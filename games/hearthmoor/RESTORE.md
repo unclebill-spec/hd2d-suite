@@ -2,6 +2,8 @@
 
 Hearthmoor, a small cozy HD-2D village errand game built on the hd2d-suite runtime. If a later Grok is asked to continue this game, **this archive is the source of truth**. Unzip it so the folder is `/workspace/hd2d-suite/games/hearthmoor/` and run `startup.sh`, which serves it on `0.0.0.0:8080`. There is no install and no build step: it is static three.js r160 ES modules with an import map. `build.py` (rebuilding the areas from `areas/src/*.json`) needs the rest of `/workspace/hd2d-suite`.
 
+Repo handoff docs (in the suite root): [`AGENTS.md`](../../AGENTS.md), [`CHANGELOG.md`](../../CHANGELOG.md), [`docs/HD2D_COZY_STYLE_LOCK.md`](../../docs/HD2D_COZY_STYLE_LOCK.md). Play online: https://unclebill-spec.github.io/hd2d-suite/games/hearthmoor/
+
 ## Identity
 
 - **Title:** Hearthmoor (working title)
