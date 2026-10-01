@@ -1,0 +1,618 @@
+{
+ "name": "Bakery Lane",
+ "seed": 11,
+ "biome": "cozy-village",
+ "about": "Bakery Lane on two terrace levels: the bakery, the Kettle & Key inn, the flower shop, laundry over the stairs and a fountain. The grass path at the top climbs back to the plaza.",
+ "time": {
+  "start": "golden",
+  "speed": 0.0016
+ },
+ "spells": true,
+ "spell_cycle": [
+  "healing_petals",
+  "sparkle_burst",
+  "light_orb",
+  "hearth_flame",
+  "frost_puff",
+  "leaf_gust",
+  "rune_circle",
+  "bolt"
+ ],
+ "camera": {
+  "fov": 24,
+  "pitch": 36,
+  "distance": 31,
+  "zoom": [
+   23,
+   40
+  ],
+  "look": [
+   0,
+   0,
+   -6.6
+  ],
+  "bounds": [
+   -5.0,
+   -12.0,
+   5.0,
+   -1.5
+  ]
+ },
+ "ground": {
+  "size": [
+   90,
+   76
+  ],
+  "mat": "grass",
+  "walk": [
+   -17,
+   -16,
+   17,
+   12
+  ]
+ },
+ "slabs": [
+  {
+   "name": "lane",
+   "rect": [
+    -14.0,
+    -2.0,
+    12.0,
+    5.0
+   ],
+   "mat": "cobble",
+   "h": 0.12
+  },
+  {
+   "name": "path_north",
+   "rect": [
+    -0.6,
+    -16.5,
+    1.6,
+    -9.5
+   ],
+   "mat": "dirt",
+   "h": 1.44
+  }
+ ],
+ "terraces": [
+  {
+   "name": "terrace_upper",
+   "rect": [
+    -14,
+    -9.5,
+    14,
+    -2.0
+   ],
+   "h": 1.4,
+   "top": "cobble",
+   "gaps": [
+    [
+     -0.85,
+     1.85
+    ]
+   ]
+  },
+  {
+   "name": "terrace_back",
+   "rect": [
+    -30,
+    -26,
+    30,
+    -9.5
+   ],
+   "h": 1.4,
+   "top": "grass",
+   "coping": false
+  }
+ ],
+ "stairs": [
+  {
+   "name": "stairs_lane",
+   "x": 0.5,
+   "z_top": -2.0,
+   "width": 2.6,
+   "rise": 1.4,
+   "base": 0.0
+  }
+ ],
+ "buildings": [
+  {
+   "piece": "bakery",
+   "pos": [
+    -6.6,
+    -5.3
+   ]
+  },
+  {
+   "piece": "inn",
+   "pos": [
+    6.1,
+    -5.6
+   ]
+  },
+  {
+   "piece": "flower_shop",
+   "pos": [
+    9.7,
+    1.3
+   ],
+   "rot": -90
+  }
+ ],
+ "props": [
+  {
+   "piece": "fountain",
+   "pos": [
+    -4.6,
+    1.6
+   ]
+  },
+  {
+   "piece": "lamp_post",
+   "pos": [
+    -1.8,
+    -0.7
+   ]
+  },
+  {
+   "piece": "lamp_post",
+   "pos": [
+    3.8,
+    3.3
+   ]
+  },
+  {
+   "piece": "lamp_post",
+   "pos": [
+    -8.3,
+    0.5
+   ]
+  },
+  {
+   "piece": "barrel",
+   "pos": [
+    4.6,
+    -0.9
+   ]
+  },
+  {
+   "piece": "barrel",
+   "pos": [
+    5.3,
+    -1.3
+   ]
+  },
+  {
+   "piece": "crate",
+   "pos": [
+    5.9,
+    -0.8
+   ],
+   "rot": 14
+  },
+  {
+   "piece": "crate",
+   "pos": [
+    5.6,
+    -0.2
+   ],
+   "rot": -8
+  },
+  {
+   "piece": "bench",
+   "pos": [
+    -7.9,
+    -1.3
+   ]
+  },
+  {
+   "piece": "flower_crate",
+   "pos": [
+    -2.9,
+    -1.6
+   ]
+  },
+  {
+   "piece": "flower_crate",
+   "pos": [
+    2.9,
+    -1.6
+   ]
+  },
+  {
+   "piece": "flower_crate",
+   "pos": [
+    -11.6,
+    -1.6
+   ]
+  },
+  {
+   "piece": "barrel",
+   "pos": [
+    -2.6,
+    -3.3
+   ]
+  },
+  {
+   "piece": "crate",
+   "pos": [
+    2.5,
+    -3.2
+   ],
+   "rot": -12
+  },
+  {
+   "piece": "fence",
+   "pos": [
+    -12.6,
+    -2.4
+   ]
+  },
+  {
+   "piece": "fence",
+   "pos": [
+    12.4,
+    -2.4
+   ]
+  },
+  {
+   "piece": "sign",
+   "pos": [
+    2.4,
+    -11.2
+   ]
+  },
+  {
+   "piece": "fern_bush",
+   "pos": [
+    -2.6,
+    -12.0
+   ]
+  }
+ ],
+ "hedges": [
+  {
+   "pos": [
+    -6.4,
+    6.2
+   ],
+   "length": 9
+  },
+  {
+   "pos": [
+    7.6,
+    6.2
+   ],
+   "length": 9
+  },
+  {
+   "pos": [
+    -13.0,
+    2.0
+   ],
+   "length": 4,
+   "rot": 90
+  },
+  {
+   "pos": [
+    0.5,
+    7.4
+   ],
+   "length": 4
+  },
+  {
+   "pos": [
+    -1.35,
+    -14.2
+   ],
+   "length": 3.6,
+   "rot": 90
+  },
+  {
+   "pos": [
+    2.35,
+    -14.2
+   ],
+   "length": 3.6,
+   "rot": 90
+  }
+ ],
+ "laundry": [
+  {
+   "from": [
+    -1.25,
+    4.15,
+    -3.15
+   ],
+   "to": [
+    2.45,
+    4.35,
+    -3.3
+   ],
+   "sag": 0.35,
+   "base": [
+    1.4,
+    1.4
+   ]
+  },
+  {
+   "from": [
+    -8.5,
+    2.4,
+    4.5
+   ],
+   "to": [
+    -5.7,
+    2.5,
+    4.0
+   ],
+   "sag": 0.25,
+   "base": [
+    0.12,
+    0.12
+   ]
+  }
+ ],
+ "trees": [
+  {
+   "type": "apple",
+   "pos": [
+    -11.4,
+    -7.4
+   ],
+   "scale": 0.8
+  },
+  {
+   "type": "oak",
+   "pos": [
+    -10.5,
+    -14.2
+   ],
+   "scale": 0.9
+  },
+  {
+   "type": "birch",
+   "pos": [
+    -5.6,
+    -15.4
+   ],
+   "scale": 0.9
+  },
+  {
+   "type": "oak",
+   "pos": [
+    5.0,
+    -15.0
+   ],
+   "scale": 0.95
+  },
+  {
+   "type": "birch",
+   "pos": [
+    10.2,
+    -13.8
+   ],
+   "scale": 0.85
+  }
+ ],
+ "backdrop": {
+  "hills": [
+   0,
+   -34
+  ]
+ },
+ "emitters": [
+  {
+   "preset": "fireflies",
+   "pos": [
+    -6.4,
+    1.0,
+    6.0
+   ],
+   "area": [
+    8,
+    1.0,
+    1.4
+   ]
+  },
+  {
+   "preset": "fireflies",
+   "pos": [
+    7.6,
+    1.0,
+    6.0
+   ],
+   "area": [
+    8,
+    1.0,
+    1.4
+   ]
+  },
+  {
+   "preset": "fireflies",
+   "pos": [
+    -4.6,
+    1.2,
+    1.6
+   ],
+   "area": [
+    3.5,
+    1.2,
+    3
+   ]
+  },
+  {
+   "preset": "petals",
+   "pos": [
+    9.0,
+    2.6,
+    2.6
+   ],
+   "area": [
+    2.5,
+    0.8,
+    2.5
+   ]
+  },
+  {
+   "preset": "dust_motes",
+   "pos": [
+    0,
+    1.6,
+    1.5
+   ],
+   "area": [
+    12,
+    2.6,
+    6
+   ]
+  }
+ ],
+ "actors": [
+  {
+   "id": "herbalist",
+   "role": "herbalist",
+   "name": "Wren the herbalist",
+   "pos": [
+    -2.4,
+    2.2
+   ],
+   "facing": "down",
+   "behavior": "caster",
+   "spell": "healing_petals",
+   "every": 5.5,
+   "talkable": true,
+   "say": [
+    "Hold still, the petals do the work."
+   ]
+  },
+  {
+   "id": "innkeeper",
+   "role": "innkeeper",
+   "name": "Bram of the Kettle & Key",
+   "pos": [
+    6.2,
+    0.7
+   ],
+   "facing": "down",
+   "behavior": "idle",
+   "talkable": true,
+   "say": [
+    "Room's warm, stew's warmer."
+   ]
+  },
+  {
+   "id": "musician",
+   "role": "musician",
+   "name": "Pip the player",
+   "pos": [
+    2.0,
+    1.2
+   ],
+   "facing": "down",
+   "behavior": "idle",
+   "talkable": true,
+   "say": [
+    "Requests? I know three songs and all of them are about bread."
+   ]
+  },
+  {
+   "id": "gardener",
+   "role": "gardener",
+   "name": "Odile",
+   "pos": [
+    6.6,
+    3.6
+   ],
+   "facing": "right",
+   "behavior": "idle",
+   "talkable": true,
+   "say": [
+    "The geraniums like the dusk best. So do I."
+   ]
+  },
+  {
+   "id": "dog",
+   "role": "dog",
+   "name": "Biscuit",
+   "pos": [
+    -0.4,
+    4.3
+   ],
+   "facing": "left",
+   "behavior": "wander",
+   "radius": 1.0,
+   "speed": 2.0,
+   "talkable": true,
+   "say": [
+    "Biscuit wags so hard his whole back half wags too."
+   ]
+  },
+  {
+   "id": "chicken",
+   "role": "chicken",
+   "name": "Mrs. Cluck",
+   "pos": [
+    -6.7,
+    0.3
+   ],
+   "facing": "right",
+   "behavior": "wander",
+   "radius": 0.8,
+   "speed": 1.1,
+   "talkable": true,
+   "say": [
+    "Bawk."
+   ]
+  }
+ ],
+ "player": {
+  "role": "hedgewitch",
+  "pos": [
+   0.5,
+   -12.6
+  ],
+  "facing": "down"
+ },
+ "grades": {
+  "night": {
+   "exposure": 1.0,
+   "hemi_intensity": 0.5
+  }
+ },
+ "game": {
+  "id": "lane",
+  "title": "Bakery Lane",
+  "exits": [
+   {
+    "rect": [
+     -0.8,
+     -17,
+     1.8,
+     -14.6
+    ],
+    "to": "plaza",
+    "spawn": "from_lane",
+    "label": "up to the Plaza"
+   }
+  ],
+  "spawns": {
+   "start": [
+    0.5,
+    -12.6,
+    "down"
+   ],
+   "from_plaza": [
+    0.5,
+    -12.8,
+    "down"
+   ],
+   "qa": [
+    1.5,
+    4.2,
+    "up"
+   ]
+  }
+ }
+}

@@ -1,0 +1,31 @@
+GIMP Palette
+Name: hd2d cozy-village
+Columns: 9
+#
+ 42  30  28	ink
+ 76  58  62	shadow
+246 236 210	plaster_hi
+230 210 172	plaster
+196 169 132	plaster_lo
+176 122  68	timber_hi
+122  78  46	timber
+ 74  46  32	timber_lo
+207 194 166	stone_hi
+156 142 122	stone
+106  94  86	stone_lo
+208 112  74	roof_hi
+154  70  48	roof
+ 98  44  36	roof_lo
+178 196 100	grass_hi
+114 160  70	grass
+ 74 114  52	moss
+ 44  76  48	leaf_deep
+228 124 140	flower_rose
+242 194  74	flower_gold
+108 140 212	flower_blue
+242 196 160	skin
+204 140 108	skin_lo
+ 62  90 140	cloth
+148 192 220	sky
+255 178  74	lamp
+255 248 230	white

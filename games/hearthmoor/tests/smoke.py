@@ -1,0 +1,541 @@
+"""Hearthmoor smoke test: plays the whole game end to end in headless Chromium (SwiftShader WebGL2).
+
+    python3 games/hearthmoor/tests/smoke.py [--out games/hearthmoor/tests/shots] [--simscale 4]
+
+Real inputs where it matters: clicks on the title buttons, E presses to talk and page through dialogue, F to cast,
+J for the quest log, K to save, page reload + Continue. Walking uses the game's own A* tap-to-walk (ctx.walkTo),
+so exits, stairs, the moss-gate portal and pickups are reached the way a tap would reach them.
+Covers: 3 errands (Warm Bread, Moonpetal Tea, Where's Pudding?), both edge exits, the portal both ways,
+Pudding following across areas, spells learned as rewards, save -> reload -> Continue (twice), and no JS errors.
+Input schemes: clicks / taps / keys while the assets load are swallowed (title not skipped, nothing queued);
+a stubbed standard-mapping controller (navigator.getGamepads) hot-plugs with a toast, walks with analog speed and
+the d-pad, talks with A, closes with B, casts with X, switches charm with Y / LB / RB, zooms with LT / RT, opens
+the log with Start, toggles the pad with Select, hides the on-screen pad while used and Continues from the title;
+on a phone the floating stick lands under the thumb, slides after the finger, mirrors with the left-handed flip,
+a quick tap in the stick zone and on open ground still walks, pinch zooms, and the page never scrolls or zooms.
+Writes screenshots + smoke.json. Exit 0 = pass.
+"""
+import argparse
+import functools
+import json
+import sys
+import threading
+import time
+from http.server import SimpleHTTPRequestHandler, ThreadingHTTPServer
+from pathlib import Path
+
+GAME = Path(__file__).resolve().parents[1]
+STUB = (Path(__file__).resolve().parent / "gamepad_stub.js").read_text()
+ARGS = ["--use-angle=swiftshader", "--enable-unsafe-swiftshader", "--ignore-gpu-blocklist"]
+
+
+# an open-ground point 1.8-3 m from the player, reachable by A*, on the bare canvas (not under the HUD or an NPC)
+MOUSE_TARGET_JS = """(() => {
+  const h = window.__hd2d, c = h.ctx, p = c.player;
+  for (const r of [2.4, 1.8, 3.0]) for (let k = 0; k < 16; k++) {
+    const a = k / 16 * Math.PI * 2, x = p.x + Math.cos(a) * r, z = p.z + Math.sin(a) * r;
+    const path = h.path(x, z); if (!path || !path.length) continue;
+    const e = path[path.length - 1]; if (Math.hypot(e[0] - x, e[1] - z) > 0.3) continue;
+    const s = c.project(x, c.heightAt(x, z), z);
+    if (s.x < 40 || s.y < 40 || s.x > innerWidth - 40 || s.y > innerHeight - 40) continue;
+    const el = document.elementFromPoint(s.x, s.y); if (!el || el.tagName !== 'CANVAS') continue;
+    const onActor = h.actorRects().some((q) => { if (!q.w || q.id === 'player') return false; const f = innerWidth / q.buf[0];
+      return s.x > q.x * f - 14 && s.x < (q.x + q.w) * f + 14 && s.y > q.y * f - 14 && s.y < (q.y + q.h) * f + 14; });
+    if (onActor) continue;
+    return { x, z, sx: s.x, sy: s.y };
+  }
+  return null;
+})()"""
+
+
+class Quiet(SimpleHTTPRequestHandler):
+    def log_message(self, *a):
+        pass
+
+
+class Smoke:
+    def __init__(self, pg, out, log):
+        self.pg, self.out, self.log, self.steps = pg, out, log, []
+
+    def ev(self, js):
+        return self.pg.evaluate(js)
+
+    def step(self, name, ok, **info):
+        self.steps.append({"step": name, "pass": bool(ok), **info})
+        self.log(f"  [{'PASS' if ok else 'FAIL'}] {name} {json.dumps(info)[:200] if info else ''}")
+        if not ok:
+            raise AssertionError(name)
+
+    def S(self):
+        return self.ev("JSON.parse(JSON.stringify(window.__hm.S))")
+
+    def wait(self, js, timeout=90):
+        self.pg.wait_for_function(js, timeout=timeout * 1000)
+
+    def idle(self, timeout=90):
+        self.wait("window.__hm.ctx && !window.__hm.busy && window.__hd2d && window.__hd2d.ready", timeout)
+
+    def shot(self, name):
+        p = self.out / f"{name}.png"
+        self.pg.screenshot(path=str(p), timeout=120000)
+        return str(p)
+
+    def walk(self, x, z, timeout=90):
+        ok = self.ev(f"window.__hm.ctx.walkTo({x}, {z})")
+        if ok is False:
+            return False
+        self.wait("!window.__hm.ctx || !window.__hm.ctx.walking() || window.__hm.busy", timeout)
+        return True
+
+    def pos(self):
+        return self.ev("[window.__hm.ctx.player.x, window.__hm.ctx.player.z]")
+
+    def talk(self, npc_id, keep_open=False):
+        """walk up to an NPC and press E until the dialogue with that NPC has been read to the end"""
+        for off in ((0, 1.0), (1.0, 0), (-1.0, 0), (0, -1.0), (0.7, 0.7), (-0.7, 0.7)):
+            a = self.ev(f"(() => {{ const a = window.__hm.ctx.npc('{npc_id}'); return a ? [a.x, a.z] : null; }})()")
+            if not a:
+                raise AssertionError(f"no npc {npc_id} in {self.ev('window.__hm.area')}")
+            self.walk(a[0] + off[0], a[1] + off[1])
+            self.pg.keyboard.press("e")
+            self.pg.wait_for_timeout(250)
+            who = self.ev("window.__hm.dlg ? window.__hm.dlg.npc.id : null")
+            if who == npc_id:
+                break
+            while self.ev("!!window.__hm.dlg"):
+                self.pg.keyboard.press("Escape"); self.pg.wait_for_timeout(100)
+        else:
+            raise AssertionError(f"could not talk to {npc_id}")
+        pages = self.ev("window.__hm.dlg.pages.length")
+        first = self.ev("window.__hm.dlg.pages[0]")
+        if keep_open:
+            return pages, first
+        self.read_all()
+        return pages, first
+
+    def read_all(self):
+        n = 0
+        while self.ev("!!window.__hm.dlg") and n < 40:
+            self.pg.keyboard.press("e"); self.pg.wait_for_timeout(140); n += 1
+
+    # ---------------------------------------------------------- controller (stubbed navigator.getGamepads)
+    def btn(self, i, hold=120):
+        """press and hold until the engine's next poll has seen it (slow SwiftShader frames), then release"""
+        n0 = self.ev("window.__hd2d.padPresses || 0")
+        self.ev(f"__padBtn({i}, 1)")
+        self.pg.wait_for_timeout(hold)
+        self.wait(f"(window.__hd2d.padPresses || 0) > {n0}", 20)
+        p0 = self.ev("window.__hd2d.padPolls || 0")
+        self.ev(f"__padBtn({i}, 0)")
+        self.wait(f"(window.__hd2d.padPolls || 0) > {p0 + 1}", 20)    # the release has been polled too
+        self.pg.wait_for_timeout(150)
+
+    def talk_pad(self, npc_id):
+        """walk up to an NPC and press A until the dialogue has been read to the end"""
+        for off in ((0, 1.0), (1.0, 0), (-1.0, 0), (0, -1.0)):
+            a = self.ev(f"(() => {{ const a = window.__hm.ctx.npc('{npc_id}'); return a ? [a.x, a.z] : null; }})()")
+            self.walk(a[0] + off[0], a[1] + off[1])
+            self.btn(0)
+            if self.ev("window.__hm.dlg ? window.__hm.dlg.npc.id : null") == npc_id:
+                break
+            while self.ev("!!window.__hm.dlg"):
+                self.btn(1)
+        else:
+            raise AssertionError(f"could not talk to {npc_id} with A")
+        n = 0
+        while self.ev("!!window.__hm.dlg") and n < 40:
+            self.btn(0, 200); n += 1
+        return n
+
+    def go_rect(self, kind, idx=0, timeout=90):
+        """walk into an exit / portal trigger and wait for the next area to finish loading"""
+        area0 = self.ev("window.__hm.area")
+        r = self.ev(f"window.__hm.ctx.scene.game.{kind}[{idx}].rect")
+        self.ev(f"window.__hm.ctx.walkTo({(r[0] + r[2]) / 2}, {(r[1] + r[3]) / 2})")
+        self.wait(f"window.__hm.area !== '{area0}' || window.__hm.busy", timeout)
+        self.idle(timeout)
+        self.pg.wait_for_timeout(400)
+        return self.ev("window.__hm.area")
+
+
+def run(out, simscale=4, size=(960, 540)):
+    from playwright.sync_api import sync_playwright
+    out.mkdir(parents=True, exist_ok=True)
+    srv = ThreadingHTTPServer(("127.0.0.1", 0), functools.partial(Quiet, directory=str(GAME)))
+    threading.Thread(target=srv.serve_forever, daemon=True).start()
+    url = f"http://127.0.0.1:{srv.server_address[1]}/index.html?nosw&simscale={simscale}"
+    lines, errors = [], []
+    log = lambda s: (print(s, flush=True), lines.append(s))  # noqa: E731
+    rep = {"url": url, "shots": {}}
+    t0 = time.time()
+    with sync_playwright() as p:
+        b = p.chromium.launch(args=ARGS)
+        ctx = b.new_context(viewport={"width": size[0], "height": size[1]})
+        ctx.add_init_script(STUB)
+        pg = ctx.new_page()
+        pg.on("pageerror", lambda e: errors.append(f"PAGEERROR {e}"))
+        pg.on("console", lambda m: errors.append(f"console.error {m.text}") if m.type == "error" else None)
+        T = Smoke(pg, out, log)
+        try:
+            # ---------------------------------------------------------- title -> new game
+            # ---------------------------------------------------------- loading gate: input while assets load is ignored
+            held, hold = [], [True]
+            pg.route("**/*.glb", lambda route: held.append(route) if hold[0] else route.continue_())
+            pg.goto(url, wait_until="commit")
+            T.wait("window.__hd2dGate && document.getElementById('boot') && document.getElementById('btnNew')", 60)
+            pg.wait_for_timeout(500)
+            during = T.ev("[window.__hd2dGate.loading, getComputedStyle(document.getElementById('boot')).display !== 'none']")
+            nb = T.ev("(() => { const r = document.getElementById('btnNew').getBoundingClientRect(); return [r.left + r.width / 2, r.top + r.height / 2]; })()")
+            for i in range(5):
+                pg.mouse.click(nb[0], nb[1]); pg.mouse.click(size[0] * (0.3 + 0.1 * i), size[1] * 0.6)
+                pg.keyboard.press(["Enter", " ", "n", "e", "j"][i]); pg.wait_for_timeout(80)
+            hold[0] = False
+            for rt in held:
+                rt.continue_()
+            T.wait("window.__hm && window.__hm.ready && window.__hd2d && window.__hd2d.ready", 120)
+            pg.wait_for_timeout(800)
+            T.step("clicks + keys during loading are swallowed (title not skipped, nothing queued)",
+                   all(during) and T.ev("window.__hm.title && !document.getElementById('titlescreen').hidden && !window.__hm.log && !window.__hd2d.walking()")
+                   and T.ev("window.__hd2dGate.swallowed") > 0 and len(held) > 0,
+                   held=len(held), swallowed=T.ev("window.__hd2dGate.swallowed"), during=during)
+            T.step("title screen shows, no save yet", T.ev("!document.getElementById('titlescreen').hidden && document.getElementById('btnCont').hidden"))
+            pg.click("#btnNew")
+            T.idle()
+            S = T.S()
+            T.step("new game in Hearthmoor Plaza", T.ev("window.__hm.area") == "plaza" and not T.ev("window.__hm.title") and S["quests"] == {"bread": 0, "tea": 0, "cat": 0})
+            T.step("quest tags over Marla and Tib", T.ev("Object.keys(window.__hm.markers).sort().join()") == "baker,kid")
+            rep["shots"]["plaza"] = T.shot("plaza")
+
+            # ---------------------------------------------------------- errand 1 + 3 start in the plaza
+            pages, first = T.talk("baker")
+            S = T.S()
+            T.step("Marla gives the warm bread errand", S["quests"]["bread"] == 1 and S["inv"].get("loaf") == 1, pages=pages, line=first[:60])
+            T.talk("kid")
+            T.step("Tib asks you to find Pudding", T.S()["quests"]["cat"] == 1)
+            T.step("plaza has no Pudding (she is lost)", T.ev("!window.__hm.ctx.npc('cat')"))
+            T.talk("elder")
+
+            # ---------------------------------------------------------- south lane -> Bakery Lane
+            area = T.go_rect("exits")
+            T.step("edge exit: plaza -> Bakery Lane (fade)", area == "lane", spawn=T.pos())
+            pages, first = T.talk("innkeeper")
+            S = T.S()
+            T.step("deliver bread to Bram: errand 1 done", S["quests"]["bread"] == 3 and not S["inv"].get("loaf") and S["inv"].get("coin") == 3
+                   and "hearth_flame" in S["spells"], line=first[:60])
+            # Wren: dialogue box + quest log together for the report shot
+            T.talk("herbalist", keep_open=True)
+            pg.wait_for_timeout(1200)
+            pg.keyboard.press("j")
+            pg.wait_for_timeout(500)
+            T.step("quest log opens over the dialogue", T.ev("!document.getElementById('log').hidden && !document.getElementById('dlg').hidden"))
+            rep["shots"]["dialogue_questlog"] = T.shot("dialogue_questlog")
+            pg.keyboard.press("j")
+            pg.wait_for_timeout(200)
+            T.read_all()
+            T.step("Wren gives the moonpetal errand", T.S()["quests"]["tea"] == 1)
+            # cast: Q to the new charm, F to cast
+            pg.keyboard.press("q"); pg.wait_for_timeout(200)
+            near = "window.__hd2d.effects.list.filter((f) => Math.hypot(f.x - window.__hm.ctx.player.x, f.z - window.__hm.ctx.player.z) < 2.5).length"
+            n0 = T.ev(near)
+            cast = T.ev("window.__hd2d.spellName()")
+            pg.keyboard.press("f"); pg.wait_for_timeout(150)
+            casting = T.ev("window.__hm.ctx.player.castT > 0")
+            pg.wait_for_timeout(500)
+            T.step("spell cast key (F) still works", casting or T.ev(near) > n0, cast=cast, casting=casting)
+            # ---------------------------------------------------------- Bluetooth controller (standard mapping, stubbed)
+            T.ev("__padPlug(true)"); pg.wait_for_timeout(700)
+            T.step("controller hot-plug: 'controller connected' toast", "controller connected" in T.ev("document.getElementById('toast').textContent")
+                   and T.ev("!document.getElementById('toast').hidden"))
+            pa = T.pos()
+            T.ev("__padAxes(0.45, 0)"); pg.wait_for_timeout(600)
+            half = T.ev("[window.__hm.ctx.player.speedScale, window.__hm.ctx.player.running]")
+            T.ev("__padAxes(1, 0)"); pg.wait_for_timeout(600)
+            full = T.ev("[window.__hm.ctx.player.speedScale, window.__hm.ctx.player.running]")
+            T.ev("__padAxes(0, 0)"); pg.wait_for_timeout(300)
+            pb = T.pos()
+            ctrl = T.ev("window.__hd2d.gamepad().ctrl")
+            T.step("left stick walks with analog speed (half tilt walks slower, full tilt runs)", pb[0] - pa[0] > 0.3 and half[0] < 0.8 and not half[1] and full[1] and ctrl,
+                   half=half, full=full, moved=[round(pb[0] - pa[0], 2), round(pb[1] - pa[1], 2)])
+            T.ev("__padBtn(13, 1)"); pg.wait_for_timeout(700); T.ev("__padBtn(13, 0)"); pg.wait_for_timeout(250)
+            pc = T.pos()
+            T.step("d-pad walks", abs(pc[1] - pb[1]) + abs(pc[0] - pb[0]) > 0.2, moved=[round(pc[0] - pb[0], 2), round(pc[1] - pb[1], 2)])
+            n0 = T.ev(near)
+            k0 = T.ev("window.__hd2d.padPresses || 0")
+            T.ev("__padBtn(2, 1)"); T.wait(f"(window.__hd2d.padPresses || 0) > {k0}", 20)
+            casting = T.ev("window.__hm.ctx.player.castT > 0"); pg.wait_for_timeout(150); T.ev("__padBtn(2, 0)"); pg.wait_for_timeout(300)
+            T.step("X casts", casting or T.ev(near) > n0, casting=casting)
+            s0 = T.ev("window.__hd2d.spellName()"); T.btn(3); s1 = T.ev("window.__hd2d.spellName()"); T.btn(4); s2 = T.ev("window.__hd2d.spellName()")
+            T.btn(5); s3 = T.ev("window.__hd2d.spellName()"); T.btn(4)
+            T.step("Y / RB next charm, LB previous charm", s1 != s0 and s2 == s0 and s3 != s0, charms=[s0, s1, s2, s3])
+            T.btn(9); log_open = T.ev("window.__hm.log"); T.btn(1); log_closed = not T.ev("window.__hm.log")
+            T.step("Start opens the quest log, B closes it", log_open and log_closed)
+            z0 = T.ev("window.__hd2d.camState().dist")
+            T.ev("__padBtn(7, 1)"); pg.wait_for_timeout(700); T.ev("__padBtn(7, 0)"); pg.wait_for_timeout(200); z1 = T.ev("window.__hd2d.camState().dist")
+            T.ev("__padBtn(6, 1)"); pg.wait_for_timeout(1400); T.ev("__padBtn(6, 0)"); pg.wait_for_timeout(200); z2 = T.ev("window.__hd2d.camState().dist")
+            T.step("RT zooms in, LT zooms out (inside the limits)", z1 < z0 - 0.3 and z2 > z1 + 0.3 and 23 - 1e-3 <= min(z1, z2) and max(z1, z2) <= 40 + 1e-3, dist=[round(z0, 2), round(z1, 2), round(z2, 2)])
+            pad_hidden = T.ev("getComputedStyle(document.getElementById('pad')).display === 'none' || document.getElementById('pad').hidden")
+            T.btn(8); pad_sel = T.ev("[document.body.classList.contains('padon'), getComputedStyle(document.getElementById('pad')).display !== 'none' && !document.getElementById('pad').hidden]")
+            T.btn(8); pad_off = T.ev("document.body.classList.contains('padon')")
+            T.step("Select toggles the on-screen pad (shown even in controller mode)", pad_hidden and pad_sel == [True, True] and not pad_off, sel=pad_sel)
+            pages = T.talk_pad("musician")
+            T.step("A talks to Pip and pages through to the end", T.ev("!window.__hm.dlg"), presses=pages)
+            T.btn(0)
+            opened = T.ev("!!window.__hm.dlg"); T.btn(1)
+            T.step("B closes a dialogue", opened and T.ev("!window.__hm.dlg"))
+            rep["shots"]["lane_controller"] = T.shot("lane_controller")
+            # all schemes together: with the controller still connected, keys walk, a mouse click walks, the wheel zooms
+            k0 = T.pos()
+            pg.keyboard.down("d"); pg.wait_for_timeout(700); pg.keyboard.up("d"); pg.wait_for_timeout(200)
+            k1 = T.pos()
+            tgt = T.ev(MOUSE_TARGET_JS)
+            clicked = False
+            if tgt:
+                pg.mouse.click(tgt["sx"], tgt["sy"]); pg.wait_for_timeout(300)
+                clicked = T.ev("window.__hm.ctx.walking()") or ((T.pos()[0] - tgt["x"]) ** 2 + (T.pos()[1] - tgt["z"]) ** 2) ** 0.5 < 0.4
+                T.wait("!window.__hm.ctx.walking()", 30)
+            w0 = T.ev("window.__hd2d.camState().dist")
+            pg.mouse.move(size[0] / 2, size[1] / 2); pg.mouse.wheel(0, 600); pg.wait_for_timeout(400)
+            w1 = T.ev("window.__hd2d.camState().dist")
+            T.step("keyboard, mouse click-to-walk and wheel zoom still work with a controller connected", abs(k1[0] - k0[0]) + abs(k1[1] - k0[1]) > 0.2 and clicked and w1 > w0 + 0.3,
+                   keys_moved=[round(k1[0] - k0[0], 2), round(k1[1] - k0[1], 2)], click=tgt and [round(tgt["x"], 2), round(tgt["z"], 2)], wheel=[round(w0, 2), round(w1, 2)])
+            T.ev("__padPlug(false)"); pg.wait_for_timeout(600)
+            T.step("controller unplugged: toast, controller mode off", "disconnected" in T.ev("document.getElementById('toast').textContent")
+                   and not T.ev("document.body.classList.contains('ctrl')"))
+            rep["shots"]["lane"] = T.shot("lane")
+
+            # ---------------------------------------------------------- back up to the plaza, through the moss gate
+            area = T.go_rect("exits")
+            T.step("edge exit: Bakery Lane -> plaza", area == "plaza", spawn=T.pos())
+            r = T.ev("window.__hm.ctx.scene.game.portals[0].rect")
+            T.walk((r[0] + r[2]) / 2, r[3] + 1.6)
+            T.ev("window.__hd2d.ctx && 0")
+            pg.mouse.move(size[0] / 2, size[1] / 2)
+            for _ in range(6):
+                pg.mouse.wheel(0, -600); pg.wait_for_timeout(120)
+            pg.wait_for_timeout(600)
+            rep["shots"]["portal_closeup"] = T.shot("portal_closeup")
+            area = T.go_rect("portals")
+            T.step("portal: plaza -> Mossglen", area == "mossglen", spawn=T.pos())
+
+            # ---------------------------------------------------------- Mossglen: moonpetals + Pudding
+            for i in range(3):
+                f = T.ev(f"(() => {{ const f = window.__hm.ctx.fx['petal_{i}']; return f ? [f.x, f.z] : null; }})()")
+                T.walk(f[0], f[1])
+                pg.wait_for_timeout(300)
+            S = T.S()
+            T.step("picked 3 moonpetals (errand 2 ready)", S["inv"].get("moonpetal") == 3 and S["quests"]["tea"] == 2, picked=sorted(S["picked"]))
+            T.talk("keeper")
+            T.talk("cat")
+            S = T.S()
+            T.step("found Pudding: she follows you", S["cat"] == "follow" and S["quests"]["cat"] == 2 and T.ev("window.__hm.ctx.npc('cat').behavior") == "follow")
+            rep["shots"]["mossglen"] = T.shot("mossglen")
+
+            # ---------------------------------------------------------- save, reload, continue
+            pg.keyboard.press("k"); pg.wait_for_timeout(300)
+            saved = T.ev("JSON.parse(localStorage.getItem('hearthmoor-slot-1-v1'))")
+            T.step("saved to localStorage hearthmoor-slot-1-v1", saved and saved["area"] == "mossglen" and saved["v"] == 1)
+            pos_before = T.pos()
+            pg.reload()
+            T.wait("window.__hm && window.__hm.ready", 120)
+            T.step("after reload the title offers Continue", T.ev("!document.getElementById('btnCont').hidden"), info=T.ev("document.getElementById('saveInfo').textContent"))
+            pg.click("#btnCont")
+            T.idle()
+            pg.wait_for_timeout(500)
+            S = T.S()
+            pos_after = T.pos()
+            T.step("Continue restores area, position, bag, errands, Pudding", T.ev("window.__hm.area") == "mossglen" and S["inv"].get("moonpetal") == 3
+                   and S["quests"] == {"bread": 3, "tea": 2, "cat": 2} and S["cat"] == "follow" and T.ev("!!window.__hm.ctx.npc('cat')")
+                   and abs(pos_after[0] - pos_before[0]) < 0.3 and abs(pos_after[1] - pos_before[1]) < 0.3
+                   and T.ev("!window.__hm.ctx.fx.petal_0 && !window.__hm.ctx.fx.petal_1 && !window.__hm.ctx.fx.petal_2 && !!window.__hm.ctx.fx.petal_3"),
+                   pos=[pos_before, pos_after])
+
+            # ---------------------------------------------------------- home through the gate with Pudding
+            area = T.go_rect("portals")
+            T.step("portal: Mossglen -> plaza, Pudding comes too", area == "plaza" and T.ev("!!window.__hm.ctx.npc('cat')"))
+            T.talk("kid")
+            S = T.S()
+            T.step("Pudding home with Tib: errand 3 done", S["quests"]["cat"] == 3 and S["cat"] == "home" and S["inv"].get("acorn") == 1 and "leaf_gust" in S["spells"])
+            area = T.go_rect("exits")
+            T.talk("herbalist")
+            S = T.S()
+            T.step("moonpetals to Wren: errand 2 done", S["quests"]["tea"] == 3 and S["inv"].get("tea") == 1 and not S["inv"].get("moonpetal") and "light_orb" in S["spells"])
+            T.step("all 3 errands done, no quest tags left", all(v == 3 for v in S["quests"].values()) and T.ev("Object.keys(window.__hm.markers).length") == 0)
+            pg.keyboard.press("j"); pg.wait_for_timeout(400)
+            rep["shots"]["questlog_done"] = T.shot("questlog_done")
+            pg.keyboard.press("j")
+
+            # ---------------------------------------------------------- second save/reload round trip
+            pg.keyboard.press("k"); pg.wait_for_timeout(300)
+            pg.reload()
+            T.wait("window.__hm && window.__hm.ready && window.__hd2d.ready", 120)
+            pg.wait_for_timeout(400)
+            T.ev("__padPlug(true)"); pg.wait_for_timeout(500)
+            T.btn(0)     # A on the title = Continue
+            T.idle()
+            S = T.S()
+            T.step("reload #2: controller A on the title Continues; finished game state restored in Bakery Lane", T.ev("window.__hm.area") == "lane" and all(v == 3 for v in S["quests"].values())
+                   and set(S["spells"]) >= {"sparkle_burst", "hearth_flame", "light_orb", "leaf_gust"})
+            T.step("no JS errors", not errors and not T.ev("window.__hd2d.errors.length"), errors=errors[:5])
+            rep["pass"] = True
+        except Exception as e:  # noqa: BLE001
+            rep["pass"] = False
+            rep["error"] = f"{type(e).__name__}: {e}"[:600]
+            try:
+                rep["shots"]["failure"] = T.shot("failure")
+                rep["state"] = T.S()
+            except Exception:  # noqa: BLE001
+                pass
+        rep["steps"] = T.steps
+        rep["errors"] = errors[:20]
+
+        # ---------------------------------------------------------- phone portrait with the pad (continue the save)
+        if rep["pass"]:
+            try:
+                saved = pg.evaluate("localStorage.getItem('hearthmoor-slot-1-v1')")
+                ctx.close()
+                ph = b.new_context(viewport={"width": 390, "height": 844}, device_scale_factor=2, is_mobile=True, has_touch=True)
+                ph.add_init_script(f"localStorage.setItem('hearthmoor-slot-1-v1', {json.dumps(saved)})")
+                ph.add_init_script(STUB)
+                q = ph.new_page()
+                q.on("pageerror", lambda e: errors.append(f"PAGEERROR {e}"))
+                T.pg = q
+                cdp = ph.new_cdp_session(q)
+                TS = [time.time()]
+
+                def touch(kind, pts):
+                    TS[0] += 0.05   # OS-style timestamps: a slow SwiftShader frame can't stretch a tap into a hold
+                    cdp.send("Input.dispatchTouchEvent", {"type": kind, "touchPoints": [{"x": x, "y": y, "id": i} for i, (x, y) in enumerate(pts)], "timestamp": TS[0]})
+
+                def tap(x, y):
+                    TS[0] = max(TS[0], time.time()); touch("touchStart", [(x, y)]); touch("touchEnd", [])
+
+                # loading gate on the phone: taps on Continue / the world while the assets load do nothing
+                held, hold = [], [True]
+                q.route("**/*.glb", lambda route: held.append(route) if hold[0] else route.continue_())
+                q.goto(url + "&pad=1", wait_until="commit")
+                q.wait_for_function("window.__hd2dGate && document.getElementById('btnCont')", timeout=60000)
+                q.wait_for_timeout(500)
+                cb = T.ev("(() => { const r = document.getElementById('btnCont').getBoundingClientRect(); return [r.left + r.width / 2, r.top + r.height / 2]; })()")
+                for i in range(5):
+                    tap(cb[0] or 195, cb[1] or 420); tap(120 + 30 * i, 600); q.wait_for_timeout(90)
+                hold[0] = False
+                for rt in held:
+                    rt.continue_()
+                q.wait_for_function("window.__hm && window.__hm.ready && window.__hd2d && window.__hd2d.ready", timeout=120000)
+                q.wait_for_timeout(800)
+                T.step("phone: taps during loading are swallowed (still on the title)", T.ev("window.__hm.title && !document.getElementById('titlescreen').hidden")
+                       and T.ev("window.__hd2dGate.swallowed") > 0, swallowed=T.ev("window.__hd2dGate.swallowed"))
+                q.tap("#btnCont")
+                q.wait_for_function("window.__hm.ctx && !window.__hm.busy && !window.__hm.title", timeout=120000)
+                q.evaluate("window.__hm.go('plaza', 'from_lane', 'walk')")
+                q.wait_for_function("window.__hm.area === 'plaza' && !window.__hm.busy && window.__hd2d.ready", timeout=120000)
+                q.wait_for_timeout(800)
+                padon = q.evaluate("document.body.classList.contains('padon') && !document.getElementById('pad').hidden")
+                p2 = out / "phone_portrait_pad.png"
+                q.screenshot(path=str(p2), timeout=120000)
+                rep["shots"]["phone_portrait_pad"] = str(p2)
+                T.step("phone portrait: pad on, game continues on touch", padon)
+                # no page scroll / zoom
+                nz = T.ev("""(() => { const m = document.querySelector('meta[name=viewport]').content; const ev = (t) => { const e = new Event(t, { bubbles: true, cancelable: true }); document.body.dispatchEvent(e); return e.defaultPrevented; };
+                  return [/user-scalable=no/.test(m), getComputedStyle(document.body).touchAction, getComputedStyle(document.body).overscrollBehaviorY, ev('gesturestart'), ev('dblclick')]; })()""")
+                T.ev("window.__noReload = 1")
+                tap(300, 330); tap(300, 330)                                 # double-tap
+                q.wait_for_timeout(300)
+                TS[0] = max(TS[0], time.time()); touch("touchStart", [(240, 80)])
+                for i in range(1, 9):
+                    touch("touchMove", [(240, 80 + 45 * i)]); q.wait_for_timeout(20)
+                touch("touchEnd", []); q.wait_for_timeout(500)
+                vv = T.ev("[visualViewport.scale, scrollX, scrollY, window.__noReload === 1]")
+                T.step("phone: page never scrolls or zooms (double-tap, pull-to-refresh, gesturestart, dblclick)",
+                       nz == [True, "none", "none", True, True] and vv == [1, 0, 0, True], guards=nz, after=vv)
+                for _ in range(3):
+                    if T.ev("!!window.__hm.dlg || window.__hm.log"):
+                        q.keyboard.press("Escape"); q.wait_for_timeout(150)
+                T.ev("window.__hm.ctx.stopWalk()"); q.wait_for_timeout(300)
+                # floating stick: lands under the thumb, slides after the finger past its radius, walks; mid-drag shot
+                zone = T.ev("(() => { const a = document.getElementById('stickZone').getBoundingClientRect(); return [a.left, a.top, a.width, a.height]; })()")
+                rest = T.ev("(() => { const a = document.getElementById('stick').getBoundingClientRect(); return [a.left + a.width / 2, a.top + a.height / 2]; })()")
+                sx, sy = zone[0] + zone[2] * 0.5, zone[1] + zone[3] * 0.3
+                pa = T.pos()
+                TS[0] = max(TS[0], time.time()); touch("touchStart", [(sx, sy)]); q.wait_for_timeout(150)
+                s1 = T.ev("window.__hd2d.stickState()")
+                fy = sy
+                for i in range(1, 11):          # north (up the plaza, open cobbles): 140 px, past the 64 px rim
+                    fy = sy - 14 * i
+                    touch("touchMove", [(sx + 2 * i, fy)]); q.wait_for_timeout(35)
+                q.wait_for_timeout(80)
+                s2 = T.ev("window.__hd2d.stickState()")
+                p3 = out / "phone_portrait_floatstick.png"
+                q.screenshot(path=str(p3), timeout=120000)
+                rep["shots"]["phone_portrait_floatstick"] = str(p3)
+                q.wait_for_timeout(600)
+                touch("touchEnd", []); q.wait_for_timeout(300)
+                s3 = T.ev("window.__hd2d.stickState()")
+                pb = T.pos()
+                b2 = s2["base"] or {"x": sx, "y": sy}
+                fd = (((sx + 20) - b2["x"]) ** 2 + (fy - b2["y"]) ** 2) ** 0.5
+                T.step("phone: floating stick appears under the thumb (not the fixed corner)", s1["base"] and abs(s1["base"]["x"] - sx) < 3 and abs(s1["base"]["y"] - sy) < 3
+                       and ((rest[0] - sx) ** 2 + (rest[1] - sy) ** 2) ** 0.5 > 60, touch=[round(sx), round(sy)], rest=[round(v) for v in rest])
+                T.step("phone: stick re-centres when dragged past its radius and walks the player", sy - b2["y"] > 50 and abs(fd - 64) < 8 and s2["run"]
+                       and abs(pb[0] - pa[0]) + abs(pb[1] - pa[1]) > 0.5 and not s3["active"] and s3["rest"],
+                       base=[round(b2["x"]), round(b2["y"])], finger_to_base=round(fd, 1), moved=[round(pb[0] - pa[0], 2), round(pb[1] - pa[1], 2)])
+                # a quick tap in the stick zone and on open ground both still walk (no conflict with the stick)
+                walked = []
+                for (x, y) in ((zone[0] + zone[2] * 0.7, zone[1] + zone[3] * 0.15), (zone[0] + zone[2] * 0.4, zone[1] + zone[3] * 0.1), (300, 380), (330, 300), (260, 260)):
+                    T.ev("window.__hm.ctx.stopWalk()")
+                    tap(x, y); q.wait_for_timeout(250)
+                    walked.append(bool(T.ev("window.__hd2d.walking()")))
+                    T.ev("window.__hm.ctx.stopWalk()"); q.wait_for_timeout(100)
+                    while T.ev("!!window.__hm.dlg || window.__hm.log"):
+                        q.keyboard.press("Escape"); q.wait_for_timeout(150)
+                T.step("phone: tap in the stick zone and tap on open ground both walk", any(walked[:2]) and any(walked[2:]), walked=walked)
+                # pinch zooms the camera only
+                d0 = T.ev("window.__hd2d.camState().dist")
+                TS[0] = max(TS[0], time.time()); touch("touchStart", [(195 - 30, 300), (195 + 30, 300)])
+                for i in range(1, 9):
+                    a = 30 + 15 * i
+                    touch("touchMove", [(195 - a, 300), (195 + a, 300)]); q.wait_for_timeout(25)
+                touch("touchEnd", []); q.wait_for_timeout(300)
+                d1 = T.ev("window.__hd2d.camState().dist")
+                T.step("phone: pinch zooms the camera (page scale stays 1)", d1 < d0 - 0.5 and T.ev("visualViewport.scale") == 1, dist=[round(d0, 2), round(d1, 2)])
+                # left-handed flip from the HUD chip: zone and stick move to the right, still floating
+                q.tap("#btnHand"); q.wait_for_timeout(300)
+                z2 = T.ev("(() => { const a = document.getElementById('stickZone').getBoundingClientRect(); return [a.left, a.top, a.width, a.height]; })()")
+                tx, ty = z2[0] + z2[2] * 0.4, z2[1] + z2[3] * 0.35
+                TS[0] = max(TS[0], time.time()); touch("touchStart", [(tx, ty)]); q.wait_for_timeout(150)
+                s4 = T.ev("window.__hd2d.stickState()")
+                for i in range(1, 6):
+                    touch("touchMove", [(tx - 14 * i, ty)]); q.wait_for_timeout(35)
+                p4 = out / "phone_portrait_floatstick_left.png"
+                q.screenshot(path=str(p4), timeout=120000)
+                rep["shots"]["phone_portrait_floatstick_left"] = str(p4)
+                touch("touchEnd", []); q.wait_for_timeout(200)
+                T.step("phone: left-handed flip mirrors the floating stick zone", T.ev("document.body.classList.contains('lefthand')") and z2[0] >= 194
+                       and s4["base"] and abs(s4["base"]["x"] - tx) < 3, zone=[round(v) for v in z2])
+                q.tap("#btnHand"); q.wait_for_timeout(200)
+                # controller on the phone: pad hides while it is used, a touch brings it back
+                T.ev("__padPlug(true)"); T.ev("__padAxes(0, 1)"); q.wait_for_timeout(800); T.ev("__padAxes(0, 0)"); q.wait_for_timeout(300)
+                hid = T.ev("getComputedStyle(document.getElementById('pad')).display === 'none'")
+                tap(195, 150); q.wait_for_timeout(300)
+                back = T.ev("!document.body.classList.contains('ctrl') && getComputedStyle(document.getElementById('pad')).display !== 'none'")
+                T.step("phone: on-screen pad hides while a controller is used and comes back on touch", hid and back, hidden=hid, back=back)
+                T.ev("__padPlug(false)")
+            except Exception as e:  # noqa: BLE001
+                rep["pass"] = False
+                rep["error"] = f"phone: {e}"[:400]
+        b.close()
+    srv.shutdown()
+    rep["seconds"] = round(time.time() - t0, 1)
+    rep["steps"] = T.steps
+    (out / "smoke.json").write_text(json.dumps(rep, indent=1))
+    log(f"smoke: {'PASS' if rep['pass'] else 'FAIL'} {sum(s['pass'] for s in T.steps)}/{len(T.steps)} steps in {rep['seconds']} s" + (f"  ({rep.get('error')})" if not rep["pass"] else ""))
+    return rep
+
+
+if __name__ == "__main__":
+    ap = argparse.ArgumentParser()
+    ap.add_argument("--out", default=str(GAME / "tests" / "shots"))
+    ap.add_argument("--simscale", type=int, default=4)
+    a = ap.parse_args()
+    r = run(Path(a.out), a.simscale)
+    sys.exit(0 if r["pass"] else 1)

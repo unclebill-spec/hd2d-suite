@@ -1,0 +1,68 @@
+{
+  "name": "Hearthmoor Plaza",
+  "seed": 7,
+  "biome": "cozy-village",
+  "about": "Cozy market plaza at golden hour: a cobbled lower plaza, a terrace with stairs, three cottages, a bread stall with bunting, one oak, a baker, a cat, a kid and you.",
+  "time": { "start": "golden", "speed": 0.0021 },
+  "camera": { "fov": 24, "pitch": 36, "distance": 31, "zoom": [23, 40], "look": [0, 0, -6.6], "bounds": [-4.5, -10.0, 4.5, -1.5] },
+  "ground": { "size": [90, 76], "mat": "grass", "walk": [-17, -16, 17, 12] },
+  "slabs": [
+    { "name": "plaza", "rect": [-10.5, -2.0, 11.0, 5.2], "mat": "cobble", "h": 0.12 },
+    { "name": "lane", "rect": [-1.2, 5.2, 1.8, 16], "mat": "dirt", "h": 0.04 }
+  ],
+  "terraces": [
+    { "name": "terrace_front", "rect": [-14, -9.5, 14, -2.0], "h": 1.4, "top": "cobble", "gaps": [[-0.85, 1.85]] },
+    { "name": "terrace_back", "rect": [-30, -26, 30, -9.5], "h": 1.4, "top": "grass", "coping": false }
+  ],
+  "stairs": [ { "name": "stairs_main", "x": 0.5, "z_top": -2.0, "width": 2.6, "rise": 1.4, "base": 0.0 } ],
+  "buildings": [
+    { "piece": "cottage_baker", "pos": [-6.4, -5.2] },
+    { "piece": "cottage_tall", "pos": [6.2, -5.4] },
+    { "piece": "cottage_shop", "pos": [9.4, 1.0], "rot": -90 }
+  ],
+  "props": [
+    { "piece": "market_stall", "pos": [-4.6, 0.5] },
+    { "piece": "lamp_post", "pos": [-1.7, -0.6] },
+    { "piece": "lamp_post", "pos": [3.6, 3.0] },
+    { "piece": "sign", "pos": [-7.6, 2.5] },
+    { "piece": "well", "pos": [-9.0, -0.4] },
+    { "piece": "barrel", "pos": [5.6, 1.2] },
+    { "piece": "barrel", "pos": [6.1, 2.0] },
+    { "piece": "crate", "pos": [6.4, 0.6], "rot": 18 },
+    { "piece": "flower_crate", "pos": [-2.8, -1.6] },
+    { "piece": "flower_crate", "pos": [3.4, -1.6] },
+    { "piece": "flower_crate", "pos": [-11.5, -1.6] },
+    { "piece": "barrel", "pos": [-1.2, -1.4] },
+    { "piece": "bench", "pos": [-2.4, -3.0] },
+    { "piece": "crate", "pos": [3.0, -3.0], "rot": -12 },
+    { "piece": "barrel", "pos": [-3.6, -7.4] },
+    { "piece": "fence", "pos": [-12.2, -2.4] },
+    { "piece": "fence", "pos": [12.2, -2.4] }
+  ],
+  "hedges": [
+    { "pos": [-6.0, 6.4], "length": 9 },
+    { "pos": [7.8, 6.4], "length": 9 },
+    { "pos": [-12.4, 2.2], "length": 4, "rot": 90 }
+  ],
+  "trees": [ { "type": "oak", "pos": [1.5, -5.6], "scale": 0.85 } ],
+  "bunting": [
+    { "from": [-3.05, 2.25, 1.3], "to": [3.6, 3.0, 3.0], "sag": 0.45 },
+    { "from": [-6.05, 2.6, -0.3], "to": [-4.4, 4.0, -3.0], "sag": 0.3 },
+    { "from": [7.2, 3.6, 1.6], "to": [3.6, 3.05, 3.0], "sag": 0.3 }
+  ],
+  "backdrop": { "hills": [0, -34] },
+  "emitters": [
+    { "preset": "dust_motes", "pos": [0, 1.6, 1.5], "area": [12, 2.6, 7] },
+    { "preset": "lamp_bugs", "pos": [-6.0, 1.0, 6.0], "area": [8, 1.2, 1.5] },
+    { "preset": "lamp_bugs", "pos": [7.8, 1.0, 6.0], "area": [8, 1.2, 1.5] }
+  ],
+  "actors": [
+    { "id": "baker", "role": "baker", "name": "Marla the baker", "at": "stall_vendor", "facing": "down", "behavior": "idle",
+      "say": ["Fresh hearthloaves, still warm! The oven's been singing since dawn.", "Mind the cat. She thinks the bread crate is a throne.", "Come back at dusk: the lamps make the crust look like gold."] },
+    { "id": "cat", "role": "cat", "name": "Pudding", "pos": [4.8, 3.4], "facing": "left", "behavior": "wander", "radius": 1.8, "speed": 1.4,
+      "say": ["Mrrp.", "Pudding blinks slowly at you. That means friend."] },
+    { "id": "kid", "role": "kid", "name": "Tib", "pos": [1.6, 2.2], "facing": "down", "behavior": "wander", "radius": 2.6, "speed": 2.0,
+      "say": ["Race you to the top of the stairs!", "When the lamps come on, the fireflies come out. Wait and see!"] }
+  ],
+  "player": { "role": "traveler", "pos": [0.2, 3.9], "facing": "up" }
+}

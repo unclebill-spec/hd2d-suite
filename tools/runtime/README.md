@@ -1,0 +1,41 @@
+# hd2d runtime
+
+three.js r160 diorama engine (static ES modules + import map, no build step).
+
+```
+hd2d runtime --out PROJECT     # usually called by hd2d assemble
+```
+
+- `web/index.html`: import map, parchment HUD, Layout One pad markup. `web/vendor/`: three r160 + GLTFLoader (copied from n64-suite).
+- `engine/main.js`: boot, locked 3/4 camera (fixed pitch, no yaw/orbit; pinch/wheel zoom inside limits; translation follows the player inside bounds), input (WASD/arrows, Shift run, tap-to-walk, tap NPC / E / Space talk, T time, P pause, G pad, +/-), NPC idle/wander, lamps, clock grading, QA API `window.__hd2d`.
+- `engine/post.js`: world -> HalfFloat render target + depth; composite pass = tilt-shift focus band that follows the player, distance + valley haze, grade, soft highlight shoulder (no bloom), vignette; writes depth.
+- `engine/sprites.js`: SHARP pass drawn after the composite: integer pixel scale k, snapped anchor, texelFetch (no filtering, no mipmaps), depth from a cylindrical billboard so walls/props still occlude. Shadows: invisible sun-facing planes with alpha-tested `customDepthMaterial`, so sprites cast real shadow-map shadows.
+- `engine/effects.js`: spell effects in the SHARP pass. Integer k, snapped anchor and texelFetch; billboards are depth-tested at their position, ground decals (rune circle) sit under the actors. Hard alpha, dithered fade-out, a pool of 2 small point-light flashes, no bloom. `castSpell` spawns a cast set at the caster's feet, front or hands; casters play their 4-frame CAST pose.
+- Spell keys (scenes with `spells`): **F** casts the current spell (and advances to the next), **Q** picks the next spell, the HUD chip shows the current one, and the pad's ✦ button casts on tap and picks the next spell on hold. NPC `behavior: "caster"` with `spell` + `every` casts on a loop.
+- `engine/particles.js` (pixel points in the sharp pass; weather follows the camera; footstep dust under the walking player; emitters pre-warm ~6 s), `engine/world.js` (GLTF -> Lambert, window/lamp emissive, layered-card trees with sway), `engine/collide.js` (heightfield + slide), `engine/clock.js` (day/dusk/night lerp), `engine/pad.js` (Layout One pad: floating stick, MAIN, potion pills, rail), `engine/gamepad.js` (controllers).
+- URL params: `t=day|golden|dusk|night|0..1`, `freeze`, `shot` (fixed dt), `pad=1`, `hud=0`, `ss=1..2` supersample, `k=` pixel scale override, `weather=rain|snow|none`, `showcase=particles` (labelled grid of every particle preset).
+- Scene extras: `grades` (per-scene tweaks over the biome grades, e.g. a darker night for a lamp-dense lane), `spell_cycle`, `weather`.
+- QA API `window.__hd2d`: ready, frames, errors, stats, camState, actorRects, setTime, pause, walk, hold, plus effects, castSpell(id, name), playerCast, cycleSpell, spellName, effectRects, effectLineup(frac), hideActors, showEffects, showOverlays.
+- **Pathfinding** (`engine/nav.js`): tap-to-walk (and `ctx.walkTo` / `__hd2d.walk`) runs grid A* over the collision heightfield (8-neighbour, no corner cutting, footprint clearance, step limit = the stair rise), so the player walks around walls and props and takes the stairs to reach a terrace. Paths are string-pulled into a few waypoints. A tap inside a building snaps to the nearest walkable cell, preferring the tapped height. A stuck timer drops a path that a moving NPC blocks.
+- **Decals under props**: ground decals (rune circle, portal ring) write a per-fragment depth for the ground plane under each texel (`gl_FragDepth` from the inverse view-projection), so props and actors standing on a decal occlude it the way they would occlude paint on the floor.
+- **Left-handed pad**: `?pad=1&hand=left`, the **H** key, or the `hand: L/R` chip mirror the Layout One pad (stick on the right, buttons on the left). The choice is saved in localStorage `hd2d-hand`.
+- **Floating stick** (`engine/pad.js`): the pad's movement zone `#stickZone` (left half, lower 58 %; the right half when left-handed) makes the stick appear where the thumb lands, follow a sliding finger and re-centre when dragged past its 64 px radius. Tilt gives analog walking speed and the rim runs. A quick tap inside the zone (< 12 px, < 350 ms) is passed on to tap-to-walk, so the zone never swallows a tap. The zone is created automatically if a page only has the old fixed-stick markup.
+- **Controller** (`engine/gamepad.js`, Gamepad API, standard mapping, polled once per frame):
+  - left stick walks (analog speed, full tilt runs), d-pad walks;
+  - A interacts / advances, B cancels (closes the bubble, stops a walk), X casts, Y / RB next spell, LB previous spell, LT / RT zoom out / in;
+  - Start toggles the clock pause (games override it with `hooks.onPad`), Select toggles the pad;
+  - hot-plug: a toast says "🎮 controller connected" / "controller disconnected" (once per pad, across area changes; `opts.toast(msg, s)` lets a game use its own toast);
+  - while it is in use `body.ctrl` hides the on-screen pad and the hint shows the controller keys (`#hint[data-pad]` overrides the text); any touch brings the pad back, and Select pins it.
+  - `hooks.onPad(name, ctx)` runs first for each pressed button (`a b x y lb rb select start ls rs home`); return true to consume it.
+- **Input guards** (installed once per page):
+  - loading gate: from the start of each `boot()` until the first frames are drawn, every pointer / touch / mouse / key / wheel event is swallowed in the capture phase, `body.loading` is set and the `#boot` overlay (z-index 50, above any title screen) stays up. No early tap can queue a walk or skip a title.
+  - no page scroll or zoom: iOS `gesturestart/change/end`, `dblclick`, double-tap-in-320-ms, `touchmove` outside `[data-scroll]`, ctrl+wheel and long-press menus are blocked. html/body are `position: fixed` with `overscroll-behavior: none` (no pull-to-refresh or rubber-band). Pinch is still the in-game camera zoom.
+  - Desktop keeps WASD / arrows, mouse click-to-walk and wheel zoom. All schemes run together: the touch stick wins over the controller, which wins over keys.
+- Phones: touch taps use the event timestamp (a slow frame can't turn a tap into a hold). On touch screens, chips are at least 32 px tall. In short landscape, the chips sit in a row along the top, clear of the pad. Safe-area insets are respected.
+- **Embedding** (games): set `window.HD2D_MANUAL = true` before the module loads and call `boot(opts)` from `engine/main.js`. It returns `{ctx, dispose}`. `dispose()` aborts every listener and frees GL resources, so a game can boot the next area on a fresh canvas.
+  - opts: `base` (URL prefix for the scene), `canvas`, `spawn {x, z, facing}`, `player`, `startT`, `clockSpeed`, `spellCycle`, `keepTitle`, `noTimeKeys`, `padHandled`, `toast(msg, seconds)`.
+  - hooks: `onInteract(ctx, kind)`, `onTalk(npc, ctx)`, `onTap(hit, ctx)`, `onFrame(dt, ctx)`, `blockInput()`, `skipActor(spec)`, `nearThing(ctx)`, `onPad(button, ctx)`.
+  - ctx: walkTo/stopWalk/walking, addNpc/removeNpc/npc(id), castSpell/setSpellCycle, effects, gamefx, fx (named persistent effects), particles/burst, heightAt, project, clock, nav.
+  - NPC `behavior: "follow"` trails the player (a pet).
+- Scene extras for games: `gamefx` (a second effects atlas, e.g. from `hd2d portal`), `fx` (persistent named effects), lamp `color` + `fixed` (a tinted lamp that stays on by day), emitter `min_gate` (keeps e.g. fireflies alive by day).
+- `?simscale=N`: N simulation sub-steps per frame (QA only; used by the game smoke test). Extra QA API: ctx, nav, path(x, z), tap(x, y), pad, setHand, toggleHand, gamefxLineup / gamefxLineupRects / clearGamefxLineup, loading(), swallowed(), gamepad(), stickState(), padButton(name).

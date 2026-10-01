@@ -1,0 +1,605 @@
+{
+ "name": "Mossglen",
+ "seed": 23,
+ "biome": "cozy-village",
+ "about": "Mossglen, a hidden glade through the moss gate: layered oaks and birches, standing stones, a little shrine up the mossy steps, stone lanterns and fireflies even by day.",
+ "time": {
+  "start": "golden",
+  "speed": 0.0016
+ },
+ "spells": true,
+ "camera": {
+  "fov": 24,
+  "pitch": 36,
+  "distance": 31,
+  "zoom": [
+   23,
+   40
+  ],
+  "look": [
+   0,
+   0,
+   -6.0
+  ],
+  "bounds": [
+   -4.0,
+   -9.0,
+   4.0,
+   0.5
+  ]
+ },
+ "ground": {
+  "size": [
+   90,
+   76
+  ],
+  "mat": "grass",
+  "walk": [
+   -13.5,
+   -14,
+   13.5,
+   8.5
+  ]
+ },
+ "slabs": [
+  {
+   "name": "glade",
+   "rect": [
+    -6.5,
+    -1.6,
+    6.5,
+    4.6
+   ],
+   "mat": "dirt",
+   "h": 0.04
+  },
+  {
+   "name": "track",
+   "rect": [
+    -9.6,
+    1.2,
+    -6.5,
+    3.8
+   ],
+   "mat": "dirt",
+   "h": 0.04
+  }
+ ],
+ "terraces": [
+  {
+   "name": "shrine_terrace",
+   "rect": [
+    -9.0,
+    -9.5,
+    9.0,
+    -2.6
+   ],
+   "h": 1.0,
+   "top": "grass",
+   "gaps": [
+    [
+     -0.85,
+     1.85
+    ]
+   ]
+  },
+  {
+   "name": "terrace_back",
+   "rect": [
+    -30,
+    -26,
+    30,
+    -9.5
+   ],
+   "h": 1.0,
+   "top": "grass",
+   "coping": false
+  }
+ ],
+ "stairs": [
+  {
+   "name": "stairs_glade",
+   "x": 0.5,
+   "z_top": -2.6,
+   "width": 2.6,
+   "rise": 1.0,
+   "base": 0.0
+  }
+ ],
+ "buildings": [
+  {
+   "piece": "shrine",
+   "pos": [
+    0.5,
+    -6.4
+   ]
+  }
+ ],
+ "props": [
+  {
+   "piece": "portal_arch",
+   "pos": [
+    -8.6,
+    0.2
+   ]
+  },
+  {
+   "piece": "stone_lantern",
+   "pos": [
+    -1.4,
+    -1.9
+   ]
+  },
+  {
+   "piece": "stone_lantern",
+   "pos": [
+    2.4,
+    -1.9
+   ]
+  },
+  {
+   "piece": "stone_lantern",
+   "pos": [
+    -1.3,
+    -4.5
+   ]
+  },
+  {
+   "piece": "stone_lantern",
+   "pos": [
+    2.3,
+    -4.5
+   ]
+  },
+  {
+   "piece": "standing_stone",
+   "pos": [
+    -5.2,
+    -0.8
+   ]
+  },
+  {
+   "piece": "standing_stone",
+   "pos": [
+    5.6,
+    -0.6
+   ],
+   "rot": 30
+  },
+  {
+   "piece": "standing_stone",
+   "pos": [
+    6.2,
+    3.6
+   ],
+   "rot": -20
+  },
+  {
+   "piece": "standing_stone",
+   "pos": [
+    -6.2,
+    -6.2
+   ],
+   "rot": 12
+  },
+  {
+   "piece": "standing_stone",
+   "pos": [
+    6.6,
+    -6.8
+   ],
+   "rot": -35
+  },
+  {
+   "piece": "mushroom_ring",
+   "pos": [
+    3.6,
+    2.2
+   ]
+  },
+  {
+   "piece": "mushroom_ring",
+   "pos": [
+    -4.4,
+    -6.8
+   ]
+  },
+  {
+   "piece": "fern_bush",
+   "pos": [
+    -3.6,
+    4.4
+   ]
+  },
+  {
+   "piece": "fern_bush",
+   "pos": [
+    4.4,
+    5.0
+   ]
+  },
+  {
+   "piece": "fern_bush",
+   "pos": [
+    -10.6,
+    -1.6
+   ]
+  },
+  {
+   "piece": "fern_bush",
+   "pos": [
+    8.6,
+    1.6
+   ]
+  },
+  {
+   "piece": "fern_bush",
+   "pos": [
+    -7.6,
+    -3.4
+   ]
+  },
+  {
+   "piece": "fern_bush",
+   "pos": [
+    7.8,
+    -4.0
+   ]
+  },
+  {
+   "piece": "bench",
+   "pos": [
+    -2.8,
+    -7.6
+   ]
+  }
+ ],
+ "hedges": [
+  {
+   "pos": [
+    -6.2,
+    6.6
+   ],
+   "length": 8
+  },
+  {
+   "pos": [
+    7.2,
+    6.6
+   ],
+   "length": 8
+  }
+ ],
+ "trees": [
+  {
+   "type": "oak",
+   "pos": [
+    -11.5,
+    -11.0
+   ],
+   "scale": 1.0
+  },
+  {
+   "type": "birch",
+   "pos": [
+    -6.5,
+    -11.6
+   ],
+   "scale": 0.95
+  },
+  {
+   "type": "oak",
+   "pos": [
+    -1.5,
+    -12.0
+   ],
+   "scale": 1.05
+  },
+  {
+   "type": "birch",
+   "pos": [
+    3.5,
+    -11.4
+   ],
+   "scale": 0.9
+  },
+  {
+   "type": "oak",
+   "pos": [
+    8.5,
+    -11.2
+   ],
+   "scale": 1.0
+  },
+  {
+   "type": "birch",
+   "pos": [
+    12.5,
+    -10.0
+   ],
+   "scale": 0.95
+  },
+  {
+   "type": "birch",
+   "pos": [
+    -11.6,
+    -5.4
+   ],
+   "scale": 0.85
+  },
+  {
+   "type": "oak",
+   "pos": [
+    11.4,
+    -4.6
+   ],
+   "scale": 0.9
+  },
+  {
+   "type": "birch",
+   "pos": [
+    -12.2,
+    4.0
+   ],
+   "scale": 0.8
+  },
+  {
+   "type": "oak",
+   "pos": [
+    11.6,
+    4.4
+   ],
+   "scale": 0.8
+  }
+ ],
+ "backdrop": {
+  "hills": [
+   0,
+   -34
+  ]
+ },
+ "emitters": [
+  {
+   "preset": "fireflies",
+   "pos": [
+    0.5,
+    1.2,
+    1.4
+   ],
+   "area": [
+    10,
+    1.4,
+    4
+   ],
+   "min_gate": 0.55
+  },
+  {
+   "preset": "fireflies",
+   "pos": [
+    0.5,
+    2.2,
+    -6.0
+   ],
+   "area": [
+    12,
+    1.4,
+    3
+   ],
+   "min_gate": 0.55
+  },
+  {
+   "preset": "fireflies",
+   "pos": [
+    -6.0,
+    1.2,
+    6.0
+   ],
+   "area": [
+    7,
+    1.0,
+    1.4
+   ],
+   "min_gate": 0.4
+  },
+  {
+   "preset": "fireflies",
+   "pos": [
+    7.0,
+    1.2,
+    6.0
+   ],
+   "area": [
+    7,
+    1.0,
+    1.4
+   ],
+   "min_gate": 0.4
+  },
+  {
+   "preset": "pollen",
+   "pos": [
+    0,
+    1.6,
+    1.0
+   ],
+   "area": [
+    12,
+    2.0,
+    6
+   ]
+  },
+  {
+   "preset": "dust_motes",
+   "pos": [
+    0,
+    1.6,
+    0.5
+   ],
+   "area": [
+    12,
+    2.6,
+    6
+   ]
+  }
+ ],
+ "actors": [
+  {
+   "id": "owl",
+   "role": "owl",
+   "name": "Hoot",
+   "pos": [
+    -2.9,
+    -6.0
+   ],
+   "facing": "down",
+   "behavior": "idle",
+   "talkable": true,
+   "say": [
+    "Hoo. Hoo-hoo. (The owl seems to approve of you.)"
+   ]
+  },
+  {
+   "id": "keeper",
+   "role": "hedgewitch",
+   "name": "Sorrel, keeper of the glade",
+   "pos": [
+    4.4,
+    -6.4
+   ],
+   "facing": "down",
+   "behavior": "caster",
+   "spell": "light_orb",
+   "every": 7.0,
+   "talkable": true,
+   "say": [
+    "The moss remembers every footstep. Walk kindly."
+   ]
+  },
+  {
+   "id": "cat",
+   "role": "cat",
+   "name": "Pudding",
+   "pos": [
+    0.5,
+    -4.1
+   ],
+   "facing": "down",
+   "behavior": "idle",
+   "talkable": true,
+   "say": [
+    "Mrrp?"
+   ]
+  }
+ ],
+ "player": {
+  "role": "hedgewitch",
+  "pos": [
+   -8.6,
+   1.6
+  ],
+  "facing": "down"
+ },
+ "fx": [
+  {
+   "id": "petal_0",
+   "name": "moonpetal",
+   "pos": [
+    -4.2,
+    2.8
+   ]
+  },
+  {
+   "id": "petal_1",
+   "name": "moonpetal",
+   "pos": [
+    5.0,
+    1.0
+   ]
+  },
+  {
+   "id": "petal_2",
+   "name": "moonpetal",
+   "pos": [
+    -5.0,
+    -5.0
+   ]
+  },
+  {
+   "id": "petal_3",
+   "name": "moonpetal",
+   "pos": [
+    6.0,
+    -4.4
+   ]
+  }
+ ],
+ "grades": {
+  "day": {
+   "fog_color": "#c8dcc0",
+   "sky_bottom": "#dcecc8",
+   "hemi_sky": "#a8d4c8",
+   "saturation": 1.1,
+   "bugs": 0.6,
+   "warmth": 0.02
+  },
+  "dusk": {
+   "fog_color": "#5a8894",
+   "sky_bottom": "#9ac4b4",
+   "bugs": 1.0
+  },
+  "night": {
+   "fog_color": "#183838",
+   "sky_bottom": "#244a50",
+   "bugs": 1.0,
+   "exposure": 1.08
+  }
+ },
+ "game": {
+  "id": "mossglen",
+  "title": "Mossglen",
+  "portals": [
+   {
+    "fx": "portal_0",
+    "to": "plaza",
+    "spawn": "from_portal",
+    "rect": [
+     -9.35,
+     -0.2,
+     -7.85,
+     0.65
+    ],
+    "label": "the moss gate home"
+   }
+  ],
+  "pickups": [
+   {
+    "fx": "petal_0",
+    "item": "moonpetal"
+   },
+   {
+    "fx": "petal_1",
+    "item": "moonpetal"
+   },
+   {
+    "fx": "petal_2",
+    "item": "moonpetal"
+   },
+   {
+    "fx": "petal_3",
+    "item": "moonpetal"
+   }
+  ],
+  "spawns": {
+   "start": [
+    -8.6,
+    1.7,
+    "down"
+   ],
+   "from_portal": [
+    -8.6,
+    1.7,
+    "down"
+   ]
+  }
+ }
+}

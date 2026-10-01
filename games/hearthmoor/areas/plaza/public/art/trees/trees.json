@@ -1,0 +1,146 @@
+{
+ "tool": "hd2d trees",
+ "biome": "cozy-village",
+ "seed": 3,
+ "credits": "canopy art: brileta-sprites (MIT, Mark Ayzenshtat)",
+ "trees": {
+  "oak_1": {
+   "type": "oak",
+   "height": 6.0,
+   "width": 5.0,
+   "trunk": "oak_1_trunk.glb",
+   "lowpoly": "oak_1_lowpoly.glb",
+   "cards": [
+    {
+     "image": "oak_1_card0.png",
+     "w": 5.0,
+     "h": 4.5,
+     "offset": [
+      0.239,
+      1.8,
+      -0.55
+     ],
+     "tilt": 16,
+     "layer": "back"
+    },
+    {
+     "image": "oak_1_card1.png",
+     "w": 4.667,
+     "h": 4.0,
+     "offset": [
+      -0.048,
+      1.8,
+      0.0
+     ],
+     "tilt": 16,
+     "layer": "mid"
+    },
+    {
+     "image": "oak_1_card2.png",
+     "w": 3.333,
+     "h": 2.833,
+     "offset": [
+      0.273,
+      2.267,
+      0.6
+     ],
+     "tilt": 16,
+     "layer": "front"
+    }
+   ],
+   "blocker": 0.45
+  },
+  "apple_2": {
+   "type": "apple",
+   "height": 4.8,
+   "width": 4.2,
+   "trunk": "apple_2_trunk.glb",
+   "lowpoly": "apple_2_lowpoly.glb",
+   "cards": [
+    {
+     "image": "apple_2_card0.png",
+     "w": 4.333,
+     "h": 3.667,
+     "offset": [
+      -0.251,
+      1.433,
+      -0.55
+     ],
+     "tilt": 16,
+     "layer": "back"
+    },
+    {
+     "image": "apple_2_card1.png",
+     "w": 4.0,
+     "h": 3.333,
+     "offset": [
+      0.0,
+      1.267,
+      0.0
+     ],
+     "tilt": 16,
+     "layer": "mid"
+    },
+    {
+     "image": "apple_2_card2.png",
+     "w": 2.833,
+     "h": 2.333,
+     "offset": [
+      0.146,
+      1.567,
+      0.6
+     ],
+     "tilt": 16,
+     "layer": "front"
+    }
+   ],
+   "blocker": 0.45
+  },
+  "birch_3": {
+   "type": "birch",
+   "height": 6.4,
+   "width": 3.8,
+   "trunk": "birch_3_trunk.glb",
+   "lowpoly": "birch_3_lowpoly.glb",
+   "cards": [
+    {
+     "image": "birch_3_card0.png",
+     "w": 3.667,
+     "h": 4.667,
+     "offset": [
+      -0.235,
+      2.033,
+      -0.55
+     ],
+     "tilt": 16,
+     "layer": "back"
+    },
+    {
+     "image": "birch_3_card1.png",
+     "w": 3.333,
+     "h": 4.167,
+     "offset": [
+      -0.29,
+      2.033,
+      0.0
+     ],
+     "tilt": 16,
+     "layer": "mid"
+    },
+    {
+     "image": "birch_3_card2.png",
+     "w": 2.5,
+     "h": 2.833,
+     "offset": [
+      0.237,
+      2.667,
+      0.6
+     ],
+     "tilt": 16,
+     "layer": "front"
+    }
+   ],
+   "blocker": 0.45
+  }
+ }
+}

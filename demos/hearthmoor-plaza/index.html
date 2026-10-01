@@ -1,0 +1,42 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
+<title>HD-2D diorama</title>
+<link rel="stylesheet" href="engine/hud.css">
+<script type="importmap">
+{ "imports": { "three": "./vendor/three.module.js", "three/addons/": "./vendor/addons/" } }
+</script>
+</head>
+<body>
+<canvas id="view"></canvas>
+<div id="hud">
+  <div class="chip title" id="title">…</div>
+  <div class="chip clock" id="clock"><span class="dial" id="dial"></span><span id="clocktxt">--:--</span></div>
+  <div class="btns">
+    <button class="chip btn" id="btnTime" title="Advance the day (T)">time</button>
+    <button class="chip btn" id="btnPause" title="Pause the clock (P)">clock ||</button>
+    <button class="chip btn" id="btnPad" title="Game Layout One pad (G)">pad</button>
+    <button class="chip btn" id="btnHand" title="Left / right-handed pad (H)">hand: R</button>
+  </div>
+  <div class="say" id="say" hidden></div>
+  <div class="hint" id="hint">tap to walk · WASD / arrows · E talk · pinch / wheel zoom · H pad hand</div>
+</div>
+<!-- Game Layout One pad (stick, MAIN + two mediums, potion pills, rail). Pad only: no Stardew world lock. -->
+<div id="pad" hidden>
+  <div class="zone" id="stickZone"></div>
+  <div class="stick" id="stick"><div class="ring"></div><div class="knob" id="knob"></div></div>
+  <div class="cluster">
+    <button class="pb sec" id="padSec" disabled>·</button>
+    <button class="pb third" id="pad3rd" disabled>·</button>
+    <button class="pb main" id="padMain"><span id="mainGlyph">✋</span></button>
+    <button class="pill hp" disabled>HP</button>
+    <button class="pill mp" disabled>MP</button>
+  </div>
+  <div class="rail" id="rail"></div>
+</div>
+<div id="boot">loading diorama…</div>
+<script type="module" src="engine/main.js"></script>
+</body>
+</html>

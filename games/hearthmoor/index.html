@@ -1,0 +1,88 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
+<title>Hearthmoor</title>
+<meta name="theme-color" content="#4a2e20">
+<meta name="description" content="Hearthmoor: a small cozy HD-2D village errand game.">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="icons/icon-192.png">
+<link rel="apple-touch-icon" href="icons/icon-192.png">
+<link rel="stylesheet" href="engine/hud.css">
+<link rel="stylesheet" href="game/game.css">
+<script>window.HD2D_MANUAL = true;</script>
+<script type="importmap">
+{ "imports": { "three": "./vendor/three.module.js", "three/addons/": "./vendor/addons/" } }
+</script>
+</head>
+<body>
+<canvas id="view"></canvas>
+<div id="hud">
+  <div class="chip title" id="title">Hearthmoor</div>
+  <div class="chip bag" id="bag" data-hud><span class="empty">bag: empty</span></div>
+  <div class="chip clock" id="clock"><span class="dial" id="dial"></span><span id="clocktxt">--:--</span></div>
+  <div class="btns">
+    <button class="chip btn" id="btnLog" title="Quest log (J)">quests 0/3</button>
+    <button class="chip btn" id="btnSave" title="Save now (K)">save</button>
+    <button class="chip btn" id="btnSound" title="Ambient sound (M)">sound: on</button>
+    <button class="chip btn" id="btnPad" title="Game Layout One pad (G)">pad</button>
+    <button class="chip btn" id="btnHand" title="Left / right-handed pad (H)">hand: R</button>
+  </div>
+  <div class="say" id="say" hidden></div>
+  <div class="prompt" id="prompt" hidden></div>
+  <div class="toast" id="toast" hidden></div>
+  <div class="hint" id="hint" data-pad="🎮 stick walk · A talk · B close · X cast · Y / LB / RB charm · Start quests · Select pad · LT / RT zoom">tap to walk · WASD · E talk · F cast · Q charm · J quests · K save · M sound · G pad · H hand</div>
+</div>
+
+<!-- dialogue: carved-wood frame around a parchment page -->
+<div id="dlg" hidden>
+  <div class="frame">
+    <div class="face"><canvas id="dlgFace" width="66" height="66"></canvas></div>
+    <div class="name" id="dlgName">…</div>
+    <div class="page"><p id="dlgText"></p></div>
+    <div class="foot"><span id="dlgPage">1/1</span><span class="more" id="dlgMore">▼</span></div>
+  </div>
+</div>
+
+<!-- quest log: parchment card with a wooden header -->
+<div id="log" hidden>
+  <div class="card" data-scroll>
+    <div class="head"><b>Errands</b><span id="logCount">0/3 done</span><button class="x" id="logClose" title="Close (J / Esc)">✕</button></div>
+    <ul id="logList"></ul>
+    <p class="spells" id="logSpells"></p>
+  </div>
+</div>
+
+<!-- Game Layout One pad (stick, MAIN + two mediums, potion pills, rail). Pad only: no world lock. -->
+<div id="pad" hidden>
+  <div class="zone" id="stickZone"></div>
+  <div class="stick" id="stick"><div class="ring"></div><div class="knob" id="knob"></div></div>
+  <div class="cluster">
+    <button class="pb sec" id="padSec" disabled>·</button>
+    <button class="pb third" id="pad3rd" disabled>·</button>
+    <button class="pb main" id="padMain"><span id="mainGlyph">✋</span></button>
+    <button class="pill hp" disabled>HP</button>
+    <button class="pill mp" disabled>MP</button>
+  </div>
+  <div class="rail" id="rail"></div>
+</div>
+
+<div id="fade"></div>
+
+<div id="titlescreen">
+  <div class="plaque">
+    <h1>Hearthmoor</h1>
+    <p class="sub">a cozy village, three small errands, one mossy gate</p>
+    <div class="row">
+      <button class="wbtn" id="btnCont" hidden>Continue</button>
+      <button class="wbtn" id="btnNew">New game</button>
+    </div>
+    <p class="info" id="saveInfo"></p>
+    <p class="keys">tap or WASD to walk · E / tap to talk · F cast · Q switch charm · J quests · K save<br>pinch or wheel to zoom · G pad · H left-handed pad · M sound<br>controller: A continue / start · X new game · Start quests</p>
+  </div>
+</div>
+<div id="boot">loading Hearthmoor…</div>
+<script type="module" src="game/game.js"></script>
+</body>
+</html>

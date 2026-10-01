@@ -1,0 +1,46 @@
+#!/usr/bin/env python3
+"""hd2d: cozy HD-2D game toolset. Usage: hd2d TOOL [options]   (hd2d --help)"""
+import os
+import sys
+from pathlib import Path
+
+SUITE = Path(os.path.realpath(__file__)).resolve().parent.parent
+sys.path.insert(0, str(SUITE))
+from hd2d_common import load_tool  # noqa: E402
+
+TOOLS = [
+    ("palette", "biome palettes -> biome.json, .gpl, swatch PNG, day/dusk/night grades"),
+    ("sprite", "4-facing 20x32 pixel actor atlases (idle 4 + walk 4) + JSON + 4x preview"),
+    ("check-sprite", "PIL checker for sprite atlases (colours, alpha, outline, frames, pivot)"),
+    ("runtime", "copy the three.js r160 diorama engine into a folder"),
+    ("texel", "32/64 px chunky palette-snapped tileable textures"),
+    ("kit", "town kit .glb generator (terraces, stairs, cottages, stall, props)"),
+    ("trees", "layered-card trees from brileta canopies + low-poly canopy option"),
+    ("particles", "particle sheets + emitter presets (motes, wisps, leaves, bugs, weather, steam, footstep dust ...)"),
+    ("spells", "cozy pixel spell effects: 6-8 frame strips + presets (billboards, ground decals, projectiles)"),
+    ("portal", "game effect art: stone-arch portal vortex, ground rune ring, herb pickup, quest tags"),
+    ("assemble", "scene spec JSON -> playable static folder + zip"),
+    ("check-scene", "headless day/dusk/night screenshots + sharpness/camera/bloom/height/colour checks"),
+    ("serve", "serve a built folder locally (default port 8077)"),
+]
+
+
+def main():
+    if len(sys.argv) < 2 or sys.argv[1] in ("-h", "--help", "help"):
+        print(__doc__)
+        for n, d in TOOLS:
+            print(f"  {n:13s} {d}")
+        print("\nEach tool: hd2d TOOL --help")
+        return 0
+    tool = sys.argv[1]
+    names = [n for n, _ in TOOLS]
+    if tool not in names:
+        print(f"unknown tool {tool!r}; tools: {', '.join(names)}", file=sys.stderr)
+        return 2
+    if tool == "serve":
+        return load_tool("assemble").serve_main(sys.argv[2:])
+    return load_tool(tool).main(sys.argv[2:]) or 0
+
+
+if __name__ == "__main__":
+    sys.exit(main())
