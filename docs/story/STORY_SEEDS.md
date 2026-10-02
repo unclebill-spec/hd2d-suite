@@ -209,3 +209,26 @@ Look: gloom-and-glow, dark armor, glowing eyes and runes.
 - Fast travel: rune waystones per city/district, unlocked by visiting; Bifrost gates between realms (allied realms free, others need keys); Gatekeepers' Guild discounts.
 - Mounts: realm-themed (storm stag, moss boar, frost elk, ember lizard, griffin late-game); some from faction ranks, rares, or quests; mounts glow at night.
 - Housing: rent an inn room in every realm city (rest, storage, save); buy real homes in a few places (Hearthmoor cottage, Ravenhold townhouse, Bifrost tower suite), upgradeable and decoratable, with a pet corner and trophy wall.
+
+## Dungeon master list (2026-10-02)
+### Rift types (the five starters stand: Frostfire, Gloam, Bloodmoon, Storm, Ruin), plus theme pool for future rifts: Acid, Plague, Heaven, Hell, Steam.
+### Nine realm dungeons (static, one per realm)
+1. Asgard: The Gilded Reliquary (Heaven theme; fallen angels, Gilded Inquisitors; boss Aurelion).
+2. Vanaheim: The Rotwood Hollow (Decay and rot; rot treants, spore elementals; boss The Blight Regent).
+3. Alfheim: The Prism Vault (Energy/light; prism shards, mirror duelists; boss Lady Sylvaine).
+4. Jotunheim: The Titan's Barrow (Giant land; frost trolls, giant golems; boss Hrimgard the Unthawed).
+5. Svartalfheim: The Clockwork Deep (Techno-mage / steampunk; forge constructs, lightning golems; boss Gorrak Ironmaw).
+6. Muspelheim: The Ember Caldera (Fire; magma hounds, fire golems; boss Vharzul the Ember Throne).
+7. Niflheim: The Frozen Spire (Ice; frost wraiths, ice golems; Kael Frostfang).
+8. Helheim: The Ossuary of Whispers (Ghost and undead; skeleton lines, liches; boss Mordrath).
+9. Midgard: The Plaguewell Sewers under Ravenhold (Disease: maggots, blood, putrid grossness, flesh and blood golems; boss the Plague Matron). Also Acid pools here.
+### Two hardest dungeons
+- Major Underworld: The Abyssal Throne (Hell theme + Death + Darkness; demon overlords, death lords; final boss Nihrax the Hollow Crown).
+- Major Overworld: The Celestial Citadel above the Rift (Heaven theme + Life + Energy; angels, nephilim; final boss archangel Seraphex the Final Verdict).
+### Mythical dungeon (optional, location TBD): The Glimmerdeep
+- Pitch-dark caverns lit by glowing mushrooms and cave moss; gloom-and-glow whimsy.
+- Mythic lore creatures: will-o'-wisps, kelpies, fae tricksters, mushroom folk, giant glowing snails, a riddling sphinx, gnome pranksters.
+- Silly stuff (talking mushrooms, a dancing golem, a cheese-obsessed troll, a reversed-gravity room) mixed with genuinely hard bosses (e.g. the Mycelium Mother, the Moonlit Kirin, the Gnome King's clockwork dragon).
+- Optional completion with special rewards (unique pet, cosmetic set, legendary gear).
+### Element/theme coverage
+Ice, Fire, Darkness, Acid, Life, Death, Nature, Energy/Electricity, Decay & Rot, Disease, Heaven, Hell, Techno-mage/steampunk, Giant land, Ghost & undead. All appear across rifts and dungeons above; procedural dungeons draw from all themes.
