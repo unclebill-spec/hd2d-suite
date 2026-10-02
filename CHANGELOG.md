@@ -2,6 +2,33 @@
 
 Dates are America/New_York. Newest first. Keep this current with every change you push.
 
+## 2026-10-02: hero classes (Norse Nine Realms) and story seeds
+- Story: Hearthmoor is now a Norse Nine Realms story. The seeds live in `docs/story/STORY_SEEDS.md` (committed for the first time). It holds:
+  - the three original pitches and the chosen direction (realms linked by the Rainbow Rift);
+  - the villain Veyra Ashmantle and the realm alliance map;
+  - the hero origins, plus the newer **Cities** section (the Bifrost Crossing hub and one city per realm);
+  - world structure, pets, and the look-and-feel priority (gloom-and-glow, neon, still no bloom);
+  - **Heroes and magic**.
+- `hd2d sprite`: **6 new hero classes** (30 roles total), in the new module `tools/sprite/roles_heroes.py`:
+  - **Wildcaller** (Midgard farmhand): blond, rust tunic, rolled sleeves, satchel, long hoe; hearth sparks.
+  - **Runeguard** (Shield-warden, paladin brawler): chestnut braids, mail and leather, axe, a round shield whose light rune glows.
+  - **Seer** (Rune-reader): grey hood with a stitched back rune, rune-stone pouch, rune staff; rune glyph glow.
+  - **Stormborn** (Child of thunder, brawler): bulkier `broad` layout, storm-blue cloak, silver circlet, stone war-hammer; lightning.
+  - **Grovekeeper** (Child of the Vanir): moss-green hair, flower crown, leaf mantle, mushroom charms; neon-green heal.
+  - **Cinderknight** (Ember-born, dark-knight brawler): bulky dark plate with a glowing ember seam, flame-tuft hair, ash cheek marks and hands, greatsword with an ember edge.
+- **Hero frames:** the same 20x32 spec (4 facings × idle 4 + walk 4, hard alpha, 1 px outline, big head), plus a 4-frame action in the cast columns:
+  - casters cast;
+  - brawlers swing with a solid swoosh arc (dust and sprout for the hoe, an ember flame aura for the greatsword).
+  - The glow is crisp emissive pixels only.
+- **Hero metadata:** heroes carry `hero`, `origin` and `pose` in `actors.json`.
+- **New CLI options:**
+  - `--roles heroes` builds just the six;
+  - `--lineup PATH` writes a labelled 4x nearest lineup.
+- The 24 existing roles are pixel-identical.
+- New review scene `scenes/hero-classes-plaza.json` (all six on the plaza at golden hour, frozen clock).
+- Screenshots: `docs/screenshots/hero_origins_4x.png` (lineup) and `docs/screenshots/hero_origins_plaza.png` (in-scene).
+- Checks: check-sprite PASS (heroes alone and all 30 roles). check-scene PASS on the review scene (all 8 checks, including sprites_sharp on 21 actor crops and the phone check).
+
 ## 2026-10-01: docs for builder handoff
 - Added `AGENTS.md` (handoff guide for Cursor and Bill's bots), this `CHANGELOG.md`, and `docs/HD2D_COZY_STYLE_LOCK.md` (Bill's style law, copied into the repo).
 - `README.md` and `games/hearthmoor/RESTORE.md` link all three.

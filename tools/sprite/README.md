@@ -21,3 +21,22 @@ hd2d sprite --list
 - New hats (helm, witch, kerchief, beret, bucket), glasses, and items (hammer, book, spear, mug, lute, watering can, sprig, staff, rod, wick) are in `roles_more.py`.
 - `vendor/sprite_writer.py` + `vendor/palette_locked.py` are copies; the Gravewake originals are untouched.
 - Seed deterministic. The original 10 roles' pixels are unchanged.
+
+## Hero classes (Hearthmoor, Norse Nine Realms): `roles_heroes.py`
+
+There are six playable classes; `--roles heroes` selects them. All are original designs. The descriptions live in `roles_heroes.py`, and the story is in `docs/story/STORY_SEEDS.md`.
+
+| role | class (origin) | read at 1x | action (cast columns) |
+|---|---|---|---|
+| `wildcaller` | Wildcaller (Midgard farmhand, mortal) | blond mop, rust tunic, rolled sleeves, satchel, long hoe | hoe raise / over the shoulder / chop / dust, sprout and hearth sparks |
+| `runeguard` | Runeguard (Shield-warden, mortal brawler) | chestnut braids, mail and leather, round shield with a light rune, axe | brace / axe high / chop / shield bash with the rune flaring |
+| `seer` | Seer (Rune-reader, mortal) | grey hood with a stitched back rune, rune-stone pouch, rune staff | staff raised, a glowing rune glyph forms and flies off |
+| `stormborn` | Stormborn (Child of thunder, demigod brawler) | `broad` build, storm-blue cloak, silver circlet, stone war-hammer | hammer up, lightning forks, slam with ground sparks |
+| `grovekeeper` | Grovekeeper (Child of the Vanir, demigod) | moss-green hair, flower crown, leaf mantle, mushroom charms | hands gather, a neon-green ring blooms, leaves and gold sparks |
+| `cinderknight` | Cinderknight (Ember-born, demigod brawler) | `broad` dark plate with an ember seam, flame-tuft hair, ash cheek marks and hands, greatsword with an ember edge | raise / overhead / ember slash arc / flame aura |
+
+- **Frames:** the same frame spec as the villagers, plus 4 action frames in columns 8–11 (the engine plays them as `cast`).
+- **JSON:** each hero's role carries `hero: true`, `origin` (mortal / demigod) and `pose` (cast / attack).
+- **Glow:** palette pixels only, with no semi-transparency and no bloom. The ink outline wraps every spark.
+- **Lineup:** `--lineup PATH` writes a labelled 4x nearest sheet. Each role is a column showing idle down / up / left / right, a walk frame and an action frame; the action row sits on a dusk panel.
+  - `hd2d sprite --roles heroes --out /tmp/h --lineup docs/screenshots/hero_origins_4x.png`

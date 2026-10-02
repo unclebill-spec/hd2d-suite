@@ -7,6 +7,9 @@ big readable head, hard alpha, colours only from the biome palette. All roles ar
 
 Writes actors.png (atlas: per role 4 rows [down, up, left, right] x 12 cols [idle0-3, walk0-3, cast0-3 (casters only)]),
 actors.json (frames, pivot = feet, anims), actors_preview_4x.png (nearest), and per-role strips.
+Hero origins (roles_heroes.py: farmhand, shieldwarden, runereader, thunderchild, vanirchild, emberborn) fill the
+cast columns with their action pose: a spell for the magic origins, a weapon swing (pose "attack") for the rest.
+    hd2d sprite --roles heroes ...   selects just the six heroes.
 Deterministic: same biome + seed -> same bytes.
 """
 from __future__ import annotations
@@ -24,6 +27,7 @@ from hd2d_common import Pal, ensure, load_biome, rng, write_json  # noqa: E402
 import sprite_writer as gw  # noqa: E402  (vendored Gravewake writer: Sprite grid + outline pass)
 sys.path.insert(0, str(HERE))
 import roles_more as RM  # noqa: E402  (second batch of roles, cast pose, animals)
+import roles_heroes as RH  # noqa: E402  (six Hearthmoor hero origins with cast / attack poses)
 
 FW, FH = 20, 32
 PIVOT = (10, 32)  # bottom-centre of the frame = the feet on the ground
@@ -82,6 +86,8 @@ class HSprite(gw.Sprite):
 # ------------------------------------------------------------------ layouts
 ADULT = dict(head_top=5, head_w=12, head_h=11, torso_top=16, hip=24, torso_w=10, arm_len=6, leg_w=3)
 KID = dict(head_top=10, head_w=12, head_h=10, torso_top=20, hip=26, torso_w=8, arm_len=4, leg_w=3)
+BROAD = dict(ADULT, torso_w=12)  # bulkier brawler build (Stormborn, Cinderknight): same head, wider chest and arms
+LAYOUTS = {"adult": ADULT, "kid": KID, "broad": BROAD}
 
 
 def head_spans(w, h, x0):
@@ -130,6 +136,7 @@ ROLES = {
               belly="plaster_hi"),
 }
 ROLES.update(RM.more_roles(_r))
+ROLES.update(RH.hero_roles(_r))
 
 ROLE_SIZE = {"human": ((14, 24), (24, 40)), "creature": ((10, 24), (10, 40))}  # (w range, h range)
 
@@ -145,13 +152,14 @@ IDLE = [(0, 0), (0, 0), (1, 0), (0, 1)]  # (bob, blink)
 def human_frame(pal: Pal, spec: dict, facing: str, anim: str, i: int) -> HSprite:
     s = HSprite(pal)
     face = "left" if facing == "right" else facing
-    L = ADULT if spec["layout"] == "adult" else KID
+    L = LAYOUTS[spec["layout"]]
     bob, blink, lift_l, lift_r, swing, stride, lift_b = 0, 0, 0, 0, 0, 0, 0
     if anim == "cast":
         bob = [0, -1, -1, 0][i]
         spec = {**spec, "_cast": i, "item": None}
     elif anim == "idle":
         bob, blink = IDLE[i]
+        spec = {**spec, "_idle": i}
     elif face in ("down", "up"):
         bob, lift_l, lift_r, swing = WALK_FRONT[i]
     else:
@@ -361,6 +369,8 @@ def draw_body(s, spec, L, face, bob, swing, stride, anim, i):
 
 def draw_arms(s, spec, L, face, top, swing, stride, x0, x1):
     sleeve = spec["shirt"]
+    if spec.get("_cast") is not None and spec.get("hero"):
+        return  # heroes draw their action pose after the head (roles_heroes.draw_action)
     if spec.get("_cast") is not None:
         return RM.draw_cast_arms(s, spec, L, face, top, x0, x1, spec["_cast"])
     if spec["cloak"] and face == "up":
@@ -411,7 +421,6 @@ def draw_head(s, spec, L, face, bob, blink):
     # jaw shadow
     a, b = spans[-1]
     s.hspan(top + h - 1, a, b, skin_lo)
-    hairline = top + (4 if L is ADULT else 4)
     if face == "down":
         for r in range(0, 4):
             a, b = spans[r]
@@ -533,6 +542,8 @@ def draw_hair_extra(s, spec, L, face, top, spans):
     elif spec["hairstyle"] == "messy":
         a, b = spans[0]
         s.set(a + 1, top - 1, hair); s.set(a + 4, top - 1, hair); s.set(b - 1, top - 1, s.pal.dk(hair))
+    else:
+        RH.draw_hair(s, spec, L, face, top, spans)
 
 
 def draw_hat(s, spec, L, face, top, spans):
@@ -601,6 +612,7 @@ def draw_hat(s, spec, L, face, top, spans):
                 s.set(x, y, "grass")
     else:
         RM.draw_hat(s, spec, L, face, top, spans)
+        RH.draw_hat(s, spec, L, face, top, spans)
 
 
 def draw_extras(s, spec, L, face, bob, swing, stride):
@@ -684,6 +696,7 @@ def draw_extras(s, spec, L, face, bob, swing, stride):
             for y in range(hand_y, 31):
                 s.set(cx, y, "timber")
     RM.draw_items(s, spec, L, face, top, hand_y, x0, x1, stride)
+    RH.draw_extras(s, spec, L, face, bob, swing, stride, spec.get("_cast"))
 
 
 # ------------------------------------------------------------------ cat (creature)
@@ -850,6 +863,8 @@ def build(biome="cozy-village", roles=None, out="public/art/sprite", project=Non
         meta["roles"][role] = {"row": ri * 4, "kind": spec["kind"], "desc": spec["desc"],
                                "size_bounds": ROLE_SIZE[spec["kind"]], "caster": bool(spec.get("caster")),
                                "anims": list(role_anims(role)), "frames": frames}
+        if spec.get("hero"):
+            meta["roles"][role].update(hero=True, origin=spec["origin"], pose=spec["pose"])
     atlas.save(out / f"{name}.png")
     write_json(out / f"{name}.json", meta)
     preview(atlas, roles, out / f"{name}_preview_4x.png")
@@ -875,6 +890,57 @@ def preview(atlas, roles, path, scale=4):
     out.save(path)
 
 
+LINEUP_CELLS = [("down", "idle", 0, "idle down"), ("up", "idle", 0, "idle up"), ("left", "idle", 0, "idle left"),
+                ("right", "idle", 0, "idle right"), ("left", "walk", 0, "walk"), ("down", "cast", 2, "cast")]
+
+
+def lineup(pal, roles, path, scale=4):
+    """Labelled nearest-neighbour lineup: one column per role, rows = idle down/up/left/right, a walk frame and
+    an action frame. The action row sits on a dusk panel so the emissive glow pixels read (no bloom, no blur)."""
+    from PIL import ImageFont
+    try:
+        font = ImageFont.truetype("DejaVuSans-Bold.ttf", 15)
+        small = ImageFont.truetype("DejaVuSans.ttf", 11)
+    except OSError:
+        font = small = ImageFont.load_default()
+    cw, ch = FW * scale, FH * scale
+    gx, gy, lw, top = 44, 10, 76, 66
+    W = lw + len(roles) * (cw + gx) + gx
+    H = top + len(LINEUP_CELLS) * (ch + gy) + 40
+    out = Image.new("RGBA", (W, H), (236, 222, 190, 255))
+    d = ImageDraw.Draw(out)
+    for ri, role in enumerate(roles):
+        x = lw + gx + ri * (cw + gx)
+        if ri % 2:
+            d.rectangle([x - gx // 2, 0, x + cw + gx // 2 - 1, H], fill=(226, 208, 172, 255))
+    ya = top + (len(LINEUP_CELLS) - 1) * (ch + gy)
+    d.rectangle([lw + gx // 2, ya - gy // 2, W - gx // 2, ya + ch + gy // 2], fill=(44, 36, 52, 255))
+    for ri, role in enumerate(roles):
+        spec = ROLES[role]
+        x = lw + gx + ri * (cw + gx)
+        title = spec.get("cls", role)
+        d.text((x + cw // 2, 8), title, fill=(60, 40, 30, 255), font=font, anchor="mt")
+        if spec.get("hero"):
+            d.text((x + cw // 2, 28), spec.get("origin_name", ""), fill=(110, 80, 60, 255), font=small, anchor="mt")
+            d.text((x + cw // 2, 43), f"{spec['origin']} · {spec.get('style', '')}", fill=(140, 100, 70, 255), font=small, anchor="mt")
+        else:
+            d.text((x + cw // 2, 28), spec["kind"], fill=(110, 80, 60, 255), font=small, anchor="mt")
+        for ci, (facing, anim, i, label) in enumerate(LINEUP_CELLS):
+            y = top + ci * (ch + gy)
+            if anim == "cast" and anim not in role_anims(role):
+                continue
+            im = frame(pal, role, facing, anim, i).image().resize((cw, ch), Image.NEAREST)
+            out.alpha_composite(im, (x, y))
+    for ci, (facing, anim, i, label) in enumerate(LINEUP_CELLS):
+        y = top + ci * (ch + gy)
+        lab = "action\n(cast /\nattack)" if anim == "cast" else label.replace(" ", "\n")
+        d.multiline_text((8, y + ch // 2 - 16), lab, fill=(90, 62, 44, 255), font=small, spacing=2)
+    d.text((8, H - 26), "hd2d sprite: Hearthmoor hero classes, 20x32 native, shown at %dx nearest (no filtering, no bloom)" % scale,
+           fill=(110, 80, 60, 255), font=small)
+    out.save(path)
+    return path
+
+
 def main(argv=None):
     ap = argparse.ArgumentParser(prog="hd2d sprite", description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument("--biome", default="cozy-village")
@@ -884,17 +950,21 @@ def main(argv=None):
     ap.add_argument("--seed", type=int, default=1)
     ap.add_argument("--name", default="actors")
     ap.add_argument("--list", action="store_true")
+    ap.add_argument("--lineup", default=None, help="also write a labelled 4x lineup PNG of the chosen roles here")
     a = ap.parse_args(argv)
     if a.list:
         for k, v in ROLES.items():
-            print(f"{k:11s} {v['kind']:8s} {v['desc']}")
+            print(f"{k:12s} {v['kind']:8s} {v['desc']}")
         return 0
-    roles = list(ROLES) if a.roles == "all" else [r.strip() for r in a.roles.split(",")]
+    roles = (list(ROLES) if a.roles == "all" else list(RH.HERO_ORDER) if a.roles == "heroes"
+             else [r.strip() for r in a.roles.split(",")])
     for r in roles:
         if r not in ROLES:
             raise SystemExit(f"unknown role {r}")
     res = build(a.biome, roles, a.out, a.project, a.seed, a.name)
     print(f"sprite: {len(roles)} roles -> {res['atlas']}\n        {res['json']}\n        {res['preview']}")
+    if a.lineup:
+        print("        " + str(lineup(Pal(load_biome(a.biome, a.project)), roles, a.lineup)))
     return 0
 
 
