@@ -16,6 +16,9 @@ then checks:
                   camera (actors hidden); each crop must be uniform k x k blocks and correlate with its
                   spells-atlas frame, with no blown highlights around them (no bloom on effects either)
   gamefx_sharp    (scenes with game effects: portal vortex / ring, pickups, quest tags) same lineup test on the gamefx atlas
+  actions         (engines with window.__hd2d.act) a triggered jump lifts the visible sprite (lift >= 0.2 m, its screen
+                  rect rises) while the shadow caster stays at the feet, then lands and ends; hero players also play
+                  >= 2 attack frames and a held defend reaches its hold frames (2/3) and ends on release
   phone           portrait 390x844 + landscape 844x390, DPR 2, touch (isMobile/hasTouch) with the Layout One pad on:
                   HUD + pad inside the viewport, no overlapping controls, touch targets >= 30 CSS px, a touch tap on
                   open ground walks the player, the FLOATING stick appears under the thumb, re-centres when dragged
@@ -293,6 +296,7 @@ def phone_check(b, url, atlas, cam_spec, out, name, vw, vh, timeout=120, extras=
     ctx = b.new_context(viewport={"width": vw, "height": vh}, device_scale_factor=2, is_mobile=True, has_touch=True)
     ctx.add_init_script(GAMEPAD_STUB)
     pg = ctx.new_page()
+    pg.set_default_timeout(max(30, timeout) * 1000)   # a loaded shared box can stall SwiftShader screenshots past 30 s
     logs = []
     pg.on("pageerror", lambda e: logs.append(f"PAGEERROR {e}"))
     r = {"viewport": [vw, vh], "dpr": 2}
@@ -400,6 +404,32 @@ def phone_check(b, url, atlas, cam_spec, out, name, vw, vh, timeout=120, extras=
     return r
 
 
+# trigger an action on the player with the simulation held, step it in fixed game time (actAdvance) and read the
+# rendered state after each step, so slow software GL can't skip phases. args: name, [[advance_s, release?], ...]
+ACT_SAMPLE = """async ([name, steps]) => {
+  const h = window.__hd2d, raf = () => new Promise((r) => requestAnimationFrame(r));
+  const settle = async () => { await raf(); await raf(); };
+  h.hold(true); await settle();
+  const s0 = h.actorState();
+  const ok = h.act(name, null, name === 'defend' ? { hold: true } : {});
+  const rows = [];
+  for (const [dt, rel] of steps) {
+    if (rel) h.release(name);
+    h.actAdvance(dt); await settle();
+    const s = h.actorState();
+    rows.push({ act: s.act, anim: s.anim, frame: s.frame, lift: +s.lift.toFixed(3), gap: Math.abs(s.casterY - s.y), ry: s.rect ? s.rect.y : 0 });
+  }
+  h.hold(false);
+  const fin = rows[rows.length - 1], frames = {};
+  for (const r of rows) if (r.act) (frames[r.anim] = frames[r.anim] || []).includes(r.frame) || frames[r.anim].push(r.frame);
+  return { ok, rows, frames, max_lift: Math.max(0, ...rows.map((r) => r.lift)), max_caster_gap: Math.max(0, ...rows.map((r) => r.gap)),
+           rect_rise_px: (s0.rect ? s0.rect.y : 0) - Math.min(...rows.map((r) => r.ry)), ended: fin.act === null && fin.lift === 0 };
+}"""
+ACT_STEPS = {"jump": [[0.05, 0], [0.2, 0], [0.12, 0], [0.14, 0], [0.12, 0], [0.2, 0]],
+             "attack": [[0.04, 0], [0.12, 0], [0.1, 0], [0.1, 0], [0.2, 0]],
+             "defend": [[0.08, 0], [0.18, 0], [0.2, 0], [0.18, 0], [0.05, 1]]}
+
+
 def run(root, out, size=(1280, 720), timeout=120, scene_dir="", params="", phone=True):
     from playwright.sync_api import sync_playwright
     root, out = Path(root).resolve(), Path(out).resolve()
@@ -417,6 +447,7 @@ def run(root, out, size=(1280, 720), timeout=120, scene_dir="", params="", phone
         with sync_playwright() as p:
             b = p.chromium.launch(args=["--use-angle=swiftshader", "--enable-unsafe-swiftshader", "--ignore-gpu-blocklist"])
             pg = b.new_page(viewport={"width": size[0], "height": size[1]})
+            pg.set_default_timeout(max(30, timeout) * 1000)
             pg.on("pageerror", lambda e: logs.append(f"PAGEERROR {e}"))
             pg.on("console", lambda m: logs.append(f"{m.type}: {m.text}") if m.type == "error" else None)
             t0 = time.time()
@@ -540,6 +571,15 @@ def run(root, out, size=(1280, 720), timeout=120, scene_dir="", params="", phone
                        "near_white": float(((im16[..., 0] > 248) & (im16[..., 1] > 248) & (im16[..., 2] > 248)).mean()),
                        "bright_frac": float((lum(gimg) > 225).mean())}
 
+            # ---- action states: jump arc (quad lifts, shadow caster stays on the ground); heroes also attack/defend
+            acts = None
+            if pg.evaluate("typeof window.__hd2d.act === 'function'"):
+                pg.evaluate("window.__hd2d.setTime('day')")
+                pg.wait_for_timeout(300)
+                acts = {"anims": pg.evaluate("window.__hd2d.actorState().anims")}
+                for nm in (("jump", "attack", "defend") if "attack" in acts["anims"] else ("jump",)):
+                    acts[nm] = pg.evaluate(ACT_SAMPLE, [nm, ACT_STEPS[nm]])
+
             # ---- camera lock under input
             pg.evaluate("window.__hd2d.setTime('day')")
             c0 = pg.evaluate("window.__hd2d.camState()")
@@ -646,6 +686,17 @@ def run(root, out, size=(1280, 720), timeout=120, scene_dir="", params="", phone
                              "effects_checked": len(ok_g), "effects_spawned": gfx["expected"], "worst_uniform_block_frac": wu,
                              "worst_atlas_corr": wc, "near_white": round(gfx["near_white"], 5), "bright_frac": round(gfx["bright_frac"], 5),
                              "per_effect": [{k: v for k, v in a.items() if k not in ("_crop", "src_colours", "crop_colours", "facing", "role")} for a in gfx["effects"]]}
+    if acts is not None:
+        j = acts["jump"]
+        jp = (j["ok"] and j["max_lift"] >= 0.2 and j["max_caster_gap"] < 1e-6 and j["rect_rise_px"] > 0 and j["ended"]
+              and (("jump" not in acts["anims"]) or len(j["frames"].get("jump", [])) >= 2))
+        res = {"jump": j}
+        if "attack" in acts["anims"]:
+            a_, d_ = acts["attack"], acts["defend"]
+            res["attack"], res["defend"] = a_, d_
+            jp = jp and a_["ok"] and len(a_["frames"].get("attack", [])) >= 2 and a_["ended"]
+            jp = jp and d_["ok"] and bool(set(d_["frames"].get("defend", [])) & {2, 3}) and d_["ended"]
+        C["actions"] = {"pass": bool(jp), "player_anims": acts["anims"], **res}
     if phone:
         C["phone"] = {"pass": bool(phones) and all(v.get("pass") for v in phones.values()), **phones}
     C["no_errors"] = {"pass": not errors and not [l for l in logs if "PAGEERROR" in l], "errors": errors, "console": logs[:20]}

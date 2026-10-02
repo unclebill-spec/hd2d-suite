@@ -7,8 +7,9 @@ big readable head, hard alpha, colours only from the biome palette. All roles ar
 
 Writes actors.png (atlas: per role 4 rows [down, up, left, right] x 12 cols [idle0-3, walk0-3, cast0-3 (casters only)]),
 actors.json (frames, pivot = feet, anims), actors_preview_4x.png (nearest), and per-role strips.
-Hero origins (roles_heroes.py: farmhand, shieldwarden, runereader, thunderchild, vanirchild, emberborn) fill the
-cast columns with their action pose: a spell for the magic origins, a weapon swing (pose "attack") for the rest.
+Hero classes (roles_heroes.py: wildcaller, runeguard, seer, stormborn, grovekeeper, cinderknight) add four action
+anims after the cast columns: cast 8-11 (spell), attack 12-15 (weapon), defend 16-19 (guard), jump 20-23 (crouch,
+launch, airborne, land). Their strips are 24 columns wide; villagers keep 12 (the atlas is as wide as its widest role).
     hd2d sprite --roles heroes ...   selects just the six heroes.
 Deterministic: same biome + seed -> same bytes.
 """
@@ -27,15 +28,20 @@ from hd2d_common import Pal, ensure, load_biome, rng, write_json  # noqa: E402
 import sprite_writer as gw  # noqa: E402  (vendored Gravewake writer: Sprite grid + outline pass)
 sys.path.insert(0, str(HERE))
 import roles_more as RM  # noqa: E402  (second batch of roles, cast pose, animals)
-import roles_heroes as RH  # noqa: E402  (six Hearthmoor hero origins with cast / attack poses)
+import roles_heroes as RH  # noqa: E402  (six Hearthmoor hero classes: cast / attack / defend / jump sets)
 
 FW, FH = 20, 32
 PIVOT = (10, 32)  # bottom-centre of the frame = the feet on the ground
 FACINGS = ("down", "up", "left", "right")
 ANIMS = {"idle": {"start": 0, "count": 4, "fps": 3, "loop": [0, 1, 2, 1], "blink": 3},
          "walk": {"start": 4, "count": 4, "fps": 8},
-         "cast": {"start": 8, "count": 4, "fps": 6, "loop": [0, 1, 2, 2, 3, 3], "casters_only": True}}
-COLS = 12  # idle 0-3 | walk 0-3 | cast 0-3 (cast columns only filled for magic users)
+         "cast": {"start": 8, "count": 4, "fps": 6, "loop": [0, 1, 2, 2, 3, 3], "casters_only": True},
+         # hero action sets (roles_heroes.py); villagers never fill these columns
+         "attack": {"start": 12, "count": 4, "fps": 10, "loop": [0, 1, 2, 2, 3], "heroes_only": True},
+         "defend": {"start": 16, "count": 4, "fps": 6, "loop": [0, 1], "hold": [2, 3], "heroes_only": True},
+         "jump": {"start": 20, "count": 4, "fps": 8, "phases": ["crouch", "launch", "airborne", "land"],
+                  "heroes_only": True}}
+COLS = 12  # villager strips: idle 0-3 | walk 0-3 | cast 0-3 (casters); hero strips run to col 23 (role_cols)
 GROUND_ROW = 31  # lowest opaque row (the outline under the soles)
 
 
@@ -154,7 +160,10 @@ def human_frame(pal: Pal, spec: dict, facing: str, anim: str, i: int) -> HSprite
     face = "left" if facing == "right" else facing
     L = LAYOUTS[spec["layout"]]
     bob, blink, lift_l, lift_r, swing, stride, lift_b = 0, 0, 0, 0, 0, 0, 0
-    if anim == "cast":
+    if anim in RH.ACTS and spec.get("hero"):
+        bob = RH.ACT_BOB[anim][i]
+        spec = {**spec, "_act": (anim, i), "item": None}
+    elif anim == "cast":
         bob = [0, -1, -1, 0][i]
         spec = {**spec, "_cast": i, "item": None}
     elif anim == "idle":
@@ -369,8 +378,8 @@ def draw_body(s, spec, L, face, bob, swing, stride, anim, i):
 
 def draw_arms(s, spec, L, face, top, swing, stride, x0, x1):
     sleeve = spec["shirt"]
-    if spec.get("_cast") is not None and spec.get("hero"):
-        return  # heroes draw their action pose after the head (roles_heroes.draw_action)
+    if spec.get("_act") is not None:
+        return  # heroes draw their action pose after the head (roles_heroes.draw_act)
     if spec.get("_cast") is not None:
         return RM.draw_cast_arms(s, spec, L, face, top, x0, x1, spec["_cast"])
     if spec["cloak"] and face == "up":
@@ -696,7 +705,7 @@ def draw_extras(s, spec, L, face, bob, swing, stride):
             for y in range(hand_y, 31):
                 s.set(cx, y, "timber")
     RM.draw_items(s, spec, L, face, top, hand_y, x0, x1, stride)
-    RH.draw_extras(s, spec, L, face, bob, swing, stride, spec.get("_cast"))
+    RH.draw_extras(s, spec, L, face, bob, swing, stride, spec.get("_act"))
 
 
 # ------------------------------------------------------------------ cat (creature)
@@ -826,11 +835,17 @@ def frame(pal, role, facing, anim, i):
 
 
 def role_anims(role):
+    if ROLES[role].get("hero"):
+        return ("idle", "walk") + RH.ACTS
     return ("idle", "walk", "cast") if ROLES[role].get("caster") else ("idle", "walk")
 
 
+def role_cols(role):
+    return max(COLS, max(ANIMS[a]["start"] + ANIMS[a]["count"] for a in role_anims(role)))
+
+
 def role_sheet(pal, role) -> Image.Image:
-    im = Image.new("RGBA", (FW * COLS, FH * 4), (0, 0, 0, 0))
+    im = Image.new("RGBA", (FW * role_cols(role), FH * 4), (0, 0, 0, 0))
     for fi, facing in enumerate(FACINGS):
         for anim in role_anims(role):
             for i in range(4):
@@ -843,9 +858,10 @@ def build(biome="cozy-village", roles=None, out="public/art/sprite", project=Non
     pal = Pal(load_biome(biome, project))
     roles = roles or list(ROLES)
     out = ensure(out)
-    atlas = Image.new("RGBA", (FW * COLS, FH * 4 * len(roles)), (0, 0, 0, 0))
+    cols = max(role_cols(r) for r in roles)
+    atlas = Image.new("RGBA", (FW * cols, FH * 4 * len(roles)), (0, 0, 0, 0))
     meta = {"tool": "hd2d sprite", "biome": biome, "seed": seed, "frame": [FW, FH], "pivot": list(PIVOT),
-            "ground_row": GROUND_ROW, "facings": list(FACINGS), "anims": ANIMS, "cols": COLS,
+            "ground_row": GROUND_ROW, "facings": list(FACINGS), "anims": ANIMS, "cols": cols,
             "image": f"{name}.png", "size": [atlas.width, atlas.height], "roles": {}}
     for ri, role in enumerate(roles):
         sheet = role_sheet(pal, role)
@@ -864,7 +880,7 @@ def build(biome="cozy-village", roles=None, out="public/art/sprite", project=Non
                                "size_bounds": ROLE_SIZE[spec["kind"]], "caster": bool(spec.get("caster")),
                                "anims": list(role_anims(role)), "frames": frames}
         if spec.get("hero"):
-            meta["roles"][role].update(hero=True, origin=spec["origin"], pose=spec["pose"])
+            meta["roles"][role].update(hero=True, cls=spec["cls"], origin=spec["origin"], style=spec["style"])
     atlas.save(out / f"{name}.png")
     write_json(out / f"{name}.json", meta)
     preview(atlas, roles, out / f"{name}_preview_4x.png")
@@ -933,10 +949,62 @@ def lineup(pal, roles, path, scale=4):
             out.alpha_composite(im, (x, y))
     for ci, (facing, anim, i, label) in enumerate(LINEUP_CELLS):
         y = top + ci * (ch + gy)
-        lab = "action\n(cast /\nattack)" if anim == "cast" else label.replace(" ", "\n")
+        lab = label.replace(" ", "\n")
         d.multiline_text((8, y + ch // 2 - 16), lab, fill=(90, 62, 44, 255), font=small, spacing=2)
     d.text((8, H - 26), "hd2d sprite: Hearthmoor hero classes, 20x32 native, shown at %dx nearest (no filtering, no bloom)" % scale,
            fill=(110, 80, 60, 255), font=small)
+    out.save(path)
+    return path
+
+
+ANIM_ROWS = ("cast", "attack", "defend", "jump")
+JUMP_LIFT = (0, 5, 9, 0)  # sheet-only preview of the runtime jump arc (native px); frames themselves stay feet-anchored
+
+
+def anim_lineup(pal, roles, path, facing="down", scale=4):
+    """Hero action sheet: rows = cast / attack / defend / jump, one column group per hero with all 4 frames of that
+    anim in `facing`. Everything sits on a dark dusk panel so the crisp glow pixels read (no bloom, no blur)."""
+    from PIL import ImageFont
+    try:
+        font = ImageFont.truetype("DejaVuSans-Bold.ttf", 15)
+        small = ImageFont.truetype("DejaVuSans.ttf", 11)
+    except OSError:
+        font = small = ImageFont.load_default()
+    roles = [r for r in roles if ROLES[r].get("hero")]
+    cw, ch = FW * scale, FH * scale
+    fg, gx, gy, lw, top = 4, 28, 14, 78, 70
+    gw = 4 * cw + 3 * fg
+    W = lw + len(roles) * (gw + gx) + gx
+    jh = max(JUMP_LIFT) * scale  # extra headroom above the jump row for the preview arc
+    rowy = [top + ai * (ch + gy + 14) + (jh if anim == "jump" else 0) for ai, anim in enumerate(ANIM_ROWS)]
+    H = rowy[-1] + ch + gy + 14 + 36
+    out = Image.new("RGBA", (W, H), (30, 25, 38, 255))
+    d = ImageDraw.Draw(out)
+    for ri, role in enumerate(roles):
+        x = lw + gx + ri * (gw + gx)
+        if ri % 2:
+            d.rectangle([x - gx // 2, top - 8, x + gw + gx // 2 - 1, H - 30], fill=(40, 33, 50, 255))
+        spec = ROLES[role]
+        d.text((x + gw // 2, 10), spec.get("cls", role), fill=(246, 222, 170, 255), font=font, anchor="mt")
+        d.text((x + gw // 2, 32), f"{spec.get('origin_name', '')} · {spec.get('style', '')}", fill=(200, 176, 150, 255),
+               font=small, anchor="mt")
+        for ai, anim in enumerate(ANIM_ROWS):
+            y = rowy[ai]
+            for i in range(ANIMS[anim]["count"]):
+                im = frame(pal, role, facing, anim, i).image().resize((cw, ch), Image.NEAREST)
+                lift = JUMP_LIFT[i] * scale if anim == "jump" else 0
+                if anim == "jump":  # the shadow stays on the ground, shrinking as the hero rises
+                    sx, sw = x + i * (cw + fg) + cw // 2, (7 - JUMP_LIFT[i] // 3) * scale
+                    d.ellipse([sx - sw, y + ch - 2 * scale, sx + sw, y + ch + scale], fill=(18, 14, 22, 255))
+                out.alpha_composite(im, (x + i * (cw + fg), y - lift))
+                d.text((x + i * (cw + fg) + cw // 2, y + ch + 2), str(i), fill=(150, 130, 120, 255), font=small, anchor="mt")
+    for ai, anim in enumerate(ANIM_ROWS):
+        y = rowy[ai]
+        sub = {"jump": "crouch\nlaunch\nair\nland", "defend": "raise\nset\nhold a\nhold b"}.get(anim, "")
+        d.text((10, y + ch // 2 - 30), anim, fill=(246, 222, 170, 255), font=font)
+        d.multiline_text((10, y + ch // 2 - 10), sub, fill=(170, 150, 135, 255), font=small, spacing=1)
+    d.text((10, H - 24), f"hd2d sprite: hero action anims, facing {facing}, 20x32 native at {scale}x nearest "
+           "(hard alpha, 1px ink outline, crisp glow pixels, no bloom)", fill=(170, 150, 135, 255), font=small)
     out.save(path)
     return path
 
@@ -951,6 +1019,9 @@ def main(argv=None):
     ap.add_argument("--name", default="actors")
     ap.add_argument("--list", action="store_true")
     ap.add_argument("--lineup", default=None, help="also write a labelled 4x lineup PNG of the chosen roles here")
+    ap.add_argument("--anim-lineup", default=None,
+                    help="also write a 4x hero action sheet (rows cast/attack/defend/jump, dark panel) here")
+    ap.add_argument("--anim-facing", default="down", choices=FACINGS, help="facing for --anim-lineup (default down)")
     a = ap.parse_args(argv)
     if a.list:
         for k, v in ROLES.items():
@@ -965,6 +1036,8 @@ def main(argv=None):
     print(f"sprite: {len(roles)} roles -> {res['atlas']}\n        {res['json']}\n        {res['preview']}")
     if a.lineup:
         print("        " + str(lineup(Pal(load_biome(a.biome, a.project)), roles, a.lineup)))
+    if a.anim_lineup:
+        print("        " + str(anim_lineup(Pal(load_biome(a.biome, a.project)), roles, a.anim_lineup, a.anim_facing)))
     return 0
 
 

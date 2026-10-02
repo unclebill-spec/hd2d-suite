@@ -7,7 +7,8 @@ Checks, per role and per frame:
   palette    every opaque colour is in the biome palette; colour count per role <= --max-colors
   outline    every silhouette edge pixel (opaque next to transparent) is the outline ink colour
   frames     4 facings x (idle 4 + walk 4) present and non-empty; facings actually differ;
-             magic users (caster) also need 4 cast frames per facing that differ from idle
+             magic users (caster) also need 4 cast frames per facing that differ from idle; heroes need every anim
+             listed in their JSON (cast, attack, defend, jump: 4 frames x 4 facings each, all differing from idle)
   size       opaque bounds inside the role's size bounds (humans about 16-24 w: 14-24 allowed for profiles/kids, 24-40 h)
   feet       lowest opaque row == ground_row in every frame; feet centre within 2 px of the pivot x
 Exit code 0 = pass, 1 = fail. Prints a report; --report writes JSON.
@@ -96,19 +97,22 @@ def check(atlas_path, json_path=None, biome=None, max_colors=20, project=None):
         rr["colors"] = len(colors)
         if len(colors) > max_colors:
             rr["issues"].append(f"{len(colors)} colours > {max_colors}")
-        want = 48 if info.get("caster") else 32
+        anims = info.get("anims") or (["idle", "walk", "cast"] if info.get("caster") else ["idle", "walk"])
+        want = 4 * sum(meta["anims"][a]["count"] for a in anims)
         if rr["frames"] != want:
-            rr["issues"].append(f"{rr['frames']} frames, expected {want} (4 facings x idle4+walk4"
-                                + (" + cast4)" if want == 48 else ")"))
-        if info.get("caster"):
-            # the cast pose must actually differ from idle in every facing
+            rr["issues"].append(f"{rr['frames']} frames, expected {want} (4 facings x " + " + ".join(
+                f"{a}{meta['anims'][a]['count']}" for a in anims) + ")")
+        # every extra anim (cast, attack, defend, jump) must actually differ from idle in every facing
+        extra = [a for a in anims if a not in ("idle", "walk")]
+        if extra:
             sig = {}
             for fr in info["frames"]:
-                if fr["anim"] in ("idle", "cast") and fr["i"] == 1:
+                if fr["i"] == 1 and fr["anim"] in ["idle"] + extra:
                     sig[(fr["facing"], fr["anim"])] = tuple(px[fr["x"] + x, fr["y"] + y] for y in range(fh) for x in range(fw))
-            for f in ("down", "up", "left", "right"):
-                if sig.get((f, "idle")) == sig.get((f, "cast")):
-                    rr["issues"].append(f"{role} {f}: cast frame identical to idle")
+            for a in extra:
+                for f in ("down", "up", "left", "right"):
+                    if sig.get((f, "idle")) == sig.get((f, a)):
+                        rr["issues"].append(f"{role} {f}: {a} frame identical to idle")
         if len(set(facing_sigs.values())) < 3:
             rr["issues"].append("facings are not distinct")
         if facing_sigs.get("left") and facing_sigs.get("right") and facing_sigs["left"] == facing_sigs["right"]:

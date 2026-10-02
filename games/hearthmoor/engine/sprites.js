@@ -3,6 +3,8 @@
 //     from the atlas (nearest, no mips), depth from the cylindrical billboard so roofs/walls still occlude.
 //  2. Shadow caster in the WORLD scene: an upright cylindrical-billboard plane turned toward the sun, invisible
 //     in colour, with an alpha-tested customDepthMaterial so the real silhouette lands in the shadow map.
+// Action states (hero roles): act(a, 'attack' | 'defend' | 'jump' | 'cast'); defend holds until release().
+// A jump lifts only the visible quad (a.lift, metres); the shadow caster stays planted at the feet (a.y).
 import * as THREE from 'three';
 
 const VERT = /* glsl */`
@@ -38,6 +40,8 @@ void main() {
 }`;
 
 const FACINGS = ['down', 'up', 'left', 'right'];
+// action timings (seconds). jump: crouch -> airborne arc (lift = JUMP_H * sin(pi * p)) -> landing pose
+export const ACT = { attack: 0.42, defend: 0.35, cast: 0.9, crouch: 0.1, air: 0.46, land: 0.12, JUMP_H: 0.55 };
 const QUAD = (() => {
   const g = new THREE.BufferGeometry();
   g.setAttribute('position', new THREE.Float32BufferAttribute([0, 0, 0, 1, 0, 0, 1, 1, 0, 0, 0, 0, 1, 1, 0, 0, 1, 0], 3));
@@ -98,6 +102,7 @@ export class Actors {
       blinkAt: 2 + Math.random() * 4, idleTurn: spec.turn !== false, r: isCreature ? 0.22 : 0.28, rect: null,
       canCast: (role.anims || []).includes('cast'), castT: 0, castDur: 0.9, spell: spec.spell || null,
       every: spec.every || 4, castClock: spec.castDelay ?? 0.5, name: spec.name,
+      anims: role.anims || ['idle', 'walk'], act: null, lift: 0,
     };
     const h0 = this.collide ? this.collide.height(a.x, a.z) : 0;
     a.y = h0 ?? 0;
@@ -114,7 +119,8 @@ export class Actors {
   frameOrigin(a) {
     const fi = FACINGS.indexOf(a.facing);
     const anims = this.meta.anims;
-    const col = (anims[a.anim] || anims.idle).start + a.frame;
+    const has = a.anims ? a.anims.includes(a.anim) : true;   // roles without the anim fall back to idle columns
+    const col = ((has && anims[a.anim]) || anims.idle).start + (has ? a.frame : Math.min(a.frame, 3));
     return [col * this.fw, (a.roleRow + fi) * this.fh];
   }
 
@@ -124,9 +130,61 @@ export class Actors {
     else a.facing = dz > 0 ? 'down' : 'up';
   }
 
+  // Start an action. jump works for every role (non-heroes just hop with idle frames); attack / defend / cast need
+  // the anim in the role's atlas. Returns false if the action is unavailable or another one is still running.
+  act(a, name, opts = {}) {
+    const has = a.anims.includes(name) && this.meta.anims[name];
+    if (name !== 'jump' && !has) return false;
+    if (a.act && !(a.act.name === name && name === 'defend')) {
+      if (a.act.name === 'jump' || a.act.t < a.act.dur) return false;
+    }
+    const dur = opts.dur || (name === 'jump' ? ACT.crouch + ACT.air + ACT.land : name === 'defend' ? ACT.defend : name === 'cast' ? ACT.cast : ACT.attack);
+    a.act = { name, t: 0, dur, held: name === 'defend' && opts.hold !== false, has: !!has, landed: false };
+    a.castT = 0;
+    return true;
+  }
+
+  release(a, name) {
+    if (a.act && (!name || a.act.name === name)) a.act.held = false;
+  }
+
+  // advance the running action; returns true while it owns the frame
+  _actStep(a, dt) {
+    const s = a.act, anims = this.meta.anims;
+    s.t += dt;
+    const p = Math.min(1, s.t / s.dur);
+    const n = s.name;
+    a.lift = 0;
+    if (n === 'jump') {
+      const tc = ACT.crouch, ta = ACT.air;
+      let f;
+      if (s.t < tc) f = 0;
+      else if (s.t < tc + ta) {
+        const q = (s.t - tc) / ta;
+        a.lift = ACT.JUMP_H * Math.sin(Math.PI * q);
+        f = q < 0.5 ? 1 : 2;
+      } else { f = 3; if (!s.landed) { s.landed = true; s.justLanded = true; } }
+      if (s.t >= s.dur) { a.act = null; a.lift = 0; return false; }
+      a.anim = s.has ? 'jump' : 'idle'; a.frame = s.has ? f : 0;
+      return true;
+    }
+    if (n === 'defend') {
+      if (s.t >= s.dur && !s.held) { a.act = null; return false; }
+      const tf = s.t / (ACT.defend / 2);   // raise, set, then pulse the hold frames while the guard is up
+      a.anim = 'defend';
+      a.frame = tf < 1 ? 0 : tf < 2 ? 1 : (anims.defend.hold || [2, 3])[Math.floor((s.t - ACT.defend) * (anims.defend.fps || 6)) % 2];
+      return true;
+    }
+    if (s.t >= s.dur) { a.act = null; return false; }
+    const loop = anims[n].loop || [0, 1, 2, 3];
+    a.anim = n; a.frame = loop[Math.min(loop.length - 1, Math.floor(p * loop.length))];
+    return true;
+  }
+
   animate(a, dt, moving) {
     const anims = this.meta.anims;
     const prev = a.anim;
+    if (a.act && this._actStep(a, dt)) return;
     if (a.castT > 0) {
       a.castT -= dt;
       if (a.canCast && anims.cast) {
@@ -171,13 +229,15 @@ export class Actors {
       u.uK.value = k;
       u.uViewport.value.set(bufW, bufH);
       // feet → pixels, snapped to whole pixels
+      // the visible quad rides a.lift (jump arc); depth + shadow stay anchored to the ground under the feet
+      const ly = a.y + (a.lift || 0);
       toCam.copy(camera.position).sub(this._v.set(a.x, a.y, a.z)).normalize().multiplyScalar(0.45);
-      const feet = this._v.set(a.x, a.y, a.z).add(toCam).project(camera);
+      const feet = this._v.set(a.x, ly, a.z).add(toCam).project(camera);
       const sx = Math.round((feet.x * 0.5 + 0.5) * bufW);
       const sy = Math.round((feet.y * 0.5 + 0.5) * bufH);
       u.uAnchor.value.set(sx, sy);
       u.uZBottom.value = feet.z;
-      const head = this._w.set(a.x, a.y + this.heightM * (a.kind === 'human' ? 1 : 0.55), a.z).add(toCam).project(camera);
+      const head = this._w.set(a.x, ly + this.heightM * (a.kind === 'human' ? 1 : 0.55), a.z).add(toCam).project(camera);
       u.uZTop.value = head.z;
       // light: clock tint, building shade, nearby lamps (warm pools at night)
       const t = a.tint.setRGB(tintBase.r, tintBase.g, tintBase.b);
@@ -199,7 +259,7 @@ export class Actors {
       if (a.kind !== 'human') a.caster.scale.set(1, 1, 1);
       // CSS-free debug rect (drawing-buffer px, top-left origin) for check-scene
       const x0 = sx - this.meta.pivot[0] * k, yTop = bufH - (sy + this.fh * k);
-      a.rect = { x: x0, y: yTop, w: this.fw * k, h: this.fh * k, frame: [fx, fy], k };
+      a.rect = { x: x0, y: yTop, w: this.fw * k, h: this.fh * k, frame: [fx, fy], k, lift: a.lift || 0 };
     }
   }
 }

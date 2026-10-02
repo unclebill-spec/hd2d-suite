@@ -2,6 +2,28 @@
 
 Dates are America/New_York. Newest first. Keep this current with every change you push.
 
+## 2026-10-02: hero action sets (cast / attack / defend / jump) and runtime action states
+- `hd2d sprite`: every hero class now has **four 4-frame action anims in all four facings** (down, up, left drawn; right is the mirrored left):
+  - **cast** (cols 8–11): a spell with crisp glow pixels for every class (brawlers now cast too: Runeguard light rune, Stormborn lightning, Cinderknight ember flame; Wildcaller lifts a hearth-light orb);
+  - **attack** (cols 12–15): melee with the class weapon (hoe chop, axe chop + shield bash, staff sweep / thrust, hammer swing with ground sparks, Grovekeeper vine lash, greatsword ember slash);
+  - **defend** (cols 16–19): raise, set, hold a / hold b (Runeguard shield up and centred with the rune lit; Wildcaller / Seer / Grovekeeper a small ward glyph; Stormborn hammer and Cinderknight greatsword held crosswise);
+  - **jump** (cols 20–23): crouch, launch, airborne, land (dust pixels on landing). Frames stay feet-anchored; the runtime adds the height.
+- Hero strips are now 24 columns (480 px); villager strips stay 12 columns, and an atlas is as wide as its widest role (`meta.cols`).
+- Pixel identity: the idle / walk columns of all six heroes and all 24 villager roles (per-role PNGs byte-identical) match the previous build. Palette caps hold (Wildcaller still 20 colours).
+- `actors.json`: new `meta.anims` entries `attack`, `defend` (with `hold: [2, 3]`) and `jump` (with `phases`), all `heroes_only`; hero roles list `anims` = idle, walk, cast, attack, defend, jump and carry `cls` / `origin` / `style` (the old `pose` key is gone).
+- New CLI: `--anim-lineup PATH [--anim-facing F]` writes a 4x action sheet (rows cast / attack / defend / jump, 4 frames per hero, dark panel; the jump row previews the arc with a ground shadow).
+- Screenshots: `docs/screenshots/hero_anims_4x.png` (down), `hero_anims_side_4x.png` (left), `hero_anims_up_4x.png` (up).
+- Runtime (`engine/sprites.js`, `engine/main.js`):
+  - `Actors.act(a, 'attack' | 'defend' | 'jump' | 'cast', {hold, dur})` and `release()`. Jump works for every role (villagers hop on idle frames); the others need the anim.
+  - The jump lifts only the visible quad (`lift = 0.55 m * sin`, crouch 0.1 s, air 0.46 s, land 0.12 s); depth and the shadow caster stay on the ground. Landing kicks footstep dust.
+  - Keys: **R** attack, **C** hold to guard, **Z** jump. Controller: **RS** attack, **LS** jump, **LT** short guard. No walking during attack / guard; a jump keeps moving.
+  - API: `window.__hd2d.act(name, id?, opts)`, `release(name, id?)`, `actorState(id?)`, `actAdvance(sec, id?)` (QA).
+  - Copied into `demos/*/engine` and `games/hearthmoor/engine` (zips rebuilt). Their atlases were not regenerated, so the game player (traveler) only has the jump.
+- check-sprite: the frame count now comes from each role's `anims`, and every extra anim must differ from idle in every facing.
+- Checks: check-sprite PASS (heroes alone, all 30 roles, the review-scene atlas, both demos and all 3 game areas). check-scene PASS on the review scene (hero player: jump, attack and defend), both demos and all 3 game areas (jump on non-hero players). Smoke test PASS 46/46.
+- check-scene: Playwright's default timeout now follows `--timeout` (screenshots on a loaded shared box stalled past 30 s).
+- check-scene: new `actions` check: with the sim held, a jump is stepped in fixed game time; the sprite must lift (≥ 0.2 m, its screen rect rises) while the shadow caster stays at the feet, then land and end. Hero players also need ≥ 2 attack frames and a held defend reaching its hold frames, ending on release.
+
 ## 2026-10-02: hero classes (Norse Nine Realms) and story seeds
 - Story: Hearthmoor is now a Norse Nine Realms story. The seeds live in `docs/story/STORY_SEEDS.md` (committed for the first time). It holds:
   - the three original pitches and the chosen direction (realms linked by the Rainbow Rift);

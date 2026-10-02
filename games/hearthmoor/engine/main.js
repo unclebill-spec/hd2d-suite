@@ -217,7 +217,7 @@ export async function boot(opts = {}) {
   function castSpell(a, name) {
     if (!effects) return;
     const set = sMeta.cast_sets[name] || [[name, 'front']];
-    a.castT = a.castDur;
+    if (!a.act) a.castT = a.castDur;   // mid-jump / mid-swing casts still fire, without restarting the pose
     const [fx, fz] = facingVec(a);
     for (const [fxName, where] of set) {
       if (where === 'feet') effects.spawn(fxName, a.x, a.y, a.z + 0.05);
@@ -236,6 +236,14 @@ export async function boot(opts = {}) {
   }
   function cycleSpell(dir = 1) { if (spellCycle.length) { spellIdx = (spellIdx + dir + spellCycle.length) % spellCycle.length; showSpell(); } }
   function showSpell() { const b = $('btnSpell'); if (b) b.textContent = '✦ ' + (spellCycle[spellIdx] || '').replace(/_/g, ' '); }
+
+  // hero action states (R attack, C hold to guard, Z jump; controller RS attack, LS jump, LT short guard)
+  function actorAct(name, a = player, opts = {}) {
+    if (a === player && blocked()) return false;
+    const ok = actors.act(a, name, opts);
+    if (ok && a === player && name !== 'jump') walkTo = null;
+    return ok;
+  }
 
   // ---------------------------------------------------------------- input
   const keys = new Set();
@@ -257,14 +265,17 @@ export async function boot(opts = {}) {
     if (k === 't' && !opts.noTimeKeys) stepTime();
     if (k === 'f' && !e.repeat) playerCast(true);
     if (k === 'q' && !e.repeat) cycleSpell();
+    if (k === 'r' && !e.repeat) actorAct('attack');
+    if (k === 'c' && !e.repeat) actorAct('defend', player, { hold: true });
+    if (k === 'z' && !e.repeat) actorAct('jump');
     if (k === 'p' && !opts.noTimeKeys) togglePause();
     if (k === 'g') togglePad();
     if (k === 'h') toggleHand();
     if (e.key === '+' || e.key === '=') zoomBy(0.92);
     if (e.key === '-') zoomBy(1.08);
   }, sig);
-  addEventListener('keyup', (e) => keys.delete(e.key.toLowerCase()), sig);
-  addEventListener('blur', () => keys.clear(), sig);
+  addEventListener('keyup', (e) => { const k = e.key.toLowerCase(); keys.delete(k); if (k === 'c') actors.release(player, 'defend'); }, sig);
+  addEventListener('blur', () => { keys.clear(); actors.release(player, 'defend'); }, sig);
   // taps on the canvas (event time, not handler time: a janky frame must not turn a tap into a hold)
   const pointers = new Map();
   canvas.addEventListener('pointerdown', (e) => {
@@ -371,6 +382,7 @@ export async function boot(opts = {}) {
     document.querySelector('#hud .btns').appendChild(b);
     if ($('hint') && !$('hint').textContent.includes('F cast')) $('hint').textContent += ' · F cast · Q next spell';
   }
+  if ($('hint') && player.anims.includes('attack') && !$('hint').textContent.includes('R attack')) $('hint').textContent += ' · R attack · C guard · Z jump';
   if ($('btnSpell')) { $('btnSpell').onclick = () => playerCast(true); $('btnSpell').hidden = !spellCycle.length; }
   showSpell();
   // left-handed pad: ?hand=left, the 'hand' HUD chip or H; remembered per device
@@ -409,6 +421,9 @@ export async function boot(opts = {}) {
       case 'x': if (!blocked()) playerCast(true); break;
       case 'y': case 'rb': if (!blocked()) cycleSpell(1); break;
       case 'lb': if (!blocked()) cycleSpell(-1); break;
+      case 'rs': actorAct('attack'); break;
+      case 'ls': actorAct('jump'); break;
+      case 'lt': actorAct('defend', player, { hold: false, dur: 0.8 }); break;
       case 'start': if (!opts.noTimeKeys) togglePause(); break;
       case 'select': togglePad(); document.body.classList.toggle('padpin', pad.on); break;
       default: break;
@@ -471,6 +486,8 @@ export async function boot(opts = {}) {
     const st = pad.stick();
     if (st.active) { dx = st.x; dz = st.y; analog(st.mag || 0, st.run); }
     if (blocked()) { dx = 0; dz = 0; walkTo = null; }
+    // planted actions: no walking during attack / guard / cast-by-act; a jump keeps its momentum
+    if (player.act && player.act.name !== 'jump') { dx = 0; dz = 0; walkTo = null; }
     if (dx || dz) walkTo = null;
     let moving = false;
     if (walkTo) {
@@ -488,6 +505,10 @@ export async function boot(opts = {}) {
     } else if (dx || dz) moving = moveActor(player, dx, dz, dt);
     if (player.castT > 0) moving = false;
     actors.animate(player, dt, moving);
+    if (player.act && player.act.justLanded) {   // landing: one dust kick per foot, on the ground
+      player.act.justLanded = false;
+      if (particles) { particles.burst('footstep_dust', player.x - 0.18, player.y + 0.05, player.z + 0.05); particles.burst('footstep_dust', player.x + 0.18, player.y + 0.05, player.z + 0.05); }
+    }
     // footstep dust: a small kick on each planted foot (walk frames 0 and 2)
     if (particles && player.anim === 'walk' && player.frame !== player._lastStep && (player.frame === 0 || player.frame === 2)) {
       particles.burst('footstep_dust', player.x, player.y + 0.05, player.z + 0.05);
@@ -699,6 +720,20 @@ export async function boot(opts = {}) {
     tap: (cx, cy) => tapAt(cx, cy), pad, setHand, toggleHand, gamefxRects: () => (gamefx ? gamefx.rects().map((r) => ({ ...r, buf: [bufW, bufH] })) : []),
     effects, castSpell: (id, name) => castSpell(actors.list.find((a) => a.id === id) || player, name), playerCast, cycleSpell,
     spellName: () => spellCycle[spellIdx],
+    // action states: act('jump' | 'attack' | 'defend' | 'cast', id?, {hold, dur}); release('defend', id?)
+    act: (name, id, opts) => actorAct(name, (id && actors.list.find((a) => a.id === id)) || player, opts || {}),
+    release: (name, id) => actors.release((id && actors.list.find((a) => a.id === id)) || player, name),
+    // QA: advance an actor's running action by `sec` of game time in fixed 1/60 s steps (use with hold(true))
+    actAdvance: (sec, id) => {
+      const a = (id && actors.list.find((b) => b.id === id)) || player;
+      for (let t = 0; t < sec - 1e-9 && a.act; t += 1 / 60) actors.animate(a, 1 / 60, false);
+      return a.act ? a.act.t : null;
+    },
+    actorState: (id) => {
+      const a = (id && actors.list.find((b) => b.id === id)) || player;
+      return { id: a.id, role: a.role, anims: a.anims, anim: a.anim, frame: a.frame, act: a.act ? a.act.name : null,
+               t: a.act ? a.act.t : 0, lift: a.lift || 0, y: a.y, casterY: a.caster.position.y, rect: a.rect };
+    },
     effectRects: () => (effects ? effects.rects().map((r) => ({ ...r, buf: [bufW, bufH] })) : []),
     showEffects: (v = true) => { if (effects) for (const f of effects.list) f.mesh.visible = v; },
     // QA: hide spell effects + particles so actor crops can be compared 1:1 with the atlas

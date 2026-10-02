@@ -14,9 +14,11 @@ Bill (GitHub `unclebill-spec`) hands this project between his bots and Cursor th
 
 ## Current state (2026-10-02)
 - **Story direction:** Hearthmoor is becoming a **Norse Nine Realms** story (original art and characters, public-domain myth). Read [`docs/story/STORY_SEEDS.md`](docs/story/STORY_SEEDS.md) before touching story, quests or characters. It covers realms, cities, the villain Veyra, alliances, heroes and magic, pets, and the look-and-feel priority.
-- **Hero classes:** `hd2d sprite` has 6 playable classes (`roles_heroes.py`: wildcaller, runeguard, seer, stormborn, grovekeeper, cinderknight), each with a 4-frame cast or attack.
-  - Lineup: `docs/screenshots/hero_origins_4x.png`. In-scene: `docs/screenshots/hero_origins_plaza.png`. Review scene: `scenes/hero-classes-plaza.json`.
-  - Not yet wired into the game: the player is still the traveler, and there's no class picker.
+- **Hero classes:** `hd2d sprite` has 6 playable classes (`roles_heroes.py`: wildcaller, runeguard, seer, stormborn, grovekeeper, cinderknight).
+  - Each has idle, walk and four 4-frame action anims in all 4 facings (right = mirrored left): **cast** (cols 8–11), **attack** (12–15), **defend** (16–19, hold frames 2/3) and **jump** (20–23: crouch, launch, airborne, land). Hero strips are 24 columns; villagers stay 12.
+  - Lineups: `docs/screenshots/hero_origins_4x.png` (looks), `hero_anims_4x.png` / `hero_anims_side_4x.png` / `hero_anims_up_4x.png` (actions). In-scene: `docs/screenshots/hero_origins_plaza.png`. Review scene: `scenes/hero-classes-plaza.json` (player = stormborn).
+  - **Runtime action states:** `Actors.act(a, name, {hold, dur})` / `release(a, name)` in `engine/sprites.js`. Keys **R** attack, **C** hold guard, **Z** jump; controller **RS** attack, **LS** jump, **LT** short guard. The jump lifts the visible sprite only (`a.lift`); the shadow caster and depth stay on the ground. API: `__hd2d.act / release / actorState / actAdvance`.
+  - Not yet wired into the game: the player is still the traveler (jump only, idle frames), and there's no class picker. No touch button for attack / guard / jump yet.
 - **Toolset:** a Python CLI `bin/hd2d` with 13 tools, which generates original pixel art and assembles lit three.js r160 dioramas (static ES modules, no build step).
 - **Demos:** `demos/hearthmoor-plaza`, `demos/bakery-lane` (+ zips).
 - **Game:** `games/hearthmoor/`:
@@ -60,6 +62,7 @@ python3 -m http.server 8078 --directory demos/bakery-lane     # http://localhost
 bin/hd2d palette --biome all --out P/public/art/palette
 bin/hd2d sprite --biome cozy-village --roles all --out P/public/art/sprite
 bin/hd2d sprite --roles heroes --out /tmp/h --lineup docs/screenshots/hero_origins_4x.png   # 6 hero classes + 4x lineup
+bin/hd2d sprite --roles heroes --out /tmp/h --anim-lineup docs/screenshots/hero_anims_4x.png  # action sheet (--anim-facing left|up)
 bin/hd2d assemble scenes/hero-classes-plaza.json --out /tmp/heroplaza --no-zip           # heroes on the plaza at golden hour
 bin/hd2d check-sprite P/public/art/sprite/actors.png --biome cozy-village
 bin/hd2d texel --biome cozy-village --sizes 32,64 --out P/public/art/texel
@@ -90,6 +93,7 @@ python3 games/hearthmoor/tests/smoke.py        # ~8 min headless, 46 steps, writ
   - height and colours, and the day / dusk / night grades;
   - effects and game-effects sharpness;
   - the phone check: layout, tap-walk, floating stick, no page zoom, loading gate, controller, pinch.
+  - actions: a jump (held sim, fixed steps) lifts the sprite while the shadow stays at the feet; hero players also attack and hold a guard.
 - **Smoke test:** a full playthrough of all 3 errands, both exits and the portal both ways, save / reload ×2, a stubbed controller, phone touch and the loading gate.
 - **Headless tips:**
   - Use SwiftShader args: `--use-angle=swiftshader --enable-unsafe-swiftshader --ignore-gpu-blocklist`.
@@ -126,6 +130,7 @@ python3 games/hearthmoor/tests/smoke.py        # ~8 min headless, 46 steps, writ
 - The player can disappear behind buildings (sprites are depth-tested; there's no see-through outline yet).
 - Dialogue is linear (no choices); there's one save slot; errands have a single path.
 - Pathfinding ignores moving NPCs (they're avoided only by collision sliding).
+- Hero actions: no touch buttons yet (keyboard + controller only); the controller guard (LT) is a timed 0.8 s guard, not a hold. Wards are hidden from behind (`up` shows glow at the hands only). Demo / game atlases weren't regenerated, so only heroes (review scene) have attack / defend / jump frames. Actions are visual only (no hitboxes or damage).
 - Smaller notes:
   - Plaza and Lane reuse the demo layouts.
   - Backdrop hills are simple domes.
@@ -141,6 +146,7 @@ python3 games/hearthmoor/tests/smoke.py        # ~8 min headless, 46 steps, writ
 6. New content: mushroom villages, gnomes, bubbly springs (new kit pieces, roles, particles; original art under the style lock).
 7. **Hero classes in the game:**
    - a class picker on the title screen, with the chosen class as the player sprite;
+   - touch buttons for attack / guard / jump on the pad (phone first), and hitboxes / interactions for the actions;
    - per-class spells and summons (see Heroes and magic in `STORY_SEEDS.md`);
    - action-frame VFX in the spells atlas;
    - first realm areas and the Rainbow Rift portal hub.

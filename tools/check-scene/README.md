@@ -17,6 +17,7 @@ hd2d check-scene games/hearthmoor --scene-dir areas/mossglen --params "area=moss
 - grades: dusk bluer than day, night < 65% day luma with warm window/lamp pixels.
 - no_errors: no JS errors. Writes `check_scene.json`.
 - gamefx_sharp (scenes with `gamefx`): the same frozen-lineup test for the game effects atlas (portal vortex, portal ring, moonpetal, quest tags). Writes `gamefx.png`.
+- actions (engines exposing `window.__hd2d.act`): with the simulation held, a player jump is stepped in fixed game time (`actAdvance`); the visible sprite must lift (>= 0.2 m, its screen rect rises) while the shadow caster stays at the feet, then land and end. Hero players also need >= 2 attack frames and a held defend that reaches its hold frames (2/3) and ends on release.
 - phone: portrait 390x844 and landscape 844x390 at DPR 2 with `isMobile` + `hasTouch` and the Layout One pad on (`?pad=1`). Each orientation must pass every sub-check:
   - layout: HUD chips and pad controls stay inside the viewport and don't overlap each other, and enabled touch targets are at least 30 CSS px.
   - touch_tap_walk: a CDP touch tap on open ground walks the player toward it.
