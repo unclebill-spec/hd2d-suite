@@ -2,6 +2,11 @@
 
 Dates are America/New_York. Newest first. Keep this current with every change you push.
 
+## 2026-10-02: consolidated Hearthmoor builder handoff
+- New `docs/HEARTHMOOR_BUILDER_HANDOFF.md`: one game design document for the Master Builder, merged from `STORY_SEEDS.md`, `AGENTS.md`, this changelog, the style lock, the tool READMEs and the code. Sections: pitch and pillars, style lock, platform/input requirements, story, world, heroes (6 + 9 = 15), bestiary, dungeons and rifts, progression and economy, current build status, open decisions, suggested milestones and repo rules, plus an appendix of resolved contradictions (later drafts win).
+- No new design. Superseded drafts resolved (e.g. one static dungeon per realm instead of 1–2, Wildcaller casts, flesh/blood golems gross only in the Plaguewell).
+- `AGENTS.md` links the handoff and now says the game player is the `hedgewitch` role (the code), not the traveler.
+
 ## 2026-10-02: hero action sets (cast / attack / defend / jump) and runtime action states
 - `hd2d sprite`: every hero class now has **four 4-frame action anims in all four facings** (down, up, left drawn; right is the mirrored left):
   - **cast** (cols 8–11): a spell with crisp glow pixels for every class (brawlers now cast too: Runeguard light rune, Stormborn lightning, Cinderknight ember flame; Wildcaller lifts a hearth-light orb);

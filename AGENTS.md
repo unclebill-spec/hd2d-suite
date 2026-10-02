@@ -2,6 +2,8 @@
 
 Bill (GitHub `unclebill-spec`) hands this project between his bots and Cursor through GitHub. Read this file first, then `CHANGELOG.md`.
 
+**Building Hearthmoor? Start with [`docs/HEARTHMOOR_BUILDER_HANDOFF.md`](docs/HEARTHMOOR_BUILDER_HANDOFF.md)**: the one consolidated game design document (pitch, style, platform, story, world, heroes, bestiary, dungeons and rifts, economy, build status, open decisions, milestones).
+
 ## Before you start / before you stop
 1. **`git pull` first**, every time you resume.
 2. Keep `CHANGELOG.md` (dated America/New_York entries) and this file current.
@@ -18,7 +20,7 @@ Bill (GitHub `unclebill-spec`) hands this project between his bots and Cursor th
   - Each has idle, walk and four 4-frame action anims in all 4 facings (right = mirrored left): **cast** (cols 8–11), **attack** (12–15), **defend** (16–19, hold frames 2/3) and **jump** (20–23: crouch, launch, airborne, land). Hero strips are 24 columns; villagers stay 12.
   - Lineups: `docs/screenshots/hero_origins_4x.png` (looks), `hero_anims_4x.png` / `hero_anims_side_4x.png` / `hero_anims_up_4x.png` (actions). In-scene: `docs/screenshots/hero_origins_plaza.png`. Review scene: `scenes/hero-classes-plaza.json` (player = stormborn).
   - **Runtime action states:** `Actors.act(a, name, {hold, dur})` / `release(a, name)` in `engine/sprites.js`. Keys **R** attack, **C** hold guard, **Z** jump; controller **RS** attack, **LS** jump, **LT** short guard. The jump lifts the visible sprite only (`a.lift`); the shadow caster and depth stay on the ground. API: `__hd2d.act / release / actorState / actAdvance`.
-  - Not yet wired into the game: the player is still the traveler (jump only, idle frames), and there's no class picker. No touch button for attack / guard / jump yet.
+  - Not yet wired into the game: the game player is the `hedgewitch` role (idle / walk / cast; jump is an idle-frame hop, R / C do nothing there), and there's no class picker. No touch button for attack / guard / jump yet.
 - **Toolset:** a Python CLI `bin/hd2d` with 13 tools, which generates original pixel art and assembles lit three.js r160 dioramas (static ES modules, no build step).
 - **Demos:** `demos/hearthmoor-plaza`, `demos/bakery-lane` (+ zips).
 - **Game:** `games/hearthmoor/`:
@@ -44,6 +46,7 @@ Bill (GitHub `unclebill-spec`) hands this project between his bots and Cursor th
 | `demos/<name>/` | Assembled demos (static) |
 | `games/hearthmoor/` | The game: `index.html`, `game/` (game.js, data.js, audio.js, game.css), `areas/<id>/` (built), `areas/src/*.json` (area specs), `build.py`, `tests/smoke.py`, `startup.sh`, `RESTORE.md` |
 | `docs/HD2D_COZY_STYLE_LOCK.md` | Bill's style law (binding) |
+| `docs/HEARTHMOOR_BUILDER_HANDOFF.md` | Consolidated builder handoff / game design document (start here to build the game) |
 | `docs/story/STORY_SEEDS.md` | Story bible: Norse Nine Realms direction, villain, alliances, cities, heroes and magic, pets |
 | `docs/screenshots/` | Curated screenshots. The full `shots/` QA folders are gitignored (they are regenerated) |
 | `index.html` | Pages landing page linking the game + demos |
