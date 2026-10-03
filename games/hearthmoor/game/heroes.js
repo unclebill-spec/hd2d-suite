@@ -53,8 +53,11 @@ export const ENEMIES = {
   // Mossheart, the Mossglen mini-boss (every third slam is a rune shockwave; always drops a Legendary)
   icegolem: { name: 'Frost golem', hp: 140, dmg: 15, speed: 1.0, reach: 1.6, windup: 0.66, cd: 2.0, aggro: 5.5, r: 0.36, push: 0.2, heavy: true, slam: true, chill: 18 },
   skelmage: { name: 'Skeleton mage', hp: 52, dmg: 11, speed: 1.7, reach: 6.5, keep: 3.8, windup: 0.6, cd: 2.5, aggro: 7.0, r: 0.28, push: 0.5, ranged: true, bolt: 'bolt' },
-  eldergolem: { name: 'Mossheart, the Elder Golem', hp: 460, dmg: 22, speed: 0.95, reach: 1.8, windup: 0.78, cd: 2.0, aggro: 6.0, r: 0.42, push: 0.15, heavy: true, slam: true,
-                boss: true, wave: { every: 3, r: 2.6, dmg: 16 }, respawn: 600, legendary: true, glow: '#f2a63a' },
+  // scale: figure height in hero heights (style lock: mini-boss / rare ~2.5x, boss 5x+). The art is drawn natively on its
+  // own boss sheet (tools/sprite/boss_sheet.py, area spec boss_roles); hitbox r, reach, wave ring, light and nav
+  // clearance below are authored for that size, and combat.js scales the slam dust / telegraph / light by `scale`
+  eldergolem: { name: 'Mossheart, the Elder Golem', scale: 2.5, hp: 460, dmg: 22, speed: 1.0, reach: 3.0, windup: 0.78, cd: 2.0, aggro: 7.5, r: 0.8, push: 0.15, heavy: true, slam: true,
+                boss: true, wave: { every: 3, r: 4.2, dmg: 16 }, respawn: 600, legendary: true, glow: '#f2a63a' },
 };
 export const RESPAWN = 60;      // seconds before a defeated enemy wanders back
 export const LEASH = 12;        // metres from home before an enemy gives up and goes home

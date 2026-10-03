@@ -61,13 +61,13 @@ export class Combat {
   // ---------------------------------------------------------------- area lifecycle
   attach(ctx, area) {
     this.ctx = ctx; this.area = area;
-    this.enemies = []; this.summon = null; this.projs = []; this.traps = []; this.later = [];
+    this.enemies = []; this.navBig = null; this.summon = null; this.projs = []; this.traps = []; this.later = [];
     this.clearDom();
     if (this.G.S.hp == null || this.G.S.hp <= 0) this.G.S.hp = this.maxHp();
     this.G.S.hp = Math.min(this.G.S.hp, this.maxHp());
     for (const sp of SPAWNS[area] || []) if (!sp.night && !(this.defeated[area + ':' + sp.id] > 0)) this.spawnEnemy(sp);
   }
-  detach() { this.clearDom(); this.ctx = null; this.enemies = []; this.summon = null; }
+  detach() { this.clearDom(); this.ctx = null; this.enemies = []; this.navBig = null; this.summon = null; }
   clearDom() {
     for (const e of this.enemies || []) if (e.light) e.light.kill = true;
     if (this.bossEl) { this.bossEl.remove(); this.bossEl = null; }
@@ -81,7 +81,8 @@ export class Combat {
     a.ai = true; a.noTalk = true; a.r = D.r; a.facing = 'down';
     const e = { a, D, sp, id: sp.id, home: sp.pos.slice(), hp: D.hp, state: 'idle', t: 0, cd: 1, wt: 1 + Math.random() * 2, target: null,
                 phase: Math.random() * 6, night: !!sp.night };
-    if (D.glow && ctx.addGlow) e.light = ctx.addGlow(a.x, a.y, a.z, { color: D.glow, intensity: 3.2, range: 3.2, lift: 1.1, fadeIn: 0.6 });   // the boss carries its own rune light
+    const k = D.scale || 1;   // big foes: light reach / height grow with the figure
+    if (D.glow && ctx.addGlow) e.light = ctx.addGlow(a.x, a.y, a.z, { color: D.glow, intensity: 3.2 + k * 0.6, range: 3.2 * Math.sqrt(k) * 1.15, lift: 1.1 * k, fadeIn: 0.6 });   // the boss carries its own rune light
     this.enemies.push(e);
     if (poof && ctx.effects) ctx.effects.spawn('summon_poof', a.x, a.y, a.z + 0.05);
     return e;
@@ -212,7 +213,10 @@ export class Combat {
   // walk around walls, fences and trees: A* over the area's nav grid (string-pulled), re-planned twice a second;
   // close up (or with no nav grid) it is a straight step as before
   seek(e, tx, tz, dt, step, scale = 1) {
-    const a = e.a, nav = this.ctx.nav;
+    const a = e.a, big = (e.D.scale || 1) > 1;
+    // big foes plan on their own nav grid with clearance for their hitbox (built once per area, on first need)
+    if (big && this.ctx.nav && this.ctx.collide && !this.navBig) this.navBig = new this.ctx.nav.constructor(this.ctx.collide, e.D.r);
+    const nav = big ? this.navBig : this.ctx.nav;
     if (!nav || Math.hypot(tx - a.x, tz - a.z) < 1.0) { e.path = null; return step(tx - a.x, tz - a.z, scale); }
     e.pathT = (e.pathT || 0) - dt;
     if (!e.path || e.pathT <= 0 || Math.hypot(e.pathGoal[0] - tx, e.pathGoal[1] - tz) > 1.2) {
@@ -235,7 +239,11 @@ export class Combat {
     e.state = 'attack'; e.t = 0; e.fired = false;
     const W = e.D.wave;   // the boss: every Nth slam is a rune shockwave, telegraphed by a rune circle under it
     e.waveNow = !!W && ((e.swings = (e.swings || 0) + 1) % W.every === 0);
-    if (e.waveNow && this.ctx.effects) this.ctx.effects.spawn('rune_circle', a.x, a.y + 0.02, a.z);
+    if (e.waveNow && this.ctx.effects) {
+      this.ctx.effects.spawn('rune_circle', a.x, a.y + 0.02, a.z);
+      const W = e.D.wave, n = (e.D.scale || 1) > 1 ? 6 : 0;   // a big boss rings its whole shockwave reach with runes
+      for (let i = 0; i < n; i++) { const t = i / n * Math.PI * 2; this.ctx.effects.spawn('rune_circle', a.x + Math.cos(t) * W.r * 0.72, a.y + 0.02, a.z + Math.sin(t) * W.r * 0.72); }
+    }
   }
   enemyStrike(e) {
     const ctx = this.ctx, a = e.a, D = e.D, p = ctx.player;
@@ -251,8 +259,8 @@ export class Combat {
     const fv = FV[a.facing] || [0, 1];
     const dx = p.x - a.x, dz = p.z - a.z, d = Math.hypot(dx, dz) || 1;
     if ((e.a.role === 'golem' || D.slam) && ctx.particles) {   // the slam kicks up dust where the fists land
-      const sx = a.x + fv[0] * 0.9, sz = a.z + fv[1] * 0.9;
-      for (let i = 0; i < 3; i++) ctx.burst('footstep_dust', sx + (i - 1) * 0.3, a.y + 0.05, sz + 0.05);
+      const k = D.scale || 1, sx = a.x + fv[0] * 0.9 * k, sz = a.z + fv[1] * 0.9 * k;
+      for (let i = 0; i < 3 * k; i++) ctx.burst('footstep_dust', sx + (i - 1) * 0.3 * k / 1.5, a.y + 0.05, sz + 0.05);
     }
     if (e.waveNow) {   // rune shockwave: a ring all round the boss (dodge-roll through it, or be out of range)
       const W = D.wave;
@@ -590,6 +598,13 @@ export class Combat {
       if (n.t > 0.9) { n.el.remove(); n.done = true; }
     }
     this.nums = this.nums.filter((n) => !n.done);
+    // camera framing scales with big foes: breathe the camera out while one is engaged and near (eased in the engine)
+    let pullF = 1;
+    for (const e of this.enemies) {
+      const k = e.D.scale || 1;
+      if (k > 1 && (e.state === 'chase' || e.state === 'attack') && dist(e.a, ctx.player) < (e.D.aggro || 6) + 3) pullF = Math.max(pullF, 1 + (k - 1) * 0.12);
+    }
+    if (ctx.framePull) ctx.framePull(pullF);
     for (const e of this.enemies) {
       let b = this.bars.get(e.id);
       const show = (e.hp < e.D.hp || e.state === 'chase' || e.state === 'attack') && e.state !== 'dead' && e.state !== 'gone';
@@ -599,7 +614,7 @@ export class Combat {
       b.hidden = false;
       if (e.light) e.light.pos.set(e.a.x, e.a.y, e.a.z);
       if (e.D.boss) { this.bossBar(e); b.hidden = true; continue; }
-      const s = ctx.project(e.a.x, e.a.y + (e.a.lift || 0) + (e.a.role === 'golem' || e.D.slam ? 1.75 : 1.85), e.a.z);
+      const s = ctx.project(e.a.x, e.a.y + (e.a.lift || 0) + (e.a.role === 'golem' || e.D.slam ? 1.75 : 1.85) * (e.D.scale || 1), e.a.z);
       b.style.transform = `translate(${Math.round(s.x - 15)}px, ${Math.round(s.y)}px)`;
       b.firstChild.style.width = Math.max(0, Math.round(26 * e.hp / e.D.hp)) + 'px';
     }

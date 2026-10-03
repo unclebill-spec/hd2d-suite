@@ -9,6 +9,7 @@
  },
  "spells": true,
  "sprite_roles": ["actors", "cat", "heroes", "combat"],
+ "boss_roles": ["eldergolem"],
  "camera": {
   "fov": 24,
   "pitch": 36,

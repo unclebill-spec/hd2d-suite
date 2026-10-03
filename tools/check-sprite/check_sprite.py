@@ -51,6 +51,9 @@ def check(atlas_path, json_path=None, biome=None, max_colors=20, project=None):
     if semi:
         failures.append(f"{semi} semi-transparent pixels in atlas")
     for role, info in meta["roles"].items():
+        if info.get("sheet"):   # drawn on its own sheet (bosses: boss.png / boss.json); check that sheet on its own
+            report["roles"][role] = {"sheet": info["sheet"], "skipped": "checked on its own sheet"}
+            continue
         rr = {"frames": 0, "colors": 0, "issues": []}
         colors = set()
         (wmin, wmax), (hmin, hmax) = info["size_bounds"]
@@ -137,6 +140,9 @@ def main(argv=None):
     a = ap.parse_args(argv)
     r = check(a.atlas, a.json, a.biome, a.max_colors, a.project)
     for role, rr in r["roles"].items():
+        if rr.get("skipped"):
+            print(f"  --   {role:11s} on sheet '{rr['sheet']}' (check that sheet: <dir>/{rr['sheet']}.png --json <dir>/{rr['sheet']}.json)")
+            continue
         status = "ok  " if not rr["issues"] else "FAIL"
         print(f"  {status} {role:11s} frames={rr['frames']:2d} colours={rr['colors']:2d}" +
               ("" if not rr["issues"] else f"  ({len(rr['issues'])} issues: {rr['issues'][0]})"))

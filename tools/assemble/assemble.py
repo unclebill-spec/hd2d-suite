@@ -107,7 +107,23 @@ def assemble(spec_path, out, do_zip=True):
             pick += (roles if tok == "actors" else list(SP.RH.HERO_ORDER) if tok == "heroes"
                      else [r for r in SP.ROLES if r in SP.EXTRA] if tok == "combat" else [tok])
         all_roles = [r for r in dict.fromkeys(pick) if r in SP.ROLES]
+    # boss roles (style lock: mini-bosses ~2.5x, bosses 5x+) are drawn natively on their own sheet with bigger frames;
+    # the main atlas lists them as stubs `{sheet: "boss", ...}` and the engine swaps frame size + texture per role
+    boss_roles = [r for r in spec.get("boss_roles", [])]
+    all_roles = [r for r in all_roles if r not in boss_roles]
     sp = SP.build(biome, all_roles, art_dir(out, "sprite"), out, seed)
+    if boss_roles:
+        sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "sprite"))
+        import boss_sheet as BS  # noqa: E402
+        bs = BS.build(biome, tuple(boss_roles), art_dir(out, "sprite"), out, "boss")
+        mp = Path(sp["json"]); m = json.loads(mp.read_text())
+        bm = json.loads(Path(bs["json"]).read_text())
+        m["sheets"] = {"boss": {"json": "boss.json", "image": "boss.png"}}
+        for r in boss_roles:
+            br = bm["roles"][r]
+            m["roles"][r] = {"sheet": "boss", "row": br["row"], "kind": br["kind"], "enemy": True, "boss": True,
+                             "scale": br["scale"], "frame": bm["frame"], "anims": br["anims"], "desc": br["desc"]}
+        mp.write_text(json.dumps(m, indent=1))
     load_tool("texel").build(biome, (32, 64), None, art_dir(out, "texel"), out, seed)
     # scene-specific kit pieces
     extra = []

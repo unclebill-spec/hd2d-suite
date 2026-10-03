@@ -77,30 +77,54 @@ const QUAD = (() => {
 })();
 
 export class Actors {
-  constructor(world, spriteScene, atlasImage, meta, collide) {
+  // sheets: optional extra sprite sheets ({name: {meta, image, path}}) for roles drawn at their own frame size (bosses:
+  // a role in meta.roles with `sheet: name` reads its row / frames from that sheet; same column layout, bigger frames)
+  constructor(world, spriteScene, atlasImage, meta, collide, sheets = {}) {
     this.world = world; this.scene = spriteScene; this.meta = meta; this.collide = collide;
     this.list = [];
-    const tex = new THREE.Texture(atlasImage);
-    tex.flipY = false; tex.generateMipmaps = false;
-    tex.minFilter = THREE.NearestFilter; tex.magFilter = THREE.NearestFilter;
-    tex.colorSpace = THREE.NoColorSpace; tex.needsUpdate = true;
+    const mk = (img) => {
+      const tex = new THREE.Texture(img);
+      tex.flipY = false; tex.generateMipmaps = false;
+      tex.minFilter = THREE.NearestFilter; tex.magFilter = THREE.NearestFilter;
+      tex.colorSpace = THREE.NoColorSpace; tex.needsUpdate = true;
+      return tex;
+    };
+    const tex = mk(atlasImage);
     this.tex = tex;
     this.aw = atlasImage.width; this.ah = atlasImage.height;
     this.fw = meta.frame[0]; this.fh = meta.frame[1];
     this.heightM = 1.8;
+    this.main = { name: 'main', tex, aw: this.aw, ah: this.ah, fw: this.fw, fh: this.fh, pivot: meta.pivot, meta };
+    this.sheets = { main: this.main };
+    for (const [n, sh] of Object.entries(sheets || {})) {
+      const m = sh.meta;
+      this.sheets[n] = { name: n, tex: mk(sh.image), aw: sh.image.width, ah: sh.image.height, fw: m.frame[0], fh: m.frame[1],
+        pivot: m.pivot, meta: m, path: sh.path };
+    }
     this.k = 3;
     this._v = new THREE.Vector3(); this._w = new THREE.Vector3();
   }
 
+  // which sheet + role record an atlas role lives in
+  sheetOf(roleName) {
+    const r = this.meta.roles[roleName];
+    if (!r) return null;
+    const S = r.sheet && this.sheets[r.sheet];
+    if (r.sheet && !S) throw new Error('role ' + roleName + ' needs sheet ' + r.sheet);
+    return S ? { S, role: { ...r, ...(S.meta.roles[roleName] || {}) } } : { S: this.main, role: r };
+  }
+
   add(spec) {
-    const role = this.meta.roles[spec.role];
-    if (!role) throw new Error('no role ' + spec.role);
+    const found = this.sheetOf(spec.role);
+    if (!found) throw new Error('no role ' + spec.role);
+    const { S, role } = found;
+    const tall = S.fh / this.fh;   // a boss sheet's figure height in hero heights (native pixels, same density)
     const mat = new THREE.ShaderMaterial({
       vertexShader: VERT, fragmentShader: FRAG, glslVersion: THREE.GLSL3, depthTest: true, depthWrite: true,
       uniforms: {
-        uAtlas: { value: this.tex }, uFrame: { value: new THREE.Vector2() },
-        uFrameSize: { value: new THREE.Vector2(this.fw, this.fh) },
-        uPivot: { value: new THREE.Vector2(this.meta.pivot[0], this.meta.pivot[1]) },
+        uAtlas: { value: S.tex }, uFrame: { value: new THREE.Vector2() },
+        uFrameSize: { value: new THREE.Vector2(S.fw, S.fh) },
+        uPivot: { value: new THREE.Vector2(S.pivot[0], S.pivot[1]) },
         uAnchor: { value: new THREE.Vector2() }, uK: { value: 3 }, uViewport: { value: new THREE.Vector2(1, 1) },
         uZBottom: { value: 0 }, uZTop: { value: 0 }, uTint: { value: new THREE.Vector3(1, 1, 1) },
         uRot: { value: 0 }, uFlash: { value: 0 }, uMode: { value: 0 }, uSil: { value: new THREE.Vector3(0.97, 0.93, 0.82) },
@@ -115,7 +139,7 @@ export class Actors {
     if (spec.xray) {
       const xm = mat.clone();
       xm.uniforms = THREE.UniformsUtils.clone(mat.uniforms);
-      xm.uniforms.uAtlas.value = this.tex; xm.uniforms.uMode.value = 1;
+      xm.uniforms.uAtlas.value = S.tex; xm.uniforms.uMode.value = 1;
       if (spec.xrayColor) xm.uniforms.uSil.value.copy(spec.xrayColor);
       xm.depthFunc = THREE.GreaterDepth; xm.depthWrite = false;
       xray = new THREE.Mesh(QUAD, xm);
@@ -123,12 +147,12 @@ export class Actors {
       this.scene.add(xray);
     }
     // shadow caster (world scene)
-    const ctex = this.tex.clone();
+    const ctex = S.tex.clone();
     ctex.flipY = true; ctex.needsUpdate = true;
-    ctex.repeat.set(this.fw / this.aw, this.fh / this.ah);
+    ctex.repeat.set(S.fw / S.aw, S.fh / S.ah);
     const isCreature = role.kind !== 'human' && role.kind !== 'enemy';
-    const h = this.heightM;
-    const w = h * this.fw / this.fh;
+    const h = this.heightM * tall;
+    const w = h * S.fw / S.fh;
     const cg = new THREE.PlaneGeometry(w, h); cg.translate(0, h / 2, 0);
     const caster = new THREE.Mesh(cg, new THREE.MeshBasicMaterial({ colorWrite: false, depthWrite: false, side: THREE.DoubleSide }));
     caster.customDepthMaterial = new THREE.MeshDepthMaterial({ depthPacking: THREE.RGBADepthPacking, map: ctex, alphaTest: 0.5, side: THREE.DoubleSide });
@@ -144,7 +168,7 @@ export class Actors {
       blinkAt: 2 + Math.random() * 4, idleTurn: spec.turn !== false, r: isCreature ? 0.22 : 0.28, rect: null,
       canCast: (role.anims || []).includes('cast'), castT: 0, castDur: 0.9, spell: spec.spell || null,
       every: spec.every || 4, castClock: spec.castDelay ?? 0.5, name: spec.name,
-      anims: role.anims || ['idle', 'walk'], act: null, lift: 0, xray, rot: 0, flashT: 0,
+      anims: role.anims || ['idle', 'walk'], act: null, lift: 0, xray, rot: 0, flashT: 0, S, tall,
     };
     const h0 = this.collide ? this.collide.height(a.x, a.z) : 0;
     a.y = h0 ?? 0;
@@ -155,7 +179,7 @@ export class Actors {
   // swap an actor's role in place (a game's hero picker): same position, new atlas row + anims
   setRole(a, roleName) {
     const role = this.meta.roles[roleName];
-    if (!role) return false;
+    if (!role || role.sheet) return false;   // in-place swaps stay on the main atlas (hero picker)
     a.role = roleName; a.roleRow = role.row; a.kind = role.kind;
     a.anims = role.anims || ['idle', 'walk']; a.canCast = a.anims.includes('cast');
     a.act = null; a.castT = 0; a.lift = 0;
@@ -174,7 +198,8 @@ export class Actors {
     const anims = this.meta.anims;
     const has = a.anims ? a.anims.includes(a.anim) : true;   // roles without the anim fall back to idle columns
     const col = ((has && anims[a.anim]) || anims.idle).start + (has ? a.frame : Math.min(a.frame, 3));
-    return [col * this.fw, (a.roleRow + fi) * this.fh];
+    const S = a.S || this.main;
+    return [col * S.fw, (a.roleRow + fi) * S.fh];
   }
 
   setFacingFromVec(a, dx, dz) {
@@ -290,7 +315,8 @@ export class Actors {
       const sy = Math.round((feet.y * 0.5 + 0.5) * bufH);
       u.uAnchor.value.set(sx, sy);
       u.uZBottom.value = feet.z;
-      const head = this._w.set(a.x, ly + this.heightM * (a.kind === 'human' || a.kind === 'enemy' ? 1 : 0.55), a.z).add(toCam).project(camera);
+      const S = a.S || this.main;
+      const head = this._w.set(a.x, ly + this.heightM * (a.tall || 1) * (a.kind === 'human' || a.kind === 'enemy' ? 1 : 0.55), a.z).add(toCam).project(camera);
       u.uZTop.value = head.z;
       // light: clock tint, building shade, nearby lamps (warm pools at night)
       const t = a.tint.setRGB(tintBase.r, tintBase.g, tintBase.b);
@@ -316,11 +342,12 @@ export class Actors {
       // shadow caster: upright, turned to face the sun, same frame as the visible sprite
       a.caster.position.set(a.x, a.y, a.z);
       a.caster.rotation.set(0, az, 0);
-      a.ctex.offset.set(fx / this.aw, 1 - (fy + this.fh) / this.ah);
+      a.ctex.offset.set(fx / S.aw, 1 - (fy + S.fh) / S.ah);
       if (a.kind !== 'human') a.caster.scale.set(1, 1, 1);
       // CSS-free debug rect (drawing-buffer px, top-left origin) for check-scene
-      const x0 = sx - this.meta.pivot[0] * k, yTop = bufH - (sy + this.fh * k);
-      a.rect = { x: x0, y: yTop, w: this.fw * k, h: this.fh * k, frame: [fx, fy], k, lift: a.lift || 0 };
+      const x0 = sx - S.pivot[0] * k, yTop = bufH - (sy + S.fh * k);
+      a.rect = { x: x0, y: yTop, w: S.fw * k, h: S.fh * k, frame: [fx, fy], k, lift: a.lift || 0 };
+      if (S !== this.main) { a.rect.sheet = S.name; a.rect.atlas = S.path; }
     }
   }
 }

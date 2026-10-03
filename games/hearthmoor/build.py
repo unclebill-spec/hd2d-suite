@@ -42,6 +42,11 @@ def used_files(scene, root):
     for k in ("atlas", "particles", "spells", "gamefx"):
         if scene.get(k):
             keep.add(scene[k]["image"]); keep.add(scene[k]["json"])
+    if scene.get("atlas"):   # boss sheets next to the actor atlas (meta.sheets)
+        am = json.loads((root / scene["atlas"]["json"]).read_text())
+        d = scene["atlas"]["json"].rsplit("/", 1)[0] + "/"
+        for sh in am.get("sheets", {}).values():
+            keep.add(d + sh["image"]); keep.add(d + sh["json"])
     for o in scene["objects"]:
         keep.add(o["glb"])
     if scene.get("trees_meta"):

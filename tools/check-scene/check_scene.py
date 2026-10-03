@@ -64,8 +64,15 @@ def lum(a):
     return a[..., 0] * 0.299 + a[..., 1] * 0.587 + a[..., 2] * 0.114
 
 
+_SHEETS, _SHEET_ROOT = {}, []
+
+
 def sprite_check(shot, atlas, r, block_tol=6):
     """shot: HxWx3 uint8 screenshot, atlas: RGBA uint8, r: actor rect (screenshot px)."""
+    if r.get("atlas") and _SHEET_ROOT:   # a boss role drawn on its own sheet (bigger native frames): compare with that sheet
+        if r["atlas"] not in _SHEETS:
+            _SHEETS[r["atlas"]] = np.array(Image.open(_SHEET_ROOT[0] / r["atlas"]).convert("RGBA"))
+        atlas = _SHEETS[r["atlas"]]
     k = int(r["k"]); fx, fy = r["frame"]; fw, fh = r["w"] // k, r["h"] // k
     x0, y0 = int(round(r["x"])), int(round(r["y"]))
     src = atlas[fy:fy + fh, fx:fx + fw]
@@ -439,6 +446,7 @@ def run(root, out, size=(1280, 720), timeout=120, scene_dir="", params="", phone
     sroot = root / scene_dir if scene_dir else root
     scene = json.loads((sroot / "scene.json").read_text())
     atlas = np.array(Image.open(sroot / scene["atlas"]["image"]).convert("RGBA"))
+    _SHEET_ROOT[:] = [sroot]
     pre = (params + "&") if params else ""
     cam_spec = scene.get("camera", {})
     srv = _serve(root)

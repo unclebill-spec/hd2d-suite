@@ -120,6 +120,12 @@ export async function boot(opts = {}) {
   const biome = await (await fetch(R(scene.palette))).json();
   const atlasMeta = await (await fetch(R(scene.atlas.json))).json();
   const atlasImg = await loadImage(R(scene.atlas.image));
+  // extra sprite sheets (boss roles drawn natively at their own frame size), paths relative to the atlas json
+  const sheetDir = scene.atlas.json.replace(/[^/]*$/, '');
+  const sheets = {};
+  for (const [n, sh] of Object.entries(atlasMeta.sheets || {})) {
+    sheets[n] = { meta: await (await fetch(R(sheetDir + sh.json))).json(), image: await loadImage(R(sheetDir + sh.image)), path: sheetDir + sh.image };
+  }
   const pMeta = scene.particles ? await (await fetch(R(scene.particles.json))).json() : null;
   const pImg = pMeta ? await loadImage(R(scene.particles.image)) : null;
   const treesMeta = scene.trees_meta ? await (await fetch(R(scene.trees_meta))).json() : { trees: {} };
@@ -156,8 +162,12 @@ export async function boot(opts = {}) {
   const bounds = C.bounds; // [x0, z0, x1, z1] for the target
   const look = new THREE.Vector3(...(C.look || [0, 0, -3]));   // frame ahead of the player (the terrace)
   function aspectScale() { const a = cssW / cssH; return a < 1.25 ? Math.min(1.9, 1.25 / a) : 1; }
+  // framing pull-back for big foes (style lock boss scale): games call ctx.framePull(f) while a boss is engaged;
+  // eased so the camera breathes out / in instead of jumping
+  let pull = 1, pullTo = 1;
   function placeCamera() {
-    const d = dist * aspectScale();
+    pull += (pullTo - pull) * 0.05; if (Math.abs(pullTo - pull) < 1e-3) pull = pullTo;
+    const d = dist * aspectScale() * pull;
     camera.position.copy(target).addScaledVector(camDir, d);
     camera.userData.hazeOff = d - C.distance;   // portrait / zoom pull-back does not add fog
     camera.quaternion.setFromEuler(new THREE.Euler(-pitch, 0, 0, 'YXZ'));   // fixed: no orbit, no yaw
@@ -244,7 +254,7 @@ export async function boot(opts = {}) {
 
   // ---------------------------------------------------------------- collision + actors
   const collide = scene.collision ? new Collide(scene.collision) : null;
-  const actors = new Actors(world, sharp, atlasImg, atlasMeta, collide);
+  const actors = new Actors(world, sharp, atlasImg, atlasMeta, collide, sheets);
   const nav = collide ? new Nav(collide, 0.3) : null;
   const npcs = (scene.actors || []).filter((s) => !(hooks.skipActor && hooks.skipActor(s))).map((s) => actors.add(s));
   const pspec = { ...scene.player, ...(opts.player || {}) };
@@ -838,12 +848,13 @@ export async function boot(opts = {}) {
     burst: (name, x, y, z, n) => particles && particles.burst(name, x, y, z, n),
     heightAt: (x, z) => (collide ? (collide.height(x, z) ?? 0) : 0),
     zoom: () => dist,
+    framePull: (f) => { pullTo = THREE.MathUtils.clamp(f || 1, 1, 1.6); }, pull: () => pull,
     moveActor, act: (name, a, o) => actorAct(name, a || player, o || {}), release: (name, a) => actors.release(a || player, name),
     dodge, summon, playerCast, cycleSpell, selectSpell, spellIndex: () => spellIdx,
     setTimeScale: (s) => { timeScale = Math.max(0, Math.min(1, s)); }, timeScale: () => timeScale,
     pixelK: () => actors.k, bufSize: () => [bufW, bufH], canvasRect: () => canvas.getBoundingClientRect(),
     nearestNpc: (d) => nearestNpc(d), blocked,
-    addGlow, glows, lamps,
+    addGlow, glows, glowN: GLOW_N, lamps,
   };
 
   // ---------------------------------------------------------------- debug / QA API
