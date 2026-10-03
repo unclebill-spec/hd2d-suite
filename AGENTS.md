@@ -4,6 +4,8 @@ Bill (GitHub `unclebill-spec`) hands this project between his bots and Cursor th
 
 **Building Hearthmoor? Start with [`docs/HEARTHMOOR_BUILDER_HANDOFF.md`](docs/HEARTHMOOR_BUILDER_HANDOFF.md)**: the one consolidated game design document (pitch, style, platform, story, world, heroes, bestiary, dungeons and rifts, economy, build status, open decisions, milestones).
 
+**New design (2026-10-03, Bill approved):** [`docs/story/DESIGN_EXPANSION_2026-10-03.md`](docs/story/DESIGN_EXPANSION_2026-10-03.md) (also appended to `STORY_SEEDS.md`): opening hour, main quest beats, leveling and skill trees, death / difficulty / New Game+, day-night and weather, Ravenhold's Forge Quarter / Old Temple / Market Terraces, music and sound. Not yet merged into the handoff; read it alongside it.
+
 ## Before you start / before you stop
 1. **`git pull` first**, every time you resume.
 2. Keep `CHANGELOG.md` (dated America/New_York entries) and this file current.
@@ -47,7 +49,8 @@ Bill (GitHub `unclebill-spec`) hands this project between his bots and Cursor th
 | `games/hearthmoor/` | The game: `index.html`, `game/` (game.js, data.js, audio.js, game.css), `areas/<id>/` (built), `areas/src/*.json` (area specs), `build.py`, `tests/smoke.py`, `startup.sh`, `RESTORE.md` |
 | `docs/HD2D_COZY_STYLE_LOCK.md` | Bill's style law (binding) |
 | `docs/HEARTHMOOR_BUILDER_HANDOFF.md` | Consolidated builder handoff / game design document (start here to build the game) |
-| `docs/story/STORY_SEEDS.md` | Story bible: Norse Nine Realms direction, villain, alliances, cities, heroes and magic, pets |
+| `docs/story/STORY_SEEDS.md` | Story bible: Norse Nine Realms direction, villain, alliances, cities, heroes and magic, pets, plus the 2026-10-03 design expansion |
+| `docs/story/DESIGN_EXPANSION_2026-10-03.md` | Design expansion E1–E7 (opening hour, main quest, skill trees, difficulty / NG+, day-night and weather, Ravenhold districts, music) |
 | `docs/screenshots/` | Curated screenshots. The full `shots/` QA folders are gitignored (they are regenerated) |
 | `index.html` | Pages landing page linking the game + demos |
 

@@ -2,7 +2,18 @@
 
 Dates are America/New_York. Newest first. Keep this current with every change you push.
 
-## 2026-10-03
+## 2026-10-03: design expansion (opening hour, main quest, skill trees, difficulty, day/night, Ravenhold, music)
+- New `docs/story/DESIGN_EXPANSION_2026-10-03.md` (Bill approved), also appended to `docs/story/STORY_SEEDS.md`. Seven sections:
+  - E1 opening hour: Lantern Eve in Hearthmoor, tutorial beats (move, talk, errands, first fight, guard / dodge / jump, first spell and summon), six origin openings, the Rift cracking, leaving home;
+  - E2 main quest: prologue, Acts 1–3, the finale, Veyra's appearances and reveal, the Saver/Breaker choice, the betrayal (Gatewright Halvard), the one side-switch window, how each of the 4 endings is reached, where the optional dungeons and superbosses fit;
+  - E3 leveling: cap 50 (+10 per NG+ cycle, max 70), six stats, 3-branch skill trees for the six starters, realm school trees, summon tiers, respec;
+  - E4 fainting (recoverable 10% carried gold), Story / Adventurer / Hero / Saga modes, boss retry, New Game+ carry-over, the Hall of Heroes;
+  - E5 a 24-minute day, night changes, weather per realm, weekly festivals;
+  - E6 Ravenhold's Forge Quarter, Old Temple (home of the Rift-gate) and Market Terraces (NPCs, shops, quests), with a consistency check of the Harbor and Undercity;
+  - E7 music and sound direction, leitmotifs, per-realm instruments, the layers, day vs night, UI / SFX rules (original only).
+- Not yet merged into `docs/HEARTHMOOR_BUILDER_HANDOFF.md` (at Bill's request; that happens at the end of the session). `AGENTS.md` points to the new file.
+
+## 2026-10-03: storyboard decisions
 - docs: handoff section 11 now records the storyboard decisions (combat style, Glimmerdeep, Verdant Heart nature dungeon, 10 rift types with signature bosses, factions, names, companions, mechanical pet).
 
 ## 2026-10-02: consolidated Hearthmoor builder handoff
