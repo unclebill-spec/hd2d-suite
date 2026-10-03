@@ -401,7 +401,7 @@ def run(out, simscale=4, size=(960, 540)):
                    and S["skills"].get("sb_tempest") == 1 and S["sp"] == lv - 2, stats=S["stats"], skills=S["skills"])
             pg.keyboard.press("Escape"); pg.wait_for_timeout(200)
             pg.keyboard.press("b"); pg.wait_for_timeout(300)
-            sb_open = T.ev("window.__hm.heroUI && document.querySelectorAll('#heroBody .row.slot').length === 4")
+            sb_open = T.ev("window.__hm.heroUI && document.querySelectorAll('#heroBody .row.sbslot').length === 4")
             before = T.ev("window.__hm.slots()")
             pg.keyboard.press("ArrowDown"); pg.keyboard.press("Enter"); pg.wait_for_timeout(300)
             after = T.ev("window.__hm.slots()"); cyc = T.ev("window.__hm.ctx.spellCycle()")

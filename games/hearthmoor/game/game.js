@@ -747,7 +747,7 @@ function drawHero() {
     HUI.n = 4;
     body.innerHTML = `<p class="pts">Spellbook: ${knownSpells().length} known · put any of them in the four slots (1-4, LB / RB, the wheel)</p>`
       + [0, 1, 2, 3].map((k) => { const id = raw[k] || null;
-        return `<div class="row slot${k === HUI.i ? ' sel' : ''}" data-k="${k}"><b>slot ${k + 1}</b><em>${id ? spellName(id) : '— empty —'}</em><span>${id ? spellBlurb(id) : 'tap change to fill'}</span>`
+        return `<div class="row sbslot${k === HUI.i ? ' sel' : ''}" data-k="${k}"><b>slot ${k + 1}</b><em>${id ? spellName(id) : '— empty —'}</em><span>${id ? spellBlurb(id) : 'tap change to fill'}</span>`
         + `<button class="wbtn sm plus" data-slot="${k}">change</button></div>`; }).join('');
     body.querySelectorAll('[data-slot]').forEach((b) => { b.onclick = (e) => { e.stopPropagation(); if (slotSpell(+b.dataset.slot)) { G.audio.sfx('pickup'); save(); drawHero(); } }; });
   } else {
