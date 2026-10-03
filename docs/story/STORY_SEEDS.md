@@ -232,3 +232,6 @@ Look: gloom-and-glow, dark armor, glowing eyes and runes.
 - Optional completion with special rewards (unique pet, cosmetic set, legendary gear).
 ### Element/theme coverage
 Ice, Fire, Darkness, Acid, Life, Death, Nature, Energy/Electricity, Decay & Rot, Disease, Heaven, Hell, Techno-mage/steampunk, Giant land, Ghost & undead. All appear across rifts and dungeons above; procedural dungeons draw from all themes.
+
+## Decisions 2026-10-03 (storyboarder, at Bill's request)
+See docs/HEARTHMOOR_BUILDER_HANDOFF.md section 11: real-time action combat; Glimmerdeep behind a hidden spring in Ravenhold Undercity (Gnome Council chain); new Vanaheim nature dungeon The Verdant Heart (boss Hjortur the Greenheart); Acid rift + Caustic Mire; 10 rift types with signature bosses; five factions kept; Morriel the Last Toll; Legend-rank items; Tick the clockwork owl; companion names.

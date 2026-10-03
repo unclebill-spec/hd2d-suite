@@ -390,7 +390,7 @@ A monster book with a **hunt log** tracking which rares and mini-bosses you've b
 | Storm | lightning golems, storm elementals, fallen angels and nephilim | blue/white |
 | Ruin | ancient stone and flesh golems, forgotten-god relics, mixed old evils | mixed |
 
-- **Rift bosses:** drawn from a shared random pool, plus a few fixed signature bosses per rift type (not yet named).
+- **Rift bosses:** drawn from a shared random pool, plus a few fixed signature bosses per rift type (named in section 11).
 - **Future rift theme pool (undesigned):** Acid, Plague, Heaven, Hell, Steam.
 - Portal and rift art: drawn fresh from the rift_refs style.
 
@@ -586,15 +586,40 @@ Runtime API: `Actors.act(a, name, {hold, dur})` / `release(a, name)` in `engine/
 
 ---
 
-## 11. Open decisions for Bill
+## 11. Decisions (made by the storyboarding agent at Bill's request, 2026-10-03)
 
-Ask Bill; don't decide these.
-1. **Combat style.** Real-time action, turn-based, or a hybrid? This gates hitboxes, enemy AI, the HUD and touch buttons.
-2. **Glimmerdeep location.** Not chosen.
-3. **Nature dungeon missing.** Vanaheim's dungeon became decay and rot, so nature has no dungeon. **Acid** and **life** are only side themes (Plaguewell acid pools; Celestial Citadel). Options raised: a living-forest nature dungeon, a bigger role for acid.
-4. **Extra rift types** (Acid, Plague, Heaven, Hell, Steam) are a theme pool only, not designed. Rift signature bosses aren't named either.
-5. **Factions:** five overall (current) vs one per city.
-6. Smaller unnamed items that will come up during the build: the Azrael-style archangel's final name, the Legend-rank item for the four non-Embassy factions, the mechanical pet's ability, the companions' names.
+These answer the former open questions. They are binding for the build unless Bill changes them.
+
+1. **Combat style: real-time action RPG.** Attack, guard, jump, and a dodge roll, plus 4 spell slots and a summon button. On phone, holding the spell button opens a slow-time spell wheel. Fits the existing R/C/Z animations and touch/controller/keyboard support. No turn-based mode.
+2. **Glimmerdeep location:** a secret entrance behind a hidden bubbly spring in **Ravenhold's Undercity**, opened by finishing the **Gnome Council** ripple chain. Available any time after you reach Ravenhold; optional completion.
+3. **Nature dungeon:** add **The Verdant Heart**, a living-forest dungeon in Vanaheim (nature + life: dryads, moss golems, life elementals, healing springs). It opens after you cleanse the Rotwood Hollow. Boss: **Hjortur the Greenheart**, an elder stag-king. On the befriend path he's a guardian trial; on the conquer path he's corrupted and fought to the death. Vanaheim now has two dungeons (10 realm dungeons total).
+   - **Acid:** gets its own rift type (below) and the **Caustic Mire** wing of the Plaguewell Sewers.
+   - **Life:** home in the Verdant Heart and the Celestial Citadel.
+4. **Rift types.** The five starters are available from the start; five more unlock after your first Abyssal Rift.
+
+| Rift | Enemies | Glow | Signature bosses |
+|---|---|---|---|
+| Frostfire | cold-fire wraiths, ice golems, frost liches | blue | Ysolde of the Pale Brazier (cold-fire lich queen) |
+| Gloam | shades, skeleton lines, death knights | violet | The Hollow Choir (a chorus of fused wraiths) |
+| Bloodmoon | vampires, blood golems, demon lords | red | Countess Varra Crimsonveil (vampire countess); the Blood Colossus |
+| Storm | lightning golems, storm elementals, fallen angels, nephilim | blue-white | Thundermaw (lightning golem titan); Azkar the Oathless (fallen nephilim) |
+| Ruin | ancient stone and flesh golems, old-god relics | amber | The Forgotten Idol (god-golem) |
+| Acid (later) | caustic elementals, acid golems, corroded knights | toxic green | The Corrosion Wyrm |
+| Plague (later) | maggot swarms, flesh golems, plague-bearers (gross allowed, like the Plaguewell) | sickly green-red | The Rotting Bishop |
+| Heaven (later) | angel sentries, light wraiths, Gilded Inquisitors | gold-white | Auriel the Unblinking (throne angel) |
+| Hell (later) | demon legions, ember knights, chained hounds | red | Malgrim the Chain-Lord (overlord demon) |
+| Steam (later) | clockwork constructs, steam elementals | brass and blue | The Brass Leviathan |
+
+Rift bosses still also draw from the shared random pool.
+
+5. **Factions: keep five overall.** Each realm city has a quartermaster who sells local gear under its Realm Embassy, so cities still feel distinct without extra factions.
+6. **Smaller names and items**
+   - Reaper archangel: **Morriel, the Last Toll**.
+   - Legend-rank faction rewards: Gatekeepers' Guild **Keyless Rune** (open any Bifrost gate, even a hostile one, once a day); Order of the Hearth **Hearthstone Mantle** (armor set; recall home anytime, one revive per dungeon); Gnome Council **Gnome King's Pocket Engine** (summons a clockwork gnome squad and reveals secrets); Rift Corsairs **Black Sail Cutlass** plus a **Rift-skiff** mount that sails the Rift.
+   - Mechanical pet (Anvildeep): **Tick, a clockwork owl.** Marks nearby hidden springs, chests and secret doors, with a loot-find aura.
+   - Companions: Asgard **Sigrun Stormwing** (valkyrie); Jotunheim **Bram Mossback** (gentle giant); Alfheim **Lumi** (wisp spirit); Svartalfheim **Dagna Coalbeard** (dwarf smith); Muspelheim **Kindle** (ember salamander); Niflheim **Hrefna Frostveil** (frost-witch); Vanaheim **Tobble Capwhistle** (gnome); Helheim **Old Corwin** (lantern-ferryman shade, by key quest); Breaker path **Veyra**.
+   - Fast travel: the agent's earlier reading is now the rule. After your first entry, gate fast travel needs a key unless the realm is allied.
+7. **Ravenhold's Forge Quarter, Old Temple and Market Terraces** get detail later, during the Midgard slice storyboard.
 
 ---
 
@@ -606,7 +631,7 @@ Ask Bill; don't decide these.
 |---|---|---|
 | 0 | Platform polish | display presets (Auto / Phone landscape / 720p / 1080p TV / Retro 320x240, integer sprite scale), fullscreen button, rotate prompt, Install button + iPhone Add to Home Screen tip, fix the LT double-map, player see-through silhouette when occluded |
 | 1 | Heroes in the game | title-screen class picker (6 starters), chosen class as player, regenerate game atlases with hero anims, touch buttons for attack/guard/jump (left-hand aware), save the class in the slot (bump the save version with migration) |
-| 2 | Combat core (**after Bill picks the style**) | hitboxes, HP, damage, guard, enemy AI, one golem + one wraith + one skeleton, death/respawn, per-class first spell and summon, action VFX in the spells atlas |
+| 2 | Combat core (real-time action, see section 11) | hitboxes, HP, damage, guard, enemy AI, one golem + one wraith + one skeleton, death/respawn, per-class first spell and summon, action VFX in the spells atlas |
 | 3 | Midgard slice | Hearthmoor reframed for the Nine Realms, Ravenhold (start with 1–2 of the 5 districts), dialogue choices, multiple save slots, story quest 1 |
 | 4 | Bifrost Crossing + first realm | portal hub, embassy mood, alliance state (befriend/conquer, rival lockouts, max 4 allies), one realm city (e.g. Mossbrook), its static dungeon and boss |
 | 5 | Loot and economy | rarity tiers, inventory, bank, merchants, factions + merit ranks, upgrades/rerolls/sockets, waystones |
