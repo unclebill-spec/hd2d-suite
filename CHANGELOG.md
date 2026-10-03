@@ -2,6 +2,13 @@
 
 Dates are America/New_York. Newest first. Keep this current with every change you push.
 
+## 2026-10-03: Hearthmoor Stage 2, glow pass (part 4 of 5)
+- **Spell light pools:** every hero spell and charm leaves a short pool of light where it lands (about 1.8 s): a dithered gold ground decal (`light_pool`), twinkling glitter motes rising out of it (`glitter`) and a real point light in the spell's own colour. No bloom: all palette pixels and point lights.
+- **Glowing toadstools at night:** red-and-white toadstool clusters come out between 19:12 and 06:00 in Mossglen (6), Market Square (4) and Bakery Lane (4). Their white spots twinkle, spores drift up, and each casts a soft rose pool of light; at dawn they dither away.
+- **Light is a place:** standing in a light zone (a lit lamp post, stone lantern, shrine, shop window, toadstool or spell pool) makes you **glowlit**: +10% damage and 1.5x stamina regen, shown as "✦ glowlit" and a gold rim on the vitals chip. Cold-fire wraiths will not drift into light, slip out of it if a pool blooms under them, and hold their fire while you stand lit.
+- **Engine:** `ctx.addGlow(x, y, z, {color, intensity, range, life, fadeIn})` gives games a small fixed pool of point lights (3, made at boot so shaders never recompile) for the strongest glows near the camera; every glow also warms nearby sprites like a lamp. Effects take `fadeIn` (dither in). `ctx.lamps` is exposed.
+- New spells-atlas effects (`tools/spells/spells.py`): `light_pool`, `glitter`, `toadstools`.
+
 ## 2026-10-03: Hearthmoor Stage 2, part 1: leveling (+ review fixes)
 - **Review fixes:** the toast is a brief fade below the top HUD row (never over buttons, never takes taps); the inventory shows once (bag chip; the pad rail is empty); the see-through silhouette has a solid 1-texel ink outline around the dither; the golem's side view is a hunched stone block with a brow ridge and a long hanging arm (no more bird); check-scene's effects lineup hides quest tags, so Plaza `effects_sharp` passes.
 - **Leveling (`game/progress.js`):** XP from enemies (golem 45, wraith 34, skeleton 28, +50% the first time you beat each kind) and errands (120); level cap 50; six stats (Might, Arcana, Spirit, Vigor, Grit, Swiftness) with class starting values; 2 free stat points + 1 skill point per level.

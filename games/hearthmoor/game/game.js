@@ -8,6 +8,7 @@ import { Ambient } from './audio.js';
 import * as PR from './progress.js';
 import { HEROES, HERO, SPELLS, SUMMONS } from './heroes.js';
 import { Combat } from './combat.js';
+import { Glow } from './glow.js';
 
 // PWA install: catch the browser's prompt as early as possible (Chrome / Edge / Android); iPhone gets a tip instead
 let installEvt = null;
@@ -33,6 +34,7 @@ const G = {
   qaStill: QA && !Q.has('combat'),   // QA screenshots / check-scene: enemies stand around unless &combat
 };
 G.combat = new Combat(G);
+G.glow = new Glow(G);
 window.__hm = G;   // smoke tests + debugging
 
 // ------------------------------------------------------------------ save / load
@@ -179,12 +181,12 @@ async function loadArea(id, spawnKey, pos) {
   const old = $('view'); if (old) old.remove();
   const canvas = document.createElement('canvas'); canvas.id = 'view'; document.body.prepend(canvas);
   G.area = id; G.S.area = id; G.armed = false;
-  G.combat.detach();
+  G.combat.detach(); G.glow.detach();
   G.game = await boot({ base: AREAS[id], canvas, spawn: sp, startT: G.S.t, clockSpeed: 1 / DAY_SECONDS, spellCycle: slots(),
                         player: { role: G.S.cls || G.preview || 'wildcaller' }, castAdvance: false,
                         keepTitle: true, padHandled: true, hooks, toast: (m, t) => toast(m, t) });
   const ctx = G.ctx = G.game.ctx;
-  G.combat.attach(ctx, id);
+  G.combat.attach(ctx, id); G.glow.attach(ctx, id);
   // portrait source: this area's actor atlas
   portraitImg = new Image(); portraitImg.src = AREAS[id] + ctx.scene.atlas.image;
   // pickups already taken stay gone
@@ -255,6 +257,7 @@ function onFrame(dt, ctx) {
   typeDialogue(dt);
   if (toastT > 0) { toastT -= dt; const el = $('toast'); if (toastT <= 0.35) el.classList.add('out'); if (toastT <= 0) { el.hidden = true; el.classList.remove('out'); } }
   syncMarkers();
+  G.glow.update(dt);
   G.combat.update(dt, ctx);
   drawVitals(ctx);
   if (G.title || G.busy) return;

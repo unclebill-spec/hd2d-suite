@@ -6,7 +6,7 @@
  "cell": 32,
  "size": [
   256,
-  672
+  768
  ],
  "effects": {
   "sparkle_burst": {
@@ -1588,6 +1588,183 @@
     }
    ],
    "duration": 0.583
+  },
+  "light_pool": {
+   "row": 21,
+   "frames": 6,
+   "fps": 8,
+   "loop": true,
+   "loop_from": 3,
+   "loops": 2,
+   "kind": "decal",
+   "pivot": [
+    16,
+    16
+   ],
+   "lift": 0.02,
+   "glow": true,
+   "light": null,
+   "speed": null,
+   "travel": null,
+   "then": null,
+   "strip": "light_pool.png",
+   "frame_list": [
+    {
+     "x": 0,
+     "y": 672,
+     "w": 32,
+     "h": 32
+    },
+    {
+     "x": 32,
+     "y": 672,
+     "w": 32,
+     "h": 32
+    },
+    {
+     "x": 64,
+     "y": 672,
+     "w": 32,
+     "h": 32
+    },
+    {
+     "x": 96,
+     "y": 672,
+     "w": 32,
+     "h": 32
+    },
+    {
+     "x": 128,
+     "y": 672,
+     "w": 32,
+     "h": 32
+    },
+    {
+     "x": 160,
+     "y": 672,
+     "w": 32,
+     "h": 32
+    }
+   ],
+   "duration": 1.5
+  },
+  "glitter": {
+   "row": 22,
+   "frames": 8,
+   "fps": 10,
+   "loop": true,
+   "loop_from": 0,
+   "loops": 2,
+   "kind": "billboard",
+   "pivot": [
+    16,
+    31
+   ],
+   "lift": 0.0,
+   "glow": true,
+   "light": null,
+   "speed": null,
+   "travel": null,
+   "then": null,
+   "strip": "glitter.png",
+   "frame_list": [
+    {
+     "x": 0,
+     "y": 704,
+     "w": 32,
+     "h": 32
+    },
+    {
+     "x": 32,
+     "y": 704,
+     "w": 32,
+     "h": 32
+    },
+    {
+     "x": 64,
+     "y": 704,
+     "w": 32,
+     "h": 32
+    },
+    {
+     "x": 96,
+     "y": 704,
+     "w": 32,
+     "h": 32
+    },
+    {
+     "x": 128,
+     "y": 704,
+     "w": 32,
+     "h": 32
+    },
+    {
+     "x": 160,
+     "y": 704,
+     "w": 32,
+     "h": 32
+    },
+    {
+     "x": 192,
+     "y": 704,
+     "w": 32,
+     "h": 32
+    },
+    {
+     "x": 224,
+     "y": 704,
+     "w": 32,
+     "h": 32
+    }
+   ],
+   "duration": 1.6
+  },
+  "toadstools": {
+   "row": 23,
+   "frames": 4,
+   "fps": 3,
+   "loop": true,
+   "loop_from": 0,
+   "loops": 1,
+   "kind": "billboard",
+   "pivot": [
+    16,
+    31
+   ],
+   "lift": 0.0,
+   "glow": true,
+   "light": null,
+   "speed": null,
+   "travel": null,
+   "then": null,
+   "strip": "toadstools.png",
+   "frame_list": [
+    {
+     "x": 0,
+     "y": 736,
+     "w": 32,
+     "h": 32
+    },
+    {
+     "x": 32,
+     "y": 736,
+     "w": 32,
+     "h": 32
+    },
+    {
+     "x": 64,
+     "y": 736,
+     "w": 32,
+     "h": 32
+    },
+    {
+     "x": 96,
+     "y": 736,
+     "w": 32,
+     "h": 32
+    }
+   ],
+   "duration": 1.333
   }
  },
  "cast_sets": {

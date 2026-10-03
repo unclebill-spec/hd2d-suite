@@ -209,6 +209,39 @@ export async function boot(opts = {}) {
     return { kind: L.kind, pos: new THREE.Vector3(...L.pos), range: L.range || 9, light, power: 0, phase: i * 0.37, srgb: c.clone().convertLinearToSRGB(), glow: L.glow !== false, tint: L.color ? c : null, fixed: L.fixed ?? null };
   });
 
+  // glows: game-placed point lights (spell light pools, glowing toadstools). A small fixed pool of real
+  // PointLights (made once, so no shader recompiles) goes to the strongest glows near the camera; every glow
+  // also warms the sprites around it the same way lamps do. ctx.addGlow(x, y, z, {color, intensity, range,
+  // life, fadeIn}) -> handle (set .kill = true, or .scale 0..1, to fade it); life Infinity = until killed.
+  const GLOW_N = Number(opts.glowLights ?? 3);
+  const glowLights = [], glows = [];
+  for (let i = 0; i < GLOW_N; i++) { const L = new THREE.PointLight(0xffffff, 0, 4, 2); world.add(L); glowLights.push(L); }
+  function addGlow(x, y, z, o = {}) {
+    const c = new THREE.Color(o.color || biome.colors.lamp);
+    const g = { pos: new THREE.Vector3(x, y, z), range: o.range || 4, color: c, srgb: c.clone().convertLinearToSRGB(),
+                base: o.intensity ?? 5, life: o.life ?? Infinity, fadeIn: o.fadeIn ?? 0.15, t: 0, power: 0, scale: 1, kill: false, lift: o.lift ?? 0.55 };
+    glows.push(g); return g;
+  }
+  function updateGlows(dt) {
+    for (let i = glows.length - 1; i >= 0; i--) {
+      const g = glows[i];
+      g.t += dt;
+      if (g.kill) g.scale = Math.max(0, g.scale - dt * 2.5);
+      const tail = Number.isFinite(g.life) ? THREE.MathUtils.clamp((g.life - g.t) / (g.life * 0.45), 0, 1) : 1;
+      g.power = Math.min(1, g.t / Math.max(0.01, g.fadeIn)) * tail * g.scale;
+      if ((Number.isFinite(g.life) && g.t >= g.life) || (g.kill && g.scale <= 0)) glows.splice(i, 1);
+    }
+    const ranked = glows.filter((g) => g.power > 0.02)
+      .map((g) => [g, g.power * g.base / (1 + Math.hypot(g.pos.x - target.x, g.pos.z - target.z) * 0.25)])
+      .sort((a, b) => b[1] - a[1]);
+    glowLights.forEach((L, i) => {
+      const g = ranked[i] && ranked[i][0];
+      if (!g) { L.intensity = 0; return; }
+      L.color.copy(g.color); L.intensity = g.base * g.power; L.distance = g.range;
+      L.position.set(g.pos.x, g.pos.y + g.lift, g.pos.z);
+    });
+  }
+
   // ---------------------------------------------------------------- collision + actors
   const collide = scene.collision ? new Collide(scene.collision) : null;
   const actors = new Actors(world, sharp, atlasImg, atlasMeta, collide);
@@ -766,7 +799,8 @@ export async function boot(opts = {}) {
     for (const a of actors.list) a.shade += (a.shadeTarget * Math.min(1, g.sun_intensity / 2) - a.shade) * Math.min(1, dt * 5);
     swayTrees(trees, time);
     const k = Number(Q.get('k')) || actors.pixelScale(camera, target, bufH);
-    actors.sync(camera, bufW, bufH, k, g, lamps, sunDir);
+    updateGlows(dt);
+    actors.sync(camera, bufW, bufH, k, g, glows.length ? lamps.concat(glows) : lamps, sunDir);
     if (particles) {
       const statics = lamps.filter((L) => L.glow && L.power > 0.15).map((L) => ({ x: L.pos.x, y: L.pos.y, z: L.pos.z + 0.02, frame: L.frame, row: pMeta.presets.lamp_flicker.row }));
       particles.followPos.x = target.x; particles.followPos.z = target.z + 2;
@@ -809,6 +843,7 @@ export async function boot(opts = {}) {
     setTimeScale: (s) => { timeScale = Math.max(0, Math.min(1, s)); }, timeScale: () => timeScale,
     pixelK: () => actors.k, bufSize: () => [bufW, bufH], canvasRect: () => canvas.getBoundingClientRect(),
     nearestNpc: (d) => nearestNpc(d), blocked,
+    addGlow, glows, lamps,
   };
 
   // ---------------------------------------------------------------- debug / QA API

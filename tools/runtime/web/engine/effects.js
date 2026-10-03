@@ -87,7 +87,7 @@ export class Effects {
     this.sharp.add(mesh);
     const fx = { name, e, mesh, mat, x, y, z, t: 0, frame: 0, fade: 0, done: false,
                  from: [x, y, z], to: opts.to || null, onDone: opts.onDone || null, forceFrame: opts.frame ?? null,
-                 onTop: !!opts.onTop, dur: e.kind === 'projectile' ? 9 : (opts.duration ?? e.duration), id: (this._id = (this._id || 0) + 1) };
+                 onTop: !!opts.onTop, fadeIn: opts.fadeIn || 0, dur: e.kind === 'projectile' ? 9 : (opts.duration ?? e.duration), id: (this._id = (this._id || 0) + 1) };
     if (e.kind === 'projectile' && fx.to) {
       const d = Math.hypot(fx.to[0] - x, fx.to[2] - z);
       fx.dur = Math.max(0.2, d / (e.speed || 6));
@@ -116,6 +116,7 @@ export class Effects {
       }
       // dither fade over the last 0.3 s of looping effects
       f.fade = e.loop && f.forceFrame === null ? THREE.MathUtils.clamp((f.t - (f.dur - 0.3)) / 0.3, 0, 1) : 0;
+      if (f.fadeIn && f.forceFrame === null) f.fade = Math.max(f.fade, THREE.MathUtils.clamp(1 - f.t / f.fadeIn, 0, 1));   // dither in
       if (f.forceFrame === null && f.t >= f.dur) {
         this.sharp.remove(f.mesh); f.mat.dispose();
         if (e.then) queue.push([e.then, f.x, f.y, f.z]);

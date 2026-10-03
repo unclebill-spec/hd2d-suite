@@ -53,7 +53,8 @@ export class Combat {
     const M = this.M, mul = kind === 'melee' ? M.meleeMul : kind === 'summon' ? M.summonMul : M.spellMul;
     const crit = kind !== 'summon' && Math.random() < M.crit;
     this.lastCrit = crit;
-    return Math.max(1, Math.round(base * mul * (crit ? 1.5 : 1)));
+    const lit = kind !== 'summon' && this.G.glow ? this.G.glow.dmgMul() : 1;   // glowlit: +10%
+    return Math.max(1, Math.round(base * mul * lit * (crit ? 1.5 : 1)));
   }
 
   // ---------------------------------------------------------------- area lifecycle
@@ -95,7 +96,7 @@ export class Combat {
     if (this.godT > 0) { this.godT -= dt; p.quad.visible = this.godT <= 0 || Math.floor(this.godT * 12) % 2 === 0; if (this.godT <= 0) p.quad.visible = true; }
     const guarding = p.act && p.act.name === 'defend';
     if (this.stT > 0) this.stT -= dt;
-    else if (!guarding && !p.roll) this.st = Math.min(this.maxSt(), this.st + PLAYER.regen * dt);
+    else if (!guarding && !p.roll) this.st = Math.min(this.maxSt(), this.st + PLAYER.regen * (this.G.glow ? this.G.glow.regenMul() : 1) * dt);
     const regen = this.M.regen;   // Warm Light: slow regen while nothing is chasing you
     if (regen && !this.G.downed && this.G.S.hp < this.maxHp() && !this.enemies.some((e) => e.state === 'chase' || e.state === 'attack')) this.G.S.hp = Math.min(this.maxHp(), this.G.S.hp + regen * dt);
     // the player's swing lands on its impact frame
@@ -151,7 +152,16 @@ export class Combat {
     const sees = !frozen && !this.peace && this.godT <= 0 && d < D.aggro && Math.abs(p.y - a.y) < 1.3;
     e.cd -= dt;
     if (frozen && e.state !== 'attack') { ctx.actors.animate(a, dt, false); this.floatBob(e); return; }
-    const step = (tx, tz, scale = 1) => { const mv = ctx.moveActor(a, tx, tz, dt * scale); return mv; };
+    const gl = D.shy ? this.G.glow : null;   // cold-fire wraiths: never drift into light
+    const step = (tx, tz, scale = 1) => {
+      if (gl) { const n = Math.hypot(tx, tz) || 1; if (gl.litAt(a.x + tx / n * 0.45, a.z + tz / n * 0.45)) return false; }
+      return ctx.moveActor(a, tx, tz, dt * scale);
+    };
+    if (gl && e.state !== 'attack') {
+      const Z = gl.zoneAt(a.x, a.z);   // caught in light (a pool bloomed under it, a lamp came on): slip out
+      if (Z) { const mv = ctx.moveActor(a, a.x - Z.x || 0.01, a.z - Z.z, dt * 1.2); ctx.actors.animate(a, dt, mv); this.floatBob(e); return; }
+    }
+    const pLit = gl ? gl.lit : false;
     switch (e.state) {
       case 'idle': {
         if (sees) { e.state = 'chase'; e.cd = Math.max(e.cd, 0.5); this.ping(e); break; }
@@ -169,7 +179,7 @@ export class Combat {
         if (D.ranged) {
           if (d < D.keep - 0.6) moving = step(-dx, -dz);
           else if (d > D.keep + 1.4) moving = step(dx, dz);
-          else if (e.cd <= 0) { this.beginAttack(e); break; }
+          else if (e.cd <= 0 && !pLit) { this.beginAttack(e); break; }   // a lit hero is out of reach
           else ctx.actors.setFacingFromVec(a, dx, dz);
         } else if (d > D.reach * 0.8) moving = step(dx, dz);
         else if (e.cd <= 0) { this.beginAttack(e); break; }
@@ -343,6 +353,7 @@ export class Combat {
     if (!S) {                                            // a charm: the engine draws it, it nips whatever is in front
       if (this.cd.charm > 0) return false;
       this.cd.charm = CHARM_CD;
+      { const fv = FV[p.facing] || [0, 1], gl = this.G.glow; if (gl) gl.pool(p.x + fv[0] * 0.95, p.z + fv[1] * 0.95, gl.colorOf(name), 0.8); }
       const dmg = CHARM_DMG[name] ?? 6;
       if (name === 'healing_petals') this.later.push({ t: 0.3, fn: () => this.heal(12) });
       if (dmg) this.later.push({ t: 0.18, fn: () => {
@@ -365,15 +376,17 @@ export class Combat {
       const tx = p.x + fv[0] * travel, tz = p.z + fv[1] * travel;
       const proj = { owner: 'player', spell: name, S, hitSet: new Set() };
       proj.f = fx.spawn(S.fx, p.x + fv[0] * 0.4, p.y, p.z + fv[1] * 0.4 + 0.05,
-                        { to: [tx, ctx.heightAt(tx, tz), tz], onDone: (f) => { if (S.kind === 'projectile' && !proj.done) this.burst(proj, f.x, f.z); proj.done = true; } });
+                        { to: [tx, ctx.heightAt(tx, tz), tz], onDone: (f) => { if (S.kind === 'projectile' && !proj.done) this.burst(proj, f.x, f.z); proj.done = true; if (S.kind === 'pierce' && this.G.glow) this.G.glow.pool(f.x, f.z, this.G.glow.colorOf(S.fx)); } });
       this.projs.push(proj);
     } else if (S.kind === 'nova') {
       fx.spawn('rune_slam', p.x, p.y, p.z + 0.05); fx.spawn('impact', p.x, p.y, p.z + 0.06);
+      if (this.G.glow) this.G.glow.pool(p.x, p.z, this.G.glow.colorOf('rune_slam'), 1.2);
       for (const e of this.alive()) if (dist(e.a, p) < S.radius + e.D.r) this.damageEnemy(e, this.out('spell', S.dmg), p, S.push, PAL.gold);
     } else if (S.kind === 'trap') {
       const x = p.x + fv[0] * 1.7, z = p.z + fv[1] * 1.7, y = ctx.heightAt(x, z);
       fx.spawn('rune_trap', x, y, z + 0.02);
       this.traps.push({ x, y, z, t: 0, S, armed: null });
+      if (this.G.glow) this.G.glow.pool(x, z, this.G.glow.colorOf('rune_trap'));
     } else if (S.kind === 'chain') {
       let from = p, hitList = [], t = 0;
       for (let i = 0; i <= S.jumps + this.M.chainJumps; i++) {
@@ -381,12 +394,13 @@ export class Combat {
         if (!e) break;
         hitList.push(e);
         const dmg = this.out('spell', S.dmg * Math.pow(0.75, i));
-        this.later.push({ t, fn: () => { if (e.state !== 'dead' && e.state !== 'gone') { fx.spawn('sky_strike', e.a.x, e.a.y, e.a.z + 0.06); this.damageEnemy(e, dmg, p, 0.2, PAL.gold); } } });
+        this.later.push({ t, fn: () => { if (e.state !== 'dead' && e.state !== 'gone') { fx.spawn('sky_strike', e.a.x, e.a.y, e.a.z + 0.06); this.damageEnemy(e, dmg, p, 0.2, PAL.gold); if (i === 0 && this.G.glow) this.G.glow.pool(e.a.x, e.a.z, this.G.glow.colorOf('sky_strike')); } } });
         from = e.a; t += 0.16;
       }
       if (!hitList.length) fx.spawn('sky_strike', p.x + fv[0] * 2, ctx.heightAt(p.x + fv[0] * 2, p.z + fv[1] * 2), p.z + fv[1] * 2 + 0.06);
     } else if (S.kind === 'heal') {
       fx.spawn('bloom_ring', p.x, p.y, p.z + 0.05); fx.spawn('healing_petals', p.x, p.y, p.z + 0.06);
+      if (this.G.glow) this.G.glow.pool(p.x, p.z, this.G.glow.colorOf('bloom_ring'));
       this.heal(S.heal);
       if (this.summon) this.summon.hp = Math.min(this.summon.D.hp, this.summon.hp + S.heal);
       for (const e of this.alive()) if (dist(e.a, p) < S.radius + e.D.r) this.damageEnemy(e, this.out('spell', S.dmg), p, 0.5, PAL.gold);
@@ -395,6 +409,7 @@ export class Combat {
   }
   burst(proj, x, z) {
     const ctx = this.ctx, S = proj.S;
+    if (!proj.small && this.G.glow) this.G.glow.pool(x, z, this.G.glow.colorOf(S.fx === 'seed_bomb' ? 'earth_burst' : S.fx));
     if (!proj.small && S.fx === 'seed_bomb' && this.M.seedSplit) {
       for (let k = 0; k < this.M.seedSplit; k++) {
         const a = k * Math.PI + 0.7, sx = x + Math.cos(a) * 1.1, sz = z + Math.sin(a) * 0.8;

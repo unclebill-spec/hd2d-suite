@@ -16,6 +16,7 @@ no glow, no blur: brightness comes from the palette's lightest steps, fades are 
   impact          a star-burst hit                                    (billboard)
   hero combat (Hearthmoor): seed_bomb -> earth_burst, rune_slam, rune_trap + glyph_burst, sky_strike,
   bloom_ring, ember_slash -> ember_pop; enemy coldfire_bolt -> frost_puff; hit_spark, summon_poof
+  glow pass (Hearthmoor): light_pool (ground decal under spells), glitter (twinkling motes), toadstools (night glow)
 
 Writes spells.png (atlas, one row per effect), <effect>.png strips, spells.json (frames + effect presets the
 runtime plays: kind, fps, loop, pivot, lift, point-light flash curve), spells_contact_4x.png.
@@ -552,6 +553,92 @@ def summon_poof(pal, seed):
     return out
 
 
+# ------------------------------------------------------------------ glow pass (Hearthmoor stage 2)
+def _outline(F, ink="ink"):
+    """1 px ink outline around everything drawn so far (4-neighbour)."""
+    pts = [(x, y) for y in range(CELL) for x in range(CELL) if F.p[y][x] is None and any(
+        F.get(x + dx, y + dy) not in (None, ink) for dx, dy in ((1, 0), (-1, 0), (0, 1), (0, -1)))]
+    for x, y in pts:
+        F.set(x, y, ink)
+
+
+def light_pool(pal, seed):
+    """A short-lived pool of light on the ground under a spell: dithered dots, densest in the middle."""
+    out = []
+    sq = DECAL_SQUASH
+    R = rng(seed, "pool")
+    jit = [[R.random() for _ in range(CELL)] for _ in range(CELL)]
+    for f in range(6):
+        F = Frame(pal)
+        grow = min(1.0, (f + 1) / 3)
+        rx = 13.5 * grow
+        for y in range(CELL):
+            for x in range(CELL):
+                d = math.hypot(x - 16, (y - 16) / sq) / max(rx, 0.01)
+                if d > 1:
+                    continue
+                dens = 0.95 * (1 - d) ** 0.9
+                if (x + y + f) % 2 == 0 and jit[y][x] < dens:
+                    F.set(x, y, "white" if d < 0.3 else "lamp" if d < 0.6 else "flower_gold")
+        F.ring(16, 16, rx, rx * sq, "flower_gold", 1.0, start=f * 0.21, dots=3)
+        out.append(F)
+    return out
+
+
+def glitter(pal, seed):
+    """Sparse twinkling motes that drift up out of a light pool."""
+    out = []
+    R = rng(seed, "glitter")
+    motes = [(5 + R.random() * 22, 10 + R.random() * 20, R.randrange(8), R.choice(["white", "lamp", "flower_rose", "sky"]))
+             for _ in range(11)]
+    for f in range(8):
+        F = Frame(pal)
+        for k, (x, y, ph, c) in enumerate(motes):
+            b = (f + ph) % 8                    # 0..7 twinkle cycle: off, dot, star, dot, off ...
+            yy = y - ((f + ph) % 8) * 0.75
+            if b in (1, 3):
+                F.set(x, yy, c)
+            elif b == 2:
+                F.star(x, yy, 1, "white", c if c != "white" else "lamp")
+        out.append(F)
+    return out
+
+
+def toadstools(pal, seed):
+    """Three red-and-white toadstools whose spots glow at night (looping twinkle + a drifting spore)."""
+    out = []
+    caps = [(14, 19, 7.0, 4.5, 30), (23.5, 24, 4.2, 2.8, 30), (6.5, 26, 3.2, 2.2, 30)]   # cx, cy, rx, ry, ground
+    spots = [(10, 17), (13, 15), (17, 16), (19, 18), (12, 19), (15, 18), (22, 22), (25, 23), (6, 25), (8, 18)]
+    for f in range(4):
+        F = Frame(pal)
+        for x in range(3, 29):                                   # grass tuft at the base
+            if (x * 7) % 5 < 3:
+                F.set(x, 30, "moss"); F.set(x, 29, "grass" if x % 3 else None)
+        for cx, cy, rx, ry, gy in caps:
+            sw = max(1, int(rx * 0.35))
+            for y in range(int(cy), gy):                         # stem
+                for x in range(int(cx - sw), int(cx + sw) + 1):
+                    F.set(x, y, "plaster_lo" if x >= cx + sw - 0.5 else "plaster_hi" if x <= cx - sw + 0.5 else "plaster")
+            for y in range(int(cy - ry), int(cy) + 1):           # dome cap
+                for x in range(int(cx - rx), int(cx + rx) + 1):
+                    if ((x - cx) / rx) ** 2 + ((y - cy) / ry) ** 2 <= 1.0:
+                        top = (y - (cy - ry)) / max(ry, 0.01)
+                        side = (x - cx) / rx
+                        F.set(x, y, "roof" if y >= cy - 0.5 else "flower_rose" if top < 0.35 and -0.6 < side < 0.1 else "roof_hi")
+        for k, (sx, sy) in enumerate(spots):                     # white spots (the glowing bit)
+            if F.get(sx, sy) in ("roof", "roof_hi", "roof_lo", "flower_rose"):
+                on = (k + f) % 4 != 0
+                F.set(sx, sy, "white" if on else "plaster_hi")
+                if k < 3:
+                    F.set(sx + 1, sy, "white" if on else "plaster")
+        _outline(F)
+        # a spore drifting up (no outline: a single lit pixel like the sparkles)
+        F.set(20 - f, 9 - f * 1.5, "flower_rose" if f % 2 else "white")
+        F.set(9 + f * 0.5, 12 - f, "lamp" if f % 2 == 0 else None)
+        out.append(F)
+    return out
+
+
 EFFECTS = {
     "sparkle_burst": dict(fn=sparkle_burst, kind="billboard", fps=14, loop=False, pivot=[16, 31], lift=0.9,
                           glow=True, light={"color": "lamp", "intensity": 7, "range": 4.5, "curve": [1, 0.9, 0.7, 0.5, 0.3, 0.2, 0.1, 0]}),
@@ -594,6 +681,10 @@ EFFECTS = {
     "hit_spark": dict(fn=hit_spark, kind="billboard", fps=18, loop=False, pivot=[16, 26], lift=0.5, glow=True, light=None, combat=True),
     "summon_poof": dict(fn=summon_poof, kind="billboard", fps=12, loop=False, pivot=[16, 31], lift=0.0, glow=False,
                         light={"color": "lamp", "intensity": 3, "range": 3, "curve": [1, 0.8, 0.6, 0.4, 0.2, 0.1, 0]}, combat=True),
+    "light_pool": dict(fn=light_pool, kind="decal", fps=8, loop=True, loop_from=3, pivot=[16, 16], lift=0.02, loops=2,
+                       glow=True, light=None, combat=True),
+    "glitter": dict(fn=glitter, kind="billboard", fps=10, loop=True, pivot=[16, 31], lift=0.0, loops=2, glow=True, light=None, combat=True),
+    "toadstools": dict(fn=toadstools, kind="billboard", fps=3, loop=True, pivot=[16, 31], lift=0.0, loops=1, glow=True, light=None, combat=True),
 }
 # what the player's spell key cycles through, and what a cast spawns (effect, where)
 CAST_SETS = {

@@ -48,7 +48,7 @@ export const SUMMON_LIFE = 15, SUMMON_CD = 30;
 export const ENEMIES = {
   golem: { name: 'Stone golem', hp: 120, dmg: 18, speed: 1.05, reach: 1.6, windup: 0.62, cd: 1.9, aggro: 5.5, r: 0.36, push: 0.2 },
   skeleton: { name: 'Skeleton swordsman', hp: 60, dmg: 10, speed: 2.0, reach: 1.2, windup: 0.36, cd: 1.15, aggro: 6.0, r: 0.28, push: 0.5 },
-  wraith: { name: 'Cold-fire wraith', hp: 45, dmg: 9, speed: 1.6, reach: 6.0, keep: 3.2, windup: 0.5, cd: 2.3, aggro: 6.5, r: 0.26, push: 0.6, ranged: true, float: true },
+  wraith: { name: 'Cold-fire wraith', hp: 45, dmg: 9, speed: 1.6, reach: 6.0, keep: 3.2, windup: 0.5, cd: 2.3, aggro: 6.5, r: 0.26, push: 0.6, ranged: true, float: true, shy: true },
 };
 export const RESPAWN = 60;      // seconds before a defeated enemy wanders back
 export const LEASH = 12;        // metres from home before an enemy gives up and goes home
