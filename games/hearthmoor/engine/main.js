@@ -295,8 +295,9 @@ export async function boot(opts = {}) {
     if (player.act) player.act = null;
     walkTo = null;
     actors.setFacingFromVec(player, dx, dz);
-    player.roll = { t: 0, dx: dx / L, dz: dz / L, spin: (dx < 0 || (dx === 0 && dz < 0)) ? 1 : -1 };
-    player.iframes = ROLL.iframes;
+    const rm = hooks.rollMods ? hooks.rollMods() : null;   // game stats: { speed: x, iframes: +s }
+    player.roll = { t: 0, dx: dx / L, dz: dz / L, spin: (dx < 0 || (dx === 0 && dz < 0)) ? 1 : -1, sp: ROLL.speed * (rm ? rm.speed : 1) };
+    player.iframes = ROLL.iframes + (rm ? rm.iframes : 0);
     return true;
   }
   function summon() { if (!blocked() && hooks.onSummon) hooks.onSummon(ctx); }
@@ -565,8 +566,8 @@ export async function boot(opts = {}) {
     if (player.roll) {   // dodge roll owns the frame: dash + quarter-turn tumble of the crouch frame
       const R = player.roll;
       R.t += dt;
-      if (collide) { const [nx, nz, nh] = collide.move(player.x, player.z, player.y, R.dx * ROLL.speed * dt, R.dz * ROLL.speed * dt, player.r); player.x = nx; player.z = nz; player.y = nh; }
-      else { player.x += R.dx * ROLL.speed * dt; player.z += R.dz * ROLL.speed * dt; }
+      if (collide) { const [nx, nz, nh] = collide.move(player.x, player.z, player.y, R.dx * R.sp * dt, R.dz * R.sp * dt, player.r); player.x = nx; player.z = nz; player.y = nh; }
+      else { player.x += R.dx * R.sp * dt; player.z += R.dz * R.sp * dt; }
       const q = Math.min(3, Math.floor(R.t / ROLL.dur * 4));
       player.rot = ((q * R.spin) % 4 + 4) % 4;
       player.anim = player.anims.includes('jump') ? 'jump' : 'idle'; player.frame = 0;

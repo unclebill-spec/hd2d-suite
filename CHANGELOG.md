@@ -2,6 +2,15 @@
 
 Dates are America/New_York. Newest first. Keep this current with every change you push.
 
+## 2026-10-03: Hearthmoor Stage 2, part 1: leveling (+ review fixes)
+- **Review fixes:** the toast is a brief fade below the top HUD row (never over buttons, never takes taps); the inventory shows once (bag chip; the pad rail is empty); the see-through silhouette has a solid 1-texel ink outline around the dither; the golem's side view is a hunched stone block with a brow ridge and a long hanging arm (no more bird); check-scene's effects lineup hides quest tags, so Plaza `effects_sharp` passes.
+- **Leveling (`game/progress.js`):** XP from enemies (golem 45, wraith 34, skeleton 28, +50% the first time you beat each kind) and errands (120); level cap 50; six stats (Might, Arcana, Spirit, Vigor, Grit, Swiftness) with class starting values; 2 free stat points + 1 skill point per level.
+  - A new game asks **"Auto level? Yes / No"** (Yes = the class spends the points along its lean, No = spend them yourself); toggle in options (`auto level: on/off`). `?autolevel=1|0` skips the ask.
+  - **Hero screen** (I, tap the vitals chip, or Y / LB / RB inside the quest log on a controller): Stats tab (+ buttons) and Skills tab with tier I of each hero's three branches (E3), e.g. Stormborn Charged Hammer / Forked Bolt / Storm Sprite II, Cinderknight Life Drain, Seer Long Step.
+  - Stats feed combat: melee / spell / summon / heal multipliers, max HP (Vigor), guard strength and stamina (Grit), stamina, roll distance and crits (Swiftness). Crits pop in gold.
+  - Level-up: sparkle burst, bloom ring and a light-orb pool at your feet, full heal, a toast, the vitals chip flashes. The vitals chip has a level + XP bar.
+  - Saves stay `hearthmoor-slot-1-v2`; the new fields (`lv`, `xp`, `stats`, `free`, `sp`, `skills`, `autoLevel`, `bestiary`) are filled with defaults when an older v2 save loads.
+
 ## 2026-10-03: Hearthmoor Stage 1: platform polish, 6 playable heroes, real-time combat core
 First build stage from the builder handoff (M0 + M1 + the start of M2). Playable on Pages.
 - **Platform (M0):**

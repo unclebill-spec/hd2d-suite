@@ -187,3 +187,25 @@ body.lefthand #pad .cluster.act .pb:active { transform: scaleX(-1) translateY(1p
 /* 1080p TV preset: bigger parchment for the couch */
 body.tv #hud .vitals { font-size: 13px; } body.tv .bar { width: 130px; height: 10px; }
 body.tv #dlg { width: min(900px, 80vw); } body.tv #dlg p { font-size: 20px; }
+
+/* stage 2: xp bar, level-up flash, auto-level ask, hero screen (stats + skill tier I) */
+.bar.xp { height: 4px; } .bar.xp i { background: #8ec8e8; }
+#hud .vitals { cursor: pointer; pointer-events: auto; }
+#hud .vitals.lvup { animation: ping .3s steps(2) 5; }
+#autolv, #heroui { position: fixed; inset: 0; display: flex; align-items: center; justify-content: center; z-index: 30; background: #1a120c66; }
+#autolv[hidden], #heroui[hidden] { display: none; }
+#autolv .card, #heroui .card { width: min(560px, 94vw); max-height: 92vh; overflow: auto; }
+#autolv .card p { font: 600 14px system-ui; margin: 8px 4px; color: #3a2a1c; }
+#autolv .wbtn.on, #heroTabs .wbtn.on { background: #f3cf5a; }
+#heroTabs { display: flex; gap: 6px; margin: 6px 0; }
+#heroHead .tag { font: 700 11px system-ui; border: 2px solid #5a3e26; border-radius: 3px; padding: 0 5px; margin-left: 4px; background: #f6ead0; }
+#heroBody .pts { font: 700 12px system-ui; margin: 4px; color: #7a2c22; }
+#heroBody .row { display: grid; grid-template-columns: 96px 44px 1fr auto; gap: 6px; align-items: center; padding: 4px 6px; margin: 3px 0;
+  border: 2px solid #c9b48a; border-radius: 4px; background: #f6ead0; font: 600 12px system-ui; color: #3a2a1c; }
+#heroBody .row.node { grid-template-columns: 96px 120px 1fr auto; }
+#heroBody .row.sel { border-color: #5a3e26; background: #fff4d8; }
+#heroBody .row.got { background: #e4f0d0; }
+#heroBody .row em { font-style: normal; font-weight: 800; }
+#heroBody .plus { min-width: 44px; min-height: 32px; }
+#heroBody .plus[disabled] { opacity: .45; }
+@media (max-height: 460px) { #heroBody .row { padding: 2px 5px; margin: 2px 0; } #heroui .card { max-height: 96vh; } }

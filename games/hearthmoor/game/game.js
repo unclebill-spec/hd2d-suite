@@ -5,6 +5,7 @@
 import { boot, DISPLAY_PRESETS, getDisplay, setDisplay } from '../engine/main.js';
 import { ITEMS, QUESTS, TALK, SPELL_NAMES, markerFor } from './data.js';
 import { Ambient } from './audio.js';
+import * as PR from './progress.js';
 import { HEROES, HERO, SPELLS, SUMMONS } from './heroes.js';
 import { Combat } from './combat.js';
 
@@ -62,7 +63,7 @@ G.give = (id, n = 1) => { G.S.inv[id] = (G.S.inv[id] || 0) + n; drawBag(id); toa
 G.take = (id, n = 1) => { G.S.inv[id] = Math.max(0, (G.S.inv[id] || 0) - n); if (!G.S.inv[id]) delete G.S.inv[id]; drawBag(); };
 G.setQuest = (id, stage) => {
   const was = G.S.quests[id]; G.S.quests[id] = stage; drawLog();
-  if (stage === 3 && was !== 3) { toast(`Errand done: ${QUESTS[id].title}`, 2.6); G.audio.sfx('quest'); }
+  if (stage === 3 && was !== 3) { toast(`Errand done: ${QUESTS[id].title}`, 2.6); G.audio.sfx('quest'); G.gainXP(PR.XP.errand); }
   else if (was === 0 && stage > 0) { toast(`New errand: ${QUESTS[id].title}`, 2.6); G.audio.sfx('pickup'); flashLog(); }
   refreshMarkers(); save();
 };
@@ -280,7 +281,8 @@ function setW(id, f) { const v = Math.round(Math.max(0, Math.min(1, f)) * 100); 
 function setCd(id, sec) { const v = sec > 0.05 ? String(Math.ceil(sec)) : ''; if (last[id] !== v) { last[id] = v; const el = $(id); if (el) { if (v) el.dataset.cd = v; else delete el.dataset.cd; } } }
 function drawVitals(ctx) {
   const C = G.combat, hp = G.S.hp ?? C.maxHp(), max = C.maxHp();
-  setW('hpFill', hp / max); setW('stFill', C.st / 100);
+  setW('hpFill', hp / max); setW('stFill', C.st / C.maxSt());
+  const S = G.S; if (S.lv) { setW('xpFill', S.lv >= PR.LEVEL_CAP ? 1 : S.xp / PR.xpNeed(S.lv)); setTxt('lvTxt', 'Lv' + S.lv); setTxt('ptsTxt', (S.free || S.sp) ? `+${S.free + S.sp}` : ''); }
   setTxt('hpTxt', `${Math.ceil(hp)}`);
   const cur = ctx.spellCycle()[ctx.spellIndex()] || '';
   const cd = SPELLS[cur] ? C.cd.spell : C.cd.charm;
@@ -298,7 +300,8 @@ function drawVitals(ctx) {
 }
 
 const hooks = {
-  blockInput: () => !!(G.dlg || G.busy || G.title || G.log || G.downed || G.opts || G.picking),
+  blockInput: () => !!(G.dlg || G.busy || G.title || G.log || G.downed || G.opts || G.picking || G.heroUI || G.asking),
+  rollMods: () => { const M = G.combat.M; return { speed: M.rollSpeed, iframes: M.rollIframes }; },
   onCast: (name) => G.combat.cast(name),
   onSummon: () => G.combat.doSummon(),
   onDodge: () => G.combat.onDodge(),
@@ -342,10 +345,12 @@ const hooks = {
       else if (name === 'x') newGame();
       return true;
     }
+    if (G.asking) { if (name === 'left' || name === 'right' || name === 'up' || name === 'down') askMove(); else if (name === 'a') askPick(ASK.yes); else if (name === 'b') askPick(false); return true; }
+    if (G.heroUI) { heroPad(name); return true; }
     if (G.opts) { if (name === 'b' || name === 'start' || name === 'a') setOpts(false); return true; }
     if (G.busy || G.downed) return true;
     if (G.dlg) { if (name === 'a') advanceDialogue(); else if (name === 'b') closeDialogue(); return name !== 'select'; }
-    if (G.log) { if (name === 'a' || name === 'b' || name === 'start') setLog(false); return name !== 'select'; }
+    if (G.log) { if (name === 'y' || name === 'rb' || name === 'lb') { setLog(false); setHeroUI(true); return true; } if (name === 'a' || name === 'b' || name === 'start') setLog(false); return name !== 'select'; }
     if (name === 'start') { setLog(true); return true; }
     return false;
   },
@@ -433,7 +438,7 @@ function syncDisplay() {
   const t = $('btnDisplayT'); if (t) t.textContent = 'Display: ' + DISPLAY_PRESETS[p].label;
 }
 function setOpts(open) {
-  G.opts = open; $('opts').hidden = !open; $('btnOpts').classList.toggle('on', open);
+  G.opts = open; $('opts').hidden = !open; $('btnOpts').classList.toggle('on', open); syncAutoBtn();
   if (open) { syncDisplay(); syncInstall(); $('btnFull').hidden = !canFull(); }
 }
 G.setOpts = setOpts;
@@ -535,7 +540,7 @@ function wire() {
   $('btnSound').onclick = () => { G.audio.start(); const m = G.audio.toggle(); $('btnSound').textContent = m ? 'sound: off' : 'sound: on'; };
   $('btnSound').textContent = G.audio.muted ? 'sound: off' : 'sound: on';
   $('dlg').addEventListener('pointerdown', (e) => { e.preventDefault(); advanceDialogue(); });
-  wirePad(); wireOptions();
+  wirePad(); wireOptions(); wireLeveling();
   $('btnBack').onclick = () => closePicker();
   $('btnBegin').onclick = () => pickBegin();
   addEventListener('keydown', (e) => {
@@ -548,6 +553,9 @@ function wire() {
       return;
     }
     if (G.title) { if (k === 'enter' || k === ' ') { e.preventDefault(); (readSave() ? cont : newGame)(); } else if (k === 'n') newGame(); return; }
+    if (G.asking) { if (k === 'y') askPick(true); else if (k === 'n' || k === 'escape') askPick(false); else if (k.startsWith('arrow') || k === 'a' || k === 'd') askMove(); else if (k === 'enter' || k === ' ') { e.preventDefault(); askPick(ASK.yes); } e.stopImmediatePropagation(); return; }
+    if (G.heroUI) { e.stopImmediatePropagation(); heroKey(k, e); return; }
+    if (k === 'i') { setHeroUI(true); return; }
     if (k === 'o') { setOpts(!G.opts); return; }
     if (k === 'j' || k === 'l') setLog(!G.log);
     if (k === 'escape') { if (G.opts) setOpts(false); else if (G.dlg) closeDialogue(); else if (G.log) setLog(false); }
@@ -575,7 +583,7 @@ async function newGame() {
   openPicker((cls) => startNew(cls));
 }
 async function startNew(cls) {
-  G.S = fresh(); G.S.cls = cls; G.S.hp = HERO[cls].hp;
+  G.S = fresh(); G.S.cls = cls; PR.ensure(G.S); G.S.hp = HERO[cls].hp;
   closeTitle();
   if (G.area !== 'plaza') await go('plaza', 'start', 'walk');
   else { const s = G.ctx.scene.game.spawns.start; G.ctx.player.x = s[0]; G.ctx.player.z = s[1]; G.ctx.player.y = G.ctx.heightAt(s[0], s[1]); G.ctx.player.facing = s[2]; G.ctx.clock.set(G.S.t); }
@@ -583,6 +591,8 @@ async function startNew(cls) {
   drawBag(); drawLog(); refreshMarkers();
   save();
   toast(`Welcome to Hearthmoor, ${HERO[cls].cls}. Marla the baker is waving at you.`, 3.2);
+  if (G.S.autoLevel == null && !Q.has('autolevel')) askAuto();
+  else if (Q.has('autolevel')) G.S.autoLevel = Q.get('autolevel') !== '0';
 }
 // replacing a save takes a second press of New game (works with touch, mouse, keys and a controller; no browser dialog)
 let newArmed = 0;
@@ -603,7 +613,7 @@ async function cont() {
   resume(s);
 }
 async function resume(s) {
-  G.S = { ...fresh(), ...s, v: 2 };
+  G.S = { ...fresh(), ...s, v: 2 }; PR.ensure(G.S);
   closeTitle();
   G.busy = true;
   $('fade').className = 'on';
@@ -616,6 +626,93 @@ async function resume(s) {
   toast(`Welcome back. ${G.ctx.scene.name}, ${$('clocktxt').textContent}`, 2.6);
 }
 
+// ------------------------------------------------------------------ leveling: XP, level-up glow, auto-level ask, hero screen
+G.gainXP = (n, src) => {
+  PR.ensure(G.S);
+  const up = PR.addXP(G.S, n);
+  const ctx = G.ctx, p = ctx && ctx.player;
+  if (p && G.combat.ctx === ctx) G.combat.number('+' + Math.round(n) + 'xp', p.x + 0.4, p.y + 2.3, p.z, '#8ec8e8');
+  if (up && p) levelUp();
+  return up;
+};
+function levelUp() {
+  const ctx = G.ctx, p = ctx.player, C = G.combat;
+  G.S.hp = C.maxHp(); C.st = C.maxSt();
+  if (ctx.effects) { ctx.effects.spawn('bloom_ring', p.x, p.y, p.z + 0.04); ctx.effects.spawn('sparkle_burst', p.x, p.y, p.z + 0.06); ctx.effects.spawn('light_orb', p.x, p.y + 0.4, p.z + 0.07); }
+  if (ctx.burst) for (let i = 0; i < 3; i++) setTimeout(() => ctx.burst('sparkle', p.x, p.y + 1.0, p.z + 0.1), i * 160);
+  G.audio.sfx('quest');
+  const pts = G.S.autoLevel ? '' : ` ${G.S.free} stat point${G.S.free === 1 ? '' : 's'} to spend (I).`;
+  toast(`Level ${G.S.lv}!${pts}${G.S.sp ? ' A skill point is ready.' : ''}`, 3.0);
+  $('vitals').classList.add('lvup'); setTimeout(() => $('vitals').classList.remove('lvup'), 1600);
+  save();
+}
+const ASK = { yes: true };
+function askAuto() { G.asking = true; ASK.yes = true; $('autolv').hidden = false; syncAsk(); }
+function syncAsk() { $('btnAutoYes').classList.toggle('on', ASK.yes); $('btnAutoNo').classList.toggle('on', !ASK.yes); }
+function askMove() { ASK.yes = !ASK.yes; syncAsk(); }
+function askPick(yes) {
+  G.asking = false; $('autolv').hidden = true;
+  G.S.autoLevel = !!yes; if (yes) PR.autoSpend(G.S);
+  syncAutoBtn(); save();
+  toast(yes ? 'Auto level on: stat points follow your class. Change it in options (O).' : 'Manual leveling: spend points on the hero screen (I).', 3.2);
+}
+function syncAutoBtn() { const b = $('btnAuto'); if (b) b.textContent = 'auto level: ' + (G.S.autoLevel ? 'on' : 'off'); }
+const HUI = { tab: 0, i: 0 };
+function setHeroUI(open) {
+  if (open && (G.title || G.busy || G.dlg || G.picking)) return;
+  G.heroUI = open; $('heroui').hidden = !open;
+  if (open) { if (G.log) setLog(false); if (G.opts) setOpts(false); PR.ensure(G.S); drawHero(); }
+}
+G.setHeroUI = setHeroUI;
+function drawHero() {
+  const S = G.S, C = G.combat, h = HERO[S.cls], M = C.M, tree = PR.TREES[S.cls] || [];
+  $('heroHead').innerHTML = `<b>${h.cls}</b> <span class="tag">Lv ${S.lv}</span> <span class="tag">${S.lv >= PR.LEVEL_CAP ? 'max level' : `${S.xp} / ${PR.xpNeed(S.lv)} xp`}</span>`
+    + `<span class="tag">HP ${C.maxHp()}</span><span class="tag">ST ${C.maxSt()}</span><span class="tag">crit ${Math.round(M.crit * 100)}%</span>`;
+  document.querySelectorAll('#heroTabs button').forEach((b, k) => b.classList.toggle('on', k === HUI.tab));
+  const body = $('heroBody');
+  if (HUI.tab === 0) {
+    HUI.n = PR.STATS.length;
+    body.innerHTML = `<p class="pts">${S.free} stat point${S.free === 1 ? '' : 's'} free${S.autoLevel ? ' · auto level is on (class picks)' : ''}</p>`
+      + PR.STATS.map((st, k) => `<div class="row${k === HUI.i ? ' sel' : ''}" data-k="${k}"><b>${st.name}</b><em>${S.stats[st.id]}</em><span>${st.does}</span>`
+      + `<button class="wbtn sm plus" data-stat="${st.id}" ${S.free ? '' : 'disabled'}>+</button></div>`).join('');
+    body.querySelectorAll('[data-stat]').forEach((b) => { b.onclick = (e) => { e.stopPropagation(); if (PR.spendStat(S, b.dataset.stat)) { G.audio.sfx('pickup'); save(); drawHero(); } }; });
+  } else {
+    HUI.n = tree.length;
+    body.innerHTML = `<p class="pts">${S.sp} skill point${S.sp === 1 ? '' : 's'} · tier I of each branch (1 point each)</p>`
+      + tree.map((n, k) => `<div class="row node${S.skills[n.id] ? ' got' : ''}${k === HUI.i ? ' sel' : ''}" data-k="${k}"><b>${n.branch}</b><em>${n.name}</em><span>${n.desc}</span>`
+      + `<button class="wbtn sm plus" data-node="${n.id}" ${S.skills[n.id] || !S.sp ? 'disabled' : ''}>${S.skills[n.id] ? '✓' : 'learn'}</button></div>`).join('');
+    body.querySelectorAll('[data-node]').forEach((b) => { b.onclick = (e) => { e.stopPropagation(); if (PR.learn(S, b.dataset.node)) { G.audio.sfx('quest'); save(); drawHero(); } }; });
+  }
+  body.querySelectorAll('.row').forEach((r) => { r.onclick = () => { HUI.i = +r.dataset.k; drawHero(); }; });
+}
+function heroAct() {
+  const S = G.S, b = $('heroBody').querySelector(`.row[data-k="${HUI.i}"] button`);
+  if (b && !b.disabled) b.click();
+}
+function heroTab(d) { HUI.tab = (HUI.tab + d + 2) % 2; HUI.i = 0; drawHero(); }
+function heroMove(d) { HUI.i = Math.max(0, Math.min((HUI.n || 1) - 1, HUI.i + d)); drawHero(); }
+function heroPad(name) {
+  if (name === 'b' || name === 'start') setHeroUI(false);
+  else if (name === 'lb' || name === 'left') heroTab(-1); else if (name === 'rb' || name === 'right') heroTab(1);
+  else if (name === 'up') heroMove(-1); else if (name === 'down') heroMove(1);
+  else if (name === 'a' || name === 'x') heroAct();
+}
+function heroKey(k, e) {
+  if (k === 'escape' || k === 'i') setHeroUI(false);
+  else if (k === 'arrowleft' || k === 'a' || k === 'q') heroTab(-1); else if (k === 'arrowright' || k === 'd' || k === 'e') heroTab(1);
+  else if (k === 'arrowup' || k === 'w') heroMove(-1); else if (k === 'arrowdown' || k === 's') heroMove(1);
+  else if (k === 'enter' || k === ' ' || k === 'f') { e.preventDefault(); heroAct(); }
+}
+function wireLeveling() {
+  $('btnAutoYes').onclick = () => askPick(true); $('btnAutoNo').onclick = () => askPick(false);
+  $('btnAuto').onclick = () => { G.S.autoLevel = !G.S.autoLevel; if (G.S.autoLevel) PR.autoSpend(G.S); syncAutoBtn(); save(); };
+  $('heroClose').onclick = () => setHeroUI(false);
+  document.querySelectorAll('#heroTabs button').forEach((b, k) => { b.onclick = () => { HUI.tab = k; HUI.i = 0; drawHero(); }; });
+  $('vitals').addEventListener('click', () => setHeroUI(true));
+  $('heroui').addEventListener('pointerdown', (e) => { if (e.target === $('heroui')) setHeroUI(false); });
+}
+G.ask = { open: askAuto, pick: askPick };
+
 // ------------------------------------------------------------------ start
 async function main() {
   wire();
@@ -624,7 +721,7 @@ async function main() {
   const s = readSave();
   if (QA) {
     G.title = false; $('titlescreen').hidden = true; $('vitals').hidden = false;
-    G.S.cls = HERO[Q.get('hero')] ? Q.get('hero') : 'wildcaller';
+    G.S.cls = HERO[Q.get('hero')] ? Q.get('hero') : 'wildcaller'; PR.ensure(G.S); G.S.autoLevel = true;
     if (Q.get('state')) Object.assign(G.S, JSON.parse(Q.get('state')));
     await loadArea(Q.get('area') || 'plaza', Q.get('spawn') || 'start');
   } else {

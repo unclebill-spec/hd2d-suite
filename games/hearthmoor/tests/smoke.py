@@ -216,6 +216,12 @@ def run(out, simscale=4, size=(960, 540)):
                    and sel == "stormborn" and "Child of thunder" in detail and "demigod" in detail and "Chain Lightning" in detail, cards=cards, sel=sel)
             pg.click("#btnBegin")
             T.idle()
+            T.wait("window.__hm.asking && !document.getElementById('autolv').hidden", 30)
+            pg.wait_for_timeout(400)
+            rep["shots"]["auto_level_popup"] = T.shot("auto_level_popup")
+            pg.keyboard.press("ArrowRight"); pg.wait_for_timeout(100); pg.keyboard.press("Enter"); pg.wait_for_timeout(300)
+            T.step("new game asks 'Auto level? Yes / No' (No = manual)", not T.ev("window.__hm.asking") and T.ev("window.__hm.S.autoLevel") is False
+                   and T.ev("window.__hm.S.lv") == 1 and T.ev("window.__hm.S.stats.might") == 7)
             S = T.S()
             T.step("new game in Hearthmoor Plaza as the chosen hero", T.ev("window.__hm.area") == "plaza" and not T.ev("window.__hm.title") and S["quests"] == {"bread": 0, "tea": 0, "cat": 0}
                    and S["cls"] == "stormborn" and T.ev("window.__hm.ctx.player.role") == "stormborn" and T.ev("window.__hm.slots()") == ["chain_lightning", "sparkle_burst"],
@@ -366,6 +372,24 @@ def run(out, simscale=4, size=(960, 540)):
             S = T.S()
             T.step("found Pudding: she follows you", S["cat"] == "follow" and S["quests"]["cat"] == 2 and T.ev("window.__hm.ctx.npc('cat').behavior") == "follow")
             rep["shots"]["mossglen"] = T.shot("mossglen")
+
+            # ---------------------------------------------------------- leveling: the bread errand gave XP; manual spend + a skill
+            S = T.S()
+            lv = S["lv"]
+            T.step("errands give XP: level 2+ with 2 stat points and a skill point per level", lv >= 2 and S["free"] == 2 * (lv - 1) and S["sp"] == lv - 1, lv=lv, xp=S["xp"], free=S["free"], sp=S["sp"])
+            pg.keyboard.press("i"); T.wait("window.__hm.heroUI", 10); pg.wait_for_timeout(300)
+            rep["shots"]["hero_stats"] = T.shot("hero_stats")
+            m0 = S["stats"]["might"]
+            pg.keyboard.press("Enter"); pg.wait_for_timeout(200)            # first row = Might
+            pg.keyboard.press("ArrowRight"); pg.wait_for_timeout(200)       # Skills tab
+            pg.keyboard.press("ArrowDown"); pg.keyboard.press("Enter"); pg.wait_for_timeout(300)   # Tempest: Forked Bolt
+            rep["shots"]["hero_skills"] = T.shot("hero_skills")
+            S = T.S()
+            T.step("hero screen (I): spend a stat point, learn a tier-I skill (keys)", S["stats"]["might"] == m0 + 1 and S["free"] == 2 * (lv - 1) - 1
+                   and S["skills"].get("sb_tempest") == 1 and S["sp"] == lv - 2, stats=S["stats"], skills=S["skills"])
+            pg.keyboard.press("Escape"); pg.wait_for_timeout(200)
+            hp_max = T.ev("window.__hm.combat.maxHp()")
+            T.step("stats feed combat (chain lightning +1 leap, HP from Vigor)", T.ev("window.__hm.combat.M.chainJumps") == 1 and hp_max >= 120, hp=hp_max)
 
             # ---------------------------------------------------------- combat in Mossglen (enemies wake up)
             q0 = T.ev("window.__hm.combat.qa()")

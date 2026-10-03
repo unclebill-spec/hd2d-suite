@@ -29,6 +29,7 @@
   <div class="chip vitals" id="vitals" data-hud hidden>
     <span class="vrow"><b>HP</b><span class="bar hp"><i id="hpFill"></i></span><em id="hpTxt">90</em></span>
     <span class="vrow"><b>ST</b><span class="bar st"><i id="stFill"></i></span><em id="spellTxt">✦</em></span>
+    <span class="vrow"><b id="lvTxt">Lv1</b><span class="bar xp"><i id="xpFill"></i></span><em id="ptsTxt"></em></span>
   </div>
   <div class="chip clock" id="clock"><span class="dial" id="dial"></span><span id="clocktxt">--:--</span></div>
   <div class="btns">
@@ -82,6 +83,22 @@
 <div id="wheel" hidden><div class="ring"><div class="slot" data-i="0"></div><div class="slot" data-i="1"></div><div class="slot" data-i="2"></div><div class="slot" data-i="3"></div><div class="mid">slide · let go</div></div></div>
 
 <!-- options: display presets, fullscreen, install, sound, pad -->
+<div id="autolv" hidden>
+  <div class="card ask">
+    <div class="head"><b>Auto level?</b></div>
+    <p>Each level gives you 2 stat points. <b>Yes</b>: your class spends them for you. <b>No</b>: you spend them yourself on the hero screen (I). You can switch this anytime in options.</p>
+    <div class="grid"><button class="wbtn" id="btnAutoYes">Yes</button><button class="wbtn" id="btnAutoNo">No</button></div>
+    <p class="tip">← → choose · Enter / A pick · Y / N</p>
+  </div>
+</div>
+<div id="heroui" hidden>
+  <div class="card hero">
+    <div class="head"><span id="heroHead"></span><button class="x" id="heroClose" title="Close (I / Esc)">✕</button></div>
+    <div class="tabs" id="heroTabs"><button class="wbtn sm">Stats</button><button class="wbtn sm">Skills</button></div>
+    <div id="heroBody"></div>
+    <p class="tip">← → tabs (LB / RB) · ↑ ↓ choose · Enter / A spend · Esc / B close</p>
+  </div>
+</div>
 <div id="opts" hidden>
   <div class="card">
     <div class="head"><b>Options</b><button class="x" id="optsClose" title="Close (O / Esc)">✕</button></div>
@@ -93,6 +110,7 @@
     <div class="grid">
       <button class="wbtn sm" id="btnFull">⛶ Fullscreen</button><button class="wbtn sm" id="btnInstall">⤓ Install</button>
       <button class="wbtn sm" id="btnSound">sound: on</button><button class="wbtn sm" id="btnPad">pad</button><button class="wbtn sm" id="btnHand">hand: R</button>
+      <button class="wbtn sm" id="btnAuto">auto level: on</button>
     </div>
     <p class="tip" id="installTip" hidden></p>
   </div>

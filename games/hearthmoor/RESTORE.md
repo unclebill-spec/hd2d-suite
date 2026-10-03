@@ -48,10 +48,12 @@ Repo handoff docs (in the suite root): [`AGENTS.md`](../../AGENTS.md), [`CHANGEL
 | Summon | V | RT | summon button |
 | Quest log | J / L | Start | ☰ |
 | Options | O or the ⚙ chip | | ⚙ chip |
+| Hero screen (stats, skills) | I | Start, then Y / LB / RB | tap the vitals chip |
 | Zoom | + / - / wheel | right stick up / down | pinch |
 | Close / cancel | Esc | B | tap |
 
 - 4 spell slots: slot 1 is the hero's class spell, slots 2-4 are the newest charms learned as errand rewards. Spells, the summon (30 s) and charms have cooldowns, shown as a dimmed sweep on the pad buttons.
+- **Leveling:** XP from enemies and errands, level cap 50, six stats (Might, Arcana, Spirit, Vigor, Grit, Swiftness), 2 free stat points and 1 skill point per level. A new game asks "Auto level? Yes / No" (options: `auto level`). The hero screen spends points and learns tier I of each hero's three skill branches (`game/progress.js`).
 - **Vitals:** a parchment chip (top left, under the title) shows HP and stamina. Attacks, guarding hits and rolls cost stamina; it refills after a short pause.
 - **Combat:** hits land on the attack's impact frame inside a short arc; damage numbers are a crisp 3x5 pixel font with an ink outline (red you, cream enemies, blue guarded, green heal). Guarding from the front takes a quarter of the damage (a Runeguard even less). The roll is a pixel-exact tumble with i-frames for its first 0.26 s. Being downed is cozy: you slump, the screen warms to dark, you wake at the area start with full HP, two seconds of grace and nothing lost.
 - **Other keys:** K (or Ctrl+S) saves, M toggles sound, T jumps to the next time of day, P pauses the clock, G toggles the pad, H flips it for left hands.
@@ -139,6 +141,7 @@ Repo handoff docs (in the suite root): [`AGENTS.md`](../../AGENTS.md), [`CHANGEL
 - Combat keys stay: R attack, C hold guard, Z jump, X roll, V summon (controller X / LT / A / B / RT as in the table). Enemies are gloom-and-glow (stone, bone, cold blue fire), nothing slimy. Defeat stays cozy (nothing lost).
 - Save key `hearthmoor-slot-1-v2` (bump the version, don't silently change the format) and keep the v1 migration. Continue restores hero, area, position, clock, bag, errands, pickups, Pudding and charms.
 - Title → hero picker for the 6 starters works with keys, controller and taps.
+- New game asks "Auto level? Yes / No"; the hero screen works with keys, controller and taps; stats and tier-I skills change combat numbers; no XP loss on defeat.
 - Phone: tap, pinch, Layout One pad with the left-hand flip. HUD inside the viewport, no overlapping controls, touch targets ≥ 30 px (check-scene `phone`).
 - Floating stick: appears under the thumb anywhere in the zone, re-centres past its radius, analog walk / rim run, mirrored by the left-hand flip; a quick tap in the zone still walks (check-scene `phone.floating_stick`, smoke).
 - Controller: standard mapping as in the table above (no button does two jobs), hot-plug toast, pad hidden while used and back on touch, title usable with A / X / Start (no browser `confirm()` dialogs anywhere).
