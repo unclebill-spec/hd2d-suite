@@ -2,6 +2,11 @@
 
 Dates are America/New_York. Newest first. Keep this current with every change you push.
 
+## 2026-10-03: Hearthmoor Stage 2, spellbook + controller spell wheel (part 2 of 5)
+- **Spellbook:** a third "Spells" tab on the hero screen (B opens it straight away; or I / the vitals chip / Start, Y on a controller, then → / RB). Four slots; Enter / A / "change" cycles a slot through every spell you know (your class spell + each charm; slots 2-4 can be empty). The cast cycle (F, Q, 1-4, LB / RB, the wheels) follows at once; saved as `slots` in the v2 save (old saves keep the default: class spell + newest three charms). A newly learned charm fills an empty slot.
+- **Controller hold-for-wheel:** tap Y casts (on release); hold Y for a third of a second opens the same slow-time spell wheel as the touch ✦ button, the left stick or d-pad picks a slot, letting go of Y casts it. The field is input-blocked while the wheel is open.
+- Hint line: "B spellbook", "Y cast (hold: spell wheel)".
+
 ## 2026-10-03: Hearthmoor Stage 2, glow pass (part 4 of 5)
 - **Spell light pools:** every hero spell and charm leaves a short pool of light where it lands (about 1.8 s): a dithered gold ground decal (`light_pool`), twinkling glitter motes rising out of it (`glitter`) and a real point light in the spell's own colour. No bloom: all palette pixels and point lights.
 - **Glowing toadstools at night:** red-and-white toadstool clusters come out between 19:12 and 06:00 in Mossglen (6), Market Square (4) and Bakery Lane (4). Their white spots twinkle, spores drift up, and each casts a soft rose pool of light; at dawn they dither away.

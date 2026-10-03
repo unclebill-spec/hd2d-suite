@@ -6,7 +6,7 @@ import { boot, DISPLAY_PRESETS, getDisplay, setDisplay } from '../engine/main.js
 import { ITEMS, QUESTS, TALK, SPELL_NAMES, markerFor } from './data.js';
 import { Ambient } from './audio.js';
 import * as PR from './progress.js';
-import { HEROES, HERO, SPELLS, SUMMONS } from './heroes.js';
+import { HEROES, HERO, SPELLS, SUMMONS, CHARM_DMG, CHARM_CD } from './heroes.js';
 import { Combat } from './combat.js';
 import { Glow } from './glow.js';
 
@@ -47,7 +47,31 @@ function readSave() {
   return null;
 }
 // the 4 spell slots: the hero's own spell first, then the newest three charms
-function slots() { const h = HERO[G.S.cls]; return [...(h ? [h.spell] : []), ...G.S.spells.slice(-3)].slice(0, 4); }
+function defaultSlots() { const h = HERO[G.S.cls]; return [...(h ? [h.spell] : []), ...G.S.spells.slice(-3)].slice(0, 4); }
+// every spell this hero can slot: the class spell + every charm learned on errands
+function knownSpells() { const h = HERO[G.S.cls]; return [...new Set([...(h ? [h.spell] : []), ...G.S.spells])]; }
+// the spellbook (hero screen, Spells tab) can set G.S.slots (4 ids or null); otherwise the default above
+function slots() {
+  const known = knownSpells();
+  if (!Array.isArray(G.S.slots)) return defaultSlots();
+  const out = G.S.slots.filter((id) => id && known.includes(id));
+  return out.length ? out.slice(0, 4) : defaultSlots();
+}
+function slotSpell(k, dir = 1) {   // cycle slot k through the known spells (slots 2-4 can be empty)
+  const known = knownSpells();
+  const cur = Array.isArray(G.S.slots) ? [...G.S.slots] : [...defaultSlots()];
+  while (cur.length < 4) cur.push(null);
+  const others = cur.filter((_, j) => j !== k);
+  const opts = [...known.filter((id) => !others.includes(id)), ...(k > 0 ? [null] : [])];
+  if (!opts.length) return false;
+  const i = opts.indexOf(cur[k]);
+  cur[k] = opts[(i + dir + opts.length) % opts.length];
+  if (!cur.some(Boolean)) return false;
+  G.S.slots = cur.map((id) => id || null);
+  if (G.ctx) G.ctx.setSpellCycle(slots());
+  return true;
+}
+G.slotSpell = slotSpell; G.knownSpells = knownSpells;
 G.slots = slots;
 function save(note) {
   if (QA || G.title) return false;
@@ -72,6 +96,7 @@ G.setQuest = (id, stage) => {
 G.learn = (spell) => {
   if (G.S.spells.includes(spell)) return;
   G.S.spells.push(spell);
+  if (Array.isArray(G.S.slots)) { const i = G.S.slots.indexOf(null); if (i >= 0) G.S.slots[i] = spell; else if (G.S.slots.length < 4) G.S.slots.push(spell); }
   if (G.ctx) G.ctx.setSpellCycle(slots());
   toast(`Learned a charm: ${SPELL_NAMES[spell] || spell} (F to cast, Q to switch)`, 3.2);
 };
@@ -111,6 +136,11 @@ function drawLog() {
   $('btnLog').textContent = `quests ${n}/3`;
   const sp = $('logSpells');
   if (sp) sp.textContent = 'Spell slots: ' + slots().map((s) => spellName(s)).join(' · ') + '  ·  Charms known: ' + G.S.spells.map((s) => SPELL_NAMES[s] || s).join(' · ');
+}
+function spellBlurb(id) {
+  const S = SPELLS[id];
+  if (S) return `class spell · ${S.kind}${S.dmg ? ` · ${S.dmg} dmg` : ''}${S.heal ? ` · heals ${S.heal}` : ''} · ${S.cd}s`;
+  const d = CHARM_DMG[id]; return `charm${d ? ` · ${d} dmg` : ' · no damage'} · ${CHARM_CD}s`;
 }
 function spellName(id) { return (SPELLS[id] && SPELLS[id].name) || SPELL_NAMES[id] || String(id).replace(/_/g, ' '); }
 G.spellName = spellName;
@@ -257,6 +287,7 @@ function onFrame(dt, ctx) {
   typeDialogue(dt);
   if (toastT > 0) { toastT -= dt; const el = $('toast'); if (toastT <= 0.35) el.classList.add('out'); if (toastT <= 0) { el.hidden = true; el.classList.remove('out'); } }
   syncMarkers();
+  padWheel();
   G.glow.update(dt);
   G.combat.update(dt, ctx);
   drawVitals(ctx);
@@ -303,7 +334,7 @@ function drawVitals(ctx) {
 }
 
 const hooks = {
-  blockInput: () => !!(G.dlg || G.busy || G.title || G.log || G.downed || G.opts || G.picking || G.heroUI || G.asking),
+  blockInput: () => !!(G.dlg || G.busy || G.title || G.log || G.downed || G.opts || G.picking || G.heroUI || G.asking || WHEEL.open),
   rollMods: () => { const M = G.combat.M; return { speed: M.rollSpeed, iframes: M.rollIframes }; },
   onCast: (name) => G.combat.cast(name),
   onSummon: () => G.combat.doSummon(),
@@ -355,7 +386,14 @@ const hooks = {
     if (G.dlg) { if (name === 'a') advanceDialogue(); else if (name === 'b') closeDialogue(); return name !== 'select'; }
     if (G.log) { if (name === 'y' || name === 'rb' || name === 'lb') { setLog(false); setHeroUI(true); return true; } if (name === 'a' || name === 'b' || name === 'start') setLog(false); return name !== 'select'; }
     if (name === 'start') { setLog(true); return true; }
+    if (name === 'y') { PADW.t = performance.now(); PADW.on = true; PADW.fired = false; return true; }   // tap casts, hold opens the wheel
     return false;
+  },
+  onPadRelease: (name) => {
+    if (name !== 'y' || !PADW.on) return false;
+    PADW.on = false;
+    if (PADW.fired) closeWheel(true); else if (G.ctx && !hooks.blockInput()) G.ctx.playerCast();
+    return true;
   },
   onFrame,
   nearThing: (ctx) => !!nearPickup(ctx, 1.4),
@@ -368,6 +406,30 @@ function press(id, down, up) {
   if (up) for (const t of ['pointerup', 'pointercancel', 'lostpointercapture']) el.addEventListener(t, (e) => up(e));
 }
 const WHEEL = { open: false, x0: 0, y0: 0, sel: -1, timer: null };
+// controller: hold Y for 0.35 s -> the same slow-time wheel; the left stick (or d-pad) picks, letting go of Y casts
+const PADW = { on: false, t: 0, fired: false };
+function padWheel() {
+  if (!PADW.on) return;
+  if (!PADW.fired) {
+    if (performance.now() - PADW.t < 350) return;
+    if (hooks.blockInput()) { PADW.on = false; return; }
+    PADW.fired = true; openWheel(innerWidth / 2, innerHeight / 2);
+    return;
+  }
+  if (!WHEEL.open) return;
+  let st = { x: 0, y: 0, mag: 0 };
+  try {
+    for (const gp of navigator.getGamepads ? navigator.getGamepads() : []) {
+      if (!gp) continue;
+      let x = gp.axes[0] || 0, y = gp.axes[1] || 0;
+      const b = (i) => gp.buttons[i] && (gp.buttons[i].pressed || gp.buttons[i].value > 0.5);
+      if (Math.hypot(x, y) < 0.35) { x = (b(15) ? 1 : 0) - (b(14) ? 1 : 0); y = (b(13) ? 1 : 0) - (b(12) ? 1 : 0); }
+      if (Math.hypot(x, y) > st.mag) st = { x, y, mag: Math.hypot(x, y) };
+    }
+  } catch (e) { /* no gamepad access */ }
+  if (st.mag > 0.4) moveWheel(WHEEL.x0 + st.x / st.mag * 60, WHEEL.y0 + st.y / st.mag * 60);
+}
+G.padWheel = PADW;
 function openWheel(x, y) {
   const ctx = G.ctx; if (!ctx || hooks.blockInput()) return;
   WHEEL.open = true; WHEEL.x0 = x; WHEEL.y0 = y; WHEEL.sel = -1;
@@ -559,6 +621,7 @@ function wire() {
     if (G.asking) { if (k === 'y') askPick(true); else if (k === 'n' || k === 'escape') askPick(false); else if (k.startsWith('arrow') || k === 'a' || k === 'd') askMove(); else if (k === 'enter' || k === ' ') { e.preventDefault(); askPick(ASK.yes); } e.stopImmediatePropagation(); return; }
     if (G.heroUI) { e.stopImmediatePropagation(); heroKey(k, e); return; }
     if (k === 'i') { setHeroUI(true); return; }
+    if (k === 'b') { HUI.tab = 2; HUI.i = 0; setHeroUI(true); return; }   // spellbook
     if (k === 'o') { setOpts(!G.opts); return; }
     if (k === 'j' || k === 'l') setLog(!G.log);
     if (k === 'escape') { if (G.opts) setOpts(false); else if (G.dlg) closeDialogue(); else if (G.log) setLog(false); }
@@ -679,6 +742,14 @@ function drawHero() {
       + PR.STATS.map((st, k) => `<div class="row${k === HUI.i ? ' sel' : ''}" data-k="${k}"><b>${st.name}</b><em>${S.stats[st.id]}</em><span>${st.does}</span>`
       + `<button class="wbtn sm plus" data-stat="${st.id}" ${S.free ? '' : 'disabled'}>+</button></div>`).join('');
     body.querySelectorAll('[data-stat]').forEach((b) => { b.onclick = (e) => { e.stopPropagation(); if (PR.spendStat(S, b.dataset.stat)) { G.audio.sfx('pickup'); save(); drawHero(); } }; });
+  } else if (HUI.tab === 2) {
+    const cur = slots(), raw = Array.isArray(S.slots) ? S.slots : cur;
+    HUI.n = 4;
+    body.innerHTML = `<p class="pts">Spellbook: ${knownSpells().length} known · put any of them in the four slots (1-4, LB / RB, the wheel)</p>`
+      + [0, 1, 2, 3].map((k) => { const id = raw[k] || null;
+        return `<div class="row slot${k === HUI.i ? ' sel' : ''}" data-k="${k}"><b>slot ${k + 1}</b><em>${id ? spellName(id) : '— empty —'}</em><span>${id ? spellBlurb(id) : 'tap change to fill'}</span>`
+        + `<button class="wbtn sm plus" data-slot="${k}">change</button></div>`; }).join('');
+    body.querySelectorAll('[data-slot]').forEach((b) => { b.onclick = (e) => { e.stopPropagation(); if (slotSpell(+b.dataset.slot)) { G.audio.sfx('pickup'); save(); drawHero(); } }; });
   } else {
     HUI.n = tree.length;
     body.innerHTML = `<p class="pts">${S.sp} skill point${S.sp === 1 ? '' : 's'} · tier I of each branch (1 point each)</p>`
@@ -692,7 +763,7 @@ function heroAct() {
   const S = G.S, b = $('heroBody').querySelector(`.row[data-k="${HUI.i}"] button`);
   if (b && !b.disabled) b.click();
 }
-function heroTab(d) { HUI.tab = (HUI.tab + d + 2) % 2; HUI.i = 0; drawHero(); }
+function heroTab(d) { HUI.tab = (HUI.tab + d + 3) % 3; HUI.i = 0; drawHero(); }
 function heroMove(d) { HUI.i = Math.max(0, Math.min((HUI.n || 1) - 1, HUI.i + d)); drawHero(); }
 function heroPad(name) {
   if (name === 'b' || name === 'start') setHeroUI(false);
@@ -701,7 +772,7 @@ function heroPad(name) {
   else if (name === 'a' || name === 'x') heroAct();
 }
 function heroKey(k, e) {
-  if (k === 'escape' || k === 'i') setHeroUI(false);
+  if (k === 'escape' || k === 'i' || k === 'b') setHeroUI(false);
   else if (k === 'arrowleft' || k === 'a' || k === 'q') heroTab(-1); else if (k === 'arrowright' || k === 'd' || k === 'e') heroTab(1);
   else if (k === 'arrowup' || k === 'w') heroMove(-1); else if (k === 'arrowdown' || k === 's') heroMove(1);
   else if (k === 'enter' || k === ' ' || k === 'f') { e.preventDefault(); heroAct(); }

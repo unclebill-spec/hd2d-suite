@@ -44,11 +44,12 @@ Repo handoff docs (in the suite root): [`AGENTS.md`](../../AGENTS.md), [`CHANGEL
 | Jump | Z | A when nobody is near, LS click | jump button |
 | Dodge roll | X | B (when nothing to close) | roll button |
 | Cast spell | F casts the current slot | Y | ✦ tap |
-| Pick spell | Q next, 1-4 slot | LB / RB | ✦ hold: slow-time wheel, slide, let go casts |
+| Pick spell | Q next, 1-4 slot | LB / RB; hold Y: slow-time wheel, stick picks, let go casts | ✦ hold: slow-time wheel, slide, let go casts |
 | Summon | V | RT | summon button |
 | Quest log | J / L | Start | ☰ |
 | Options | O or the ⚙ chip | | ⚙ chip |
 | Hero screen (stats, skills) | I | Start, then Y / LB / RB | tap the vitals chip |
+| Spellbook (assign the 4 slots) | B (or I, then → to Spells) | Start, Y, then RB to Spells | tap the vitals chip, Spells tab |
 | Zoom | + / - / wheel | right stick up / down | pinch |
 | Close / cancel | Esc | B | tap |
 
@@ -138,7 +139,7 @@ Repo handoff docs (in the suite root): [`AGENTS.md`](../../AGENTS.md), [`CHANGEL
 - HUD is parchment and carved wood only. No copied UI or IP from any other game.
 - Tap-to-walk uses A* (around walls and props, up the stairs). Tapping an NPC walks there and talks. Tapping a glimmer or the swirl walks onto it.
 - 3 errands complete end to end. Pudding follows across areas, the gate works both ways, and both edge exits fade.
-- Spell keys stay: F cast, Q next, 1-4 slots; pad ✦ tap casts, hold opens the slow-time wheel. Charms are rewards (start with sparkle burst); slot 1 is the class spell.
+- Spell keys stay: F cast, Q next, 1-4 slots; pad ✦ tap casts, hold opens the slow-time wheel; controller Y tap casts (on release), hold Y opens the same wheel. Charms are rewards (start with sparkle burst); by default slot 1 is the class spell, and the spellbook (B / hero screen Spells tab, saved as `slots`) can put any known spell in any slot.
 - Combat keys stay: R attack, C hold guard, Z jump, X roll, V summon (controller X / LT / A / B / RT as in the table). Enemies are gloom-and-glow (stone, bone, cold blue fire), nothing slimy. Defeat stays cozy (nothing lost).
 - Save key `hearthmoor-slot-1-v2` (bump the version, don't silently change the format) and keep the v1 migration. Continue restores hero, area, position, clock, bag, errands, pickups, Pudding and charms.
 - Title → hero picker for the 6 starters works with keys, controller and taps.
