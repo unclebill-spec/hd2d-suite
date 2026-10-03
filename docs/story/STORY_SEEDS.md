@@ -659,3 +659,10 @@ Ravenhold sits on terraces at the foot of the Rainbow Rift: Harbor at the bottom
 ## Bill's calls on the E1-E7 check items (2026-10-03)
 - Approved all proposed changes: rename the Jotunheim companion to Ulfar Mossback (innkeeper stays Bram), 24-minute day, Gatewright Halvard betrayal, and the rest of the E1-E7 choices.
 - Stats: on a new game (and in Settings) a popup asks "Auto level? Yes / No". Yes auto-assigns the 2 free stat points per level based on class; No lets the player spend them manually. Can be toggled anytime in Settings.
+
+## Glow ideas (2026-10-03). Bill loves light pools, sparkly spells, bright neon against darkness, red-and-white-spotted toadstools
+- Toadstool Hollows: glowing red/white-spotted toadstool groves; giant bounce toadstools; gnome doors in the stems.
+- Light pools as gameplay: standing in lantern/pet light gives a small buff; wraiths avoid light; some secrets appear only when lit.
+- Sparkle spells: every cast leaves glitter motes and a short-lived ground light pool; big casts briefly light the room (point lights, no bloom).
+- Glow-gardening at home: grow glow mushrooms, moonflowers, fireflies.
+- Dark-hour zones: pitch-black caves/forests you light with cold-fire braziers as you go.
