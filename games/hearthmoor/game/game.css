@@ -194,23 +194,23 @@ body.tv #dlg { width: min(900px, 80vw); } body.tv #dlg p { font-size: 20px; }
 .bar.xp { height: 4px; } .bar.xp i { background: #8ec8e8; }
 #hud .vitals { cursor: pointer; pointer-events: auto; }
 #hud .vitals.lvup { animation: ping .3s steps(2) 5; }
-#autolv, #heroui { position: fixed; inset: 0; display: flex; align-items: center; justify-content: center; z-index: 30; background: #1a120c66; }
-#autolv[hidden], #heroui[hidden] { display: none; }
-#autolv .card, #heroui .card { width: min(560px, 94vw); max-height: 92vh; overflow: auto; }
+#autolv, #heroui, #shopui { position: fixed; inset: 0; display: flex; align-items: center; justify-content: center; z-index: 30; background: #1a120c66; }
+#autolv[hidden], #heroui[hidden], #shopui[hidden] { display: none; }
+#autolv .card, #heroui .card, #shopui .card { width: min(560px, 94vw); max-height: 92vh; overflow: auto; }
 #autolv .card p { font: 600 14px system-ui; margin: 8px 4px; color: #3a2a1c; }
-#autolv .wbtn.on, #heroTabs .wbtn.on { background: #f3cf5a; }
-#heroTabs { display: flex; gap: 6px; margin: 6px 0; }
-#heroHead .tag { font: 700 11px system-ui; border: 2px solid #5a3e26; border-radius: 3px; padding: 0 5px; margin-left: 4px; background: #f6ead0; }
-#heroBody .pts { font: 700 12px system-ui; margin: 4px; color: #7a2c22; }
-#heroBody .row { display: grid; grid-template-columns: 96px 44px 1fr auto; gap: 6px; align-items: center; padding: 4px 6px; margin: 3px 0;
+#autolv .wbtn.on, #heroTabs .wbtn.on, #shopTabs .wbtn.on { background: #f3cf5a; }
+#heroTabs, #shopTabs { display: flex; gap: 6px; margin: 6px 0; }
+#heroHead .tag, #shopHead .tag { font: 700 11px system-ui; border: 2px solid #5a3e26; border-radius: 3px; padding: 0 5px; margin-left: 4px; background: #f6ead0; }
+#heroBody .pts, #shopBody .pts { font: 700 12px system-ui; margin: 4px; color: #7a2c22; }
+#heroBody .row, #shopBody .row { display: grid; grid-template-columns: 96px 44px 1fr auto; gap: 6px; align-items: center; padding: 4px 6px; margin: 3px 0;
   border: 2px solid #c9b48a; border-radius: 4px; background: #f6ead0; font: 600 12px system-ui; color: #3a2a1c; }
-#heroBody .row.node { grid-template-columns: 96px 120px 1fr auto; }
-#heroBody .row.sel { border-color: #5a3e26; background: #fff4d8; }
-#heroBody .row.got { background: #e4f0d0; }
-#heroBody .row em { font-style: normal; font-weight: 800; }
-#heroBody .plus { min-width: 44px; min-height: 32px; }
-#heroBody .plus[disabled] { opacity: .45; }
-@media (max-height: 460px) { #heroBody .row { padding: 2px 5px; margin: 2px 0; } #heroui .card { max-height: 96vh; } }
+#heroBody .row.node, #shopBody .row.node { grid-template-columns: 96px 120px 1fr auto; }
+#heroBody .row.sel, #shopBody .row.sel { border-color: #5a3e26; background: #fff4d8; }
+#heroBody .row.got, #shopBody .row.got { background: #e4f0d0; }
+#heroBody .row em, #shopBody .row em { font-style: normal; font-weight: 800; }
+#heroBody .plus, #shopBody .plus { min-width: 44px; min-height: 32px; }
+#heroBody .plus[disabled], #shopBody .plus[disabled] { opacity: .45; }
+@media (max-height: 460px) {#heroBody .row, #shopBody .row { padding: 2px 5px; margin: 2px 0; }#heroui .card, #shopui .card { max-height: 96vh; } }
 /* loot drops (stage 2): pixel beam + icon pinned to the world; Epic: stepped glow ring, Legendary: neon aura */
 .loot { position: absolute; left: 0; top: 0; width: 0; height: 0; pointer-events: none; will-change: transform; }
 .loot canvas { position: absolute; image-rendering: pixelated; image-rendering: crisp-edges; }
@@ -220,21 +220,22 @@ body.tv #dlg { width: min(900px, 80vw); } body.tv #dlg p { font-size: 20px; }
 .loot.gold .icon { top: -20px; }
 .loot.purse .icon { animation: ping .6s steps(2) infinite; }
 /* gear page rows: rarity colours, Epic faint glow, Legendary animated neon edge (hard pixel borders, no blur) */
-#heroBody .row.gear { grid-template-columns: 62px minmax(120px, 1.1fr) 1.4fr auto; }
-#heroBody .row.gear .iname { display: flex; align-items: center; gap: 5px; }
-#heroBody .row.gear canvas.gicon { image-rendering: pixelated; flex: none; width: 20px; height: 20px; }
-#heroBody .row.gear u { text-decoration: none; font-weight: 800; }
-#heroBody .row.gear .bb { display: flex; gap: 4px; }
-#heroBody .row.r0 .iname { color: #5a4a3a; } #heroBody .row.r1 .iname, #heroBody .row.r1 u { color: #4a7234; }
-#heroBody .row.r2 .iname, #heroBody .row.r2 u { color: #3e5a8c; } #heroBody .row.r3 .iname, #heroBody .row.r3 u { color: #6a3e9a; }
-#heroBody .row.r4 .iname, #heroBody .row.r4 u { color: #b04a1c; }
-#heroBody .row.r3 { border-color: #b07ce0; animation: epicGlow 1.6s steps(2) infinite; }
-#heroBody .row.r4 { border-color: #f2a63a; animation: neon .6s steps(4) infinite; }
-#heroBody .row.none { opacity: .7; }
+#heroBody .row.gear, #shopBody .row.gear { grid-template-columns: 62px minmax(120px, 1.1fr) 1.4fr auto; }
+#heroBody .row.gear .iname, #shopBody .row.gear .iname { display: flex; align-items: center; gap: 5px; }
+#heroBody .row.gear canvas.gicon, #shopBody .row.gear canvas.gicon { image-rendering: pixelated; flex: none; width: 20px; height: 20px; }
+#heroBody .row.gear canvas.gicon { width: 30px; height: 30px; margin: -4px 0; }
+#heroBody .row.gear u, #shopBody .row.gear u { text-decoration: none; font-weight: 800; }
+#heroBody .row.gear .bb, #shopBody .row.gear .bb { display: flex; gap: 4px; }
+#heroBody .row.r0 .iname, #shopBody .row.r0 .iname { color: #5a4a3a; }#heroBody .row.r1 .iname, #heroBody .row.r1 u, #shopBody .row.r1 .iname, #shopBody .row.r1 u { color: #4a7234; }
+#heroBody .row.r2 .iname, #heroBody .row.r2 u, #shopBody .row.r2 .iname, #shopBody .row.r2 u { color: #3e5a8c; }#heroBody .row.r3 .iname, #heroBody .row.r3 u, #shopBody .row.r3 .iname, #shopBody .row.r3 u { color: #6a3e9a; }
+#heroBody .row.r4 .iname, #heroBody .row.r4 u, #shopBody .row.r4 .iname, #shopBody .row.r4 u { color: #b04a1c; }
+#heroBody .row.r3, #shopBody .row.r3 { border-color: #b07ce0; animation: epicGlow 1.6s steps(2) infinite; }
+#heroBody .row.r4, #shopBody .row.r4 { border-color: #f2a63a; animation: neon .6s steps(4) infinite; }
+#heroBody .row.none, #shopBody .row.none { opacity: .7; }
 @keyframes epicGlow { 0% { box-shadow: 0 0 0 2px #b07ce055; } 100% { box-shadow: 0 0 0 2px #b07ce0aa; } }
 @keyframes neon { 0% { border-color: #f2a63a; box-shadow: 0 0 0 2px #f2c24a; } 25% { border-color: #f2c24a; box-shadow: 0 0 0 2px #fff8e6; }
   50% { border-color: #fff8e6; box-shadow: 0 0 0 2px #e47c8c; } 75% { border-color: #e47c8c; box-shadow: 0 0 0 2px #f2a63a; } 100% { border-color: #f2a63a; box-shadow: 0 0 0 2px #f2c24a; } }
-@media (prefers-reduced-motion: reduce) { #heroBody .row.r3, #heroBody .row.r4, .loot.purse .icon { animation: none; } }
+@media (prefers-reduced-motion: reduce) {#heroBody .row.r3, #heroBody .row.r4, .loot.purse .icon, #shopBody .row.r3, #shopBody .row.r4 { animation: none; } }
 #bag .gearchip, #bag .goldchip { display: inline-flex; align-items: center; margin-left: 6px; font: 800 12px system-ui; color: #3a2a1c; }
 #bag .goldchip { color: #9a4630; }
 .plaque .modetip { margin: 4px 0 0; font: 600 12px system-ui; color: var(--parch-hi); min-height: 1.2em; }
@@ -247,3 +248,13 @@ body.tv #dlg { width: min(900px, 80vw); } body.tv #dlg p { font-size: 20px; }
 #bossbar span { display: block; height: 7px; background: var(--ink); border: 1px solid var(--parch); }
 #bossbar i { display: block; height: 7px; background: #f2a63a; box-shadow: inset 0 -2px 0 #c4502c; }
 .loot.paura { z-index: 0; }
+
+/* stage 3 shop panel (same parchment card as the hero screen) */
+#shopBody .row.gear { grid-template-columns: minmax(150px, 1.1fr) 1.4fr auto; }
+#shopBody .row.good .iname { color: #3a2a1c; } #shopBody .row small { font-weight: 600; color: #7a5a3a; }
+#shopHead .tag.gold { background: #f3cf5a; }
+#bag .slot img.ico { width: 32px; height: 32px; image-rendering: pixelated; background: none; }
+#shopBody .row.gear canvas.gicon.gd { width: 32px; height: 32px; margin: -6px 0; }
+#heroBody .pts.gems { color: #3a2a1c; display: flex; flex-wrap: wrap; gap: 4px; align-items: center; }
+#heroBody .gemtag { border: 2px solid #5a3e26; border-left: 8px solid var(--gc); border-radius: 3px; padding: 0 4px; background: #f6ead0; }
+#heroBody .gemtag.on { background: #fff4d8; box-shadow: 0 0 0 2px var(--gc); }

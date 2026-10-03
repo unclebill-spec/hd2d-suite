@@ -10,6 +10,7 @@ import { HEROES, HERO, SPELLS, SUMMONS, CHARM_DMG, CHARM_CD } from './heroes.js'
 import { Combat } from './combat.js';
 import { Glow } from './glow.js';
 import * as LO from './loot.js';
+import { Shop, drinkTonic, goodIconURL } from './shop.js';
 
 // PWA install: catch the browser's prompt as early as possible (Chrome / Edge / Android); iPhone gets a tip instead
 let installEvt = null;
@@ -37,6 +38,7 @@ const G = {
 G.combat = new Combat(G);
 G.glow = new Glow(G);
 G.loot = new LO.Loot(G); G.LO = LO;
+G.shopUI = new Shop(G); G.drinkTonic = () => drinkTonic(G);
 window.__hm = G;   // smoke tests + debugging
 
 // ------------------------------------------------------------------ save / load
@@ -114,14 +116,19 @@ G.catHome = () => {
 
 // ------------------------------------------------------------------ HUD: bag, quest log, toast, prompt
 const ICON = 32;   // 16 px icons drawn at 2x
-function iconHTML(id) { const i = ITEMS[id].icon; return `<span class="ico" style="background-position:-${i * ICON}px 0"></span>`; }
+const PXURL = {};
+function iconHTML(id) {
+  if (ITEMS[id].px) { const u = PXURL[id] || (PXURL[id] = goodIconURL(ITEMS[id].px)); return `<img class="ico" alt="" src="${u}">`; }
+  const i = ITEMS[id].icon; return `<span class="ico" style="background-position:-${i * ICON}px 0"></span>`;
+}
 function drawBag(flash) {
   const el = $('bag'); if (!el) return;
   const ids = Object.keys(ITEMS).filter((k) => G.S.inv[k]);
   const nGear = (G.S.bag || []).length, gold = G.S.gold || 0;
   const gear = nGear || gold ? `<span class="gearchip" title="Gear in the bag (G)">⚔ ${nGear}</span><span class="goldchip" title="Gold">● ${gold}</span>` : '';
-  el.innerHTML = ids.length || gear ? ids.map((k) => `<span class="slot${k === flash ? ' new' : ''}" title="${ITEMS[k].name}: ${ITEMS[k].about}">${iconHTML(k)}<b>${G.S.inv[k]}</b></span>`).join('') + gear
+  el.innerHTML = ids.length || gear ? ids.map((k) => `<span class="slot${k === flash ? ' new' : ''}" data-item="${k}" title="${ITEMS[k].name}: ${ITEMS[k].about}">${iconHTML(k)}<b>${G.S.inv[k]}</b></span>`).join('') + gear
                             : '<span class="empty">bag: empty</span>';
+  const tn = el.querySelector('[data-item="tonic"]'); if (tn) tn.onclick = (e) => { e.stopPropagation(); G.drinkTonic(); };   // tap the tonic to drink it
   const rail = $('rail');
   if (rail) rail.innerHTML = '';   // the bag chip (top left) is the one inventory display; the pad rail stays empty
 }
@@ -217,12 +224,12 @@ async function loadArea(id, spawnKey, pos) {
   const old = $('view'); if (old) old.remove();
   const canvas = document.createElement('canvas'); canvas.id = 'view'; document.body.prepend(canvas);
   G.area = id; G.S.area = id; G.armed = false;
-  G.combat.detach(); G.glow.detach(); G.loot.detach();
+  G.combat.detach(); G.glow.detach(); G.loot.detach(); G.shopUI.detach();
   G.game = await boot({ base: AREAS[id], canvas, spawn: sp, startT: G.S.t, clockSpeed: 1 / DAY_SECONDS, spellCycle: slots(),
                         player: { role: G.S.cls || G.preview || 'wildcaller' }, castAdvance: false,
                         keepTitle: true, padHandled: true, hooks, toast: (m, t) => toast(m, t) });
   const ctx = G.ctx = G.game.ctx;
-  G.combat.attach(ctx, id); G.glow.attach(ctx, id); G.loot.attach(ctx); PR.ensure(G.S); G.loot.restorePurse(id);
+  G.combat.attach(ctx, id); G.glow.attach(ctx, id); G.loot.attach(ctx); G.shopUI.attach(ctx, id); PR.ensure(G.S); G.loot.restorePurse(id);
   // portrait source: this area's actor atlas
   portraitImg = new Image(); portraitImg.src = AREAS[id] + ctx.scene.atlas.image;
   // pickups already taken stay gone
@@ -295,7 +302,7 @@ function onFrame(dt, ctx) {
   syncMarkers();
   padWheel();
   G.glow.update(dt);
-  G.loot.update(dt);
+  G.loot.update(dt); G.shopUI.update(dt);
   G.combat.update(dt, ctx);
   drawVitals(ctx);
   if (G.title || G.busy) return;
@@ -341,7 +348,7 @@ function drawVitals(ctx) {
 }
 
 const hooks = {
-  blockInput: () => !!(G.dlg || G.busy || G.title || G.log || G.downed || G.opts || G.picking || G.heroUI || G.asking || WHEEL.open),
+  blockInput: () => !!(G.dlg || G.busy || G.title || G.log || G.downed || G.opts || G.picking || G.heroUI || G.shop || G.asking || WHEEL.open),
   rollMods: () => { const M = G.combat.M; return { speed: M.rollSpeed, iframes: M.rollIframes }; },
   onCast: (name) => G.combat.cast(name),
   onSummon: () => G.combat.doSummon(),
@@ -389,11 +396,13 @@ const hooks = {
     }
     if (G.asking) { if (name === 'left' || name === 'right' || name === 'up' || name === 'down') askMove(); else if (name === 'a') askPick(ASK.yes); else if (name === 'b') askPick(false); return true; }
     if (G.heroUI) { heroPad(name); return true; }
+    if (G.shop) { G.shopUI.pad(name); return true; }
     if (G.opts) { if (name === 'b' || name === 'start' || name === 'a') setOpts(false); return true; }
     if (G.busy || G.downed) return true;
     if (G.dlg) { if (name === 'a') advanceDialogue(); else if (name === 'b') closeDialogue(); return name !== 'select'; }
     if (G.log) { if (name === 'y' || name === 'rb' || name === 'lb') { setLog(false); setHeroUI(true); return true; } if (name === 'a' || name === 'b' || name === 'start') setLog(false); return name !== 'select'; }
     if (name === 'start') { setLog(true); return true; }
+    if (name === 'rs') { G.drinkTonic(); return true; }   // right-stick click drinks a tonic
     if (name === 'y') { PADW.t = performance.now(); PADW.on = true; PADW.fired = false; return true; }   // tap casts, hold opens the wheel
     return false;
   },
@@ -624,7 +633,7 @@ function wire() {
   $('btnSound').onclick = () => { G.audio.start(); const m = G.audio.toggle(); $('btnSound').textContent = m ? 'sound: off' : 'sound: on'; };
   $('btnSound').textContent = G.audio.muted ? 'sound: off' : 'sound: on';
   $('dlg').addEventListener('pointerdown', (e) => { e.preventDefault(); advanceDialogue(); });
-  wirePad(); wireOptions(); wireLeveling();
+  wirePad(); wireOptions(); wireLeveling(); G.shopUI.wire();
   $('btnBack').onclick = () => closePicker();
   $('btnBegin').onclick = () => pickBegin();
   $('btnPickMode').onclick = () => pickMode();
@@ -641,6 +650,8 @@ function wire() {
     if (G.title) { if (k === 'enter' || k === ' ') { e.preventDefault(); (readSave() ? cont : newGame)(); } else if (k === 'n') newGame(); return; }
     if (G.asking) { if (k === 'y') askPick(true); else if (k === 'n' || k === 'escape') askPick(false); else if (k.startsWith('arrow') || k === 'a' || k === 'd') askMove(); else if (k === 'enter' || k === ' ') { e.preventDefault(); askPick(ASK.yes); } e.stopImmediatePropagation(); return; }
     if (G.heroUI) { e.stopImmediatePropagation(); heroKey(k, e); return; }
+    if (G.shop) { e.stopImmediatePropagation(); G.shopUI.key(k, e); return; }
+    if (k === 'u' && !hooks.blockInput()) { G.drinkTonic(); return; }
     if (k === 'i') { setHeroUI(true); return; }
     if (k === 'b') { HUI.tab = 2; HUI.i = 0; setHeroUI(true); return; }   // spellbook
     if (k === 'g') { HUI.tab = 3; HUI.i = 0; setHeroUI(true); return; }   // gear + bag
@@ -751,7 +762,7 @@ G.syncModeBtn = syncModeBtn;
 function syncAutoBtn() { const b = $('btnAuto'); if (b) b.textContent = 'auto level: ' + (G.S.autoLevel ? 'on' : 'off'); }
 const HUI = { tab: 0, i: 0 };
 function setHeroUI(open) {
-  if (open && (G.title || G.busy || G.dlg || G.picking)) return;
+  if (open && (G.title || G.busy || G.dlg || G.picking || G.shop)) return;
   G.heroUI = open; $('heroui').hidden = !open;
   if (open) { if (G.log) setLog(false); if (G.opts) setOpts(false); PR.ensure(G.S); drawHero(); }
 }
@@ -774,13 +785,20 @@ function drawHero() {
     const eq = LO.SLOTS.map((sl) => [sl, S.gear[sl]]);
     HUI.n = 3 + S.bag.length;
     const rowOf = (it, k, label, btns) => `<div class="row gear${it ? ' r' + it.rar : ' none'}${k === HUI.i ? ' sel' : ''}" data-k="${k}">`
-      + `<b>${label}</b><em class="iname">${it ? `<i class="ic" data-ic="${it.slot}:${it.rar}"></i>${it.name}` : '— empty —'}</em>`
+      + `<b>${label}</b><em class="iname">${it ? `<i class="ic" data-ic="${it.slot}:${it.rar}:${(it.gems || []).map((g) => g || '-').join(',')}"></i>${it.name}` : '— empty —'}</em>`
       + `<span>${it ? `<u>${LO.RARITY[it.rar].name}</u> · ${LO.describe(it)}` : ''}</span><span class="bb">${btns}</span></div>`;
+    const owned = LO.GEM_IDS.filter((g) => S.gems[g] > 0);
+    if (!owned.includes(HUI.gem)) HUI.gem = owned[0] || null;
+    const sockBtn = (it, k) => (it && (it.gems || []).includes(null) && HUI.gem ? `<button class="wbtn sm plus" data-sock="${k}">socket</button>` : '');
     body.innerHTML = `<p class="pts">Gold ${S.gold} · bag ${S.bag.length} / ${LO.BAG_MAX} · Enter / A equip · X scrap for gold</p>`
-      + eq.map(([sl, it], k) => rowOf(it, k, sl, it ? `<button class="wbtn sm plus" data-uneq="${sl}">take off</button>` : '')).join('')
+      + `<p class="pts gems">${owned.length ? `gems: ${owned.map((g) => `<span class="gemtag${g === HUI.gem ? ' on' : ''}" style="--gc:${LO.GEMS[g].col}">◆ ${LO.GEMS[g].name} ×${S.gems[g]}</span>`).join(' ')}`
+        + ` <button class="wbtn sm" id="gemCycle">gem ▸</button> · R / Y socket into the chosen row · T / RT next gem` : 'gems: none yet (golem cores, rift shards: beat foes, or ask the night merchant)'}</p>`
+      + eq.map(([sl, it], k) => rowOf(it, k, sl, (it ? `<button class="wbtn sm plus" data-uneq="${sl}">take off</button>` : '') + sockBtn(it, k))).join('')
       + (S.bag.length ? '<p class="pts">bag</p>' : '<p class="pts">bag is empty: beat enemies, walk over the beams</p>')
-      + S.bag.map((it, i) => rowOf(it, 3 + i, it.slot, `<button class="wbtn sm plus" data-eq="${i}">equip</button><button class="wbtn sm plus" data-scrap="${i}">scrap</button>`)).join('');
-    body.querySelectorAll('[data-ic]').forEach((el) => { const [sl, r] = el.dataset.ic.split(':'); const cv = LO.iconCanvas(sl, +r, 2); el.replaceWith(cv); cv.className = 'gicon'; });
+      + S.bag.map((it, i) => rowOf(it, 3 + i, it.slot, `<button class="wbtn sm plus" data-eq="${i}">equip</button>${sockBtn(it, 3 + i)}<button class="wbtn sm plus" data-scrap="${i}">scrap</button>`)).join('');
+    body.querySelectorAll('[data-ic]').forEach((el) => { const [sl, r, gs] = el.dataset.ic.split(':'); const cv = LO.iconCanvas(sl, +r, 3, gs ? gs.split(',').map((g) => (g === '-' ? null : g)) : null); el.replaceWith(cv); cv.className = 'gicon'; });
+    body.querySelectorAll('[data-sock]').forEach((b) => { b.onclick = (e) => { e.stopPropagation(); HUI.i = +b.dataset.sock; heroSocket(); }; });
+    const gc = $('gemCycle'); if (gc) gc.onclick = (e) => { e.stopPropagation(); gemCycle(); };
     body.querySelectorAll('[data-eq]').forEach((b) => { b.onclick = (e) => { e.stopPropagation(); if (LO.equip(S, +b.dataset.eq)) { G.audio.sfx('pickup'); save(); drawHero(); } }; });
     body.querySelectorAll('[data-uneq]').forEach((b) => { b.onclick = (e) => { e.stopPropagation(); if (LO.unequip(S, b.dataset.uneq)) { save(); drawHero(); } }; });
     body.querySelectorAll('[data-scrap]').forEach((b) => { b.onclick = (e) => { e.stopPropagation(); HUI.i = 3 + +b.dataset.scrap; heroScrap(); }; });
@@ -812,6 +830,23 @@ function heroScrap() {
   const g = LO.scrap(G.S, HUI.i - 3);
   if (g) { toast(`Scrapped for ${g} gold`, 1.4); G.audio.sfx('pickup'); HUI.i = Math.min(HUI.i, 2 + G.S.bag.length); save(); drawHero(); }
 }
+// sockets: put the chosen gem into the selected row's first empty socket (gems stay until a jeweler clears them)
+function gearAt(k) { const S = G.S; return k < 3 ? S.gear[LO.SLOTS[k]] : S.bag[k - 3]; }
+function heroSocket() {
+  if (HUI.tab !== 3) return false;
+  const it = gearAt(HUI.i);
+  if (!it || !(it.gems || []).includes(null)) { toast(it ? 'No empty socket on this piece' : 'Pick a piece of gear first', 1.4); return false; }
+  if (!HUI.gem) { toast('No gems yet', 1.2); return false; }
+  const name = LO.GEMS[HUI.gem].name;
+  if (!LO.socketGem(G.S, it, HUI.gem)) return false;
+  toast(`${name} set into ${it.name}`, 1.8); G.audio.sfx('quest'); save(); drawHero();
+  return true;
+}
+function gemCycle() {
+  const owned = LO.GEM_IDS.filter((g) => G.S.gems[g] > 0); if (!owned.length) return;
+  HUI.gem = owned[(owned.indexOf(HUI.gem) + 1) % owned.length]; drawHero();
+}
+G.heroSocket = heroSocket; G.gemCycle = gemCycle;
 function heroTab(d) { HUI.tab = (HUI.tab + d + 4) % 4; HUI.i = 0; drawHero(); }
 function heroMove(d) { HUI.i = Math.max(0, Math.min((HUI.n || 1) - 1, HUI.i + d)); drawHero(); }
 function heroPad(name) {
@@ -819,11 +854,15 @@ function heroPad(name) {
   else if (name === 'lb' || name === 'left') heroTab(-1); else if (name === 'rb' || name === 'right') heroTab(1);
   else if (name === 'up') heroMove(-1); else if (name === 'down') heroMove(1);
   else if (name === 'x' && HUI.tab === 3) heroScrap();
+  else if (name === 'y' && HUI.tab === 3) heroSocket();
+  else if (name === 'rt' && HUI.tab === 3) gemCycle();
   else if (name === 'a' || name === 'x') heroAct();
 }
 function heroKey(k, e) {
   if (k === 'escape' || k === 'i' || k === 'b' || k === 'g') setHeroUI(false);
   else if (HUI.tab === 3 && (k === 'x' || k === 'delete' || k === 'backspace')) { e.preventDefault(); heroScrap(); }
+  else if (HUI.tab === 3 && k === 'r') heroSocket();
+  else if (HUI.tab === 3 && k === 't') gemCycle();
   else if (k === 'arrowleft' || k === 'a' || k === 'q') heroTab(-1); else if (k === 'arrowright' || k === 'd' || k === 'e') heroTab(1);
   else if (k === 'arrowup' || k === 'w') heroMove(-1); else if (k === 'arrowdown' || k === 's') heroMove(1);
   else if (k === 'enter' || k === ' ' || k === 'f') { e.preventDefault(); heroAct(); }

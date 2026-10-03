@@ -48,6 +48,8 @@ export class Glow {
     }
     for (const t of this.toads) if (t.on) out.push({ x: t.x, z: t.z, r: LIT.toadR, src: 'toadstool' });
     for (const p of this.pools) out.push({ x: p.x, z: p.z, r: p.r, src: 'spell' });
+    const nm = this.G && this.G.shopUI && this.G.shopUI.nm;   // the night merchant's neon-blue lantern is a light zone too
+    if (nm && nm.a) out.push({ x: nm.a.x + 0.35, z: nm.a.z + 0.1, r: 1.8, src: 'lantern' });
     return out;
   }
   zoneAt(x, z) {

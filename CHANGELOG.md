@@ -2,6 +2,19 @@
 
 Dates are America/New_York. Newest first. Keep this current with every change you push.
 
+## 2026-10-03: Hearthmoor Stage 3, part 3.2 + 3.3: the travelling night merchant, gem sockets
+- **Sefa, the travelling night merchant** sets up by the Plaza well only in the night hours (19:12 to 06:00) and packs up at dawn (a little poof each way). Deep hood, night-blue cloak and a **neon-blue cold-fire lantern** that lights the cobbles (a pooled point light) and counts as a light zone (glowlit, wraith-proof). Her **Lantern Pack** shop (same panel and controls as Odo's) sells tonics, the four socket gems and two rarer pieces (Rare + Epic, one level up, always at least one socket), fresh each night, and buys loot back at 1.2x.
+- **Gem sockets:** Rare gear rolls 0-2 sockets (mostly 0-1), Epic 0-2 (mostly 1-2), **Legendary always 2**. Gems: **Golem core** (+15 HP, guard -3% dmg), **Rift shard** (+6% spells, +1% crit), Frost core (+12 stamina), Moon opal (+8% summons). Mossheart always drops a golem core; stone golems (10%), frost golems (25% frost core), wraiths and skeleton mages (rift shards) sometimes do. Loose gems lie on the ground as faceted pixel stones and go into a gem pouch (`S.gems`).
+- **Socketing in the Gear tab:** a gem line lists what you own (the chosen gem is outlined; "gem ▸", T or RT picks the next one); R (keys), Y (controller) or the row's "socket" button sets it into the chosen piece's first empty socket. Set gems glow in their colour on the item icon (a dithered ring around a 2x2 inlay with a white glint; empty sockets are dark holes) and are listed in the item text (◆ / ◇). Gear-tab icons are now drawn at 3x. Gems stay set (a jeweler to clear them comes later).
+- Smoke: shop steps (keys, controller, touch, tonic), night merchant (appears with light + zone at night, gem stock, socketed gear, gone at dawn), Mossheart's golem core, socketing by R and Y, gem stats once equipped.
+
+## 2026-10-03: Hearthmoor Stage 3, part 3.1: Odo's shop in the Plaza
+- **Odo the merchant** (Plaza, by the barrels and crates east of the fountain): talk to him to open his shop, a parchment / wood panel like the hero screen. **Buy**: Hearth tonics (12 gold, heal 60 HP), glow seeds (8 gold; kept for the coming glow-gardens) and three pieces of plain gear rolled when you arrive (Common / Uncommon, priced by rarity and level). **Sell**: anything in the gear bag, priced by rarity (always more than scrapping; Epic and Legendary ask "sure?" first).
+- Works on all three schemes: keys (← → tabs, ↑ ↓ choose, Enter buy / sell, Esc close), controller (LB / RB tabs, d-pad, A, B) and touch (tap a tab, a row, the buy / sell button, ✕ or outside the card). The field is input-blocked while it is open.
+- **Hearth tonics** show in the bag chip with a new pixel icon; drink one with **U**, a **right-stick click**, or by tapping it in the bag.
+- Plaza and Bakery Lane sprite sheets no longer carry the enemy sprites (only Mossglen has enemies): Lane 3328 → 2560 px tall, Plaza 2944 → 2432 px.
+- Sprites: `nightmerchant` role added (deep hood, night-blue cloak, neon-blue lantern) for part 3.2.
+
 ## 2026-10-03: Hearthmoor Stage 3, part 2: new foes, the Mossheart mini-boss, the Legendary aura
 - **Frost golem** (Mossglen, east by the hedge): the stone golem re-cut in pale ice with ice spikes and white rune light. Tougher than the stone golem; its slam also **chills** you (drains 18 stamina).
 - **Skeleton mage** (Mossglen, south glade): skull under a red hood, long gold-hemmed robe, a crooked staff with a cold-fire orb. Keeps its distance and fires arcane bolts (dodge, guard, or let a summon take them). Not light-shy, unlike the wraiths.

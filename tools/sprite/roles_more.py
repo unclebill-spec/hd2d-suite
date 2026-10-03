@@ -39,6 +39,9 @@ def more_roles(_r):
         "lamplighter": _r(desc="lamplighter: flat cap, long brown coat, lit wick pole", hat="flatcap",
                           hatc="shadow", hair="stone", beard="stone_hi", shirt="plaster_lo", cloak="timber",
                           pants="timber_lo", item="wick"),
+        "nightmerchant": _r(desc="travelling night merchant: deep hood, night-blue cloak, blue scarf, pack, neon-blue lantern",
+                            hat="hood", hatc="shadow", hair="stone", beard="stone_hi", shirt="cloth", cloak="shadow",
+                            scarf="flower_blue", satchel="timber_hi", pants="timber_lo", shoes="shadow", item="bluelantern"),
         "dog": _r(kind="creature", animal="dog", desc="scruffy cream terrier with floppy brown ears", fur="plaster",
                   spot="timber_hi", belly="plaster_hi"),
         "goat": _r(kind="creature", animal="goat", desc="small white goat with curled horns and a bell",
@@ -126,6 +129,20 @@ def draw_glasses(s, spec, L, face, top, hx, w):
 def draw_items(s, spec, L, face, top, hand_y, x0, x1, stride):
     item = spec["item"]
     if not item:
+        return
+    if item == "bluelantern":                      # night merchant: a neon-blue cold-fire lantern on a short crook
+        hx = (x1 + 2) if face == "down" else (x0 - 3) if face == "up" else (4 - stride)
+        for y in range(hand_y - 5, hand_y + 1):
+            s.set(hx, y, "timber_lo")
+        s.set(hx + (1 if face != "left" else -1), hand_y - 5, "timber_lo")
+        lx = hx + (1 if face != "left" else -1)
+        ly = hand_y - 3
+        if face == "up":                            # carried on the far side: only the top glints past the cloak
+            s.set(lx, ly, "flower_blue"); s.set(lx, ly + 1, "sky")
+            return
+        for dy in range(0, 4):
+            s.set(lx - 1, ly + dy, "flower_blue"); s.set(lx + 1, ly + dy, "flower_blue")
+        s.set(lx, ly, "flower_blue"); s.set(lx, ly + 1, "white"); s.set(lx, ly + 2, "sky"); s.set(lx, ly + 3, "flower_blue")
         return
     if face == "down":
         hl, hr = x0 - 2, x1 + 1          # screen-left / screen-right hands

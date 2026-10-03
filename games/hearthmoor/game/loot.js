@@ -9,6 +9,24 @@ export const RARITY = [
   { id: 'legendary', name: 'Legendary', col: '#f2a63a', lo: '#c4502c', w: 2, mul: 3.5, scrap: 32 },
 ];
 export const SLOTS = ['weapon', 'armor', 'trinket'];
+// socket gems (stage 3): golem cores and rift shards are the high-tier ones; each glows in its colour on the item icon
+export const GEMS = {
+  golem_core: { name: 'Golem core', col: '#f2a63a', lo: '#c4502c', mods: { hpAdd: 15, guardMul: -0.03 }, price: 150, about: '+15 HP · guard -3% dmg' },
+  rift_shard: { name: 'Rift shard', col: '#b07ce0', lo: '#6a3e9a', mods: { spellMul: 0.06, crit: 0.01 }, price: 120, about: '+6% spells · +1% crit' },
+  frost_core: { name: 'Frost core', col: '#94c0dc', lo: '#3e5a8c', mods: { stAdd: 12 }, price: 70, about: '+12 stamina' },
+  moon_opal: { name: 'Moon opal', col: '#fff8e6', lo: '#c4a984', mods: { summonMul: 0.08 }, price: 90, about: '+8% summons' },
+};
+export const GEM_IDS = Object.keys(GEMS);
+// Rare: 0-2 sockets (mostly 0-1), Epic: 0-2 (mostly 1-2), Legendary: always 2
+export function rollSockets(rar, rnd = Math.random) {
+  if (rar >= 4) return 2; if (rar === 3) return pickW(rnd, [25, 45, 30]); if (rar === 2) return pickW(rnd, [55, 35, 10]); return 0;
+}
+export function socketGem(S, it, gem) {
+  if (!it || !GEMS[gem] || !((S.gems || {})[gem] > 0)) return false;
+  const k = (it.gems || []).indexOf(null); if (k < 0) return false;
+  it.gems[k] = gem; S.gems[gem] -= 1; if (!S.gems[gem]) delete S.gems[gem];
+  return true;
+}
 export const BAG_MAX = 30;
 const INK = '#2a1e1c';
 const BASES = {
@@ -31,6 +49,7 @@ export function ensure(S) {
   if (!Array.isArray(S.bag)) S.bag = [];
   if (!S.gear || typeof S.gear !== 'object') S.gear = { weapon: null, armor: null, trinket: null };
   if (typeof S.gold !== 'number') S.gold = (S.inv && S.inv.coin) || 0;
+  if (!S.gems || typeof S.gems !== 'object') S.gems = {};
   return S;
 }
 export function makeItem(lv = 1, rar = null, slot = null, rnd = Math.random, luck = 0) {
@@ -42,7 +61,8 @@ export function makeItem(lv = 1, rar = null, slot = null, rnd = Math.random, luc
   if (sl === 'weapon') { mods.meleeMul = +(0.04 * k).toFixed(3); mods.spellMul = +(0.04 * k).toFixed(3); }
   else if (sl === 'armor') { mods.hpAdd = Math.round(8 * k); mods.guardMul = -+(0.015 * k).toFixed(3); }
   else { mods.crit = +(0.01 * k).toFixed(3); mods.stAdd = Math.round(4 * k); if (r >= 3) mods.summonMul = +(0.05 * k).toFixed(3); }
-  return { uid: `${Date.now().toString(36)}${(uidN++).toString(36)}`, slot: sl, name: `${pre} ${base}`, rar: r, lv, mods };
+  const n = rollSockets(r, rnd);
+  return { uid: `${Date.now().toString(36)}${(uidN++).toString(36)}`, slot: sl, name: `${pre} ${base}`, rar: r, lv, mods, gems: Array(n).fill(null) };
 }
 export function describe(it) {
   const m = it.mods, out = [];
@@ -53,12 +73,14 @@ export function describe(it) {
   if (m.crit) out.push(`+${(m.crit * 100).toFixed(1)}% crit`);
   if (m.stAdd) out.push(`+${m.stAdd} stamina`);
   if (m.summonMul) out.push(`+${Math.round(m.summonMul * 100)}% summons`);
+  for (const g of it.gems || []) out.push(g ? `◆ ${GEMS[g].name}` : '◇ empty socket');
   return out.join(' · ');
 }
 export function gearMods(S, m) {   // fold equipped gear into progress.mods()
   for (const it of Object.values((S && S.gear) || {})) {
     if (!it) continue;
-    for (const [k, v] of Object.entries(it.mods)) {
+    const all = [it.mods, ...(it.gems || []).filter(Boolean).map((g) => GEMS[g].mods)];
+    for (const mods of all) for (const [k, v] of Object.entries(mods)) {
       if (k === 'guardMul') m.guardMul = Math.max(0.4, m.guardMul + v);
       else m[k] = (m[k] || 0) + v;
     }
@@ -66,7 +88,7 @@ export function gearMods(S, m) {   // fold equipped gear into progress.mods()
   return m;
 }
 // pixel art: icon canvas (8x8 at scale, 1 px ink outline) and beam canvas
-export function iconCanvas(kind, rar, scale = 3) {
+export function iconCanvas(kind, rar, scale = 3, gems = null) {
   const R = RARITY[rar] || RARITY[0], rows = ICONS[kind] || ICONS.trinket;
   const cv = document.createElement('canvas'); cv.width = 10 * scale; cv.height = 10 * scale;
   const g = cv.getContext('2d'); g.imageSmoothingEnabled = false;
@@ -75,6 +97,23 @@ export function iconCanvas(kind, rar, scale = 3) {
   const px = (x, y, c) => { g.fillStyle = c; g.fillRect(x * scale, y * scale, scale, scale); };
   for (let y = -1; y < 9; y++) for (let x = -1; x < 9; x++) if (!on(x, y) && (on(x + 1, y) || on(x - 1, y) || on(x, y + 1) || on(x, y - 1))) px(x + 1, y + 1, INK);
   for (let y = 0; y < 8; y++) for (let x = 0; x < 8; x++) if (on(x, y)) px(x + 1, y + 1, col[rows[y][x]] || R.col);
+  if (kind === 'gem') return gemPaint(cv, g, px, gems && gems[0]);
+  // sockets: 2x2 inlays down the right edge; a set gem glows (a dithered ring of its colour), an empty one is a dark hole
+  (gems || []).forEach((gm, k) => {
+    const x = 7, y = k ? 6 : 1, G = gm && GEMS[gm];
+    if (G) for (const [dx, dy] of [[-1, 0], [2, 1], [0, -1], [1, 2], [-1, 1], [2, 0], [1, -1], [0, 2]]) if ((dx + dy + k) % 2 === 0) px(x + dx, y + dy, G.col);
+    px(x, y, G ? '#fff8e6' : INK); px(x + 1, y, G ? G.col : INK); px(x, y + 1, G ? G.col : INK); px(x + 1, y + 1, G ? G.lo : '#5a3e26');
+  });
+  return cv;
+}
+// a loose gem: a faceted 6x6 stone in its colour, white glint, ink outline
+function gemPaint(cv, g, px, id) {
+  const G = GEMS[id] || GEMS.rift_shard;
+  g.clearRect(0, 0, cv.width, cv.height);
+  const rows = ['..11..', '.1211.', '122113', '111133', '.1133.', '..33..'];
+  const on = (x, y) => y >= 0 && y < 6 && x >= 0 && x < 6 && rows[y][x] !== '.';
+  for (let y = -1; y < 7; y++) for (let x = -1; x < 7; x++) if (!on(x, y) && (on(x + 1, y) || on(x - 1, y) || on(x, y + 1) || on(x, y - 1))) px(x + 2, y + 2, INK);
+  for (let y = 0; y < 6; y++) for (let x = 0; x < 6; x++) if (on(x, y)) px(x + 2, y + 2, { 1: G.col, 2: '#fff8e6', 3: G.lo }[rows[y][x]]);
   return cv;
 }
 function beamCanvas(rar, scale = 3, frame = 0) {
@@ -152,22 +191,28 @@ export class Loot {
     const gold = 2 + Math.floor(Math.random() * 5) + (o.gold || 0);
     this.drop(a.x + 0.35, a.z + 0.2, { gold });
     const luck = this.G.S.mode === 'hero' ? 1 : 0;
-    if (o.legendary) { this.drop(a.x - 0.3, a.z + 0.35, { item: makeItem(lv + 1, 4, null, Math.random, luck) }); return; }   // a boss: always a Legendary
+    if (o.legendary) {   // a boss: always a Legendary, and Mossheart's golem core
+      this.drop(a.x - 0.3, a.z + 0.35, { item: makeItem(lv + 1, 4, null, Math.random, luck) });
+      this.drop(a.x + 0.1, a.z - 0.35, { gem: 'golem_core' });
+      return;
+    }
+    const gemOdds = { golem: ['golem_core', 0.1], icegolem: ['frost_core', 0.25], wraith: ['rift_shard', 0.08], skelmage: ['rift_shard', 0.1] }[a.role];
+    if (gemOdds && Math.random() < gemOdds[1]) this.drop(a.x + 0.05, a.z - 0.4, { gem: gemOdds[0] });
     if (Math.random() < 0.6 + luck * 0.1) this.drop(a.x - 0.3, a.z + 0.35, { item: makeItem(lv, null, null, Math.random, luck) });
   }
   drop(x, z, what) {
     const ctx = this.ctx; if (!ctx || !this.layer) return null;
     const y = ctx.heightAt(x, z), it = what.item || null, rar = it ? it.rar : -1;
-    const el = document.createElement('div'); el.className = 'loot' + (it ? ' r' + rar : ' gold') + (what.purse ? ' purse' : '');
+    const el = document.createElement('div'); el.className = 'loot' + (it ? ' r' + rar : what.gem ? ' gem' : ' gold') + (what.purse ? ' purse' : '');
     const sc = 3;
     let beam = null, aura = null;
     if (it) { beam = beamCanvas(rar, sc); beam.className = 'beam'; el.appendChild(beam); }
     if (rar >= 3) { aura = document.createElement('canvas'); aura.width = 26 * sc; aura.height = 13 * sc; aura.className = 'aura'; el.appendChild(aura); }
-    const icon = iconCanvas(it ? it.slot : 'gold', Math.max(0, rar), sc); icon.className = 'icon'; el.appendChild(icon);
+    const icon = what.gem ? iconCanvas('gem', 0, sc, [what.gem]) : iconCanvas(it ? it.slot : 'gold', Math.max(0, rar), sc, it ? it.gems : null); icon.className = 'icon'; el.appendChild(icon);
     this.layer.appendChild(el);
     // Epic / Legendary drops also light the ground around them (a pooled point light, no bloom)
     const light = rar >= 3 && ctx.addGlow ? ctx.addGlow(x, y, z, { color: RARITY[rar].col, intensity: rar === 4 ? 6 : 3.5, range: 2.8, lift: 0.45, fadeIn: 0.3 }) : null;
-    const d = { x, y, z, it, gold: what.gold || 0, purse: !!what.purse, el, beam, aura, sc, frame: -1, t: 0, light };
+    const d = { x, y, z, it, gem: what.gem || null, gold: what.gold || 0, purse: !!what.purse, el, beam, aura, sc, frame: -1, t: 0, light };
     this.drops.push(d);
     return d;
   }
@@ -194,6 +239,7 @@ export class Loot {
     d.el.remove(); this.drops.splice(this.drops.indexOf(d), 1);
     if (d.purse) { S.purse = null; G.toast && G.toast(`Found your purse: +${d.gold} gold`, 2.4); }
     if (d.gold) { S.gold += d.gold; G.popText && G.popText(`+${d.gold}`, d, '#f2c24a'); }
+    if (d.gem) { S.gems[d.gem] = (S.gems[d.gem] || 0) + 1; G.toast && G.toast(`<span style="color:${GEMS[d.gem].lo}">${GEMS[d.gem].name}</span>: a socket gem (G: gear page)`, 2.6, true); }
     if (d.it) { S.bag.push(d.it); G.toast && G.toast(`<span style="color:${RARITY[d.it.rar].lo}">${RARITY[d.it.rar].name}</span> ${d.it.name}`, 2.4, true); }
     G.audio && G.audio.sfx('pickup');
     if (d.light) d.light.kill = true;
@@ -203,7 +249,7 @@ export class Loot {
   removePurse() { for (const d of this.drops.filter((x) => x.purse)) { d.el.remove(); if (d.light) d.light.kill = true; this.drops.splice(this.drops.indexOf(d), 1); } }
   restorePurse(area) { const P = this.G.S.purse; if (P && P.area === area && P.gold > 0) this.drop(P.x, P.z, { gold: P.gold, purse: true }); }
   auraOn() { return !!this.pa; }
-  qa() { return this.drops.map((d) => ({ x: +d.x.toFixed(2), z: +d.z.toFixed(2), gold: d.gold, rar: d.it ? d.it.rar : null, slot: d.it ? d.it.slot : null })); }
+  qa() { return this.drops.map((d) => ({ x: +d.x.toFixed(2), z: +d.z.toFixed(2), gold: d.gold, gem: d.gem, rar: d.it ? d.it.rar : null, slot: d.it ? d.it.slot : null })); }
 }
 // bag / gear actions (the hero screen's Gear tab calls these)
 export function equip(S, i) {

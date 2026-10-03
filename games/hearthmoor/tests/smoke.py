@@ -513,6 +513,11 @@ def run(out, simscale=4, size=(960, 540)):
             pg.wait_for_timeout(900)
             legs = [d for d in T.ev("window.__hm.loot.qa()") if d["rar"] == 4]
             T.step("Mossheart always drops a Legendary (and the boss bar goes away)", len(legs) >= 1 and T.ev("!document.getElementById('bossbar') || document.getElementById('bossbar').hidden"), drops=legs)
+            cores = [d for d in T.ev("window.__hm.loot.qa()") if d.get("gem") == "golem_core"]
+            T.step("Mossheart also drops a golem core (socket gem)", len(cores) >= 1, drops=cores)
+            for d in cores:
+                T.ev(f"(() => {{ const c = window.__hm.ctx, p = c.player; p.x = {d['x']}; p.z = {d['z']}; p.y = c.heightAt(p.x, p.z); c.stopWalk(); }})()"); pg.wait_for_timeout(500)
+            T.step("walking over the core puts it in the gem pouch", (T.S().get("gems") or {}).get("golem_core", 0) >= 1, gems=T.S().get("gems"))
             nb = len(T.S()["bag"])
             for d in legs:
                 T.ev(f"(() => {{ const c = window.__hm.ctx, p = c.player; p.x = {d['x']}; p.z = {d['z']}; p.y = c.heightAt(p.x, p.z); c.stopWalk(); }})()"); pg.wait_for_timeout(500)
@@ -580,6 +585,75 @@ def run(out, simscale=4, size=(960, 540)):
             T.talk("kid")
             S = T.S()
             T.step("Pudding home with Tib: errand 3 done", S["quests"]["cat"] == 3 and S["cat"] == "home" and S["inv"].get("acorn") == 1 and "leaf_gust" in S["spells"])
+            # ---------------------------------------------------------- stage 3: Odo's shop (keys, controller, touch) + tonics
+            T.step("Odo the merchant keeps a stall in the plaza", T.ev("(() => { const a = window.__hm.ctx.npc('merchant'); return !!a && a.role === 'shopkeeper'; })()"))
+            T.ev("__padPlug(true)"); pg.wait_for_timeout(600)   # the shop + gear steps use the controller too
+            T.ev("(() => { const S = window.__hm.S, LO = window.__hm.LO; S.gold = 120; S.bag.push(LO.makeItem(2, 2, 'weapon')); })()")
+            T.talk("merchant"); pg.wait_for_timeout(300)
+            shop0 = T.ev("window.__hm.shopUI.qa()")
+            T.step("talking to Odo opens the shop panel (tonic, glow seed, 3 pieces of gear)", T.ev("!!window.__hm.shop && !document.getElementById('shopui').hidden") and len(shop0["rows"]) == 5
+                   and shop0["rows"][0]["name"] == "Hearth tonic", rows=[r["name"] for r in shop0["rows"]])
+            g0, t0 = T.ev("window.__hm.S.gold"), T.ev("window.__hm.S.inv.tonic || 0")
+            pg.keyboard.press("Enter"); pg.wait_for_timeout(250)
+            T.step("keyboard: Enter buys a Hearth tonic (12 gold)", T.ev("window.__hm.S.gold") == g0 - 12 and T.ev("window.__hm.S.inv.tonic") == t0 + 1)
+            rep["shots"]["shop_buy"] = T.shot("shop_buy")
+            T.btn(5); pg.wait_for_timeout(200)
+            sell = T.ev("window.__hm.shopUI.qa()")
+            g1, n1 = T.ev("window.__hm.S.gold"), len(T.S()["bag"])
+            T.btn(0); pg.wait_for_timeout(250)
+            first = sell["rows"][0] if sell["rows"] else {}
+            sold = T.ev("window.__hm.S.gold") - g1
+            if not sold and first:   # an Epic / Legendary first row asks twice
+                T.btn(0); pg.wait_for_timeout(250); sold = T.ev("window.__hm.S.gold") - g1
+            T.step("controller: RB to the sell tab, A sells the first bag item at its rarity price", sell["tab"] == 1 and len(T.S()["bag"]) == n1 - 1 and sold == first.get("price"), first=first, sold=sold)
+            T.btn(4); pg.wait_for_timeout(200)
+            g2 = T.ev("window.__hm.S.gold")
+            pg.click("#shopBody .row[data-k='1'] button"); pg.wait_for_timeout(250)
+            T.step("touch: tapping 'buy 8g' buys a glow seed", T.ev("window.__hm.S.gold") == g2 - 8 and T.ev("window.__hm.S.inv.glowseed") >= 1)
+            pg.keyboard.press("Escape"); pg.wait_for_timeout(200)
+            T.step("Esc closes the shop and the field takes input again", not T.ev("window.__hm.shop") and T.ev("document.getElementById('shopui').hidden"))
+            T.ev("window.__hm.S.hp = 30"); tn = T.ev("window.__hm.S.inv.tonic")
+            pg.keyboard.press("u"); pg.wait_for_timeout(300)
+            T.step("U drinks a Hearth tonic: +60 HP, one fewer in the bag", T.ev("window.__hm.S.hp") >= 90 and (T.ev("window.__hm.S.inv.tonic") or 0) == tn - 1, hp=T.ev("window.__hm.S.hp"))
+            # ---------------------------------------------------------- stage 3: the travelling night merchant + gem sockets
+            t_day = T.ev("window.__hd2d.clock.t")
+            T.ev("window.__hd2d.setTime(0.9)"); pg.wait_for_timeout(700)
+            nm = T.ev("(() => { const a = window.__hm.ctx.npc('nightmerchant'), s = window.__hm.shopUI; return { here: !!a, role: a && a.role, light: !!(s.nm && s.nm.light), zone: window.__hm.glow.zones().some((z) => z.src === 'lantern') }; })()")
+            T.step("night: Sefa the night merchant sets up by the well with a neon-blue lantern (light + light zone)", nm["here"] and nm["role"] == "nightmerchant" and nm["light"] and nm["zone"], nm=nm)
+            T.ev("(() => { const c = window.__hm.ctx, p = c.player, a = c.npc('nightmerchant'); p.x = a.x + 0.4; p.z = a.z + 1.6; p.y = c.heightAt(p.x, p.z); c.stopWalk(); })()")
+            pg.wait_for_timeout(1200)
+            rep["shots"]["night_merchant"] = T.shot("night_merchant")
+            T.ev("window.__hm.S.gold = 400")
+            T.talk("nightmerchant"); pg.wait_for_timeout(300)
+            ns = T.ev("window.__hm.shopUI.qa()")
+            socks = T.ev("window.__hm.shopUI.stockOf('night').map((it) => it.gems.length)")
+            T.step("Sefa's shop: socket gems (rift shard, golem core, frost core, moon opal) + socketed Rare / Epic gear", ns["open"] == "night"
+                   and [r["name"] for r in ns["rows"] if r["kind"] == "gem"] == ["Rift shard", "Golem core", "Frost core", "Moon opal"] and socks and min(socks) >= 1, rows=[r["name"] for r in ns["rows"]], sockets=socks)
+            T.ev("window.__hm.shopUI.i = 1; window.__hm.shopUI.draw()"); pg.keyboard.press("Enter"); pg.wait_for_timeout(250)
+            T.step("buy a rift shard (120 gold) into the gem pouch", T.ev("window.__hm.S.gold") == 280 and (T.S().get("gems") or {}).get("rift_shard") == 1, gems=T.S().get("gems"))
+            pg.keyboard.press("Escape"); pg.wait_for_timeout(200)
+            T.ev("window.__hd2d.setTime(0.5)"); pg.wait_for_timeout(700)
+            T.step("dawn: the night merchant packs up and his lantern light goes", not T.ev("!!window.__hm.ctx.npc('nightmerchant')") and not T.ev("!!window.__hm.shopUI.nm"))
+            T.ev(f"window.__hd2d.setTime({t_day if 0.25 < t_day < 0.8 else 0.5})")
+            T.ev("(() => { const S = window.__hm.S, LO = window.__hm.LO, it = LO.makeItem(3, 4, 'weapon'); it.name = 'Sunfire Rune Hammer'; S.bag.unshift(it); S.gems.golem_core = 1; S.gems.rift_shard = 1; })()")
+            T.step("a Legendary always rolls 2 sockets; Rare+ roll 0-2", T.ev("window.__hm.S.bag[0].gems.length") == 2
+                   and T.ev("(() => { const LO = window.__hm.LO; let ok = true; for (let i = 0; i < 60; i++) { const n = LO.makeItem(2, 2).gems.length; if (n > 2) ok = false; if (LO.makeItem(2, 0).gems.length) ok = false; } return ok; })()"))
+            sp0 = T.ev("window.__hm.combat.M.spellMul"); hp0 = T.ev("window.__hm.combat.maxHp()")
+            pg.keyboard.press("g"); pg.wait_for_timeout(300)
+            pg.click("#heroBody .row[data-k='3']"); pg.wait_for_timeout(200)
+            pg.keyboard.press("r"); pg.wait_for_timeout(250)
+            g1 = T.ev("window.__hm.S.bag[0].gems")
+            T.btn(3); pg.wait_for_timeout(250)
+            g2 = T.ev("window.__hm.S.bag[0].gems")
+            T.step("Gear tab: R (keys) then Y (controller) set both gems into the Legendary's sockets", g1.count(None) == 1 and None not in g2 and set(g2) == {"golem_core", "rift_shard"}, after_r=g1, after_y=g2)
+            idx = T.ev("window.__hm.S.bag.findIndex((it) => it.name === 'Sunfire Rune Hammer')")
+            pg.click(f"#heroBody [data-eq='{idx}']"); pg.wait_for_timeout(300)
+            rep["shots"]["gear_sockets"] = T.shot("gear_sockets")
+            T.step("socketed gems count once equipped (rift shard: spells, golem core: HP) and the icon shows them", T.ev("window.__hm.combat.M.spellMul") > sp0 + 0.05 and T.ev("window.__hm.combat.maxHp()") >= hp0 + 15,
+                   spell=[sp0, T.ev("window.__hm.combat.M.spellMul")], hp=[hp0, T.ev("window.__hm.combat.maxHp()")])
+            pg.keyboard.press("Escape"); pg.wait_for_timeout(200)
+            T.ev("(() => { const S = window.__hm.S; if (S.gear.weapon && S.gear.weapon.rar === 4) window.__hm.LO.unequip(S, 'weapon'); })()")
+            T.ev("__padPlug(false)"); pg.wait_for_timeout(600)
             area = T.go_rect("exits")
             T.talk("herbalist")
             S = T.S()

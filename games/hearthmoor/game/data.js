@@ -7,6 +7,8 @@ export const ITEMS = {
   coin:      { name: 'Copper bits', icon: 2, about: 'Small, round, and well loved.' },
   acorn:     { name: "Tib's lucky acorn", icon: 3, about: 'Polished smooth by a very small thumb.' },
   tea:       { name: 'Moonpetal tea', icon: 4, about: 'A tin of Wren\'s tea. Calms storms, and also grandparents.' },
+  tonic:     { name: 'Hearth tonic', px: 'tonic', about: 'Heals 60 HP. Drink: U, right-stick click, or tap it here.' },
+  glowseed:  { name: 'Glow seed', px: 'glowseed', about: 'Hums in the dark. Glow-gardens are coming.' },
 };
 
 export const QUESTS = {
@@ -33,6 +35,24 @@ const petals = (S) => S.inv.moonpetal || 0;
 
 export const TALK = {
   // ---------------------------------------------------------------- Hearthmoor Plaza
+  nightmerchant(S) {
+    const first = !S.met?.night;
+    return {
+      pages: first ? ['Shh, the lantern likes it quiet. I\'m Sefa. I walk the roads after dark and only stop where the lamps are kind.',
+                      'Rift shards, golem cores, a moon opal or two. Set them in a socket and your kit hums. Rarer stock, fairer to rarer purses.']
+                   : ['The lantern found you again. Browse, friend. I leave at first light.'],
+      then: (G) => { G.S.met = { ...(G.S.met || {}), night: 1 }; G.shopUI.show('night'); },
+    };
+  },
+  merchant(S) {
+    const first = !S.met?.merchant;
+    return {
+      pages: first ? ['Odo Fairweather, purveyor of useful things! Tonics for scrapes, glow seeds for later, honest kit for now.',
+                      'And whatever you haul out of Mossglen, I\'ll buy. Rarer finds fetch a rarer price.']
+                   : ['Back again! Let\'s see what you\'ve got.'],
+      then: (G) => { G.S.met = { ...(G.S.met || {}), merchant: 1 }; G.shopUI.show('hearthmoor'); },
+    };
+  },
   baker(S) {
     const q = S.quests.bread;
     if (q === 0) return {
