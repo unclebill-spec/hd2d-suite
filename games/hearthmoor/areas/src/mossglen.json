@@ -8,8 +8,15 @@
   "speed": 0.0016
  },
  "spells": true,
- "sprite_roles": ["actors", "cat", "heroes", "combat"],
- "boss_roles": ["eldergolem"],
+ "sprite_roles": [
+  "actors",
+  "cat",
+  "heroes",
+  "combat"
+ ],
+ "boss_roles": [
+  "eldergolem"
+ ],
  "camera": {
   "fov": 24,
   "pitch": 36,
@@ -601,7 +608,25 @@
     -8.6,
     1.7,
     "down"
+   ],
+   "from_hollows": [
+    12.2,
+    -0.3,
+    "left"
    ]
-  }
+  },
+  "exits": [
+   {
+    "rect": [
+     12.8,
+     -2.0,
+     14.0,
+     1.4
+    ],
+    "to": "hollows",
+    "spawn": "from_mossglen",
+    "label": "east to Toadstool Hollows"
+   }
+  ]
  }
 }

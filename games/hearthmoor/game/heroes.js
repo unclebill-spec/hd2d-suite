@@ -73,6 +73,11 @@ export const SPAWNS = {
     { id: 'skelmage_0', role: 'skelmage', pos: [-1.2, 5.6] },
     { id: 'mossheart', role: 'eldergolem', pos: [10.2, -0.6] },
   ],
+  hollows: [
+    { id: 'wraith_h0', role: 'wraith', pos: [7.6, -0.8] },
+    { id: 'wraith_hnight', role: 'wraith', pos: [-6.4, -6.0], night: true },
+    { id: 'skeleton_h0', role: 'skeleton', pos: [2.2, 5.4] },
+  ],
 };
 
 export const PLAYER = { stamina: 100, regen: 30, regenDelay: 0.6, atkCost: 6, dodgeCost: 25, guardMul: 0.25, hitIframes: 0.5,

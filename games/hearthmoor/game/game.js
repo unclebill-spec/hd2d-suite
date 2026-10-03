@@ -9,6 +9,7 @@ import * as PR from './progress.js';
 import { HEROES, HERO, SPELLS, SUMMONS, CHARM_DMG, CHARM_CD } from './heroes.js';
 import { Combat } from './combat.js';
 import { Glow } from './glow.js';
+import { Hollows } from './hollows.js';
 import * as LO from './loot.js';
 import { Shop, drinkTonic, goodIconURL } from './shop.js';
 
@@ -21,7 +22,7 @@ const Q = new URLSearchParams(location.search);
 const SLOT_V2 = 'hearthmoor-slot-1-v2';
 const SLOT_V1 = 'hearthmoor-slot-1-v1';       // read once for migration, never written or deleted
 const QA = Q.has('qa');                       // check-scene / screenshots: straight into ?area=, fresh state, no title, no saving
-const AREAS = { plaza: 'areas/plaza/', lane: 'areas/lane/', mossglen: 'areas/mossglen/' };
+const AREAS = { plaza: 'areas/plaza/', lane: 'areas/lane/', mossglen: 'areas/mossglen/', hollows: 'areas/hollows/' };
 const DAY_SECONDS = Number(Q.get('day') || 1440);  // one whole day = 24 real minutes (day, dusk, night, dawn)
 const $ = (id) => document.getElementById(id);
 
@@ -37,6 +38,7 @@ const G = {
 };
 G.combat = new Combat(G);
 G.glow = new Glow(G);
+G.hollows = new Hollows(G);
 G.loot = new LO.Loot(G); G.LO = LO; G.PR = PR;
 G.shopUI = new Shop(G); G.drinkTonic = () => drinkTonic(G);
 window.__hm = G;   // smoke tests + debugging
@@ -224,12 +226,12 @@ async function loadArea(id, spawnKey, pos) {
   const old = $('view'); if (old) old.remove();
   const canvas = document.createElement('canvas'); canvas.id = 'view'; document.body.prepend(canvas);
   G.area = id; G.S.area = id; G.armed = false;
-  G.combat.detach(); G.glow.detach(); G.loot.detach(); G.shopUI.detach();
+  G.combat.detach(); G.glow.detach(); G.hollows.detach(); G.loot.detach(); G.shopUI.detach();
   G.game = await boot({ base: AREAS[id], canvas, spawn: sp, startT: G.S.t, glowLights: glowCap(), clockSpeed: 1 / DAY_SECONDS, spellCycle: slots(),
                         player: { role: G.S.cls || G.preview || 'wildcaller' }, castAdvance: false,
                         keepTitle: true, padHandled: true, hooks, toast: (m, t) => toast(m, t) });
   const ctx = G.ctx = G.game.ctx;
-  G.combat.attach(ctx, id); G.glow.attach(ctx, id); G.loot.attach(ctx); G.shopUI.attach(ctx, id); PR.ensure(G.S); G.loot.restorePurse(id);
+  G.combat.attach(ctx, id); G.glow.attach(ctx, id); G.hollows.attach(ctx); G.loot.attach(ctx); G.shopUI.attach(ctx, id); PR.ensure(G.S); G.loot.restorePurse(id);
   // portrait source: this area's actor atlas
   portraitImg = new Image(); portraitImg.src = AREAS[id] + ctx.scene.atlas.image;
   // pickups already taken stay gone
@@ -301,7 +303,7 @@ function onFrame(dt, ctx) {
   if (toastT > 0) { toastT -= dt; const el = $('toast'); if (toastT <= 0.35) el.classList.add('out'); if (toastT <= 0) { el.hidden = true; el.classList.remove('out'); } }
   syncMarkers();
   padWheel();
-  G.glow.update(dt);
+  G.hollows.update(dt); G.glow.update(dt);
   G.loot.update(dt); G.shopUI.update(dt);
   G.combat.update(dt, ctx);
   drawVitals(ctx);
@@ -348,12 +350,12 @@ function drawVitals(ctx) {
 }
 
 const hooks = {
-  blockInput: () => !!(G.dlg || G.busy || G.title || G.log || G.downed || G.opts || G.picking || G.heroUI || G.shop || G.asking || WHEEL.open),
+  blockInput: () => !!(G.dlg || G.busy || G.title || G.log || G.downed || G.opts || G.picking || G.heroUI || G.shop || G.asking || WHEEL.open || G.hollows.busy()),
   rollMods: () => { const M = G.combat.M; return { speed: M.rollSpeed, iframes: M.rollIframes }; },
   onCast: (name) => G.combat.cast(name),
   onSummon: () => G.combat.doSummon(),
   onDodge: () => G.combat.onDodge(),
-  onAct: (name) => G.combat.onAct(name),
+  onAct: (name) => { if (name === 'jump') G.hollows.onJump(); G.combat.onAct(name); },
   skipActor: (spec) => spec.id === 'cat' && ((G.area === 'plaza' && G.S.cat !== 'home') || (G.area === 'mossglen' && G.S.cat !== 'glade')),
   onInteract: (ctx, kind) => {
     if (G.title) return true;

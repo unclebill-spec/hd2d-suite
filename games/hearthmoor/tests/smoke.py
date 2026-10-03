@@ -588,6 +588,29 @@ def run(out, simscale=4, size=(960, 540)):
             T.ev("window.__hm.peace = true")
             T.wait("!window.__hm.combat.summon || window.__hm.combat.summon.life < 20", 5)
 
+            # ---------------------------------------------------------- Part 5: Toadstool Hollows, east past Mossheart's clearing, and back
+            T.ev("(() => { const c = window.__hm.ctx, p = c.player; p.x = 12.0; p.z = 0.6; p.y = c.heightAt(p.x, p.z); c.stopWalk(); })()"); pg.wait_for_timeout(400)
+            area = T.go_rect("exits")
+            hq = T.ev("(() => { const G = window.__hm, z = G.glow.zones(); return { title: G.ctx.scene.game.title, pools: z.filter((q) => q.src === 'pool').length, toads: z.filter((q) => q.src === 'toadstool').length, en: (G.combat.enemies || []).length, p: [G.ctx.player.x, G.ctx.player.z] }; })()")
+            T.step("edge exit: Mossglen -> Toadstool Hollows (always-glowing toadstools + standing light pools)", area == "hollows" and hq["title"] == "Toadstool Hollows" and hq["pools"] >= 6 and hq["toads"] >= 8 and hq["en"] >= 1, hollows=hq)
+            rep["shots"]["hollows"] = T.shot("hollows")
+            # Part 5 step 2: bounce toadstools spring you up to the hidden ledge, and back down
+            T.ev("(() => { const c = window.__hm.ctx, p = c.player; p.x = 6.2; p.z = -2.3; p.y = c.heightAt(p.x, p.z); c.stopWalk(); })()"); pg.wait_for_timeout(300)
+            y0 = T.ev("window.__hm.ctx.player.y"); pg.keyboard.press("z"); pg.wait_for_timeout(250)
+            mid = T.ev("(() => { const p = window.__hm.ctx.player; return [window.__hm.hollows.busy(), p.lift]; })()")
+            T.wait("!window.__hm.hollows.busy()", 10); pg.wait_for_timeout(300)
+            up = T.ev("(() => { const p = window.__hm.ctx.player; return [p.x, p.z, p.y]; })()")
+            rep["shots"]["hollows_ledge"] = T.shot("hollows_ledge")
+            T.ev("(() => { const c = window.__hm.ctx, p = c.player; p.x = 12.2; p.z = -4.4; p.y = c.heightAt(p.x, p.z); c.stopWalk(); })()"); pg.wait_for_timeout(300)
+            pg.keyboard.press("z"); T.wait("!window.__hm.hollows.busy()", 10); pg.wait_for_timeout(300)
+            down = T.ev("(() => { const p = window.__hm.ctx.player; return [p.x, p.z, p.y]; })()")
+            T.step("bounce toadstool: Z on the cap springs you high onto the hidden ledge (y 2.6), the ledge one springs you back down",
+                   mid[0] and mid[1] > 0.8 and abs(up[0] - 7.6) < 0.3 and abs(up[1] + 5.8) < 0.3 and up[2] > 2.3 and y0 < 0.3 and down[2] < 0.3 and down[1] > -2.0
+                   and T.S().get("found", {}).get("ledge_up") == 1, mid=mid, up=up, down=down)
+            T.ev("(() => { const c = window.__hm.ctx, p = c.player; p.x = -11.0; p.z = 1.1; p.y = c.heightAt(p.x, p.z); c.stopWalk(); })()"); pg.wait_for_timeout(300)
+            area = T.go_rect("exits")
+            p = T.pos()
+            T.step("edge exit: Toadstool Hollows -> Mossglen (arrive at the east edge)", area == "mossglen" and p[0] > 11, spawn=p)
             # ---------------------------------------------------------- save, reload, continue
             pg.keyboard.press("k"); pg.wait_for_timeout(300)
             saved = T.ev("JSON.parse(localStorage.getItem('hearthmoor-slot-1-v2'))")

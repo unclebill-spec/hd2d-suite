@@ -881,6 +881,8 @@ PROPS = {"barrel": barrel, "crate": crate, "sign": sign, "flower_crate": flower_
 SIGN_ICONS = ("loaf", "mug", "flower", "key")
 import kit_glade as _glade  # noqa: E402  (Mossglen pieces: portal_arch, shrine, standing_stone, ...)
 PROPS.update(_glade.pieces(__import__('types').SimpleNamespace(**globals())))
+import kit_hollows as _hollows  # noqa: E402  (Toadstool Hollows pieces: toadstools, gnome stump, spring, brazier)
+PROPS.update(_hollows.pieces(__import__('types').SimpleNamespace(**globals())))
 
 
 def export_piece(cx: Ctx, pc: Piece, out: Path):

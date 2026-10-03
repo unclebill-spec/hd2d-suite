@@ -1,0 +1,535 @@
+{
+ "name": "Toadstool Hollows",
+ "seed": 41,
+ "biome": "cozy-village",
+ "about": "Toadstool Hollows, a dim mossy hollow east of Mossglen: giant red white-spotted toadstools, glowing light pools, neon-blue cold fire and violet dusk, fireflies at every hour.",
+ "time": {
+  "start": "dusk",
+  "speed": 0.0016
+ },
+ "spells": true,
+ "sprite_roles": [
+  "actors",
+  "cat",
+  "heroes",
+  "combat"
+ ],
+ "camera": {
+  "fov": 24,
+  "pitch": 36,
+  "distance": 31,
+  "zoom": [
+   23,
+   40
+  ],
+  "look": [
+   0,
+   0,
+   -6.0
+  ],
+  "bounds": [
+   -4.0,
+   -9.0,
+   4.0,
+   0.5
+  ]
+ },
+ "ground": {
+  "size": [
+   90,
+   76
+  ],
+  "mat": "moss",
+  "walk": [
+   -13.5,
+   -14,
+   13.5,
+   8.5
+  ]
+ },
+ "slabs": [
+  {
+   "name": "path_west",
+   "rect": [
+    -13.5,
+    0.0,
+    -5.0,
+    2.2
+   ],
+   "mat": "dirt",
+   "h": 0.04
+  },
+  {
+   "name": "hollow_floor",
+   "rect": [
+    -5.0,
+    -2.2,
+    5.5,
+    4.4
+   ],
+   "mat": "dirt",
+   "h": 0.04
+  },
+  {
+   "name": "path_east",
+   "rect": [
+    5.5,
+    -1.4,
+    9.5,
+    1.0
+   ],
+   "mat": "dirt",
+   "h": 0.04
+  }
+ ],
+ "terraces": [
+  {
+   "name": "bank_west",
+   "rect": [
+    -13.5,
+    -9.5,
+    -3.0,
+    -3.4
+   ],
+   "h": 1.0,
+   "top": "moss",
+   "gaps": [
+    [
+     -9.55,
+     -6.95
+    ]
+   ]
+  },
+  {
+   "name": "ledge_east",
+   "rect": [
+    4.2,
+    -9.5,
+    13.5,
+    -3.4
+   ],
+   "h": 2.6,
+   "top": "moss"
+  },
+  {
+   "name": "terrace_back",
+   "rect": [
+    -30,
+    -26,
+    30,
+    -9.5
+   ],
+   "h": 2.6,
+   "top": "moss",
+   "coping": false
+  }
+ ],
+ "stairs": [
+  {
+   "name": "stairs_bank",
+   "x": -8.25,
+   "z_top": -3.4,
+   "width": 2.6,
+   "rise": 1.0,
+   "base": 0.0
+  }
+ ],
+ "buildings": [],
+ "props": [
+  {
+   "piece": "toadstool_big",
+   "pos": [
+    -3.4,
+    -1.6
+   ]
+  },
+  {
+   "piece": "toadstool_big",
+   "pos": [
+    3.6,
+    3.6
+   ],
+   "rot": 40
+  },
+  {
+   "piece": "toadstool_big",
+   "pos": [
+    -10.8,
+    4.8
+   ],
+   "rot": 15
+  },
+  {
+   "piece": "toadstool_big",
+   "pos": [
+    -6.8,
+    -6.6
+   ],
+   "rot": 70
+  },
+  {
+   "piece": "toadstool_big",
+   "pos": [
+    11.0,
+    3.8
+   ],
+   "rot": -20
+  },
+  {
+   "piece": "toadstool_cluster",
+   "pos": [
+    0.8,
+    -2.3
+   ]
+  },
+  {
+   "piece": "toadstool_cluster",
+   "pos": [
+    -6.0,
+    3.4
+   ],
+   "rot": 60
+  },
+  {
+   "piece": "toadstool_cluster",
+   "pos": [
+    6.8,
+    3.0
+   ],
+   "rot": -30
+  },
+  {
+   "piece": "toadstool_cluster",
+   "pos": [
+    -11.6,
+    -5.0
+   ],
+   "rot": 20
+  },
+  {
+   "piece": "toadstool_cluster",
+   "pos": [
+    8.8,
+    -6.0
+   ],
+   "rot": 110
+  },
+  {
+   "piece": "toadstool_cluster",
+   "pos": [
+    -1.8,
+    5.6
+   ],
+   "rot": 200
+  },
+  {
+   "piece": "mushroom_ring",
+   "pos": [
+    -1.0,
+    1.4
+   ]
+  },
+  {
+   "piece": "mushroom_ring",
+   "pos": [
+    -9.4,
+    -6.4
+   ]
+  },
+  {
+   "piece": "fern_bush",
+   "pos": [
+    -4.6,
+    5.2
+   ]
+  },
+  {
+   "piece": "fern_bush",
+   "pos": [
+    5.8,
+    5.6
+   ]
+  },
+  {
+   "piece": "fern_bush",
+   "pos": [
+    -12.4,
+    2.8
+   ]
+  },
+  {
+   "piece": "fern_bush",
+   "pos": [
+    12.2,
+    -1.8
+   ]
+  },
+  {
+   "piece": "standing_stone",
+   "pos": [
+    9.8,
+    1.8
+   ],
+   "rot": 25
+  },
+  {
+   "piece": "standing_stone",
+   "pos": [
+    -4.4,
+    -5.0
+   ],
+   "rot": -15
+  },
+  {
+   "piece": "bounce_toadstool",
+   "pos": [
+    6.2,
+    -2.3
+   ]
+  },
+  {
+   "piece": "bounce_toadstool",
+   "pos": [
+    12.2,
+    -4.4
+   ]
+  }
+ ],
+ "hedges": [
+  {
+   "pos": [
+    -6.2,
+    7.4
+   ],
+   "length": 8
+  },
+  {
+   "pos": [
+    7.2,
+    7.4
+   ],
+   "length": 8
+  }
+ ],
+ "trees": [
+  {
+   "type": "oak",
+   "pos": [
+    -11.5,
+    -11.4
+   ],
+   "scale": 1.0
+  },
+  {
+   "type": "birch",
+   "pos": [
+    -6.0,
+    -11.8
+   ],
+   "scale": 0.9
+  },
+  {
+   "type": "oak",
+   "pos": [
+    -0.5,
+    -12.2
+   ],
+   "scale": 1.05
+  },
+  {
+   "type": "birch",
+   "pos": [
+    5.0,
+    -11.6
+   ],
+   "scale": 0.9
+  },
+  {
+   "type": "oak",
+   "pos": [
+    10.5,
+    -11.4
+   ],
+   "scale": 1.0
+  },
+  {
+   "type": "birch",
+   "pos": [
+    -12.6,
+    7.0
+   ],
+   "scale": 0.8
+  },
+  {
+   "type": "oak",
+   "pos": [
+    12.6,
+    6.6
+   ],
+   "scale": 0.8
+  }
+ ],
+ "backdrop": {
+  "hills": [
+   0,
+   -34
+  ]
+ },
+ "emitters": [
+  {
+   "preset": "fireflies",
+   "pos": [
+    0.0,
+    1.2,
+    1.4
+   ],
+   "area": [
+    12,
+    1.4,
+    4
+   ],
+   "min_gate": 0.0
+  },
+  {
+   "preset": "fireflies",
+   "pos": [
+    -8.0,
+    2.2,
+    -6.4
+   ],
+   "area": [
+    8,
+    1.4,
+    3
+   ],
+   "min_gate": 0.0
+  },
+  {
+   "preset": "fireflies",
+   "pos": [
+    8.6,
+    3.6,
+    -6.4
+   ],
+   "area": [
+    8,
+    1.4,
+    3
+   ],
+   "min_gate": 0.0
+  },
+  {
+   "preset": "dust_motes",
+   "pos": [
+    0,
+    1.6,
+    0.5
+   ],
+   "area": [
+    14,
+    2.6,
+    7
+   ]
+  }
+ ],
+ "actors": [],
+ "player": {
+  "role": "hedgewitch",
+  "pos": [
+   -11.6,
+   1.1
+  ],
+  "facing": "right"
+ },
+ "fx": [],
+ "grades": {
+  "day": {
+   "fog_color": "#3c4a5c",
+   "sky_bottom": "#5a5a80",
+   "hemi_sky": "#5a6a8c",
+   "saturation": 1.05,
+   "bugs": 1.0,
+   "warmth": -0.04,
+   "exposure": 0.74,
+   "sun_intensity": 1.7,
+   "hemi_intensity": 0.6,
+   "sun_color": "#c8d0ff"
+  },
+  "dusk": {
+   "fog_color": "#2c2a48",
+   "sky_bottom": "#4a3c6c",
+   "bugs": 1.0,
+   "exposure": 0.78,
+   "sun_intensity": 0.7
+  },
+  "night": {
+   "fog_color": "#16182c",
+   "sky_bottom": "#2a2448",
+   "bugs": 1.0,
+   "exposure": 1.0
+  }
+ },
+ "game": {
+  "id": "hollows",
+  "title": "Toadstool Hollows",
+  "exits": [
+   {
+    "rect": [
+     -14.0,
+     -0.6,
+     -12.8,
+     2.8
+    ],
+    "to": "mossglen",
+    "spawn": "from_hollows",
+    "label": "west to Mossglen"
+   }
+  ],
+  "spawns": {
+   "start": [
+    -11.4,
+    1.1,
+    "right"
+   ],
+   "from_mossglen": [
+    -11.4,
+    1.1,
+    "right"
+   ],
+   "qa": [
+    -1.0,
+    3.2,
+    "up"
+   ]
+  },
+  "bounces": [
+   {
+    "id": "ledge_up",
+    "pos": [
+     6.2,
+     -2.3
+    ],
+    "to": [
+     7.6,
+     -5.8
+    ],
+    "h": 3.6,
+    "dur": 1.1,
+    "secret": "Boing! A hidden mossy ledge."
+   },
+   {
+    "id": "ledge_down",
+    "pos": [
+     12.2,
+     -4.4
+    ],
+    "to": [
+     12.0,
+     -1.6
+    ],
+    "h": 1.4,
+    "dur": 0.8
+   }
+  ]
+ }
+}

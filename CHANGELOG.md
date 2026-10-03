@@ -2,6 +2,23 @@
 
 Dates are America/New_York. Newest first. Keep this current with every change you push.
 
+## 2026-10-03: Hearthmoor Part 5: Toadstool Hollows (area + bounce toadstools)
+- **Toadstool Hollows**, a new area (`areas/src/hollows.json`): walk out of Mossglen's east edge, past Mossheart's clearing, and the west edge of the Hollows brings you back.
+  - It's a dim mossy hollow with a dirt floor, a mossy bank with stairs, and a high east ledge.
+  - It has giant red white-spotted toadstools (`toadstool_big`), toadstool clusters, mushroom rings, ferns and standing stones, with fireflies and motes at every hour.
+  - The grades are dark: teal-grey by day, violet at dusk, deep indigo at night.
+- **Always-on glow:** the Hollows' toadstool clusters glow at every hour. There are 6 standing light pools: violet and pink `light_pool` with glitter, and neon-blue `coldfire_pool` with cold-fire motes.
+  - Each pool carries its own point light (`glow.js` `ALWAYS` / `POOLS`) and is a light zone (`src: 'pool'`), so you're glowlit there and wraiths keep away.
+  - Violet comes only from lights and grades; the cozy-village palette is unchanged.
+- **Enemies:** a cold-fire wraith, a night wraith and a skeleton (`SPAWNS.hollows`). Their sprites come from the Hollows sheet (560x3328, under 4096).
+- **Bounce toadstools** (`game/hollows.js`, area `game.bounces`):
+  - Press jump (Z / LS) on a low wide bounce cap and you spring along a high arc onto the hidden east ledge ("Boing! A hidden mossy ledge.", remembered in `S.found`).
+  - A second cap on the ledge springs you back down.
+- **New kit pieces** in `tools/kit/kit_hollows.py`: `toadstool_big`, `toadstool_cluster`, `bounce_toadstool`, `gnome_stump`, `spring_basin`, `brazier` (the last three are for the next steps).
+- **Tests:** new smoke steps cover Mossglen -> Hollows -> Mossglen and the bounce up and back down. Smoke: 112/112. check-scene now runs on `areas/hollows`.
+- **Not done yet (next run):** gnome doors and the gnome NPC, the hidden bubbly spring on the ledge, and the dark-hour cold-fire braziers.
+- Screenshots: `docs/screenshots/part5_hollows_night_pools.png`, `docs/screenshots/part5_bounce_toadstool.png`.
+
 ## 2026-10-03: Hearthmoor Part 4: skill tiers II-III with capstones, summon tiers; check-scene fixes
 - **Skill tiers II and III:** every hero's three branches now run three tiers deep (9 nodes per hero). Tier II costs 1 point at level 5 and needs that branch's tier I; tier III is the branch **capstone**, 2 points at level 10, needing tier II. Capstones include Hearthfire Heart, Worldroot, Unbroken Wall, Sunrise Cleave, Great Sigil, Between Steps, Fate-reader, Hammer of Skies, Eye of the Storm, Evergreen, Thornheart, Sunforged and Cinder Wraithblade, plus a top summon capstone per hero (Elder Mushroom Golem, Rune Colossus, Thunderhead, Elder Treant, Ash Legion Lord). New skill effects: shorter spell cooldowns (`spellCd`), harder crits (`critDmg`), faster stamina refill (`stRegen`), quicker summons (`summonCd`).
 - **Hero screen Skills tab** lists the tree by tier (tier headers, capstones edged in gold). Rows you can't learn yet are dimmed, and their button says why ("needs Gale Bolt", "Lv 10", "2 points"). The top line shows your current summon tier. Keys, controller and taps work as before, and tier-I rows keep their old positions.
