@@ -1,6 +1,14 @@
 // Hearthmoor leveling (stage 2): XP, levels (cap 50), six stats, 2 free points per level (auto by class or manual),
 // 1 skill point per level and the first tier of each starter's skill tree (docs/story/DESIGN_EXPANSION_2026-10-03.md E3).
 // Pure data + maths; game.js owns the UI, combat.js reads mods().
+import { ensure as lootEnsure, gearMods } from './loot.js';
+// difficulty: Story (gentle, no faint penalty), Adventurer (default), Hero (hits harder, better loot)
+export const MODES = {
+  story: { name: 'Story', hurt: 0.6, deal: 1.15, penalty: 0, luck: 0 },
+  adventurer: { name: 'Adventurer', hurt: 1, deal: 1, penalty: 0.1, luck: 0 },
+  hero: { name: 'Hero', hurt: 1.35, deal: 0.9, penalty: 0.1, luck: 1 },
+};
+export const MODE_IDS = ['story', 'adventurer', 'hero'];
 export const LEVEL_CAP = 50;
 export const STATS = [
   { id: 'might', name: 'Might', does: 'melee damage, guard break' },
@@ -60,6 +68,8 @@ export const TREES = {
 
 // ------------------------------------------------------------------ state helpers (S is the save)
 export function ensure(S) {
+  lootEnsure(S);
+  if (!MODES[S.mode]) S.mode = 'adventurer';
   const cs = CLASS_STATS[S.cls] || CLASS_STATS.wildcaller;
   if (!S.lv) S.lv = 1;
   if (S.xp == null) S.xp = 0;
@@ -120,5 +130,5 @@ export function mods(S) {
       else m[k] = (m[k] || 0) + v;
     }
   }
-  return m;
+  return gearMods(S, m);
 }

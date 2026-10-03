@@ -9,6 +9,7 @@ import * as PR from './progress.js';
 import { HEROES, HERO, SPELLS, SUMMONS, CHARM_DMG, CHARM_CD } from './heroes.js';
 import { Combat } from './combat.js';
 import { Glow } from './glow.js';
+import * as LO from './loot.js';
 
 // PWA install: catch the browser's prompt as early as possible (Chrome / Edge / Android); iPhone gets a tip instead
 let installEvt = null;
@@ -20,7 +21,7 @@ const SLOT_V2 = 'hearthmoor-slot-1-v2';
 const SLOT_V1 = 'hearthmoor-slot-1-v1';       // read once for migration, never written or deleted
 const QA = Q.has('qa');                       // check-scene / screenshots: straight into ?area=, fresh state, no title, no saving
 const AREAS = { plaza: 'areas/plaza/', lane: 'areas/lane/', mossglen: 'areas/mossglen/' };
-const DAY_SECONDS = Number(Q.get('day') || 720);  // one whole day = 12 real minutes (day, dusk, night, dawn)
+const DAY_SECONDS = Number(Q.get('day') || 1440);  // one whole day = 24 real minutes (day, dusk, night, dawn)
 const $ = (id) => document.getElementById(id);
 
 // v2 adds the hero class (cls) and current HP; everything from v1 carries over unchanged
@@ -35,6 +36,7 @@ const G = {
 };
 G.combat = new Combat(G);
 G.glow = new Glow(G);
+G.loot = new LO.Loot(G); G.LO = LO;
 window.__hm = G;   // smoke tests + debugging
 
 // ------------------------------------------------------------------ save / load
@@ -147,8 +149,9 @@ G.spellName = spellName;
 function flashLog() { const b = $('btnLog'); b.classList.add('ping'); setTimeout(() => b.classList.remove('ping'), 1600); }
 function setLog(open) { G.log = open; $('log').hidden = !open; $('btnLog').classList.toggle('on', open); if (open) drawLog(); }
 let toastT = 0;
-function toast(msg, s = 2.0) { const el = $('toast'); el.textContent = msg; el.hidden = false; el.classList.remove('out'); toastT = s; }
+function toast(msg, s = 2.0, html = false) { const el = $('toast'); if (html) el.innerHTML = msg; else el.textContent = msg; el.hidden = false; el.classList.remove('out'); toastT = s; }
 G.toast = toast;
+G.popText = (txt, at, col) => G.combat.number(txt, at.x, at.y + 0.9, at.z, col);
 
 // ------------------------------------------------------------------ dialogue (carved-wood frame, parchment page)
 let portraitImg = null;
@@ -211,12 +214,12 @@ async function loadArea(id, spawnKey, pos) {
   const old = $('view'); if (old) old.remove();
   const canvas = document.createElement('canvas'); canvas.id = 'view'; document.body.prepend(canvas);
   G.area = id; G.S.area = id; G.armed = false;
-  G.combat.detach(); G.glow.detach();
+  G.combat.detach(); G.glow.detach(); G.loot.detach();
   G.game = await boot({ base: AREAS[id], canvas, spawn: sp, startT: G.S.t, clockSpeed: 1 / DAY_SECONDS, spellCycle: slots(),
                         player: { role: G.S.cls || G.preview || 'wildcaller' }, castAdvance: false,
                         keepTitle: true, padHandled: true, hooks, toast: (m, t) => toast(m, t) });
   const ctx = G.ctx = G.game.ctx;
-  G.combat.attach(ctx, id); G.glow.attach(ctx, id);
+  G.combat.attach(ctx, id); G.glow.attach(ctx, id); G.loot.attach(ctx); PR.ensure(G.S); G.loot.restorePurse(id);
   // portrait source: this area's actor atlas
   portraitImg = new Image(); portraitImg.src = AREAS[id] + ctx.scene.atlas.image;
   // pickups already taken stay gone
@@ -289,6 +292,7 @@ function onFrame(dt, ctx) {
   syncMarkers();
   padWheel();
   G.glow.update(dt);
+  G.loot.update(dt);
   G.combat.update(dt, ctx);
   drawVitals(ctx);
   if (G.title || G.busy) return;
@@ -503,7 +507,7 @@ function syncDisplay() {
   const t = $('btnDisplayT'); if (t) t.textContent = 'Display: ' + DISPLAY_PRESETS[p].label;
 }
 function setOpts(open) {
-  G.opts = open; $('opts').hidden = !open; $('btnOpts').classList.toggle('on', open); syncAutoBtn();
+  G.opts = open; $('opts').hidden = !open; $('btnOpts').classList.toggle('on', open); syncAutoBtn(); syncModeBtn();
   if (open) { syncDisplay(); syncInstall(); $('btnFull').hidden = !canFull(); }
 }
 G.setOpts = setOpts;
@@ -622,6 +626,7 @@ function wire() {
     if (G.heroUI) { e.stopImmediatePropagation(); heroKey(k, e); return; }
     if (k === 'i') { setHeroUI(true); return; }
     if (k === 'b') { HUI.tab = 2; HUI.i = 0; setHeroUI(true); return; }   // spellbook
+    if (k === 'g') { HUI.tab = 3; HUI.i = 0; setHeroUI(true); return; }   // gear + bag
     if (k === 'o') { setOpts(!G.opts); return; }
     if (k === 'j' || k === 'l') setLog(!G.log);
     if (k === 'escape') { if (G.opts) setOpts(false); else if (G.dlg) closeDialogue(); else if (G.log) setLog(false); }
@@ -659,6 +664,7 @@ async function startNew(cls) {
   toast(`Welcome to Hearthmoor, ${HERO[cls].cls}. Marla the baker is waving at you.`, 3.2);
   if (G.S.autoLevel == null && !Q.has('autolevel')) askAuto();
   else if (Q.has('autolevel')) G.S.autoLevel = Q.get('autolevel') !== '0';
+  if (Q.has('mode') && PR.MODES[Q.get('mode')]) G.S.mode = Q.get('mode');
 }
 // replacing a save takes a second press of New game (works with touch, mouse, keys and a controller; no browser dialog)
 let newArmed = 0;
@@ -722,6 +728,9 @@ function askPick(yes) {
   syncAutoBtn(); save();
   toast(yes ? 'Auto level on: stat points follow your class. Change it in options (O).' : 'Manual leveling: spend points on the hero screen (I).', 3.2);
 }
+const MODE_TIP = { story: 'Story mode: gentle hits, no faint penalty.', adventurer: 'Adventurer mode: fainting drops 10% of your gold (walk back for it).', hero: 'Hero mode: foes hit harder, better loot; fainting drops 10% of your gold.' };
+function syncModeBtn() { const b = $('btnMode'); if (b) b.textContent = 'mode: ' + (PR.MODES[G.S.mode] || PR.MODES.adventurer).name; }
+G.syncModeBtn = syncModeBtn;
 function syncAutoBtn() { const b = $('btnAuto'); if (b) b.textContent = 'auto level: ' + (G.S.autoLevel ? 'on' : 'off'); }
 const HUI = { tab: 0, i: 0 };
 function setHeroUI(open) {
@@ -733,7 +742,7 @@ G.setHeroUI = setHeroUI;
 function drawHero() {
   const S = G.S, C = G.combat, h = HERO[S.cls], M = C.M, tree = PR.TREES[S.cls] || [];
   $('heroHead').innerHTML = `<b>${h.cls}</b> <span class="tag">Lv ${S.lv}</span> <span class="tag">${S.lv >= PR.LEVEL_CAP ? 'max level' : `${S.xp} / ${PR.xpNeed(S.lv)} xp`}</span>`
-    + `<span class="tag">HP ${C.maxHp()}</span><span class="tag">ST ${C.maxSt()}</span><span class="tag">crit ${Math.round(M.crit * 100)}%</span>`;
+    + `<span class="tag">${(PR.MODES[S.mode] || PR.MODES.adventurer).name}</span><span class="tag">gold ${S.gold || 0}</span><span class="tag">HP ${C.maxHp()}</span><span class="tag">ST ${C.maxSt()}</span><span class="tag">crit ${Math.round(M.crit * 100)}%</span>`;
   document.querySelectorAll('#heroTabs button').forEach((b, k) => b.classList.toggle('on', k === HUI.tab));
   const body = $('heroBody');
   if (HUI.tab === 0) {
@@ -742,6 +751,22 @@ function drawHero() {
       + PR.STATS.map((st, k) => `<div class="row${k === HUI.i ? ' sel' : ''}" data-k="${k}"><b>${st.name}</b><em>${S.stats[st.id]}</em><span>${st.does}</span>`
       + `<button class="wbtn sm plus" data-stat="${st.id}" ${S.free ? '' : 'disabled'}>+</button></div>`).join('');
     body.querySelectorAll('[data-stat]').forEach((b) => { b.onclick = (e) => { e.stopPropagation(); if (PR.spendStat(S, b.dataset.stat)) { G.audio.sfx('pickup'); save(); drawHero(); } }; });
+  } else if (HUI.tab === 3) {
+    LO.ensure(S);
+    const eq = LO.SLOTS.map((sl) => [sl, S.gear[sl]]);
+    HUI.n = 3 + S.bag.length;
+    const rowOf = (it, k, label, btns) => `<div class="row gear${it ? ' r' + it.rar : ' none'}${k === HUI.i ? ' sel' : ''}" data-k="${k}">`
+      + `<b>${label}</b><em class="iname">${it ? `<i class="ic" data-ic="${it.slot}:${it.rar}"></i>${it.name}` : '— empty —'}</em>`
+      + `<span>${it ? `<u>${LO.RARITY[it.rar].name}</u> · ${LO.describe(it)}` : ''}</span><span class="bb">${btns}</span></div>`;
+    body.innerHTML = `<p class="pts">Gold ${S.gold} · bag ${S.bag.length} / ${LO.BAG_MAX} · Enter / A equip · X scrap for gold</p>`
+      + eq.map(([sl, it], k) => rowOf(it, k, sl, it ? `<button class="wbtn sm plus" data-uneq="${sl}">take off</button>` : '')).join('')
+      + (S.bag.length ? '<p class="pts">bag</p>' : '<p class="pts">bag is empty: beat enemies, walk over the beams</p>')
+      + S.bag.map((it, i) => rowOf(it, 3 + i, it.slot, `<button class="wbtn sm plus" data-eq="${i}">equip</button><button class="wbtn sm plus" data-scrap="${i}">scrap</button>`)).join('');
+    body.querySelectorAll('[data-ic]').forEach((el) => { const [sl, r] = el.dataset.ic.split(':'); const cv = LO.iconCanvas(sl, +r, 2); el.replaceWith(cv); cv.className = 'gicon'; });
+    body.querySelectorAll('[data-eq]').forEach((b) => { b.onclick = (e) => { e.stopPropagation(); if (LO.equip(S, +b.dataset.eq)) { G.audio.sfx('pickup'); save(); drawHero(); } }; });
+    body.querySelectorAll('[data-uneq]').forEach((b) => { b.onclick = (e) => { e.stopPropagation(); if (LO.unequip(S, b.dataset.uneq)) { save(); drawHero(); } }; });
+    body.querySelectorAll('[data-scrap]').forEach((b) => { b.onclick = (e) => { e.stopPropagation(); HUI.i = 3 + +b.dataset.scrap; heroScrap(); }; });
+    const sel = body.querySelector('.row.sel'); if (sel && sel.scrollIntoView) sel.scrollIntoView({ block: 'nearest' });
   } else if (HUI.tab === 2) {
     const cur = slots(), raw = Array.isArray(S.slots) ? S.slots : cur;
     HUI.n = 4;
@@ -763,22 +788,30 @@ function heroAct() {
   const S = G.S, b = $('heroBody').querySelector(`.row[data-k="${HUI.i}"] button`);
   if (b && !b.disabled) b.click();
 }
-function heroTab(d) { HUI.tab = (HUI.tab + d + 3) % 3; HUI.i = 0; drawHero(); }
+function heroScrap() {
+  if (HUI.tab !== 3 || HUI.i < 3) return;
+  const g = LO.scrap(G.S, HUI.i - 3);
+  if (g) { toast(`Scrapped for ${g} gold`, 1.4); G.audio.sfx('pickup'); HUI.i = Math.min(HUI.i, 2 + G.S.bag.length); save(); drawHero(); }
+}
+function heroTab(d) { HUI.tab = (HUI.tab + d + 4) % 4; HUI.i = 0; drawHero(); }
 function heroMove(d) { HUI.i = Math.max(0, Math.min((HUI.n || 1) - 1, HUI.i + d)); drawHero(); }
 function heroPad(name) {
   if (name === 'b' || name === 'start') setHeroUI(false);
   else if (name === 'lb' || name === 'left') heroTab(-1); else if (name === 'rb' || name === 'right') heroTab(1);
   else if (name === 'up') heroMove(-1); else if (name === 'down') heroMove(1);
+  else if (name === 'x' && HUI.tab === 3) heroScrap();
   else if (name === 'a' || name === 'x') heroAct();
 }
 function heroKey(k, e) {
-  if (k === 'escape' || k === 'i' || k === 'b') setHeroUI(false);
+  if (k === 'escape' || k === 'i' || k === 'b' || k === 'g') setHeroUI(false);
+  else if (HUI.tab === 3 && (k === 'x' || k === 'delete' || k === 'backspace')) { e.preventDefault(); heroScrap(); }
   else if (k === 'arrowleft' || k === 'a' || k === 'q') heroTab(-1); else if (k === 'arrowright' || k === 'd' || k === 'e') heroTab(1);
   else if (k === 'arrowup' || k === 'w') heroMove(-1); else if (k === 'arrowdown' || k === 's') heroMove(1);
   else if (k === 'enter' || k === ' ' || k === 'f') { e.preventDefault(); heroAct(); }
 }
 function wireLeveling() {
   $('btnAutoYes').onclick = () => askPick(true); $('btnAutoNo').onclick = () => askPick(false);
+  $('btnMode').onclick = () => { const i = PR.MODE_IDS.indexOf(G.S.mode); G.S.mode = PR.MODE_IDS[(i + 1) % 3]; syncModeBtn(); save(); toast(MODE_TIP[G.S.mode], 3); };
   $('btnAuto').onclick = () => { G.S.autoLevel = !G.S.autoLevel; if (G.S.autoLevel) PR.autoSpend(G.S); syncAutoBtn(); save(); };
   $('heroClose').onclick = () => setHeroUI(false);
   document.querySelectorAll('#heroTabs button').forEach((b, k) => { b.onclick = () => { HUI.tab = k; HUI.i = 0; drawHero(); }; });

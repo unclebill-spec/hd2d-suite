@@ -211,3 +211,27 @@ body.tv #dlg { width: min(900px, 80vw); } body.tv #dlg p { font-size: 20px; }
 #heroBody .plus { min-width: 44px; min-height: 32px; }
 #heroBody .plus[disabled] { opacity: .45; }
 @media (max-height: 460px) { #heroBody .row { padding: 2px 5px; margin: 2px 0; } #heroui .card { max-height: 96vh; } }
+/* loot drops (stage 2): pixel beam + icon pinned to the world; Epic: stepped glow ring, Legendary: neon aura */
+.loot { position: absolute; left: 0; top: 0; width: 0; height: 0; pointer-events: none; will-change: transform; }
+.loot canvas { position: absolute; image-rendering: pixelated; image-rendering: crisp-edges; }
+.loot .icon { left: -15px; top: -24px; }
+.loot .beam { left: -10px; bottom: 6px; }
+.loot .aura { left: -30px; top: -21px; }
+.loot.gold .icon { top: -20px; }
+.loot.purse .icon { animation: ping .6s steps(2) infinite; }
+/* gear page rows: rarity colours, Epic faint glow, Legendary animated neon edge (hard pixel borders, no blur) */
+#heroBody .row.gear { grid-template-columns: 62px minmax(120px, 1.1fr) 1.4fr auto; }
+#heroBody .row.gear .iname { display: flex; align-items: center; gap: 5px; }
+#heroBody .row.gear canvas.gicon { image-rendering: pixelated; flex: none; width: 20px; height: 20px; }
+#heroBody .row.gear u { text-decoration: none; font-weight: 800; }
+#heroBody .row.gear .bb { display: flex; gap: 4px; }
+#heroBody .row.r0 .iname { color: #5a4a3a; } #heroBody .row.r1 .iname, #heroBody .row.r1 u { color: #4a7234; }
+#heroBody .row.r2 .iname, #heroBody .row.r2 u { color: #3e5a8c; } #heroBody .row.r3 .iname, #heroBody .row.r3 u { color: #6a3e9a; }
+#heroBody .row.r4 .iname, #heroBody .row.r4 u { color: #b04a1c; }
+#heroBody .row.r3 { border-color: #b07ce0; animation: epicGlow 1.6s steps(2) infinite; }
+#heroBody .row.r4 { border-color: #f2a63a; animation: neon .6s steps(4) infinite; }
+#heroBody .row.none { opacity: .7; }
+@keyframes epicGlow { 0% { box-shadow: 0 0 0 2px #b07ce055; } 100% { box-shadow: 0 0 0 2px #b07ce0aa; } }
+@keyframes neon { 0% { border-color: #f2a63a; box-shadow: 0 0 0 2px #f2c24a; } 25% { border-color: #f2c24a; box-shadow: 0 0 0 2px #fff8e6; }
+  50% { border-color: #fff8e6; box-shadow: 0 0 0 2px #e47c8c; } 75% { border-color: #e47c8c; box-shadow: 0 0 0 2px #f2a63a; } 100% { border-color: #f2a63a; box-shadow: 0 0 0 2px #f2c24a; } }
+@media (prefers-reduced-motion: reduce) { #heroBody .row.r3, #heroBody .row.r4, .loot.purse .icon { animation: none; } }

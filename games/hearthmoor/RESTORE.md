@@ -30,7 +30,7 @@ Repo handoff docs (in the suite root): [`AGENTS.md`](../../AGENTS.md), [`CHANGEL
   2. **Moonpetal Tea:** Wren the herbalist (Lane) wants 3 moonpetals from Mossglen. Reward: a tin of moonpetal tea and the light orb charm.
   3. **Where's Pudding?:** Tib (Plaza) lost his cat. She is by the Mossglen shrine, and she follows you home through the gate. Reward: Tib's lucky acorn and the leaf gust charm.
 - **Look:** pixel billboard actors (20x32, 1 px ink outline, nearest-neighbour) in a lit 3D miniature. Locked 3/4 camera with mild tilt-shift, one warm key sun plus lamps, and sprite shadows. Day is warm, dusk is blue, night has orange windows. The HUD is parchment and carved wood. No bloom and no blurred sprites.
-- **Day cycle:** real-time, compressed: one whole day (day, dusk, night, dawn) takes 12 minutes. The time is saved with the game.
+- **Day cycle:** real-time, compressed: one whole day (day, dusk, night, dawn) takes 24 minutes (`?day=` seconds overrides). The time is saved with the game.
 - **Audio:** procedural WebAudio, no files. It has a soft pad, music-box plucks, birds by day, crickets at night, a shimmer in Mossglen, and chimes for pickups, errands and the portal.
 
 ## Controls
@@ -49,6 +49,7 @@ Repo handoff docs (in the suite root): [`AGENTS.md`](../../AGENTS.md), [`CHANGEL
 | Quest log | J / L | Start | ☰ |
 | Options | O or the ⚙ chip | | ⚙ chip |
 | Hero screen (stats, skills) | I | Start, then Y / LB / RB | tap the vitals chip |
+| Gear + bag (equip / scrap) | G (or I, then → to Gear) | Start, Y, then RB to Gear; A equip, X scrap | tap the vitals chip, Gear tab |
 | Spellbook (assign the 4 slots) | B (or I, then → to Spells) | Start, Y, then RB to Spells | tap the vitals chip, Spells tab |
 | Zoom | + / - / wheel | right stick up / down | pinch |
 | Close / cancel | Esc | B | tap |
@@ -56,6 +57,8 @@ Repo handoff docs (in the suite root): [`AGENTS.md`](../../AGENTS.md), [`CHANGEL
 - 4 spell slots: slot 1 is the hero's class spell, slots 2-4 are the newest charms learned as errand rewards. Spells, the summon (30 s) and charms have cooldowns, shown as a dimmed sweep on the pad buttons.
 - **Leveling:** XP from enemies and errands, level cap 50, six stats (Might, Arcana, Spirit, Vigor, Grit, Swiftness), 2 free stat points and 1 skill point per level. A new game asks "Auto level? Yes / No" (options: `auto level`). The hero screen spends points and learns tier I of each hero's three skill branches (`game/progress.js`).
 - **Glow pass:** spells leave a short light pool (gold dithered decal + glitter + a point light in the spell's colour); red-and-white toadstools glow at night (19:12–06:00) in all three areas; light zones (lit lamps, toadstools, spell pools) make you glowlit (+10% damage, 1.5x stamina, "✦ glowlit" in the vitals chip) and wraiths stay out of light and hold fire on a lit hero (`game/glow.js`, engine `ctx.addGlow`).
+- **Loot + gear:** beaten foes drop gold and (60%, 70% on Hero) an item in one of five rarities: Common white, Uncommon green, Rare blue, Epic purple, Legendary orange-gold. Each drop stands under a pixel beam in its colour; Epic has a faint stepped glow ring, Legendary an animated neon aura. Walk over a drop to take it. The hero screen's Gear tab (G) shows the weapon / armor / trinket slots and the bag (30): Enter / A equips, X scraps for gold. Gear feeds the same stat mods as levels (`game/loot.js`, saved as `bag`, `gear`, `gold`).
+- **Modes + faint penalty:** options `mode:` Story (foes hit 40% softer, +15% damage, no faint penalty) / Adventurer (default) / Hero (foes hit 35% harder, -10% damage, better loot). Outside Story, fainting drops 10% of carried gold as a purse where you fell (saved as `purse`, survives area changes); walk back over it to get it all back. `?mode=story|adventurer|hero`.
 - **Vitals:** a parchment chip (top left, under the title) shows HP and stamina. Attacks, guarding hits and rolls cost stamina; it refills after a short pause.
 - **Combat:** hits land on the attack's impact frame inside a short arc; damage numbers are a crisp 3x5 pixel font with an ink outline (red you, cream enemies, blue guarded, green heal). Guarding from the front takes a quarter of the damage (a Runeguard even less). The roll is a pixel-exact tumble with i-frames for its first 0.26 s. Being downed is cozy: you slump, the screen warms to dark, you wake at the area start with full HP, two seconds of grace and nothing lost.
 - **Other keys:** K (or Ctrl+S) saves, M toggles sound, T jumps to the next time of day, P pauses the clock, G toggles the pad, H flips it for left hands.
@@ -145,6 +148,7 @@ Repo handoff docs (in the suite root): [`AGENTS.md`](../../AGENTS.md), [`CHANGEL
 - Title → hero picker for the 6 starters works with keys, controller and taps.
 - New game asks "Auto level? Yes / No"; the hero screen works with keys, controller and taps; stats and tier-I skills change combat numbers; no XP loss on defeat.
 - At night the toadstools glow and their pools light the ground; casting leaves a light pool + glitter; standing in light shows "✦ glowlit"; the night wraith will not enter light. No bloom anywhere.
+- Loot beams show the five rarity colours with no blur; the Gear tab equips and scraps with keys, controller and taps; fainting in Story mode costs nothing, otherwise the purse can always be walked back to.
 - Phone: tap, pinch, Layout One pad with the left-hand flip. HUD inside the viewport, no overlapping controls, touch targets ≥ 30 px (check-scene `phone`).
 - Floating stick: appears under the thumb anywhere in the zone, re-centres past its radius, analog walk / rim run, mirrored by the left-hand flip; a quick tap in the zone still walks (check-scene `phone.floating_stick`, smoke).
 - Controller: standard mapping as in the table above (no button does two jobs), hot-plug toast, pad hidden while used and back on touch, title usable with A / X / Start (no browser `confirm()` dialogs anywhere).

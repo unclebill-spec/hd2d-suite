@@ -41,7 +41,7 @@
   <div class="say" id="say" hidden></div>
   <div class="prompt" id="prompt" hidden></div>
   <div class="toast" id="toast" hidden></div>
-  <div class="hint" id="hint" data-pad="🎮 stick walk · A talk / jump · B dodge · X attack · Y cast (hold: spell wheel) · LB / RB spell · LT guard · RT summon · R-stick zoom · Start quests">WASD walk · R attack · C guard · Z jump · X dodge · F cast · Q / 1-4 spell · B spellbook · V summon · E talk · J quests · O options</div>
+  <div class="hint" id="hint" data-pad="🎮 stick walk · A talk / jump · B dodge · X attack · Y cast (hold: spell wheel) · LB / RB spell · LT guard · RT summon · R-stick zoom · Start quests">WASD walk · R attack · C guard · Z jump · X dodge · F cast · Q / 1-4 spell · B spellbook · G gear · V summon · E talk · J quests · O options</div>
 </div>
 
 <!-- dialogue: carved-wood frame around a parchment page -->
@@ -60,7 +60,7 @@
     <div class="head"><b>Errands</b><span id="logCount">0/3 done</span><button class="x" id="logClose" title="Close (J / Esc)">✕</button></div>
     <ul id="logList"></ul>
     <p class="spells" id="logSpells"></p>
-    <p class="tip" id="logTip">Hero screen + spellbook: I / B · 🎮 Y or LB / RB here · tap the vitals chip</p>
+    <p class="tip" id="logTip">Hero screen, spellbook, gear: I / B / G · 🎮 Y or LB / RB here · tap the vitals chip</p>
   </div>
 </div>
 
@@ -94,11 +94,11 @@
   </div>
 </div>
 <div id="heroui" hidden>
-  <div class="card hero">
+  <div class="card hero" data-scroll>
     <div class="head"><span id="heroHead"></span><button class="x" id="heroClose" title="Close (I / Esc)">✕</button></div>
-    <div class="tabs" id="heroTabs"><button class="wbtn sm">Stats</button><button class="wbtn sm">Skills</button><button class="wbtn sm">Spells</button></div>
+    <div class="tabs" id="heroTabs"><button class="wbtn sm">Stats</button><button class="wbtn sm">Skills</button><button class="wbtn sm">Spells</button><button class="wbtn sm">Gear</button></div>
     <div id="heroBody"></div>
-    <p class="tip">← → tabs (LB / RB) · ↑ ↓ choose · Enter / A spend / change · Esc / B close</p>
+    <p class="tip">← → tabs (LB / RB) · ↑ ↓ choose · Enter / A spend / change / equip · X scrap · Esc / B close</p>
   </div>
 </div>
 <div id="opts" hidden>
@@ -113,6 +113,7 @@
       <button class="wbtn sm" id="btnFull">⛶ Fullscreen</button><button class="wbtn sm" id="btnInstall">⤓ Install</button>
       <button class="wbtn sm" id="btnSound">sound: on</button><button class="wbtn sm" id="btnPad">pad</button><button class="wbtn sm" id="btnHand">hand: R</button>
       <button class="wbtn sm" id="btnAuto">auto level: on</button>
+      <button class="wbtn sm" id="btnMode" title="Story: gentle, no faint penalty · Adventurer · Hero: harder, better loot">mode: Adventurer</button>
     </div>
     <p class="tip" id="installTip" hidden></p>
   </div>

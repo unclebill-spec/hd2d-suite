@@ -1,7 +1,7 @@
 // Hearthmoor combat core (stage 1): real-time hits, guard, dodge i-frames, stamina, hero spells + summons,
 // three enemies with simple AI, crisp pixel damage numbers, cozy defeat (wake up, nothing lost).
 // Visuals come from the engine (sprites, spells atlas); this file only decides who gets hit and how hard.
-import { mods as progMods, XP, addXP } from './progress.js';
+import { mods as progMods, XP, addXP, MODES } from './progress.js';
 import { HERO, SPELLS, CHARM_DMG, CHARM_CD, SUMMONS, SUMMON_LIFE, SUMMON_CD, ENEMIES, RESPAWN, LEASH, SPAWNS, PLAYER } from './heroes.js';
 
 const PAL = { ink: '#2a1e1c', white: '#fff8e6', gold: '#f2c24a', rose: '#e47c8c', green: '#b2c464', sky: '#94c0dc' };
@@ -54,7 +54,8 @@ export class Combat {
     const crit = kind !== 'summon' && Math.random() < M.crit;
     this.lastCrit = crit;
     const lit = kind !== 'summon' && this.G.glow ? this.G.glow.dmgMul() : 1;   // glowlit: +10%
-    return Math.max(1, Math.round(base * mul * lit * (crit ? 1.5 : 1)));
+    const mode = (MODES[this.G.S.mode] || MODES.adventurer).deal;
+    return Math.max(1, Math.round(base * mul * lit * mode * (crit ? 1.5 : 1)));
   }
 
   // ---------------------------------------------------------------- area lifecycle
@@ -259,6 +260,7 @@ export class Combat {
         const first = !seen[a.role]; seen[a.role] = (seen[a.role] || 0) + 1;
         this.G.gainXP(Math.round((XP[a.role] || 25) * (first ? 1 + XP.firstKill : 1)), a);
       }
+      if (this.G.loot && !e.sp.noLoot) this.G.loot.onKill(a, this.G.S.lv || 1);
     } else e.t = 1.5;
   }
   shove(a, dx, dz, m) {
@@ -272,6 +274,7 @@ export class Combat {
   hurtPlayer(dmg, src, push = 0.3) {
     const ctx = this.ctx, p = ctx.player, G = this.G;
     if (G.downed || this.godT > 0 || p.iframes > 0) return false;
+    dmg *= (MODES[G.S.mode] || MODES.adventurer).hurt;   // Story / Adventurer / Hero
     const fv = FV[p.facing] || [0, 1];
     const dx = src.x - p.x, dz = src.z - p.z, d = Math.hypot(dx, dz) || 1;
     let guarded = false;
@@ -301,6 +304,17 @@ export class Combat {
     const ctx = this.ctx, p = ctx.player, G = this.G;
     G.downed = true; p.act = null; p.roll = null; p.rot = 1; walkStop(ctx);
     G.audio.sfx('down');
+    // faint penalty (not in Story): 10% of carried gold drops where you fell, as a purse you can walk back to
+    const md = MODES[G.S.mode] || MODES.adventurer;
+    let lost = 0;
+    if (md.penalty && (G.S.gold || 0) > 0) {
+      lost = Math.max(1, Math.ceil(G.S.gold * md.penalty));
+      G.S.gold -= lost;
+      const prev = G.S.purse && G.S.purse.area === this.area ? G.S.purse.gold : 0;   // one purse per area: they stack
+      if (prev && G.loot) G.loot.removePurse();
+      G.S.purse = { area: this.area, x: +p.x.toFixed(2), z: +p.z.toFixed(2), gold: lost + prev };
+      if (G.loot) G.loot.drop(p.x, p.z, { gold: lost + prev, purse: true });
+    }
     const f = document.getElementById('fade');
     setTimeout(() => { f.className = 'on'; }, 900);
     setTimeout(() => {
@@ -311,7 +325,7 @@ export class Combat {
       for (const e of this.alive()) { e.state = 'idle'; e.hp = e.D.hp; e.a.act = null; e.a.x = e.home[0]; e.a.z = e.home[1]; e.a.y = ctx.heightAt(e.home[0], e.home[1]); }
       this.godT = PLAYER.respawnIframes; G.downed = false;
       f.className = '';
-      G.toast('You wake by the gate, warm and whole. Nothing lost.', 3.4);
+      G.toast(lost ? `You wake by the gate. You dropped ${lost} gold where you fell: go get it back.` : 'You wake by the gate, warm and whole. Nothing lost.', 3.4);
     }, 1700);
   }
   meleeHit() {

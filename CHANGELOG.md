@@ -2,6 +2,14 @@
 
 Dates are America/New_York. Newest first. Keep this current with every change you push.
 
+## 2026-10-03: Hearthmoor Stage 2, loot + gear (part 3) and modes, faint penalty, 24-minute day (part 5)
+- **Loot:** beaten foes drop a little gold and often an item (weapon, armor or trinket) in one of five rarities: Common (white), Uncommon (green), Rare (blue), Epic (purple), Legendary (orange-gold). Every item drop stands under a crisp pixel beam in its colour with rising motes; Epic adds a faint stepped glow ring, Legendary an animated neon aura (marching pixels cycling orange / gold / white / rose). Walk over a drop to pick it up (the toast names it in its colour; gold pops as a pixel number).
+- **Gear page:** a fourth hero-screen tab, Gear (G): weapon / armor / trinket slots plus a 30-item bag. Enter / A / "equip" swaps an item in, "take off" puts it back, X / "scrap" turns it into gold. Rarity-coloured names; Epic rows glow faintly, Legendary rows have the animated neon edge. Gear adds melee / spell %, HP, guard, crit, stamina and (Epic+) summon power through the same stat system as levels. Saved as `bag`, `gear`, `gold` (old saves start empty; old coins become gold).
+- **Modes:** options `mode:` Story / Adventurer / Hero (`?mode=`). Story: foes hit 40% softer, you hit 15% harder, no faint penalty. Hero: foes hit 35% harder, you hit 10% softer, better loot odds.
+- **Faint penalty** (Adventurer and Hero): fainting drops 10% of carried gold as a purse where you fell. It stays there (also across area changes and saves) until you walk back over it. Story mode: nothing lost.
+- **24-minute day:** a whole day / night cycle now takes 24 real minutes (was 12).
+- Smoke: dawn check uses midday (the run can already be at night); new loot / gear / faint / Story steps.
+
 ## 2026-10-03: Hearthmoor Stage 2, spellbook + controller spell wheel (part 2 of 5)
 - **Spellbook:** a third "Spells" tab on the hero screen (B opens it straight away; or I / the vitals chip / Start, Y on a controller, then → / RB). Four slots; Enter / A / "change" cycles a slot through every spell you know (your class spell + each charm; slots 2-4 can be empty). The cast cycle (F, Q, 1-4, LB / RB, the wheels) follows at once; saved as `slots` in the v2 save (old saves keep the default: class spell + newest three charms). A newly learned charm fills an empty slot.
 - **Controller hold-for-wheel:** tap Y casts (on release); hold Y for a third of a second opens the same slow-time spell wheel as the touch ✦ button, the left stick or d-pad picks a slot, letting go of Y casts it. The field is input-blocked while the wheel is open.
