@@ -1,9 +1,14 @@
 // Hearthmoor combat core (stage 1): real-time hits, guard, dodge i-frames, stamina, hero spells + summons,
 // three enemies with simple AI, crisp pixel damage numbers, cozy defeat (wake up, nothing lost).
 // Visuals come from the engine (sprites, spells atlas); this file only decides who gets hit and how hard.
-import { mods as progMods, XP, addXP, MODES } from './progress.js';
+import { mods as progMods, XP, addXP, MODES, summonTier } from './progress.js';
 import { HERO, SPELLS, CHARM_DMG, CHARM_CD, SUMMONS, SUMMON_LIFE, SUMMON_CD, ENEMIES, RESPAWN, LEASH, SPAWNS, PLAYER } from './heroes.js';
 
+// summon tiers (Part 4): I base, II glows (a following light + sparkles), III radiant form (lit rim, crown of light,
+// sparkles; '<role>_r' sprite) + a rune circle on arrival, IV (capstone) brighter and wider light + a sparkle burst.
+// Stats grow through the summon-branch skills (summonMul / summonLife). Gloom-and-glow: palette pixels, no bloom.
+const SUMMON_GLOW = { mushgolem: '#f2c24a', runesentinel: '#ffb24a', runewisp: '#94c0dc', stormsprite: '#94c0dc', sapling: '#b2c464', emberimp: '#ffb24a' };
+const ROMAN = ['', 'I', 'II', 'III', 'IV'];
 const PAL = { ink: '#2a1e1c', white: '#fff8e6', gold: '#f2c24a', rose: '#e47c8c', green: '#b2c464', sky: '#94c0dc' };
 // 3x5 pixel font: digits, + and - (drawn at an integer scale with a 1 px ink outline, never smoothed)
 const GLYPH = {
@@ -55,7 +60,7 @@ export class Combat {
     this.lastCrit = crit;
     const lit = kind !== 'summon' && this.G.glow ? this.G.glow.dmgMul() : 1;   // glowlit: +10%
     const mode = (MODES[this.G.S.mode] || MODES.adventurer).deal;
-    return Math.max(1, Math.round(base * mul * lit * mode * (crit ? 1.5 : 1)));
+    return Math.max(1, Math.round(base * mul * lit * mode * (crit ? 1.5 + (M.critDmg || 0) : 1)));
   }
 
   // ---------------------------------------------------------------- area lifecycle
@@ -101,7 +106,7 @@ export class Combat {
     if (this.godT > 0) { this.godT -= dt; p.quad.visible = this.godT <= 0 || Math.floor(this.godT * 12) % 2 === 0; if (this.godT <= 0) p.quad.visible = true; }
     const guarding = p.act && p.act.name === 'defend';
     if (this.stT > 0) this.stT -= dt;
-    else if (!guarding && !p.roll) this.st = Math.min(this.maxSt(), this.st + PLAYER.regen * (this.G.glow ? this.G.glow.regenMul() : 1) * dt);
+    else if (!guarding && !p.roll) this.st = Math.min(this.maxSt(), this.st + PLAYER.regen * (1 + (this.M.stRegen || 0)) * (this.G.glow ? this.G.glow.regenMul() : 1) * dt);
     const regen = this.M.regen;   // Warm Light: slow regen while nothing is chasing you
     if (regen && !this.G.downed && this.G.S.hp < this.maxHp() && !this.enemies.some((e) => e.state === 'chase' || e.state === 'attack')) this.G.S.hp = Math.min(this.maxHp(), this.G.S.hp + regen * dt);
     // the player's swing lands on its impact frame
@@ -421,7 +426,7 @@ export class Combat {
       return true;
     }
     if (this.cd.spell > 0) { this.tired(); return false; }
-    this.cd.spell = S.cd;
+    this.cd.spell = S.cd * (1 - Math.min(0.5, this.M.spellCd || 0));   // tier II / III skills shorten spell cooldowns
     // auto-face the nearest foe (4-way facing) so a quick tap aims where you mean
     const tgt = this.nearestEnemy(p, 7);
     if (tgt && !p.act) ctx.actors.setFacingFromVec(p, tgt.a.x - p.x, tgt.a.z - p.z);
@@ -521,17 +526,23 @@ export class Combat {
     const ctx = this.ctx, p = ctx.player, G = this.G;
     if (!ctx || G.downed) return false;
     if (this.cd.summon > 0) { this.tired(); return false; }
-    const role = this.hero.summon, D = SUMMONS[role];
-    if (!ctx.actors.meta.roles[role]) return false;
+    const base = this.hero.summon, D = SUMMONS[base];
+    if (!ctx.actors.meta.roles[base]) return false;
     if (this.summon) this.unsummon();
+    const tier = summonTier(G.S), roles = ctx.actors.meta.roles;
+    const role = tier >= 3 && roles[base + '_r'] ? base + '_r' : base;
     const fv = FV[p.facing] || [0, 1];
-    const a = ctx.addNpc({ id: 'summon', role, name: D.name, pos: [p.x + fv[0] * 0.9 + 0.3, p.z + fv[1] * 0.9], behavior: 'idle', turn: false, speed: D.speed });
+    const name = tier > 1 ? `${D.name} ${ROMAN[tier]}` : D.name;
+    const a = ctx.addNpc({ id: 'summon', role, name, pos: [p.x + fv[0] * 0.9 + 0.3, p.z + fv[1] * 0.9], behavior: 'idle', turn: false, speed: D.speed });
     a.ai = true; a.noTalk = true; a.facing = p.facing;
-    this.summon = { a, D: { ...D, hp: Math.round(D.hp * this.M.summonMul) }, hp: Math.round(D.hp * this.M.summonMul), life: SUMMON_LIFE + this.M.summonLife, cd: 0.4, target: null };
-    this.cd.summon = SUMMON_CD;
+    this.summon = { a, tier, D: { ...D, hp: Math.round(D.hp * this.M.summonMul) }, hp: Math.round(D.hp * this.M.summonMul), life: SUMMON_LIFE + this.M.summonLife, cd: 0.4, target: null, sparkT: 0.3 };
+    if (tier >= 2 && ctx.addGlow) this.summon.light = ctx.addGlow(a.x, a.y, a.z, { color: SUMMON_GLOW[base] || '#f2c24a', intensity: tier >= 4 ? 6 : tier >= 3 ? 4.5 : 3, range: tier >= 4 ? 3.6 : tier >= 3 ? 3.0 : 2.4, lift: 0.8, fadeIn: 0.4 });
+    if (tier >= 3 && ctx.effects) ctx.effects.spawn('rune_circle', a.x, a.y + 0.02, a.z);
+    if (tier >= 4 && ctx.effects) ctx.effects.spawn('sparkle_burst', a.x, a.y, a.z + 0.06);
+    this.cd.summon = SUMMON_CD * (1 - Math.min(0.5, this.M.summonCd || 0));
     if (ctx.effects) ctx.effects.spawn('summon_poof', a.x, a.y, a.z + 0.05);
     G.audio.sfx('summon');
-    G.toast(`${D.name} answers your call!`, 1.6);
+    G.toast(`${name} answers your call!`, 1.6);
     return true;
   }
   hurtSummon(dmg) {
@@ -543,6 +554,7 @@ export class Combat {
   unsummon() {
     const s = this.summon; if (!s) return;
     if (this.ctx.effects) this.ctx.effects.spawn('summon_poof', s.a.x, s.a.y, s.a.z + 0.05);
+    if (s.light) s.light.kill = true;
     this.ctx.removeNpc(s.a);
     this.summon = null;
   }
@@ -577,6 +589,11 @@ export class Combat {
     }
     ctx.actors.animate(a, dt, moving && !a.act);
     if (s.life < 2) a.quad.visible = Math.floor(s.life * 10) % 2 === 0;
+    if (s.light) { s.light.pos.set(a.x, a.y, a.z); s.light.scale = a.quad.visible ? 1 : 0.4; }
+    if (s.tier >= 2 && ctx.effects && !frozen && (s.sparkT -= dt) <= 0) {   // glowing tiers shed little sparkles as they go
+      s.sparkT = s.tier >= 4 ? 0.7 : s.tier >= 3 ? 1.0 : 1.5;
+      ctx.effects.spawn('glitter', a.x + (Math.random() - 0.5) * 0.5, a.y, a.z + 0.08, { duration: 1.2 });
+    }
   }
 
   // ---------------------------------------------------------------- crisp DOM numbers + little health bars
@@ -633,7 +650,7 @@ export class Combat {
   qa() {
     return { hp: this.G.S.hp, max: this.maxHp(), st: Math.round(this.st), cd: { ...this.cd }, god: this.godT,
              enemies: this.enemies.map((e) => ({ id: e.id, role: e.a.role, hp: e.hp, state: e.state, x: +e.a.x.toFixed(2), z: +e.a.z.toFixed(2) })),
-             summon: this.summon ? { role: this.summon.a.role, hp: this.summon.hp, life: +this.summon.life.toFixed(1) } : null };
+             summon: this.summon ? { role: this.summon.a.role, hp: this.summon.hp, life: +this.summon.life.toFixed(1), tier: this.summon.tier, light: !!this.summon.light, name: this.summon.a.name } : null };
   }
 }
 function walkStop(ctx) { ctx.stopWalk && ctx.stopWalk(); }

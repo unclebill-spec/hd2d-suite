@@ -37,7 +37,7 @@ const G = {
 };
 G.combat = new Combat(G);
 G.glow = new Glow(G);
-G.loot = new LO.Loot(G); G.LO = LO;
+G.loot = new LO.Loot(G); G.LO = LO; G.PR = PR;
 G.shopUI = new Shop(G); G.drinkTonic = () => drinkTonic(G);
 window.__hm = G;   // smoke tests + debugging
 
@@ -829,10 +829,17 @@ function drawHero() {
     body.querySelectorAll('[data-slot]').forEach((b) => { b.onclick = (e) => { e.stopPropagation(); if (slotSpell(+b.dataset.slot)) { G.audio.sfx('pickup'); save(); drawHero(); } }; });
   } else {
     HUI.n = tree.length;
-    body.innerHTML = `<p class="pts">${S.sp} skill point${S.sp === 1 ? '' : 's'} · tier I of each branch (1 point each)</p>`
-      + tree.map((n, k) => `<div class="row node${S.skills[n.id] ? ' got' : ''}${k === HUI.i ? ' sel' : ''}" data-k="${k}"><b>${n.branch}</b><em>${n.name}</em><span>${n.desc}</span>`
-      + `<button class="wbtn sm plus" data-node="${n.id}" ${S.skills[n.id] || !S.sp ? 'disabled' : ''}>${S.skills[n.id] ? '✓' : 'learn'}</button></div>`).join('');
+    const RN = ['', 'I', 'II', 'III', 'IV'], TL = { 1: 'tier I · 1 point', 2: 'tier II · 1 point · Lv 5', 3: 'tier III capstones · 2 points · Lv 10' };
+    const st = PR.summonTier(S);
+    body.innerHTML = `<p class="pts">${S.sp} skill point${S.sp === 1 ? '' : 's'} · summon tier ${RN[st]}</p>`
+      + tree.map((n, k) => {
+        const lock = PR.lockOf(S, n), got = lock === 'learned';
+        const head = (k === 0 || tree[k - 1].tier !== n.tier) ? `<p class="tierhd t${n.tier}">${TL[n.tier]}</p>` : '';
+        return head + `<div class="row node t${n.tier}${got ? ' got' : ''}${lock && !got ? ' locked' : ''}${k === HUI.i ? ' sel' : ''}" data-k="${k}"><b>${n.branch}</b><em>${n.name}</em><span>${n.desc}</span>`
+          + `<button class="wbtn sm plus" data-node="${n.id}" ${lock ? 'disabled' : ''}>${got ? '✓' : lock || 'learn'}</button></div>`;
+      }).join('');
     body.querySelectorAll('[data-node]').forEach((b) => { b.onclick = (e) => { e.stopPropagation(); if (PR.learn(S, b.dataset.node)) { G.audio.sfx('quest'); save(); drawHero(); } }; });
+    const sel = body.querySelector('.row.sel'); if (sel && sel.scrollIntoView) sel.scrollIntoView({ block: 'nearest' });
   }
   body.querySelectorAll('.row').forEach((r) => { r.onclick = () => { HUI.i = +r.dataset.k; drawHero(); }; });
 }

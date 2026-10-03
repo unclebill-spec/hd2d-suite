@@ -258,3 +258,10 @@ body.tv #dlg { width: min(900px, 80vw); } body.tv #dlg p { font-size: 20px; }
 #heroBody .pts.gems { color: #3a2a1c; display: flex; flex-wrap: wrap; gap: 4px; align-items: center; }
 #heroBody .gemtag { border: 2px solid #5a3e26; border-left: 8px solid var(--gc); border-radius: 3px; padding: 0 4px; background: #f6ead0; }
 #heroBody .gemtag.on { background: #fff4d8; box-shadow: 0 0 0 2px var(--gc); }
+
+/* Part 4: skill tiers. Tier headers are small parchment labels; capstones carry a gold ink edge; locked rows dim */
+#heroBody .tierhd { margin: 6px 0 2px; font-size: 11px; letter-spacing: 0.04em; color: #7a4e2e; text-transform: uppercase; }
+#heroBody .tierhd.t3 { color: #9a4630; }
+#heroBody .row.node.t3 { box-shadow: inset 3px 0 0 #f2c24a; }
+#heroBody .row.node.locked { opacity: 0.62; }
+#heroBody .row.node.locked .plus { font-size: 10px; }
