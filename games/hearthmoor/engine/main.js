@@ -853,6 +853,7 @@ export async function boot(opts = {}) {
     effectLineup: (frameFrac = 0.5) => {
       if (!effects) return [];
       effects.clear();
+      if (gamefx) for (const f of gamefx.list) f.mesh.visible = false;   // quest tags / pickups must not sit over a spell
       const names = effects.names();
       const cols = Math.max(5, Math.ceil(names.length / 3));   // <= 3 rows so a big atlas still fits on screen
       names.forEach((n, i) => {

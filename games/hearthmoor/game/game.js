@@ -91,7 +91,7 @@ function drawBag(flash) {
   el.innerHTML = ids.length ? ids.map((k) => `<span class="slot${k === flash ? ' new' : ''}" title="${ITEMS[k].name}: ${ITEMS[k].about}">${iconHTML(k)}<b>${G.S.inv[k]}</b></span>`).join('')
                             : '<span class="empty">bag: empty</span>';
   const rail = $('rail');
-  if (rail) rail.innerHTML = ids.slice(0, 4).map((k) => `<span class="rslot">${iconHTML(k)}<b>${G.S.inv[k]}</b></span>`).join('');
+  if (rail) rail.innerHTML = '';   // the bag chip (top left) is the one inventory display; the pad rail stays empty
 }
 function drawLog() {
   const el = $('logList'); if (!el) return;
@@ -114,7 +114,7 @@ G.spellName = spellName;
 function flashLog() { const b = $('btnLog'); b.classList.add('ping'); setTimeout(() => b.classList.remove('ping'), 1600); }
 function setLog(open) { G.log = open; $('log').hidden = !open; $('btnLog').classList.toggle('on', open); if (open) drawLog(); }
 let toastT = 0;
-function toast(msg, s = 2.0) { const el = $('toast'); el.textContent = msg; el.hidden = false; toastT = s; }
+function toast(msg, s = 2.0) { const el = $('toast'); el.textContent = msg; el.hidden = false; el.classList.remove('out'); toastT = s; }
 G.toast = toast;
 
 // ------------------------------------------------------------------ dialogue (carved-wood frame, parchment page)
@@ -252,7 +252,7 @@ function onFrame(dt, ctx) {
   G.S.t = ctx.clock.t;
   G.S.played += dt;
   typeDialogue(dt);
-  if (toastT > 0) { toastT -= dt; if (toastT <= 0) $('toast').hidden = true; }
+  if (toastT > 0) { toastT -= dt; const el = $('toast'); if (toastT <= 0.35) el.classList.add('out'); if (toastT <= 0) { el.hidden = true; el.classList.remove('out'); } }
   syncMarkers();
   G.combat.update(dt, ctx);
   drawVitals(ctx);

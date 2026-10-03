@@ -48,7 +48,16 @@ void main() {
   ivec2 at = ivec2(int(uFrame.x) + t.x, int(uFrame.y) + int(uFrameSize.y) - 1 - t.y);
   vec4 c = texelFetch(uAtlas, at, 0);
   if (c.a < 0.5) discard;           // hard alpha only
-  if (uMode == 1) {                 // checker dither on the texel grid: crisp, never a soft ghost
+  if (uMode == 1) {                 // see-through: solid ink outline + checker-dithered fill on the texel grid (crisp, never a soft ghost)
+    bool edge = false;
+    ivec2 nb[4] = ivec2[4](ivec2(1, 0), ivec2(-1, 0), ivec2(0, 1), ivec2(0, -1));
+    for (int i = 0; i < 4; i++) {
+      ivec2 u = t + nb[i];
+      if (u.x < 0 || u.y < 0 || u.x >= int(uFrameSize.x) || u.y >= int(uFrameSize.y)) { edge = true; continue; }
+      ivec2 ua = ivec2(int(uFrame.x) + u.x, int(uFrame.y) + int(uFrameSize.y) - 1 - u.y);
+      if (texelFetch(uAtlas, ua, 0).a < 0.5) edge = true;
+    }
+    if (edge) { outColor = vec4(0.165, 0.118, 0.086, 1.0); return; }   // palette ink
     ivec2 g = ivec2(floor((gl_FragCoord.xy - origin) / uK));
     if (((g.x + g.y) & 1) == 1) discard;
     outColor = vec4(uSil, 1.0);

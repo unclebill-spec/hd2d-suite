@@ -95,16 +95,25 @@ def golem(s, face, anim, i):
         rect(s, lx, 25 + b, lx + 3, 30 - lift, lo if lx > 9 else mid)
         s.set(lx, 25 + b, hi)
     # body
-    bcx = 10 if side else 9.5
-    rx = 7 if side else 8
+    bcx = 10.5 if side else 9.5
+    rx = 7.5 if side else 8
     ell(s, bcx, 18 + b, rx, 7.5, mid, shader(bcx, rx, hi, mid, lo))
-    # head (sunk into the shoulders; forward in profile)
-    hcx = 7 if side else 9.5
-    ell(s, hcx, 9 + b, 4 if side else 4.5, 3.6, mid, shader(hcx, 4.5, hi, mid, lo))
+    if side:   # profile: a big shoulder hump behind a heavy, low, square head with a brow ridge
+        ell(s, 12, 11 + b, 5.5, 4.5, mid, shader(12, 5.5, hi, mid, lo))
+        rect(s, 3, 9 + b, 9, 14 + b, mid)
+        rect(s, 3, 9 + b, 4, 14 + b, hi)
+        rect(s, 3, 8 + b, 9, 8 + b, hi)
+        rect(s, 2, 10 + b, 8, 10 + b, lo)          # brow ridge shadow line
+        rect(s, 3, 14 + b, 8, 14 + b, lo)          # jaw
+    else:
+        hcx = 9.5
+        ell(s, hcx, 9 + b, 4.5, 3.6, mid, shader(hcx, 4.5, hi, mid, lo))
     # moss on head and shoulders
-    for x in ((5, 6, 9) if side else (6, 7, 11, 12)):
-        s.set(x, 6 + b, "moss")
-    for x in ((10, 11, 14) if side else (3, 4, 15, 16)):
+    for x in ((10, 11, 12, 14) if side else (6, 7, 11, 12)):
+        s.set(x, (7 if side else 6) + b, "moss")
+    if side:
+        s.set(5, 8 + b, "moss"); s.set(6, 8 + b, "grass")
+    for x in ((15, 16) if side else (3, 4, 15, 16)):
         s.set(x, 12 + b, "moss" if x % 2 else "grass")
     if face == "down":
         ey = 9 + b
@@ -123,9 +132,10 @@ def golem(s, face, anim, i):
             s.set(10 if k % 3 else 9, y, lo)
         s.set(10, 18 + b, glow)
     else:
-        s.set(5, 9 + b, glow if crack < 3 else lo); s.set(5, 8 + b, "shadow"); s.set(4, 10 + b, "shadow")
-        for k, y in enumerate(range(15 + b, 23 + b)):
-            s.set(6 + (k // 3) % 2, y, glow if (k + crack) % 4 else "white")
+        s.set(4, 11 + b, glow if crack < 3 else lo); s.set(5, 11 + b, glow if crack < 3 else lo)
+        s.set(4, 12 + b, "shadow"); s.set(3, 13 + b, "shadow"); s.set(4, 13 + b, "shadow")
+        for k, y in enumerate(range(16 + b, 24 + b)):
+            s.set(9 + (k // 3) % 2, y, glow if (k + crack) % 4 else "white")
     if crack:                                           # hit cracks
         for (x, y) in ((6, 14), (7, 15), (13, 20), (12, 21), (11, 22)):
             s.set(x, y + b, "white" if crack == 1 else "shadow")
@@ -135,7 +145,9 @@ def golem(s, face, anim, i):
         s.set(int(cx), int(cy), lo)
     if side:
         if arms == "rest":
-            fist(9, 21 + b + (1 if anim == "walk" and i % 2 else 0))
+            sw = 1 if anim == "walk" and i % 2 else 0
+            rect(s, 5, 15 + b, 7, 21 + b + sw, mid); rect(s, 5, 15 + b, 5, 21 + b, hi)
+            fist(6, 24 + b + sw, 2.8)
         elif arms in ("up", "high"):
             fist(7, 4 + b if arms == "high" else 7 + b)
             rect(s, 8, 8 + b, 9, 13 + b, mid)
@@ -143,7 +155,8 @@ def golem(s, face, anim, i):
             fist(4, 27, 2.8)
             rect(s, 5, 20 + b, 7, 24 + b, mid)
         else:
-            fist(5, 18 + b)
+            rect(s, 5, 15 + b, 7, 18 + b, mid)
+            fist(4, 20 + b)
     else:
         if arms == "rest":
             sw = 1 if anim == "walk" and i % 2 else 0
