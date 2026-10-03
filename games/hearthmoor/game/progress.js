@@ -30,7 +30,7 @@ export const CLASS_STATS = {
 };
 // XP to go from level L to L+1: gentle early, ~1.6 power curve
 export const xpNeed = (L) => Math.round(60 * Math.pow(L, 1.6));
-export const XP = { golem: 45, skeleton: 28, wraith: 34, errand: 120, firstKill: 0.5 };
+export const XP = { golem: 45, skeleton: 28, wraith: 34, icegolem: 55, skelmage: 36, eldergolem: 260, errand: 120, firstKill: 0.5 };
 
 // First tier of each tree: one node per branch (3 per class), 1 skill point each.
 export const TREES = {

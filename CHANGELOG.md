@@ -2,6 +2,14 @@
 
 Dates are America/New_York. Newest first. Keep this current with every change you push.
 
+## 2026-10-03: Hearthmoor Stage 3, part 2: new foes, the Mossheart mini-boss, the Legendary aura
+- **Frost golem** (Mossglen, east by the hedge): the stone golem re-cut in pale ice with ice spikes and white rune light. Tougher than the stone golem; its slam also **chills** you (drains 18 stamina).
+- **Skeleton mage** (Mossglen, south glade): skull under a red hood, long gold-hemmed robe, a crooked staff with a cold-fire orb. Keeps its distance and fires arcane bolts (dodge, guard, or let a summon take them). Not light-shy, unlike the wraiths.
+- **Mossheart, the Elder Golem** (Mossglen mini-boss, east clearing): the glowing tier-III golem look (dark ancient stone, amber crystal crown, gold runes all over, glow-flowers in the moss) and it carries its own warm rune light. 460 HP; every third slam is a telegraphed rune shockwave all round it (rune circle on the wind-up; roll through or stay out of range). A named parchment / wood boss bar shows at the top while it fights. It **always drops a Legendary** (plus extra gold) and comes back after 10 minutes. Same sprite scale as every actor (style lock); it reads as a boss through the glow, light and bar.
+- **Legendary aura on the hero:** with any Legendary equipped, the same marching neon ring as a Legendary drop circles your feet (the back arc behind your legs is left out) and a warm orange-gold rune light follows you.
+- Sprites: `icegolem`, `skelmage`, `eldergolem` in `tools/sprite/roles_enemies.py` (palette-remapped golem / robed skeleton variants; atlases rebuilt). XP: frost golem 55, skeleton mage 36, Mossheart 260.
+- Smoke: new steps for the three foes, the chill, the mage bolt, the boss light + bar, the guaranteed Legendary and the hero aura on / off; the part-1 pathfinding step now checks the result (the foe reached the terrace by the stairs) rather than the path length. 88/88 pass. check-scene: plaza 11/11, lane 10/10 (clean re-run), mossglen 11/11 (on 0f8fb68).
+
 ## 2026-10-03: Hearthmoor Stage 3, part 1: leftovers + enemy pathfinding
 - **Brighter Epic / Legendary drops:** bigger aura (Legendary: two counter-marching rings plus four orbiting sparks; Epic: one ring plus two sparks) and each Epic / Legendary drop now lights the ground around it with a pooled point light in its colour (purple / orange-gold). Still no blur or bloom.
 - **Bag chip:** shows "⚔ N" (gear pieces in the bag) and "● gold" next to the errand items, refreshed on pickup, equip, scrap and faint.

@@ -69,6 +69,8 @@ export class Combat {
   }
   detach() { this.clearDom(); this.ctx = null; this.enemies = []; this.summon = null; }
   clearDom() {
+    for (const e of this.enemies || []) if (e.light) e.light.kill = true;
+    if (this.bossEl) { this.bossEl.remove(); this.bossEl = null; }
     for (const n of this.nums) n.el.remove();
     for (const b of this.bars.values()) b.remove();
     this.nums = []; this.bars.clear();
@@ -79,6 +81,7 @@ export class Combat {
     a.ai = true; a.noTalk = true; a.r = D.r; a.facing = 'down';
     const e = { a, D, sp, id: sp.id, home: sp.pos.slice(), hp: D.hp, state: 'idle', t: 0, cd: 1, wt: 1 + Math.random() * 2, target: null,
                 phase: Math.random() * 6, night: !!sp.night };
+    if (D.glow && ctx.addGlow) e.light = ctx.addGlow(a.x, a.y, a.z, { color: D.glow, intensity: 3.2, range: 3.2, lift: 1.1, fadeIn: 0.6 });   // the boss carries its own rune light
     this.enemies.push(e);
     if (poof && ctx.effects) ctx.effects.spawn('summon_poof', a.x, a.y, a.z + 0.05);
     return e;
@@ -144,6 +147,7 @@ export class Combat {
       a.act = null; a.anim = 'die'; a.frame = Math.min(3, Math.floor(e.t * 6));
       if (D.float) a.lift = Math.max(0, (a.lift || 0) - dt * 0.4);
       if (e.t > 1.5) a.quad.visible = Math.floor(e.t * 10) % 2 === 0;
+      if (e.light) { e.light.kill = true; e.light = null; }
       if (e.t > 2.3) { ctx.removeNpc(a); e.state = 'gone'; const b = this.bars.get(e.id); if (b) { b.remove(); this.bars.delete(e.id); } }
       return;
     }
@@ -229,6 +233,9 @@ export class Combat {
     a.act = null;
     this.ctx.actors.act(a, 'attack', { dur: e.D.windup / 0.42 });
     e.state = 'attack'; e.t = 0; e.fired = false;
+    const W = e.D.wave;   // the boss: every Nth slam is a rune shockwave, telegraphed by a rune circle under it
+    e.waveNow = !!W && ((e.swings = (e.swings || 0) + 1) % W.every === 0);
+    if (e.waveNow && this.ctx.effects) this.ctx.effects.spawn('rune_circle', a.x, a.y + 0.02, a.z);
   }
   enemyStrike(e) {
     const ctx = this.ctx, a = e.a, D = e.D, p = ctx.player;
@@ -237,17 +244,28 @@ export class Combat {
       // aim a little ahead of a walking player, then fly past the aim point so a dodge is a real dodge
       const ddx = to[0] - from[0], ddz = to[2] - from[2], L = Math.hypot(ddx, ddz) || 1, reach = Math.min(D.reach, L + 2.5);
       const tx = from[0] + ddx / L * reach, tz = from[2] + ddz / L * reach;
-      const f = ctx.effects && ctx.effects.spawn('coldfire_bolt', from[0], from[1], from[2], { to: [tx, ctx.heightAt(tx, tz), tz] });
+      const f = ctx.effects && ctx.effects.spawn(D.bolt || 'coldfire_bolt', from[0], from[1], from[2], { to: [tx, ctx.heightAt(tx, tz), tz] });
       if (f) this.projs.push({ f, owner: 'enemy', dmg: D.dmg, r: 0.55, src: a });
       return;
     }
     const fv = FV[a.facing] || [0, 1];
     const dx = p.x - a.x, dz = p.z - a.z, d = Math.hypot(dx, dz) || 1;
-    if (e.a.role === 'golem' && ctx.particles) {   // the slam kicks up dust where the fists land
+    if ((e.a.role === 'golem' || D.slam) && ctx.particles) {   // the slam kicks up dust where the fists land
       const sx = a.x + fv[0] * 0.9, sz = a.z + fv[1] * 0.9;
       for (let i = 0; i < 3; i++) ctx.burst('footstep_dust', sx + (i - 1) * 0.3, a.y + 0.05, sz + 0.05);
     }
-    if (d <= D.reach + 0.3 && (fv[0] * dx + fv[1] * dz) / d > 0.25) this.hurtPlayer(D.dmg, a, D.push);
+    if (e.waveNow) {   // rune shockwave: a ring all round the boss (dodge-roll through it, or be out of range)
+      const W = D.wave;
+      if (ctx.effects) { ctx.effects.spawn('rune_slam', a.x, a.y + 0.03, a.z); ctx.effects.spawn('earth_burst', a.x, a.y, a.z + 0.05); }
+      if (this.G.glow) this.G.glow.pool(a.x, a.z, D.glow || '#f2a63a', 1.4);
+      if (d <= W.r && Math.abs(p.y - a.y) < 1.0) this.hurtPlayer(W.dmg, a, 0.6);
+      return;
+    }
+    if (d <= D.reach + 0.3 && (fv[0] * dx + fv[1] * dz) / d > 0.25 && this.hurtPlayer(D.dmg, a, D.push) && D.chill) {
+      this.st = Math.max(0, this.st - D.chill); this.stT = PLAYER.regenDelay;   // frost golem: the cold saps your stamina
+      if (ctx.effects) ctx.effects.spawn('frost_puff', p.x, p.y + 0.4, p.z + 0.05);
+      this.G.toast && !this.chillTold && (this.chillTold = true, this.G.toast('Chilled! The frost golem saps your stamina.', 2));
+    }
   }
   damageEnemy(e, dmg, src, push = 0.35, color = PAL.white) {
     if (e.state === 'dead' || e.state === 'gone') return false;
@@ -257,7 +275,7 @@ export class Combat {
     this.number(dmg, a.x, a.y + (e.D.float ? 2.1 : 1.9), a.z, color);
     if (ctx.effects) ctx.effects.spawn('hit_spark', a.x, a.y + (e.a.lift || 0), a.z + 0.1);
     this.G.audio.sfx('hit');
-    if (push && src) this.shove(a, a.x - src.x, a.z - src.z, push * (e.a.role === 'golem' ? 0.35 : 1));
+    if (push && src) this.shove(a, a.x - src.x, a.z - src.z, push * (e.a.role === 'golem' || e.D.heavy ? (e.D.boss ? 0.15 : 0.35) : 1));
     if (!this.peace && (e.state === 'idle' || e.state === 'home')) e.state = 'chase';
     if (e.hp <= 0) this.kill(e);
     return true;
@@ -268,7 +286,8 @@ export class Combat {
     if (!quiet) {
       this.G.audio.sfx('defeat');
       if (ctx.effects) ctx.effects.spawn(a.role === 'wraith' ? 'glyph_burst' : 'impact', a.x, a.y, a.z + 0.05);
-      this.defeated[this.area + ':' + e.id] = RESPAWN;
+      this.defeated[this.area + ':' + e.id] = e.D.respawn || RESPAWN;
+      if (e.D.boss) { this.G.toast && this.G.toast(`${e.D.name} falls! Its heart-light spills out as a Legendary.`, 3.2); this.G.S.bosses = { ...(this.G.S.bosses || {}), [e.id]: (this.G.S.bosses?.[e.id] || 0) + 1 }; }
       this.G.stats = this.G.stats || { defeated: 0 };
       this.G.stats.defeated++;
       if (!e.sp.noXp && this.G.gainXP) {
@@ -276,7 +295,7 @@ export class Combat {
         const first = !seen[a.role]; seen[a.role] = (seen[a.role] || 0) + 1;
         this.G.gainXP(Math.round((XP[a.role] || 25) * (first ? 1 + XP.firstKill : 1)), a);
       }
-      if (this.G.loot && !e.sp.noLoot) this.G.loot.onKill(a, this.G.S.lv || 1);
+      if (this.G.loot && !e.sp.noLoot) this.G.loot.onKill(a, this.G.S.lv || 1, { legendary: !!e.D.legendary, gold: e.D.boss ? 30 : 0 });
     } else e.t = 1.5;
   }
   shove(a, dx, dz, m) {
@@ -574,13 +593,26 @@ export class Combat {
     for (const e of this.enemies) {
       let b = this.bars.get(e.id);
       const show = (e.hp < e.D.hp || e.state === 'chase' || e.state === 'attack') && e.state !== 'dead' && e.state !== 'gone';
-      if (!show) { if (b) b.hidden = true; continue; }
+      if (e.light) e.light.pos.set(e.a.x, e.a.y, e.a.z);
+      if (!show) { if (b) b.hidden = true; if (e.D.boss && this.bossEl) this.bossEl.hidden = true; continue; }
       if (!b) { b = document.createElement('div'); b.className = 'ebar'; b.innerHTML = '<i></i>'; this.layer.appendChild(b); this.bars.set(e.id, b); }
       b.hidden = false;
-      const s = ctx.project(e.a.x, e.a.y + (e.a.lift || 0) + (e.a.role === 'golem' ? 1.75 : 1.85), e.a.z);
+      if (e.light) e.light.pos.set(e.a.x, e.a.y, e.a.z);
+      if (e.D.boss) { this.bossBar(e); b.hidden = true; continue; }
+      const s = ctx.project(e.a.x, e.a.y + (e.a.lift || 0) + (e.a.role === 'golem' || e.D.slam ? 1.75 : 1.85), e.a.z);
       b.style.transform = `translate(${Math.round(s.x - 15)}px, ${Math.round(s.y)}px)`;
       b.firstChild.style.width = Math.max(0, Math.round(26 * e.hp / e.D.hp)) + 'px';
     }
+  }
+  // the mini-boss gets a named parchment bar at the top of the screen instead of a little world bar
+  bossBar(e) {
+    if (!this.bossEl) {
+      const el = document.createElement('div'); el.id = 'bossbar'; el.innerHTML = '<b></b><span><i></i></span>';
+      (document.getElementById('hud') || document.body).appendChild(el); this.bossEl = el;
+    }
+    const el = this.bossEl; el.hidden = false;
+    el.firstChild.textContent = e.D.name;
+    el.querySelector('i').style.width = Math.max(0, Math.round(100 * e.hp / e.D.hp)) + '%';
   }
   // QA helpers
   qa() {

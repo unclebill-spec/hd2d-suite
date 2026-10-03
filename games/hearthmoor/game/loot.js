@@ -97,11 +97,12 @@ function drawBeam(cv, rar, scale, frame) {
   if (rar >= 1) for (let k = 0; k < rar; k++) { const y = (Math.floor(frame * 1.5) + k * 7) % H; px(k % 2 ? 6 : 0, H - 1 - y, '#fff8e6'); }   // rising motes
 }
 // Legendary aura: a ring of neon pixels marching round the drop (4 frames, colours cycle)
-function drawAura(cv, scale, frame, epic) {
+function drawAura(cv, scale, frame, epic, worn = false) {
   const g = cv.getContext('2d'), W = cv.width / scale, Hh = cv.height / scale;
   g.clearRect(0, 0, cv.width, cv.height);
   const cols = epic ? ['#b07ce0', '#e0c8f4', '#6a3e9a'] : ['#f2a63a', '#f2c24a', '#fff8e6', '#e47c8c'];
-  const px = (x, y, c) => { g.fillStyle = c; g.fillRect(Math.round(x) * scale, Math.round(y) * scale, scale, scale); };
+  // worn (under the hero): the DOM layer sits over the sprite, so the back arc behind the legs is left out
+  const px = (x, y, c) => { if (worn && y < Hh / 2 - 0.5 && Math.abs(x - W / 2) < 6) return; g.fillStyle = c; g.fillRect(Math.round(x) * scale, Math.round(y) * scale, scale, scale); };
   const ring = (rx, ry, n, skip, off) => {
     for (let i = 0; i < n; i++) {
       if ((i + frame + off) % skip) continue;
@@ -123,12 +124,35 @@ export class Loot {
   constructor(G) { this.G = G; this.layer = document.getElementById('fxlayer'); this.drops = []; this.t = 0; }
   attach(ctx) { this.clear(); this.ctx = ctx; }
   detach() { this.clear(); this.ctx = null; }
-  clear() { for (const d of this.drops) { d.el.remove(); if (d.light) d.light.kill = true; } this.drops = []; }
+  clear() {
+    for (const d of this.drops) { d.el.remove(); if (d.light) d.light.kill = true; }
+    this.drops = [];
+    if (this.pa) { this.pa.el.remove(); if (this.pa.light) this.pa.light.kill = true; this.pa = null; }
+  }
+  // a Legendary equipped: the same marching neon ring under the hero's feet, plus a warm rune light that follows
+  playerAura(fr) {
+    const ctx = this.ctx, S = this.G.S, p = ctx.player;
+    const on = !!Object.values(S.gear || {}).some((it) => it && it.rar === 4) && !this.G.title;
+    if (!on) { if (this.pa) { this.pa.el.remove(); if (this.pa.light) this.pa.light.kill = true; this.pa = null; } return; }
+    if (!this.pa) {
+      const el = document.createElement('div'); el.className = 'loot paura';
+      const cv = document.createElement('canvas'); cv.width = 26 * 3; cv.height = 13 * 3; cv.className = 'aura'; el.appendChild(cv);
+      this.layer.appendChild(el);
+      const light = ctx.addGlow ? ctx.addGlow(p.x, p.y, p.z, { color: RARITY[4].col, intensity: 2.6, range: 2.6, lift: 0.5, fadeIn: 0.4 }) : null;
+      this.pa = { el, cv, light, frame: -1 };
+    }
+    const s = ctx.project(p.x, p.y + 0.03, p.z);
+    this.pa.el.style.transform = `translate(${Math.round(s.x)}px, ${Math.round(s.y)}px)`;
+    this.pa.el.style.visibility = p.quad && !p.quad.visible ? 'hidden' : '';
+    if (this.pa.light) this.pa.light.pos.set(p.x, p.y, p.z);
+    if (fr !== this.pa.frame) { this.pa.frame = fr; drawAura(this.pa.cv, 3, fr % 8, false, true); }
+  }
   // an enemy went down: gold always, and sometimes an item (rarity weights, level-scaled)
-  onKill(a, lv) {
-    const gold = 2 + Math.floor(Math.random() * 5);
+  onKill(a, lv, o = {}) {
+    const gold = 2 + Math.floor(Math.random() * 5) + (o.gold || 0);
     this.drop(a.x + 0.35, a.z + 0.2, { gold });
     const luck = this.G.S.mode === 'hero' ? 1 : 0;
+    if (o.legendary) { this.drop(a.x - 0.3, a.z + 0.35, { item: makeItem(lv + 1, 4, null, Math.random, luck) }); return; }   // a boss: always a Legendary
     if (Math.random() < 0.6 + luck * 0.1) this.drop(a.x - 0.3, a.z + 0.35, { item: makeItem(lv, null, null, Math.random, luck) });
   }
   drop(x, z, what) {
@@ -151,6 +175,7 @@ export class Loot {
     const ctx = this.ctx; if (!ctx) return;
     this.t += dt;
     const p = ctx.player, fr = Math.floor(this.t * 6);
+    this.playerAura(fr);
     for (const d of [...this.drops]) {
       d.t += dt;
       if (!this.G.downed && Math.hypot(p.x - d.x, p.z - d.z) < 0.75 && d.t > 0.4) { this.pick(d); continue; }
@@ -177,6 +202,7 @@ export class Loot {
   }
   removePurse() { for (const d of this.drops.filter((x) => x.purse)) { d.el.remove(); if (d.light) d.light.kill = true; this.drops.splice(this.drops.indexOf(d), 1); } }
   restorePurse(area) { const P = this.G.S.purse; if (P && P.area === area && P.gold > 0) this.drop(P.x, P.z, { gold: P.gold, purse: true }); }
+  auraOn() { return !!this.pa; }
   qa() { return this.drops.map((d) => ({ x: +d.x.toFixed(2), z: +d.z.toFixed(2), gold: d.gold, rar: d.it ? d.it.rar : null, slot: d.it ? d.it.slot : null })); }
 }
 // bag / gear actions (the hero screen's Gear tab calls these)

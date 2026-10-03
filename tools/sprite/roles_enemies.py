@@ -7,6 +7,9 @@ caller), biome palette colours only. Gloom-and-glow: emissive palette pixels (la
     golem      stone golem: mossy boulder body, amber rune seam and eyes, slams with both fists
     wraith     blue cold-fire wraith: hooded spectre, cold-fire hem and tail, casts a cold-fire orb
     skeleton   skeleton swordsman: big skull under a dark rune helm, dark breastplate, notched sword
+    icegolem   frost golem (stage 3): the golem drawing re-cut in pale ice + ice spikes
+    skelmage   skeleton mage (stage 3): hooded robe, staff with a cold-fire orb, fires arcane bolts
+    eldergolem Mossheart, the Mossglen mini-boss (stage 3): dark stone, amber crown, glowing gold runes
   summons (anims idle, walk, attack)
     mushgolem    Wildcaller: a little mushroom golem
     runesentinel Runeguard: a floating rune stone on a pillar of light
@@ -274,7 +277,7 @@ def wraith(s, face, anim, i):
 
 
 # ------------------------------------------------------------------ skeleton swordsman
-def skeleton(s, face, anim, i):
+def skeleton(s, face, anim, i, mage=False):
     b = 0
     lift_l = lift_r = 0
     sword = "rest"
@@ -290,8 +293,8 @@ def skeleton(s, face, anim, i):
     elif anim == "die":
         slump = i + 1
     bone, bone_lo, bone_hi = "stone_hi", "stone", "plaster_hi"
-    iron, iron_lo = "stone_lo", "shadow"
-    eye = "sky" if slump < 3 else "flower_blue"
+    iron, iron_lo = ("roof", "roof_lo") if mage else ("stone_lo", "shadow")   # mage: a deep-red hooded robe
+    eye = ("lamp" if mage else "sky") if slump < 3 else "flower_blue"
     if anim == "die" and i >= 2:                       # a heap of bones with the skull on top
         ell(s, 9.5, 28.5, 7, 2.5, bone_lo)
         for (x0, y0, x1) in ((3, 28, 9), (10, 27, 16), (5, 29, 14)):
@@ -304,7 +307,10 @@ def skeleton(s, face, anim, i):
         if i == 2:
             s.set(6, sy + 2, eye)
         rect(s, 4, 30, 15, 30, bone_lo)
-        rect(s, 15, 25, 18, 25, "stone_hi"); s.set(19, 25, "white")   # the dropped sword
+        if mage:                                       # the dropped staff, its orb gone dim, and a robe rag
+            rect(s, 12, 25, 18, 25, "timber"); s.set(19, 25, "sky"); rect(s, 3, 29, 7, 29, "roof_lo")
+        else:
+            rect(s, 15, 25, 18, 25, "stone_hi"); s.set(19, 25, "white")   # the dropped sword
         return
     side = face == "left"
     b += 1 if slump == 1 else 3 if slump == 2 else 0
@@ -316,6 +322,13 @@ def skeleton(s, face, anim, i):
         rect(s, lx - (1 if side else 0), 29 - lift, lx + 1, 30 - lift, iron_lo)
     # pelvis
     rect(s, 6, 22 + b, 13, 23 + b, bone_lo)
+    if mage:                                           # long robe skirt over the shins, a gold-stitched hem
+        for y in range(22 + b, 29):
+            w = 3 + (y - 22 - b) // 3
+            for x in range(int(9.5 - w), int(9.5 + w) + 1):
+                s.set(x, y, iron if x < 10 else iron_lo)
+        for x in range(5, 15, 2):
+            s.set(x, 28, "flower_gold")
     # torso: dark breastplate with ribs peeking out at the sides, a blue rune etched
     tx0, tx1 = (6, 13) if not side else (7, 12)
     for y in range(15 + b, 22 + b):
@@ -353,6 +366,12 @@ def skeleton(s, face, anim, i):
     # arms + notched sword (always in the near / right hand on screen)
     def blade(x0, y0, x1, y1):
         n = max(abs(x1 - x0), abs(y1 - y0))
+        if mage:                                       # a crooked staff with a glowing cold-fire orb
+            for k in range(n + 1):
+                x = round(x0 + (x1 - x0) * k / max(1, n)); y = round(y0 + (y1 - y0) * k / max(1, n))
+                s.set(x, y, "timber_hi" if k % 3 else "timber")
+            ell(s, x1, y1, 1.3, 1.3, "flower_blue"); s.set(x1, y1, "white"); s.set(x1 - 1, y1 - 1, "sky")
+            return
         for k in range(n + 1):
             x = round(x0 + (x1 - x0) * k / max(1, n)); y = round(y0 + (y1 - y0) * k / max(1, n))
             s.set(x, y, "white" if k == n else "stone_hi" if k % 3 else "plaster_hi")
@@ -526,7 +545,83 @@ def emberimp(s, face, anim, i):
         s.set(cx, 18 + b, "white")
 
 
-DRAW = {"golem": golem, "wraith": wraith, "skeleton": skeleton, "mushgolem": mushgolem, "runesentinel": runesentinel,
+# ------------------------------------------------------------------ palette-swapped variants (stage 3)
+class _Remap:
+    """wraps a sprite grid and swaps colour names on the way in (same drawing, new material)"""
+    def __init__(self, s, m):
+        self.s, self.m = s, m
+
+    @property
+    def p(self):
+        return self.s.p
+
+    def set(self, x, y, col):
+        self.s.set(x, y, self.m.get(col, col) if col else col)
+
+
+def _golem_b(anim, i):
+    return {"idle": [0, 0, 1, 1], "walk": [0, 1, 0, 1], "attack": [0, -1, 2, 1], "die": [1, 3, 0, 0]}.get(anim, [0, 0, 0, 0])[i]
+
+
+ICE = {"stone_hi": "white", "stone": "sky", "stone_lo": "flower_blue", "moss": "white", "grass": "plaster_hi",
+       "lamp": "white", "flower_gold": "sky", "plaster_lo": "plaster_hi"}
+
+
+def icegolem(s, face, anim, i):
+    """frost golem: the stone golem re-cut in pale ice, snow on the shoulders, ice spikes, white rune light"""
+    golem(_Remap(s, ICE), face, anim, i)
+    if anim == "die" and i >= 2:
+        s.set(5, 25, "white"); s.set(14, 26, "white")
+        return
+    b = _golem_b(anim, i)
+    if face == "left":
+        spikes = ((11, 6), (13, 6), (15, 8))
+    else:
+        spikes = ((4, 10), (6, 8), (13, 8), (15, 10)) if face == "down" else ((5, 9), (14, 9), (9, 5))
+    for (x, y) in spikes:                              # jagged ice crystals poking out of the shoulders
+        s.set(x, y + b - 1, "white"); s.set(x, y + b - 2, "sky"); s.set(x, y + b, "flower_blue")
+    if face == "down":
+        s.set(9, 5 + b, "white"); s.set(10, 4 + b, "sky")
+
+
+ELDER = {"stone_hi": "stone", "stone": "stone_lo", "stone_lo": "shadow", "moss": "grass_hi", "grass": "moss",
+         "plaster_lo": "flower_gold"}
+
+
+def eldergolem(s, face, anim, i):
+    """Mossheart, the elder golem (Mossglen mini-boss): dark ancient stone, a crown of amber crystals, glowing
+    gold runes across the whole body, glow-flowers in the moss (the tier-III 'glowing variant' look)"""
+    golem(_Remap(s, ELDER), face, anim, i)
+    if anim == "die" and i >= 2:
+        s.set(5, 26, "lamp"); s.set(12, 25, "flower_gold"); s.set(15, 28, "white")
+        return
+    b = _golem_b(anim, i)
+    lit = not (anim == "die" and i >= 1)
+    rune, hot = ("lamp", "white") if lit else ("flower_gold", "flower_gold")
+    side = face == "left"
+    crown = ((4, 7), (6, 6), (8, 7)) if side else ((7, 5), (9, 4), (10, 4), (12, 5))
+    for (x, y) in crown:                               # a crown of amber crystals
+        s.set(x, y + b, rune); s.set(x, y + b - 1, "flower_gold"); s.set(x, y + b - 2, hot if (x + i) % 3 == 0 else "flower_gold")
+    if face == "down":                                 # rune lines on the flanks and legs, a third eye of light
+        for (x, y) in ((5, 16), (5, 18), (14, 17), (14, 19), (6, 21), (13, 21), (5, 27), (14, 27)):
+            s.set(x, y + b if y < 25 else y, rune if (x + y + i) % 3 else hot)
+        s.set(9, 7 + b, hot); s.set(10, 7 + b, hot)
+    elif face == "up":
+        for (x, y) in ((6, 13), (9, 12), (10, 12), (13, 13), (7, 19), (12, 19), (9, 22), (10, 22)):
+            s.set(x, y + b, rune if (x + i) % 2 else hot)
+    else:
+        for (x, y) in ((12, 15), (13, 17), (12, 19), (14, 21), (8, 27), (13, 27)):
+            s.set(x, y + b if y < 25 else y, rune if (x + y + i) % 3 else hot)
+    for (x, y) in (((11, 7), (14, 7)) if side else ((6, 6), (12, 6), (3, 12), (16, 12))):
+        s.set(x, y + b, "flower_rose" if (x + i) % 2 else "flower_gold")   # glow-flowers in the moss
+
+
+def skelmage(s, face, anim, i):
+    """skeleton mage (caster line T1): skull under a red hood, long robe, a crooked staff with a cold-fire orb"""
+    skeleton(s, face, anim, i, mage=True)
+
+
+DRAW = {"golem": golem, "icegolem": icegolem, "eldergolem": eldergolem, "skelmage": skelmage, "wraith": wraith, "skeleton": skeleton, "mushgolem": mushgolem, "runesentinel": runesentinel,
         "runewisp": runewisp, "stormsprite": stormsprite, "sapling": sapling, "emberimp": emberimp}
 
 SUMMON_OF = {"wildcaller": "mushgolem", "runeguard": "runesentinel", "seer": "runewisp", "stormborn": "stormsprite",
@@ -540,6 +635,9 @@ def enemy_roles(_r):
         "golem": _r(**E, draw="golem", desc="stone golem: mossy boulder body, amber rune seam and eyes, two-fist slam"),
         "wraith": _r(**E, draw="wraith", desc="blue cold-fire wraith: hooded spectre with a cold-fire hem and tail, casts a cold-fire orb"),
         "skeleton": _r(**E, draw="skeleton", desc="skeleton swordsman: big skull under a dark rune helm, dark breastplate, notched sword"),
+        "icegolem": _r(**E, draw="icegolem", desc="frost golem: the stone golem in pale ice, snowy shoulders, ice spikes, white rune light"),
+        "skelmage": _r(**E, draw="skelmage", desc="skeleton mage: skull under a red hood, long gold-hemmed robe, crooked staff with a cold-fire orb"),
+        "eldergolem": _r(**E, draw="eldergolem", desc="Mossheart the elder golem (mini-boss): dark ancient stone, amber crystal crown, glowing gold runes, glow-flowers"),
         "mushgolem": _r(**S, draw="mushgolem", desc="summon (Wildcaller): a little mushroom golem"),
         "runesentinel": _r(**S, draw="runesentinel", desc="summon (Runeguard): a floating rune stone on a pillar of light"),
         "runewisp": _r(**S, draw="runewisp", desc="summon (Seer): a blue rune-wisp with an orbiting glyph"),

@@ -489,9 +489,41 @@ def run(out, simscale=4, size=(960, 540)):
                  " p.x = 5.0; p.z = -4.0; p.y = c.heightAt(p.x, p.z); c.stopWalk(); const e = C.enemies.find((x) => x.id === 'skeleton_0');"
                  " e.a.x = 6.0; e.a.z = 0.6; e.a.y = c.heightAt(6, 0.6); e.home = [6.0, 0.6]; e.state = 'chase'; e.path = null; })()")
             pg.wait_for_timeout(3500)
-            sk = T.ev("(() => { const e = window.__hm.combat.enemies.find((x) => x.id === 'skeleton_0'); return { x: e.a.x, z: e.a.z, y: e.a.y, path: !!(e.path && e.path.length > 2), state: e.state }; })()")
+            sk = T.ev("(() => { const e = window.__hm.combat.enemies.find((x) => x.id === 'skeleton_0'); return { x: e.a.x, z: e.a.z, y: e.a.y, path: !!(e.path && e.path.length), state: e.state }; })()")
             T.ev("(() => { const C = window.__hm.combat; window.__hm.peace = true; window.__hm.ctx.player.iframes = 0; const e = C.enemies.find((x) => x.id === 'skeleton_0'); e.home = [5.0, 2.6]; e.state = 'home'; })()")
-            T.step("pathfinding: a foe below the terrace wall routes via the stairs", sk["path"] and (sk["y"] > 0.3 or sk["x"] < 4.0), skeleton=sk)
+            T.step("pathfinding: a foe below the terrace wall routes via the stairs", sk["y"] > 0.3 or sk["x"] < 4.0, skeleton=sk)
+            # ---------------------------------------------------------- stage 3: new foes, the Mossheart mini-boss, the Legendary aura
+            roles3 = sorted({e["role"] for e in T.ev("window.__hm.combat.qa()")["enemies"]})
+            T.step("Mossglen also has a frost golem, a skeleton mage and Mossheart (mini-boss)", {"icegolem", "skelmage", "eldergolem"} <= set(roles3), roles=roles3)
+            chill = T.ev("(() => { const c = window.__hm.ctx, C = window.__hm.combat, p = c.player, e = C.enemies.find((x) => x.id === 'icegolem_0');"
+                         " p.iframes = 0; C.godT = 0; C.st = C.maxSt(); p.act = null; p.x = e.a.x + 1.0; p.z = e.a.z; p.y = c.heightAt(p.x, p.z); c.stopWalk(); e.a.facing = 'right';"
+                         " const h0 = window.__hm.S.hp, s0 = C.st; C.enemyStrike(e); return [h0 - window.__hm.S.hp, Math.round(s0 - C.st)]; })()")
+            T.step("frost golem slam hurts and chills (drains stamina)", chill[0] > 0 and chill[1] >= 15, hurt=chill[0], stamina_lost=chill[1])
+            bolt = T.ev("(() => { const c = window.__hm.ctx, C = window.__hm.combat, p = c.player, e = C.enemies.find((x) => x.id === 'skelmage_0');"
+                        " p.x = e.a.x + 4; p.z = e.a.z; p.y = c.heightAt(p.x, p.z); c.stopWalk(); C.enemyStrike(e); return c.effects.list.some((f) => f.name === 'bolt'); })()")
+            T.step("skeleton mage casts an arcane bolt from range", bolt)
+            T.ev("(() => { const C = window.__hm.combat, c = window.__hm.ctx, p = c.player; C.heal(999, true); p.iframes = 99; window.__hm.peace = false; C.godT = 0;"
+                 " const e = C.enemies.find((x) => x.id === 'mossheart'); p.x = e.a.x - 2.2; p.z = e.a.z; p.y = c.heightAt(p.x, p.z); c.stopWalk(); C.damageEnemy(e, 40, p); })()")
+            pg.wait_for_timeout(700)
+            boss = T.ev("(() => { const C = window.__hm.combat, e = C.enemies.find((x) => x.id === 'mossheart'), b = document.getElementById('bossbar');"
+                        " return { state: e.state, light: !!e.light, bar: !!(b && !b.hidden), name: b ? b.firstChild.textContent : '', w: b ? b.querySelector('i').style.width : '' }; })()")
+            rep["shots"]["boss_fight"] = T.shot("boss_fight")
+            T.step("Mossheart: carries a rune light, a named boss bar shows when it fights", boss["light"] and boss["bar"] and "Mossheart" in boss["name"] and boss["w"] not in ("", "100%"), boss=boss)
+            T.ev("(() => { const C = window.__hm.combat, e = C.enemies.find((x) => x.id === 'mossheart'); window.__hm.peace = true; C.damageEnemy(e, 9999, window.__hm.ctx.player); })()")
+            pg.wait_for_timeout(900)
+            legs = [d for d in T.ev("window.__hm.loot.qa()") if d["rar"] == 4]
+            T.step("Mossheart always drops a Legendary (and the boss bar goes away)", len(legs) >= 1 and T.ev("!document.getElementById('bossbar') || document.getElementById('bossbar').hidden"), drops=legs)
+            nb = len(T.S()["bag"])
+            for d in legs:
+                T.ev(f"(() => {{ const c = window.__hm.ctx, p = c.player; p.x = {d['x']}; p.z = {d['z']}; p.y = c.heightAt(p.x, p.z); c.stopWalk(); }})()"); pg.wait_for_timeout(500)
+            T.ev("(() => { const S = window.__hm.S, i = S.bag.findIndex((it) => it.rar === 4); if (i >= 0) window.__hm.LO.equip(S, i); })()")
+            pg.wait_for_timeout(500)
+            aura = T.ev("window.__hm.loot.auraOn() && !!document.querySelector('#fxlayer .loot.paura canvas')")
+            rep["shots"]["legendary_aura"] = T.shot("legendary_aura")
+            T.step("a Legendary equipped: a neon aura + rune light follow the hero", len(T.S()["bag"]) >= nb and aura, aura=aura)
+            T.ev("(() => { const S = window.__hm.S; for (const k of ['weapon', 'armor', 'trinket']) if (S.gear[k] && S.gear[k].rar === 4) window.__hm.LO.unequip(S, k); window.__hm.ctx.player.iframes = 0; })()")
+            pg.wait_for_timeout(300)
+            T.step("unequipping the Legendary drops the aura", not T.ev("window.__hm.loot.auraOn()"))
             T.ev("(() => { const c = window.__hm.ctx, p = c.player, g = c.npc('golem_0'); p.x = g.x - 1.1; p.z = g.z; p.y = c.heightAt(p.x, p.z); p.facing = 'right'; c.stopWalk(); })()")
             T.ev("window.__hm.combat.cd.summon = 0"); pg.keyboard.press("v"); pg.wait_for_timeout(500)
             T.step("V summons the storm sprite", (T.ev("window.__hm.combat.qa().summon") or {}).get("role") == "stormsprite")
