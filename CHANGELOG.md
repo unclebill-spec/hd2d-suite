@@ -13,7 +13,7 @@ Dates are America/New_York. Newest first. Keep this current with every change yo
 - **check-scene fixes:**
   - The QA effects lineup keeps a 26-effect row on screen (spacing `min(2.4, 19.2 / cols)` m). Before, the new cold-fire effects pushed `impact` off-screen.
   - Odo moved to [5.4, 3.4], in front of the barrels and crates, so the Plaza bunting no longer crosses his sprite (it was failing the sprite_sharp check).
-- Smoke: new steps for the tiered tree (capstone locked until tier II, learned by keys, mods apply) and summon tiers I / III / IV.
+- Smoke: new steps for the tiered tree (capstone locked until tier II, learned by keys, mods apply) and summon tiers I / III / IV. 109/109 pass. check-scene on the same build (5af7ea8 content): plaza 11/11, lane 10/10, mossglen 11/11 (all 26 effects on screen in the lineup).
 
 ## 2026-10-03: Hearthmoor: Mossheart at boss scale, Sefa's neon-blue lantern pool, glow-light cap option
 - **Mossheart is now ~2.5x the hero** (style lock "boss scale override": mini-bosses / rares 2-3x, bosses 5x+). It is **drawn natively** on its own boss sheet at 50x80 px frames (same texel density as the 20x32 actors, never an upscale): ancient stone-block masonry, a faceted amber crystal crown, gold rune glyphs and a zig-zag heart seam, thick moss with grass blades and glow-flowers, cracks spreading as it dies, a mossy rubble heap at the end. New tool `tools/sprite/boss_sheet.py`; area specs list `boss_roles` and assemble writes `boss.png` / `boss.json` beside the actor atlas (Mossglen's actor atlas drops to 2560 px tall).
