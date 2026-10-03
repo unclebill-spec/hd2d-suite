@@ -903,9 +903,10 @@ export async function boot(opts = {}) {
       if (gamefx) for (const f of gamefx.list) f.mesh.visible = false;   // quest tags / pickups must not sit over a spell
       const names = effects.names();
       const cols = Math.max(5, Math.ceil(names.length / 3));   // <= 3 rows so a big atlas still fits on screen
+      const dx = Math.min(2.4, 19.2 / cols);                   // and the row never gets wider than 8 cells at 2.4 m
       names.forEach((n, i) => {
         const e = sMeta.effects[n];
-        const x = target.x + ((i % cols) - (cols - 1) / 2) * 2.4;
+        const x = target.x + ((i % cols) - (cols - 1) / 2) * dx;
         const z = target.z - look.z + 0.6 - Math.floor(i / cols) * 3.2;
         const y = collide ? (collide.height(x, z) ?? 0) : 0;
         effects.spawn(n, x, y, z, { frame: Math.min(e.frames - 1, Math.floor(e.frames * frameFrac)), onTop: true });

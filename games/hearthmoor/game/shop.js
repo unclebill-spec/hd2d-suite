@@ -22,7 +22,7 @@ export const NIGHT_MERCHANT = { plaza: { id: 'nightmerchant', role: 'nightmercha
   say: ['Lantern Pack, open till dawn.'] } };
 export const NIGHT = (t) => t > 0.8 || t < 0.25;
 const LANTERN = '#5ab4f0';
-export const MERCHANT = { plaza: { id: 'merchant', role: 'shopkeeper', name: 'Odo the merchant', pos: [5.0, 0.3], facing: 'down',
+export const MERCHANT = { plaza: { id: 'merchant', role: 'shopkeeper', name: 'Odo the merchant', pos: [5.4, 3.4], facing: 'down',
   say: ['Tonics, seeds, sturdy kit. And I buy whatever you drag out of the glade.'] } };
 
 const pick = (a) => a[Math.floor(Math.random() * a.length)];
