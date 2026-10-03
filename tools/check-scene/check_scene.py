@@ -84,6 +84,8 @@ def sprite_check(shot, atlas, r, block_tol=6):
                 uniform += 1
             sv.append(lum(src[j:j + 1, i:i + 1])[0, 0]); dv.append(lum(b).mean())
     if blocks < 20:
+        if int((src[..., 3] >= 128).sum()) < 20:   # a tiny spark frame: too few pixels to measure, not missing
+            return {"id": r["id"], "skipped": "sparse"}
         return {"id": r["id"], "skipped": "off-screen"}
     sv, dv = np.array(sv), np.array(dv)
     corr = float(np.corrcoef(sv, dv)[0, 1]) if sv.std() > 0 and dv.std() > 0 else 0.0
@@ -671,9 +673,10 @@ def run(root, out, size=(1280, 720), timeout=120, scene_dir="", params="", phone
         ok_fx = [a for a in fx["effects"] if "uniform_frac" in a]
         wu = min((a["uniform_frac"] for a in ok_fx), default=0)
         wc = min((a["atlas_corr"] for a in ok_fx), default=0)
-        C["effects_sharp"] = {"pass": len(ok_fx) == fx["expected"] and fx["expected"] > 0 and wu >= 0.97 and wc >= 0.85
+        sparse = sum(1 for a in fx["effects"] if a.get("skipped") == "sparse")
+        C["effects_sharp"] = {"pass": len(ok_fx) + sparse == fx["expected"] and len(ok_fx) > 0 and fx["expected"] > 0 and wu >= 0.97 and wc >= 0.85
                               and fx["near_white"] < 0.004 and fx["bright_frac"] < 0.03,
-                              "effects_checked": len(ok_fx), "effects_spawned": fx["expected"],
+                              "effects_checked": len(ok_fx), "effects_sparse": sparse, "effects_spawned": fx["expected"],
                               "worst_uniform_block_frac": wu, "worst_atlas_corr": wc,
                               "near_white": round(fx["near_white"], 5), "bright_frac": round(fx["bright_frac"], 5),
                               "per_effect": [{k: v for k, v in a.items() if k not in ("_crop", "src_colours", "crop_colours", "facing", "role")} for a in fx["effects"]]}
