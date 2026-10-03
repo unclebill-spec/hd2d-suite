@@ -617,7 +617,7 @@ Rift bosses still also draw from the shared random pool.
    - Reaper archangel: **Morriel, the Last Toll**.
    - Legend-rank faction rewards: Gatekeepers' Guild **Keyless Rune** (open any Bifrost gate, even a hostile one, once a day); Order of the Hearth **Hearthstone Mantle** (armor set; recall home anytime, one revive per dungeon); Gnome Council **Gnome King's Pocket Engine** (summons a clockwork gnome squad and reveals secrets); Rift Corsairs **Black Sail Cutlass** plus a **Rift-skiff** mount that sails the Rift.
    - Mechanical pet (Anvildeep): **Tick, a clockwork owl.** Marks nearby hidden springs, chests and secret doors, with a loot-find aura.
-   - Companions: Asgard **Sigrun Stormwing** (valkyrie); Jotunheim **Bram Mossback** (gentle giant); Alfheim **Lumi** (wisp spirit); Svartalfheim **Dagna Coalbeard** (dwarf smith); Muspelheim **Kindle** (ember salamander); Niflheim **Hrefna Frostveil** (frost-witch); Vanaheim **Tobble Capwhistle** (gnome); Helheim **Old Corwin** (lantern-ferryman shade, by key quest); Breaker path **Veyra**.
+   - Companions: Asgard **Sigrun Stormwing** (valkyrie); Jotunheim **Ulfar Mossback** (gentle giant); Alfheim **Lumi** (wisp spirit); Svartalfheim **Dagna Coalbeard** (dwarf smith); Muspelheim **Kindle** (ember salamander); Niflheim **Hrefna Frostveil** (frost-witch); Vanaheim **Tobble Capwhistle** (gnome); Helheim **Old Corwin** (lantern-ferryman shade, by key quest); Breaker path **Veyra**.
    - Fast travel: the agent's earlier reading is now the rule. After your first entry, gate fast travel needs a key unless the realm is allied.
 7. **Ravenhold's Forge Quarter, Old Temple and Market Terraces** get detail later, during the Midgard slice storyboard.
 

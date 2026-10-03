@@ -655,3 +655,7 @@ Ravenhold sits on terraces at the foot of the Rainbow Rift: Harbor at the bottom
 - **Ambience per realm:** birds and wind (Midgard), thunder (Asgard), bubbling springs (Vanaheim), wisp chimes (Alfheim), creaking ice and wind (Jotunheim, Niflheim), forge clangs (Svartalfheim), lava bubbling (Muspelheim), whispers and lantern creaks (Helheim).
 - **Mix:** separate sliders for music, SFX, ambience and voice blips; mono-safe and phone-speaker friendly; nothing piercing above the music. Respect the existing mute toggle (M, saved).
 - **No voice acting:** characters use short original voice blips per personality (Hearthmoor tradition).
+
+## Bill's calls on the E1-E7 check items (2026-10-03)
+- Approved all proposed changes: rename the Jotunheim companion to Ulfar Mossback (innkeeper stays Bram), 24-minute day, Gatewright Halvard betrayal, and the rest of the E1-E7 choices.
+- Stats: on a new game (and in Settings) a popup asks "Auto level? Yes / No". Yes auto-assigns the 2 free stat points per level based on class; No lets the player spend them manually. Can be toggled anytime in Settings.
