@@ -1,34 +1,57 @@
-// Hearthmoor: a small cozy HD-2D village loop on the hd2d runtime (engine/main.js boot + hooks).
-// Area manager (fresh canvas per area, fade), dialogue, 3 errands + quest log, bag, persistent clock,
-// spells as rewards, save/load (localStorage hearthmoor-slot-1-v1), ambient audio, PWA.
-import { boot } from '../engine/main.js';
+// Hearthmoor: a cozy HD-2D action RPG on the hd2d runtime (engine/main.js boot + hooks).
+// Area manager (fresh canvas per area, fade), hero picker (6 starters), real-time combat (combat.js), dialogue,
+// 3 errands + quest log, bag, persistent clock, 4 spell slots, save/load (localStorage hearthmoor-slot-1-v2, migrates
+// v1), ambient audio, PWA install + fullscreen + display presets.
+import { boot, DISPLAY_PRESETS, getDisplay, setDisplay } from '../engine/main.js';
 import { ITEMS, QUESTS, TALK, SPELL_NAMES, markerFor } from './data.js';
 import { Ambient } from './audio.js';
+import { HEROES, HERO, SPELLS, SUMMONS } from './heroes.js';
+import { Combat } from './combat.js';
+
+// PWA install: catch the browser's prompt as early as possible (Chrome / Edge / Android); iPhone gets a tip instead
+let installEvt = null;
+addEventListener('beforeinstallprompt', (e) => { e.preventDefault(); installEvt = e; syncInstall(); });
+addEventListener('appinstalled', () => { installEvt = null; syncInstall(); });
 
 const Q = new URLSearchParams(location.search);
-const KEY = 'hearthmoor-slot-1-v1';
+const SLOT_V2 = 'hearthmoor-slot-1-v2';
+const SLOT_V1 = 'hearthmoor-slot-1-v1';       // read once for migration, never written or deleted
 const QA = Q.has('qa');                       // check-scene / screenshots: straight into ?area=, fresh state, no title, no saving
 const AREAS = { plaza: 'areas/plaza/', lane: 'areas/lane/', mossglen: 'areas/mossglen/' };
 const DAY_SECONDS = Number(Q.get('day') || 720);  // one whole day = 12 real minutes (day, dusk, night, dawn)
 const $ = (id) => document.getElementById(id);
 
-const fresh = () => ({ v: 1, area: 'plaza', pos: null, t: 0.62, inv: {}, quests: { bread: 0, tea: 0, cat: 0 }, picked: {},
+// v2 adds the hero class (cls) and current HP; everything from v1 carries over unchanged
+const fresh = () => ({ v: 2, cls: null, hp: null, area: 'plaza', pos: null, t: 0.62, inv: {}, quests: { bread: 0, tea: 0, cat: 0 }, picked: {},
                        cat: 'glade', spells: ['sparkle_burst'], played: 0, savedAt: null });
 
 const G = {
   S: fresh(), game: null, ctx: null, busy: false, title: !QA, dlg: null, log: false, markers: {}, scenes: {}, armed: false,
-  audio: new Ambient(), autosave: 20, near: null,
+  audio: new Ambient(), autosave: 20, near: null, downed: false, opts: false, picking: false,
+  peace: Q.has('peace') || (QA && !Q.has('combat')),
+  qaStill: QA && !Q.has('combat'),   // QA screenshots / check-scene: enemies stand around unless &combat
 };
+G.combat = new Combat(G);
 window.__hm = G;   // smoke tests + debugging
 
 // ------------------------------------------------------------------ save / load
-function readSave() { try { const s = JSON.parse(localStorage.getItem(KEY)); return s && s.v === 1 ? s : null; } catch (e) { return null; } }
+function readSave() {
+  try { const s = JSON.parse(localStorage.getItem(SLOT_V2)); if (s && s.v === 2) return s; } catch (e) { /* corrupt: fall through */ }
+  try {   // migrate a v1 save: same fields, no class yet (Continue asks who you are, then carries on)
+    const o = JSON.parse(localStorage.getItem(SLOT_V1));
+    if (o && o.v === 1) return { ...fresh(), ...o, v: 2, cls: null, hp: null, migrated: 1 };
+  } catch (e) { /* ignore */ }
+  return null;
+}
+// the 4 spell slots: the hero's own spell first, then the newest three charms
+function slots() { const h = HERO[G.S.cls]; return [...(h ? [h.spell] : []), ...G.S.spells.slice(-3)].slice(0, 4); }
+G.slots = slots;
 function save(note) {
   if (QA || G.title) return false;
   const p = G.ctx && G.ctx.player;
   if (p) G.S.pos = [+p.x.toFixed(2), +p.z.toFixed(2), p.facing];
   G.S.area = G.area; G.S.savedAt = new Date().toISOString();
-  localStorage.setItem(KEY, JSON.stringify(G.S));
+  localStorage.setItem(SLOT_V2, JSON.stringify(G.S));
   if (note) { toast('Saved ✓'); G.audio.sfx('save'); }
   return true;
 }
@@ -46,7 +69,7 @@ G.setQuest = (id, stage) => {
 G.learn = (spell) => {
   if (G.S.spells.includes(spell)) return;
   G.S.spells.push(spell);
-  if (G.ctx) G.ctx.setSpellCycle(G.S.spells);
+  if (G.ctx) G.ctx.setSpellCycle(slots());
   toast(`Learned a charm: ${SPELL_NAMES[spell] || spell} (F to cast, Q to switch)`, 3.2);
 };
 G.catFollow = () => {
@@ -83,8 +106,11 @@ function drawLog() {
   const n = Object.values(G.S.quests).filter((v) => v === 3).length;
   $('logCount').textContent = `${n}/3 done`;
   $('btnLog').textContent = `quests ${n}/3`;
-  const sp = $('logSpells'); if (sp) sp.textContent = 'Charms: ' + G.S.spells.map((s) => SPELL_NAMES[s] || s).join(' · ');
+  const sp = $('logSpells');
+  if (sp) sp.textContent = 'Spell slots: ' + slots().map((s) => spellName(s)).join(' · ') + '  ·  Charms known: ' + G.S.spells.map((s) => SPELL_NAMES[s] || s).join(' · ');
 }
+function spellName(id) { return (SPELLS[id] && SPELLS[id].name) || SPELL_NAMES[id] || String(id).replace(/_/g, ' '); }
+G.spellName = spellName;
 function flashLog() { const b = $('btnLog'); b.classList.add('ping'); setTimeout(() => b.classList.remove('ping'), 1600); }
 function setLog(open) { G.log = open; $('log').hidden = !open; $('btnLog').classList.toggle('on', open); if (open) drawLog(); }
 let toastT = 0;
@@ -152,9 +178,12 @@ async function loadArea(id, spawnKey, pos) {
   const old = $('view'); if (old) old.remove();
   const canvas = document.createElement('canvas'); canvas.id = 'view'; document.body.prepend(canvas);
   G.area = id; G.S.area = id; G.armed = false;
-  G.game = await boot({ base: AREAS[id], canvas, spawn: sp, startT: G.S.t, clockSpeed: 1 / DAY_SECONDS, spellCycle: G.S.spells,
+  G.combat.detach();
+  G.game = await boot({ base: AREAS[id], canvas, spawn: sp, startT: G.S.t, clockSpeed: 1 / DAY_SECONDS, spellCycle: slots(),
+                        player: { role: G.S.cls || G.preview || 'wildcaller' }, castAdvance: false,
                         keepTitle: true, padHandled: true, hooks, toast: (m, t) => toast(m, t) });
   const ctx = G.ctx = G.game.ctx;
+  G.combat.attach(ctx, id);
   // portrait source: this area's actor atlas
   portraitImg = new Image(); portraitImg.src = AREAS[id] + ctx.scene.atlas.image;
   // pickups already taken stay gone
@@ -225,6 +254,8 @@ function onFrame(dt, ctx) {
   typeDialogue(dt);
   if (toastT > 0) { toastT -= dt; if (toastT <= 0) $('toast').hidden = true; }
   syncMarkers();
+  G.combat.update(dt, ctx);
+  drawVitals(ctx);
   if (G.title || G.busy) return;
   // exits + portals: arm once the player has stood outside every trigger (no bounce on arrival)
   const trig = [...(gm.exits || []).map((e) => ({ ...e, how: 'walk' })), ...(gm.portals || []).map((e) => ({ ...e, how: 'portal' }))];
@@ -242,8 +273,36 @@ function onFrame(dt, ctx) {
   G.autosave -= dt; if (G.autosave <= 0) { G.autosave = 20; save(); }
 }
 
+// ------------------------------------------------------------------ vitals + touch-button cooldowns (cheap DOM writes)
+const last = {};
+function setTxt(id, v) { if (last[id] !== v) { last[id] = v; const el = $(id); if (el) el.textContent = v; } }
+function setW(id, f) { const v = Math.round(Math.max(0, Math.min(1, f)) * 100); if (last[id] !== v) { last[id] = v; const el = $(id); if (el) el.style.width = v + '%'; } }
+function setCd(id, sec) { const v = sec > 0.05 ? String(Math.ceil(sec)) : ''; if (last[id] !== v) { last[id] = v; const el = $(id); if (el) { if (v) el.dataset.cd = v; else delete el.dataset.cd; } } }
+function drawVitals(ctx) {
+  const C = G.combat, hp = G.S.hp ?? C.maxHp(), max = C.maxHp();
+  setW('hpFill', hp / max); setW('stFill', C.st / 100);
+  setTxt('hpTxt', `${Math.ceil(hp)}`);
+  const cur = ctx.spellCycle()[ctx.spellIndex()] || '';
+  const cd = SPELLS[cur] ? C.cd.spell : C.cd.charm;
+  setTxt('spellTxt', '✦ ' + spellName(cur) + (cd > 0.05 ? ` ${cd.toFixed(1)}` : ''));
+  setTxt('padSpellName', (spellName(cur).split(' ')[0] || 'spell').slice(0, 7).toLowerCase());
+  setCd('padSpell', cd); setCd('padSummon', C.cd.summon);
+  const v = $('vitals'), bag = $('bag');
+  if (v && bag) {   // sit just under the bag, whatever its height (icons make it taller than the empty chip)
+    const top = bag.offsetTop + bag.offsetHeight + 4;
+    if (last.vtop !== top) { last.vtop = top; v.style.top = top + 'px'; }
+  }
+  if (v) { const low = hp / max < 0.3; if (last.low !== low) { last.low = low; v.classList.toggle('low', low); } }
+  const near = $('mainGlyph') && $('mainGlyph').textContent === '💬';
+  if (last.talk !== near) { last.talk = near; $('padMain').classList.toggle('talk', near); }
+}
+
 const hooks = {
-  blockInput: () => !!(G.dlg || G.busy || G.title || G.log),
+  blockInput: () => !!(G.dlg || G.busy || G.title || G.log || G.downed || G.opts || G.picking),
+  onCast: (name) => G.combat.cast(name),
+  onSummon: () => G.combat.doSummon(),
+  onDodge: () => G.combat.onDodge(),
+  onAct: (name) => G.combat.onAct(name),
   skipActor: (spec) => spec.id === 'cat' && ((G.area === 'plaza' && G.S.cat !== 'home') || (G.area === 'mossglen' && G.S.cat !== 'glade')),
   onInteract: (ctx, kind) => {
     if (G.title) return true;
@@ -272,12 +331,19 @@ const hooks = {
   },
   // controller buttons (standard mapping) before the engine defaults: title, dialogue, quest log, Start = log
   onPad: (name, ctx) => {
+    if (G.picking) {
+      if (name === 'left' || name === 'lb') pickMove(-1); else if (name === 'right' || name === 'rb') pickMove(1);
+      else if (name === 'up') pickMove(-3); else if (name === 'down') pickMove(3);
+      else if (name === 'a' || name === 'start') pickBegin(); else if (name === 'b') closePicker();
+      return true;
+    }
     if (G.title) {
       if (name === 'a' || name === 'start') (readSave() ? cont : newGame)();
       else if (name === 'x') newGame();
       return true;
     }
-    if (G.busy) return true;
+    if (G.opts) { if (name === 'b' || name === 'start' || name === 'a') setOpts(false); return true; }
+    if (G.busy || G.downed) return true;
     if (G.dlg) { if (name === 'a') advanceDialogue(); else if (name === 'b') closeDialogue(); return name !== 'select'; }
     if (G.log) { if (name === 'a' || name === 'b' || name === 'start') setLog(false); return name !== 'select'; }
     if (name === 'start') { setLog(true); return true; }
@@ -287,6 +353,180 @@ const hooks = {
   nearThing: (ctx) => !!nearPickup(ctx, 1.4),
 };
 
+// ------------------------------------------------------------------ touch action buttons + slow-time spell wheel
+function press(id, down, up) {
+  const el = $(id); if (!el) return;
+  el.addEventListener('pointerdown', (e) => { e.preventDefault(); e.stopPropagation(); try { el.setPointerCapture(e.pointerId); } catch (err) { /* synthetic */ } down(e); });
+  if (up) for (const t of ['pointerup', 'pointercancel', 'lostpointercapture']) el.addEventListener(t, (e) => up(e));
+}
+const WHEEL = { open: false, x0: 0, y0: 0, sel: -1, timer: null };
+function openWheel(x, y) {
+  const ctx = G.ctx; if (!ctx || hooks.blockInput()) return;
+  WHEEL.open = true; WHEEL.x0 = x; WHEEL.y0 = y; WHEEL.sel = -1;
+  const cyc = ctx.spellCycle(), cur = ctx.spellIndex();
+  document.querySelectorAll('#wheel .slot').forEach((el, i) => { el.textContent = cyc[i] ? spellName(cyc[i]) : ''; el.classList.toggle('cur', i === cur); el.classList.remove('on'); });
+  $('wheel').hidden = false;
+  ctx.setTimeScale(0.2);
+}
+function moveWheel(x, y) {
+  if (!WHEEL.open) return;
+  const dx = x - WHEEL.x0, dy = y - WHEEL.y0, n = G.ctx.spellCycle().length;
+  let sel = -1;
+  if (Math.hypot(dx, dy) > 22) sel = Math.abs(dx) > Math.abs(dy) ? (dx > 0 ? 1 : 3) : (dy > 0 ? 2 : 0);
+  if (sel >= n) sel = -1;
+  WHEEL.sel = sel;
+  document.querySelectorAll('#wheel .slot').forEach((el, i) => el.classList.toggle('on', i === sel));
+}
+function closeWheel(cast) {
+  if (!WHEEL.open) return;
+  WHEEL.open = false; $('wheel').hidden = true;
+  const ctx = G.ctx; if (!ctx) return;
+  ctx.setTimeScale(1);
+  if (cast && WHEEL.sel >= 0) { ctx.selectSpell(WHEEL.sel); ctx.playerCast(); }
+}
+G.wheel = { open: openWheel, move: moveWheel, close: closeWheel, state: () => ({ ...WHEEL, timer: undefined }) };
+function wirePad() {
+  const C = () => G.ctx;
+  press('padGuard', () => { if (C()) { C().act('defend', null, { hold: true }); $('padGuard').classList.add('on'); } },
+                    () => { if (C()) C().release('defend'); $('padGuard').classList.remove('on'); });
+  press('padJump', () => C() && C().act('jump'));
+  press('padDodge', () => C() && C().dodge());
+  press('padSummon', () => C() && C().summon());
+  const sp = $('padSpell');
+  press('padSpell', (e) => {
+    clearTimeout(WHEEL.timer);
+    const x = e.clientX, y = e.clientY;
+    WHEEL.timer = setTimeout(() => { WHEEL.timer = 'fired'; openWheel(x, y); }, 350);
+  }, (e) => {
+    if (e.type === 'lostpointercapture' && !WHEEL.open && WHEEL.timer === null) return;
+    if (WHEEL.timer === 'fired') { WHEEL.timer = null; closeWheel(e.type === 'pointerup'); return; }
+    if (WHEEL.timer) { clearTimeout(WHEEL.timer); WHEEL.timer = null; if (e.type === 'pointerup' && C()) C().playerCast(); }
+  });
+  sp.addEventListener('pointermove', (e) => moveWheel(e.clientX, e.clientY));
+  press('pad3rd', () => setLog(!G.log));
+}
+
+// ------------------------------------------------------------------ options: display presets, fullscreen, install
+const isIOS = /iphone|ipad|ipod/i.test(navigator.userAgent) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+const standalone = () => matchMedia('(display-mode: standalone)').matches || matchMedia('(display-mode: fullscreen)').matches || navigator.standalone === true;
+const canFull = () => !!(document.documentElement.requestFullscreen || document.documentElement.webkitRequestFullscreen) && !isIOS;
+function syncInstall() {
+  const show = !standalone();
+  for (const id of ['btnInstall', 'btnInstallT']) { const b = $(id); if (b) b.hidden = !show; }
+}
+function doInstall(tipId) {
+  const tip = $(tipId);
+  if (installEvt) { installEvt.prompt(); installEvt.userChoice.finally(() => { installEvt = null; syncInstall(); }); return; }
+  const msg = isIOS ? 'iPhone / iPad: tap the Share button (□↑) in Safari, then "Add to Home Screen". Hearthmoor then opens full screen and works offline.'
+                    : 'Use your browser menu: "Install app" or "Add to Home screen". Hearthmoor then works offline.';
+  if (tip) { tip.textContent = msg; tip.hidden = false; }
+}
+function toggleFull() {
+  const d = document, el = d.documentElement;
+  if (d.fullscreenElement || d.webkitFullscreenElement) { (d.exitFullscreen || d.webkitExitFullscreen).call(d); return; }
+  const p = (el.requestFullscreen || el.webkitRequestFullscreen).call(el, { navigationUI: 'hide' });
+  if (p && p.then) p.then(() => { try { screen.orientation.lock('landscape').catch(() => {}); } catch (e) { /* not supported */ } }).catch(() => {});
+}
+function syncDisplay() {
+  const p = getDisplay();
+  document.querySelectorAll('#displayRow [data-p]').forEach((b) => b.classList.toggle('on', b.dataset.p === p));
+  const t = $('btnDisplayT'); if (t) t.textContent = 'Display: ' + DISPLAY_PRESETS[p].label;
+}
+function setOpts(open) {
+  G.opts = open; $('opts').hidden = !open; $('btnOpts').classList.toggle('on', open);
+  if (open) { syncDisplay(); syncInstall(); $('btnFull').hidden = !canFull(); }
+}
+G.setOpts = setOpts;
+function wireOptions() {
+  $('btnOpts').onclick = () => setOpts(!G.opts);
+  $('optsClose').onclick = () => setOpts(false);
+  $('opts').addEventListener('pointerdown', (e) => { if (e.target === $('opts')) setOpts(false); });
+  document.querySelectorAll('#displayRow [data-p]').forEach((b) => { b.onclick = () => { setDisplay(b.dataset.p); syncDisplay(); }; });
+  const order = Object.keys(DISPLAY_PRESETS);
+  $('btnDisplayT').onclick = () => { setDisplay(order[(order.indexOf(getDisplay()) + 1) % order.length]); syncDisplay(); };
+  $('btnFull').onclick = toggleFull; $('btnFullT').onclick = toggleFull;
+  $('btnFullT').hidden = !canFull();
+  $('btnInstall').onclick = () => doInstall('installTip'); $('btnInstallT').onclick = () => doInstall('installTipT');
+  syncInstall(); syncDisplay();
+  // rotate prompt: portrait phones only, dismissible, never blocks play (hidden for QA captures)
+  const portrait = matchMedia('(orientation: portrait) and (pointer: coarse)');
+  let dismissed = false;
+  const rot = () => { const show = portrait.matches && !dismissed && !QA && !Q.has('norotate'); $('rotate').hidden = !show; };
+  $('rotateX').onclick = () => { dismissed = true; rot(); };
+  $('rotate').addEventListener('pointerdown', (e) => { e.stopPropagation(); });
+  portrait.addEventListener ? portrait.addEventListener('change', rot) : portrait.addListener(rot);
+  rot();
+  setTimeout(() => { dismissed = true; rot(); }, 9000);
+}
+
+// ------------------------------------------------------------------ hero picker (title -> New game, or a v1 save on Continue)
+const PICK = { i: 0, meta: null, img: null, raf: 0, then: null, t0: 0 };
+async function heroAtlas() {
+  if (PICK.meta) return;
+  const base = AREAS.plaza + 'public/art/sprite/';
+  PICK.meta = await (await fetch(base + 'actors.json')).json();
+  PICK.img = await new Promise((res, rej) => { const im = new Image(); im.onload = () => res(im); im.onerror = rej; im.src = base + 'actors.png'; });
+}
+function buildCards() {
+  const wrap = $('cards'); wrap.innerHTML = '';
+  HEROES.forEach((h, i) => {
+    const b = document.createElement('button');
+    b.className = 'card'; b.dataset.i = i; b.id = 'hero_' + h.id;
+    b.innerHTML = `<canvas width="20" height="32"></canvas><b>${h.cls}</b><i>${h.kind}</i>`;
+    b.onclick = () => { if (PICK.i === i && PICK.tapped) pickBegin(); else { PICK.i = i; PICK.tapped = true; pickShow(); } };
+    wrap.appendChild(b);
+  });
+}
+function pickShow() {
+  const h = HEROES[PICK.i];
+  document.querySelectorAll('#cards .card').forEach((c, i) => c.classList.toggle('sel', i === PICK.i));
+  $('heroDetail').innerHTML = `<b>${h.cls}</b> <span class="tag">${h.origin}</span><span class="tag ${h.kind}">${h.kind}</span><span class="tag">${h.style}</span><br>${h.blurb}`
+    + `<span class="kit">First spell: ${SPELLS[h.spell].name} · Summon: ${SUMMONS[h.summon].name} · ${h.hp} HP</span>`;
+  G.preview = h.id;
+  if (G.ctx && G.ctx.actors.meta.roles[h.id]) { G.ctx.actors.setRole(G.ctx.player, h.id); G.ctx.actors.act(G.ctx.player, 'attack'); }
+  PICK.t0 = performance.now();
+}
+function drawPreviews(now) {
+  if (!G.picking) return;
+  const M = PICK.meta, fw = M.frame[0], fh = M.frame[1];
+  document.querySelectorAll('#cards .card').forEach((c, i) => {
+    const h = HEROES[i], r = M.roles[h.id]; if (!r) return;
+    const cv = c.querySelector('canvas'), g = cv.getContext('2d');
+    g.imageSmoothingEnabled = false; g.clearRect(0, 0, fw, fh);
+    let anim = 'idle', fr = Math.floor(now / 330) % 4;
+    if (i === PICK.i) {   // the chosen hero shows off: attack, cast, jump, idle
+      const seq = ['attack', 'cast', 'jump', 'idle'], ph = Math.floor((now - PICK.t0) / 900) % 4;
+      anim = seq[ph]; if (!r.anims.includes(anim)) anim = 'idle';
+      fr = Math.min(3, Math.floor(((now - PICK.t0) % 900) / 180));
+    }
+    const col = M.anims[anim].start + fr;
+    g.drawImage(PICK.img, col * fw, r.row * fh, fw, fh, 0, 0, fw, fh);
+  });
+  PICK.raf = requestAnimationFrame(drawPreviews);
+}
+async function openPicker(then) {
+  try { await heroAtlas(); } catch (e) { console.error(e); }
+  PICK.then = then; PICK.tapped = false;
+  const cur = HEROES.findIndex((h) => h.id === (G.S.cls || G.preview));
+  PICK.i = cur >= 0 ? cur : 0;
+  G.picking = true;
+  $('plaque').hidden = true; $('picker').hidden = false;
+  if (!$('cards').children.length) buildCards();
+  pickShow();
+  cancelAnimationFrame(PICK.raf); PICK.raf = requestAnimationFrame(drawPreviews);
+}
+function closePicker() {
+  G.picking = false; cancelAnimationFrame(PICK.raf);
+  $('picker').hidden = true; $('plaque').hidden = false;
+}
+function pickMove(d) { PICK.i = (PICK.i + d + HEROES.length * 3) % HEROES.length; PICK.tapped = false; pickShow(); }
+function pickBegin() {
+  const id = HEROES[PICK.i].id, then = PICK.then;
+  closePicker();
+  if (then) then(id);
+}
+G.picker = { open: openPicker, move: pickMove, begin: pickBegin, close: closePicker, state: () => ({ open: G.picking, i: PICK.i, id: HEROES[PICK.i].id }) };
+
 // ------------------------------------------------------------------ title screen, buttons, keys
 function wire() {
   $('btnLog').onclick = () => setLog(!G.log);
@@ -295,13 +535,22 @@ function wire() {
   $('btnSound').onclick = () => { G.audio.start(); const m = G.audio.toggle(); $('btnSound').textContent = m ? 'sound: off' : 'sound: on'; };
   $('btnSound').textContent = G.audio.muted ? 'sound: off' : 'sound: on';
   $('dlg').addEventListener('pointerdown', (e) => { e.preventDefault(); advanceDialogue(); });
-  const third = $('pad3rd');
-  if (third) { third.disabled = false; third.textContent = '☰'; third.title = 'quest log'; third.addEventListener('pointerdown', (e) => { e.preventDefault(); e.stopPropagation(); setLog(!G.log); }); }
+  wirePad(); wireOptions();
+  $('btnBack').onclick = () => closePicker();
+  $('btnBegin').onclick = () => pickBegin();
   addEventListener('keydown', (e) => {
     const k = e.key.toLowerCase();
+    if (G.picking || G.title) e.stopImmediatePropagation();   // the engine's own keys (talk on Enter) wait for the field
+    if (G.picking) {
+      if (k === 'arrowleft' || k === 'a') pickMove(-1); else if (k === 'arrowright' || k === 'd') pickMove(1);
+      else if (k === 'arrowup' || k === 'w') pickMove(-3); else if (k === 'arrowdown' || k === 's') pickMove(3);
+      else if (k === 'enter' || k === ' ') { e.preventDefault(); pickBegin(); } else if (k === 'escape') closePicker();
+      return;
+    }
     if (G.title) { if (k === 'enter' || k === ' ') { e.preventDefault(); (readSave() ? cont : newGame)(); } else if (k === 'n') newGame(); return; }
+    if (k === 'o') { setOpts(!G.opts); return; }
     if (k === 'j' || k === 'l') setLog(!G.log);
-    if (k === 'escape') { if (G.dlg) closeDialogue(); else if (G.log) setLog(false); }
+    if (k === 'escape') { if (G.opts) setOpts(false); else if (G.dlg) closeDialogue(); else if (G.log) setLog(false); }
     if (k === 'k' || ((e.ctrlKey || e.metaKey) && k === 's')) { e.preventDefault(); save(true); }
     if (k === 'm') { G.audio.start(); const m = G.audio.toggle(); $('btnSound').textContent = m ? 'sound: off' : 'sound: on'; }
   });
@@ -312,18 +561,28 @@ function wire() {
   $('btnNew').onclick = () => newGame();
   $('btnCont').onclick = () => cont();
 }
-function closeTitle() { G.title = false; $('titlescreen').hidden = true; document.body.classList.remove('titled'); G.audio.start(); }
+function closeTitle() { G.title = false; $('titlescreen').hidden = true; document.body.classList.remove('titled'); $('vitals').hidden = false; G.audio.start(); }
+function applyHero() {
+  const ctx = G.ctx; if (!ctx) return;
+  if (ctx.actors.meta.roles[G.S.cls]) ctx.actors.setRole(ctx.player, G.S.cls);
+  ctx.setSpellCycle(slots()); ctx.selectSpell(0);
+  if (G.S.hp == null) G.S.hp = G.combat.maxHp();
+}
 async function newGame() {
-  if (G.busy) return;
+  if (G.busy || G.picking) return;
   const had = readSave();
   if (had && !confirmNew()) return;
-  G.S = fresh();
+  openPicker((cls) => startNew(cls));
+}
+async function startNew(cls) {
+  G.S = fresh(); G.S.cls = cls; G.S.hp = HERO[cls].hp;
   closeTitle();
   if (G.area !== 'plaza') await go('plaza', 'start', 'walk');
   else { const s = G.ctx.scene.game.spawns.start; G.ctx.player.x = s[0]; G.ctx.player.z = s[1]; G.ctx.player.y = G.ctx.heightAt(s[0], s[1]); G.ctx.player.facing = s[2]; G.ctx.clock.set(G.S.t); }
+  applyHero();
   drawBag(); drawLog(); refreshMarkers();
   save();
-  toast('Welcome to Hearthmoor. Marla the baker is waving at you.', 3.2);
+  toast(`Welcome to Hearthmoor, ${HERO[cls].cls}. Marla the baker is waving at you.`, 3.2);
 }
 // replacing a save takes a second press of New game (works with touch, mouse, keys and a controller; no browser dialog)
 let newArmed = 0;
@@ -335,13 +594,23 @@ function confirmNew() {
   return false;
 }
 async function cont() {
+  if (G.busy || G.picking) return;
   const s = readSave(); if (!s) return newGame();
-  G.S = { ...fresh(), ...s };
+  if (!s.cls) {   // a migrated v1 save: choose your hero once, keep everything else
+    openPicker((cls) => { s.cls = cls; s.hp = HERO[cls].hp; delete s.migrated; resume(s); });
+    return;
+  }
+  resume(s);
+}
+async function resume(s) {
+  G.S = { ...fresh(), ...s, v: 2 };
   closeTitle();
   G.busy = true;
   $('fade').className = 'on';
   await new Promise((r) => setTimeout(r, 300));
   await loadArea(s.area || 'plaza', 'start', s.pos);
+  applyHero();
+  save();
   $('fade').className = '';
   G.busy = false;
   toast(`Welcome back. ${G.ctx.scene.name}, ${$('clocktxt').textContent}`, 2.6);
@@ -350,17 +619,19 @@ async function cont() {
 // ------------------------------------------------------------------ start
 async function main() {
   wire();
-  if (Q.has('reset')) localStorage.removeItem(KEY);
+  if (Q.has('reset')) localStorage.removeItem(SLOT_V2);
   if (Q.has('pad') || (matchMedia('(pointer: coarse)').matches && !Q.has('nopad') && !QA)) document.body.classList.add('padon');
   const s = readSave();
   if (QA) {
-    G.title = false; $('titlescreen').hidden = true;
+    G.title = false; $('titlescreen').hidden = true; $('vitals').hidden = false;
+    G.S.cls = HERO[Q.get('hero')] ? Q.get('hero') : 'wildcaller';
     if (Q.get('state')) Object.assign(G.S, JSON.parse(Q.get('state')));
     await loadArea(Q.get('area') || 'plaza', Q.get('spawn') || 'start');
   } else {
     document.body.classList.add('titled');
     $('btnCont').hidden = !s;
-    if (s) $('saveInfo').textContent = `Saved: ${new Date(s.savedAt).toLocaleString([], { dateStyle: 'medium', timeStyle: 'short' })} · ${Object.values(s.quests).filter((v) => v === 3).length}/3 errands`;
+    if (s) $('saveInfo').textContent = `Saved: ${new Date(s.savedAt).toLocaleString([], { dateStyle: 'medium', timeStyle: 'short' })} · ${s.cls ? HERO[s.cls].cls + ' · ' : ''}${Object.values(s.quests).filter((v) => v === 3).length}/3 errands${s.migrated ? ' · (older save: pick your hero to continue)' : ''}`;
+    G.preview = (s && s.cls) || 'wildcaller';
     await loadArea('plaza', 'start');    // the plaza idles behind the title card
   }
   if ($('pad')) $('btnPad') && $('btnPad').classList.toggle('on', document.body.classList.contains('padon'));

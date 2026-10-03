@@ -507,6 +507,7 @@
   "facing": "up"
  },
  "spells": true,
+ "sprite_roles": ["actors", "cat", "heroes", "combat"],
  "game": {
   "id": "plaza",
   "title": "Hearthmoor Plaza",

@@ -64,10 +64,32 @@ function setCtrl(on) {
   body.classList.toggle('ctrl', on);
   const h = document.getElementById('hint');
   if (h) {
-    if (on) { h.dataset.keys = h.dataset.keys || h.textContent; h.textContent = h.dataset.pad || '🎮 stick walk · A talk · B close · X cast · Y / LB / RB charm · LT / RT zoom · Start menu · Select pad'; }
+    if (on) { h.dataset.keys = h.dataset.keys || h.textContent; h.textContent = h.dataset.pad || '🎮 stick walk · A talk / jump · B close / dodge · X attack · Y cast · LB / RB spell · LT guard · RT summon · R-stick zoom · Start menu'; }
     else if (h.dataset.keys) h.textContent = h.dataset.keys;
   }
 }
+// display presets (remembered per device; ?display= overrides): the canvas buffer size, never the art. Sprites keep
+// their integer pixel scale inside whatever buffer the preset picks.
+//   auto    native (devicePixelRatio, capped at 2)        phone   full screen, DPR capped at 1.5 (cooler, longer battery)
+//   720p    buffer 720 px tall, upscaled nearest           1080p   buffer 1080 px tall + TV HUD (bigger chips, overscan margin)
+//   retro   a 320x240 4:3 buffer, pillarboxed, nearest upscale (integer when the screen allows 2x or more)
+export const DISPLAY_PRESETS = {
+  auto: { label: 'Auto' }, phone: { label: 'Phone', maxDpr: 1.5 }, '720p': { label: '720p', h: 720 },
+  '1080p': { label: '1080p TV', h: 1080, tv: true }, retro: { label: 'Retro 320×240', w: 320, h: 240, fixed: true },
+};
+let displayPreset = (() => { let v = Q.get('display'); try { v = v || localStorage.getItem('hd2d-display'); } catch (e) { /* private mode */ } return DISPLAY_PRESETS[v] ? v : 'auto'; })();
+export function getDisplay() { return displayPreset; }
+export function setDisplay(p, remember = true) {
+  if (!DISPLAY_PRESETS[p]) return displayPreset;
+  displayPreset = p;
+  if (remember) { try { localStorage.setItem('hd2d-display', p); } catch (e) { /* private mode */ } }
+  if (document.body) { document.body.dataset.display = p; document.body.classList.toggle('tv', !!DISPLAY_PRESETS[p].tv); }
+  dispatchEvent(new Event('resize'));
+  return p;
+}
+window.__hd2dDisplay = { presets: DISPLAY_PRESETS, get: getDisplay, set: setDisplay };
+if (document.body) { document.body.dataset.display = displayPreset; document.body.classList.toggle('tv', !!DISPLAY_PRESETS[displayPreset].tv); }
+
 // a small parchment toast for engine messages (a game can pass opts.toast to use its own)
 function engineToast(msg, s = 2.4) {
   let el = document.getElementById('etoast');
@@ -82,7 +104,10 @@ function engineToast(msg, s = 2.4) {
 //   opts.spawn       {x, z, facing} player start override;  opts.player: player spec overrides (role, ...)
 //   opts.startT      clock time 0..1;  opts.clockSpeed: cycles per second
 //   opts.spellCycle  spells the player can cast (default: scene.spell_cycle or the spells atlas cycle)
-//   opts.hooks       { onInteract(ctx), onTalk(npc, ctx), onTap(hit, ctx), onFrame(dt, ctx), blockInput() }
+//   opts.hooks       { onInteract(ctx), onTalk(npc, ctx), onTap(hit, ctx), onFrame(dt, ctx), blockInput(),
+//                      onCast(name, ctx) -> false vetoes, onSummon(ctx), onDodge(ctx) -> false vetoes, onAct(name, ctx),
+//                      onPad(name, ctx), onPadRelease(name, ctx) }
+//   opts.castAdvance cast moves to the next spell (default true; a slot-based game passes false)
 export async function boot(opts = {}) {
   const base = opts.base ?? '';
   const R = (u) => (u && !/^(https?:|data:|blob:|\/)/.test(u) ? base + u : u);
@@ -108,7 +133,7 @@ export async function boot(opts = {}) {
 
   // ---------------------------------------------------------------- renderer
   const renderer = new THREE.WebGLRenderer({ canvas, antialias: false, powerPreference: 'high-performance', preserveDrawingBuffer: Q.has('shot') });
-  const dpr = Math.min(window.devicePixelRatio || 1, 2);
+  let dpr = Math.min(window.devicePixelRatio || 1, 2);
   renderer.setPixelRatio(dpr);
   renderer.shadowMap.enabled = true;
   renderer.shadowMap.type = THREE.PCFSoftShadowMap;
@@ -130,7 +155,7 @@ export async function boot(opts = {}) {
   const target = new THREE.Vector3(...(C.target || [0, 0, 0]));
   const bounds = C.bounds; // [x0, z0, x1, z1] for the target
   const look = new THREE.Vector3(...(C.look || [0, 0, -3]));   // frame ahead of the player (the terrace)
-  function aspectScale() { const a = innerWidth / innerHeight; return a < 1.25 ? Math.min(1.9, 1.25 / a) : 1; }
+  function aspectScale() { const a = cssW / cssH; return a < 1.25 ? Math.min(1.9, 1.25 / a) : 1; }
   function placeCamera() {
     const d = dist * aspectScale();
     camera.position.copy(target).addScaledVector(camDir, d);
@@ -191,7 +216,9 @@ export async function boot(opts = {}) {
   const npcs = (scene.actors || []).filter((s) => !(hooks.skipActor && hooks.skipActor(s))).map((s) => actors.add(s));
   const pspec = { ...scene.player, ...(opts.player || {}) };
   if (opts.spawn) { pspec.pos = [opts.spawn.x, opts.spawn.z]; if (opts.spawn.facing) pspec.facing = opts.spawn.facing; }
-  const player = actors.add({ ...pspec, id: 'player', behavior: 'player', turn: false });
+  const silC = new THREE.Color(biome.colors.plaster_hi || '#f4ead0');
+  const player = actors.add({ ...pspec, id: 'player', behavior: 'player', turn: false, xray: scene.xray !== false,
+                              xrayColor: new THREE.Vector3(silC.r, silC.g, silC.b) });
   player.speed = 2.6;
 
   // particles
@@ -228,22 +255,52 @@ export async function boot(opts = {}) {
       } else effects.spawn(fxName, a.x + fx * 0.95, a.y, a.z + fz * 0.95 + 0.05);
     }
   }
-  function playerCast(advance = true) {
-    if (!spellCycle.length) return;
+  function playerCast(advance = opts.castAdvance ?? true) {
+    if (!spellCycle.length || blocked()) return;
+    if (hooks.onCast && hooks.onCast(spellCycle[spellIdx], ctx) === false) return;
     castSpell(player, spellCycle[spellIdx]);
     if (advance) spellIdx = (spellIdx + 1) % spellCycle.length;
     showSpell();
   }
+  function selectSpell(i) { if (i >= 0 && i < spellCycle.length) { spellIdx = i; showSpell(); } }
   function cycleSpell(dir = 1) { if (spellCycle.length) { spellIdx = (spellIdx + dir + spellCycle.length) % spellCycle.length; showSpell(); } }
   function showSpell() { const b = $('btnSpell'); if (b) b.textContent = '✦ ' + (spellCycle[spellIdx] || '').replace(/_/g, ' '); }
 
   // hero action states (R attack, C hold to guard, Z jump; controller RS attack, LS jump, LT short guard)
   function actorAct(name, a = player, opts = {}) {
     if (a === player && blocked()) return false;
+    if (a === player && player.roll) return false;
     const ok = actors.act(a, name, opts);
     if (ok && a === player && name !== 'jump') walkTo = null;
+    if (ok && a === player && hooks.onAct) hooks.onAct(name, ctx);
     return ok;
   }
+  // dodge roll: a quick dash in the stick / facing direction with a pixel-exact tumble (the crouch frame turned in
+  // quarter steps) and invulnerability frames for the first ~0.26 s. hooks.onDodge can veto (stamina).
+  const ROLL = { dur: 0.36, speed: 7.2, iframes: 0.26 };
+  function dodge(dirX, dirZ) {
+    if (blocked() || player.roll || (player.act && player.act.name === 'jump')) return false;
+    let dx = dirX, dz = dirZ;
+    if (dx === undefined) {
+      const st = pad.stick();
+      if (gp.mag > 0) { dx = gp.x; dz = gp.y; } else if (st.active && st.mag > 0) { dx = st.x; dz = st.y; }
+      else {
+        dx = (keys.has('d') || keys.has('arrowright') ? 1 : 0) - (keys.has('a') || keys.has('arrowleft') ? 1 : 0);
+        dz = (keys.has('s') || keys.has('arrowdown') ? 1 : 0) - (keys.has('w') || keys.has('arrowup') ? 1 : 0);
+      }
+      if (!dx && !dz) [dx, dz] = facingVec(player);
+    }
+    if (hooks.onDodge && hooks.onDodge(ctx) === false) return false;
+    const L = Math.hypot(dx, dz) || 1;
+    if (player.act) player.act = null;
+    walkTo = null;
+    actors.setFacingFromVec(player, dx, dz);
+    player.roll = { t: 0, dx: dx / L, dz: dz / L, spin: (dx < 0 || (dx === 0 && dz < 0)) ? 1 : -1 };
+    player.iframes = ROLL.iframes;
+    return true;
+  }
+  function summon() { if (!blocked() && hooks.onSummon) hooks.onSummon(ctx); }
+  let timeScale = 1;
 
   // ---------------------------------------------------------------- input
   const keys = new Set();
@@ -263,8 +320,11 @@ export async function boot(opts = {}) {
     if (['e', ' ', 'enter'].includes(k)) { e.preventDefault(); if (!e.repeat) interact(); }
     if (blocked()) return;
     if (k === 't' && !opts.noTimeKeys) stepTime();
-    if (k === 'f' && !e.repeat) playerCast(true);
+    if (k === 'f' && !e.repeat) playerCast();
     if (k === 'q' && !e.repeat) cycleSpell();
+    if (/^[1-4]$/.test(k) && !e.repeat) selectSpell(Number(k) - 1);
+    if (k === 'x' && !e.repeat) dodge();
+    if (k === 'v' && !e.repeat) summon();
     if (k === 'r' && !e.repeat) actorAct('attack');
     if (k === 'c' && !e.repeat) actorAct('defend', player, { hold: true });
     if (k === 'z' && !e.repeat) actorAct('jump');
@@ -330,8 +390,12 @@ export async function boot(opts = {}) {
   function tapAt(cx, cy) {
     if (blocked()) { if (hooks.onInteract) hooks.onInteract(ctx, 'tap'); return; }
     // talk if the tap lands on an NPC sprite (buffer px; the rects are in drawing-buffer pixels)
-    const bx = cx * bufW / innerWidth, by = cy * bufH / innerHeight;
+    const cr = canvas.getBoundingClientRect();
+    const u = (cx - cr.left) / cr.width, v = (cy - cr.top) / cr.height;
+    if (u < 0 || v < 0 || u > 1 || v > 1) return;   // letterbox bars (retro preset)
+    const bx = u * bufW, by = v * bufH;
     for (const a of npcs) {
+      if (a.noTalk) continue;
       const r = a.rect;
       if (a.quad.visible && r && bx >= r.x && bx < r.x + r.w && by >= r.y && by < r.y + r.h) {
         if (Math.hypot(a.x - player.x, a.z - player.z) < 2.4) { talk(a); return; }
@@ -340,7 +404,7 @@ export async function boot(opts = {}) {
         return;
       }
     }
-    ray.setFromCamera(new THREE.Vector2(cx / innerWidth * 2 - 1, -(cy / innerHeight) * 2 + 1), camera);
+    ray.setFromCamera(new THREE.Vector2(u * 2 - 1, -v * 2 + 1), camera);
     const hit = ray.intersectObjects(walkables, false)[0];
     if (!hit) return;
     if (hooks.onTap && hooks.onTap({ x: hit.point.x, y: hit.point.y, z: hit.point.z }, ctx)) return;
@@ -364,17 +428,19 @@ export async function boot(opts = {}) {
   }
   function nearestNpc(maxd = 2.2) {
     let best = null, bd = maxd;
-    for (const a of npcs) { const d = Math.hypot(a.x - player.x, a.z - player.z); if (d < bd && (a.say || a.talkable) && a.quad.visible) { bd = d; best = a; } }
+    for (const a of npcs) { const d = Math.hypot(a.x - player.x, a.z - player.z); if (d < bd && (a.say || a.talkable) && !a.noTalk && a.quad.visible) { bd = d; best = a; } }
     return best;
   }
-  function interact() {
-    if (hooks.onInteract && hooks.onInteract(ctx, 'key')) return;
+  function interact(kind = 'key') {
+    if (hooks.onInteract && hooks.onInteract(ctx, kind)) return;
     if (blocked()) return;
-    const n = nearestNpc(); if (n) talk(n);
+    const n = nearestNpc(); if (n) { talk(n); return; }
+    // the pad's MAIN verb: talk when someone is near, otherwise swing (heroes)
+    if (kind === 'pad' && !(hooks.nearThing && hooks.nearThing(ctx)) && player.anims.includes('attack')) actorAct('attack');
   }
 
   // ---------------------------------------------------------------- HUD
-  const pad = new Pad({ onMain: interact, near: () => !!nearestNpc(), onSpell: sMeta ? () => playerCast(true) : null,
+  const pad = new Pad({ onMain: () => interact('pad'), near: () => !!nearestNpc(), onSpell: sMeta ? () => playerCast() : null,
                        onSpellHold: sMeta ? () => cycleSpell(1) : null, onTap: (x, y) => tapAt(x, y), blockStart: () => !!pinch0, signal: ac.signal });
   if (sMeta && !$('btnSpell') && document.querySelector('#hud .btns')) {
     const b = document.createElement('button');
@@ -382,8 +448,8 @@ export async function boot(opts = {}) {
     document.querySelector('#hud .btns').appendChild(b);
     if ($('hint') && !$('hint').textContent.includes('F cast')) $('hint').textContent += ' · F cast · Q next spell';
   }
-  if ($('hint') && player.anims.includes('attack') && !$('hint').textContent.includes('R attack')) $('hint').textContent += ' · R attack · C guard · Z jump';
-  if ($('btnSpell')) { $('btnSpell').onclick = () => playerCast(true); $('btnSpell').hidden = !spellCycle.length; }
+  if ($('hint') && player.anims.includes('attack') && !$('hint').textContent.includes('R attack')) $('hint').textContent += ' · R attack · C guard · Z jump · X dodge';
+  if ($('btnSpell')) { $('btnSpell').onclick = () => playerCast(); $('btnSpell').hidden = !spellCycle.length; }
   showSpell();
   // left-handed pad: ?hand=left, the 'hand' HUD chip or H; remembered per device
   function setHand(left) {
@@ -411,26 +477,34 @@ export async function boot(opts = {}) {
   if (Q.get('hud') === '0' && $('hud')) $('hud').style.display = 'none';
 
   // ---------------------------------------------------------------- controller (Gamepad API, standard mapping)
-  function cancel() { if ($('say')) $('say').hidden = true; sayTimer = 0; walkTo = null; }
+  function cancel() { const had = ($('say') && !$('say').hidden) || !!walkTo; if ($('say')) $('say').hidden = true; sayTimer = 0; walkTo = null; return had; }
+  // controller map: A talk (jump when nobody is near), B close (dodge roll when there is nothing to close), X attack,
+  // Y cast, LB / RB spell, LT hold guard, RT summon, LS click jump, RS click attack, Start menu, Select pad
   function padButton(name) {
     API.padPresses = (API.padPresses || 0) + 1; API.lastPad = name;   // QA: presses seen by the engine
     if (hooks.onPad && hooks.onPad(name, ctx)) return;
     switch (name) {
-      case 'a': interact(); break;
-      case 'b': cancel(); break;
-      case 'x': if (!blocked()) playerCast(true); break;
-      case 'y': case 'rb': if (!blocked()) cycleSpell(1); break;
+      case 'a': if (blocked() || nearestNpc() || (hooks.nearThing && hooks.nearThing(ctx)) || !player.anims.includes('jump')) interact(); else actorAct('jump'); break;
+      case 'b': if (!cancel() && !blocked()) dodge(); break;
+      case 'x': case 'rs': actorAct('attack'); break;
+      case 'y': if (!blocked()) playerCast(); break;
+      case 'rb': if (!blocked()) cycleSpell(1); break;
       case 'lb': if (!blocked()) cycleSpell(-1); break;
-      case 'rs': actorAct('attack'); break;
       case 'ls': actorAct('jump'); break;
-      case 'lt': actorAct('defend', player, { hold: false, dur: 0.8 }); break;
+      case 'lt': actorAct('defend', player, { hold: true }); break;
+      case 'rt': summon(); break;
       case 'start': if (!opts.noTimeKeys) togglePause(); break;
       case 'select': togglePad(); document.body.classList.toggle('padpin', pad.on); break;
       default: break;
     }
   }
+  function padRelease(name) {
+    if (hooks.onPadRelease && hooks.onPadRelease(name, ctx)) return;
+    if (name === 'lt') actors.release(player, 'defend');
+  }
   const gamepads = new GamepadInput({
     onButton: (name) => padButton(name),
+    onRelease: (name) => padRelease(name),
     onConnect: (on, gp) => { toast(on ? '🎮 controller connected' : 'controller disconnected', 2.4); if (!on) setCtrl(false); },
     signal: ac.signal,
   });
@@ -438,10 +512,24 @@ export async function boot(opts = {}) {
   if ($('btnPause')) $('btnPause').classList.toggle('on', clock.paused);
 
   // ---------------------------------------------------------------- sizing
-  let bufW = 1, bufH = 1;
+  let bufW = 1, bufH = 1, cssW = innerWidth, cssH = innerHeight;
   function resize() {
-    renderer.setSize(innerWidth, innerHeight, false);
-    canvas.style.width = innerWidth + 'px'; canvas.style.height = innerHeight + 'px';
+    const P = DISPLAY_PRESETS[displayPreset] || DISPLAY_PRESETS.auto;
+    let cw = innerWidth, ch = innerHeight, left = 0, top = 0;
+    if (P.fixed) {   // retro: 4:3 pillarbox, integer upscale when it fits 2x or more
+      const sc = Math.min(innerWidth / P.w, innerHeight / P.h);
+      const si = sc >= 2 ? Math.floor(sc) : sc;
+      cw = Math.round(P.w * si); ch = Math.round(P.h * si);
+      left = Math.floor((innerWidth - cw) / 2); top = Math.floor((innerHeight - ch) / 2);
+      dpr = P.h / ch;
+    } else if (P.h) dpr = P.h / innerHeight;
+    else dpr = Math.min(window.devicePixelRatio || 1, P.maxDpr || 2);
+    renderer.setPixelRatio(dpr);
+    renderer.setSize(cw, ch, false);
+    if (P.fixed) { renderer.domElement.width = P.w; renderer.domElement.height = P.h; renderer.setViewport(0, 0, cw, ch); }
+    canvas.style.width = cw + 'px'; canvas.style.height = ch + 'px';
+    canvas.style.left = left + 'px'; canvas.style.top = top + 'px'; canvas.style.right = 'auto'; canvas.style.bottom = 'auto';
+    cssW = cw; cssH = ch;
     bufW = renderer.domElement.width; bufH = renderer.domElement.height;
     camera.aspect = bufW / bufH; camera.updateProjectionMatrix();
     post.setSize(bufW, bufH);
@@ -473,6 +561,18 @@ export async function boot(opts = {}) {
   }
 
   function updatePlayer(dt) {
+    if (player.iframes > 0) player.iframes -= dt;
+    if (player.roll) {   // dodge roll owns the frame: dash + quarter-turn tumble of the crouch frame
+      const R = player.roll;
+      R.t += dt;
+      if (collide) { const [nx, nz, nh] = collide.move(player.x, player.z, player.y, R.dx * ROLL.speed * dt, R.dz * ROLL.speed * dt, player.r); player.x = nx; player.z = nz; player.y = nh; }
+      else { player.x += R.dx * ROLL.speed * dt; player.z += R.dz * ROLL.speed * dt; }
+      const q = Math.min(3, Math.floor(R.t / ROLL.dur * 4));
+      player.rot = ((q * R.spin) % 4 + 4) % 4;
+      player.anim = player.anims.includes('jump') ? 'jump' : 'idle'; player.frame = 0;
+      if (R.t >= ROLL.dur) { player.roll = null; player.rot = 0; if (particles) particles.burst('footstep_dust', player.x, player.y + 0.05, player.z + 0.05); }
+      return;
+    }
     let dx = 0, dz = 0;
     if (keys.has('w') || keys.has('arrowup')) dz -= 1;
     if (keys.has('s') || keys.has('arrowdown')) dz += 1;
@@ -517,6 +617,7 @@ export async function boot(opts = {}) {
   }
 
   function updateNpc(a, dt) {
+    if (a.ai) return;   // driven by the game (enemies, summons): it moves and animates them itself
     let moving = false;
     if (a.behavior === 'wander' || a.behavior === 'stroll') {
       if (a.target) {
@@ -609,9 +710,9 @@ export async function boot(opts = {}) {
   }
   function updateShowcase() {
     for (const L of showLabels) {
-      const p = tmpV.copy(L.pos).project(camera);
-      L.el.style.left = ((p.x * 0.5 + 0.5) * innerWidth) + 'px';
-      L.el.style.top = ((-p.y * 0.5 + 0.5) * innerHeight + 4) + 'px';
+      const p = project(L.pos.x, L.pos.y, L.pos.z);
+      L.el.style.left = p.x + 'px';
+      L.el.style.top = (p.y + 4) + 'px';
     }
   }
   if (showcase === 'particles' && particles) {
@@ -629,6 +730,8 @@ export async function boot(opts = {}) {
   const fixedDt = Q.has('shot') ? 1 / 30 : null;
   const simScale = Math.max(1, Math.min(12, Number(Q.get('simscale')) || 1));   // QA: extra sim sub-steps per frame
   function simulate(dt) {
+    dt *= timeScale;
+    for (const a of actors.list) if (a.flashT > 0) a.flashT -= dt;
     time += dt;
     clock.tick(dt);
     updatePlayer(dt);
@@ -680,13 +783,15 @@ export async function boot(opts = {}) {
     if (sayTimer > 0) { sayTimer -= dt; if (sayTimer <= 0 && $('say')) $('say').hidden = true; }
     if ($('clocktxt')) $('clocktxt').textContent = clock.label();
     if ($('dial')) $('dial').style.background = '#' + g.sky_top.clone().lerp(g.sun_color, 0.5).getHexString();
-    pad.update(!!nearestNpc() || !!(hooks.nearThing && hooks.nearThing(ctx)));
+    pad.update(!!nearestNpc() || !!(hooks.nearThing && hooks.nearThing(ctx)), player.anims.includes('attack'));
     API.frames++;
     requestAnimationFrame(frame);
   }
 
   // ---------------------------------------------------------------- game context (hooks get this)
-  const project = (x, y, z) => { const p = tmpV.set(x, y, z).project(camera); return { x: (p.x * 0.5 + 0.5) * innerWidth, y: (-p.y * 0.5 + 0.5) * innerHeight, z: p.z }; };
+  // world -> CSS px of the page (the canvas may be letterboxed by a display preset)
+  const projV = new THREE.Vector3();
+  const project = (x, y, z) => { const cr = canvas.getBoundingClientRect(); const p = projV.set(x, y, z).project(camera); return { x: cr.left + (p.x * 0.5 + 0.5) * cr.width, y: cr.top + (-p.y * 0.5 + 0.5) * cr.height, z: p.z }; };
   const ctx = {
     scene, clock, camera, actors, player, npcs, collide, nav, effects, gamefx, fx: fxPlaced, particles, keys, project,
     walkTo: (x, z, extra) => walkPath(x, z, extra), stopWalk: () => { walkTo = null; }, walking: () => !!walkTo,
@@ -698,6 +803,11 @@ export async function boot(opts = {}) {
     burst: (name, x, y, z, n) => particles && particles.burst(name, x, y, z, n),
     heightAt: (x, z) => (collide ? (collide.height(x, z) ?? 0) : 0),
     zoom: () => dist,
+    moveActor, act: (name, a, o) => actorAct(name, a || player, o || {}), release: (name, a) => actors.release(a || player, name),
+    dodge, summon, playerCast, cycleSpell, selectSpell, spellIndex: () => spellIdx,
+    setTimeScale: (s) => { timeScale = Math.max(0, Math.min(1, s)); }, timeScale: () => timeScale,
+    pixelK: () => actors.k, bufSize: () => [bufW, bufH], canvasRect: () => canvas.getBoundingClientRect(),
+    nearestNpc: (d) => nearestNpc(d), blocked,
   };
 
   // ---------------------------------------------------------------- debug / QA API
@@ -744,7 +854,7 @@ export async function boot(opts = {}) {
       if (!effects) return [];
       effects.clear();
       const names = effects.names();
-      const cols = 5;
+      const cols = Math.max(5, Math.ceil(names.length / 3));   // <= 3 rows so a big atlas still fits on screen
       names.forEach((n, i) => {
         const e = sMeta.effects[n];
         const x = target.x + ((i % cols) - (cols - 1) / 2) * 2.4;
@@ -774,7 +884,8 @@ export async function boot(opts = {}) {
     hold: (h = true) => { API.held = h; },
     // input QA: gate state, controller state, floating-stick state
     loading: () => GATE.loading, swallowed: () => GATE.swallowed, gamepad: () => ({ ...gp, ctrl: document.body.classList.contains('ctrl') }),
-    stickState: () => ({ ...pad.st, base: pad.base, rest: !pad.base }), padButton,
+    stickState: () => ({ ...pad.st, base: pad.base, rest: !pad.base }), padButton, padRelease, dodge,
+    display: () => ({ preset: displayPreset, buf: [bufW, bufH], css: [cssW, cssH], dpr, k: actors.k }), setDisplay,
   });
 
   API.ready = false; API.frames = 0;

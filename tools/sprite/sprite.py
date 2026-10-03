@@ -11,6 +11,8 @@ Hero classes (roles_heroes.py: wildcaller, runeguard, seer, stormborn, grovekeep
 anims after the cast columns: cast 8-11 (spell), attack 12-15 (weapon), defend 16-19 (guard), jump 20-23 (crouch,
 launch, airborne, land). Their strips are 24 columns wide; villagers keep 12 (the atlas is as wide as its widest role).
     hd2d sprite --roles heroes ...   selects just the six heroes.
+Combat roles (roles_enemies.py: golem, wraith, skeleton + six summons) are extra: never part of "all"; name them
+(or --roles combat). Enemies add a die anim at cols 24-27; summons carry idle / walk / attack.
 Deterministic: same biome + seed -> same bytes.
 """
 from __future__ import annotations
@@ -29,6 +31,7 @@ import sprite_writer as gw  # noqa: E402  (vendored Gravewake writer: Sprite gri
 sys.path.insert(0, str(HERE))
 import roles_more as RM  # noqa: E402  (second batch of roles, cast pose, animals)
 import roles_heroes as RH  # noqa: E402  (six Hearthmoor hero classes: cast / attack / defend / jump sets)
+import roles_enemies as RE  # noqa: E402  (Hearthmoor combat: three enemies + six tiny hero summons)
 
 FW, FH = 20, 32
 PIVOT = (10, 32)  # bottom-centre of the frame = the feet on the ground
@@ -40,7 +43,9 @@ ANIMS = {"idle": {"start": 0, "count": 4, "fps": 3, "loop": [0, 1, 2, 1], "blink
          "attack": {"start": 12, "count": 4, "fps": 10, "loop": [0, 1, 2, 2, 3], "heroes_only": True},
          "defend": {"start": 16, "count": 4, "fps": 6, "loop": [0, 1], "hold": [2, 3], "heroes_only": True},
          "jump": {"start": 20, "count": 4, "fps": 8, "phases": ["crouch", "launch", "airborne", "land"],
-                  "heroes_only": True}}
+                  "heroes_only": True},
+         # enemies only (roles_enemies.py): a 4-frame defeat that ends in a small heap / wisp on the ground
+         "die": {"start": 24, "count": 4, "fps": 6, "once": True, "enemies_only": True}}
 COLS = 12  # villager strips: idle 0-3 | walk 0-3 | cast 0-3 (casters); hero strips run to col 23 (role_cols)
 GROUND_ROW = 31  # lowest opaque row (the outline under the soles)
 
@@ -143,8 +148,11 @@ ROLES = {
 }
 ROLES.update(RM.more_roles(_r))
 ROLES.update(RH.hero_roles(_r))
+ROLES.update(RE.enemy_roles(_r))  # extra: only built when a spec names them (sprite_roles), never by "all"
+EXTRA = {k for k, v in ROLES.items() if v.get("enemy") or v.get("summon")}
 
-ROLE_SIZE = {"human": ((14, 24), (24, 40)), "creature": ((10, 24), (10, 40))}  # (w range, h range)
+ROLE_SIZE = {"human": ((14, 24), (24, 40)), "creature": ((10, 24), (10, 40)),
+             "enemy": ((6, 20), (6, 32)), "summon": ((4, 20), (6, 32))}  # (w range, h range)
 
 
 # ------------------------------------------------------------------ pose tables
@@ -823,6 +831,16 @@ def cat_frame(pal: Pal, spec: dict, facing: str, anim: str, i: int) -> HSprite:
 
 def frame(pal, role, facing, anim, i):
     spec = ROLES[role]
+    if spec.get("draw"):
+        s = HSprite(pal)
+        face = "left" if facing == "right" else facing
+        RE.DRAW[spec["draw"]](s, face, anim, i)
+        for y in range(FH):  # keep a 1 px margin so the ink outline always closes inside the frame
+            for x in range(FW):
+                if x in (0, FW - 1) or y in (0, FH - 1):
+                    s.p[y][x] = None
+        s.outline("ink")
+        return s.mirror() if facing == "right" else s
     if spec["kind"] == "creature":
         if spec.get("animal"):
             s = HSprite(pal)
@@ -835,6 +853,8 @@ def frame(pal, role, facing, anim, i):
 
 
 def role_anims(role):
+    if ROLES[role].get("anims"):
+        return tuple(ROLES[role]["anims"])
     if ROLES[role].get("hero"):
         return ("idle", "walk") + RH.ACTS
     return ("idle", "walk", "cast") if ROLES[role].get("caster") else ("idle", "walk")
@@ -856,7 +876,7 @@ def role_sheet(pal, role) -> Image.Image:
 
 def build(biome="cozy-village", roles=None, out="public/art/sprite", project=None, seed=1, name="actors"):
     pal = Pal(load_biome(biome, project))
-    roles = roles or list(ROLES)
+    roles = roles or [r for r in ROLES if r not in EXTRA]
     out = ensure(out)
     cols = max(role_cols(r) for r in roles)
     atlas = Image.new("RGBA", (FW * cols, FH * 4 * len(roles)), (0, 0, 0, 0))
@@ -881,6 +901,8 @@ def build(biome="cozy-village", roles=None, out="public/art/sprite", project=Non
                                "anims": list(role_anims(role)), "frames": frames}
         if spec.get("hero"):
             meta["roles"][role].update(hero=True, cls=spec["cls"], origin=spec["origin"], style=spec["style"])
+        if spec.get("enemy") or spec.get("summon"):
+            meta["roles"][role]["enemy" if spec.get("enemy") else "summon"] = True
     atlas.save(out / f"{name}.png")
     write_json(out / f"{name}.json", meta)
     preview(atlas, roles, out / f"{name}_preview_4x.png")
@@ -1027,7 +1049,8 @@ def main(argv=None):
         for k, v in ROLES.items():
             print(f"{k:12s} {v['kind']:8s} {v['desc']}")
         return 0
-    roles = (list(ROLES) if a.roles == "all" else list(RH.HERO_ORDER) if a.roles == "heroes"
+    roles = ([r for r in ROLES if r not in EXTRA] if a.roles == "all" else list(RH.HERO_ORDER) if a.roles == "heroes"
+             else sorted(EXTRA, key=list(ROLES).index) if a.roles == "combat"
              else [r.strip() for r in a.roles.split(",")])
     for r in roles:
         if r not in ROLES:

@@ -5,14 +5,18 @@
 Real inputs where it matters: clicks on the title buttons, E presses to talk and page through dialogue, F to cast,
 J for the quest log, K to save, page reload + Continue. Walking uses the game's own A* tap-to-walk (ctx.walkTo),
 so exits, stairs, the moss-gate portal and pickups are reached the way a tap would reach them.
-Covers: 3 errands (Warm Bread, Moonpetal Tea, Where's Pudding?), both edge exits, the portal both ways,
-Pudding following across areas, spells learned as rewards, save -> reload -> Continue (twice), and no JS errors.
+Covers: the hero picker (6 starters, keyboard + click), 3 errands (Warm Bread, Moonpetal Tea, Where's Pudding?),
+both edge exits, the portal both ways, Pudding following across areas, spells learned as rewards,
+combat in Mossglen (melee hits + crisp damage numbers, guard cuts damage, dodge-roll i-frames, class spell,
+summon, cozy defeat + respawn), save v2 -> reload -> Continue (twice), v1 save migration, and no JS errors.
 Input schemes: clicks / taps / keys while the assets load are swallowed (title not skipped, nothing queued);
 a stubbed standard-mapping controller (navigator.getGamepads) hot-plugs with a toast, walks with analog speed and
-the d-pad, talks with A, closes with B, casts with X, switches charm with Y / LB / RB, zooms with LT / RT, opens
-the log with Start, toggles the pad with Select, hides the on-screen pad while used and Continues from the title;
-on a phone the floating stick lands under the thumb, slides after the finger, mirrors with the left-handed flip,
-a quick tap in the stick zone and on open ground still walks, pinch zooms, and the page never scrolls or zooms.
+the d-pad, talks with A, closes with B, attacks with X, casts with Y, switches spell with LB / RB, guards while
+LT is held, summons with RT, dodges with B, zooms with the right stick, opens the log with Start, toggles the pad
+with Select, hides the on-screen pad while used and Continues from the title; on a phone the floating stick lands
+under the thumb, slides after the finger, mirrors with the left-handed flip, a quick tap in the stick zone and on
+open ground still walks, pinch zooms, the action buttons (attack / jump / guard / roll / spell wheel / summon)
+work, and the page never scrolls or zooms.
 Writes screenshots + smoke.json. Exit 0 = pass.
 """
 import argparse
@@ -163,7 +167,7 @@ def run(out, simscale=4, size=(960, 540)):
     out.mkdir(parents=True, exist_ok=True)
     srv = ThreadingHTTPServer(("127.0.0.1", 0), functools.partial(Quiet, directory=str(GAME)))
     threading.Thread(target=srv.serve_forever, daemon=True).start()
-    url = f"http://127.0.0.1:{srv.server_address[1]}/index.html?nosw&simscale={simscale}"
+    url = f"http://127.0.0.1:{srv.server_address[1]}/index.html?nosw&peace&simscale={simscale}"
     lines, errors = [], []
     log = lambda s: (print(s, flush=True), lines.append(s))  # noqa: E731
     rep = {"url": url, "shots": {}}
@@ -200,9 +204,22 @@ def run(out, simscale=4, size=(960, 540)):
                    held=len(held), swallowed=T.ev("window.__hd2dGate.swallowed"), during=during)
             T.step("title screen shows, no save yet", T.ev("!document.getElementById('titlescreen').hidden && document.getElementById('btnCont').hidden"))
             pg.click("#btnNew")
+            T.wait("window.__hm.picking && document.querySelectorAll('#cards .card').length === 6", 30)
+            pg.wait_for_timeout(700)
+            cards = T.ev("[...document.querySelectorAll('#cards .card b')].map((b) => b.textContent)")
+            rep["shots"]["hero_picker"] = T.shot("hero_picker")
+            pg.keyboard.press("ArrowRight"); pg.keyboard.press("ArrowRight"); pg.keyboard.press("ArrowRight")   # -> Stormborn
+            pg.wait_for_timeout(300)
+            sel = T.ev("window.__hm.picker.state().id")
+            detail = T.ev("document.getElementById('heroDetail').textContent")
+            T.step("hero picker: 6 starters with origin, mortal / demigod, blurb; arrows choose", cards == ["Wildcaller", "Runeguard", "Seer", "Stormborn", "Grovekeeper", "Cinderknight"]
+                   and sel == "stormborn" and "Child of thunder" in detail and "demigod" in detail and "Chain Lightning" in detail, cards=cards, sel=sel)
+            pg.click("#btnBegin")
             T.idle()
             S = T.S()
-            T.step("new game in Hearthmoor Plaza", T.ev("window.__hm.area") == "plaza" and not T.ev("window.__hm.title") and S["quests"] == {"bread": 0, "tea": 0, "cat": 0})
+            T.step("new game in Hearthmoor Plaza as the chosen hero", T.ev("window.__hm.area") == "plaza" and not T.ev("window.__hm.title") and S["quests"] == {"bread": 0, "tea": 0, "cat": 0}
+                   and S["cls"] == "stormborn" and T.ev("window.__hm.ctx.player.role") == "stormborn" and T.ev("window.__hm.slots()") == ["chain_lightning", "sparkle_burst"],
+                   cls=S["cls"], slots=T.ev("window.__hm.slots()"))
             T.step("quest tags over Marla and Tib", T.ev("Object.keys(window.__hm.markers).sort().join()") == "baker,kid")
             rep["shots"]["plaza"] = T.shot("plaza")
 
@@ -259,20 +276,40 @@ def run(out, simscale=4, size=(960, 540)):
             T.ev("__padBtn(13, 1)"); pg.wait_for_timeout(700); T.ev("__padBtn(13, 0)"); pg.wait_for_timeout(250)
             pc = T.pos()
             T.step("d-pad walks", abs(pc[1] - pb[1]) + abs(pc[0] - pb[0]) > 0.2, moved=[round(pc[0] - pb[0], 2), round(pc[1] - pb[1], 2)])
+            pg.wait_for_timeout(1300)   # charm cooldown from the F cast above
             n0 = T.ev(near)
             k0 = T.ev("window.__hd2d.padPresses || 0")
+            T.ev("__padBtn(3, 1)"); T.wait(f"(window.__hd2d.padPresses || 0) > {k0}", 20)
+            casting = T.ev("window.__hm.ctx.player.castT > 0"); pg.wait_for_timeout(150); T.ev("__padBtn(3, 0)"); pg.wait_for_timeout(300)
+            T.step("Y casts", casting or T.ev(near) > n0, casting=casting)
+            k0 = T.ev("window.__hd2d.padPresses || 0")
             T.ev("__padBtn(2, 1)"); T.wait(f"(window.__hd2d.padPresses || 0) > {k0}", 20)
-            casting = T.ev("window.__hm.ctx.player.castT > 0"); pg.wait_for_timeout(150); T.ev("__padBtn(2, 0)"); pg.wait_for_timeout(300)
-            T.step("X casts", casting or T.ev(near) > n0, casting=casting)
-            s0 = T.ev("window.__hd2d.spellName()"); T.btn(3); s1 = T.ev("window.__hd2d.spellName()"); T.btn(4); s2 = T.ev("window.__hd2d.spellName()")
-            T.btn(5); s3 = T.ev("window.__hd2d.spellName()"); T.btn(4)
-            T.step("Y / RB next charm, LB previous charm", s1 != s0 and s2 == s0 and s3 != s0, charms=[s0, s1, s2, s3])
+            swing = T.ev("window.__hd2d.actorState().act"); pg.wait_for_timeout(120); T.ev("__padBtn(2, 0)"); pg.wait_for_timeout(500)
+            T.step("X attacks", swing == "attack", act=swing)
+            s0 = T.ev("window.__hd2d.spellName()"); T.btn(5); s1 = T.ev("window.__hd2d.spellName()"); T.btn(4); s2 = T.ev("window.__hd2d.spellName()")
+            T.btn(4); s3 = T.ev("window.__hd2d.spellName()"); T.btn(5)
+            T.step("RB next spell, LB previous spell", s1 != s0 and s2 == s0 and s3 != s0, spells=[s0, s1, s2, s3])
+            # LT is a real hold-to-guard now (zoom moved to the right stick: no trigger is mapped twice)
+            k0 = T.ev("window.__hd2d.padPresses || 0")
+            T.ev("__padBtn(6, 1)"); T.wait(f"(window.__hd2d.padPresses || 0) > {k0}", 20); pg.wait_for_timeout(700)
+            g1 = T.ev("window.__hd2d.actorState().act")
+            p0 = T.ev("window.__hd2d.padPolls || 0"); T.ev("__padBtn(6, 0)"); T.wait(f"(window.__hd2d.padPolls || 0) > {p0 + 1}", 20); pg.wait_for_timeout(600)
+            g2 = T.ev("window.__hd2d.actorState().act")
+            T.step("LT held guards, letting go drops the guard", g1 == "defend" and g2 != "defend", held=g1, after=g2)
+            T.btn(7); pg.wait_for_timeout(300)
+            summ = T.ev("window.__hm.combat.qa().summon")
+            T.step("RT summons the hero's companion", summ and summ["role"] == "stormsprite", summon=summ)
+            T.ev("window.__hm.combat.st = 100")
+            T.btn(1, hold=60)
+            st = T.ev("window.__hm.combat.st")
+            T.step("B dodges in the field (roll costs stamina)", st < 100, stamina=st)
             T.btn(9); log_open = T.ev("window.__hm.log"); T.btn(1); log_closed = not T.ev("window.__hm.log")
             T.step("Start opens the quest log, B closes it", log_open and log_closed)
             z0 = T.ev("window.__hd2d.camState().dist")
-            T.ev("__padBtn(7, 1)"); pg.wait_for_timeout(700); T.ev("__padBtn(7, 0)"); pg.wait_for_timeout(200); z1 = T.ev("window.__hd2d.camState().dist")
-            T.ev("__padBtn(6, 1)"); pg.wait_for_timeout(1400); T.ev("__padBtn(6, 0)"); pg.wait_for_timeout(200); z2 = T.ev("window.__hd2d.camState().dist")
-            T.step("RT zooms in, LT zooms out (inside the limits)", z1 < z0 - 0.3 and z2 > z1 + 0.3 and 23 - 1e-3 <= min(z1, z2) and max(z1, z2) <= 40 + 1e-3, dist=[round(z0, 2), round(z1, 2), round(z2, 2)])
+            rs = lambda v: T.ev(f"(() => {{ window.__fakePad.axes[3] = {v}; window.__fakePad.timestamp = performance.now(); }})()")  # noqa: E731
+            rs(-1); pg.wait_for_timeout(700); rs(0); pg.wait_for_timeout(200); z1 = T.ev("window.__hd2d.camState().dist")
+            rs(1); pg.wait_for_timeout(1400); rs(0); pg.wait_for_timeout(200); z2 = T.ev("window.__hd2d.camState().dist")
+            T.step("right stick up zooms in, down zooms out (inside the limits)", z1 < z0 - 0.3 and z2 > z1 + 0.3 and 23 - 1e-3 <= min(z1, z2) and max(z1, z2) <= 40 + 1e-3, dist=[round(z0, 2), round(z1, 2), round(z2, 2)])
             pad_hidden = T.ev("getComputedStyle(document.getElementById('pad')).display === 'none' || document.getElementById('pad').hidden")
             T.btn(8); pad_sel = T.ev("[document.body.classList.contains('padon'), getComputedStyle(document.getElementById('pad')).display !== 'none' && !document.getElementById('pad').hidden]")
             T.btn(8); pad_off = T.ev("document.body.classList.contains('padon')")
@@ -330,10 +367,56 @@ def run(out, simscale=4, size=(960, 540)):
             T.step("found Pudding: she follows you", S["cat"] == "follow" and S["quests"]["cat"] == 2 and T.ev("window.__hm.ctx.npc('cat').behavior") == "follow")
             rep["shots"]["mossglen"] = T.shot("mossglen")
 
+            # ---------------------------------------------------------- combat in Mossglen (enemies wake up)
+            q0 = T.ev("window.__hm.combat.qa()")
+            roles = sorted({e["role"] for e in q0["enemies"]})
+            T.step("Mossglen has a stone golem, a cold-fire wraith and a skeleton swordsman", {"golem", "wraith", "skeleton"} <= set(roles), roles=roles)
+            T.ev("window.__hm.peace = false")
+            # stand left of the golem, facing it, and swing (R)
+            T.ev("(() => { const c = window.__hm.ctx, p = c.player, g = c.npc('golem_0'); p.x = g.x - 1.1; p.z = g.z; p.y = c.heightAt(p.x, p.z); p.facing = 'right'; c.stopWalk(); })()")
+            pg.wait_for_timeout(400)
+            hp0 = T.ev("window.__hm.combat.enemies.find((e) => e.id === 'golem_0').hp")
+            pg.keyboard.press("r"); pg.wait_for_timeout(450)
+            nums = T.ev("document.querySelectorAll('#fxlayer .dmgnum').length")
+            pg.keyboard.press("r"); pg.wait_for_timeout(450)
+            hp1 = T.ev("window.__hm.combat.enemies.find((e) => e.id === 'golem_0').hp")
+            T.step("R swings: the golem takes damage, a crisp pixel damage number pops", hp1 < hp0 and nums > 0, hp=[hp0, hp1], numbers=nums)
+            pg.keyboard.press("1"); pg.wait_for_timeout(100); pg.keyboard.press("f"); pg.wait_for_timeout(700)
+            hp2 = T.ev("window.__hm.combat.enemies.find((e) => e.id === 'golem_0').hp")
+            T.step("class spell (Chain Lightning) strikes and goes on cooldown", hp2 < hp1 and T.ev("window.__hm.combat.cd.spell") > 0, hp=hp2)
+            T.ev("window.__hm.combat.cd.summon = 0"); pg.keyboard.press("v"); pg.wait_for_timeout(500)
+            T.step("V summons the storm sprite", (T.ev("window.__hm.combat.qa().summon") or {}).get("role") == "stormsprite")
+            rep["shots"]["mossglen_combat"] = T.shot("mossglen_combat")
+            # guard: a hit from the front is cut to a quarter; unguarded takes it all; a roll's i-frames take nothing
+            hurt = "(() => { const c = window.__hm.ctx, p = c.player, C = window.__hm.combat; p.iframes = 0; C.godT = 0; const h0 = window.__hm.S.hp; C.hurtPlayer(20, { x: p.x + 1, z: p.z }); return h0 - window.__hm.S.hp; })()"
+            T.ev("(() => { const c = window.__hm.ctx; c.player.facing = 'right'; window.__hm.S.hp = 100; window.__hm.peace = true; })()")
+            pg.keyboard.down("c"); pg.wait_for_timeout(500)
+            guarded = T.ev(hurt)
+            pg.keyboard.up("c"); pg.wait_for_timeout(500)
+            open_hit = T.ev(hurt)
+            T.step("guard (C) cuts a frontal hit to a quarter", guarded == 5 and open_hit == 20, guarded=guarded, unguarded=open_hit)
+            T.ev("window.__hm.combat.st = 100; window.__hm.ctx.player.iframes = 0")
+            rolled = T.ev("(() => { const c = window.__hm.ctx, C = window.__hm.combat; window.__hd2d.hold(true); const ok = c.dodge(1, 0); const h0 = window.__hm.S.hp; C.hurtPlayer(20, { x: c.player.x + 1, z: c.player.z }); const d = h0 - window.__hm.S.hp; window.__hd2d.hold(false); return [ok, d, C.st]; })()")
+            T.step("dodge roll (X): stamina spent, i-frames ignore the hit", rolled[0] and rolled[1] == 0 and rolled[2] <= 76, roll=rolled)
+            pg.wait_for_timeout(500)
+            # cozy defeat: slump, fade, wake at the gate with full HP and a moment of grace; nothing lost
+            inv0 = T.S()["inv"]
+            T.ev("(() => { const c = window.__hm.ctx, C = window.__hm.combat; window.__hm.S.hp = 3; c.player.iframes = 0; C.godT = 0; C.hurtPlayer(20, { x: c.player.x + 1, z: c.player.z }); })()")
+            downed = T.ev("window.__hm.downed")
+            T.wait("!window.__hm.downed", 30)
+            pg.wait_for_timeout(300)
+            st = T.ev("({ hp: window.__hm.S.hp, max: window.__hm.combat.maxHp(), god: window.__hm.combat.godT, p: [window.__hm.ctx.player.x, window.__hm.ctx.player.z] })")
+            sp = T.ev("window.__hm.ctx.scene.game.spawns.start")
+            T.step("defeat is cozy: wake at the gate with full HP, brief grace, bag untouched", downed and st["hp"] == st["max"] and st["god"] > 0
+                   and abs(st["p"][0] - sp[0]) < 0.3 and abs(st["p"][1] - sp[1]) < 0.3 and T.S()["inv"] == inv0, state=st)
+            T.ev("window.__hm.peace = true")
+            T.wait("!window.__hm.combat.summon || window.__hm.combat.summon.life < 20", 5)
+
             # ---------------------------------------------------------- save, reload, continue
             pg.keyboard.press("k"); pg.wait_for_timeout(300)
-            saved = T.ev("JSON.parse(localStorage.getItem('hearthmoor-slot-1-v1'))")
-            T.step("saved to localStorage hearthmoor-slot-1-v1", saved and saved["area"] == "mossglen" and saved["v"] == 1)
+            saved = T.ev("JSON.parse(localStorage.getItem('hearthmoor-slot-1-v2'))")
+            T.step("saved to localStorage hearthmoor-slot-1-v2 (with the hero class)", saved and saved["area"] == "mossglen" and saved["v"] == 2 and saved["cls"] == "stormborn"
+                   and T.ev("localStorage.getItem('hearthmoor-slot-1-v1')") is None)
             pos_before = T.pos()
             pg.reload()
             T.wait("window.__hm && window.__hm.ready", 120)
@@ -343,7 +426,8 @@ def run(out, simscale=4, size=(960, 540)):
             pg.wait_for_timeout(500)
             S = T.S()
             pos_after = T.pos()
-            T.step("Continue restores area, position, bag, errands, Pudding", T.ev("window.__hm.area") == "mossglen" and S["inv"].get("moonpetal") == 3
+            T.step("Continue restores area, position, hero, bag, errands, Pudding", T.ev("window.__hm.area") == "mossglen" and S["inv"].get("moonpetal") == 3
+                   and S["cls"] == "stormborn" and T.ev("window.__hm.ctx.player.role") == "stormborn"
                    and S["quests"] == {"bread": 3, "tea": 2, "cat": 2} and S["cat"] == "follow" and T.ev("!!window.__hm.ctx.npc('cat')")
                    and abs(pos_after[0] - pos_before[0]) < 0.3 and abs(pos_after[1] - pos_before[1]) < 0.3
                    and T.ev("!window.__hm.ctx.fx.petal_0 && !window.__hm.ctx.fx.petal_1 && !window.__hm.ctx.fx.petal_2 && !!window.__hm.ctx.fx.petal_3"),
@@ -391,10 +475,10 @@ def run(out, simscale=4, size=(960, 540)):
         # ---------------------------------------------------------- phone portrait with the pad (continue the save)
         if rep["pass"]:
             try:
-                saved = pg.evaluate("localStorage.getItem('hearthmoor-slot-1-v1')")
+                saved = pg.evaluate("localStorage.getItem('hearthmoor-slot-1-v2')")
                 ctx.close()
                 ph = b.new_context(viewport={"width": 390, "height": 844}, device_scale_factor=2, is_mobile=True, has_touch=True)
-                ph.add_init_script(f"localStorage.setItem('hearthmoor-slot-1-v1', {json.dumps(saved)})")
+                ph.add_init_script(f"if (!sessionStorage.getItem('seeded')) {{ localStorage.setItem('hearthmoor-slot-1-v2', {json.dumps(saved)}); sessionStorage.setItem('seeded', '1'); }}")
                 ph.add_init_script(STUB)
                 q = ph.new_page()
                 q.on("pageerror", lambda e: errors.append(f"PAGEERROR {e}"))
@@ -498,8 +582,58 @@ def run(out, simscale=4, size=(960, 540)):
                 touch("touchEnd", []); q.wait_for_timeout(300)
                 d1 = T.ev("window.__hd2d.camState().dist")
                 T.step("phone: pinch zooms the camera (page scale stays 1)", d1 < d0 - 0.5 and T.ev("visualViewport.scale") == 1, dist=[round(d0, 2), round(d1, 2)])
-                # left-handed flip from the HUD chip: zone and stick move to the right, still floating
-                q.tap("#btnHand"); q.wait_for_timeout(300)
+                # action buttons: MAIN swings when nobody is near, jump, guard (hold), roll, summon, spell tap + hold wheel
+                T.ev("window.__hm.ctx.stopWalk()")
+                def bc(sel):
+                    return T.ev(f"(() => {{ const r = document.querySelector('{sel}').getBoundingClientRect(); return [r.left + r.width / 2, r.top + r.height / 2, r.width]; }})()")
+                acts = {}
+                def idle_act():
+                    try:
+                        T.wait("!window.__hd2d.actorState().act", 8)   # let the last action finish (slow, capped game time)
+                    except Exception:  # noqa: BLE001
+                        pass
+                for name, sel, want in (("main", "#padMain", "attack"), ("jump", "#padJump", "jump")):
+                    idle_act()
+                    x, y, _w = bc(sel); q.wait_for_timeout(300)
+                    TS[0] = max(TS[0], time.time()); touch("touchStart", [(x, y)]); touch("touchEnd", [])
+                    q.wait_for_timeout(120 if name == "jump" else 60)
+                    acts[name] = T.ev("window.__hd2d.actorState().act")
+                    q.wait_for_timeout(700)
+                idle_act()
+                x, y, _w = bc("#padGuard"); TS[0] = max(TS[0], time.time()); touch("touchStart", [(x, y)]); q.wait_for_timeout(500)
+                acts["guard"] = T.ev("window.__hd2d.actorState().act"); touch("touchEnd", []); q.wait_for_timeout(300)
+                acts["guard_lit"] = T.ev("document.getElementById('padGuard').classList.contains('on')")
+                try:
+                    T.wait("window.__hd2d.actorState().act !== 'defend'", 8)   # the lowering frames run in (slow, capped) game time
+                except Exception:  # noqa: BLE001
+                    pass
+                acts["guard_after"] = T.ev("window.__hd2d.actorState().act")
+                idle_act(); T.ev("window.__hm.combat.st = 100")
+                x, y, _w = bc("#padDodge"); TS[0] = max(TS[0], time.time()); touch("touchStart", [(x, y)]); touch("touchEnd", []); q.wait_for_timeout(40)
+                acts["roll"] = T.ev("window.__hm.combat.st") < 100
+                q.wait_for_timeout(600)
+                T.ev("window.__hm.combat.cd.summon = 0; window.__hm.combat.cd.spell = 0; window.__hm.combat.cd.charm = 0")
+                x, y, _w = bc("#padSummon"); TS[0] = max(TS[0], time.time()); touch("touchStart", [(x, y)]); touch("touchEnd", []); q.wait_for_timeout(300)
+                acts["summon"] = (T.ev("window.__hm.combat.qa().summon") or {}).get("role")
+                sizes = [bc(s)[2] for s in ("#padMain", "#padJump", "#padGuard", "#padDodge", "#padSpell", "#padSummon", "#pad3rd")]
+                T.step("phone: action buttons work (MAIN swings, jump, hold guard, roll, summon) and are thumb-sized", acts["main"] == "attack" and acts["jump"] == "jump"
+                       and acts["guard"] == "defend" and not acts["guard_lit"] and acts["guard_after"] != "defend" and acts["roll"] and acts["summon"] == "stormsprite" and min(sizes) >= 44, acts=acts, sizes=sizes)
+                # spell: hold opens the slow-time wheel, slide to another slot, let go = select + cast
+                T.ev("window.__hm.ctx.selectSpell(0)")
+                x, y, _w = bc("#padSpell"); TS[0] = max(TS[0], time.time()); touch("touchStart", [(x, y)]); q.wait_for_timeout(700)
+                wheel = T.ev("[!document.getElementById('wheel').hidden, window.__hm.ctx.timeScale()]")
+                for i in range(1, 6):
+                    touch("touchMove", [(x + 12 * i, y)]); q.wait_for_timeout(30)
+                p5 = out / "phone_portrait_spellwheel.png"
+                q.screenshot(path=str(p5), timeout=120000)
+                rep["shots"]["phone_portrait_spellwheel"] = str(p5)
+                touch("touchEnd", []); q.wait_for_timeout(300)
+                after = T.ev("[document.getElementById('wheel').hidden, window.__hm.ctx.timeScale(), window.__hm.ctx.spellIndex()]")
+                T.step("phone: holding spell opens the slow-time wheel; sliding + letting go picks and casts", wheel == [True, 0.2] and after == [True, 1, 1], wheel=wheel, after=after)
+                # left-handed flip from the options card: zone and stick move to the right, still floating
+                q.tap("#btnOpts"); q.wait_for_timeout(300)
+                q.tap("#btnHand"); q.wait_for_timeout(200)
+                q.tap("#optsClose"); q.wait_for_timeout(300)
                 z2 = T.ev("(() => { const a = document.getElementById('stickZone').getBoundingClientRect(); return [a.left, a.top, a.width, a.height]; })()")
                 tx, ty = z2[0] + z2[2] * 0.4, z2[1] + z2[3] * 0.35
                 TS[0] = max(TS[0], time.time()); touch("touchStart", [(tx, ty)]); q.wait_for_timeout(150)
@@ -512,7 +646,7 @@ def run(out, simscale=4, size=(960, 540)):
                 touch("touchEnd", []); q.wait_for_timeout(200)
                 T.step("phone: left-handed flip mirrors the floating stick zone", T.ev("document.body.classList.contains('lefthand')") and z2[0] >= 194
                        and s4["base"] and abs(s4["base"]["x"] - tx) < 3, zone=[round(v) for v in z2])
-                q.tap("#btnHand"); q.wait_for_timeout(200)
+                q.tap("#btnOpts"); q.wait_for_timeout(300); q.tap("#btnHand"); q.wait_for_timeout(200); q.tap("#optsClose"); q.wait_for_timeout(200)
                 # controller on the phone: pad hides while it is used, a touch brings it back
                 T.ev("__padPlug(true)"); T.ev("__padAxes(0, 1)"); q.wait_for_timeout(800); T.ev("__padAxes(0, 0)"); q.wait_for_timeout(300)
                 hid = T.ev("getComputedStyle(document.getElementById('pad')).display === 'none'")
@@ -520,9 +654,52 @@ def run(out, simscale=4, size=(960, 540)):
                 back = T.ev("!document.body.classList.contains('ctrl') && getComputedStyle(document.getElementById('pad')).display !== 'none'")
                 T.step("phone: on-screen pad hides while a controller is used and comes back on touch", hid and back, hidden=hid, back=back)
                 T.ev("__padPlug(false)")
+                # phone landscape: the full action layout (report shot), nothing overlapping
+                q.set_viewport_size({"width": 844, "height": 390}); q.wait_for_timeout(1200)
+                lay = T.ev("""(() => { const els = [...document.querySelectorAll('#hud .chip, #hud button, #pad .pb, [data-hud]')].filter((e) => e.offsetParent && getComputedStyle(e).visibility !== 'hidden');
+                  const R = els.map((e) => [e.id || e.className, e.getBoundingClientRect()]); const bad = [];
+                  for (let i = 0; i < R.length; i++) { const a = R[i][1]; if (a.left < -1 || a.top < -1 || a.right > innerWidth + 1 || a.bottom > innerHeight + 1) bad.push(['out', R[i][0]]);
+                    for (let j = i + 1; j < R.length; j++) { const b = R[j][1]; const ox = Math.min(a.right, b.right) - Math.max(a.left, b.left), oy = Math.min(a.bottom, b.bottom) - Math.max(a.top, b.top);
+                      if (ox > 1 && oy > 1 && !els[i].contains(els[j]) && !els[j].contains(els[i])) bad.push([R[i][0], R[j][0]]); } } return bad; })()""")
+                p6 = out / "phone_landscape_buttons.png"
+                q.screenshot(path=str(p6), timeout=120000)
+                rep["shots"]["phone_landscape_buttons"] = str(p6)
+                T.step("phone landscape: HUD + action buttons inside the screen, nothing overlapping", not lay, overlaps=lay[:6])
             except Exception as e:  # noqa: BLE001
                 rep["pass"] = False
                 rep["error"] = f"phone: {e}"[:400]
+        # ---------------------------------------------------------- v1 save migration (old saves still load)
+        if rep["pass"]:
+            try:
+                v1 = {"v": 1, "area": "lane", "pos": [0.5, 2.0, "down"], "t": 0.4, "inv": {"coin": 3, "moonpetal": 2}, "quests": {"bread": 3, "tea": 1, "cat": 0},
+                      "picked": {"petal_0": True, "petal_1": True}, "cat": "glade", "spells": ["sparkle_burst", "hearth_flame"], "played": 321, "savedAt": "2026-10-01T12:00:00.000Z"}
+                mg = b.new_context(viewport={"width": size[0], "height": size[1]})
+                mg.add_init_script(f"if (!sessionStorage.getItem('seeded')) {{ localStorage.clear(); localStorage.setItem('hearthmoor-slot-1-v1', {json.dumps(json.dumps(v1))}); sessionStorage.setItem('seeded', '1'); }}")
+                m = mg.new_page()
+                m.on("pageerror", lambda e: errors.append(f"PAGEERROR {e}"))
+                T.pg = m
+                m.goto(url)
+                T.wait("window.__hm && window.__hm.ready && window.__hd2d && window.__hd2d.ready", 120)
+                m.wait_for_timeout(500)
+                info = T.ev("document.getElementById('saveInfo').textContent")
+                T.step("v1 save: the title offers Continue", T.ev("!document.getElementById('btnCont').hidden"), info=info)
+                m.click("#btnCont")
+                T.wait("window.__hm.picking", 30)
+                m.wait_for_timeout(300)
+                m.click("#hero_grovekeeper"); m.wait_for_timeout(200); m.click("#btnBegin")
+                T.idle(); m.wait_for_timeout(500)
+                S = T.S()
+                v2 = T.ev("JSON.parse(localStorage.getItem('hearthmoor-slot-1-v2'))")
+                old = T.ev("JSON.parse(localStorage.getItem('hearthmoor-slot-1-v1'))")
+                T.step("v1 save migrates: pick a hero once, area / bag / errands / charms carry over, v2 written, v1 left as it was",
+                       T.ev("window.__hm.area") == "lane" and S["cls"] == "grovekeeper" and S["inv"] == v1["inv"] and S["quests"] == v1["quests"]
+                       and S["spells"] == v1["spells"] and v2 and v2["v"] == 2 and v2["cls"] == "grovekeeper" and old == v1
+                       and T.ev("window.__hm.ctx.player.role") == "grovekeeper", cls=S["cls"], area=T.ev("window.__hm.area"))
+                T.step("no JS errors (all contexts)", not errors, errors=errors[:5])
+                mg.close()
+            except Exception as e:  # noqa: BLE001
+                rep["pass"] = False
+                rep["error"] = f"migration: {e}"[:400]
         b.close()
     srv.shutdown()
     rep["seconds"] = round(time.time() - t0, 1)

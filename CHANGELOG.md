@@ -2,6 +2,32 @@
 
 Dates are America/New_York. Newest first. Keep this current with every change you push.
 
+## 2026-10-03: Hearthmoor Stage 1: platform polish, 6 playable heroes, real-time combat core
+First build stage from the builder handoff (M0 + M1 + the start of M2). Playable on Pages.
+- **Platform (M0):**
+  - an options card (O / ⚙ chip, also on the title) with display presets: Auto, Phone landscape (DPR cap 1.5), 720p, 1080p TV (bigger HUD, TV-safe inset), Retro 320x240 (4:3 letterbox, chunky integer pixels). Saved as `hd2d-display`, or `?display=`;
+  - fullscreen button, an in-game Install button (`beforeinstallprompt`; iPhone / iPad get an "Add to Home Screen" tip), a rotate-to-landscape banner on upright phones;
+  - the LT double-map is gone: LT is a held guard, RT summons, and zoom moved to the right stick;
+  - a see-through silhouette: a dithered plaster-colour ghost of the player shows through buildings and trees (second quad with an inverted depth test; no blur).
+- **Heroes (M1):**
+  - New game opens a hero picker with the 6 starters (name, origin, mortal / demigod, blurb, animated sprite preview from the atlas, first spell and summon). It works with keys, controller and taps. The chosen class is the player;
+  - the game atlases were regenerated with the hero anims plus the new enemy and summon roles;
+  - phone action buttons: MAIN (attack / talk) plus guard, jump, roll, ✦ spell (tap casts, hold opens a slow-time spell wheel), summon and log, pixel icons from `art/buttons.png`, mirrored for left hands;
+  - save is now `hearthmoor-slot-1-v2` (class + HP). Old `hearthmoor-slot-1-v1` saves still load: Continue asks for a hero once, then everything carries over (the v1 key is left alone).
+- **Combat core (M2 start), `game/combat.js` + `game/heroes.js`:**
+  - HP and stamina (parchment vitals chip), melee hitboxes on the impact frame, crisp 3x5 pixel-font damage numbers, enemy HP bars;
+  - guard cuts frontal hits to a quarter; the dodge roll is a pixel-exact tumble with 0.26 s of i-frames; defeat is cozy (wake at the area start, full HP, a moment of grace, nothing lost);
+  - three gloom-and-glow enemies in Mossglen: a stone golem, a skeleton swordsman and a blue cold-fire wraith (ranged), plus a second wraith at night. They wander, aggro, telegraph, leash home and respawn;
+  - each starter has a first spell (Seed Bomb, Rune Slam, Rune Trap, Chain Lightning, Bloom, Ember Slash) and a first summon (mushroom golem, rune sentinel, rune wisp, storm sprite, sapling, ember imp). The 4 spell slots are the class spell + the newest 3 charms; charms do small damage too;
+  - new SFX: swing, hit, hurt, guard, dodge, spell, summon, defeat, down.
+- **Tools:**
+  - `hd2d sprite`: new `roles_enemies.py` (golem / wraith / skeleton with idle / walk / attack / die, and 6 summons), `--roles combat`, a `die` anim;
+  - `hd2d spells`: combat effects (seed bomb, earth burst, rune slam, rune trap, glyph burst, sky strike, bloom ring, ember slash / pop, cold-fire bolt, hit spark, summon poof), glow pixels only;
+  - `hd2d assemble`: a `sprite_roles` spec key;
+  - engine: `dodge`, `summon`, spell-slot select, `timeScale`, hit flash and roll rotation in the sprite shader, x-ray silhouette quads, display presets, press / release for every pad button, the effects QA lineup wraps to at most 3 rows.
+- Small: Marla / Bram / Wren no longer call every hero a hedgewitch; the vitals chip sits under the bag whatever its height; in QA stills (`?qa` without `&combat`) enemies hold still and the night wraith doesn't spawn, so check-scene captures stay deterministic.
+- Tests: the smoke test (64 steps, PASS) now covers the hero picker, Mossglen combat (hit, guard, roll i-frames, spell, summon, defeat / respawn), the new controller map, phone action buttons and the spell wheel, and the v1 → v2 save migration. `RESTORE.md` and `AGENTS.md` (game section) are updated.
+
 ## 2026-10-03: design expansion (opening hour, main quest, skill trees, difficulty, day/night, Ravenhold, music)
 - New `docs/story/DESIGN_EXPANSION_2026-10-03.md` (Bill approved), also appended to `docs/story/STORY_SEEDS.md`. Seven sections:
   - E1 opening hour: Lantern Eve in Hearthmoor, tutorial beats (move, talk, errands, first fight, guard / dodge / jump, first spell and summon), six origin openings, the Rift cracking, leaving home;

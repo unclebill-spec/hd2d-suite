@@ -99,8 +99,15 @@ def assemble(spec_path, out, do_zip=True):
     pal_dir = art_dir(out, "palette")
     load_tool("palette").build(biome, pal_dir)
     roles = sorted({a["role"] for a in spec.get("actors", [])} | {spec["player"]["role"]})
-    all_roles = list(load_tool("sprite").ROLES)
-    sp = load_tool("sprite").build(biome, all_roles, art_dir(out, "sprite"), out, seed)
+    SP = load_tool("sprite")
+    all_roles = [r for r in SP.ROLES if r not in SP.EXTRA]
+    if spec.get("sprite_roles"):  # e.g. ["actors", "heroes", "combat"]: keep the atlas under 4096 px tall
+        pick = []
+        for tok in spec["sprite_roles"]:
+            pick += (roles if tok == "actors" else list(SP.RH.HERO_ORDER) if tok == "heroes"
+                     else [r for r in SP.ROLES if r in SP.EXTRA] if tok == "combat" else [tok])
+        all_roles = [r for r in dict.fromkeys(pick) if r in SP.ROLES]
+    sp = SP.build(biome, all_roles, art_dir(out, "sprite"), out, seed)
     load_tool("texel").build(biome, (32, 64), None, art_dir(out, "texel"), out, seed)
     # scene-specific kit pieces
     extra = []

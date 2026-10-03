@@ -74,6 +74,16 @@ export class Ambient {
     if (kind === 'quest') [0, 4, 7, 12].forEach((s, i) => this.pluck(s + 12, 0.08, i * 0.1));
     if (kind === 'blip') this.pluck(24, 0.02);
     if (kind === 'save') this.pluck(12, 0.05);
+    // combat: soft and woody, never harsh
+    if (kind === 'swing') this.noise(0.08, 900, 2600, 0.05);
+    if (kind === 'hit') { this.noise(0.06, 500, 300, 0.09); this.pluck(5, 0.03); }
+    if (kind === 'hurt') { this.pluck(-5, 0.06); this.pluck(-8, 0.05, 0.06); }
+    if (kind === 'guard') { this.pluck(17, 0.05); this.noise(0.05, 2400, 1800, 0.05); }
+    if (kind === 'dodge') this.noise(0.14, 400, 1400, 0.05);
+    if (kind === 'spell') [12, 16, 19].forEach((s2, i) => this.pluck(s2 + 7, 0.04, i * 0.05));
+    if (kind === 'summon') [0, 7, 12, 19].forEach((s2, i) => this.pluck(s2 + 5, 0.05, i * 0.07));
+    if (kind === 'defeat') [12, 7, 3].forEach((s2, i) => this.pluck(s2, 0.05, i * 0.08));
+    if (kind === 'down') [7, 3, 0, -5].forEach((s2, i) => this.pluck(s2, 0.06, i * 0.14));
     if (kind === 'portal') {
       const c = this.ctx, t = c.currentTime, n = c.createBufferSource(), b = c.createBuffer(1, c.sampleRate * 0.9, c.sampleRate), d = b.getChannelData(0);
       for (let i = 0; i < d.length; i++) d[i] = (Math.random() * 2 - 1) * (1 - i / d.length);
@@ -82,6 +92,13 @@ export class Ambient {
       const g = c.createGain(); g.gain.value = 0.12; n.connect(f); f.connect(g); g.connect(this.master); n.start(t);
       [7, 12, 16, 19].forEach((s, i) => this.pluck(s + 12, 0.04, 0.1 + i * 0.08));
     }
+  }
+  noise(dur, f0, f1, vol) {
+    const c = this.ctx, t = c.currentTime, n = c.createBufferSource(), b = c.createBuffer(1, Math.max(1, c.sampleRate * dur), c.sampleRate), d = b.getChannelData(0);
+    for (let i = 0; i < d.length; i++) d[i] = (Math.random() * 2 - 1) * (1 - i / d.length);
+    n.buffer = b; const f = c.createBiquadFilter(); f.type = 'bandpass'; f.Q.value = 2;
+    f.frequency.setValueAtTime(f0, t); f.frequency.exponentialRampToValueAtTime(f1, t + dur);
+    const g = c.createGain(); g.gain.value = vol; n.connect(f); f.connect(g); g.connect(this.master); n.start(t);
   }
   setArea(a) { this.area = a; }
   setNight(n) { this.night = n; }

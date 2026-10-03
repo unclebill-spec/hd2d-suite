@@ -14,6 +14,8 @@ no glow, no blur: brightness comes from the palette's lightest steps, fades are 
   rune_circle     a gold rune ring drawn on the ground, then turning   (ground decal, pre-squashed for the 3/4 camera)
   bolt            a spinning spark projectile (loops)                 (projectile -> impact)
   impact          a star-burst hit                                    (billboard)
+  hero combat (Hearthmoor): seed_bomb -> earth_burst, rune_slam, rune_trap + glyph_burst, sky_strike,
+  bloom_ring, ember_slash -> ember_pop; enemy coldfire_bolt -> frost_puff; hit_spark, summon_poof
 
 Writes spells.png (atlas, one row per effect), <effect>.png strips, spells.json (frames + effect presets the
 runtime plays: kind, fps, loop, pivot, lift, point-light flash curve), spells_contact_4x.png.
@@ -311,6 +313,245 @@ def impact(pal, seed):
     return out
 
 
+# ------------------------------------------------------------------ hero combat spells (Hearthmoor stage 1)
+def seed_bomb(pal, seed):
+    """Wildcaller: a spinning acorn-seed lobbed forward (projectile -> earth_burst)"""
+    out = []
+    for f in range(6):
+        F = Frame(pal)
+        F.disk(16, 16, 3.2, ["grass_hi", "grass", "moss"])
+        a = f / 6 * math.tau
+        F.set(16 + math.cos(a) * 2, 16 + math.sin(a) * 2, "flower_gold")
+        F.set(16, 12, "timber"); F.set(17, 12, "timber_lo"); F.set(16, 11, "leaf_deep")
+        for k in range(3):
+            b = -a + k * math.tau / 3
+            F.set(16 + math.cos(b) * 7, 16 + math.sin(b) * 7, "grass_hi" if k else "flower_gold")
+        out.append(F)
+    return out
+
+
+def earth_burst(pal, seed):
+    out = []
+    R = rng(seed, "earth")
+    clods = [(R.uniform(-1, 1), R.uniform(0.4, 1.0), R.choice(["timber", "timber_lo", "moss", "grass", "grass_hi"])) for _ in range(12)]
+    for f in range(7):
+        F = Frame(pal)
+        if f < 2:
+            F.disk(16, 27, 4 + f * 3, ["flower_gold", "grass_hi", "grass"], sq=0.45)
+        for (vx, vy, c) in clods:
+            t = f / 6
+            x = 16 + vx * 13 * t
+            y = 28 - vy * 22 * t + 26 * t * t
+            if y < 31 and (f < 5 or (int(x) + f) % 2):
+                F.set(x, y, c); F.set(x + 1, y, c)
+        if 2 <= f <= 5:
+            F.ring(16, 28, 4 + f * 2, (4 + f * 2) * 0.35, "grass_hi" if f < 4 else "moss", dots=2)
+            F.star(16 + (f - 3) * 3, 22 - f, 1, "white", "flower_rose")
+        out.append(F)
+    return out
+
+
+def rune_slam(pal, seed):
+    """Runeguard: a gold rune shockwave rings out from the shield (ground decal)"""
+    out = []
+    sq = DECAL_SQUASH
+    for f in range(7):
+        F = Frame(pal)
+        r = 3 + f * 2.1
+        F.ring(16, 16, r, r * sq, "white" if f < 2 else "lamp", dots=1 if f < 4 else 2)
+        if r > 4:
+            F.ring(16, 16, r - 1.5, (r - 1.5) * sq, "flower_gold", dots=2 if f < 5 else 3)
+        for k in range(8):
+            a = k * math.tau / 8 + f * 0.1
+            if f < 5:
+                F.set(16 + math.cos(a) * (r + 1), 16 + math.sin(a) * (r + 1) * sq, "white" if k % 2 else "flower_gold")
+        if f < 3:
+            F.star(16, 16, 2 - f // 2, "white", "lamp")
+        out.append(F)
+    return out
+
+
+def rune_trap(pal, seed):
+    """Seer: a blue glyph drawn on the ground that arms and flares (ground decal)"""
+    out = []
+    sq = DECAL_SQUASH
+    for f in range(8):
+        F = Frame(pal)
+        frac = min(1.0, (f + 1) / 3)
+        F.ring(16, 16, 11, 11 * sq, "flower_blue", frac, start=-math.pi / 2)
+        F.ring(16, 16, 10, 10 * sq - 0.6, "sky", frac, start=-math.pi / 2, dots=2)
+        if f >= 2:
+            for k in range(3):                       # triangle glyph
+                a0 = -math.pi / 2 + k * math.tau / 3 + f * 0.05
+                a1 = a0 + math.tau / 3
+                F.line(16 + math.cos(a0) * 8, 16 + math.sin(a0) * 8 * sq, 16 + math.cos(a1) * 8, 16 + math.sin(a1) * 8 * sq,
+                       "sky" if f % 2 else "white")
+            F.set(16, 16, "white")
+        if f >= 6:
+            F.ring(16, 16, 13, 13 * sq, "white", dots=2)
+        out.append(F)
+    return out
+
+
+def glyph_burst(pal, seed):
+    """the Seer's trap (and the wraith's death) going off: a pillar of cold blue light"""
+    out = []
+    for f in range(6):
+        F = Frame(pal)
+        w = [2, 4, 5, 4, 2, 1][f]
+        top = [20, 6, 2, 4, 10, 18][f]
+        for y in range(top, 31):
+            for x in range(16 - w, 16 + w + 1):
+                d = abs(x - 16) / max(1, w)
+                if f >= 4 and (x + y) % 2:
+                    continue
+                F.set(x, y, "white" if d < 0.35 else "sky" if d < 0.75 else "flower_blue")
+        if 1 <= f <= 4:
+            F.ring(16, 29, 6 + f * 2, (6 + f * 2) * 0.35, "sky" if f < 3 else "flower_blue", dots=2)
+        out.append(F)
+    return out
+
+
+def sky_strike(pal, seed):
+    """Stormborn chain lightning: a jagged bolt from the sky onto one target"""
+    out = []
+    R = rng(seed, "strike")
+    path = [16]
+    for _ in range(31):
+        path.append(max(10, min(22, path[-1] + R.choice([-1, 0, 0, 1]))))
+    for f in range(6):
+        F = Frame(pal)
+        if f in (0, 1, 3):
+            for y in range(0 if f != 3 else 8, 31):
+                x = path[y] + (1 if f == 3 and y % 6 < 3 else 0)
+                F.set(x, y, "white"); F.set(x + 1, y, "flower_gold" if y % 3 else "lamp")
+            for (y0, d) in ((8, -1), (15, 1), (22, -1)):
+                for k in range(5):
+                    F.set(path[y0] + d * (k + 1), y0 + k, "lamp" if k < 4 else "flower_gold")
+        if f in (1, 2, 4):
+            F.disk(16, 29, 4 + f, ["white", "flower_gold", "lamp"], sq=0.4)
+        if f >= 4:
+            for k in range(5):
+                a = k * 1.3 + f
+                F.set(16 + math.cos(a) * (7 + f), 28 - abs(math.sin(a)) * (3 + f), "flower_gold" if k % 2 else "white")
+        out.append(F)
+    return out
+
+
+def bloom_ring(pal, seed):
+    """Grovekeeper bloom: a ring of opening flowers and petals around the caster (ground decal)"""
+    out = []
+    sq = DECAL_SQUASH
+    cols = ["flower_rose", "flower_gold", "flower_blue", "white"]
+    for f in range(8):
+        F = Frame(pal)
+        r = min(13, 4 + f * 2)
+        F.ring(16, 16, r, r * sq, "grass_hi", dots=2)
+        F.ring(16, 16, r - 1, (r - 1) * sq, "grass", dots=3)
+        for k in range(8):
+            a = k * math.tau / 8 + f * 0.08
+            x, y = 16 + math.cos(a) * r, 16 + math.sin(a) * r * sq
+            c = cols[k % 4]
+            if f >= 2:
+                F.set(x, y, c); F.set(x - 1, y, c); F.set(x + 1, y, c); F.set(x, y - 1, c)
+                F.set(x, y, "flower_gold" if c != "flower_gold" else "white")
+        out.append(F)
+    return out
+
+
+def ember_slash(pal, seed):
+    """Cinderknight: a spinning crescent of fire flung forward (projectile -> ember_pop)"""
+    out = []
+    for f in range(6):
+        F = Frame(pal)
+        a = f / 6 * math.tau
+        for k in range(14):
+            b = a + k * 0.19
+            r = 8 - abs(k - 7) * 0.35
+            for dr in (0, 1, 2):
+                c = "white" if dr == 1 and 4 < k < 11 else "lamp" if dr == 1 else "flower_gold" if dr == 0 else "roof_hi"
+                F.set(16 + math.cos(b) * (r - dr), 16 + math.sin(b) * (r - dr) * 0.8, c)
+        F.disk(16, 16, 1.5, ["white", "lamp"])
+        out.append(F)
+    return out
+
+
+def ember_pop(pal, seed):
+    out = []
+    for f in range(6):
+        F = Frame(pal)
+        r = [3, 5, 7, 8, 9, 9][f]
+        if f < 3:
+            F.disk(16, 22, r, ["white", "lamp", "flower_gold", "roof_hi"])
+        for k in range(8):
+            a = k * math.tau / 8 + 0.3
+            rr = r + 2
+            if f >= 3 and (k + f) % 2:
+                continue
+            F.set(16 + math.cos(a) * rr, 22 + math.sin(a) * rr * 0.8 - f, "lamp" if k % 2 else "roof_hi")
+        if f >= 3:
+            for k in range(3):
+                F.set(13 + k * 3, 14 - f + k, "stone" if (k + f) % 2 else "stone_lo")
+        out.append(F)
+    return out
+
+
+def coldfire_bolt(pal, seed):
+    """the wraith's cold-fire orb (projectile -> frost_puff)"""
+    out = []
+    for f in range(6):
+        F = Frame(pal)
+        F.disk(16, 16, 3.6, ["white", "sky", "flower_blue"])
+        a = f / 6 * math.tau
+        for k in range(5):
+            b = a + k * math.tau / 5
+            r = 5 + (k + f) % 2
+            F.set(16 + math.cos(b) * r, 16 + math.sin(b) * r, "sky" if k % 2 else "flower_blue")
+            F.set(16 + math.cos(b) * (r + 2), 16 + math.sin(b) * (r + 2), "flower_blue" if (k + f) % 3 == 0 else None)
+        F.set(15, 15, "white")
+        out.append(F)
+    return out
+
+
+def hit_spark(pal, seed):
+    """a weapon hit: a small crisp star that pops and scatters"""
+    out = []
+    for f in range(5):
+        F = Frame(pal)
+        if f == 0:
+            F.star(16, 20, 3, "white", "white")
+        elif f == 1:
+            F.star(16, 20, 4, "white", "lamp")
+            for k in range(4):
+                a = k * math.tau / 4 + math.pi / 4
+                F.set(16 + math.cos(a) * 3, 20 + math.sin(a) * 3, "lamp")
+        else:
+            for k in range(6):
+                a = k * math.tau / 6 + f
+                r = 3 + f * 2
+                if (k + f) % 2 or f < 4:
+                    F.set(16 + math.cos(a) * r, 20 + math.sin(a) * r * 0.8, "flower_gold" if f > 2 else "lamp")
+        out.append(F)
+    return out
+
+
+def summon_poof(pal, seed):
+    """a summon arriving or leaving: a ring of glints and a little dust"""
+    out = []
+    for f in range(7):
+        F = Frame(pal)
+        r = 3 + f * 1.8
+        if f < 5:
+            F.ring(16, 27, r, r * 0.4, "plaster_hi" if f < 3 else "plaster_lo", dots=2)
+        for k in range(6):
+            a = k * math.tau / 6 + f * 0.4
+            y = 26 - f * 2.5 + math.sin(a) * 2
+            if (k + f) % 2 or f < 3:
+                F.star(16 + math.cos(a) * (4 + f), y, 1 if f < 4 else 0, "white", "lamp" if k % 2 else "flower_rose")
+        out.append(F)
+    return out
+
+
 EFFECTS = {
     "sparkle_burst": dict(fn=sparkle_burst, kind="billboard", fps=14, loop=False, pivot=[16, 31], lift=0.9,
                           glow=True, light={"color": "lamp", "intensity": 7, "range": 4.5, "curve": [1, 0.9, 0.7, 0.5, 0.3, 0.2, 0.1, 0]}),
@@ -329,6 +570,30 @@ EFFECTS = {
                  then="impact", glow=True, light={"color": "lamp", "intensity": 4, "range": 3.5, "curve": [1, 1, 1, 1, 1, 1]}),
     "impact": dict(fn=impact, kind="billboard", fps=14, loop=False, pivot=[16, 26], lift=0.6,
                    glow=True, light={"color": "white", "intensity": 8, "range": 4, "curve": [1, 0.8, 0.5, 0.3, 0.15, 0]}),
+    # hero combat spells + enemy / hit effects (Hearthmoor); combat=True keeps them out of the default charm cycle
+    "seed_bomb": dict(fn=seed_bomb, kind="projectile", fps=12, loop=True, pivot=[16, 16], lift=1.0, speed=8.0, travel=5.0,
+                      then="earth_burst", glow=False, light=None, combat=True),
+    "earth_burst": dict(fn=earth_burst, kind="billboard", fps=14, loop=False, pivot=[16, 31], lift=0.0, glow=False,
+                        light={"color": "flower_gold", "intensity": 3, "range": 3, "curve": [1, 0.7, 0.4, 0.2, 0.1, 0, 0]}, combat=True),
+    "rune_slam": dict(fn=rune_slam, kind="decal", fps=14, loop=False, pivot=[16, 16], lift=0.03, glow=True,
+                      light={"color": "lamp", "intensity": 7, "range": 4.5, "curve": [1, 0.9, 0.7, 0.5, 0.3, 0.15, 0]}, combat=True),
+    "rune_trap": dict(fn=rune_trap, kind="decal", fps=12, loop=False, pivot=[16, 16], lift=0.03, glow=True,
+                      light={"color": "sky", "intensity": 3, "range": 3, "curve": [0.2, 0.4, 0.6, 0.8, 0.8, 0.8, 1, 1]}, combat=True),
+    "glyph_burst": dict(fn=glyph_burst, kind="billboard", fps=14, loop=False, pivot=[16, 31], lift=0.0, glow=True,
+                        light={"color": "sky", "intensity": 8, "range": 4.5, "curve": [0.6, 1, 1, 0.7, 0.4, 0.1]}, combat=True),
+    "sky_strike": dict(fn=sky_strike, kind="billboard", fps=16, loop=False, pivot=[16, 31], lift=0.0, glow=True,
+                       light={"color": "white", "intensity": 9, "range": 5, "curve": [1, 1, 0.4, 0.9, 0.3, 0]}, combat=True),
+    "bloom_ring": dict(fn=bloom_ring, kind="decal", fps=12, loop=False, pivot=[16, 16], lift=0.03, glow=False,
+                       light={"color": "flower_rose", "intensity": 3, "range": 3.5, "curve": [0.3, 0.6, 1, 1, 1, 0.8, 0.5, 0.2]}, combat=True),
+    "ember_slash": dict(fn=ember_slash, kind="projectile", fps=16, loop=True, pivot=[16, 16], lift=0.9, speed=10.0, travel=4.5,
+                        then="ember_pop", glow=True, light={"color": "lamp", "intensity": 5, "range": 3.5, "curve": [1, 1, 1, 1, 1, 1]}, combat=True),
+    "ember_pop": dict(fn=ember_pop, kind="billboard", fps=14, loop=False, pivot=[16, 31], lift=0.0, glow=True,
+                      light={"color": "lamp", "intensity": 6, "range": 3.5, "curve": [1, 0.8, 0.5, 0.3, 0.1, 0]}, combat=True),
+    "coldfire_bolt": dict(fn=coldfire_bolt, kind="projectile", fps=12, loop=True, pivot=[16, 16], lift=1.0, speed=5.0, travel=7.0,
+                          then="frost_puff", glow=True, light={"color": "sky", "intensity": 4, "range": 3.5, "curve": [1, 1, 1, 1, 1, 1]}, combat=True),
+    "hit_spark": dict(fn=hit_spark, kind="billboard", fps=18, loop=False, pivot=[16, 26], lift=0.5, glow=True, light=None, combat=True),
+    "summon_poof": dict(fn=summon_poof, kind="billboard", fps=12, loop=False, pivot=[16, 31], lift=0.0, glow=False,
+                        light={"color": "lamp", "intensity": 3, "range": 3, "curve": [1, 0.8, 0.6, 0.4, 0.2, 0.1, 0]}, combat=True),
 }
 # what the player's spell key cycles through, and what a cast spawns (effect, where)
 CAST_SETS = {
@@ -340,7 +605,15 @@ CAST_SETS = {
     "light_orb": [["light_orb", "front"]],
     "rune_circle": [["rune_circle", "feet"], ["sparkle_burst", "feet"]],
     "bolt": [["bolt", "hands"]],
+    # hero first spells (Hearthmoor combat; the game resolves damage, these are the visuals)
+    "seed_bomb": [["seed_bomb", "hands"]],
+    "rune_slam": [["rune_slam", "feet"], ["impact", "feet"]],
+    "rune_trap": [["rune_trap", "front"]],
+    "chain_lightning": [["sky_strike", "front"]],
+    "bloom": [["bloom_ring", "feet"], ["healing_petals", "feet"]],
+    "ember_slash": [["ember_slash", "hands"]],
 }
+COMBAT_SETS = {"seed_bomb", "rune_slam", "rune_trap", "chain_lightning", "bloom", "ember_slash"}
 
 
 def build(biome="cozy-village", out="public/art/spells", project=None, seed=1):
@@ -349,7 +622,8 @@ def build(biome="cozy-village", out="public/art/spells", project=None, seed=1):
     names = list(EFFECTS)
     atlas = Image.new("RGBA", (CELL * COLS, CELL * len(names)), (0, 0, 0, 0))
     meta = {"tool": "hd2d spells", "biome": biome, "seed": seed, "image": "spells.png", "cell": CELL,
-            "size": [atlas.width, atlas.height], "effects": {}, "cast_sets": CAST_SETS, "cycle": list(CAST_SETS)}
+            "size": [atlas.width, atlas.height], "effects": {}, "cast_sets": CAST_SETS,
+            "cycle": [k for k in CAST_SETS if k not in COMBAT_SETS]}
     for row, name in enumerate(names):
         e = EFFECTS[name]
         frames = e["fn"](pal, seed)

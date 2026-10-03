@@ -5,7 +5,11 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
 <title>Hearthmoor</title>
 <meta name="theme-color" content="#4a2e20">
-<meta name="description" content="Hearthmoor: a small cozy HD-2D village errand game.">
+<meta name="description" content="Hearthmoor: a cozy HD-2D action RPG. Pick a hero, run village errands, face the gloom in Mossglen.">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Hearthmoor">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="icon" href="icons/icon-192.png">
 <link rel="apple-touch-icon" href="icons/icon-192.png">
@@ -18,21 +22,24 @@
 </head>
 <body>
 <canvas id="view"></canvas>
+<div id="fxlayer"></div>
 <div id="hud">
   <div class="chip title" id="title">Hearthmoor</div>
   <div class="chip bag" id="bag" data-hud><span class="empty">bag: empty</span></div>
+  <div class="chip vitals" id="vitals" data-hud hidden>
+    <span class="vrow"><b>HP</b><span class="bar hp"><i id="hpFill"></i></span><em id="hpTxt">90</em></span>
+    <span class="vrow"><b>ST</b><span class="bar st"><i id="stFill"></i></span><em id="spellTxt">✦</em></span>
+  </div>
   <div class="chip clock" id="clock"><span class="dial" id="dial"></span><span id="clocktxt">--:--</span></div>
   <div class="btns">
     <button class="chip btn" id="btnLog" title="Quest log (J)">quests 0/3</button>
     <button class="chip btn" id="btnSave" title="Save now (K)">save</button>
-    <button class="chip btn" id="btnSound" title="Ambient sound (M)">sound: on</button>
-    <button class="chip btn" id="btnPad" title="Game Layout One pad (G)">pad</button>
-    <button class="chip btn" id="btnHand" title="Left / right-handed pad (H)">hand: R</button>
+    <button class="chip btn" id="btnOpts" title="Options: display, fullscreen, install, sound, pad (O)">⚙</button>
   </div>
   <div class="say" id="say" hidden></div>
   <div class="prompt" id="prompt" hidden></div>
   <div class="toast" id="toast" hidden></div>
-  <div class="hint" id="hint" data-pad="🎮 stick walk · A talk · B close · X cast · Y / LB / RB charm · Start quests · Select pad · LT / RT zoom">tap to walk · WASD · E talk · F cast · Q charm · J quests · K save · M sound · G pad · H hand</div>
+  <div class="hint" id="hint" data-pad="🎮 stick walk · A talk / jump · B dodge · X attack · Y cast · LB / RB spell · LT guard · RT summon · R-stick zoom · Start quests">WASD walk · R attack · C guard · Z jump · X dodge · F cast · Q / 1-4 spell · V summon · E talk · J quests · O options</div>
 </div>
 
 <!-- dialogue: carved-wood frame around a parchment page -->
@@ -54,32 +61,73 @@
   </div>
 </div>
 
-<!-- Game Layout One pad (stick, MAIN + two mediums, potion pills, rail). Pad only: no world lock. -->
+<!-- action pad: floating stick + MAIN (attack, or talk when someone is near) + guard / jump / dodge / spell / summon / log.
+     Mirrored for the left hand. Spell: tap casts, hold opens the slow-time spell wheel. -->
 <div id="pad" hidden>
   <div class="zone" id="stickZone"></div>
   <div class="stick" id="stick"><div class="ring"></div><div class="knob" id="knob"></div></div>
-  <div class="cluster">
-    <button class="pb sec" id="padSec" disabled>·</button>
-    <button class="pb third" id="pad3rd" disabled>·</button>
-    <button class="pb main" id="padMain"><span id="mainGlyph">✋</span></button>
-    <button class="pill hp" disabled>HP</button>
-    <button class="pill mp" disabled>MP</button>
+  <div class="cluster act">
+    <button class="pb main" id="padMain" title="attack · talk when someone is near"><span class="ic" style="--i:0"></span><span class="ic talk" style="--i:7"></span><span id="mainGlyph">⚔</span></button>
+    <button class="pb abtn dodge" id="padDodge" title="dodge roll"><span class="ic" style="--i:3"></span><span class="l">roll</span></button>
+    <button class="pb abtn guard" id="padGuard" title="hold to guard"><span class="ic" style="--i:1"></span><span class="l">guard</span></button>
+    <button class="pb abtn jump" id="padJump" title="jump"><span class="ic" style="--i:2"></span><span class="l">jump</span></button>
+    <button class="pb abtn spell" id="padSpell" title="tap: cast · hold: spell wheel"><span class="ic" style="--i:4"></span><span class="l" id="padSpellName">spell</span></button>
+    <button class="pb abtn summon" id="padSummon" title="summon"><span class="ic" style="--i:5"></span><span class="l">call</span></button>
+    <button class="pb abtn third" id="pad3rd" title="quest log"><span class="ic" style="--i:6"></span></button>
   </div>
   <div class="rail" id="rail"></div>
 </div>
 
+<!-- slow-time spell wheel (hold the spell button, slide to a slot, let go) -->
+<div id="wheel" hidden><div class="ring"><div class="slot" data-i="0"></div><div class="slot" data-i="1"></div><div class="slot" data-i="2"></div><div class="slot" data-i="3"></div><div class="mid">slide · let go</div></div></div>
+
+<!-- options: display presets, fullscreen, install, sound, pad -->
+<div id="opts" hidden>
+  <div class="card">
+    <div class="head"><b>Options</b><button class="x" id="optsClose" title="Close (O / Esc)">✕</button></div>
+    <p class="lab">Display</p>
+    <div class="grid" id="displayRow">
+      <button class="wbtn sm" data-p="auto">Auto</button><button class="wbtn sm" data-p="phone">Phone</button><button class="wbtn sm" data-p="720p">720p</button>
+      <button class="wbtn sm" data-p="1080p">1080p TV</button><button class="wbtn sm" data-p="retro">Retro 320×240</button>
+    </div>
+    <div class="grid">
+      <button class="wbtn sm" id="btnFull">⛶ Fullscreen</button><button class="wbtn sm" id="btnInstall">⤓ Install</button>
+      <button class="wbtn sm" id="btnSound">sound: on</button><button class="wbtn sm" id="btnPad">pad</button><button class="wbtn sm" id="btnHand">hand: R</button>
+    </div>
+    <p class="tip" id="installTip" hidden></p>
+  </div>
+</div>
+
+<div id="rotate" hidden><span>↻ Turn your phone sideways for the best view</span><button id="rotateX" title="dismiss">✕</button></div>
+
 <div id="fade"></div>
 
 <div id="titlescreen">
-  <div class="plaque">
+  <div class="plaque" id="plaque">
     <h1>Hearthmoor</h1>
-    <p class="sub">a cozy village, three small errands, one mossy gate</p>
+    <p class="sub">a cozy village, a mossy gate, and something cold in the glade at night</p>
     <div class="row">
       <button class="wbtn" id="btnCont" hidden>Continue</button>
       <button class="wbtn" id="btnNew">New game</button>
     </div>
+    <div class="row small">
+      <button class="wbtn sm" id="btnInstallT">⤓ Install</button>
+      <button class="wbtn sm" id="btnFullT">⛶ Fullscreen</button>
+      <button class="wbtn sm" id="btnDisplayT">Display: Auto</button>
+    </div>
     <p class="info" id="saveInfo"></p>
-    <p class="keys">tap or WASD to walk · E / tap to talk · F cast · Q switch charm · J quests · K save<br>pinch or wheel to zoom · G pad · H left-handed pad · M sound<br>controller: A continue / start · X new game · Start quests</p>
+    <p class="tip" id="installTipT" hidden></p>
+    <p class="keys">WASD walk · R attack · C guard · Z jump · X dodge · F cast · Q / 1-4 spell · V summon · E talk<br>controller: A continue / start · X new game · Start quests</p>
+  </div>
+  <div class="plaque picker" id="picker" hidden>
+    <h2>Who are you?</h2>
+    <div class="cards" id="cards"></div>
+    <div class="detail" id="heroDetail"></div>
+    <div class="row">
+      <button class="wbtn" id="btnBack">Back</button>
+      <button class="wbtn" id="btnBegin">Begin</button>
+    </div>
+    <p class="keys">← → choose · Enter / A begin · Esc / B back</p>
   </div>
 </div>
 <div id="boot">loading Hearthmoor…</div>

@@ -1,12 +1,16 @@
 // Bluetooth / USB controllers through the Gamepad API (W3C "standard" mapping), polled once per frame.
-//   left stick + d-pad: walk (analog speed)   A talk/advance   B cancel/close   X cast   Y next charm
-//   LB / RB: previous / next charm   LT / RT: zoom out / in (analog)   Start: menu (log / pause)   Select: pad
+//   left stick + d-pad: walk (analog speed)   right stick up / down: zoom (analog)
+//   A talk / advance (jump when nothing is near)   B cancel / close (dodge roll in the field)   X attack   Y cast
+//   LB / RB: previous / next spell   LT: hold to guard   RT: summon   LS click: jump   RS click: attack
+//   Start: menu (log / pause)   Select: pad
+// Every button (triggers included, past half travel) fires onButton once per press and onRelease when let go, so
+// LT is a real hold-to-guard; zoom moved to the right stick so no trigger is mapped twice.
 // Hot-plug: a pad is announced the first time it shows up in getGamepads() (Chrome only lists a pad after
 // its first button press) or on 'gamepadconnected'; announcements survive area changes (module-level set).
 export const BUTTONS = ['a', 'b', 'x', 'y', 'lb', 'rb', 'lt', 'rt', 'select', 'start', 'ls', 'rs', 'up', 'down', 'left', 'right', 'home'];
 const SEEN = (window.__hd2dPadsSeen = window.__hd2dPadsSeen || new Map());   // key -> label
 const DEAD = 0.18;          // radial stick deadzone
-const TRIG = 0.12;          // trigger deadzone
+const ZDEAD = 0.3;          // right-stick zoom deadzone
 
 const keyOf = (gp) => `${gp.index}:${gp.id}`;
 export const padLabel = (gp) => {
@@ -14,11 +18,11 @@ export const padLabel = (gp) => {
   return id.length > 28 ? id.slice(0, 26) + '…' : id || 'controller';
 };
 const pressedOf = (b) => (typeof b === 'object' && b ? (b.pressed || (b.value || 0) > 0.5) : b === 1 || b === true);
-const valueOf = (b) => (typeof b === 'object' && b ? (b.value ?? (b.pressed ? 1 : 0)) : Number(b) || 0);
 
 export class GamepadInput {
-  constructor({ onButton, onConnect, signal } = {}) {
+  constructor({ onButton, onRelease, onConnect, signal } = {}) {
     this.onButton = onButton || (() => {});
+    this.onRelease = onRelease || (() => {});
     this.onConnect = onConnect || (() => {});
     this.prev = new Map();           // gamepad index -> pressed[]
     this.state = { x: 0, y: 0, mag: 0, zoom: 0, used: false, count: 0 };
@@ -65,15 +69,18 @@ export class GamepadInput {
       // d-pad: digital walk at full walking speed (no run)
       const dx = (pressed[15] ? 1 : 0) - (pressed[14] ? 1 : 0), dy = (pressed[13] ? 1 : 0) - (pressed[12] ? 1 : 0);
       if ((dx || dy) && mag === 0) { const L = Math.hypot(dx, dy); x = dx / L; y = dy / L; mag = 0.85; }
-      const lt = valueOf(gp.buttons?.[6]), rt = valueOf(gp.buttons?.[7]);
-      const zoom = (rt > TRIG ? rt : 0) - (lt > TRIG ? lt : 0);
+      // right stick Y: push up = zoom in, pull down = zoom out
+      const ry = axes[3] || 0;
+      const zoom = Math.abs(ry) > ZDEAD ? -Math.sign(ry) * (Math.abs(ry) - ZDEAD) / (1 - ZDEAD) : 0;
       const any = pressed.some(Boolean) || mag > 0 || zoom !== 0;
       if (any) st.used = true;
       if (!enabled) continue;
       if (mag > st.mag) { st.x = x; st.y = y; st.mag = mag; }
       if (zoom && !st.zoom) st.zoom = zoom;
       for (let i = 0; i < pressed.length; i++) {
-        if (pressed[i] && !prev[i] && BUTTONS[i] && i !== 6 && i !== 7 && (i < 12 || i > 15)) this.onButton(BUTTONS[i], gp);
+        if (!BUTTONS[i]) continue;   // d-pad presses also fire (menus); they keep walking through the axes above
+        if (pressed[i] && !prev[i]) this.onButton(BUTTONS[i], gp);
+        else if (!pressed[i] && prev[i]) this.onRelease(BUTTONS[i], gp);
       }
     }
     this.state = st;

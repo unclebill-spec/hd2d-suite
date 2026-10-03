@@ -21,14 +21,16 @@ Bill (GitHub `unclebill-spec`) hands this project between his bots and Cursor th
 - **Hero classes:** `hd2d sprite` has 6 playable classes (`roles_heroes.py`: wildcaller, runeguard, seer, stormborn, grovekeeper, cinderknight).
   - Each has idle, walk and four 4-frame action anims in all 4 facings (right = mirrored left): **cast** (cols 8–11), **attack** (12–15), **defend** (16–19, hold frames 2/3) and **jump** (20–23: crouch, launch, airborne, land). Hero strips are 24 columns; villagers stay 12.
   - Lineups: `docs/screenshots/hero_origins_4x.png` (looks), `hero_anims_4x.png` / `hero_anims_side_4x.png` / `hero_anims_up_4x.png` (actions). In-scene: `docs/screenshots/hero_origins_plaza.png`. Review scene: `scenes/hero-classes-plaza.json` (player = stormborn).
-  - **Runtime action states:** `Actors.act(a, name, {hold, dur})` / `release(a, name)` in `engine/sprites.js`. Keys **R** attack, **C** hold guard, **Z** jump; controller **RS** attack, **LS** jump, **LT** short guard. The jump lifts the visible sprite only (`a.lift`); the shadow caster and depth stay on the ground. API: `__hd2d.act / release / actorState / actAdvance`.
-  - Not yet wired into the game: the game player is the `hedgewitch` role (idle / walk / cast; jump is an idle-frame hop, R / C do nothing there), and there's no class picker. No touch button for attack / guard / jump yet.
+  - **Runtime action states:** `Actors.act(a, name, {hold, dur})` / `release(a, name)` in `engine/sprites.js`. Keys **R** attack, **C** hold guard, **Z** jump, **X** dodge roll; controller **X / RS** attack, **LS** jump, **LT** held guard, **B** roll. The jump lifts the visible sprite only (`a.lift`); the shadow caster and depth stay on the ground. API: `__hd2d.act / release / actorState / actAdvance / dodge`.
+  - **In the game (Stage 1, 2026-10-03):** the title opens a hero picker for the 6 starters and the chosen class is the player (saved in `hearthmoor-slot-1-v2`). Real-time combat lives in `game/combat.js`: 3 enemies in Mossglen (stone golem, skeleton swordsman, cold-fire wraith, plus a night wraith), HP / stamina, guard, dodge-roll i-frames, pixel damage numbers, a class spell + summon per hero, cozy defeat. Enemy + summon sprites: `tools/sprite/roles_enemies.py` (`hd2d sprite --roles combat`); combat VFX: new `tools/spells` effects.
 - **Toolset:** a Python CLI `bin/hd2d` with 13 tools, which generates original pixel art and assembles lit three.js r160 dioramas (static ES modules, no build step).
 - **Demos:** `demos/hearthmoor-plaza`, `demos/bakery-lane` (+ zips).
 - **Game:** `games/hearthmoor/`:
-  - 3 areas (Plaza, Bakery Lane, Mossglen through a portal), 3 errands, dialogue, quest log, bag;
-  - real-time day / dusk / night, charms, save / load (`hearthmoor-slot-1-v1`), PWA;
-  - touch with a floating stick, Bluetooth / USB controller, keyboard + mouse.
+  - title → hero picker (6 starters); 3 areas (Plaza, Bakery Lane, Mossglen through a portal), 3 errands, dialogue, quest log, bag;
+  - real-time action combat in Mossglen (attack / guard / jump / dodge roll, 4 spell slots, summon, slow-time spell wheel on the phone);
+  - real-time day / dusk / night, charms, save / load (`hearthmoor-slot-1-v2`, migrates v1), PWA with an in-game Install button (iPhone: Add to Home Screen tip);
+  - options card: display presets (Auto / Phone landscape / 720p / 1080p TV / Retro 320x240), fullscreen, sound, pad, hand; rotate-to-landscape prompt; see-through player silhouette behind buildings;
+  - touch with a floating stick + action buttons, Bluetooth / USB controller (no button double-mapped: zoom is on the right stick), keyboard + mouse.
   - Zip: `games/hearthmoor.zip`. Restore kit and do-not-regress list: `games/hearthmoor/RESTORE.md`.
 - **Live on GitHub Pages:**
   - index: https://unclebill-spec.github.io/hd2d-suite/
@@ -46,7 +48,7 @@ Bill (GitHub `unclebill-spec`) hands this project between his bots and Cursor th
 | `hd2d_common/` | Shared Python helpers (`load_tool`) |
 | `scenes/*.json` | Demo scene specs (+ `hero-classes-plaza.json` review scene) |
 | `demos/<name>/` | Assembled demos (static) |
-| `games/hearthmoor/` | The game: `index.html`, `game/` (game.js, data.js, audio.js, game.css), `areas/<id>/` (built), `areas/src/*.json` (area specs), `build.py`, `tests/smoke.py`, `startup.sh`, `RESTORE.md` |
+| `games/hearthmoor/` | The game: `index.html`, `game/` (game.js, data.js, heroes.js, combat.js, audio.js, game.css), `areas/<id>/` (built), `areas/src/*.json` (area specs), `build.py`, `tests/smoke.py`, `startup.sh`, `RESTORE.md` |
 | `docs/HD2D_COZY_STYLE_LOCK.md` | Bill's style law (binding) |
 | `docs/HEARTHMOOR_BUILDER_HANDOFF.md` | Consolidated builder handoff / game design document (start here to build the game) |
 | `docs/story/STORY_SEEDS.md` | Story bible: Norse Nine Realms direction, villain, alliances, cities, heroes and magic, pets, plus the 2026-10-03 design expansion |
@@ -92,7 +94,7 @@ bin/hd2d check-scene demos/bakery-lane
 bin/hd2d check-scene games/hearthmoor --scene-dir areas/plaza    --params "area=plaza&qa&spawn=start"    --out games/hearthmoor/shots/plaza
 bin/hd2d check-scene games/hearthmoor --scene-dir areas/lane     --params "area=lane&qa&spawn=qa"        --out games/hearthmoor/shots/lane
 bin/hd2d check-scene games/hearthmoor --scene-dir areas/mossglen --params "area=mossglen&qa&spawn=start" --out games/hearthmoor/shots/mossglen
-python3 games/hearthmoor/tests/smoke.py        # ~8 min headless, 46 steps, writes games/hearthmoor/tests/shots/ (+ smoke.json)
+python3 games/hearthmoor/tests/smoke.py        # ~10 min headless, writes games/hearthmoor/tests/shots/ (+ smoke.json)
 ```
 - **check-scene** (~5–7 min each) checks:
   - sprite sharpness, camera lock and no bloom;
@@ -100,7 +102,7 @@ python3 games/hearthmoor/tests/smoke.py        # ~8 min headless, 46 steps, writ
   - effects and game-effects sharpness;
   - the phone check: layout, tap-walk, floating stick, no page zoom, loading gate, controller, pinch.
   - actions: a jump (held sim, fixed steps) lifts the sprite while the shadow stays at the feet; hero players also attack and hold a guard.
-- **Smoke test:** a full playthrough of all 3 errands, both exits and the portal both ways, save / reload ×2, a stubbed controller, phone touch and the loading gate.
+- **Smoke test:** the hero picker, a full playthrough of all 3 errands, both exits and the portal both ways, Mossglen combat (hit, guard, roll i-frames, spell, summon, defeat / respawn), save / reload ×2, v1 → v2 save migration, a stubbed controller (new map), phone touch (stick, action buttons, spell wheel) and the loading gate. It runs with `?peace` so enemies don't interrupt the errands, then turns them on for the combat steps.
 - **Headless tips:**
   - Use SwiftShader args: `--use-angle=swiftshader --enable-unsafe-swiftshader --ignore-gpu-blocklist`.
   - Run **one browser job at a time**; a second busy page makes touch timing flaky.
@@ -133,10 +135,10 @@ python3 games/hearthmoor/tests/smoke.py        # ~8 min headless, 46 steps, writ
 ## Known issues
 - No real-device or real-GPU test yet (headless Chromium + SwiftShader and emulated phones only).
 - The controller is tested only through a simulated `navigator.getGamepads()`. There's no button remap, and non-standard pads are read as standard.
-- The player can disappear behind buildings (sprites are depth-tested; there's no see-through outline yet).
 - Dialogue is linear (no choices); there's one save slot; errands have a single path.
 - Pathfinding ignores moving NPCs (they're avoided only by collision sliding).
-- Hero actions: no touch buttons yet (keyboard + controller only); the controller guard (LT) is a timed 0.8 s guard, not a hold. Wards are hidden from behind (`up` shows glow at the hands only). Demo / game atlases weren't regenerated, so only heroes (review scene) have attack / defend / jump frames. Actions are visual only (no hitboxes or damage).
+- Hero actions: wards are hidden from behind (`up` shows glow at the hands only). The demos' atlases weren't regenerated (only the game's were), so demo villagers have no attack / defend / jump frames.
+- Combat (Stage 1): no loot, XP or levels yet; one summon per hero; spell slots 2–4 are simply the newest charms (no spellbook UI); the controller has no hold-for-wheel (LB / RB step slots instead); enemies don't path-find (they chase straight and slide on walls); the golem's side view reads a little bird-like.
 - Smaller notes:
   - Plaza and Lane reuse the demo layouts.
   - Backdrop hills are simple domes.
@@ -144,15 +146,9 @@ python3 games/hearthmoor/tests/smoke.py        # ~8 min headless, 46 steps, writ
   - The procedural audio has never been listened to.
 
 ## Next steps
-1. A see-through outline / silhouette for the player when a building occludes them (sprite-only pass, no blur).
-2. Controller button remap (saved per device) and handling for non-standard mappings.
-3. Bill's display presets: **Auto, Phone landscape, 720p, 1080p TV, Retro 320x240**, plus aspect options. Keep the integer pixel scale for sprites.
-4. A fullscreen button and a "rotate your phone" prompt.
-5. More areas and quests (dialogue choices, NPC schedules, more save slots).
-6. New content: mushroom villages, gnomes, bubbly springs (new kit pieces, roles, particles; original art under the style lock).
-7. **Hero classes in the game:**
-   - a class picker on the title screen, with the chosen class as the player sprite;
-   - touch buttons for attack / guard / jump on the pad (phone first), and hitboxes / interactions for the actions;
-   - per-class spells and summons (see Heroes and magic in `STORY_SEEDS.md`);
-   - action-frame VFX in the spells atlas;
-   - first realm areas and the Rainbow Rift portal hub.
+Hearthmoor is being built in stages (milestones in `docs/HEARTHMOOR_BUILDER_HANDOFF.md` section 12); each stage pushes a playable build to Pages. Stage 1 (M0 platform polish + M1 heroes + start of M2 combat) is done. Proposed **Stage 2**:
+1. Leveling (XP from foes and errands, 2 free stat points per level) and the first tier of each hero's skill tree (`docs/story/DESIGN_EXPANSION_2026-10-03.md` E3). Bill's call: a new game asks "Auto level? Yes / No" (Yes = class-based auto-assign of the 2 points, No = manual), toggleable anytime in the options card.
+2. Loot with rarity colours, an inventory / equipment page and a spellbook UI to assign the 4 slots.
+3. Day-night effects on gameplay (night spawns, lamp-lit safe zones) and light weather.
+4. More enemy types, a mini-boss in Mossglen, difficulty settings, a controller hold-for-wheel and button remap.
+5. Then: first realm areas and the Rainbow Rift portal hub, dialogue choices, more save slots, mushroom villages / gnomes / bubbly springs.

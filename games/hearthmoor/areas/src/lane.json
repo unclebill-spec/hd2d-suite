@@ -8,6 +8,7 @@
   "speed": 0.0016
  },
  "spells": true,
+ "sprite_roles": ["actors", "cat", "heroes", "combat"],
  "spell_cycle": [
   "healing_petals",
   "sparkle_burst",

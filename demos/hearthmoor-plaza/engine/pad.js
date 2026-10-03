@@ -74,8 +74,8 @@ export class Pad {
     }
     const main = document.getElementById('padMain');
     let held = null;
-    main.addEventListener('pointerdown', (e) => { e.stopPropagation(); e.preventDefault(); held = setTimeout(() => { held = 'fired'; this.onMain(); }, 350); }, sig);
-    main.addEventListener('pointerup', () => { if (held && held !== 'fired') { clearTimeout(held); this.onMain(); } held = null; }, sig);
+    if (main) main.addEventListener('pointerdown', (e) => { e.stopPropagation(); e.preventDefault(); held = setTimeout(() => { held = 'fired'; this.onMain(); }, 350); }, sig);
+    if (main) main.addEventListener('pointerup', () => { if (held && held !== 'fired') { clearTimeout(held); this.onMain(); } held = null; }, sig);
     this.glyph = document.getElementById('mainGlyph');
     const sec = document.getElementById('padSec');
     if (onSpell && sec) {
@@ -92,5 +92,5 @@ export class Pad {
   dispose() { this._rest && this._rest(); }
   toggle(v) { this.on = v ?? !this.on; this.el.hidden = !this.on; document.body.classList.toggle('padon', this.on); if (!this.on) this._rest(); }
   stick() { return this.on && !document.body.classList.contains('ctrl') ? this.st : { active: false }; }
-  update(near) { if (this.on) this.glyph.textContent = near ? '💬' : '✋'; }
+  update(near, fight = false) { if (this.on && this.glyph) { const g = near ? '💬' : fight ? '⚔' : '✋'; if (this.glyph.textContent !== g) this.glyph.textContent = g; } }
 }

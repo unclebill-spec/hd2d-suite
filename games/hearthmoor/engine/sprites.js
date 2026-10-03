@@ -28,15 +28,34 @@ uniform vec2 uFrame;       // frame top-left in atlas px
 uniform vec2 uFrameSize, uPivot, uAnchor;
 uniform float uK;
 uniform vec3 uTint;        // sRGB-space multiplier from the clock grade + lamps
+uniform int uRot;          // 0..3 quarter turns of the frame about (10, 10) from the feet (dodge-roll tumble, pixel exact)
+uniform float uFlash;      // 0..1 hurt flash toward the palette's lightest step (no bloom: a flat colour mix)
+uniform int uMode;         // 0 = sprite, 1 = see-through silhouette (only drawn where the world hides the sprite)
+uniform vec3 uSil;         // silhouette colour (sRGB, a palette colour)
 out vec4 outColor;
 void main() {
   vec2 origin = vec2(uAnchor.x - uPivot.x * uK, uAnchor.y - (uFrameSize.y - uPivot.y) * uK);
   ivec2 t = ivec2(floor((gl_FragCoord.xy - origin) / uK));
+  if (uRot != 0) {
+    ivec2 q = t - ivec2(10, 10);
+    if (uRot == 1) q = ivec2(-q.y - 1, q.x);
+    else if (uRot == 2) q = ivec2(-q.x - 1, -q.y - 1);
+    else q = ivec2(q.y, -q.x - 1);
+    t = q + ivec2(10, 10);
+    if (t.x < 0 || t.y < 0 || t.x >= int(uFrameSize.x) || t.y >= int(uFrameSize.y)) discard;
+  }
   t = clamp(t, ivec2(0), ivec2(uFrameSize) - 1);
   ivec2 at = ivec2(int(uFrame.x) + t.x, int(uFrame.y) + int(uFrameSize.y) - 1 - t.y);
   vec4 c = texelFetch(uAtlas, at, 0);
   if (c.a < 0.5) discard;           // hard alpha only
-  outColor = vec4(min(c.rgb * uTint, vec3(1.0)), 1.0);
+  if (uMode == 1) {                 // checker dither on the texel grid: crisp, never a soft ghost
+    ivec2 g = ivec2(floor((gl_FragCoord.xy - origin) / uK));
+    if (((g.x + g.y) & 1) == 1) discard;
+    outColor = vec4(uSil, 1.0);
+    return;
+  }
+  vec3 col = min(c.rgb * uTint, vec3(1.0));
+  outColor = vec4(mix(col, vec3(1.0, 0.97, 0.9), uFlash), 1.0);
 }`;
 
 const FACINGS = ['down', 'up', 'left', 'right'];
@@ -75,16 +94,30 @@ export class Actors {
         uPivot: { value: new THREE.Vector2(this.meta.pivot[0], this.meta.pivot[1]) },
         uAnchor: { value: new THREE.Vector2() }, uK: { value: 3 }, uViewport: { value: new THREE.Vector2(1, 1) },
         uZBottom: { value: 0 }, uZTop: { value: 0 }, uTint: { value: new THREE.Vector3(1, 1, 1) },
+        uRot: { value: 0 }, uFlash: { value: 0 }, uMode: { value: 0 }, uSil: { value: new THREE.Vector3(0.97, 0.93, 0.82) },
       },
     });
     const quad = new THREE.Mesh(QUAD, mat);
     quad.frustumCulled = false;
     this.scene.add(quad);
+    // see-through silhouette (spec.xray, the player): the same quad drawn only where the world is in front of it
+    // (GreaterDepth, no depth write) as a dithered palette-colour figure, so a hero behind a cottage stays readable
+    let xray = null;
+    if (spec.xray) {
+      const xm = mat.clone();
+      xm.uniforms = THREE.UniformsUtils.clone(mat.uniforms);
+      xm.uniforms.uAtlas.value = this.tex; xm.uniforms.uMode.value = 1;
+      if (spec.xrayColor) xm.uniforms.uSil.value.copy(spec.xrayColor);
+      xm.depthFunc = THREE.GreaterDepth; xm.depthWrite = false;
+      xray = new THREE.Mesh(QUAD, xm);
+      xray.frustumCulled = false; xray.renderOrder = 5;
+      this.scene.add(xray);
+    }
     // shadow caster (world scene)
     const ctex = this.tex.clone();
     ctex.flipY = true; ctex.needsUpdate = true;
     ctex.repeat.set(this.fw / this.aw, this.fh / this.ah);
-    const isCreature = role.kind !== 'human';
+    const isCreature = role.kind !== 'human' && role.kind !== 'enemy';
     const h = this.heightM;
     const w = h * this.fw / this.fh;
     const cg = new THREE.PlaneGeometry(w, h); cg.translate(0, h / 2, 0);
@@ -102,7 +135,7 @@ export class Actors {
       blinkAt: 2 + Math.random() * 4, idleTurn: spec.turn !== false, r: isCreature ? 0.22 : 0.28, rect: null,
       canCast: (role.anims || []).includes('cast'), castT: 0, castDur: 0.9, spell: spec.spell || null,
       every: spec.every || 4, castClock: spec.castDelay ?? 0.5, name: spec.name,
-      anims: role.anims || ['idle', 'walk'], act: null, lift: 0,
+      anims: role.anims || ['idle', 'walk'], act: null, lift: 0, xray, rot: 0, flashT: 0,
     };
     const h0 = this.collide ? this.collide.height(a.x, a.z) : 0;
     a.y = h0 ?? 0;
@@ -110,9 +143,20 @@ export class Actors {
     return a;
   }
 
+  // swap an actor's role in place (a game's hero picker): same position, new atlas row + anims
+  setRole(a, roleName) {
+    const role = this.meta.roles[roleName];
+    if (!role) return false;
+    a.role = roleName; a.roleRow = role.row; a.kind = role.kind;
+    a.anims = role.anims || ['idle', 'walk']; a.canCast = a.anims.includes('cast');
+    a.act = null; a.castT = 0; a.lift = 0;
+    return true;
+  }
+
   remove(a) {
     const i = this.list.indexOf(a); if (i >= 0) this.list.splice(i, 1);
     this.scene.remove(a.quad); this.world.remove(a.caster);
+    if (a.xray) { this.scene.remove(a.xray); a.xray.material.dispose(); }
     a.mat.dispose(); a.ctex.dispose(); a.caster.geometry.dispose(); a.caster.material.dispose(); a.caster.customDepthMaterial.dispose();
   }
 
@@ -237,7 +281,7 @@ export class Actors {
       const sy = Math.round((feet.y * 0.5 + 0.5) * bufH);
       u.uAnchor.value.set(sx, sy);
       u.uZBottom.value = feet.z;
-      const head = this._w.set(a.x, ly + this.heightM * (a.kind === 'human' ? 1 : 0.55), a.z).add(toCam).project(camera);
+      const head = this._w.set(a.x, ly + this.heightM * (a.kind === 'human' || a.kind === 'enemy' ? 1 : 0.55), a.z).add(toCam).project(camera);
       u.uZTop.value = head.z;
       // light: clock tint, building shade, nearby lamps (warm pools at night)
       const t = a.tint.setRGB(tintBase.r, tintBase.g, tintBase.b);
@@ -252,6 +296,14 @@ export class Actors {
         t.r += L.srgb.r * s; t.g += L.srgb.g * s; t.b += L.srgb.b * s;
       }
       u.uTint.value.set(Math.min(t.r, 1.25), Math.min(t.g, 1.25), Math.min(t.b, 1.25));
+      u.uRot.value = a.rot || 0;
+      u.uFlash.value = a.flashT > 0 ? 0.5 : 0;
+      if (a.xray) {   // mirror the live uniforms (values copied, so the silhouette keeps its own mode / colour)
+        const xu = a.xray.material.uniforms;
+        for (const k2 of ['uFrame', 'uAnchor', 'uViewport']) xu[k2].value.copy(u[k2].value);
+        for (const k2 of ['uK', 'uZBottom', 'uZTop', 'uRot']) xu[k2].value = u[k2].value;
+        a.xray.visible = a.quad.visible;
+      }
       // shadow caster: upright, turned to face the sun, same frame as the visible sprite
       a.caster.position.set(a.x, a.y, a.z);
       a.caster.rotation.set(0, az, 0);

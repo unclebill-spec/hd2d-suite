@@ -37,7 +37,7 @@ export const TALK = {
     const q = S.quests.bread;
     if (q === 0) return {
       pages: [
-        'Oh, the new hedgewitch! Welcome to Hearthmoor. I\'m Marla. If it\'s round and golden, I baked it.',
+        'Oh, a new face! Welcome to Hearthmoor. I\'m Marla. If it\'s round and golden, I baked it.',
         'Would you do me a kindness? Bram at the Kettle & Key ordered a hearthloaf, and my feet have done enough stairs today.',
         'Take the lane south, out past the hedges, and you\'ll come down into Bakery Lane. The inn has the kettle on its sign.',
       ],
@@ -97,7 +97,7 @@ export const TALK = {
     const q = S.quests.bread;
     if (q === 1) return {
       pages: [
-        'Is that... a hearthloaf? Still warm? You are a marvel, hedgewitch.',
+        'Is that... a hearthloaf? Still warm? You are a marvel, friend.',
         'Here, a few copper bits for your trouble. And a trick my grandmother taught me: snap your fingers at a cold hearth.',
       ],
       then: (G) => { G.take('loaf', 1); G.give('coin', 3); G.setQuest('bread', 3); G.learn('hearth_flame'); },
@@ -109,7 +109,7 @@ export const TALK = {
     const q = S.quests.tea;
     if (q === 0) return {
       pages: [
-        'Hold still, the petals do the work. ...There. Hello! I\'m Wren. You have a hedgewitch\'s hat, so you must like plants.',
+        'Hold still, the petals do the work. ...There. Hello! I\'m Wren. You have kind hands, so you must like plants.',
         'I\'m brewing moonpetal tea for the winter shelf, but moonpetals only grow in Mossglen, through the moss gate.',
         'Could you bring me three? They glimmer, you can\'t miss them. Just walk over one to pick it.',
       ],

@@ -208,6 +208,74 @@ def draw_icons():
     m.resize((512, 512), Image.NEAREST).save(GAME / "icons" / "icon-maskable-512.png")
 
 
+# ------------------------------------------------------------------ touch-button icons (16 px, palette only, ink outline)
+# letters -> palette colours; '.' = clear. Drawn as ASCII so they stay easy to tweak. Outline is added after.
+BTN_KEY = {"w": "white", "s": "stone_hi", "S": "stone", "k": "stone_lo", "t": "timber", "T": "timber_hi", "d": "timber_lo",
+           "g": "flower_gold", "l": "lamp", "r": "flower_rose", "b": "flower_blue", "y": "sky", "G": "grass_hi", "m": "moss",
+           "p": "plaster_hi", "P": "plaster", "o": "roof_hi", "R": "roof"}
+BTN_ICONS = {
+    "attack": [
+        "............ws..", "...........wss..", "..........wss...", ".........wss....", "........wss.....", ".......wss......",
+        "......wss.......", "..g..wss........", "..ggwss.........", "...ggs..........", "...tgg..........", "..tt.gg.........",
+        ".tt.............", "dt..............", "d...............", "................"],
+    "guard": [
+        "................", "....kkkkkkkk....", "...ksssssssSk...", "..ksTTTTTTTTSk..", "..ksTTTggTTTSk..", "..ksTTgllgTTSk..",
+        "..ksTTTggTTTSk..", "..ksTTTggTTTSk..", "..ksTTTggTTTSk..", "...ksTTggTTSk...", "...ksTTTTTTSk...", "....ksTTTTSk....",
+        ".....ksTTSk.....", "......kSSk......", ".......kk.......", "................"],
+    "jump": [
+        "................", ".......pp.......", "......pppp......", ".....pppppp.....", "....pppppppp....", "...pppPppPppp...",
+        "......pPPp......", "......pPPp......", "......pPPp......", "......pPPp......", "................", "....yy....yy....",
+        "...y..y..y..y...", "................", "..GGGGGGGGGGGG..", "..mmmmmmmmmmmm.."],
+    "dodge": [
+        "................", ".....yyyyy......", "...yy.....yy....", "..y.........y...", ".y...........y..", ".y.....p.....y..",
+        "y.....ppp....y..", "y....ppppp...y..", "y......p.....y..", ".y...........y..", ".y.........yyyy.", "..y.........yyy.",
+        "...yy.....y.yy..", ".....yyyyy...y..", "................", "................"],
+    "spell": [
+        "................", ".......l........", ".......l........", "......lwl.......", "......lwl.......", ".....lwwwl...g..",
+        "..llllwwwllll...", "...lwwwwwwwl....", "..llllwwwllll...", ".....lwwwl......", "......lwl.......", "..g...lwl.......",
+        ".......l.....g..", ".......l........", "................", "................"],
+    "summon": [
+        "................", "..g.........w...", ".......GG.......", "......GmmG......", ".....GmGGmG.....", "......GmmG...g..",
+        ".......GG.......", ".......mm.......", "...r...mm...r...", "..rwr..mm..rwr..", "...r..mmmm..r...", "......mddm......",
+        ".....ttttttt....", ".....tTTTTTt....", "......ttttt.....", "................"],
+    "log": [
+        "................", "...dttttttttd...", "..dTppppppppTd..", "...dpppppppd....", "...pPPPPPPPp....", "...pppppppp.....",
+        "...pPPPPPPp.....", "...pppppppp.....", "...pPPPPPp......", "...pppppppp.....", "...pPPPPPPPp....", "...pppppppp.....",
+        "..dTppppppppTd..", "...dttttttttd...", "................", "................"],
+    "talk": [
+        "................", "................", "...pppppppppp...", "..pppppppppppp..", "..pppppppppppp..", "..ppdpppdpppdp..",
+        "..pppppppppppp..", "..pppppppppppp..", "...pppppppppp...", ".....ppp........", "....pp..........", "...p............",
+        "................", "................", "................", "................"],
+}
+
+
+def draw_button_icons():
+    C = {k: tuple(int(v[i:i + 2], 16) for i in (1, 3, 5)) + (255,) for k, v in load_biome("cozy-village")["colors"].items()}
+    names = list(BTN_ICONS)
+    W = 16
+    sheet = Image.new("RGBA", (W * len(names), W), (0, 0, 0, 0))
+    px = sheet.load()
+    for n, name in enumerate(names):
+        rows = BTN_ICONS[name]
+        assert len(rows) == 16 and all(len(r) == 16 for r in rows), name
+        for y, row in enumerate(rows):
+            for x, ch in enumerate(row):
+                if ch != ".":
+                    px[n * W + x, y] = C[BTN_KEY[ch]]
+        pts = []
+        for y in range(W):
+            for x in range(W):
+                if px[n * W + x, y][3] == 0 and any(0 <= x + dx < W and 0 <= y + dy < W and px[n * W + x + dx, y + dy][3]
+                                                    and px[n * W + x + dx, y + dy] != C["ink"] for dx, dy in ((1, 0), (-1, 0), (0, 1), (0, -1))):
+                    pts.append((x, y))
+        for x, y in pts:
+            px[n * W + x, y] = C["ink"]
+    (GAME / "art").mkdir(exist_ok=True)
+    sheet.save(GAME / "art" / "buttons.png")
+    sheet.resize((sheet.width * 6, sheet.height * 6), Image.NEAREST).save(GAME / "art" / "buttons_6x.png")
+    return names
+
+
 def write_pwa():
     man = {"name": "Hearthmoor", "short_name": "Hearthmoor", "description": "A small cozy HD-2D village errand game.",
            "start_url": "./index.html", "scope": "./", "display": "fullscreen", "orientation": "any",
@@ -262,6 +330,7 @@ if __name__ == "__main__":
         assemble()
     copy_areas()
     draw_icons()
+    draw_button_icons()
     write_pwa()
     if not a.no_zip:
         make_zip()

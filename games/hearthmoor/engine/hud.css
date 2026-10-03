@@ -70,3 +70,9 @@ body.ctrl:not(.padpin) .hint { display: block; }
 /* mid-height screens (desktop windows, tablets in landscape): the rail would run into the chip column, so it sits
    as a row just above the button cluster */
 @media (max-height: 640px) and (min-height: 461px) { #pad .rail { top: auto; bottom: 176px; flex-direction: row; } }
+/* display presets: the canvas may be letterboxed (retro 4:3); 1080p TV gets bigger chips and an overscan-safe margin */
+body[data-display="retro"] #view { background: #000; }
+body.tv #hud { inset: 3vh 3vw; font-size: 18px; }
+body.tv #hud .chip { padding: 6px 12px; }
+body.tv .say { font-size: 19px; max-width: min(760px, 80vw); }
+body.tv #pad .cluster { bottom: 5vh; right: 4vw; }
