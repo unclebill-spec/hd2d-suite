@@ -8,7 +8,8 @@ Dates are America/New_York. Newest first. Keep this current with every change yo
 - **Modes:** options `mode:` Story / Adventurer / Hero (`?mode=`). Story: foes hit 40% softer, you hit 15% harder, no faint penalty. Hero: foes hit 35% harder, you hit 10% softer, better loot odds.
 - **Faint penalty** (Adventurer and Hero): fainting drops 10% of carried gold as a purse where you fell. It stays there (also across area changes and saves) until you walk back over it. Story mode: nothing lost.
 - **24-minute day:** a whole day / night cycle now takes 24 real minutes (was 12).
-- Smoke: dawn check uses midday (the run can already be at night); new loot / gear / faint / Story steps.
+- Smoke: dawn check uses midday (the run can already be at night); new loot / gear / faint / Story steps. 78/78 pass.
+- Bakery Lane: one toadstool cluster moved off a spot behind the flower shop (it showed over the roof) to the open front-left corner.
 
 ## 2026-10-03: Hearthmoor Stage 2, spellbook + controller spell wheel (part 2 of 5)
 - **Spellbook:** a third "Spells" tab on the hero screen (B opens it straight away; or I / the vitals chip / Start, Y on a controller, then → / RB). Four slots; Enter / A / "change" cycles a slot through every spell you know (your class spell + each charm; slots 2-4 can be empty). The cast cycle (F, Q, 1-4, LB / RB, the wheels) follows at once; saved as `slots` in the v2 save (old saves keep the default: class spell + newest three charms). A newly learned charm fills an empty slot.

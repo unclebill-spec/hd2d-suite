@@ -8,7 +8,7 @@ const TOAD_COL = '#e47c8c';
 const TOADS = {
   mossglen: [[-5.5, 3.4], [5.8, -2.6], [9.0, 1.5], [-11.0, -3.0], [-4.6, -7.2], [7.0, -8.2]],
   plaza: [[-9.5, 4.6], [9.5, 5.0], [3.2, -4.4], [-11.5, -8.6]],
-  lane: [[-10.2, -6.0], [9.5, 5.0], [-10.5, 5.0], [12.5, -4.0]],
+  lane: [[-10.2, -6.0], [9.5, 5.0], [-10.5, 5.0], [-11.8, 8.6]],
 };
 // lamp kinds that make a light zone at night, and how far it reaches on the ground (metres)
 const LAMP_R = { lamp_post: 3.0, stone_lantern: 2.2, shrine: 2.6, portal: 2.0 };
