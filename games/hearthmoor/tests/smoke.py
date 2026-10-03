@@ -214,13 +214,18 @@ def run(out, simscale=4, size=(960, 540)):
             detail = T.ev("document.getElementById('heroDetail').textContent")
             T.step("hero picker: 6 starters with origin, mortal / demigod, blurb; arrows choose", cards == ["Wildcaller", "Runeguard", "Seer", "Stormborn", "Grovekeeper", "Cinderknight"]
                    and sel == "stormborn" and "Child of thunder" in detail and "demigod" in detail and "Chain Lightning" in detail, cards=cards, sel=sel)
+            pg.keyboard.press("m"); pg.wait_for_timeout(150)
+            m1, tip = T.ev("window.__hm.picker.state().mode"), T.ev("document.getElementById('pickModeTip').textContent")
+            pg.keyboard.press("m"); pg.keyboard.press("m"); pg.wait_for_timeout(150)
+            T.step("hero picker: M cycles the mode (Story / Adventurer / Hero) with a tip", m1 == "hero" and "Hero mode" in tip
+                   and T.ev("window.__hm.picker.state().mode") == "adventurer", mode=m1)
             pg.click("#btnBegin")
             T.idle()
             T.wait("window.__hm.asking && !document.getElementById('autolv').hidden", 30)
             pg.wait_for_timeout(400)
             rep["shots"]["auto_level_popup"] = T.shot("auto_level_popup")
             pg.keyboard.press("ArrowRight"); pg.wait_for_timeout(100); pg.keyboard.press("Enter"); pg.wait_for_timeout(300)
-            T.step("new game asks 'Auto level? Yes / No' (No = manual)", not T.ev("window.__hm.asking") and T.ev("window.__hm.S.autoLevel") is False
+            T.step("new game asks 'Auto level? Yes / No' (No = manual)", not T.ev("window.__hm.asking") and T.ev("window.__hm.S.autoLevel") is False and T.ev("window.__hm.S.mode") == "adventurer"
                    and T.ev("window.__hm.S.lv") == 1 and T.ev("window.__hm.S.stats.might") == 7)
             S = T.S()
             T.step("new game in Hearthmoor Plaza as the chosen hero", T.ev("window.__hm.area") == "plaza" and not T.ev("window.__hm.title") and S["quests"] == {"bread": 0, "tea": 0, "cat": 0}
@@ -458,6 +463,8 @@ def run(out, simscale=4, size=(960, 540)):
             pg.wait_for_timeout(300)
             S = T.S()
             T.step("walking over drops puts items in the bag and gold in the purse", len(S["bag"]) == b0 + 5 and S["gold"] == g0 + 7, bag=len(S["bag"]), gold=S["gold"])
+            chip = T.ev("(document.querySelector('#bag .gearchip') || {}).textContent || ''")
+            T.step("bag chip shows the gear count and gold", chip.strip() == f"⚔ {len(S['bag'])}" and T.ev("!!document.querySelector('#bag .goldchip')"), chip=chip)
             hp_a = T.ev("window.__hm.combat.maxHp()")
             pg.keyboard.press("g"); pg.wait_for_timeout(300)
             for _ in range(3): pg.keyboard.press("ArrowDown")
@@ -477,6 +484,14 @@ def run(out, simscale=4, size=(960, 540)):
             T.ev("window.__hm.S.mode = 'story'; window.__hm.combat.down()"); pg.wait_for_timeout(2400)
             T.step("Story mode: fainting costs nothing", T.S()["gold"] == 50 and not T.S().get("purse"))
             T.ev("window.__hm.S.mode = 'adventurer'; window.__hm.combat.godT = 0")
+            # pathfinding: a skeleton below the terrace wall must go round by the stairs to reach you
+            T.ev("(() => { const c = window.__hm.ctx, C = window.__hm.combat, p = c.player; window.__hm.peace = false; C.godT = 0; p.iframes = 99;"
+                 " p.x = 5.0; p.z = -4.0; p.y = c.heightAt(p.x, p.z); c.stopWalk(); const e = C.enemies.find((x) => x.id === 'skeleton_0');"
+                 " e.a.x = 6.0; e.a.z = 0.6; e.a.y = c.heightAt(6, 0.6); e.home = [6.0, 0.6]; e.state = 'chase'; e.path = null; })()")
+            pg.wait_for_timeout(3500)
+            sk = T.ev("(() => { const e = window.__hm.combat.enemies.find((x) => x.id === 'skeleton_0'); return { x: e.a.x, z: e.a.z, y: e.a.y, path: !!(e.path && e.path.length > 2), state: e.state }; })()")
+            T.ev("(() => { const C = window.__hm.combat; window.__hm.peace = true; window.__hm.ctx.player.iframes = 0; const e = C.enemies.find((x) => x.id === 'skeleton_0'); e.home = [5.0, 2.6]; e.state = 'home'; })()")
+            T.step("pathfinding: a foe below the terrace wall routes via the stairs", sk["path"] and (sk["y"] > 0.3 or sk["x"] < 4.0), skeleton=sk)
             T.ev("(() => { const c = window.__hm.ctx, p = c.player, g = c.npc('golem_0'); p.x = g.x - 1.1; p.z = g.z; p.y = c.heightAt(p.x, p.z); p.facing = 'right'; c.stopWalk(); })()")
             T.ev("window.__hm.combat.cd.summon = 0"); pg.keyboard.press("v"); pg.wait_for_timeout(500)
             T.step("V summons the storm sprite", (T.ev("window.__hm.combat.qa().summon") or {}).get("role") == "stormsprite")

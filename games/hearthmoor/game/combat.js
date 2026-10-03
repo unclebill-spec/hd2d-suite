@@ -179,10 +179,10 @@ export class Combat {
         if (this.peace || fromHome > LEASH || d > D.aggro * 1.9 || this.godT > 0) { e.state = 'home'; break; }
         if (D.ranged) {
           if (d < D.keep - 0.6) moving = step(-dx, -dz);
-          else if (d > D.keep + 1.4) moving = step(dx, dz);
+          else if (d > D.keep + 1.4) moving = this.seek(e, p.x, p.z, dt, step);
           else if (e.cd <= 0 && !pLit) { this.beginAttack(e); break; }   // a lit hero is out of reach
           else ctx.actors.setFacingFromVec(a, dx, dz);
-        } else if (d > D.reach * 0.8) moving = step(dx, dz);
+        } else if (d > D.reach * 0.8) moving = this.seek(e, p.x, p.z, dt, step);
         else if (e.cd <= 0) { this.beginAttack(e); break; }
         else ctx.actors.setFacingFromVec(a, dx, dz);
         break;
@@ -196,7 +196,7 @@ export class Combat {
       case 'home': {
         const ex = e.home[0] - a.x, ez = e.home[1] - a.z;
         if (Math.hypot(ex, ez) < 0.3 || (e.homeT = (e.homeT || 0) + dt) > 8) { e.state = 'idle'; e.homeT = 0; e.hp = D.hp; e.wt = 2; }
-        else moving = step(ex, ez);
+        else moving = this.seek(e, e.home[0], e.home[1], dt, step);
         if (sees && fromHome < LEASH * 0.6) e.state = 'chase';
         break;
       }
@@ -204,6 +204,22 @@ export class Combat {
     }
     ctx.actors.animate(a, dt, moving && !a.act);
     this.floatBob(e);
+  }
+  // walk around walls, fences and trees: A* over the area's nav grid (string-pulled), re-planned twice a second;
+  // close up (or with no nav grid) it is a straight step as before
+  seek(e, tx, tz, dt, step, scale = 1) {
+    const a = e.a, nav = this.ctx.nav;
+    if (!nav || Math.hypot(tx - a.x, tz - a.z) < 1.0) { e.path = null; return step(tx - a.x, tz - a.z, scale); }
+    e.pathT = (e.pathT || 0) - dt;
+    if (!e.path || e.pathT <= 0 || Math.hypot(e.pathGoal[0] - tx, e.pathGoal[1] - tz) > 1.2) {
+      e.path = nav.path(a.x, a.z, tx, tz, 20000); e.pathGoal = [tx, tz]; e.pathT = 0.5; e.pathI = 0;
+    }
+    if (!e.path || !e.path.length) return step(tx - a.x, tz - a.z, scale);
+    let wp = e.path[e.pathI];
+    while (wp && e.pathI < e.path.length - 1 && Math.hypot(wp[0] - a.x, wp[1] - a.z) < 0.3) wp = e.path[++e.pathI];
+    const mv = step(wp[0] - a.x, wp[1] - a.z, scale);
+    if (!mv) e.pathT = 0;   // blocked (light, another actor): re-plan next frame
+    return mv;
   }
   floatBob(e) { if (e.D.float && e.state !== 'dead') e.a.lift = 0.16 + Math.sin(this.time * 2.6 + e.phase) * 0.07; }
   ping(e) { const a = e.a; if (this.ctx.gamefx && this.ctx.gamefx.meta.effects.quest_bang) { /* reuse nothing: a quick flash says "noticed" */ } a.flashT = 0.08; }
@@ -314,6 +330,7 @@ export class Combat {
       if (prev && G.loot) G.loot.removePurse();
       G.S.purse = { area: this.area, x: +p.x.toFixed(2), z: +p.z.toFixed(2), gold: lost + prev };
       if (G.loot) G.loot.drop(p.x, p.z, { gold: lost + prev, purse: true });
+      if (G.drawBag) G.drawBag();
     }
     const f = document.getElementById('fade');
     setTimeout(() => { f.className = 'on'; }, 900);

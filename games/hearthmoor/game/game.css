@@ -216,7 +216,7 @@ body.tv #dlg { width: min(900px, 80vw); } body.tv #dlg p { font-size: 20px; }
 .loot canvas { position: absolute; image-rendering: pixelated; image-rendering: crisp-edges; }
 .loot .icon { left: -15px; top: -24px; }
 .loot .beam { left: -10px; bottom: 6px; }
-.loot .aura { left: -30px; top: -21px; }
+.loot .aura { left: -39px; top: -26px; }
 .loot.gold .icon { top: -20px; }
 .loot.purse .icon { animation: ping .6s steps(2) infinite; }
 /* gear page rows: rarity colours, Epic faint glow, Legendary animated neon edge (hard pixel borders, no blur) */
@@ -235,3 +235,6 @@ body.tv #dlg { width: min(900px, 80vw); } body.tv #dlg p { font-size: 20px; }
 @keyframes neon { 0% { border-color: #f2a63a; box-shadow: 0 0 0 2px #f2c24a; } 25% { border-color: #f2c24a; box-shadow: 0 0 0 2px #fff8e6; }
   50% { border-color: #fff8e6; box-shadow: 0 0 0 2px #e47c8c; } 75% { border-color: #e47c8c; box-shadow: 0 0 0 2px #f2a63a; } 100% { border-color: #f2a63a; box-shadow: 0 0 0 2px #f2c24a; } }
 @media (prefers-reduced-motion: reduce) { #heroBody .row.r3, #heroBody .row.r4, .loot.purse .icon { animation: none; } }
+#bag .gearchip, #bag .goldchip { display: inline-flex; align-items: center; margin-left: 6px; font: 800 12px system-ui; color: #3a2a1c; }
+#bag .goldchip { color: #9a4630; }
+.plaque .modetip { margin: 4px 0 0; font: 600 12px system-ui; color: var(--parch-hi); min-height: 1.2em; }

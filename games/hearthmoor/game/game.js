@@ -118,7 +118,9 @@ function iconHTML(id) { const i = ITEMS[id].icon; return `<span class="ico" styl
 function drawBag(flash) {
   const el = $('bag'); if (!el) return;
   const ids = Object.keys(ITEMS).filter((k) => G.S.inv[k]);
-  el.innerHTML = ids.length ? ids.map((k) => `<span class="slot${k === flash ? ' new' : ''}" title="${ITEMS[k].name}: ${ITEMS[k].about}">${iconHTML(k)}<b>${G.S.inv[k]}</b></span>`).join('')
+  const nGear = (G.S.bag || []).length, gold = G.S.gold || 0;
+  const gear = nGear || gold ? `<span class="gearchip" title="Gear in the bag (G)">⚔ ${nGear}</span><span class="goldchip" title="Gold">● ${gold}</span>` : '';
+  el.innerHTML = ids.length || gear ? ids.map((k) => `<span class="slot${k === flash ? ' new' : ''}" title="${ITEMS[k].name}: ${ITEMS[k].about}">${iconHTML(k)}<b>${G.S.inv[k]}</b></span>`).join('') + gear
                             : '<span class="empty">bag: empty</span>';
   const rail = $('rail');
   if (rail) rail.innerHTML = '';   // the bag chip (top left) is the one inventory display; the pad rail stays empty
@@ -151,6 +153,7 @@ function setLog(open) { G.log = open; $('log').hidden = !open; $('btnLog').class
 let toastT = 0;
 function toast(msg, s = 2.0, html = false) { const el = $('toast'); if (html) el.innerHTML = msg; else el.textContent = msg; el.hidden = false; el.classList.remove('out'); toastT = s; }
 G.toast = toast;
+G.drawBag = (f) => drawBag(f);
 G.popText = (txt, at, col) => G.combat.number(txt, at.x, at.y + 0.9, at.z, col);
 
 // ------------------------------------------------------------------ dialogue (carved-wood frame, parchment page)
@@ -376,6 +379,7 @@ const hooks = {
       if (name === 'left' || name === 'lb') pickMove(-1); else if (name === 'right' || name === 'rb') pickMove(1);
       else if (name === 'up') pickMove(-3); else if (name === 'down') pickMove(3);
       else if (name === 'a' || name === 'start') pickBegin(); else if (name === 'b') closePicker();
+      else if (name === 'y' || name === 'x') pickMode();
       return true;
     }
     if (G.title) {
@@ -586,20 +590,31 @@ async function openPicker(then) {
   G.picking = true;
   $('plaque').hidden = true; $('picker').hidden = false;
   if (!$('cards').children.length) buildCards();
-  pickShow();
+  pickShow(); syncPickMode();
   cancelAnimationFrame(PICK.raf); PICK.raf = requestAnimationFrame(drawPreviews);
 }
 function closePicker() {
   G.picking = false; cancelAnimationFrame(PICK.raf);
   $('picker').hidden = true; $('plaque').hidden = false;
 }
+// difficulty is chosen with the hero (Story / Adventurer / Hero); options can change it later
+function pickMode(d = 1) {
+  const i = PR.MODE_IDS.indexOf(PICK.mode || 'adventurer');
+  PICK.mode = PR.MODE_IDS[(i + d + 3) % 3]; syncPickMode();
+}
+function syncPickMode() {
+  PICK.mode = PICK.mode || (PR.MODES[Q.get('mode')] ? Q.get('mode') : 'adventurer');
+  if ($('btnPickMode')) $('btnPickMode').textContent = 'mode: ' + PR.MODES[PICK.mode].name;
+  if ($('pickModeTip')) $('pickModeTip').textContent = MODE_TIP[PICK.mode];
+}
+G.pickMode = pickMode;
 function pickMove(d) { PICK.i = (PICK.i + d + HEROES.length * 3) % HEROES.length; PICK.tapped = false; pickShow(); }
 function pickBegin() {
   const id = HEROES[PICK.i].id, then = PICK.then;
   closePicker();
   if (then) then(id);
 }
-G.picker = { open: openPicker, move: pickMove, begin: pickBegin, close: closePicker, state: () => ({ open: G.picking, i: PICK.i, id: HEROES[PICK.i].id }) };
+G.picker = { open: openPicker, move: pickMove, begin: pickBegin, close: closePicker, mode: pickMode, state: () => ({ open: G.picking, i: PICK.i, id: HEROES[PICK.i].id, mode: PICK.mode }) };
 
 // ------------------------------------------------------------------ title screen, buttons, keys
 function wire() {
@@ -612,6 +627,7 @@ function wire() {
   wirePad(); wireOptions(); wireLeveling();
   $('btnBack').onclick = () => closePicker();
   $('btnBegin').onclick = () => pickBegin();
+  $('btnPickMode').onclick = () => pickMode();
   addEventListener('keydown', (e) => {
     const k = e.key.toLowerCase();
     if (G.picking || G.title) e.stopImmediatePropagation();   // the engine's own keys (talk on Enter) wait for the field
@@ -619,6 +635,7 @@ function wire() {
       if (k === 'arrowleft' || k === 'a') pickMove(-1); else if (k === 'arrowright' || k === 'd') pickMove(1);
       else if (k === 'arrowup' || k === 'w') pickMove(-3); else if (k === 'arrowdown' || k === 's') pickMove(3);
       else if (k === 'enter' || k === ' ') { e.preventDefault(); pickBegin(); } else if (k === 'escape') closePicker();
+      else if (k === 'm') pickMode();
       return;
     }
     if (G.title) { if (k === 'enter' || k === ' ') { e.preventDefault(); (readSave() ? cont : newGame)(); } else if (k === 'n') newGame(); return; }
@@ -654,7 +671,7 @@ async function newGame() {
   openPicker((cls) => startNew(cls));
 }
 async function startNew(cls) {
-  G.S = fresh(); G.S.cls = cls; PR.ensure(G.S); G.S.hp = HERO[cls].hp;
+  G.S = fresh(); G.S.cls = cls; G.S.mode = PICK.mode || 'adventurer'; PR.ensure(G.S); G.S.hp = HERO[cls].hp;
   closeTitle();
   if (G.area !== 'plaza') await go('plaza', 'start', 'walk');
   else { const s = G.ctx.scene.game.spawns.start; G.ctx.player.x = s[0]; G.ctx.player.z = s[1]; G.ctx.player.y = G.ctx.heightAt(s[0], s[1]); G.ctx.player.facing = s[2]; G.ctx.clock.set(G.S.t); }
@@ -740,6 +757,7 @@ function setHeroUI(open) {
 }
 G.setHeroUI = setHeroUI;
 function drawHero() {
+  drawBag();
   const S = G.S, C = G.combat, h = HERO[S.cls], M = C.M, tree = PR.TREES[S.cls] || [];
   $('heroHead').innerHTML = `<b>${h.cls}</b> <span class="tag">Lv ${S.lv}</span> <span class="tag">${S.lv >= PR.LEVEL_CAP ? 'max level' : `${S.xp} / ${PR.xpNeed(S.lv)} xp`}</span>`
     + `<span class="tag">${(PR.MODES[S.mode] || PR.MODES.adventurer).name}</span><span class="tag">gold ${S.gold || 0}</span><span class="tag">HP ${C.maxHp()}</span><span class="tag">ST ${C.maxSt()}</span><span class="tag">crit ${Math.round(M.crit * 100)}%</span>`;
@@ -789,6 +807,7 @@ function heroAct() {
   if (b && !b.disabled) b.click();
 }
 function heroScrap() {
+  drawBag();
   if (HUI.tab !== 3 || HUI.i < 3) return;
   const g = LO.scrap(G.S, HUI.i - 3);
   if (g) { toast(`Scrapped for ${g} gold`, 1.4); G.audio.sfx('pickup'); HUI.i = Math.min(HUI.i, 2 + G.S.bag.length); save(); drawHero(); }

@@ -2,6 +2,13 @@
 
 Dates are America/New_York. Newest first. Keep this current with every change you push.
 
+## 2026-10-03: Hearthmoor Stage 3, part 1: leftovers + enemy pathfinding
+- **Brighter Epic / Legendary drops:** bigger aura (Legendary: two counter-marching rings plus four orbiting sparks; Epic: one ring plus two sparks) and each Epic / Legendary drop now lights the ground around it with a pooled point light in its colour (purple / orange-gold). Still no blur or bloom.
+- **Bag chip:** shows "⚔ N" (gear pieces in the bag) and "● gold" next to the errand items, refreshed on pickup, equip, scrap and faint.
+- **Mode at New Game:** the hero picker has a "mode:" button (M key, Y / X on a controller, or tap) cycling Story / Adventurer / Hero with a one-line tip; the new save starts in that mode (options can still change it).
+- **Enemy pathfinding:** chasing / returning enemies follow an A* path over the area's nav grid (string-pulled, re-planned twice a second) so they walk round walls, fences, terrace edges (via the stairs) and trees instead of sliding along them. Cold-fire wraiths still refuse to path into light.
+- Smoke: picker mode step, bag-chip step, a pathfinding step (a skeleton below Mossglen's terrace wall routes by the stairs).
+
 ## 2026-10-03: Hearthmoor Stage 2, loot + gear (part 3) and modes, faint penalty, 24-minute day (part 5)
 - **Loot:** beaten foes drop a little gold and often an item (weapon, armor or trinket) in one of five rarities: Common (white), Uncommon (green), Rare (blue), Epic (purple), Legendary (orange-gold). Every item drop stands under a crisp pixel beam in its colour with rising motes; Epic adds a faint stepped glow ring, Legendary an animated neon aura (marching pixels cycling orange / gold / white / rose). Walk over a drop to pick it up (the toast names it in its colour; gold pops as a pixel number).
 - **Gear page:** a fourth hero-screen tab, Gear (G): weapon / armor / trinket slots plus a 30-item bag. Enter / A / "equip" swaps an item in, "take off" puts it back, X / "scrap" turns it into gold. Rarity-coloured names; Epic rows glow faintly, Legendary rows have the animated neon edge. Gear adds melee / spell %, HP, guard, crit, stamina and (Epic+) summon power through the same stat system as levels. Saved as `bag`, `gear`, `gold` (old saves start empty; old coins become gold).

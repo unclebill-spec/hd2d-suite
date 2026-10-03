@@ -100,13 +100,22 @@ function drawBeam(cv, rar, scale, frame) {
 function drawAura(cv, scale, frame, epic) {
   const g = cv.getContext('2d'), W = cv.width / scale, Hh = cv.height / scale;
   g.clearRect(0, 0, cv.width, cv.height);
-  const cols = epic ? ['#b07ce0', '#6a3e9a'] : ['#f2a63a', '#f2c24a', '#fff8e6', '#e47c8c'];
-  const n = epic ? 18 : 28, rx = W / 2 - 1, ry = Hh / 2 - 1;
-  for (let i = 0; i < n; i++) {
-    if (epic ? (i + frame) % 3 : (i + frame) % 2) continue;
-    const a = i / n * Math.PI * 2;
-    g.fillStyle = cols[(i + frame) % cols.length];
-    g.fillRect(Math.round(W / 2 + Math.cos(a) * rx) * scale, Math.round(Hh / 2 + Math.sin(a) * ry) * scale, scale, scale);
+  const cols = epic ? ['#b07ce0', '#e0c8f4', '#6a3e9a'] : ['#f2a63a', '#f2c24a', '#fff8e6', '#e47c8c'];
+  const px = (x, y, c) => { g.fillStyle = c; g.fillRect(Math.round(x) * scale, Math.round(y) * scale, scale, scale); };
+  const ring = (rx, ry, n, skip, off) => {
+    for (let i = 0; i < n; i++) {
+      if ((i + frame + off) % skip) continue;
+      const a = i / n * Math.PI * 2;
+      px(W / 2 + Math.cos(a) * rx, Hh / 2 + Math.sin(a) * ry, cols[(i + frame) % cols.length]);
+    }
+  };
+  ring(W / 2 - 1, Hh / 2 - 1, epic ? 30 : 44, 2, 0);                 // outer marching ring
+  if (!epic) ring(W / 2 - 4, Hh / 2 - 2.5, 30, 3, 1);                 // legendary: a second, counter-phased ring
+  // four sparks orbiting (plus shapes, white core)
+  const k = epic ? 2 : 4;
+  for (let j = 0; j < k; j++) {
+    const a = (frame / 8 + j / k) * Math.PI * 2, x = W / 2 + Math.cos(a) * (W / 2 - 2), y = Hh / 2 + Math.sin(a) * (Hh / 2 - 1.5);
+    px(x, y, '#fff8e6'); px(x + 1, y, cols[0]); px(x - 1, y, cols[0]); px(x, y - 1, cols[1]); px(x, y + 1, cols[1]);
   }
 }
 
@@ -114,7 +123,7 @@ export class Loot {
   constructor(G) { this.G = G; this.layer = document.getElementById('fxlayer'); this.drops = []; this.t = 0; }
   attach(ctx) { this.clear(); this.ctx = ctx; }
   detach() { this.clear(); this.ctx = null; }
-  clear() { for (const d of this.drops) d.el.remove(); this.drops = []; }
+  clear() { for (const d of this.drops) { d.el.remove(); if (d.light) d.light.kill = true; } this.drops = []; }
   // an enemy went down: gold always, and sometimes an item (rarity weights, level-scaled)
   onKill(a, lv) {
     const gold = 2 + Math.floor(Math.random() * 5);
@@ -129,10 +138,12 @@ export class Loot {
     const sc = 3;
     let beam = null, aura = null;
     if (it) { beam = beamCanvas(rar, sc); beam.className = 'beam'; el.appendChild(beam); }
-    if (rar >= 3) { aura = document.createElement('canvas'); aura.width = 20 * sc; aura.height = 10 * sc; aura.className = 'aura'; el.appendChild(aura); }
+    if (rar >= 3) { aura = document.createElement('canvas'); aura.width = 26 * sc; aura.height = 13 * sc; aura.className = 'aura'; el.appendChild(aura); }
     const icon = iconCanvas(it ? it.slot : 'gold', Math.max(0, rar), sc); icon.className = 'icon'; el.appendChild(icon);
     this.layer.appendChild(el);
-    const d = { x, y, z, it, gold: what.gold || 0, purse: !!what.purse, el, beam, aura, sc, frame: -1, t: 0 };
+    // Epic / Legendary drops also light the ground around them (a pooled point light, no bloom)
+    const light = rar >= 3 && ctx.addGlow ? ctx.addGlow(x, y, z, { color: RARITY[rar].col, intensity: rar === 4 ? 6 : 3.5, range: 2.8, lift: 0.45, fadeIn: 0.3 }) : null;
+    const d = { x, y, z, it, gold: what.gold || 0, purse: !!what.purse, el, beam, aura, sc, frame: -1, t: 0, light };
     this.drops.push(d);
     return d;
   }
@@ -160,9 +171,11 @@ export class Loot {
     if (d.gold) { S.gold += d.gold; G.popText && G.popText(`+${d.gold}`, d, '#f2c24a'); }
     if (d.it) { S.bag.push(d.it); G.toast && G.toast(`<span style="color:${RARITY[d.it.rar].lo}">${RARITY[d.it.rar].name}</span> ${d.it.name}`, 2.4, true); }
     G.audio && G.audio.sfx('pickup');
+    if (d.light) d.light.kill = true;
+    G.drawBag && G.drawBag();
     G.onLoot && G.onLoot(d);
   }
-  removePurse() { for (const d of this.drops.filter((x) => x.purse)) { d.el.remove(); this.drops.splice(this.drops.indexOf(d), 1); } }
+  removePurse() { for (const d of this.drops.filter((x) => x.purse)) { d.el.remove(); if (d.light) d.light.kill = true; this.drops.splice(this.drops.indexOf(d), 1); } }
   restorePurse(area) { const P = this.G.S.purse; if (P && P.area === area && P.gold > 0) this.drop(P.x, P.z, { gold: P.gold, purse: true }); }
   qa() { return this.drops.map((d) => ({ x: +d.x.toFixed(2), z: +d.z.toFixed(2), gold: d.gold, rar: d.it ? d.it.rar : null, slot: d.it ? d.it.slot : null })); }
 }
