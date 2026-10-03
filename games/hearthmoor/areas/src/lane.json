@@ -8,7 +8,7 @@
   "speed": 0.0016
  },
  "spells": true,
- "sprite_roles": ["actors", "cat", "heroes", "mushgolem", "runesentinel", "runewisp", "stormsprite", "sapling", "emberimp"],
+ "sprite_roles": ["actors", "cat", "heroes", "mushgolem", "runesentinel", "runewisp", "stormsprite", "sapling", "emberimp", "mushgolem_r", "runesentinel_r", "runewisp_r", "stormsprite_r", "sapling_r", "emberimp_r"],
  "spell_cycle": [
   "healing_petals",
   "sparkle_burst",

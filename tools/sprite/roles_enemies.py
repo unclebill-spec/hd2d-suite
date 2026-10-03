@@ -621,8 +621,45 @@ def skelmage(s, face, anim, i):
     skeleton(s, face, anim, i, mage=True)
 
 
+# ------------------------------------------------------------------ radiant summons (Part 4: summon tier III+)
+# Same creature, drawn again with a gloom-and-glow "radiant" finish: a lit rim along its top edge, brighter
+# highlights, a little gold-white crown of light over its head and sparkles that twinkle frame to frame.
+RADIANT = {"shadow": "stone_lo", "stone_lo": "stone", "stone": "stone_hi", "moss": "grass", "grass": "grass_hi",
+           "timber_lo": "timber", "timber": "timber_hi", "roof_lo": "roof", "roof": "roof_hi", "cloth": "flower_blue",
+           "flower_blue": "sky"}
+
+
+def _radiant(base):
+    def draw(s, face, anim, i):
+        base(_Remap(s, RADIANT), face, anim, i)
+        pts = [(x, y) for y in range(len(s.p)) for x in range(len(s.p[0])) if s.p[y][x]]
+        if not pts:
+            return
+        top = min(y for _, y in pts)
+        cols = {}
+        for x, y in pts:
+            if y < cols.get(x, 99):
+                cols[x] = y
+        xs = sorted(cols); cx = (xs[0] + xs[-1]) // 2
+        for x, y in cols.items():                      # a glow rim catching the light along the crown of the head
+            if y < top + 3 and abs(x - cx) <= 3:
+                s.set(x, y, "white" if (x + i) % 3 == 0 else "flower_gold")
+        if top >= 4:                                   # a small crown of light over the head
+            s.set(cx, top - 2, "white"); s.set(cx - 1, top - 2, "lamp"); s.set(cx + 1, top - 2, "lamp"); s.set(cx, top - 3, "flower_gold")
+        L, R = xs[0] - 2, xs[-1] + 2
+        for k, (x, dy) in enumerate(((L, 3), (R, 6), (L, 11), (R, 14))):   # twinkling sparkles (2 of 4 lit per frame)
+            if (k + i) % 2 == 0:
+                y = top + dy
+                if 1 <= x < len(s.p[0]) - 1 and 1 <= y < len(s.p) - 1 and not s.p[y][x]:
+                    s.set(x, y, "white" if k % 2 else "lamp")
+    return draw
+
+
 DRAW = {"golem": golem, "icegolem": icegolem, "eldergolem": eldergolem, "skelmage": skelmage, "wraith": wraith, "skeleton": skeleton, "mushgolem": mushgolem, "runesentinel": runesentinel,
         "runewisp": runewisp, "stormsprite": stormsprite, "sapling": sapling, "emberimp": emberimp}
+
+for _k in ("mushgolem", "runesentinel", "runewisp", "stormsprite", "sapling", "emberimp"):
+    DRAW[_k + "_r"] = _radiant(DRAW[_k])
 
 SUMMON_OF = {"wildcaller": "mushgolem", "runeguard": "runesentinel", "seer": "runewisp", "stormborn": "stormsprite",
              "grovekeeper": "sapling", "cinderknight": "emberimp"}
@@ -644,4 +681,6 @@ def enemy_roles(_r):
         "stormsprite": _r(**S, draw="stormsprite", desc="summon (Stormborn): a storm-cloud sprite walking on lightning"),
         "sapling": _r(**S, draw="sapling", desc="summon (Grovekeeper): a treant sapling with a vine whip"),
         "emberimp": _r(**S, draw="emberimp", desc="summon (Cinderknight): a small fire elemental"),
+        **{f"{k}_r": _r(**S, draw=f"{k}_r", desc=f"radiant summon (tier III+): the {k} with a lit rim, crown of light and sparkles")
+           for k in ("mushgolem", "runesentinel", "runewisp", "stormsprite", "sapling", "emberimp")},
     }

@@ -2,6 +2,19 @@
 
 Dates are America/New_York. Newest first. Keep this current with every change you push.
 
+## 2026-10-03: Hearthmoor Part 4: skill tiers II-III with capstones, summon tiers; check-scene fixes
+- **Skill tiers II and III:** every hero's three branches now run three tiers deep (9 nodes per hero). Tier II costs 1 point at level 5 and needs that branch's tier I; tier III is the branch **capstone**, 2 points at level 10, needing tier II. Capstones include Hearthfire Heart, Worldroot, Unbroken Wall, Sunrise Cleave, Great Sigil, Between Steps, Fate-reader, Hammer of Skies, Eye of the Storm, Evergreen, Thornheart, Sunforged and Cinder Wraithblade, plus a top summon capstone per hero (Elder Mushroom Golem, Rune Colossus, Thunderhead, Elder Treant, Ash Legion Lord). New skill effects: shorter spell cooldowns (`spellCd`), harder crits (`critDmg`), faster stamina refill (`stRegen`), quicker summons (`summonCd`).
+- **Hero screen Skills tab** lists the tree by tier (tier headers, capstones edged in gold). Rows you can't learn yet are dimmed, and their button says why ("needs Gale Bolt", "Lv 10", "2 points"). The top line shows your current summon tier. Keys, controller and taps work as before, and tier-I rows keep their old positions.
+- **Summon tiers:** each summon-branch skill raises your summon a tier (I to IV, shown in its name, e.g. "Storm sprite III").
+  - Tier II glows: a soft light in its colour follows it, and it sheds sparkles.
+  - Tier III takes a **radiant form**: a new `<summon>_r` sprite for all six summons, with brighter colours, a gold-white crown of light, a lit rim and twinkling sparkles. It arrives on a rune circle with a stronger light.
+  - Tier IV (capstone) adds a sparkle burst on arrival and the widest light.
+  - Stats still grow through `summonMul` / `summonLife`. All of it is palette pixels with no bloom (gloom-and-glow).
+- **check-scene fixes:**
+  - The QA effects lineup keeps a 26-effect row on screen (spacing `min(2.4, 19.2 / cols)` m). Before, the new cold-fire effects pushed `impact` off-screen.
+  - Odo moved to [5.4, 3.4], in front of the barrels and crates, so the Plaza bunting no longer crosses his sprite (it was failing the sprite_sharp check).
+- Smoke: new steps for the tiered tree (capstone locked until tier II, learned by keys, mods apply) and summon tiers I / III / IV.
+
 ## 2026-10-03: Hearthmoor: Mossheart at boss scale, Sefa's neon-blue lantern pool, glow-light cap option
 - **Mossheart is now ~2.5x the hero** (style lock "boss scale override": mini-bosses / rares 2-3x, bosses 5x+). It is **drawn natively** on its own boss sheet at 50x80 px frames (same texel density as the 20x32 actors, never an upscale): ancient stone-block masonry, a faceted amber crystal crown, gold rune glyphs and a zig-zag heart seam, thick moss with grass blades and glow-flowers, cracks spreading as it dies, a mossy rubble heap at the end. New tool `tools/sprite/boss_sheet.py`; area specs list `boss_roles` and assemble writes `boss.png` / `boss.json` beside the actor atlas (Mossglen's actor atlas drops to 2560 px tall).
 - **Engine: per-role sprite sheets / frame size.** An atlas role can say `sheet: "boss"`; the actor then uses that sheet's texture, frame size and pivot (shader quad, shadow caster plane scaled to the figure, head depth, x-ray, debug rect with `sheet` / `atlas` for check-scene). check-scene compares such actors against their own sheet.

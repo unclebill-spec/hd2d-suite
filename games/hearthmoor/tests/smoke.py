@@ -408,6 +408,20 @@ def run(out, simscale=4, size=(960, 540)):
             S = T.S()
             T.step("hero screen (I): spend a stat point, learn a tier-I skill (keys)", S["stats"]["might"] == m0 + 1 and S["free"] == 2 * (lv - 1) - 1
                    and S["skills"].get("sb_tempest") == 1 and S["sp"] == lv - 2, stats=S["stats"], skills=S["skills"])
+            # Part 4: tiers II-III (tier II needs tier I + Lv 5; the tier-III capstone needs tier II + Lv 10 and costs 2)
+            T.ev("window.__qaKeep = { lv: window.__hm.S.lv, sp: window.__hm.S.sp, xp: window.__hm.S.xp }; window.__hm.S.lv = 10; window.__hm.S.sp = 3; window.__hm.heroUI && window.__hm.drawHero && window.__hm.drawHero()")
+            lk = T.ev("(() => { const P = window.__hm.PR, S = window.__hm.S, t = P.TREES[S.cls]; return [P.lockOf(S, t.find((n) => n.id === 'sb_tempest3')), t.length, t.filter((n) => n.tier === 3).length]; })()")
+            for _ in range(3): pg.keyboard.press("ArrowDown")
+            pg.keyboard.press("Enter"); pg.wait_for_timeout(250)
+            for _ in range(3): pg.keyboard.press("ArrowDown")
+            pg.keyboard.press("Enter"); pg.wait_for_timeout(300)
+            rep["shots"]["hero_skill_tiers"] = T.shot("hero_skill_tiers")
+            tiers = T.ev("(() => { const S = window.__hm.S, M = window.__hm.combat.M; return { t2: S.skills.sb_tempest2, t3: S.skills.sb_tempest3, sp: S.sp, jumps: M.chainJumps, spellCd: M.spellCd,"
+                         " hdrs: document.querySelectorAll('#heroBody .tierhd').length }; })()")
+            T.step("skill tiers II-III: 9 nodes per hero; the capstone is locked until tier II, then learned by keys (2 points) and its mods apply",
+                   lk[0].startswith("needs") and lk[1] == 9 and lk[2] == 3 and tiers["t2"] == 1 and tiers["t3"] == 1 and tiers["sp"] == 0 and tiers["jumps"] == 3
+                   and abs(tiers["spellCd"] - 0.15) < 1e-6 and tiers["hdrs"] == 3, lock=lk, tiers=tiers)
+            T.ev("(() => { const S = window.__hm.S, k = window.__qaKeep; delete S.skills.sb_tempest2; delete S.skills.sb_tempest3; S.lv = k.lv; S.sp = k.sp; S.xp = k.xp; })()")
             pg.keyboard.press("Escape"); pg.wait_for_timeout(200)
             pg.keyboard.press("b"); pg.wait_for_timeout(300)
             sb_open = T.ev("window.__hm.heroUI && document.querySelectorAll('#heroBody .row.sbslot').length === 4")
@@ -537,6 +551,18 @@ def run(out, simscale=4, size=(960, 540)):
             T.ev("window.__hm.combat.cd.summon = 0"); pg.keyboard.press("v"); pg.wait_for_timeout(500)
             T.step("V summons the storm sprite", (T.ev("window.__hm.combat.qa().summon") or {}).get("role") == "stormsprite")
             rep["shots"]["mossglen_combat"] = T.shot("mossglen_combat")
+            # Part 4 summon tiers: Skyherd II + III -> tier III radiant form (own sprite, light, sparkles); + capstone -> tier IV
+            tq = "(() => { const C = window.__hm.combat; C.cd.summon = 0; C.doSummon(); return { ...C.qa().summon, hp0: C.summon.D.hp }; })()"
+            t1 = T.ev(tq)
+            T.ev("(() => { const S = window.__hm.S; S.skills.sb_herd = 1; S.skills.sb_herd2 = 1; })()")
+            t3 = T.ev(tq); pg.wait_for_timeout(600)
+            rep["shots"]["summon_tier3"] = T.shot("summon_tier3")
+            T.ev("window.__hm.S.skills.sb_herd3 = 1")
+            t4 = T.ev(tq)
+            T.step("summon tiers: base I, tier III radiant storm sprite with its own light, tier IV (capstone) stronger still",
+                   t1["tier"] == 1 and t1["role"] == "stormsprite" and not t1["light"] and t3["tier"] == 3 and t3["role"] == "stormsprite_r" and t3["light"]
+                   and "III" in t3["name"] and t4["tier"] == 4 and t4["hp0"] > t3["hp0"] > t1["hp0"], t1=t1, t3=t3, t4=t4)
+            T.ev("(() => { const S = window.__hm.S, C = window.__hm.combat; delete S.skills.sb_herd; delete S.skills.sb_herd2; delete S.skills.sb_herd3; C.cd.summon = 0; C.doSummon(); })()")
             # guard: a hit from the front is cut to a quarter; unguarded takes it all; a roll's i-frames take nothing
             hurt = "(() => { const c = window.__hm.ctx, p = c.player, C = window.__hm.combat; p.iframes = 0; C.godT = 0; const h0 = window.__hm.S.hp; C.hurtPlayer(20, { x: p.x + 1, z: p.z }); return h0 - window.__hm.S.hp; })()"
             T.ev("(() => { const c = window.__hm.ctx; c.player.facing = 'right'; window.__hm.S.hp = 100; window.__hm.peace = true; })()")

@@ -507,7 +507,7 @@
   "facing": "up"
  },
  "spells": true,
- "sprite_roles": ["actors", "cat", "heroes", "shopkeeper", "nightmerchant", "mushgolem", "runesentinel", "runewisp", "stormsprite", "sapling", "emberimp"],
+ "sprite_roles": ["actors", "cat", "heroes", "shopkeeper", "nightmerchant", "mushgolem", "runesentinel", "runewisp", "stormsprite", "sapling", "emberimp", "mushgolem_r", "runesentinel_r", "runewisp_r", "stormsprite_r", "sapling_r", "emberimp_r"],
  "game": {
   "id": "plaza",
   "title": "Hearthmoor Plaza",
