@@ -16,7 +16,8 @@ no glow, no blur: brightness comes from the palette's lightest steps, fades are 
   impact          a star-burst hit                                    (billboard)
   hero combat (Hearthmoor): seed_bomb -> earth_burst, rune_slam, rune_trap + glyph_burst, sky_strike,
   bloom_ring, ember_slash -> ember_pop; enemy coldfire_bolt -> frost_puff; hit_spark, summon_poof
-  glow pass (Hearthmoor): light_pool (ground decal under spells), glitter (twinkling motes), toadstools (night glow)
+  glow pass (Hearthmoor): light_pool (ground decal under spells), glitter (twinkling motes), toadstools (night glow),
+  coldfire_pool + coldfire_motes (Sefa's neon-blue lantern pool at night)
 
 Writes spells.png (atlas, one row per effect), <effect>.png strips, spells.json (frames + effect presets the
 runtime plays: kind, fps, loop, pivot, lift, point-light flash curve), spells_contact_4x.png.
@@ -604,6 +605,53 @@ def glitter(pal, seed):
     return out
 
 
+def coldfire_pool(pal, seed):
+    """Sefa's lantern pool (Hearthmoor night merchant): a neon-blue cold-fire pool of light on the cobbles.
+    Dithered palette pixels only (no bloom): white core, sky / flower_blue body, a flickering cloth-blue rim."""
+    out = []
+    sq = DECAL_SQUASH
+    R = rng(seed, "coldpool")
+    jit = [[R.random() for _ in range(CELL)] for _ in range(CELL)]
+    for f in range(6):
+        F = Frame(pal)
+        fl = [1.0, 0.94, 0.98, 0.9, 1.0, 0.96][f]           # the cold flame breathes: the pool's edge flickers
+        rx = 15.0 * fl
+        for y in range(CELL):
+            for x in range(CELL):
+                d = math.hypot(x - 16, (y - 16) / sq) / rx
+                if d > 1:
+                    continue
+                dens = 1.0 * (1 - d) ** 0.7 + 0.12
+                if d < 0.3 or ((x + y + f) % 2 == 0 and jit[y][x] < dens):   # a solid sky-blue heart, white flecks dancing in it
+                    core = "white" if (x + 2 * y + f) % 3 == 0 else "sky"
+                    F.set(x, y, core if d < 0.3 else "sky" if d < 0.55 else "flower_blue" if d < 0.82 else "cloth")
+        F.ring(16, 16, rx, rx * sq, "flower_blue", 1.0, start=f * 0.17, dots=4)
+        F.ring(16, 16, rx * 0.62, rx * 0.62 * sq, "sky", 1.0, start=0.5 + f * 0.23, dots=3)
+        out.append(F)
+    return out
+
+
+def coldfire_motes(pal, seed):
+    """Cold-fire flicker motes: little blue flames / sparks drifting up out of a lantern pool."""
+    out = []
+    R = rng(seed, "coldmotes")
+    motes = [(6 + R.random() * 20, 14 + R.random() * 16, R.randrange(8), R.choice(["sky", "flower_blue", "white", "sky"]))
+             for _ in range(9)]
+    for f in range(8):
+        F = Frame(pal)
+        for k, (x, y, ph, c) in enumerate(motes):
+            b = (f + ph) % 8
+            yy = y - b * 1.1
+            if b in (1, 4):
+                F.set(x, yy, c)
+            elif b in (2, 3):                    # a two-pixel flame: blue tongue, white tip
+                F.set(x, yy, c if c != "white" else "sky"); F.set(x, yy - 1, "white")
+            elif b == 5:
+                F.star(x, yy, 1, "white", "sky")
+        out.append(F)
+    return out
+
+
 def toadstools(pal, seed):
     """Three red-and-white toadstools whose spots glow at night (looping twinkle + a drifting spore)."""
     out = []
@@ -684,6 +732,9 @@ EFFECTS = {
     "light_pool": dict(fn=light_pool, kind="decal", fps=8, loop=True, loop_from=3, pivot=[16, 16], lift=0.02, loops=2,
                        glow=True, light=None, combat=True),
     "glitter": dict(fn=glitter, kind="billboard", fps=10, loop=True, pivot=[16, 31], lift=0.0, loops=2, glow=True, light=None, combat=True),
+    "coldfire_pool": dict(fn=coldfire_pool, kind="decal", fps=6, loop=True, loop_from=0, pivot=[16, 16], lift=0.02, loops=1,
+                          glow=True, light=None, combat=True),
+    "coldfire_motes": dict(fn=coldfire_motes, kind="billboard", fps=9, loop=True, pivot=[16, 31], lift=0.0, loops=1, glow=True, light=None, combat=True),
     "toadstools": dict(fn=toadstools, kind="billboard", fps=3, loop=True, pivot=[16, 31], lift=0.0, loops=1, glow=True, light=None, combat=True),
 }
 # what the player's spell key cycles through, and what a cast spawns (effect, where)

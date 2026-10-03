@@ -33,7 +33,13 @@ export class Shop {
     const M = MERCHANT[area];
     if (M && !ctx.npc(M.id)) { const a = ctx.addNpc({ ...M, pos: M.pos.slice(), behavior: 'idle', talkable: true }); a.facing = M.facing; }
   }
-  detach() { this.close(); if (this.nm && this.nm.light) this.nm.light.kill = true; this.nm = null; this.ctx = null; }
+  detach() { this.dropLantern(); this.close(); this.ctx = null; }
+  dropLantern() {
+    const nm = this.nm, fx = this.ctx && this.ctx.effects;
+    if (nm && nm.light) nm.light.kill = true;
+    if (nm && fx) for (const f of nm.fx || []) f.dur = f.t + 0.4;   // the pool and motes dither out with her
+    this.nm = null;
+  }
   // per frame: the night merchant comes and goes with the dark (not while you are mid-purchase with him)
   update(dt) {
     const ctx = this.ctx, M = ctx && NIGHT_MERCHANT[this.area]; if (!M) return;
@@ -41,11 +47,19 @@ export class Shop {
     if (night && !a) {
       const n = ctx.addNpc({ ...M, pos: M.pos.slice(), behavior: 'idle', talkable: true }); n.facing = M.facing;
       if (ctx.effects && !this.G.qaStill) ctx.effects.spawn('summon_poof', n.x, n.y, n.z + 0.05);
-      this.nm = { a: n, light: ctx.addGlow ? ctx.addGlow(n.x + 0.35, n.y, n.z + 0.1, { color: LANTERN, intensity: 5, range: 3.8, lift: 0.7, fadeIn: 0.8 }) : null };
+      // her lantern: a bright neon-blue cold-fire pool on the cobbles = a strong blue point light low over the ground,
+      // a dithered blue ground decal (palette pixels, drawn unlit so it reads against the dark; no bloom) and
+      // flickering cold-fire motes rising out of it
+      const lx = n.x + 0.35, lz = n.z + 0.1, ly = ctx.heightAt(lx, lz), still = !!this.G.qaStill;
+      const pool = (ox, oz, k) => ctx.effects.spawn('coldfire_pool', lx + ox, ctx.heightAt(lx + ox, lz + oz), lz + oz + 0.03, { duration: 1e9, fadeIn: still ? 0 : 0.8 * k });
+      const fx = ctx.effects ? [pool(0, 0, 1), pool(-0.62, 0.22, 1.3), pool(0.6, 0.3, 1.5),
+        ctx.effects.spawn('coldfire_motes', lx - 0.15, ly, lz + 0.12, { duration: 1e9, fadeIn: still ? 0 : 1.2 }),
+        ctx.effects.spawn('coldfire_motes', lx + 0.45, ly, lz - 0.1, { duration: 1e9, fadeIn: still ? 0 : 1.6 })].filter(Boolean) : [];
+      this.nm = { a: n, fx, light: ctx.addGlow ? ctx.addGlow(lx, ly, lz, { color: LANTERN, intensity: 11, range: 4.6, lift: 0.55, fadeIn: 0.8 }) : null };
       delete this.stock.night;   // fresh stock every night
     } else if (!night && a && this.open !== 'night') {
       if (ctx.effects) ctx.effects.spawn('summon_poof', a.x, a.y, a.z + 0.05);
-      ctx.removeNpc(a); if (this.nm && this.nm.light) this.nm.light.kill = true; this.nm = null;
+      ctx.removeNpc(a); this.dropLantern();
     }
   }
   nightHere() { return !!(this.ctx && NIGHT_MERCHANT[this.area] && this.ctx.npc(NIGHT_MERCHANT[this.area].id)); }
