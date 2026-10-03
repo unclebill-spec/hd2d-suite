@@ -509,6 +509,10 @@ def run(out, simscale=4, size=(960, 540)):
                         " return { state: e.state, light: !!e.light, bar: !!(b && !b.hidden), name: b ? b.firstChild.textContent : '', w: b ? b.querySelector('i').style.width : '' }; })()")
             rep["shots"]["boss_fight"] = T.shot("boss_fight")
             T.step("Mossheart: carries a rune light, a named boss bar shows when it fights", boss["light"] and boss["bar"] and "Mossheart" in boss["name"] and boss["w"] not in ("", "100%"), boss=boss)
+            big = T.ev("(() => { const R = window.__hd2d.actorRects(), m = R.find((r) => r.id === 'mossheart'), p = R.find((r) => r.id === 'player'), C = window.__hm.combat, e = C.enemies.find((x) => x.id === 'mossheart');"
+                       " return { sheet: m && m.sheet, mh: m && m.h / m.k, ph: p && p.h / p.k, r: e.a.r, scale: e.D.scale, pull: window.__hm.ctx.pull() }; })()")
+            T.step("Mossheart is ~2.5x the hero, drawn natively on its own boss sheet; hitbox and camera framing scale with it",
+                   big["sheet"] == "boss" and big["mh"] == 80 and big["ph"] == 32 and big["scale"] == 2.5 and big["r"] >= 0.7 and big["pull"] > 1.01, **big)
             T.ev("(() => { const C = window.__hm.combat, e = C.enemies.find((x) => x.id === 'mossheart'); window.__hm.peace = true; C.damageEnemy(e, 9999, window.__hm.ctx.player); })()")
             pg.wait_for_timeout(900)
             legs = [d for d in T.ev("window.__hm.loot.qa()") if d["rar"] == 4]
@@ -618,8 +622,10 @@ def run(out, simscale=4, size=(960, 540)):
             # ---------------------------------------------------------- stage 3: the travelling night merchant + gem sockets
             t_day = T.ev("window.__hd2d.clock.t")
             T.ev("window.__hd2d.setTime(0.9)"); pg.wait_for_timeout(700)
-            nm = T.ev("(() => { const a = window.__hm.ctx.npc('nightmerchant'), s = window.__hm.shopUI; return { here: !!a, role: a && a.role, light: !!(s.nm && s.nm.light), zone: window.__hm.glow.zones().some((z) => z.src === 'lantern') }; })()")
+            nm = T.ev("(() => { const a = window.__hm.ctx.npc('nightmerchant'), s = window.__hm.shopUI; return { here: !!a, role: a && a.role, light: !!(s.nm && s.nm.light), zone: window.__hm.glow.zones().some((z) => z.src === 'lantern'),"
+                 " pool: !!(s.nm && s.nm.fx.some((f) => f.name === 'coldfire_pool')), motes: s.nm ? s.nm.fx.filter((f) => f.name === 'coldfire_motes').length : 0, power: s.nm && s.nm.light ? s.nm.light.base : 0 }; })()")
             T.step("night: Sefa the night merchant sets up by the well with a neon-blue lantern (light + light zone)", nm["here"] and nm["role"] == "nightmerchant" and nm["light"] and nm["zone"], nm=nm)
+            T.step("Sefa's lantern casts a bright neon-blue cold-fire pool on the cobbles (strong light + ground decal + flicker motes)", nm["pool"] and nm["motes"] == 2 and nm["power"] >= 10, nm=nm)
             T.ev("(() => { const c = window.__hm.ctx, p = c.player, a = c.npc('nightmerchant'); p.x = a.x + 0.4; p.z = a.z + 1.6; p.y = c.heightAt(p.x, p.z); c.stopWalk(); })()")
             pg.wait_for_timeout(1200)
             rep["shots"]["night_merchant"] = T.shot("night_merchant")
@@ -634,6 +640,16 @@ def run(out, simscale=4, size=(960, 540)):
             pg.keyboard.press("Escape"); pg.wait_for_timeout(200)
             T.ev("window.__hd2d.setTime(0.5)"); pg.wait_for_timeout(700)
             T.step("dawn: the night merchant packs up and his lantern light goes", not T.ev("!!window.__hm.ctx.npc('nightmerchant')") and not T.ev("!!window.__hm.shopUI.nm"))
+            # ---------------------------------------------------------- glow-light cap (Options): 3 on desktop, 2 on phones
+            g0 = T.ev("[window.__hm.glowCap(), window.__hm.ctx.glowN]")
+            T.ev("document.getElementById('btnGlow').click()")
+            pg.wait_for_function("window.__hm.ctx && window.__hm.ctx.glowN === " + str(5 - g0[0]) + " && window.__hd2d.ready", timeout=120000); pg.wait_for_timeout(500)
+            g1 = T.ev("[window.__hm.glowCap(), window.__hm.ctx.glowN, document.getElementById('btnGlow').textContent, window.__hm.area]")
+            T.ev("document.getElementById('btnGlow').click()")
+            pg.wait_for_function("window.__hm.ctx && window.__hm.ctx.glowN === " + str(g0[0]) + " && window.__hd2d.ready", timeout=120000); pg.wait_for_timeout(500)
+            g2 = T.ev("[window.__hm.glowCap(), window.__hm.ctx.glowN, window.__hm.area]")
+            T.step("Options: glow lights toggles 3 <-> 2 (phone) and re-opens the area in place with that many pooled lights",
+                   g0 == [3, 3] and g1[:2] == [2, 2] and "2" in g1[2] and g1[3] == "plaza" and g2 == [3, 3, "plaza"], g0=g0, g1=g1, g2=g2)
             T.ev(f"window.__hd2d.setTime({t_day if 0.25 < t_day < 0.8 else 0.5})")
             T.ev("(() => { const S = window.__hm.S, LO = window.__hm.LO, it = LO.makeItem(3, 4, 'weapon'); it.name = 'Sunfire Rune Hammer'; S.bag.unshift(it); S.gems.golem_core = 1; S.gems.rift_shard = 1; })()")
             T.step("a Legendary always rolls 2 sockets; Rare+ roll 0-2", T.ev("window.__hm.S.bag[0].gems.length") == 2

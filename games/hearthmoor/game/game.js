@@ -225,7 +225,7 @@ async function loadArea(id, spawnKey, pos) {
   const canvas = document.createElement('canvas'); canvas.id = 'view'; document.body.prepend(canvas);
   G.area = id; G.S.area = id; G.armed = false;
   G.combat.detach(); G.glow.detach(); G.loot.detach(); G.shopUI.detach();
-  G.game = await boot({ base: AREAS[id], canvas, spawn: sp, startT: G.S.t, clockSpeed: 1 / DAY_SECONDS, spellCycle: slots(),
+  G.game = await boot({ base: AREAS[id], canvas, spawn: sp, startT: G.S.t, glowLights: glowCap(), clockSpeed: 1 / DAY_SECONDS, spellCycle: slots(),
                         player: { role: G.S.cls || G.preview || 'wildcaller' }, castAdvance: false,
                         keepTitle: true, padHandled: true, hooks, toast: (m, t) => toast(m, t) });
   const ctx = G.ctx = G.game.ctx;
@@ -524,7 +524,23 @@ function setOpts(open) {
   if (open) { syncDisplay(); syncInstall(); $('btnFull').hidden = !canFull(); }
 }
 G.setOpts = setOpts;
+// extra glow lights (pooled point lights for spell pools, drops, lanterns): 3, or 2 on phones (lighter on the GPU).
+// Saved per device (not in the save slot); ?glow=2 / ?glow=3 overrides; changing it re-opens the area in place.
+const GLOW_KEY = 'hearthmoor-glowlights';
+function glowCap() {
+  const q = +Q.get('glow'); if (q === 2 || q === 3) return q;
+  const s = +localStorage.getItem(GLOW_KEY); if (s === 2 || s === 3) return s;
+  return matchMedia('(pointer: coarse)').matches ? 2 : 3;
+}
+G.glowCap = glowCap;
+function syncGlowBtn() { const b = $('btnGlow'); if (b) b.textContent = `glow lights: ${glowCap()}${glowCap() === 2 ? ' (phone)' : ''}`; }
+async function toggleGlow() {
+  localStorage.setItem(GLOW_KEY, String(glowCap() === 3 ? 2 : 3)); syncGlowBtn();
+  if (G.ctx && !G.title) { const p = G.ctx.player; save(); await loadArea(G.area, null, [p.x, p.z, p.facing]); }
+  toast(`Glow lights: ${glowCap()}`, 1.6);
+}
 function wireOptions() {
+  $('btnGlow').onclick = () => toggleGlow(); syncGlowBtn();
   $('btnOpts').onclick = () => setOpts(!G.opts);
   $('optsClose').onclick = () => setOpts(false);
   $('opts').addEventListener('pointerdown', (e) => { if (e.target === $('opts')) setOpts(false); });
