@@ -627,9 +627,9 @@ def run(out, simscale=4, size=(960, 540)):
                  " const e = C.enemies.find((x) => x.id === 'mossheart'); p.x = e.a.x - 2.2; p.z = e.a.z; p.y = c.heightAt(p.x, p.z); c.stopWalk(); C.damageEnemy(e, 40, p); })()")
             pg.wait_for_timeout(700)
             boss = T.ev("(() => { const C = window.__hm.combat, e = C.enemies.find((x) => x.id === 'mossheart'), b = document.getElementById('bossbar');"
-                        " return { state: e.state, light: !!e.light, bar: !!(b && !b.hidden), name: b ? b.firstChild.textContent : '', w: b ? b.querySelector('i').style.width : '' }; })()")
+                        " return { state: e.state, light: !!e.light, bar: !!(b && !b.hidden), label: b ? b.firstChild.textContent : '', w: b ? b.querySelector('i').style.width : '' }; })()")
             rep["shots"]["boss_fight"] = T.shot("boss_fight")
-            T.step("Mossheart: carries a rune light, a named boss bar shows when it fights", boss["light"] and boss["bar"] and "Mossheart" in boss["name"] and boss["w"] not in ("", "100%"), boss=boss)
+            T.step("Mossheart: carries a rune light, a named boss bar shows when it fights", boss["light"] and boss["bar"] and "Mossheart" in boss["label"] and boss["w"] not in ("", "100%"), boss=boss)
             big = T.ev("(() => { const R = window.__hd2d.actorRects(), m = R.find((r) => r.id === 'mossheart'), p = R.find((r) => r.id === 'player'), C = window.__hm.combat, e = C.enemies.find((x) => x.id === 'mossheart');"
                        " return { sheet: m && m.sheet, mh: m && m.h / m.k, ph: p && p.h / p.k, r: e.a.r, scale: e.D.scale, pull: window.__hm.ctx.pull() }; })()")
             T.step("Mossheart is ~2.5x the hero, drawn natively on its own boss sheet; hitbox and camera framing scale with it",
@@ -654,6 +654,83 @@ def run(out, simscale=4, size=(960, 540)):
             T.ev("(() => { const S = window.__hm.S; for (const k of ['weapon', 'armor', 'trinket']) if (S.gear[k] && S.gear[k].rar === 4) window.__hm.LO.unequip(S, k); window.__hm.ctx.player.iframes = 0; })()")
             pg.wait_for_timeout(300)
             T.step("unequipping the Legendary drops the aura", not T.ev("window.__hm.loot.auraOn()"))
+            # ---------------------------------------------------------- stage 5 part 2: procedural rares + random rifts
+            KILL = ("(() => { const G = window.__hm, C = G.combat, p = G.ctx.player; G.peace = true;"
+                    " for (const e of %s) for (let i = 0; i < 60 && e.state !== 'dead' && e.state !== 'gone'; i++) C.damageEnemy(e, 80, p); })()")
+            T.ev("(() => { const G = window.__hm, C = G.combat; G.peace = true; G.loot.clear(); C.heal(999, true); })()")
+            rare = T.ev("(() => { const G = window.__hm, p = G.ctx.player; const R = G.rares.spawn({ base: 'deathlord', el: 'gloam', traits: ['shielded'], pos: [p.x + 3.4, p.z - 0.3] });"
+                        " return { name: R.name, id: R.e.id, light: !!R.e.light, aura: G.ctx.effects.list.some((f) => f.name === 'rare_aura_violet'), scale: R.D.scale, minRar: R.D.minRar }; })()")
+            T.frames(8); pg.wait_for_timeout(500)
+            big = T.ev(f"(() => {{ const R = window.__hd2d.actorRects(), m = R.find((r) => r.id === '{rare['id']}'), p = R.find((r) => r.id === 'player'); return {{ sheet: m && m.sheet, mh: m && m.h / m.k, ph: p && p.h / p.k }}; }})()")
+            rep["shots"]["rare_death_lord"] = T.shot("rare_death_lord")
+            T.step("a procedural rare: name prefix (trait + element + base), a coloured aura and its own light",
+                   rare["name"] == "Shielded Gloam Death Lord" and rare["aura"] and rare["light"] and rare["minRar"] >= 2, rare=rare)
+            T.step("the rare is drawn natively on the area's boss sheet at 2-3x the hero (80 px frame vs 32)",
+                   big["sheet"] == "boss" and big["mh"] == 80 and big["ph"] == 32 and 2 <= rare["scale"] <= 3, **big)
+            ward = T.ev(f"(() => {{ const G = window.__hm, C = G.combat, e = C.enemies.find((x) => x.id === '{rare['id']}'), h0 = e.hp, w0 = e.rare.ward; G.ctx.player.iframes = 99; G.peace = false; C.damageEnemy(e, 40, G.ctx.player);"
+                        " const b = document.getElementById('bossbar'); return { lost: h0 - e.hp, ward: [w0, e.rare.ward], bar: !!(b && !b.hidden), label: b ? b.firstChild.textContent : '', col: b ? b.firstChild.style.color : '' }; })()")
+            T.frames(3)
+            # read the bar while the rare still fights (in peace it walks home and heals, which hides the bar)
+            ward.update(T.ev("(() => { const b = document.getElementById('bossbar'), r = { bar: !!(b && !b.hidden), label: b ? b.firstChild.textContent : '', col: b ? b.firstChild.style.color : '' }; window.__hm.peace = true; window.__hm.ctx.player.iframes = 0; return r; })()"))
+            T.step("Shielded: the rune ward soaks most of a hit; a named bar in the element colour shows the rare",
+                   ward["lost"] < 40 and ward["ward"][1] < ward["ward"][0] and ward["bar"] and "Death Lord" in ward["label"] and ward["col"] != "", **ward)
+            T.ev(KILL % f"window.__hm.combat.enemies.filter((x) => x.id === '{rare['id']}')")
+            T.frames(6); pg.wait_for_timeout(600)
+            hunt = T.S().get("hunt") or {}
+            drops = T.ev("window.__hm.loot.qa()")
+            T.step("felling the rare: a hunt log entry and a guaranteed Rare-or-better drop; the aura goes",
+                   (hunt.get("deathlord:gloam:shielded") or {}).get("kills") == 1 and any((d["rar"] or 0) >= 2 for d in drops)
+                   and not T.ev("window.__hm.ctx.effects.list.some((f) => f.name === 'rare_aura_violet' && f.t < f.dur - 0.31)"), hunt=list(hunt), drops=drops)
+            traits = T.ev("(() => { const G = window.__hm, C = G.combat, p = G.ctx.player; const R = G.rares.spawn({ base: 'elderwraith', el: 'frost', traits: ['enraged', 'blinking', 'summoner'], pos: [p.x + 3.2, p.z + 0.6] });"
+                          " const e = R.e; G.peace = false; e.state = 'chase'; const x0 = e.a.x, z0 = e.a.z; R.blinkT = 0; R.callT = 0; G.rares.tick(e, 0.05, false);"
+                          " const moved = Math.hypot(e.a.x - x0, e.a.z - z0), sp0 = e.D.speed; C.damageEnemy(e, Math.ceil(e.hp * 0.6), p); G.rares.tick(e, 0.05, false); G.peace = true;"
+                          " return { rname: R.name, blinks: R.blinks || 0, moved: +moved.toFixed(2), kin: R.minions.length, enraged: !!R.enraged, faster: e.D.speed > sp0, aura: !!R.fx }; })()")
+            T.step("traits work: Blinking jumps to the hero's side, Summoner calls kin, Enraged speeds up below half health",
+                   traits["blinks"] == 1 and traits["moved"] > 0.5 and traits["kin"] == 1 and traits["enraged"] and traits["faster"] and traits["rname"].endswith("Frostfire Elder Wraith"), **traits)
+            T.ev(KILL % "window.__hm.combat.enemies.filter((x) => x.rare || /_kin/.test(x.id))")
+            T.frames(6); pg.wait_for_timeout(600)
+            pg.keyboard.press("j"); pg.wait_for_timeout(400)
+            hl = T.ev("[...document.querySelectorAll('#huntList li b')].map((b) => b.textContent)")
+            rep["shots"]["hunt_log"] = T.shot("hunt_log")
+            pg.keyboard.press("j"); pg.wait_for_timeout(300)
+            T.step("the hunt log (J / Start / ☰) lists both rares", len(hl) == 2 and "Shielded Gloam Death Lord" in hl and any("Frostfire Elder Wraith" in n for n in hl), hunt=hl)
+            T.ev("window.__hm.loot.clear()")
+            # random rifts: three tiers
+            OPEN = "(() => { const G = window.__hm, p = G.ctx.player; const R = G.rifts.open(%d, [p.x + 4.6, p.z - 0.8]); if (%s) G.rifts.cur.forceRare = true; return G.rifts.state(); })()"   # force the tier II rare at open (setting it later races the hero's approach)
+            GO = "(() => { const G = window.__hm, c = G.ctx, p = c.player, R = G.rifts.cur; p.x = R.pos[0] - 1.4; p.z = R.pos[1] + 0.6; p.y = c.heightAt(p.x, p.z); c.stopWalk(); })()"
+            ALIVE = "window.__hm.rifts.alive()"
+            for tier, tid, fx, shot in ((0, "minor", "rift_tear_minor", "rift_minor"), (1, "major", "rift_tear", "rift_major"), (2, "abyssal", "rift_tear_abyss", "rift_abyssal")):
+                c0 = (T.S().get("rifts") or {}).get(tid, 0)
+                st = T.ev(OPEN % (tier, 'true' if tier == 1 else 'false'))
+                T.frames(10); pg.wait_for_timeout(700)
+                rep["shots"][shot] = T.shot(shot)
+                ok = st["rift"] and st["rift"]["state"] == "open" and fx in st["rift"]["fx"] and (tier < 2 or "rift_ring_abyss" in st["rift"]["fx"])
+                T.ev(GO); T.frames(6); pg.wait_for_timeout(400)
+                f1 = T.ev("window.__hm.rifts.state()")["rift"]
+                waves = []
+                for w in range(3):
+                    r = T.ev("window.__hm.rifts.state()")["rift"]
+                    if not r: break
+                    waves.append([r["wave"], r["alive"], r["rare"]])
+                    T.ev(KILL % ALIVE); T.frames(8); pg.wait_for_timeout(500)
+                end = T.ev("window.__hm.rifts.state()")
+                drops = T.ev("window.__hm.loot.qa()")
+                need = {0: 1, 1: 2, 2: 3}[tier]
+                T.step(f"random rift tier {tier + 1} ({tid}): opens with its tear, spits a wave when you come close, seals with a reward",
+                       ok and f1 and f1["state"] == "fight" and f1["alive"] >= 3 and end["rift"] is None and end["closed"][tid] == c0 + 1
+                       and any(d["gold"] for d in drops) and any((d["rar"] or 0) >= need for d in drops)
+                       and (tier != 1 or (waves and waves[0][2])) and (tier != 2 or (len(waves) == 2 and waves[0][2] and waves[1][0] == 2)), waves=waves, fx=st["rift"] and st["rift"]["fx"])
+                T.ev("window.__hm.loot.clear()")
+            H = T.S().get("hunt") or {}
+            T.step("rift rares go into the hunt log too (the abyssal one has two traits)", sum(h["kills"] for h in H.values()) >= 4 and any(len(h["traits"]) == 2 for h in H.values()),
+                   hunt=[h["name"] for h in H.values()])
+            ign = T.ev("(() => { const G = window.__hm, p = G.ctx.player; const c0 = { ...(G.S.rifts || {}) }; G.rifts.open(0, [p.x + 9, p.z]); G.rifts.cur.t = 999; G.rifts.update(0.016);"
+                       " return { gone: !G.rifts.cur, same: JSON.stringify(c0) === JSON.stringify(G.S.rifts || {}) }; })()")
+            T.step("an ignored rift closes by itself (no reward)", ign["gone"] and ign["same"], **ign)
+            auto = T.ev("(() => { const G = window.__hm, R = G.rifts, a = R.auto; R.auto = () => true; R.timer = 0.01; R.update(0.05); const st = R.state(); R.close(false, true); R.auto = a;"
+                        " return { opened: !!st.rift, tier: st.rift && st.rift.id, timer: R.timer > 30 }; })()")
+            T.step("in normal play a rift tears open by itself when its timer runs out (tier picked by weight)", auto["opened"] and auto["tier"] in ("minor", "major", "abyssal"), **auto)
+            T.ev("(() => { const G = window.__hm; G.peace = true; G.loot.clear(); G.combat.heal(999, true); G.ctx.player.iframes = 0; })()")
             T.ev("(() => { const c = window.__hm.ctx, p = c.player, g = c.npc('golem_0'); p.x = g.x - 1.1; p.z = g.z; p.y = c.heightAt(p.x, p.z); p.facing = 'right'; c.stopWalk(); })()")
             T.ev("window.__hm.combat.cd.summon = 0"); pg.keyboard.press("v"); pg.wait_for_timeout(500)
             T.step("V summons the storm sprite", (T.ev("window.__hm.combat.qa().summon") or {}).get("role") == "stormsprite")
@@ -795,6 +872,8 @@ def run(out, simscale=4, size=(960, 540)):
             saved = T.ev("JSON.parse(localStorage.getItem('hearthmoor-slot-1-v2'))")
             T.step("saved to localStorage hearthmoor-slot-1-v2 (with the hero class)", saved and saved["area"] == "mossglen" and saved["v"] == 2 and saved["cls"] == "stormborn"
                    and T.ev("localStorage.getItem('hearthmoor-slot-1-v1')") is None)
+            T.step("the hunt log and rift tally are saved with the slot", sum(h["kills"] for h in (saved.get("hunt") or {}).values()) >= 4 and (saved.get("rifts") or {}).get("abyssal", 0) >= 1,
+                   hunt=len(saved.get("hunt") or {}), rifts=saved.get("rifts"))
             pos_before = T.pos()
             pg.reload()
             T.wait("window.__hm && window.__hm.ready", 120)

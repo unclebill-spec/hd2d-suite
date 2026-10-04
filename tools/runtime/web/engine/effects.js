@@ -165,7 +165,14 @@ export class Effects {
         const b = this._w.set(f.x, y, f.z).addScaledVector(toCam, 0.9).project(camera);
         u.uZBottom.value = b.z; u.uZTop.value = b.z;
       }
-      if (f.onTop) { u.uZBottom.value = -0.999; u.uZTop.value = -0.999; }   // QA lineup only: never occluded
+      // QA lineup only: never occluded by the scene, but still ordered among themselves (decals first, then billboards,
+      // each far to near). A shared depth let the first-drawn effect win, and depth bands squeezed near the far plane are
+      // below depth-buffer precision, so order by renderOrder with the depth test off (a back-row burst cut into lane's orb)
+      if (f.onTop) {
+        u.uZBottom.value = -0.999; u.uZTop.value = -0.999; f.mat.depthTest = false;
+        const far = camera.position.distanceTo(this._c.set(f.x, y, f.z));
+        f.mesh.renderOrder = (e.kind === 'decal' ? 100000 : 200000) - Math.round(far * 100);
+      }
       const piv = u.uPivot.value;
       f.rect = { id: f.name, name: f.name, kind: e.kind, x: sx - piv.x * k, y: bufH - (sy + piv.y * k), w: this.cell * k, h: this.cell * k,
                  k, frame: [f.frame * this.cell, e.row * this.cell], cell: this.cell };

@@ -22,6 +22,8 @@ no glow, no blur: brightness comes from the palette's lightest steps, fades are 
   glowplant_coldfire (neon-blue), glowplant_violet (neon violet), glowplant_toadcap (neon red, crisp white spots);
   violet_pool / red_pool (their night ground pools). Violet + saturated red use the named NEON glow accents.
   Lantern Eve (Hearthmoor Stage 5): sky_lantern (a paper sky lantern lit from inside, flame at the opening), rift_tear (Veyra's violet-red omen).
+  Rares + random rifts (Stage 5 part 2): rare_aura_blue / _violet / _red (a rare's element ground aura), rift_tear_minor
+  (tier I), rift_tear (tier II), rift_tear_abyss + rift_ring_abyss (tier III).
 
 Writes spells.png (atlas, one row per effect), <effect>.png strips, spells.json (frames + effect presets the
 runtime plays: kind, fps, loop, pivot, lift, point-light flash curve), spells_contact_4x.png.
@@ -1041,6 +1043,116 @@ def rift_tear(pal, seed):
         out.append(F)
     return out
 
+
+# ------------------------------------------------------------------ Stage 5 part 2: rare auras + random-rift tiers
+def _rare_aura(pal, seed, cols):
+    """a procedural rare's ground aura in its element colour: a marching dashed outer ring, a dithered inner ring,
+    four rune ticks turning the other way and a few glints. Decal (pre-squashed), palette / NEON pixels, no bloom."""
+    hi, mid, lo = cols
+    out = []
+    sq = DECAL_SQUASH
+    for f in range(8):
+        F = Frame(pal)
+        rx, ry = 15.0, 15.0 * sq
+        F.ring(16, 16, rx, ry, mid, 1.0, start=f * math.tau / 24, dots=2)
+        F.ring(16, 16, rx - 0.8, ry - 0.6, lo, 1.0, start=f * math.tau / 24 + 0.12, dots=3)
+        F.ring(16, 16, rx - 4.0, ry - 4.0 * sq, lo, 1.0, start=-f * 0.2, dots=2)
+        rot = -f * math.tau / 32
+        for k in range(4):
+            a = rot + k * math.tau / 4
+            x, y = 16 + math.cos(a) * (rx - 2.2), 16 + math.sin(a) * (ry - 1.3)
+            F.set(x, y, hi); F.set(x - 1, y, mid); F.set(x + 1, y, mid)
+        for k in range(3):
+            a = (f * 0.7 + k * 2.1) % math.tau
+            r = 6 + (f + k * 3) % 6
+            F.set(16 + math.cos(a) * r, 16 + math.sin(a) * r * sq, hi if (f + k) % 2 else mid)
+        out.append(F)
+    return out
+
+
+def rare_aura_blue(pal, seed):
+    return _rare_aura(pal, seed, ("white", "sky", "flower_blue"))
+
+
+def rare_aura_violet(pal, seed):
+    return _rare_aura(pal, seed, ("neon_violet_hi", "neon_violet", "neon_violet_lo"))
+
+
+def rare_aura_red(pal, seed):
+    return _rare_aura(pal, seed, ("neon_red_hi", "neon_red", "neon_red_lo"))
+
+
+def _tier_tear(pal, seed, tag, y0, y1, xlo, xhi, wmax, lips, edges, spark):
+    """a random-rift tear (Stage 5 part 2) at a given size: a jagged void seam with lips and a hard neon edge line,
+    a fixed jagged profile, embers off the edge and sparks; it breathes and flickers (no bloom)"""
+    out = []
+    R = rng(seed, tag)
+    path = []
+    x = 16.0
+    for y in range(y0, y1 + 1):
+        if y0 + 2 < y < y1 - 2 and y % 2 == 0:
+            x += R.choice((-2, -1, -1, 1, 1, 2))
+        x = max(xlo, min(xhi, x))
+        path.append((y, x))
+    notch = [1.0 + R.choice((-0.3, -0.15, 0.0, 0.0, 0.15, 0.35)) for _ in path]
+    sparks = [(R.randrange(2, len(path) - 2), R.choice((-1, 1)), R.randrange(8)) for _ in range(max(4, len(path) // 3))]
+    lip, lip_hi = lips
+    edge, edge_hi, edge_lo = edges
+    for f in range(8):
+        F = Frame(pal)
+        breathe = [1.0, 1.2, 0.9, 1.35, 1.1, 0.85, 1.25, 1.0][f]
+        for i, (y, x) in enumerate(path):
+            t = i / (len(path) - 1)
+            w = max(0.0, math.sin(t * math.pi)) ** 0.6 * wmax * breathe * notch[i]
+            for dx in range(-10, 11):
+                d = abs(dx) - w
+                if d <= -1.0:
+                    F.set(x + dx, y, "ink" if (x + dx + 3 * y + f) % 11 else lip)
+                elif d <= 0.0:
+                    F.set(x + dx, y, lip_hi if (y + f) % 3 == 0 else lip)
+                elif d <= 1.0:
+                    F.set(x + dx, y, edge_hi if (y + f) % 3 == 0 else edge)
+                elif d <= 2.0 and (y + dx + f) % 2 == 0:
+                    F.set(x + dx, y, edge_lo)
+        for (i, side, ph) in sparks:
+            b = (f + ph) % 8
+            if b > 4:
+                continue
+            y, x = path[i]
+            sx = x + side * (wmax + 1 + b * 1.4)
+            F.set(sx, y - b * 0.6, spark if b < 2 else edge)
+            if b == 1:
+                F.set(sx, y - 1.6, "white")
+        out.append(F)
+    return out
+
+
+def rift_tear_minor(pal, seed):
+    """tier I (minor) random rift: a small cold-fire tear, violet lips with a neon-blue edge"""
+    return _tier_tear(pal, seed, "tearI", 14, 30, 13, 19, 2.6, ("neon_violet", "neon_violet_hi"), ("flower_blue", "sky", "cloth"), "white")
+
+
+def rift_tear_abyss(pal, seed):
+    """tier III (abyssal) random rift: a wide crimson tear, red lips with a violet neon edge and red embers"""
+    return _tier_tear(pal, seed, "tearIII", 0, 31, 11, 21, 5.6, ("neon_red", "neon_red_hi"), ("neon_violet", "neon_violet_hi", "neon_red_lo"), "neon_red_hi")
+
+
+def rift_ring_abyss(pal, seed):
+    """the ground ring under an abyssal rift: a dashed crimson rune ring with violet ticks (decal)"""
+    out = []
+    sq = DECAL_SQUASH
+    for f in range(8):
+        F = Frame(pal)
+        rx, ry = 14.5, 14.5 * sq
+        F.ring(16, 16, rx, ry, "neon_red", 1.0, start=f * math.tau / 32, dots=2)
+        F.ring(16, 16, rx - 3.5, ry - 3.5 * sq, "neon_red_lo", 1.0, start=-f * math.tau / 32, dots=3)
+        for k in range(6):
+            a = k * math.tau / 6 + f * 0.1
+            F.set(16 + math.cos(a) * (rx - 1.8), 16 + math.sin(a) * (ry - 1.1), "neon_violet_hi" if (k + f) % 2 else "neon_violet")
+        out.append(F)
+    return out
+
+
 EFFECTS = {
     "sparkle_burst": dict(fn=sparkle_burst, kind="billboard", fps=14, loop=False, pivot=[16, 31], lift=0.9,
                           glow=True, light={"color": "lamp", "intensity": 7, "range": 4.5, "curve": [1, 0.9, 0.7, 0.5, 0.3, 0.2, 0.1, 0]}),
@@ -1101,6 +1213,12 @@ EFFECTS = {
     "glowplant_toadcap": dict(fn=glowplant_toadcap, kind="billboard", fps=3, loop=True, pivot=[16, 31], lift=0.0, loops=1, glow=True, light=None, combat=True),
     "sky_lantern": dict(fn=sky_lantern, kind="billboard", fps=6, loop=True, pivot=[16, 31], lift=0.0, loops=1, glow=True, light=None, combat=True),
     "rift_tear": dict(fn=rift_tear, kind="billboard", fps=10, loop=True, pivot=[16, 31], lift=0.0, loops=1, glow=True, light=None, combat=True),
+    "rare_aura_blue": dict(fn=rare_aura_blue, kind="decal", fps=8, loop=True, loop_from=0, pivot=[16, 16], lift=0.02, loops=1, glow=True, light=None, combat=True),
+    "rare_aura_violet": dict(fn=rare_aura_violet, kind="decal", fps=8, loop=True, loop_from=0, pivot=[16, 16], lift=0.02, loops=1, glow=True, light=None, combat=True),
+    "rare_aura_red": dict(fn=rare_aura_red, kind="decal", fps=8, loop=True, loop_from=0, pivot=[16, 16], lift=0.02, loops=1, glow=True, light=None, combat=True),
+    "rift_tear_minor": dict(fn=rift_tear_minor, kind="billboard", fps=10, loop=True, pivot=[16, 31], lift=0.0, loops=1, glow=True, light=None, combat=True),
+    "rift_tear_abyss": dict(fn=rift_tear_abyss, kind="billboard", fps=10, loop=True, pivot=[16, 31], lift=0.0, loops=1, glow=True, light=None, combat=True),
+    "rift_ring_abyss": dict(fn=rift_ring_abyss, kind="decal", fps=6, loop=True, loop_from=0, pivot=[16, 16], lift=0.02, loops=1, glow=True, light=None, combat=True),
     "toadstools": dict(fn=toadstools, kind="billboard", fps=3, loop=True, pivot=[16, 31], lift=0.0, loops=1, glow=True, light=None, combat=True),
 }
 # what the player's spell key cycles through, and what a cast spawns (effect, where)

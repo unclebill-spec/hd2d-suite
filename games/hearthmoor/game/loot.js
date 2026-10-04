@@ -196,9 +196,18 @@ export class Loot {
       this.drop(a.x + 0.1, a.z - 0.35, { gem: 'golem_core' });
       return;
     }
+    if (o.minRar != null) {   // rares (Rare+) and rift rewards: always an item of at least that rarity
+      this.dropItem(a.x - 0.3, a.z + 0.35, lv + 1, o.minRar);
+      if (Math.random() < 0.5) this.drop(a.x + 0.05, a.z - 0.4, { gem: 'rift_shard' });
+      return;
+    }
     const gemOdds = { golem: ['golem_core', 0.1], icegolem: ['frost_core', 0.25], wraith: ['rift_shard', 0.08], skelmage: ['rift_shard', 0.1], mossgolem: ['golem_core', 0.15], sporeling: ['rift_shard', 0.08] }[a.role];
     if (gemOdds && Math.random() < gemOdds[1]) this.drop(a.x + 0.05, a.z - 0.4, { gem: gemOdds[0] });
     if (Math.random() < 0.6 + luck * 0.1) this.drop(a.x - 0.3, a.z + 0.35, { item: makeItem(lv, null, null, Math.random, luck) });
+  }
+  dropItem(x, z, lv, minRar = 0) {
+    const luck = this.G.S.mode === 'hero' ? 1 : 0, ws = RARITY.map((r, i) => (i >= minRar ? r.w : 0));
+    return this.drop(x, z, { item: makeItem(lv, pickW(Math.random, ws), null, Math.random, luck) });
   }
   drop(x, z, what) {
     const ctx = this.ctx; if (!ctx || !this.layer) return null;

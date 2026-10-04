@@ -23859,6 +23859,50 @@
     }
    ],
    "summon": true
+  },
+  "elderwraith": {
+   "sheet": "boss",
+   "row": 0,
+   "kind": "enemy",
+   "enemy": true,
+   "boss": true,
+   "scale": 2.4,
+   "frame": [
+    50,
+    80
+   ],
+   "anims": [
+    "idle",
+    "walk",
+    "attack",
+    "die"
+   ],
+   "desc": "Elder wraith (rare, ~2.4x): towering hooded spectre, tattered layered robes, cold-fire crown, skeletal hands, a cold-fire chain lantern"
+  },
+  "deathlord": {
+   "sheet": "boss",
+   "row": 4,
+   "kind": "enemy",
+   "enemy": true,
+   "boss": true,
+   "scale": 2.4,
+   "frame": [
+    50,
+    80
+   ],
+   "anims": [
+    "idle",
+    "walk",
+    "attack",
+    "die"
+   ],
+   "desc": "Death Lord (rare, ~2.4x): skeleton knight in dark rune plate, horned helm over a bone skull, spiked pauldrons, deep-red cape, rune greatsword"
+  }
+ },
+ "sheets": {
+  "boss": {
+   "json": "boss.json",
+   "image": "boss.png"
   }
  }
 }

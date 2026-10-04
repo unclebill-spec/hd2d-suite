@@ -293,3 +293,11 @@ body.tv #dlg { width: min(900px, 80vw); } body.tv #dlg p { font-size: 20px; }
              font: 700 14px/1 "Trebuchet MS", system-ui, sans-serif; padding: 6px 12px; cursor: pointer; touch-action: none; pointer-events: auto; }
 #introSkip span { font-size: 11px; letter-spacing: -2px; }
 #introSkip:active { transform: translateX(-50%) translateY(1px); }
+/* Stage 5 part 2: the hunt log under the tasks (rares felled, rifts sealed) */
+#log .hunt h4 { margin: 10px 0 4px; font-size: 14px; display: flex; justify-content: space-between; color: var(--ink, #2a1e1c); border-top: 2px dotted #c4a984; padding-top: 6px; }
+#log .hunt h4 span { font-weight: 400; font-size: 12px; opacity: .8; }
+#huntList { list-style: none; margin: 0; padding: 0; }
+#huntList li { display: flex; align-items: center; gap: 6px; padding: 2px 0; font-size: 13px; }
+#huntList li i { flex: none; width: 10px; height: 10px; border: 2px solid #2a1e1c; }
+#huntList li span { opacity: .8; font-size: 12px; margin-left: auto; }
+#log .rifts { margin: 4px 0 0; font-size: 12px; opacity: .85; }

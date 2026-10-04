@@ -67,6 +67,15 @@ def lum(a):
 _SHEETS, _SHEET_ROOT = {}, []
 
 
+def _frames(pg, n=3, timeout=20.0):
+    """wait until the engine has drawn n more frames: fixed sleeps alone read rects that were never set on a loaded box
+    (plaza's second gamefx page under load ~20 drew no frame in 1 s)"""
+    import time
+    f0 = pg.evaluate("window.__hd2d.frames || 0"); t0 = time.time()
+    while pg.evaluate("window.__hd2d.frames || 0") < f0 + n and time.time() - t0 < timeout:
+        pg.wait_for_timeout(100)
+
+
 def sprite_check(shot, atlas, r, block_tol=6):
     """shot: HxWx3 uint8 screenshot, atlas: RGBA uint8, r: actor rect (screenshot px)."""
     if r.get("atlas") and _SHEET_ROOT:   # a boss role drawn on its own sheet (bigger native frames): compare with that sheet
@@ -522,28 +531,34 @@ def run(root, out, size=(1280, 720), timeout=120, scene_dir="", params="", phone
                 # particles off for the lineup: a firefly drifting over a frozen effect is not a blurred effect
                 PSHOW = "(() => { const p = window.__hd2d.ctx.particles; if (p) p.points.visible = %s; })()"
                 pg.evaluate(PSHOW % "false")
-                pg.evaluate("window.__hd2d.hideActors(true); window.__hd2d.effectLineup(0.5)")
-                pg.wait_for_timeout(700)
-                pg.evaluate("window.__hd2d.hold(true)")
-                pg.wait_for_timeout(300)
-                frects = pg.evaluate("window.__hd2d.effectRects()")
-                png = pg.screenshot()
-                pg.evaluate("window.__hd2d.hold(false); window.__hd2d.effects.clear(); window.__hd2d.hideActors(false)")
+                # paged lineup (<= 24 per page, <= 8 a row at 2.4 m) when the runtime has effectPages; older runtimes: one page
+                FPER = 24
+                fpages = pg.evaluate(f"window.__hd2d.effectPages ? window.__hd2d.effectPages({FPER}) : 0")
+                fres, fexp, fnw, fbf = [], 0, 0.0, 0.0
+                for page in range(max(1, fpages)):
+                    lineup = f"window.__hd2d.effectLineup(0.5, {page}, {FPER})" if fpages else "window.__hd2d.effectLineup(0.5)"
+                    pg.evaluate(f"window.__hd2d.hideActors(true); {lineup}")
+                    pg.wait_for_timeout(700); _frames(pg)
+                    pg.evaluate("window.__hd2d.hold(true)")
+                    pg.wait_for_timeout(300)
+                    frects = pg.evaluate("window.__hd2d.effectRects()")
+                    png = pg.screenshot()
+                    pg.evaluate("window.__hd2d.hold(false); window.__hd2d.effects.clear(); window.__hd2d.hideActors(false)")
+                    path = out / ("effects.png" if page == 0 else f"effects_p{page + 1}.png")
+                    path.write_bytes(png)
+                    rep["shots"]["effects" if page == 0 else f"effects_p{page + 1}"] = str(path)
+                    fimg = np.array(Image.open(path).convert("RGB"))
+                    scale = fimg.shape[1] / frects[0]["buf"][0] if frects else 1
+                    for r in frects:
+                        if abs(scale - 1) > 1e-6:
+                            r = {**r, "x": r["x"] * scale, "y": r["y"] * scale}
+                        fres.append({**sprite_check(fimg, fx_atlas, r), "kind": r.get("kind")})
+                    im16 = fimg.astype(np.int16)
+                    fexp += len(frects)
+                    fnw = max(fnw, float(((im16[..., 0] > 248) & (im16[..., 1] > 248) & (im16[..., 2] > 248)).mean()))
+                    fbf = max(fbf, float((lum(fimg) > 225).mean()))
                 pg.evaluate(PSHOW % "true")
-                path = out / "effects.png"
-                path.write_bytes(png)
-                rep["shots"]["effects"] = str(path)
-                fimg = np.array(Image.open(path).convert("RGB"))
-                scale = fimg.shape[1] / frects[0]["buf"][0] if frects else 1
-                fres = []
-                for r in frects:
-                    if abs(scale - 1) > 1e-6:
-                        r = {**r, "x": r["x"] * scale, "y": r["y"] * scale}
-                    fres.append({**sprite_check(fimg, fx_atlas, r), "kind": r.get("kind")})
-                im16 = fimg.astype(np.int16)
-                fx = {"effects": fres, "expected": len(frects),
-                      "near_white": float(((im16[..., 0] > 248) & (im16[..., 1] > 248) & (im16[..., 2] > 248)).mean()),
-                      "bright_frac": float((lum(fimg) > 225).mean())}
+                fx = {"effects": fres, "expected": fexp, "near_white": fnw, "bright_frac": fbf}
                 crops = [c["_crop"] for c in fres if "_crop" in c and c["_crop"].size]
                 if crops:
                     hmax = max(c.shape[0] for c in crops)
@@ -564,7 +579,7 @@ def run(root, out, size=(1280, 720), timeout=120, scene_dir="", params="", phone
                 gres, nw, bf = [], 0.0, 0.0
                 for pi in range(pages):
                     pg.evaluate(f"window.__hd2d.hideActors(true); window.__hd2d.showOverlays && window.__hd2d.showOverlays(false); window.__hd2d.gamefxLineup(0.5, {pi})")
-                    pg.wait_for_timeout(700)
+                    pg.wait_for_timeout(700); _frames(pg)
                     pg.evaluate("window.__hd2d.hold(true)")
                     pg.wait_for_timeout(300)
                     grects = pg.evaluate("window.__hd2d.gamefxLineupRects()")

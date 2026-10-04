@@ -13,6 +13,8 @@ import { Hollows } from './hollows.js';
 import { Garden } from './garden.js';
 import { Weather, weatherAt } from './weather.js';
 import { Intro } from './intro.js';
+import { Rares, ELEMENTS as RARE_EL } from './rares.js';
+import { Rifts } from './rifts.js';
 import * as LO from './loot.js';
 import { Shop, drinkTonic, goodIconURL } from './shop.js';
 
@@ -51,6 +53,7 @@ G.hollows = new Hollows(G);
 G.garden = new Garden(G);
 G.weather = new Weather(G);
 G.intro = new Intro(G);
+G.rares = new Rares(G); G.rifts = new Rifts(G); G.qs = Q; G.qa = QA;   // Stage 5 part 2: procedural rares + random rifts
 G.weatherAt = weatherAt;   // smoke: the weather calendar
 G.loot = new LO.Loot(G); G.LO = LO; G.PR = PR;
 G.shopUI = new Shop(G); G.drinkTonic = () => drinkTonic(G);
@@ -162,9 +165,20 @@ function drawLog() {
   const n = Object.values(G.S.quests).filter((v) => v === 3).length;
   $('logCount').textContent = `${n}/3 done`;
   $('btnLog').textContent = `quests ${n}/3`;
+  drawHunt();
   const sp = $('logSpells');
   if (sp) sp.textContent = 'Spell slots: ' + slots().map((s) => spellName(s)).join(' · ') + '  ·  Charms known: ' + G.S.spells.map((s) => SPELL_NAMES[s] || s).join(' · ');
 }
+// the hunt log (Stage 5 part 2): every rare you have felled (name in its element colour, kills, first day) + rifts sealed
+function drawHunt() {
+  const el = $('huntList'); if (!el) return;
+  const H = Object.values(G.S.hunt || {}), R = G.S.rifts || {};
+  el.innerHTML = H.length ? H.map((h) => `<li><i style="background:${(RARE_EL[h.el] || {}).col || '#fff8e6'}"></i><b>${h.name}</b><span>×${h.kills} · first on day ${(h.first || 0) + 1}</span></li>`).join('')
+                          : '<li class="todo"><span>No rares hunted yet. Big glowing foes roam the wilds and come out of rifts.</span></li>';
+  $('huntCount').textContent = `${H.length} found`;
+  $('riftCount').textContent = `Rifts sealed: ${R.minor || 0} minor · ${R.major || 0} major · ${R.abyssal || 0} abyssal`;
+}
+G.drawHunt = drawHunt;
 function spellBlurb(id) {
   const S = SPELLS[id];
   if (S) return `class spell · ${S.kind}${S.dmg ? ` · ${S.dmg} dmg` : ''}${S.heal ? ` · heals ${S.heal}` : ''} · ${S.cd}s`;
@@ -271,12 +285,12 @@ async function loadArea(id, spawnKey, pos) {
   const old = $('view'); if (old) old.remove();
   const canvas = document.createElement('canvas'); canvas.id = 'view'; document.body.prepend(canvas);
   G.area = id; G.S.area = id; G.armed = false;
-  G.combat.detach(); G.glow.detach(); G.hollows.detach(); G.garden.detach(); G.weather.detach(); G.loot.detach(); G.shopUI.detach();
+  G.rifts.detach(); G.rares.detach(); G.combat.detach(); G.glow.detach(); G.hollows.detach(); G.garden.detach(); G.weather.detach(); G.loot.detach(); G.shopUI.detach();
   G.game = await boot({ base: AREAS[id], canvas, spawn: sp, startT: G.S.t, glowLights: glowCap(), clockSpeed: 1 / DAY_SECONDS, spellCycle: slots(),
                         player: { role: G.S.cls || G.preview || 'wildcaller' }, castAdvance: false,
                         keepTitle: true, padHandled: true, hooks, toast: (m, t) => toast(m, t) });
   const ctx = G.ctx = G.game.ctx;
-  G.combat.attach(ctx, id); G.glow.attach(ctx, id); G.hollows.attach(ctx); G.garden.attach(ctx); G.weather.attach(ctx, id); G.loot.attach(ctx); G.shopUI.attach(ctx, id); PR.ensure(G.S); G.loot.restorePurse(id);
+  G.combat.attach(ctx, id); G.rares.attach(ctx, id); G.rifts.attach(ctx, id); G.glow.attach(ctx, id); G.hollows.attach(ctx); G.garden.attach(ctx); G.weather.attach(ctx, id); G.loot.attach(ctx); G.shopUI.attach(ctx, id); PR.ensure(G.S); G.loot.restorePurse(id);
   // portrait source: this area's actor atlas
   portraitImg = new Image(); portraitImg.src = AREAS[id] + ctx.scene.atlas.image;
   // pickups already taken stay gone
@@ -388,7 +402,7 @@ function onFrame(dt, ctx) {
   syncMarkers();
   padWheel();
   G.hollows.update(dt); G.garden.update(dt); G.glow.update(dt); G.weather.update(dt); G.intro.update(dt);
-  G.loot.update(dt); G.shopUI.update(dt);
+  G.loot.update(dt); G.shopUI.update(dt); G.rares.update(dt); G.rifts.update(dt);
   G.combat.update(dt, ctx);
   drawVitals(ctx);
   if (G.title || G.busy) return;

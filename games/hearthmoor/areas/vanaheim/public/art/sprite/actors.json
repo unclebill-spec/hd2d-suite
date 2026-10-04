@@ -25231,6 +25231,31 @@
     }
    ],
    "enemy": true
+  },
+  "sporemother": {
+   "sheet": "boss",
+   "row": 0,
+   "kind": "enemy",
+   "enemy": true,
+   "boss": true,
+   "scale": 2.2,
+   "frame": [
+    50,
+    80
+   ],
+   "anims": [
+    "idle",
+    "walk",
+    "attack",
+    "die"
+   ],
+   "desc": "Sporemother (rare, ~2.2x): giant spore elemental, floating moss mound under a wide rose toadstool cap, gold lamp eyes, root tendrils, spore ring"
+  }
+ },
+ "sheets": {
+  "boss": {
+   "json": "boss.json",
+   "image": "boss.png"
   }
  }
 }

@@ -6,7 +6,7 @@
  "cell": 32,
  "size": [
   256,
-  1216
+  1408
  ],
  "effects": {
   "sparkle_burst": {
@@ -2527,25 +2527,25 @@
    ],
    "duration": 0.8
   },
-  "toadstools": {
+  "rare_aura_blue": {
    "row": 37,
-   "frames": 4,
-   "fps": 3,
+   "frames": 8,
+   "fps": 8,
    "loop": true,
    "loop_from": 0,
    "loops": 1,
-   "kind": "billboard",
+   "kind": "decal",
    "pivot": [
     16,
-    31
+    16
    ],
-   "lift": 0.0,
+   "lift": 0.02,
    "glow": true,
    "light": null,
    "speed": null,
    "travel": null,
    "then": null,
-   "strip": "toadstools.png",
+   "strip": "rare_aura_blue.png",
    "frame_list": [
     {
      "x": 0,
@@ -2568,6 +2568,432 @@
     {
      "x": 96,
      "y": 1184,
+     "w": 32,
+     "h": 32
+    },
+    {
+     "x": 128,
+     "y": 1184,
+     "w": 32,
+     "h": 32
+    },
+    {
+     "x": 160,
+     "y": 1184,
+     "w": 32,
+     "h": 32
+    },
+    {
+     "x": 192,
+     "y": 1184,
+     "w": 32,
+     "h": 32
+    },
+    {
+     "x": 224,
+     "y": 1184,
+     "w": 32,
+     "h": 32
+    }
+   ],
+   "duration": 1.0
+  },
+  "rare_aura_violet": {
+   "row": 38,
+   "frames": 8,
+   "fps": 8,
+   "loop": true,
+   "loop_from": 0,
+   "loops": 1,
+   "kind": "decal",
+   "pivot": [
+    16,
+    16
+   ],
+   "lift": 0.02,
+   "glow": true,
+   "light": null,
+   "speed": null,
+   "travel": null,
+   "then": null,
+   "strip": "rare_aura_violet.png",
+   "frame_list": [
+    {
+     "x": 0,
+     "y": 1216,
+     "w": 32,
+     "h": 32
+    },
+    {
+     "x": 32,
+     "y": 1216,
+     "w": 32,
+     "h": 32
+    },
+    {
+     "x": 64,
+     "y": 1216,
+     "w": 32,
+     "h": 32
+    },
+    {
+     "x": 96,
+     "y": 1216,
+     "w": 32,
+     "h": 32
+    },
+    {
+     "x": 128,
+     "y": 1216,
+     "w": 32,
+     "h": 32
+    },
+    {
+     "x": 160,
+     "y": 1216,
+     "w": 32,
+     "h": 32
+    },
+    {
+     "x": 192,
+     "y": 1216,
+     "w": 32,
+     "h": 32
+    },
+    {
+     "x": 224,
+     "y": 1216,
+     "w": 32,
+     "h": 32
+    }
+   ],
+   "duration": 1.0
+  },
+  "rare_aura_red": {
+   "row": 39,
+   "frames": 8,
+   "fps": 8,
+   "loop": true,
+   "loop_from": 0,
+   "loops": 1,
+   "kind": "decal",
+   "pivot": [
+    16,
+    16
+   ],
+   "lift": 0.02,
+   "glow": true,
+   "light": null,
+   "speed": null,
+   "travel": null,
+   "then": null,
+   "strip": "rare_aura_red.png",
+   "frame_list": [
+    {
+     "x": 0,
+     "y": 1248,
+     "w": 32,
+     "h": 32
+    },
+    {
+     "x": 32,
+     "y": 1248,
+     "w": 32,
+     "h": 32
+    },
+    {
+     "x": 64,
+     "y": 1248,
+     "w": 32,
+     "h": 32
+    },
+    {
+     "x": 96,
+     "y": 1248,
+     "w": 32,
+     "h": 32
+    },
+    {
+     "x": 128,
+     "y": 1248,
+     "w": 32,
+     "h": 32
+    },
+    {
+     "x": 160,
+     "y": 1248,
+     "w": 32,
+     "h": 32
+    },
+    {
+     "x": 192,
+     "y": 1248,
+     "w": 32,
+     "h": 32
+    },
+    {
+     "x": 224,
+     "y": 1248,
+     "w": 32,
+     "h": 32
+    }
+   ],
+   "duration": 1.0
+  },
+  "rift_tear_minor": {
+   "row": 40,
+   "frames": 8,
+   "fps": 10,
+   "loop": true,
+   "loop_from": 0,
+   "loops": 1,
+   "kind": "billboard",
+   "pivot": [
+    16,
+    31
+   ],
+   "lift": 0.0,
+   "glow": true,
+   "light": null,
+   "speed": null,
+   "travel": null,
+   "then": null,
+   "strip": "rift_tear_minor.png",
+   "frame_list": [
+    {
+     "x": 0,
+     "y": 1280,
+     "w": 32,
+     "h": 32
+    },
+    {
+     "x": 32,
+     "y": 1280,
+     "w": 32,
+     "h": 32
+    },
+    {
+     "x": 64,
+     "y": 1280,
+     "w": 32,
+     "h": 32
+    },
+    {
+     "x": 96,
+     "y": 1280,
+     "w": 32,
+     "h": 32
+    },
+    {
+     "x": 128,
+     "y": 1280,
+     "w": 32,
+     "h": 32
+    },
+    {
+     "x": 160,
+     "y": 1280,
+     "w": 32,
+     "h": 32
+    },
+    {
+     "x": 192,
+     "y": 1280,
+     "w": 32,
+     "h": 32
+    },
+    {
+     "x": 224,
+     "y": 1280,
+     "w": 32,
+     "h": 32
+    }
+   ],
+   "duration": 0.8
+  },
+  "rift_tear_abyss": {
+   "row": 41,
+   "frames": 8,
+   "fps": 10,
+   "loop": true,
+   "loop_from": 0,
+   "loops": 1,
+   "kind": "billboard",
+   "pivot": [
+    16,
+    31
+   ],
+   "lift": 0.0,
+   "glow": true,
+   "light": null,
+   "speed": null,
+   "travel": null,
+   "then": null,
+   "strip": "rift_tear_abyss.png",
+   "frame_list": [
+    {
+     "x": 0,
+     "y": 1312,
+     "w": 32,
+     "h": 32
+    },
+    {
+     "x": 32,
+     "y": 1312,
+     "w": 32,
+     "h": 32
+    },
+    {
+     "x": 64,
+     "y": 1312,
+     "w": 32,
+     "h": 32
+    },
+    {
+     "x": 96,
+     "y": 1312,
+     "w": 32,
+     "h": 32
+    },
+    {
+     "x": 128,
+     "y": 1312,
+     "w": 32,
+     "h": 32
+    },
+    {
+     "x": 160,
+     "y": 1312,
+     "w": 32,
+     "h": 32
+    },
+    {
+     "x": 192,
+     "y": 1312,
+     "w": 32,
+     "h": 32
+    },
+    {
+     "x": 224,
+     "y": 1312,
+     "w": 32,
+     "h": 32
+    }
+   ],
+   "duration": 0.8
+  },
+  "rift_ring_abyss": {
+   "row": 42,
+   "frames": 8,
+   "fps": 6,
+   "loop": true,
+   "loop_from": 0,
+   "loops": 1,
+   "kind": "decal",
+   "pivot": [
+    16,
+    16
+   ],
+   "lift": 0.02,
+   "glow": true,
+   "light": null,
+   "speed": null,
+   "travel": null,
+   "then": null,
+   "strip": "rift_ring_abyss.png",
+   "frame_list": [
+    {
+     "x": 0,
+     "y": 1344,
+     "w": 32,
+     "h": 32
+    },
+    {
+     "x": 32,
+     "y": 1344,
+     "w": 32,
+     "h": 32
+    },
+    {
+     "x": 64,
+     "y": 1344,
+     "w": 32,
+     "h": 32
+    },
+    {
+     "x": 96,
+     "y": 1344,
+     "w": 32,
+     "h": 32
+    },
+    {
+     "x": 128,
+     "y": 1344,
+     "w": 32,
+     "h": 32
+    },
+    {
+     "x": 160,
+     "y": 1344,
+     "w": 32,
+     "h": 32
+    },
+    {
+     "x": 192,
+     "y": 1344,
+     "w": 32,
+     "h": 32
+    },
+    {
+     "x": 224,
+     "y": 1344,
+     "w": 32,
+     "h": 32
+    }
+   ],
+   "duration": 1.333
+  },
+  "toadstools": {
+   "row": 43,
+   "frames": 4,
+   "fps": 3,
+   "loop": true,
+   "loop_from": 0,
+   "loops": 1,
+   "kind": "billboard",
+   "pivot": [
+    16,
+    31
+   ],
+   "lift": 0.0,
+   "glow": true,
+   "light": null,
+   "speed": null,
+   "travel": null,
+   "then": null,
+   "strip": "toadstools.png",
+   "frame_list": [
+    {
+     "x": 0,
+     "y": 1376,
+     "w": 32,
+     "h": 32
+    },
+    {
+     "x": 32,
+     "y": 1376,
+     "w": 32,
+     "h": 32
+    },
+    {
+     "x": 64,
+     "y": 1376,
+     "w": 32,
+     "h": 32
+    },
+    {
+     "x": 96,
+     "y": 1376,
      "w": 32,
      "h": 32
     }

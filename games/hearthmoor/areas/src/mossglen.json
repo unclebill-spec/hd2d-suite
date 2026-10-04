@@ -15,7 +15,9 @@
   "combat"
  ],
  "boss_roles": [
-  "eldergolem"
+  "eldergolem",
+  "elderwraith",
+  "deathlord"
  ],
  "camera": {
   "fov": 24,

@@ -2,6 +2,40 @@
 
 Dates are America/New_York. Newest first. Keep this current with every change you push.
 
+## 2026-10-04: Hearthmoor Stage 5, part 2: procedural rares + random rifts
+- **Procedural rares** (`game/rares.js`): a rare is a base body + an element affix + a trait, seeded by day and area.
+  - **Bodies**, drawn natively at 2-3x the hero on each wild area's boss sheet (`tools/sprite/boss_sheet.py`, 50x80 frames like Mossheart, style lock: never upscaled):
+    - the **Elder Wraith** (~2.4x): a towering hooded cold-fire spectre in tattered layered robes, a crown of cold-fire tongues, skeletal hands and a cold-fire chain lantern;
+    - the **Death Lord** (~2.4x, the skeleton line's T4): a skeleton knight in dark rune plate, a horned helm over a bone skull with cold-fire eyes, spiked pauldrons, a deep-red cape and a rune greatsword;
+    - the **Sporemother** (~2.2x): a giant spore elemental, a floating moss mound under a wide rose toadstool cap with gold lamp eyes, root tendrils and a spore ring.
+  - **Elements:** Frostfire (blue), Gloam (violet) or Bloodmoon (red). The element is the name prefix, a marching ground aura (`rare_aura_blue` / `_violet` / `_red`, new in `spells.py`) and the rare's own point light.
+  - **Traits:**
+    - **Shielded:** a rune ward soaks 70% of each hit until it breaks, then regrows after 8 s.
+    - **Enraged:** below half health it gets faster and hits harder.
+    - **Blinking:** it blinks to your side every 5-7 s.
+    - **Summoner:** it calls up to two lesser kin.
+  - **Name:** trait(s) + element + body, e.g. "Shielded Gloam Death Lord". The name shows in its element colour on the boss bar.
+  - **Where they appear:** they roam Mossglen and the Hollows (Elder Wraith / Death Lord) and Vanaheim (Sporemother), with a 30% chance per area per day (45% at night) and one per area per day. They also come out of rifts.
+  - **Rewards:** every rare always drops a Rare-or-better item (Epic+ for two-trait rares), a 50% rift shard, extra gold and big XP. Each kill goes into the **hunt log**.
+- **Hunt log:** a new section in the quest log (J / Start / ☰). It lists every rare felled (an element swatch, the name, kills, the first day) and the rifts sealed per tier. Saved in the slot (`S.hunt`, `S.rifts`).
+- **Random rifts** (`game/rifts.js`): small tears open now and then in Mossglen, the Hollows and Vanaheim. The first comes 45-80 s after you arrive, then one every 2-3.5 minutes; a toast warns you.
+  - **Tiers:**
+    - **I minor:** a small cold-fire tear (`rift_tear_minor`), 3 foes, a 15% rare.
+    - **II major:** the violet-red tear, 4 foes, a 50% rare.
+    - **III abyssal:** a wide crimson tear over a rune ring (`rift_tear_abyss` + `rift_ring_abyss`), two waves of 4 and always a two-trait rare.
+  - **How a rift plays:** walk within about 3.4 m and it spits out its wave (one more foe at night). Clear every foe and it seals with gold, XP (40 / 90 / 200), an item of at least Uncommon / Rare / Epic, and a chance of rift shards. A rift you ignore closes by itself after 90 s. Rifts only open on their own in normal play: `?qa` / `?peace` need `&rifts`, and `?riftnow=1|2|3` opens one on arrival.
+- **Combat hooks** (`combat.js`):
+  - `spawnEnemy` takes a built def (`sp.D`), and `sp.once` foes don't respawn.
+  - Enemies may carry `tick` (traits), `mods.hurt` (ward) and `onKill`, and `D.xp` overrides the XP table.
+  - Rares get the named bar up top.
+- **Loot** (`loot.js`): `onKill` honours `minRar` (always an item of at least that rarity), and the new `dropItem(x, z, lv, minRar)` serves the rift rewards.
+- **Area specs:** `boss_roles` now lists mossglen eldergolem + elderwraith + deathlord, hollows elderwraith + deathlord, and vanaheim sporemother.
+- **QA effects lineup, paged** (`tools/runtime/web/engine/main.js`, `effects.js`, `tools/check-scene/check_scene.py`): the six new effects take the spell atlas to 44, and one screen at 15 a row packed neighbours over the new rings (`effects_sharp` dropped to 0.91-0.94 in mossglen / hollows / vanaheim). The engine adds `effectOrder` / `effectPages(per)` and `effectLineup(frac, page, per)`; check-scene walks pages of 24 at the full 2.4 m spacing (`effects_p2.png`). Lineup effects are still never occluded by the scene but are now ordered among themselves (decals, then billboards, each far to near, by renderOrder with the depth test off; one shared depth let the first-drawn win), and effects that float 1 m or more (light orb, bolts, seed bomb) go to the back row of their page, so lane's light orb (lifted 1.5 m) no longer rises over the earth burst behind it. Rows sit 3.2 m apart, deeper when a camera squeezes that into under 1.35 cells on screen: only the rift's far camera (118 px vs 132-141 px elsewhere, so 3.52 m there), where a front-row billboard reached into the back-row red aura. The 0.97 threshold is unchanged.
+- **check-scene under load:** after laying out an effects or gamefx lineup page it now waits for the engine to draw 3 more frames (up to 20 s) before reading the rects, as smoke already does. On a box at load ~20, plaza's second gamefx page drew no frame in the fixed 1 s and the rects came back unset (a KeyError, not a check failure).
+- **Smoke steps:** a rare's name, aura, light and native 2-3x size; the Shielded ward and the coloured bar; the hunt entry and the Rare+ drop; Blinking, Summoner and Enraged; the hunt log via J; rift tiers I-III opening, engaging and sealing with rewards; rift rares in the hunt log; an ignored rift closing; a rift auto-opening on its timer; hunt + rifts saved.
+- **Screenshots:** `docs/screenshots/stage5_rare_death_lord.png`, `stage5_rift_abyssal.png`, `stage5_hunt_log.png`.
+- **Checks:** smoke 179/179 (one re-run: the terrace pathfinding step's fixed 3.5 s wait came up 0.01 m short at load ~15); check-scene plaza 11/11, lane 10/10, mossglen 11/11, hollows 10/10, rift 10/10 + height EXEMPT, vanaheim 11/11. Re-runs only for load: lane and rift phone checks once each; plaza's portrait tap-walk failed at load 17-24 with the same numbers as the live 8904caa build on the same box (2.4 -> 2.27 m), then passed at load ~10.
+
 ## 2026-10-04: Hearthmoor Stage 5, part 1 polish: paper sky lanterns and a bigger rift tear
 - **Sky lanterns redrawn** (`sky_lantern` in `tools/spells/spells.py`): the rising lanterns no longer read as orange eyeballs (the old round orange disc had a dark fish in the middle). They are now paper sky lanterns, a little taller than wide with a rounded crown. The cream-gold paper glows from inside: white-hot just above the flame, cream in the body, gold at the shoulders and a warm amber rim. They have soft dithered ribs, a bamboo hoop with a bright flickering flame at the bottom opening, a warm glint on the paper and a small twinkle circling each one. There is no dark centre.
 - **Rift tear enlarged** (`rift_tear`): it now fills the full 32 px cell height, zigzags harder, and has a fixed jagged lip profile and four short side cracks. The void has violet lips and a hard neon-red edge line, with red embers and sparks spitting off. Palette and NEON pixels only, no bloom.

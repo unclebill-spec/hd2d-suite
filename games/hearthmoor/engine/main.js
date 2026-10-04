@@ -897,20 +897,42 @@ export async function boot(opts = {}) {
     showOverlays: (v = true) => { API.showEffects(v); if (particles) particles.points.visible = v; },
     hideActors: (h = true) => { for (const a of actors.list) { a.quad.visible = !h; a.caster.visible = !h; } },
     // QA lineup: every effect frozen on a chosen frame in a grid on open ground in front of the camera
-    effectLineup: (frameFrac = 0.5) => {
+    // paged (per > 0): a big atlas squeezed into one screen packs neighbours so tight they overlap (44 effects at 15 a
+    // row put a billboard over the next decal's rim); check-scene walks effectPages(per) pages of `per` instead
+    effectOrder: () => {
       if (!effects) return [];
-      effects.clear();
-      if (gamefx) for (const f of gamefx.list) f.mesh.visible = false;   // quest tags / pickups must not sit over a spell
       // wide ground decals alternate with narrow billboards so neighbours never overlap even when the row is tight
       const all = effects.names(), dec = all.filter((n) => sMeta.effects[n].kind === 'decal'), oth = all.filter((n) => sMeta.effects[n].kind !== 'decal');
       const names = [];
       while (dec.length || oth.length) { if (oth.length) names.push(oth.shift()); if (dec.length) names.push(dec.shift()); }
+      return names;
+    },
+    effectPages: (per = 24) => (effects ? Math.ceil(effects.names().length / per) : 0),
+    effectLineup: (frameFrac = 0.5, page = 0, per = 0) => {
+      if (!effects) return [];
+      effects.clear();
+      if (gamefx) for (const f of gamefx.list) f.mesh.visible = false;   // quest tags / pickups must not sit over a spell
+      let names = API.effectOrder();
+      if (per > 0) names = names.slice(page * per, page * per + per);
+      // effects that float high (lift >= 1 m) go to the back row: in a front row they rise into the row behind (lane:
+      // the light orb, lifted 1.5 m, sat over a back-row earth burst). Stable, so the decal / billboard alternation holds
+      names = names.filter((n) => (sMeta.effects[n].lift || 0) < 1).concat(names.filter((n) => (sMeta.effects[n].lift || 0) >= 1));
       const cols = Math.max(5, Math.ceil(names.length / 3));   // <= 3 rows so a big atlas still fits on screen
       const dx = Math.min(2.4, 19.2 / cols);                   // and the row never gets wider than 8 cells at 2.4 m
+      // rows 3.2 m apart, deeper (up to 6 m) when this camera squeezes 3.2 m into less than 1.35 cells on screen (only the rift: 118 px vs 132-141 elsewhere): on the
+      // rift's far camera a front-row billboard reached up into the back-row ring behind it. Paged lineups only.
+      let rowDz = 3.2;
+      if (per > 0) {
+        const z0 = target.z - look.z + 0.6, gy = collide ? (collide.height(target.x, z0) ?? 0) : 0;
+        const sy = (dz) => (new THREE.Vector3(target.x, gy, z0 - dz).project(camera).y * 0.5 + 0.5) * bufH;
+        const gap = sy(3.2) - sy(0), need = 1.35 * effects.cell * (effects.k || 3);
+        if (gap > 0 && gap < need) rowDz = Math.min(6, 3.2 * need / gap);
+        API._lineRow = { gap: +gap.toFixed(1), need, rowDz: +rowDz.toFixed(2) };
+      }
       names.forEach((n, i) => {
         const e = sMeta.effects[n];
         const x = target.x + ((i % cols) - (cols - 1) / 2) * dx;
-        const z = target.z - look.z + 0.6 - Math.floor(i / cols) * 3.2;
+        const z = target.z - look.z + 0.6 - Math.floor(i / cols) * rowDz;
         const y = collide ? (collide.height(x, z) ?? 0) : 0;
         effects.spawn(n, x, y, z, { frame: Math.min(e.frames - 1, Math.floor(e.frames * frameFrac)), onTop: true });
       });

@@ -22957,6 +22957,44 @@
     "die"
    ],
    "desc": "Mossheart the elder golem (mini-boss, ~2.5x): dark ancient stone blocks, amber crystal crown, glowing gold rune glyphs, glow-flowers in thick moss"
+  },
+  "elderwraith": {
+   "sheet": "boss",
+   "row": 4,
+   "kind": "enemy",
+   "enemy": true,
+   "boss": true,
+   "scale": 2.4,
+   "frame": [
+    50,
+    80
+   ],
+   "anims": [
+    "idle",
+    "walk",
+    "attack",
+    "die"
+   ],
+   "desc": "Elder wraith (rare, ~2.4x): towering hooded spectre, tattered layered robes, cold-fire crown, skeletal hands, a cold-fire chain lantern"
+  },
+  "deathlord": {
+   "sheet": "boss",
+   "row": 8,
+   "kind": "enemy",
+   "enemy": true,
+   "boss": true,
+   "scale": 2.4,
+   "frame": [
+    50,
+    80
+   ],
+   "anims": [
+    "idle",
+    "walk",
+    "attack",
+    "die"
+   ],
+   "desc": "Death Lord (rare, ~2.4x): skeleton knight in dark rune plate, horned helm over a bone skull, spiked pauldrons, deep-red cape, rune greatsword"
   }
  },
  "sheets": {

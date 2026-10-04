@@ -15,6 +15,9 @@
   "sporeling",
   "mossgolem"
  ],
+ "boss_roles": [
+  "sporemother"
+ ],
  "camera": {
   "fov": 24,
   "pitch": 36,

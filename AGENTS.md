@@ -63,7 +63,14 @@ Bill (GitHub `unclebill-spec`) hands this project between his bots and Cursor th
     - `S.flags.intro`: `playing` / `done` / `skipped`. `resume()` turns `playing` into `skipped`, so Continue never replays it. `startNew` sets `G.introNext` (not with `?nointro`), and `playIntro()` runs after the auto-level ask.
     - Skip: Esc in keydown, pad B while active, `#introSkip` chip (`press()`, pointerdown; it needs `pointer-events: auto` because `#hud` passes clicks through).
     - The lines use `G.openDialogue(id, pages, then)` / `G.dropDialogue()`. The wraith is `combat.spawnEnemy({id: 'eve_wraith', role: 'wraith', def: 'evewraith', noLoot: true})`. `sp.def` selects the `ENEMIES` entry, falling back to `sp.role`. Effects `sky_lantern` and `rift_tear` are in `spells.py`. The Plaza sheet has the `innkeeper` and `wraith` roles.
-    - Next (Stage 5): procedural rares + random rifts, then factions + merit, then a Ravenhold slice.
+  - **Stage 5 part 2 rares + random rifts (2026-10-04):**
+    - `game/rares.js`: `BASES` (elderwraith / deathlord / sporemother, ENEMIES-shaped + `scale`, `minion`, `xp`), `ELEMENTS` (frost / gloam / blood: prefix, colour, aura effect), `TRAITS` (shielded / enraged / blinking / summoner) and `RARE_AREAS` (which bodies and spots per area; the body must be in that area spec's `boss_roles`).
+    - `makeRare({base, el, traits | nTraits, seed, lv})` builds `{key, name, D}`. `class Rares` (`G.rares`) provides `attach` (a seeded roaming chance, skipped in `?qa` / `?peace` unless `?rare`), `spawn(o)`, `tick` / `hurt` / `onKill` (wired on the enemy as `e.tick`, `e.mods.hurt`, `e.onKill`) and the test API `state()`.
+    - Hunt log: `S.hunt[key] = {name, base, el, traits, kills, first, last}`, drawn by `drawHunt()` in game.js (`#huntList`, `#riftCount`). `S.rareDays['day:area']` marks a day's roaming rare as hunted.
+    - `game/rifts.js`: `TIERS` (minor / major / abyssal: fx, wave, waves, rare chance, rewards, `minRar`), `RIFT_AREAS` (foes, spots), `FIRST` / `EVERY` / `LIFE` / `NEAR`. `class Rifts` (`G.rifts`) provides `open(tier, pos)`, `engage()` (one wave at a time), `alive()`, `update` (proximity engage, auto-open via `auto()`, expiry, next wave, `close(won)` with rewards into `S.rifts`) and the test API `state()`. Query params: `?rifts` (auto-open in QA), `?riftnow=1|2|3`.
+    - combat.js: `sp.D` (a built def), `sp.once` (no respawn), `D.xp`, and `D.rare` (boss bar in the element colour, `bossEl.dataset.id`). loot.js: `onKill({minRar})`, `dropItem(x, z, lv, minRar)`.
+    - Art: `boss_sheet.py` `elderwraith` / `deathlord` / `sporemother` (50x80, `_Rnd` float-pixel wrapper); `spells.py` `rare_aura_*`, `rift_tear_minor`, `rift_tear_abyss`, `rift_ring_abyss`.
+    - Next (Stage 5): factions + merit, then a Ravenhold slice.
   - **In the game (Stage 1, 2026-10-03):** the title opens a hero picker for the 6 starters and the chosen class is the player (saved in `hearthmoor-slot-1-v2`). Real-time combat lives in `game/combat.js`: 3 enemies in Mossglen (stone golem, skeleton swordsman, cold-fire wraith, plus a night wraith), HP / stamina, guard, dodge-roll i-frames, pixel damage numbers, a class spell + summon per hero, cozy defeat. Enemy + summon sprites: `tools/sprite/roles_enemies.py` (`hd2d sprite --roles combat`); combat VFX: new `tools/spells` effects.
 - **Toolset:** a Python CLI `bin/hd2d` with 13 tools, which generates original pixel art and assembles lit three.js r160 dioramas (static ES modules, no build step).
 - **Demos:** `demos/hearthmoor-plaza`, `demos/bakery-lane` (+ zips).
@@ -126,7 +133,7 @@ bin/hd2d assemble scenes/hearthmoor-plaza.json --out demos/hearthmoor-plaza [--n
 python3 games/hearthmoor/build.py [--skip-assemble] [--no-zip]   # rebuild areas, icons, manifest, sw.js, zip
 ```
 
-Useful URL params: `?pad=1`, `?hand=left`, `?t=day|dusk|night`, `?freeze`. For the game: `?qa&area=plaza|lane|mossglen` (fresh state, no title, no saving), `?reset`, `?nosw`, `?day=SECONDS`, `?simscale=N`, `?nointro` (new game without the Lantern Eve opening).
+Useful URL params: `?pad=1`, `?hand=left`, `?t=day|dusk|night`, `?freeze`. For the game: `?qa&area=plaza|lane|mossglen` (fresh state, no title, no saving), `?reset`, `?nosw`, `?day=SECONDS`, `?simscale=N`, `?nointro` (new game without the Lantern Eve opening), `?rare` (force a roaming rare), `?rifts` / `?riftnow=1|2|3` (random rifts in QA).
 
 ## Checks and smoke test (must pass)
 ```

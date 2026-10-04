@@ -81,7 +81,7 @@ export class Combat {
     this.nums = []; this.bars.clear();
   }
   spawnEnemy(sp, poof = false) {
-    const ctx = this.ctx, D = ENEMIES[sp.def || sp.role];   // sp.def: a stat variant drawn with the role's sprite (Lantern Eve's wraith)
+    const ctx = this.ctx, D = sp.D || ENEMIES[sp.def || sp.role];   // sp.def: a stat variant drawn with the role's sprite (Lantern Eve's wraith); sp.D: a built def (rares.js)
     const a = ctx.addNpc({ id: sp.id, role: sp.role, name: D.name, pos: sp.pos.slice(), behavior: 'idle', turn: false, speed: D.speed });
     a.ai = true; a.noTalk = true; a.r = D.r; a.facing = 'down';
     const e = { a, D, sp, id: sp.id, home: sp.pos.slice(), hp: D.hp, state: 'idle', t: 0, cd: 1, wt: 1 + Math.random() * 2, target: null,
@@ -157,6 +157,7 @@ export class Combat {
       if (e.t > 2.3) { ctx.removeNpc(a); e.state = 'gone'; const b = this.bars.get(e.id); if (b) { b.remove(); this.bars.delete(e.id); } }
       return;
     }
+    if (e.tick) e.tick(e, dt, frozen);   // rares: traits (ward regrowth, rage, blinks, summons) + their aura
     let moving = false;
     const dx = p.x - a.x, dz = p.z - a.z, d = Math.hypot(dx, dz);
     const fromHome = Math.hypot(a.x - e.home[0], a.z - e.home[1]);
@@ -283,6 +284,7 @@ export class Combat {
   damageEnemy(e, dmg, src, push = 0.35, color = PAL.white) {
     if (e.state === 'dead' || e.state === 'gone') return false;
     const ctx = this.ctx, a = e.a;
+    if (e.mods && e.mods.hurt) dmg = e.mods.hurt(e, dmg);   // a Shielded rare's ward soaks part of the hit
     e.hp -= dmg;
     a.flashT = 0.12;
     this.number(dmg, a.x, a.y + (e.D.float ? 2.1 : 1.9), a.z, color);
@@ -299,16 +301,17 @@ export class Combat {
     if (!quiet) {
       this.G.audio.sfx('defeat');
       if (ctx.effects) ctx.effects.spawn(a.role === 'wraith' ? 'glyph_burst' : 'impact', a.x, a.y, a.z + 0.05);
-      this.defeated[this.area + ':' + e.id] = e.D.respawn || RESPAWN;
+      if (!e.sp.once) this.defeated[this.area + ':' + e.id] = e.D.respawn || RESPAWN;   // rift waves and rares don't wander back
       if (e.D.boss) { this.G.toast && this.G.toast(`${e.D.name} falls! Its heart-light spills out as a Legendary.`, 3.2); this.G.S.bosses = { ...(this.G.S.bosses || {}), [e.id]: (this.G.S.bosses?.[e.id] || 0) + 1 }; }
       this.G.stats = this.G.stats || { defeated: 0 };
       this.G.stats.defeated++;
       if (!e.sp.noXp && this.G.gainXP) {
         const seen = (this.G.S.bestiary = this.G.S.bestiary || {});
         const first = !seen[a.role]; seen[a.role] = (seen[a.role] || 0) + 1;
-        this.G.gainXP(Math.round((XP[a.role] || 25) * (first ? 1 + XP.firstKill : 1)), a);
+        this.G.gainXP(Math.round((e.D.xp || XP[a.role] || 25) * (first ? 1 + XP.firstKill : 1)), a);
       }
-      if (this.G.loot && !e.sp.noLoot) this.G.loot.onKill(a, this.G.S.lv || 1, { legendary: !!e.D.legendary, gold: e.D.boss ? 30 : 0 });
+      if (this.G.loot && !e.sp.noLoot) this.G.loot.onKill(a, this.G.S.lv || 1, { legendary: !!e.D.legendary, gold: e.D.boss ? 30 : e.D.rare ? 20 : 0, minRar: e.D.minRar });
+      if (e.onKill) e.onKill(e);   // rares: hunt log, aura off
     } else e.t = 1.5;
   }
   shove(a, dx, dz, m) {
@@ -626,11 +629,11 @@ export class Combat {
       let b = this.bars.get(e.id);
       const show = (e.hp < e.D.hp || e.state === 'chase' || e.state === 'attack') && e.state !== 'dead' && e.state !== 'gone';
       if (e.light) e.light.pos.set(e.a.x, e.a.y, e.a.z);
-      if (!show) { if (b) b.hidden = true; if (e.D.boss && this.bossEl) this.bossEl.hidden = true; continue; }
+      if (!show) { if (b) b.hidden = true; if ((e.D.boss || e.D.rare) && this.bossEl && this.bossEl.dataset.id === e.id) this.bossEl.hidden = true; continue; }
       if (!b) { b = document.createElement('div'); b.className = 'ebar'; b.innerHTML = '<i></i>'; this.layer.appendChild(b); this.bars.set(e.id, b); }
       b.hidden = false;
       if (e.light) e.light.pos.set(e.a.x, e.a.y, e.a.z);
-      if (e.D.boss) { this.bossBar(e); b.hidden = true; continue; }
+      if (e.D.boss || e.D.rare) { this.bossBar(e); b.hidden = true; continue; }   // bosses and rares: a named bar up top
       const s = ctx.project(e.a.x, e.a.y + (e.a.lift || 0) + (e.a.role === 'golem' || e.D.slam ? 1.75 : 1.85) * (e.D.scale || 1), e.a.z);
       b.style.transform = `translate(${Math.round(s.x - 15)}px, ${Math.round(s.y)}px)`;
       b.firstChild.style.width = Math.max(0, Math.round(26 * e.hp / e.D.hp)) + 'px';
@@ -643,13 +646,14 @@ export class Combat {
       (document.getElementById('hud') || document.body).appendChild(el); this.bossEl = el;
     }
     const el = this.bossEl; el.hidden = false;
-    el.firstChild.textContent = e.D.name;
+    el.firstChild.textContent = e.D.name; el.dataset.id = e.id;
+    el.firstChild.style.color = e.D.rare ? e.D.glow : '';   // a rare's name in its element colour
     el.querySelector('i').style.width = Math.max(0, Math.round(100 * e.hp / e.D.hp)) + '%';
   }
   // QA helpers
   qa() {
     return { hp: this.G.S.hp, max: this.maxHp(), st: Math.round(this.st), cd: { ...this.cd }, god: this.godT,
-             enemies: this.enemies.map((e) => ({ id: e.id, role: e.a.role, hp: e.hp, state: e.state, x: +e.a.x.toFixed(2), z: +e.a.z.toFixed(2) })),
+             enemies: this.enemies.map((e) => ({ id: e.id, role: e.a.role, hp: e.hp, state: e.state, rare: !!e.rare, name: e.D.name, x: +e.a.x.toFixed(2), z: +e.a.z.toFixed(2) })),
              summon: this.summon ? { role: this.summon.a.role, hp: this.summon.hp, life: +this.summon.life.toFixed(1), tier: this.summon.tier, light: !!this.summon.light, name: this.summon.a.name } : null };
   }
 }

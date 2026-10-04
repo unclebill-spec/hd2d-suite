@@ -14,6 +14,10 @@
   "heroes",
   "combat"
  ],
+ "boss_roles": [
+  "elderwraith",
+  "deathlord"
+ ],
  "camera": {
   "fov": 24,
   "pitch": 36,
