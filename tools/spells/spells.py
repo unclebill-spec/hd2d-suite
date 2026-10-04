@@ -652,6 +652,57 @@ def coldfire_motes(pal, seed):
     return out
 
 
+def spring_bubbles(pal, seed):
+    """Toadstool Hollows' hidden spring: round glowing bubbles rising out of the water, wobbling, popping at the top.
+    1 px ring bubbles (sky rim, white glint) and a few solid motes; palette pixels only."""
+    out = []
+    R = rng(seed, "bubbles")
+    bub = [(5 + R.random() * 22, 26 + R.random() * 4, R.randrange(10), R.choice([1, 1, 2])) for _ in range(8)]
+    for f in range(10):
+        F = Frame(pal)
+        for x0, y0, ph, sz in bub:
+            b = (f + ph) % 10
+            y = y0 - b * 2.4
+            x = x0 + (1 if (b // 2) % 2 else 0)
+            if b == 9:                                            # pop: four sparkle pixels
+                for dx, dy in ((-1, 0), (1, 0), (0, -1), (0, 1)):
+                    F.set(x + dx * 2, y + dy * 2, "white")
+            elif sz == 1:
+                F.set(x, y, "white" if b % 3 == 0 else "sky")
+                F.set(x, y + 1, "flower_blue")
+            else:
+                F.ring(x, y, 1.6, 1.6, "sky", 1.0)
+                F.set(x - 1, y - 1, "white")
+        out.append(F)
+    return out
+
+
+def coldfire_flame(pal, seed):
+    """A dark-hour brazier's neon-blue cold fire: a tall flickering tongue (cloth-blue rim, flower_blue body, sky heart,
+    white core) with sparks leaving the tip; palette pixels, no bloom."""
+    out = []
+    R = rng(seed, "coldflame")
+    for f in range(6):
+        F = Frame(pal)
+        sway = [0, 1, 1, 0, -1, -1][f]
+        hgt = [17, 19, 18, 20, 18, 19][f]
+        for y in range(31, 31 - hgt, -1):
+            k = (31 - y) / hgt                                    # 0 at the coals, 1 at the tip
+            hw = 5.5 * (1 - k) ** 0.8 * (1 + 0.25 * math.sin(k * 6 + f))
+            cx = 16 + sway * k * 2
+            for x in range(int(cx - hw - 1), int(cx + hw + 2)):
+                d = abs(x - cx) / max(0.6, hw)
+                if d > 1:
+                    continue
+                c = "white" if d < 0.3 and k < 0.55 else "sky" if d < 0.6 else "flower_blue" if d < 0.88 else "cloth"
+                F.set(x, y, c)
+        for k in range(3):
+            sy = 31 - hgt - 2 - ((f + k * 2) % 6) * 1.5
+            F.set(16 + sway * 2 + R.choice([-2, -1, 1, 2]), sy, R.choice(["sky", "white"]))
+        out.append(F)
+    return out
+
+
 def toadstools(pal, seed):
     """Three red-and-white toadstools whose spots glow at night (looping twinkle + a drifting spore)."""
     out = []
@@ -735,6 +786,8 @@ EFFECTS = {
     "coldfire_pool": dict(fn=coldfire_pool, kind="decal", fps=6, loop=True, loop_from=0, pivot=[16, 16], lift=0.02, loops=1,
                           glow=True, light=None, combat=True),
     "coldfire_motes": dict(fn=coldfire_motes, kind="billboard", fps=9, loop=True, pivot=[16, 31], lift=0.0, loops=1, glow=True, light=None, combat=True),
+    "spring_bubbles": dict(fn=spring_bubbles, kind="billboard", fps=8, loop=True, pivot=[16, 31], lift=0.0, loops=1, glow=True, light=None, combat=True),
+    "coldfire_flame": dict(fn=coldfire_flame, kind="billboard", fps=8, loop=True, pivot=[16, 31], lift=0.0, loops=1, glow=True, light=None, combat=True),
     "toadstools": dict(fn=toadstools, kind="billboard", fps=3, loop=True, pivot=[16, 31], lift=0.0, loops=1, glow=True, light=None, combat=True),
 }
 # what the player's spell key cycles through, and what a cast spawns (effect, where)

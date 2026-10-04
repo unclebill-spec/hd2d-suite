@@ -9,13 +9,15 @@ const TOADS = {
   mossglen: [[-5.5, 3.4], [5.8, -2.6], [9.0, 1.5], [-11.0, -3.0], [-4.6, -7.2], [7.0, -8.2]],
   plaza: [[-9.5, 4.6], [9.5, 5.0], [3.2, -4.4], [-11.5, -8.6]],
   lane: [[-10.2, -6.0], [9.5, 5.0], [-10.5, 5.0], [-11.8, 8.6]],
-  hollows: [[-3.4, -1.6], [3.6, 3.6], [-10.8, 4.8], [-6.8, -6.6], [11.0, 3.8], [0.8, -2.3], [-6.0, 3.4], [6.8, 3.0], [-11.6, -5.0], [8.8, -6.0]],
+  hollows: [[-3.4, -1.6], [3.6, 3.6], [-10.8, 4.8], [-6.8, -6.6], [11.0, 3.8], [0.8, -2.3], [-6.0, 3.4], [6.8, 3.0], [-11.6, -5.0], [12.6, -8.6]],
 };
 // areas that glow at every hour (the hollow is always dim), and their standing light pools: [x, z, kind, colour]
 const ALWAYS = { hollows: true };
 const POOLS = {
   hollows: [[-1.0, 1.4, 'light', '#9a6cd4'], [5.0, 0.2, 'cold', '#5ac8ff'], [-8.2, 1.4, 'cold', '#5ac8ff'],
-            [-9.4, -6.4, 'light', '#9a6cd4'], [8.6, -6.6, 'cold', '#5ac8ff'], [1.8, 5.6, 'light', '#e47c8c']],
+            [-9.4, -6.4, 'light', '#9a6cd4'], [8.6, -6.6, 'cold', '#5ac8ff'], [1.8, 5.6, 'light', '#e47c8c'],
+            // warm glow under each giant toadstool cap: a dithered decal only (the cap itself is self-lit), no extra light
+            [-3.4, -1.6, 'under'], [3.6, 3.6, 'under'], [-10.8, 4.8, 'under'], [-6.8, -6.6, 'under'], [11.0, 3.8, 'under']],
 };
 export const POOL_R = 2.2;
 // lamp kinds that make a light zone at night, and how far it reaches on the ground (metres)
@@ -35,6 +37,10 @@ export class Glow {
     const ctx = this.ctx, still = !!this.G.qaStill; if (!ctx) return;
     for (const [x, z, kind, color] of POOLS[this.area] || []) {
       const y = ctx.heightAt(x, z), fx = [];
+      if (kind === 'under') {
+        if (ctx.effects) fx.push(ctx.effects.spawn('light_pool', x, y, z + 0.03, { duration: 1e9, fadeIn: still ? 0 : 1, ...(still ? { frame: 0 } : {}) }));
+        this.fixed.push({ x, z, r: 1.4, kind, fx, light: null }); continue;
+      }
       if (ctx.effects) {
         const cold = kind === 'cold', fr = (f) => (still ? { frame: f } : {});
         fx.push(ctx.effects.spawn(cold ? 'coldfire_pool' : 'light_pool', x, y, z + 0.03, { duration: 1e9, fadeIn: still ? 0 : 1, ...fr(0) }));
@@ -56,6 +62,7 @@ export class Glow {
     }
     if (ctx.addGlow) ctx.addGlow(x, y, z, { color: color || '#ffb24a', intensity: 10 * scale, range: 4.6, life, fadeIn: 0.08, lift: 0.5 });
     this.pools.push({ x, z, r: LIT.poolR, t: life });
+    if (this.G.hollows) this.G.hollows.spellAt(x, z);   // a spell landing by a cold-fire brazier lights it
   }
   colorOf(fxName) {
     const m = this.ctx && this.ctx.effects && this.ctx.effects.meta.effects[fxName];
@@ -72,6 +79,7 @@ export class Glow {
     for (const t of this.toads) if (t.on) out.push({ x: t.x, z: t.z, r: LIT.toadR, src: 'toadstool' });
     for (const p of this.pools) out.push({ x: p.x, z: p.z, r: p.r, src: 'spell' });
     for (const p of this.fixed) out.push({ x: p.x, z: p.z, r: p.r, src: 'pool' });
+    if (this.G.hollows) out.push(...this.G.hollows.zones());   // lit braziers + the spring
     const nm = this.G && this.G.shopUI && this.G.shopUI.nm;   // the night merchant's neon-blue lantern is a light zone too
     if (nm && nm.a) out.push({ x: nm.a.x + 0.35, z: nm.a.z + 0.1, r: 2.2, src: 'lantern' });
     return out;
@@ -114,6 +122,6 @@ export class Glow {
     this.toads = [];
   }
   // combat hooks
-  dmgMul() { return this.lit ? LIT.dmg : 1; }
-  regenMul() { return this.lit ? LIT.regen : 1; }
+  dmgMul() { return (this.lit ? LIT.dmg : 1) * (this.G.hollows ? this.G.hollows.dmgMul() : 1); }      // + spring-fizz
+  regenMul() { return (this.lit ? LIT.regen : 1) * (this.G.hollows ? this.G.hollows.regenMul() : 1); }
 }

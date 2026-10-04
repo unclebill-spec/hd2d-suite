@@ -105,7 +105,7 @@ def assemble(spec_path, out, do_zip=True):
         pick = []
         for tok in spec["sprite_roles"]:
             pick += (roles if tok == "actors" else list(SP.RH.HERO_ORDER) if tok == "heroes"
-                     else [r for r in SP.ROLES if r in SP.EXTRA] if tok == "combat" else [tok])
+                     else [r for r in SP.ROLES if r in SP.EXTRA and not SP.ROLES[r].get("named")] if tok == "combat" else [tok])
         all_roles = [r for r in dict.fromkeys(pick) if r in SP.ROLES]
     # boss roles (style lock: mini-bosses ~2.5x, bosses 5x+) are drawn natively on their own sheet with bigger frames;
     # the main atlas lists them as stubs `{sheet: "boss", ...}` and the engine swaps frame size + texture per role

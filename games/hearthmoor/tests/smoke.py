@@ -589,8 +589,8 @@ def run(out, simscale=4, size=(960, 540)):
             T.wait("!window.__hm.combat.summon || window.__hm.combat.summon.life < 20", 5)
 
             # ---------------------------------------------------------- Part 5: Toadstool Hollows, east past Mossheart's clearing, and back
-            T.ev("(() => { const c = window.__hm.ctx, p = c.player; p.x = 12.0; p.z = 0.6; p.y = c.heightAt(p.x, p.z); c.stopWalk(); })()"); pg.wait_for_timeout(400)
-            area = T.go_rect("exits")
+            T.ev("(() => { const c = window.__hm.ctx, p = c.player; p.x = 12.3; p.z = -0.3; p.y = c.heightAt(p.x, p.z); c.stopWalk(); })()"); pg.wait_for_timeout(400)
+            area = T.go_rect("exits")   # a short straight walk east into the gate (a summon / loot can block a diagonal one)
             hq = T.ev("(() => { const G = window.__hm, z = G.glow.zones(); return { title: G.ctx.scene.game.title, pools: z.filter((q) => q.src === 'pool').length, toads: z.filter((q) => q.src === 'toadstool').length, en: (G.combat.enemies || []).length, p: [G.ctx.player.x, G.ctx.player.z] }; })()")
             T.step("edge exit: Mossglen -> Toadstool Hollows (always-glowing toadstools + standing light pools)", area == "hollows" and hq["title"] == "Toadstool Hollows" and hq["pools"] >= 6 and hq["toads"] >= 8 and hq["en"] >= 1, hollows=hq)
             rep["shots"]["hollows"] = T.shot("hollows")
@@ -607,6 +607,33 @@ def run(out, simscale=4, size=(960, 540)):
             T.step("bounce toadstool: Z on the cap springs you high onto the hidden ledge (y 2.6), the ledge one springs you back down",
                    mid[0] and mid[1] > 0.8 and abs(up[0] - 7.6) < 0.3 and abs(up[1] + 5.8) < 0.3 and up[2] > 2.3 and y0 < 0.3 and down[2] < 0.3 and down[1] > -2.0
                    and T.S().get("found", {}).get("ledge_up") == 1, mid=mid, up=up, down=down)
+            # Part 6: the gnome, gnome doors (a little chest + a peeking gnome), the bubbly spring, a cold-fire brazier
+            T.ev("(() => { const c = window.__hm.ctx, p = c.player; p.x = 1.9; p.z = -4.7; p.y = c.heightAt(p.x, p.z); p.facing = 'up'; c.stopWalk(); })()"); pg.wait_for_timeout(350)
+            T.talk("gnome")
+            T.step("Pipkin the gnome (Hollows-only sprite) talks", T.ev("!window.__hm.dlg") and T.ev("!!window.__hm.ctx.npc('gnome')"))
+            T.ev("(() => { const c = window.__hm.ctx, p = c.player; p.x = -11.4; p.z = -6.0; p.y = c.heightAt(p.x, p.z); p.facing = 'up'; c.stopWalk(); })()"); pg.wait_for_timeout(350)
+            g0 = T.S().get("gold", 0); t0 = T.S()["inv"].get("tonic", 0); pg.keyboard.press("e"); pg.wait_for_timeout(400)
+            S = T.S()
+            T.step("gnome door: E opens a little chest (+12 gold, a Hearth tonic), once", S["gold"] == g0 + 12 and S["inv"].get("tonic", 0) == t0 + 1 and S["found"].get("door_chest") == 1, gold=[g0, S["gold"]])
+            T.ev("(() => { const c = window.__hm.ctx, p = c.player; p.x = 0.4; p.z = -6.2; p.y = c.heightAt(p.x, p.z); p.facing = 'up'; c.stopWalk(); })()"); pg.wait_for_timeout(350)
+            pg.keyboard.press("e"); pg.wait_for_timeout(400)
+            peek = T.ev("window.__hm.dlg ? [window.__hm.dlg.npc.role, window.__hm.dlg.npc.name] : null")
+            for _ in range(12):
+                if not T.ev("!!window.__hm.dlg"): break
+                pg.keyboard.press("e"); pg.wait_for_timeout(250)
+            T.step("gnome door: another opens on a peeking gnome (dialogue with the gnome portrait)", peek is not None and peek[0] == "gnome" and T.ev("!window.__hm.dlg"), peek=peek)
+            T.ev("window.__hm.S.hp = 10"); T.ev("(() => { const c = window.__hm.ctx, p = c.player; p.x = 7.6; p.z = -5.8; p.y = c.heightAt(p.x, p.z); c.stopWalk(); })()")
+            T.walk(10.0, -6.4); pg.wait_for_timeout(400)
+            sp = T.ev("({ hp: window.__hm.S.hp, max: window.__hm.combat.maxHp(), buff: window.__hm.hollows.buffT, dmg: window.__hm.glow.dmgMul() })")
+            rep["shots"]["hollows_spring"] = T.shot("hollows_spring")
+            T.step("hidden bubbly spring on the ledge: walking in heals fully and gives spring-fizz (+15% damage, timed)", sp["hp"] == sp["max"] and sp["buff"] > 40 and sp["dmg"] >= 1.15, spring=sp)
+            T.ev("(() => { const c = window.__hm.ctx, p = c.player; p.x = 9.4; p.z = -0.6; p.y = c.heightAt(p.x, p.z); p.facing = 'up'; c.stopWalk(); })()"); pg.wait_for_timeout(350)
+            T.ev("window.__hm.combat.cd = {}"); pg.keyboard.press("f"); pg.wait_for_timeout(900)
+            if not T.ev("window.__hm.hollows.braziers.find((b) => b.id === 'brazier_e').lit"):
+                T.ev("window.__hm.combat.cd = {}"); pg.keyboard.press("f"); pg.wait_for_timeout(900)
+            bz = T.ev("(() => { const H = window.__hm.hollows, b = H.braziers.find((q) => q.id === 'brazier_e'); return { lit: b.lit, burning: b.burning, light: !!b.light, zone: window.__hm.glow.zones().some((z) => z.src === 'brazier'), saved: window.__hm.S.found.brazier_e }; })()")
+            rep["shots"]["hollows_brazier"] = T.shot("hollows_brazier")
+            T.step("cold-fire brazier: a spell beside it lights it (flame + blue light + a light zone wraiths avoid), remembered", bz["lit"] and bz["burning"] and bz["light"] and bz["zone"] and bz["saved"] == 1, brazier=bz)
             T.ev("(() => { const c = window.__hm.ctx, p = c.player; p.x = -11.0; p.z = 1.1; p.y = c.heightAt(p.x, p.z); c.stopWalk(); })()"); pg.wait_for_timeout(300)
             area = T.go_rect("exits")
             p = T.pos()

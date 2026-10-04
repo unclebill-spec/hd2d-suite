@@ -901,7 +901,10 @@ export async function boot(opts = {}) {
       if (!effects) return [];
       effects.clear();
       if (gamefx) for (const f of gamefx.list) f.mesh.visible = false;   // quest tags / pickups must not sit over a spell
-      const names = effects.names();
+      // wide ground decals alternate with narrow billboards so neighbours never overlap even when the row is tight
+      const all = effects.names(), dec = all.filter((n) => sMeta.effects[n].kind === 'decal'), oth = all.filter((n) => sMeta.effects[n].kind !== 'decal');
+      const names = [];
+      while (dec.length || oth.length) { if (oth.length) names.push(oth.shift()); if (dec.length) names.push(dec.shift()); }
       const cols = Math.max(5, Math.ceil(names.length / 3));   // <= 3 rows so a big atlas still fits on screen
       const dx = Math.min(2.4, 19.2 / cols);                   // and the row never gets wider than 8 cells at 2.4 m
       names.forEach((n, i) => {

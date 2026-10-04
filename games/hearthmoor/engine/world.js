@@ -15,7 +15,7 @@ export function loadImage(url) {
   return new Promise((res, rej) => { const im = new Image(); im.onload = () => res(im); im.onerror = rej; im.src = url; });
 }
 
-// glTF PBR(roughness 1) -> Lambert. Windows / lamp glass become emissive slots the clock drives.
+// glTF PBR(roughness 1) -> Lambert. Windows / lamp glass become emissive slots the clock drives; 'glow' is unlit.
 export function litify(root, slots) {
   root.traverse((o) => {
     if (!o.isMesh) return;
@@ -35,6 +35,10 @@ export function litify(root, slots) {
     } else if (name === 'lamp') {
       m = new THREE.MeshLambertMaterial({ ...common, color: 0xffffff, emissive: new THREE.Color(0x000000) });
       slots.lamps.push(m);
+    } else if (name === 'glow') {
+      // self-lit palette pixels (glowing toadstool caps / spots / gills, spring water): shown at their baked vertex
+      // colour at every hour, no point light needed and no bloom
+      m = new THREE.MeshBasicMaterial({ ...common });
     } else {
       m = new THREE.MeshLambertMaterial({ ...common, map: src.map || null, alphaTest: src.alphaTest || 0, transparent: false });
     }

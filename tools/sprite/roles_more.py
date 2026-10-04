@@ -42,6 +42,10 @@ def more_roles(_r):
         "nightmerchant": _r(desc="travelling night merchant: deep hood, night-blue cloak, blue scarf, pack, neon-blue lantern",
                             hat="hood", hatc="shadow", hair="stone", beard="stone_hi", shirt="cloth", cloak="shadow",
                             scarf="flower_blue", satchel="timber_hi", pants="timber_lo", shoes="shadow", item="bluelantern"),
+        "gnome": _r(desc="Toadstool Hollows gnome: small, tall red pointy cap with a white tassel, bushy white beard, "
+                         "blue smock, brown belt and boots", layout="kid", hat="gnome", hatc="roof_hi", hair="white",
+                    hairstyle="short", beard="white", shirt="cloth", pants="timber_lo", boots=True, shoes="timber_lo",
+                    named=True),
         "dog": _r(kind="creature", animal="dog", desc="scruffy cream terrier with floppy brown ears", fur="plaster",
                   spot="timber_hi", belly="plaster_hi"),
         "goat": _r(kind="creature", animal="goat", desc="small white goat with curled horns and a bell",
@@ -101,6 +105,19 @@ def draw_hat(s, spec, L, face, top, spans):
         fx = b0 - 1 if face != "left" else b0
         for k in range(2):                                   # feather sweeping back
             s.set(fx + k, top - 2 - k, "white" if k < 1 else "flower_gold")
+    elif hat == "gnome":
+        # tall pointy red cap pulled low over the brow, tip flopping to one side, a white tassel on the tip
+        cx = (a0 + b0) // 2
+        s.hspan(top + 2, a0 - 1, b0 + 1, dk)                 # turned-up rim
+        s.hspan(top + 1, a0 - 1, b0 + 1, c)
+        rows = [(top, 6), (top - 1, 5), (top - 2, 5), (top - 3, 4), (top - 4, 3), (top - 5, 3), (top - 6, 2), (top - 7, 2)]
+        for y, hw in rows:
+            s.hspan(y, cx - hw, cx + hw - 1, c)
+            s.set(cx + hw - 1, y, dk)
+            s.set(cx - hw, y, lt)
+        tip = -1 if face == "left" else 1
+        s.set(cx + tip, top - 8, c); s.set(cx + 2 * tip, top - 8, dk); s.set(cx + 3 * tip, top - 7, "white")
+        s.set(cx + 3 * tip, top - 6, "white"); s.set(cx + 4 * tip, top - 7, "stone_hi")
     elif hat == "bucket":
         for y, ind in ((top - 1, 2), (top, 1), (top + 1, 1)):
             s.hspan(y, a0 + ind, b0 - ind, c)

@@ -209,8 +209,8 @@
   {
    "piece": "toadstool_cluster",
    "pos": [
-    8.8,
-    -6.0
+    12.6,
+    -8.6
    ],
    "rot": 110
   },
@@ -225,8 +225,8 @@
   {
    "piece": "mushroom_ring",
    "pos": [
-    -1.0,
-    1.4
+    2.4,
+    -0.4
    ]
   },
   {
@@ -292,6 +292,55 @@
    "pos": [
     12.2,
     -4.4
+   ]
+  },
+  {
+   "piece": "gnome_stump",
+   "pos": [
+    -11.4,
+    -7.2
+   ]
+  },
+  {
+   "piece": "gnome_stump",
+   "pos": [
+    0.4,
+    -7.4
+   ]
+  },
+  {
+   "piece": "gnome_stump",
+   "pos": [
+    8.4,
+    6.0
+   ]
+  },
+  {
+   "piece": "spring_basin",
+   "pos": [
+    10.0,
+    -7.2
+   ]
+  },
+  {
+   "piece": "brazier",
+   "pos": [
+    -7.6,
+    -0.8
+   ]
+  },
+  {
+   "piece": "brazier",
+   "pos": [
+    2.8,
+    -5.6
+   ]
+  },
+  {
+   "piece": "brazier",
+   "pos": [
+    9.4,
+    -2.0
    ]
   }
  ],
@@ -432,7 +481,25 @@
    ]
   }
  ],
- "actors": [],
+ "actors": [
+  {
+   "id": "gnome",
+   "role": "gnome",
+   "name": "Pipkin, a toadstool gnome",
+   "pos": [
+    1.9,
+    -5.9
+   ],
+   "facing": "down",
+   "behavior": "idle",
+   "talkable": true,
+   "say": [
+    "Oh! A big-folk. Mind the giant caps: the low pink one by the east bank bounces you right up the ledge.",
+    "Up there is our fizzy spring. Have a paddle and you'll feel spry for a good while.",
+    "And if the dark gets too dark, give a brazier a spell. Cold fire keeps the wraiths off."
+   ]
+  }
+ ],
  "player": {
   "role": "hedgewitch",
   "pos": [
@@ -529,6 +596,82 @@
     ],
     "h": 1.4,
     "dur": 0.8
+   }
+  ],
+  "doors": [
+   {
+    "id": "door_chest",
+    "pos": [
+     -11.4,
+     -6.3
+    ],
+    "kind": "chest",
+    "gold": 12,
+    "item": "tonic"
+   },
+   {
+    "id": "door_peek",
+    "pos": [
+     0.4,
+     -6.5
+    ],
+    "kind": "peek",
+    "name": "A gnome behind the door",
+    "say": [
+     [
+      "(The round door opens a crack. A tiny gnome with flour on her beard peeks out.)",
+      "Shoo, shoo! The mushroom loaf isn't ready yet!"
+     ],
+     [
+      "(The door opens a crack again.)",
+      "Still baking! Go bounce on something!"
+     ]
+    ]
+   },
+   {
+    "id": "door_peek2",
+    "pos": [
+     8.4,
+     6.9
+    ],
+    "kind": "peek",
+    "name": "A sleepy gnome",
+    "say": [
+     [
+      "(A sleepy gnome in a nightcap blinks at you.)",
+      "Is it the dark hours already? Light a brazier for us, would you?"
+     ]
+    ]
+   }
+  ],
+  "spring": {
+   "pos": [
+    10.0,
+    -7.2
+   ],
+   "r": 1.8
+  },
+  "braziers": [
+   {
+    "id": "brazier_w",
+    "pos": [
+     -7.6,
+     -0.8
+    ]
+   },
+   {
+    "id": "brazier_back",
+    "pos": [
+     2.8,
+     -5.6
+    ]
+   },
+   {
+    "id": "brazier_e",
+    "pos": [
+     9.4,
+     -2.0
+    ]
    }
   ]
  }

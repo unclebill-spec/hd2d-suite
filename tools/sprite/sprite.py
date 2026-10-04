@@ -149,7 +149,7 @@ ROLES = {
 ROLES.update(RM.more_roles(_r))
 ROLES.update(RH.hero_roles(_r))
 ROLES.update(RE.enemy_roles(_r))  # extra: only built when a spec names them (sprite_roles), never by "all"
-EXTRA = {k for k, v in ROLES.items() if v.get("enemy") or v.get("summon")}
+EXTRA = {k for k, v in ROLES.items() if v.get("enemy") or v.get("summon") or v.get("named")}  # named: only when a spec names it
 
 ROLE_SIZE = {"human": ((14, 24), (24, 40)), "creature": ((10, 24), (10, 40)),
              "enemy": ((6, 20), (6, 32)), "summon": ((4, 20), (6, 32))}  # (w range, h range)

@@ -162,6 +162,8 @@ function setLog(open) { G.log = open; $('log').hidden = !open; $('btnLog').class
 let toastT = 0;
 function toast(msg, s = 2.0, html = false) { const el = $('toast'); if (html) el.innerHTML = msg; else el.textContent = msg; el.hidden = false; el.classList.remove('out'); toastT = s; }
 G.toast = toast;
+G.say = (npc, page) => openDialogue(npc, { pages: Array.isArray(page) ? page : [page] });
+G.itemName = (id) => (ITEMS[id] ? ITEMS[id].name : id);
 G.drawBag = (f) => drawBag(f);
 G.popText = (txt, at, col) => G.combat.number(txt, at.x, at.y + 0.9, at.z, col);
 
@@ -352,7 +354,12 @@ function drawVitals(ctx) {
 const hooks = {
   blockInput: () => !!(G.dlg || G.busy || G.title || G.log || G.downed || G.opts || G.picking || G.heroUI || G.shop || G.asking || WHEEL.open || G.hollows.busy()),
   rollMods: () => { const M = G.combat.M; return { speed: M.rollSpeed, iframes: M.rollIframes }; },
-  onCast: (name) => G.combat.cast(name),
+  onCast: (name) => {
+    const C = G.combat, s0 = C.cd.spell || 0, c0 = C.cd.charm || 0, ok = C.cast(name);
+    // a cast really happened when its cooldown just started (spells return false so the engine skips its own fx)
+    if ((C.cd.spell || 0) > s0 || (C.cd.charm || 0) > c0) G.hollows.onCast();
+    return ok;
+  },
   onSummon: () => G.combat.doSummon(),
   onDodge: () => G.combat.onDodge(),
   onAct: (name) => { if (name === 'jump') G.hollows.onJump(); G.combat.onAct(name); },
@@ -362,6 +369,7 @@ const hooks = {
     if (G.dlg) { advanceDialogue(); return true; }
     if (G.log) { setLog(false); return true; }
     if (G.busy) return true;
+    if (kind !== 'tap' && G.hollows.interact()) return true;   // gnome doors
     return false;
   },
   onTalk: (npc, ctx) => {
@@ -415,7 +423,7 @@ const hooks = {
     return true;
   },
   onFrame,
-  nearThing: (ctx) => !!nearPickup(ctx, 1.4),
+  nearThing: (ctx) => !!nearPickup(ctx, 1.4) || G.hollows.nearThing(ctx),
 };
 
 // ------------------------------------------------------------------ touch action buttons + slow-time spell wheel

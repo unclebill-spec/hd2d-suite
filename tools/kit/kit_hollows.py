@@ -11,17 +11,23 @@ PI = math.pi
 def pieces(K):
     box, cylinder, sphere, mix, Piece, W_, Mesh = K.box, K.cylinder, K.sphere, K.mix, K.Piece, K.W_, K.Mesh
 
-    def cap(m, cx, r, x, y, z, R, h, spots=7, col="roof_hi"):
-        """a red dome cap with a darker underside rim and white spots"""
-        m.add(sphere(R, 9, 5, cx.c(col), squash=(1, h / R, 1), col_bottom=cx.c("roof")).xf((x, y, z)))
-        m.add(cylinder(R * 0.92, R * 0.55, 0.06, 9, cx.c("plaster_lo"), "paint", y0=y - 0.04).xf((x, 0, z)))   # gills
+    RED, RED_LO, GILL, SPOT = "#e0302a", "#a81c22", "#ffc463", "#fff8e6"   # bright toadstool red, rim, warm gills
+
+    def cap(m, cx, r, x, y, z, R, h, spots=7, col=None):
+        """a bright red dome cap with crisp white spots and warm glowing gills underneath. All of it is the self-lit
+        'glow' material (baked vertex colour, no lighting), so it reads against the gloom at every hour without
+        extra lights or bloom; the dome's lower rim is a deeper red so the shape still reads."""
+        top = col or RED
+        m.add(sphere(R, 10, 6, top, "glow", squash=(1, h / R, 1), col_bottom=RED_LO).xf((x, y, z)))
+        m.add(cylinder(R * 0.93, R * 0.5, 0.07, 10, GILL, "glow", y0=y - 0.06).xf((x, 0, z)))          # glowing gills
+        m.add(cylinder(R * 0.5, R * 0.3, 0.05, 8, mix(GILL, SPOT, 0.5), "glow", y0=y - 0.1).xf((x, 0, z)))
         for k in range(spots):
             a = k * 2 * PI / spots + r.uniform(-0.3, 0.3)
-            rr = R * r.uniform(0.3, 0.75)
+            rr = R * r.uniform(0.3, 0.72)
             sx, sz = math.cos(a) * rr, math.sin(a) * rr
-            sy = y + h * math.sqrt(max(0.0, 1 - (rr / R) ** 2)) * 0.96
-            m.add(sphere(R * r.uniform(0.09, 0.15), 5, 3, cx.c("white"), squash=(1, 0.45, 1)).xf((x + sx, sy, z + sz)))
-        m.add(sphere(R * 0.14, 5, 3, cx.c("white"), squash=(1, 0.5, 1)).xf((x, y + h * 0.98, z)))
+            sy = y + h * math.sqrt(max(0.0, 1 - (rr / R) ** 2)) * 0.97
+            m.add(sphere(R * r.uniform(0.11, 0.16), 6, 3, SPOT, "glow", squash=(1, 0.42, 1)).xf((x + sx, sy, z + sz)))
+        m.add(sphere(R * 0.16, 6, 3, SPOT, "glow", squash=(1, 0.5, 1)).xf((x, y + h * 0.98, z)))
 
     def stem(m, cx, x, z, r0, r1, h, y0=0.0):
         m.add(cylinder(r0, r1, h, 8, cx.c("plaster_hi"), "paint", y0=y0, col_top=cx.c("plaster")).xf((x, 0, z)))
@@ -53,7 +59,7 @@ def pieces(K):
         """the springy one: a short fat stem and a broad, low, extra-bright cap you can jump on"""
         pc = Piece("bounce_toadstool"); r = K.rng(cx.seed, "tbounce"); m = Mesh()
         stem(m, cx, 0, 0, 0.42, 0.36, 0.45)
-        cap(m, cx, r, 0, 0.45, 0, 0.95, 0.32, spots=8, col="flower_rose")
+        cap(m, cx, r, 0, 0.45, 0, 0.95, 0.32, spots=8, col="#f0505a")
         pc.mesh = m.ao(0, 0.9, 0.2)
         pc.size = [1.9, 0.8, 1.9]
         return pc
@@ -82,8 +88,9 @@ def pieces(K):
     def spring_basin(cx):
         """the hidden spring: a ring of mossy stones round a pool of glowing blue water"""
         pc = Piece("spring_basin"); r = K.rng(cx.seed, "spring"); m = Mesh()
-        m.add(cylinder(1.25, 1.25, 0.05, 14, cx.c("sky"), "lamp", y0=0.06))                     # the water (lit)
-        m.add(cylinder(0.7, 0.7, 0.02, 12, cx.c("white"), "lamp", y0=0.11))
+        m.add(cylinder(1.25, 1.25, 0.05, 14, mix(cx.c("sky"), cx.c("flower_blue"), 0.35), "glow", y0=0.06))   # the water (self-lit)
+        m.add(cylinder(0.7, 0.7, 0.02, 12, cx.c("sky"), "glow", y0=0.11))
+        m.add(cylinder(0.25, 0.25, 0.02, 8, cx.c("white"), "glow", y0=0.13))
         for k in range(12):
             a = k * 2 * PI / 12 + r.uniform(-0.1, 0.1)
             m.add(box(0.42, r.uniform(0.22, 0.34), 0.34, mix(W_, cx.c("stone"), 0.2), "stone", y0=0).xf(
@@ -103,7 +110,7 @@ def pieces(K):
             a = k * 2 * PI / 3
             m.add(box(0.1, 0.7, 0.1, st, "stone", y0=0).xf((math.cos(a) * 0.22, 0, math.sin(a) * 0.22), rot=(0, -a, 0.12)))
         m.add(cylinder(0.36, 0.22, 0.24, 8, cx.c("shadow"), "paint", y0=0.66))
-        m.add(cylinder(0.3, 0.3, 0.04, 8, cx.c("flower_blue"), "lamp", y0=0.88))                # cold coals
+        m.add(cylinder(0.3, 0.3, 0.04, 8, mix(cx.c("cloth"), cx.c("shadow"), 0.4), "paint", y0=0.88))   # cold coals (dark until lit)
         m.add(box(0.5, 0.06, 0.5, st, "stone", y0=0))
         pc.mesh = m.ao(0, 1.0, 0.2)
         pc.blockers.append([-0.3, -0.3, 0.3, 0.3])

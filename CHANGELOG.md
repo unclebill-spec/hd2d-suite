@@ -2,6 +2,32 @@
 
 Dates are America/New_York. Newest first. Keep this current with every change you push.
 
+## 2026-10-03: Hearthmoor Part 6: bright toadstools, gnome doors + Pipkin, the bubbly spring, cold-fire braziers
+- **Toadstool art fix:** the giant toadstool caps (and the clusters and bounce caps) are now a clear saturated red with crisp bright-white spots and warm glowing gills underneath.
+  - They use a new self-lit `glow` world material (`world.js` `litify`: an unlit `MeshBasicMaterial` that shows the baked vertex colour). So they read against the gloom at every hour with no new lights and no bloom. The dome's lower rim is a deeper red so the shape still reads.
+  - Each giant toadstool also has a warm dithered `light_pool` decal underneath (a decal only, no light).
+- **Gnome doors:**
+  - Three `gnome_stump` homes with round doors and lit windows (`game.doors`; E / A opens one).
+  - One door hides a little chest: +12 gold and a Hearth tonic, once.
+  - The other two open on a peeking gnome: a dialogue with the gnome portrait ("Shoo, shoo! The mushroom loaf isn't ready yet!").
+- **Pipkin, a toadstool gnome:** a new `gnome` sprite (small, tall pointy red cap with a white tassel, bushy white beard, blue smock, belt and boots). It is on the Hollows sheet only: roles marked `named` are built only when a spec names them, and the `combat` token skips them. Pipkin has three short lines pointing at the bounce cap, the spring and the braziers.
+- **The hidden bubbly spring** sits on the bounce ledge (`spring_basin`, self-lit blue water).
+  - It has rising, wobbling, popping glowing bubbles (new `spring_bubbles` effect), glitter and a soft sky-blue light.
+  - Walking in heals you fully, refills stamina, and gives **spring-fizz** for 60 s: +15% damage and faster stamina (`Hollows.dmgMul` / `regenMul`, folded into `glow.dmgMul`). It can be used again after 8 s.
+- **Dark-hour cold-fire braziers:** three stone-and-iron braziers (`game.braziers`). Cast a spell beside one, or land a spell's light pool near it, and it catches.
+  - A lit brazier burns a neon-blue cold-fire tongue (new `coldfire_flame` effect), with cold-fire motes, a blue `coldfire_pool` and a blue light.
+  - It burns through every dark hour (dusk to dawn) and flares for 25 s when struck by day. Lit braziers are remembered in `S.found`.
+  - Burning braziers are light zones (`src: 'brazier'`, r 3.2): you're glowlit there and wraiths keep away.
+  - The flame sits over a wide neon-blue `coldfire_pool` (4 decals).
+  - Casting beside a brazier is detected from the spell or charm cooldown starting. Spells return `false` from `Combat.cast` so the engine skips its own effect, which hid the cast before this fix.
+- **Sprite sheets:** Hollows actors 560x3456 (under 4096); spells 256x896.
+- **Tests:**
+  - 5 new smoke steps (gnome talk, chest door, peek door, spring heal + buff, brazier lit by a cast). Smoke: 117/117 (re-run before push).
+  - check-scene: hollows 10/10, mossglen 11/11. All of Part 6 (toadstool fix, gnome doors, spring, braziers) is done and live.
+  - check-scene's effect lineup (`effectLineup` in `main.js`) now alternates wide ground decals with narrow billboards. With 28 effects the row got tight and `bloom_ring` overlapped its neighbour.
+  - The Hollows' front mushroom ring moved off the lineup row.
+- Screenshots: `docs/screenshots/part6_hollows_night_toadstools.png`, `part6_bubbly_spring.png`, `part6_brazier_gnome.png`.
+
 ## 2026-10-03: Hearthmoor Part 5: Toadstool Hollows (area + bounce toadstools)
 - **Toadstool Hollows**, a new area (`areas/src/hollows.json`): walk out of Mossglen's east edge, past Mossheart's clearing, and the west edge of the Hollows brings you back.
   - It's a dim mossy hollow with a dirt floor, a mossy bank with stairs, and a high east ledge.
@@ -16,7 +42,7 @@ Dates are America/New_York. Newest first. Keep this current with every change yo
   - A second cap on the ledge springs you back down.
 - **New kit pieces** in `tools/kit/kit_hollows.py`: `toadstool_big`, `toadstool_cluster`, `bounce_toadstool`, `gnome_stump`, `spring_basin`, `brazier` (the last three are for the next steps).
 - **Tests:** new smoke steps cover Mossglen -> Hollows -> Mossglen and the bounce up and back down. Smoke: 112/112. check-scene now runs on `areas/hollows`.
-- **Not done yet (next run):** gnome doors and the gnome NPC, the hidden bubbly spring on the ledge, and the dark-hour cold-fire braziers.
+- Gnome doors, the spring and the braziers followed in Part 6 (above).
 - Screenshots: `docs/screenshots/part5_hollows_night_pools.png`, `docs/screenshots/part5_bounce_toadstool.png`.
 
 ## 2026-10-03: Hearthmoor Part 4: skill tiers II-III with capstones, summon tiers; check-scene fixes
