@@ -722,6 +722,31 @@ def run(out, simscale=4, size=(960, 540)):
             T.ev("window.__hm.S.hp = 30"); tn = T.ev("window.__hm.S.inv.tonic")
             pg.keyboard.press("u"); pg.wait_for_timeout(300)
             T.step("U drinks a Hearth tonic: +60 HP, one fewer in the bag", T.ev("window.__hm.S.hp") >= 90 and (T.ev("window.__hm.S.inv.tonic") or 0) == tn - 1, hp=T.ev("window.__hm.S.hp"))
+            # ---------------------------------------------------------- stage 4: Bix Coppertuft's Nine Keys Bank (one vault shared by all save slots)
+            bx = T.ev("(() => { const a = window.__hm.ctx.npc('banker'); return a ? { role: a.role, p: [+a.x.toFixed(2), +a.z.toFixed(2)] } : null; })()")
+            T.step("Bix Coppertuft the gnome clerk keeps the bank in the plaza", bx and bx["role"] == "gnome", bix=bx)
+            T.ev("(() => { localStorage.removeItem('hearthmoor-bank-v1'); const S = window.__hm.S, LO = window.__hm.LO; S.gold = 100; S.bag.push(LO.makeItem(2, 1, 'armor')); })()")
+            T.talk("banker"); pg.wait_for_timeout(300)
+            bq = T.ev("window.__hm.shopUI.qa()")
+            T.step("talking to Bix opens the bank panel (Deposit tab: gold rows, then your gear)", bq["open"] == "bank" and bq["rows"][0]["name"] == "Deposit 10 gold"
+                   and T.ev("document.querySelector('#shopTabs button').textContent") == "Deposit" and T.ev("!document.getElementById('shopui').hidden"), rows=[r["name"] for r in bq["rows"]][:6])
+            rep["shots"]["bank"] = T.shot("bank")
+            bank = "JSON.parse(localStorage.getItem('hearthmoor-bank-v1') || 'null')"
+            pg.keyboard.press("Enter"); pg.wait_for_timeout(250)
+            bk = T.ev(bank)
+            T.step("keyboard: Enter deposits 10 gold into the shared vault", T.ev("window.__hm.S.gold") == 90 and bk and bk["gold"] == 10, bank=bk and bk["gold"])
+            nbag = len(T.S()["bag"])
+            T.btn(13); T.btn(13); T.btn(0); pg.wait_for_timeout(250)   # d-pad down twice to the first bag row, A deposits it
+            bk = T.ev(bank)
+            T.step("controller: d-pad down + A deposits a piece of gear (it takes one of the 40 vault slots)", len(T.S()["bag"]) == nbag - 1 and len(bk["items"]) == 1, items=len(bk["items"]))
+            pg.click("#shopTabs button:nth-child(2)"); pg.wait_for_timeout(250)
+            pg.click("#shopBody .row[data-k='2'] button"); pg.wait_for_timeout(250)
+            pg.click("#shopBody .row[data-k='0'] button"); pg.wait_for_timeout(250)
+            bk = T.ev(bank)
+            T.step("touch: Vault tab, 'take' brings the gear back and 'take' on the gold row withdraws 10 gold", len(T.S()["bag"]) == nbag and not bk["items"] and bk["gold"] == 0 and T.ev("window.__hm.S.gold") == 100)
+            T.step("the vault lives outside the save slot (hearthmoor-bank-v1, shared by all three slots)",
+                   "bank" not in json.loads(T.ev("localStorage.getItem('hearthmoor-slot-1-v2')")) and T.ev("localStorage.getItem('hearthmoor-bank-v1')") is not None)
+            pg.keyboard.press("Escape"); pg.wait_for_timeout(200)
             # ---------------------------------------------------------- stage 3: the travelling night merchant + gem sockets
             t_day = T.ev("window.__hd2d.clock.t")
             T.ev("window.__hd2d.setTime(0.9)"); pg.wait_for_timeout(700)

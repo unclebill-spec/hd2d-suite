@@ -70,6 +70,7 @@ Repo handoff docs (in the suite root): [`AGENTS.md`](../../AGENTS.md), [`CHANGEL
   - Gnome doors: a chest (+12 gold + a tonic, once) and peeking gnomes. Pipkin the gnome stays on the Hollows sheet only.
   - The bubbly spring on the ledge heals fully and gives 60 s of spring-fizz.
   - A spell beside a cold-fire brazier lights it. It burns dusk to dawn as a light zone that wraiths avoid.
+- **Bank (Stage 4):** Bix Coppertuft, the gnome clerk (west plaza), opens the Nine Keys Bank: one 40-slot vault shared by all three save slots (`hearthmoor-bank-v1`) for gear and gems, plus gold deposit / withdraw (10 or all). Deposit / Vault tabs; Enter / A / tap act, arrows / d-pad move, LB / RB or the tabs switch.
 - **Night merchant + sockets:** Sefa (`nightmerchant`) only exists at night in the Plaza (her lantern casts a bright neon-blue cold-fire pool: strong blue light + `coldfire_pool` ground decal + `coldfire_motes`, light zone 2.2 m) and sells gems; Legendary = 2 sockets, Rare / Epic 0-2, Common / Uncommon none; Mossheart always drops a golem core; gems glow on item icons; socket with R / Y / the row button in the Gear tab.
 - **Legendary aura on the hero:** any Legendary equipped -> marching neon ring at the hero's feet (back arc skipped so it never covers the legs) + a following orange-gold point light; gone when unequipped or on the title.
 - **Vitals:** a parchment chip (top left, under the title) shows HP and stamina. Attacks, guarding hits and rolls cost stamina; it refills after a short pause.

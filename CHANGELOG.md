@@ -2,6 +2,14 @@
 
 Dates are America/New_York. Newest first. Keep this current with every change you push.
 
+## 2026-10-03: Hearthmoor Stage 4, part 2: the Nine Keys Bank (Bix Coppertuft, a shared 40-slot vault)
+- **Bix Coppertuft**, gnome clerk of the Nine Keys Bank, stands on open cobbles west of the plaza (-6.0, 4.4), clear of the bunting, the well, Sefa's spot and the start-to-lane path (checked against the baked collision grid). He uses the `gnome` sprite, now named on the Plaza sheet (`sprite_roles`).
+- **One vault for every save slot:** `localStorage` `hearthmoor-bank-v1` (`{v, items, gems, gold}`), not part of any slot save. 40 slots: each piece of gear takes one, each gem kind stacks in one. Gold has its own rows (deposit / withdraw 10, or all). Banked gold is not carried, so a faint never drops it.
+- The bank reuses the shop panel (`Shop`, `SHOPS.bank`, tabs Deposit / Vault): keys (arrows, Enter), controller (d-pad, LB / RB, A) and touch (tabs, row buttons) all work.
+- Smoke: 6 new steps (Bix is there, the panel opens, keyboard gold deposit, controller gear deposit, touch take-out + gold withdraw, the vault is outside the slot save). Smoke: 129/129; check-scene plaza 11/11.
+- The shop panel's footer hint now follows the panel (bank: deposit / vault).
+- Screenshots: `docs/screenshots/stage4_slot_picker.png` (live build), `stage4_bix_plaza.png`, `stage4_bank_deposit.png`, `stage4_bank_vault.png`.
+
 ## 2026-10-03: Hearthmoor Stage 4, part 1: three save slots with a slot picker on the title
 - **Save slots:** three slots, `hearthmoor-slot-<n>-v2`. Slot 1 keeps the old single-slot key `hearthmoor-slot-1-v2`, so an existing save simply is slot 1 (no data moves). The v1 save still migrates, into slot 1. Deleting slot 1 sets `hearthmoor-v1-migrated` so an old v1 save can't reappear. The last slot used is remembered (`hearthmoor-lastslot`); `?slot=N` picks one.
 - **Slot picker on the title:** three carved-wood / parchment cards, each with the hero's own pixel sprite (idle-down frame from the Plaza atlas, integer scale, nearest-neighbour), hero, level, area and play time. Continue and New game act on the chosen slot.

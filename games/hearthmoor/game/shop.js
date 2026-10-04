@@ -22,6 +22,19 @@ export const NIGHT_MERCHANT = { plaza: { id: 'nightmerchant', role: 'nightmercha
   say: ['Lantern Pack, open till dawn.'] } };
 export const NIGHT = (t) => t > 0.8 || t < 0.25;
 const LANTERN = '#5ab4f0';
+// the Nine Keys Bank (Bix Coppertuft, gnome clerk): ONE vault shared by every save slot (localStorage hearthmoor-bank-v1).
+// 40 slots: each piece of gear takes one, each gem kind stacks in one. Gold has its own deposit / withdraw rows.
+export const BANK_STORE = 'hearthmoor-bank-v1';
+export const BANK_MAX = 40;
+export const BANKER = { plaza: { id: 'banker', role: 'gnome', name: 'Bix Coppertuft, bank clerk', pos: [-6.0, 4.4], facing: 'down',
+  say: ['The Nine Keys Bank. Shared vault, every hero welcome.'] } };
+export function readBank() {
+  try { const b = JSON.parse(localStorage.getItem(BANK_STORE)); if (b && b.v === 1) return { v: 1, items: b.items || [], gems: b.gems || {}, gold: b.gold || 0 }; } catch (e) { /* fresh */ }
+  return { v: 1, items: [], gems: {}, gold: 0 };
+}
+export const writeBank = (b) => localStorage.setItem(BANK_STORE, JSON.stringify(b));
+export const bankUsed = (b) => b.items.length + Object.values(b.gems).filter((n) => n > 0).length;
+SHOPS.bank = { name: 'The Nine Keys Bank', keeper: 'Bix Coppertuft', goods: [], gear: { n: 0, rar: [] }, sellMul: 1, bank: true, tabs: ['Deposit', 'Vault'] };
 export const MERCHANT = { plaza: { id: 'merchant', role: 'shopkeeper', name: 'Odo the merchant', pos: [5.4, 3.4], facing: 'down',
   say: ['Tonics, seeds, sturdy kit. And I buy whatever you drag out of the glade.'] } };
 
@@ -32,6 +45,38 @@ export class Shop {
     this.ctx = ctx; this.area = area;
     const M = MERCHANT[area];
     if (M && !ctx.npc(M.id)) { const a = ctx.addNpc({ ...M, pos: M.pos.slice(), behavior: 'idle', talkable: true }); a.facing = M.facing; }
+    const B = BANKER[area];
+    if (B && ctx.actors.meta.roles[B.role] && !ctx.npc(B.id)) { const a = ctx.addNpc({ ...B, pos: B.pos.slice(), behavior: 'idle', talkable: true }); a.facing = B.facing; }
+  }
+  bankRows() {
+    const S = this.G.S, b = this.bank, full = bankUsed(b) >= BANK_MAX, gold = S.gold || 0;
+    const gearRow = (it, k, kind) => ({ kind, it, k, name: it.name, about: `${LO.RARITY[it.rar].name} ${it.slot} · ${LO.describe(it)}`, price: 0 });
+    if (this.tab === 0) return [
+      { kind: 'dep_gold', n: Math.min(10, gold), name: 'Deposit 10 gold', about: `you carry ${gold} · banked gold is safe from a faint`, cant: !gold },
+      { kind: 'dep_gold', n: gold, name: 'Deposit all gold', about: `${gold} gold`, cant: !gold },
+      ...(S.bag || []).map((it, k) => ({ ...gearRow(it, k, 'dep'), cant: full })),
+      ...LO.GEM_IDS.filter((g) => S.gems[g] > 0).map((g) => ({ kind: 'dep_gem', id: g, name: LO.GEMS[g].name, about: `socket gem · you have ${S.gems[g]}`, cant: full && !(b.gems[g] > 0) })),
+    ];
+    return [
+      { kind: 'wd_gold', n: Math.min(10, b.gold), name: 'Withdraw 10 gold', about: `banked ${b.gold}`, cant: !b.gold },
+      { kind: 'wd_gold', n: b.gold, name: 'Withdraw all gold', about: `${b.gold} gold`, cant: !b.gold },
+      ...b.items.map((it, k) => ({ ...gearRow(it, k, 'wd'), cant: S.bag.length >= LO.BAG_MAX })),
+      ...LO.GEM_IDS.filter((g) => b.gems[g] > 0).map((g) => ({ kind: 'wd_gem', id: g, name: LO.GEMS[g].name, about: `socket gem · banked ${b.gems[g]}` })),
+    ];
+  }
+  bankAct(r) {
+    const G = this.G, S = G.S, b = this.bank = readBank();   // re-read: another tab / slot may have changed it
+    if (r.cant) { G.toast && G.toast(r.kind.startsWith('dep') ? (bankUsed(b) >= BANK_MAX ? 'The vault is full (40 slots)' : 'Nothing to deposit') : 'Bag full', 1.4); return false; }
+    if (r.kind === 'dep_gold') { S.gold -= r.n; b.gold += r.n; }
+    else if (r.kind === 'wd_gold') { b.gold -= r.n; S.gold = (S.gold || 0) + r.n; }
+    else if (r.kind === 'dep') { b.items.push(S.bag.splice(r.k, 1)[0]); }
+    else if (r.kind === 'wd') { S.bag.push(b.items.splice(r.k, 1)[0]); }
+    else if (r.kind === 'dep_gem') { S.gems[r.id] -= 1; b.gems[r.id] = (b.gems[r.id] || 0) + 1; }
+    else if (r.kind === 'wd_gem') { b.gems[r.id] -= 1; if (!b.gems[r.id]) delete b.gems[r.id]; S.gems[r.id] = (S.gems[r.id] || 0) + 1; }
+    writeBank(b); G.save && G.save();
+    G.toast && G.toast(`${r.kind.startsWith('dep') ? 'Banked' : 'Took out'} ${r.kind.endsWith('gold') ? r.n + ' gold' : r.name}`, 1.4); G.audio && G.audio.sfx('pickup');
+    G.drawBag && G.drawBag(); this.draw();
+    return true;
   }
   detach() { this.dropLantern(); this.close(); this.ctx = null; }
   dropLantern() {
@@ -75,6 +120,7 @@ export class Shop {
   }
   rows() {
     const S = this.G.S, D = SHOPS[this.open];
+    if (D.bank) return this.bankRows();
     if (this.tab === 0) {
       return [...D.goods.map((g) => ({ kind: 'good', id: g, name: GOODS[g].name, about: GOODS[g].about, price: GOODS[g].price, have: (S.inv[g] || 0) })),
               ...(D.gems || []).map((g) => ({ kind: 'gem', id: g, name: LO.GEMS[g].name, about: `socket gem · ${LO.GEMS[g].about}`, price: LO.GEMS[g].price, have: (S.gems[g] || 0) })),
@@ -87,6 +133,11 @@ export class Shop {
     if (G.title || G.busy || G.picking || G.heroUI) return false;
     LO.ensure(G.S);
     this.open = id; this.tab = 0; this.i = 0; this.confirm = -1; G.shop = true;
+    if (SHOPS[id].bank) this.bank = readBank();
+    const labels = SHOPS[id].tabs || ['Buy', 'Sell'];
+    document.querySelectorAll('#shopTabs button').forEach((b, k) => { b.textContent = labels[k]; });
+    const tip = document.getElementById('shopTip');
+    if (tip) tip.textContent = SHOPS[id].bank ? '← → deposit / vault (LB / RB) · ↑ ↓ choose · Enter / A deposit or take · Esc / B close' : '← → buy / sell (LB / RB) · ↑ ↓ choose · Enter / A buy or sell · Esc / B close';
     document.getElementById('shopui').hidden = false;
     this.draw();
     return true;
@@ -100,13 +151,21 @@ export class Shop {
   draw() {
     const G = this.G, S = G.S, D = SHOPS[this.open]; if (!D) return;
     const $ = (id) => document.getElementById(id);
-    $('shopHead').innerHTML = `<b>${D.name}</b> <span class="tag">${D.keeper}</span><span class="tag gold">gold ${S.gold || 0}</span><span class="tag">bag ${S.bag.length} / ${LO.BAG_MAX}</span>`;
+    $('shopHead').innerHTML = `<b>${D.name}</b> <span class="tag">${D.keeper}</span><span class="tag gold">gold ${S.gold || 0}</span><span class="tag">bag ${S.bag.length} / ${LO.BAG_MAX}</span>`
+      + (D.bank ? `<span class="tag">vault ${bankUsed(this.bank)} / ${BANK_MAX}</span><span class="tag gold">banked ${this.bank.gold}</span>` : '');
     document.querySelectorAll('#shopTabs button').forEach((b, k) => b.classList.toggle('on', k === this.tab));
     const rows = this.rows(); this.n = rows.length; this.i = Math.min(this.i, Math.max(0, rows.length - 1));
     const body = $('shopBody');
-    const hint = this.tab === 0 ? 'Enter / A / tap buy · ← → or LB / RB: sell tab' : 'Enter / A / tap sell (Epic and Legendary ask twice) · ← → or LB / RB: buy tab';
+    const hint = D.bank ? (this.tab === 0 ? 'Enter / A / tap deposit · shared by all three save slots · ← → or LB / RB: vault' : 'Enter / A / tap take out · ← → or LB / RB: deposit')
+      : this.tab === 0 ? 'Enter / A / tap buy · ← → or LB / RB: sell tab' : 'Enter / A / tap sell (Epic and Legendary ask twice) · ← → or LB / RB: buy tab';
     body.innerHTML = `<p class="pts">${hint}</p>` + (rows.length ? '' : '<p class="pts">nothing in the bag to sell yet</p>')
       + rows.map((r, k) => {
+        if (D.bank) {
+          const rar = r.it ? r.it.rar : -1;
+          return `<div class="row gear${rar >= 0 ? ' r' + rar : ' good'}${k === this.i ? ' sel' : ''}" data-k="${k}">`
+            + `<em class="iname">${r.it ? `<i class="ic" data-ic="${k}"></i>` : r.id ? `<i class="gm" data-gm="${r.id}"></i>` : ''}${r.name}</em>`
+            + `<span>${r.about}</span><span class="bb"><button class="wbtn sm plus" data-buy="${k}" ${r.cant ? 'disabled' : ''}>${this.tab === 0 ? 'deposit' : 'take'}</button></span></div>`;
+        }
         const rar = r.it ? r.it.rar : -1, cant = r.kind !== 'sell' && ((S.gold || 0) < r.price || (r.kind === 'gear' && S.bag.length >= LO.BAG_MAX));
         const label = r.kind === 'sell' ? (this.confirm === k ? `sure? ${r.price}g` : `sell ${r.price}g`) : `buy ${r.price}g`;
         return `<div class="row gear${rar >= 0 ? ' r' + rar : ' good'}${k === this.i ? ' sel' : ''}" data-k="${k}">`
@@ -122,6 +181,7 @@ export class Shop {
   }
   act() {
     const G = this.G, S = G.S, r = this.rows()[this.i]; if (!r) return false;
+    if (SHOPS[this.open].bank) return this.bankAct(r);
     if (r.kind === 'sell') {
       if (r.it.rar >= 3 && this.confirm !== this.i) { this.confirm = this.i; this.draw(); return false; }
       S.bag.splice(r.k, 1); S.gold = (S.gold || 0) + r.price; this.confirm = -1;

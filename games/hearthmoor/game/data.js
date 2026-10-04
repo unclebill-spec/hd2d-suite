@@ -44,6 +44,15 @@ export const TALK = {
       then: (G) => { G.S.met = { ...(G.S.met || {}), night: 1 }; G.shopUI.show('night'); },
     };
   },
+  banker(S) {
+    const first = !S.met?.banker;
+    return {
+      pages: first ? ['Bix Coppertuft, clerk of the Nine Keys Bank. Small desk, deep vault.',
+                      'Forty slots, shared by every hero who carries your name. Gear, gems, gold. Banked gold stays put when you faint.']
+                   : ['Keys, ledger, lantern. Deposit or withdraw?'],
+      then: (G) => { G.S.met = { ...(G.S.met || {}), banker: 1 }; G.shopUI.show('bank'); },
+    };
+  },
   merchant(S) {
     const first = !S.met?.merchant;
     return {
