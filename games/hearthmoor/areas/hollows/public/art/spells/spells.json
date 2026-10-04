@@ -6,7 +6,7 @@
  "cell": 32,
  "size": [
   256,
-  896
+  1152
  ],
  "effects": {
   "sparkle_burst": {
@@ -1991,8 +1991,414 @@
    ],
    "duration": 0.75
   },
-  "toadstools": {
+  "garden_plot": {
    "row": 27,
+   "frames": 1,
+   "fps": 1,
+   "loop": true,
+   "loop_from": 0,
+   "loops": 1,
+   "kind": "decal",
+   "pivot": [
+    16,
+    16
+   ],
+   "lift": 0.015,
+   "glow": false,
+   "light": null,
+   "speed": null,
+   "travel": null,
+   "then": null,
+   "strip": "garden_plot.png",
+   "frame_list": [
+    {
+     "x": 0,
+     "y": 864,
+     "w": 32,
+     "h": 32
+    }
+   ],
+   "duration": 1.0
+  },
+  "glowplant_seed": {
+   "row": 28,
+   "frames": 4,
+   "fps": 3,
+   "loop": true,
+   "loop_from": 0,
+   "loops": 1,
+   "kind": "billboard",
+   "pivot": [
+    16,
+    31
+   ],
+   "lift": 0.0,
+   "glow": true,
+   "light": null,
+   "speed": null,
+   "travel": null,
+   "then": null,
+   "strip": "glowplant_seed.png",
+   "frame_list": [
+    {
+     "x": 0,
+     "y": 896,
+     "w": 32,
+     "h": 32
+    },
+    {
+     "x": 32,
+     "y": 896,
+     "w": 32,
+     "h": 32
+    },
+    {
+     "x": 64,
+     "y": 896,
+     "w": 32,
+     "h": 32
+    },
+    {
+     "x": 96,
+     "y": 896,
+     "w": 32,
+     "h": 32
+    }
+   ],
+   "duration": 1.333
+  },
+  "glowplant_sprout": {
+   "row": 29,
+   "frames": 4,
+   "fps": 3,
+   "loop": true,
+   "loop_from": 0,
+   "loops": 1,
+   "kind": "billboard",
+   "pivot": [
+    16,
+    31
+   ],
+   "lift": 0.0,
+   "glow": true,
+   "light": null,
+   "speed": null,
+   "travel": null,
+   "then": null,
+   "strip": "glowplant_sprout.png",
+   "frame_list": [
+    {
+     "x": 0,
+     "y": 928,
+     "w": 32,
+     "h": 32
+    },
+    {
+     "x": 32,
+     "y": 928,
+     "w": 32,
+     "h": 32
+    },
+    {
+     "x": 64,
+     "y": 928,
+     "w": 32,
+     "h": 32
+    },
+    {
+     "x": 96,
+     "y": 928,
+     "w": 32,
+     "h": 32
+    }
+   ],
+   "duration": 1.333
+  },
+  "glowplant_coldfire": {
+   "row": 30,
+   "frames": 6,
+   "fps": 7,
+   "loop": true,
+   "loop_from": 0,
+   "loops": 1,
+   "kind": "billboard",
+   "pivot": [
+    16,
+    31
+   ],
+   "lift": 0.0,
+   "glow": true,
+   "light": null,
+   "speed": null,
+   "travel": null,
+   "then": null,
+   "strip": "glowplant_coldfire.png",
+   "frame_list": [
+    {
+     "x": 0,
+     "y": 960,
+     "w": 32,
+     "h": 32
+    },
+    {
+     "x": 32,
+     "y": 960,
+     "w": 32,
+     "h": 32
+    },
+    {
+     "x": 64,
+     "y": 960,
+     "w": 32,
+     "h": 32
+    },
+    {
+     "x": 96,
+     "y": 960,
+     "w": 32,
+     "h": 32
+    },
+    {
+     "x": 128,
+     "y": 960,
+     "w": 32,
+     "h": 32
+    },
+    {
+     "x": 160,
+     "y": 960,
+     "w": 32,
+     "h": 32
+    }
+   ],
+   "duration": 0.857
+  },
+  "glowplant_violet": {
+   "row": 31,
+   "frames": 6,
+   "fps": 4,
+   "loop": true,
+   "loop_from": 0,
+   "loops": 1,
+   "kind": "billboard",
+   "pivot": [
+    16,
+    31
+   ],
+   "lift": 0.0,
+   "glow": true,
+   "light": null,
+   "speed": null,
+   "travel": null,
+   "then": null,
+   "strip": "glowplant_violet.png",
+   "frame_list": [
+    {
+     "x": 0,
+     "y": 992,
+     "w": 32,
+     "h": 32
+    },
+    {
+     "x": 32,
+     "y": 992,
+     "w": 32,
+     "h": 32
+    },
+    {
+     "x": 64,
+     "y": 992,
+     "w": 32,
+     "h": 32
+    },
+    {
+     "x": 96,
+     "y": 992,
+     "w": 32,
+     "h": 32
+    },
+    {
+     "x": 128,
+     "y": 992,
+     "w": 32,
+     "h": 32
+    },
+    {
+     "x": 160,
+     "y": 992,
+     "w": 32,
+     "h": 32
+    }
+   ],
+   "duration": 1.5
+  },
+  "violet_pool": {
+   "row": 32,
+   "frames": 6,
+   "fps": 6,
+   "loop": true,
+   "loop_from": 0,
+   "loops": 1,
+   "kind": "decal",
+   "pivot": [
+    16,
+    16
+   ],
+   "lift": 0.02,
+   "glow": true,
+   "light": null,
+   "speed": null,
+   "travel": null,
+   "then": null,
+   "strip": "violet_pool.png",
+   "frame_list": [
+    {
+     "x": 0,
+     "y": 1024,
+     "w": 32,
+     "h": 32
+    },
+    {
+     "x": 32,
+     "y": 1024,
+     "w": 32,
+     "h": 32
+    },
+    {
+     "x": 64,
+     "y": 1024,
+     "w": 32,
+     "h": 32
+    },
+    {
+     "x": 96,
+     "y": 1024,
+     "w": 32,
+     "h": 32
+    },
+    {
+     "x": 128,
+     "y": 1024,
+     "w": 32,
+     "h": 32
+    },
+    {
+     "x": 160,
+     "y": 1024,
+     "w": 32,
+     "h": 32
+    }
+   ],
+   "duration": 1.0
+  },
+  "red_pool": {
+   "row": 33,
+   "frames": 6,
+   "fps": 6,
+   "loop": true,
+   "loop_from": 0,
+   "loops": 1,
+   "kind": "decal",
+   "pivot": [
+    16,
+    16
+   ],
+   "lift": 0.02,
+   "glow": true,
+   "light": null,
+   "speed": null,
+   "travel": null,
+   "then": null,
+   "strip": "red_pool.png",
+   "frame_list": [
+    {
+     "x": 0,
+     "y": 1056,
+     "w": 32,
+     "h": 32
+    },
+    {
+     "x": 32,
+     "y": 1056,
+     "w": 32,
+     "h": 32
+    },
+    {
+     "x": 64,
+     "y": 1056,
+     "w": 32,
+     "h": 32
+    },
+    {
+     "x": 96,
+     "y": 1056,
+     "w": 32,
+     "h": 32
+    },
+    {
+     "x": 128,
+     "y": 1056,
+     "w": 32,
+     "h": 32
+    },
+    {
+     "x": 160,
+     "y": 1056,
+     "w": 32,
+     "h": 32
+    }
+   ],
+   "duration": 1.0
+  },
+  "glowplant_toadcap": {
+   "row": 34,
+   "frames": 4,
+   "fps": 3,
+   "loop": true,
+   "loop_from": 0,
+   "loops": 1,
+   "kind": "billboard",
+   "pivot": [
+    16,
+    31
+   ],
+   "lift": 0.0,
+   "glow": true,
+   "light": null,
+   "speed": null,
+   "travel": null,
+   "then": null,
+   "strip": "glowplant_toadcap.png",
+   "frame_list": [
+    {
+     "x": 0,
+     "y": 1088,
+     "w": 32,
+     "h": 32
+    },
+    {
+     "x": 32,
+     "y": 1088,
+     "w": 32,
+     "h": 32
+    },
+    {
+     "x": 64,
+     "y": 1088,
+     "w": 32,
+     "h": 32
+    },
+    {
+     "x": 96,
+     "y": 1088,
+     "w": 32,
+     "h": 32
+    }
+   ],
+   "duration": 1.333
+  },
+  "toadstools": {
+   "row": 35,
    "frames": 4,
    "fps": 3,
    "loop": true,
@@ -2013,25 +2419,25 @@
    "frame_list": [
     {
      "x": 0,
-     "y": 864,
+     "y": 1120,
      "w": 32,
      "h": 32
     },
     {
      "x": 32,
-     "y": 864,
+     "y": 1120,
      "w": 32,
      "h": 32
     },
     {
      "x": 64,
-     "y": 864,
+     "y": 1120,
      "w": 32,
      "h": 32
     },
     {
      "x": 96,
-     "y": 864,
+     "y": 1120,
      "w": 32,
      "h": 32
     }

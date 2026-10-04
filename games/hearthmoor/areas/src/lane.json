@@ -583,7 +583,7 @@
   }
  },
  "game": {
-  "id": "lane",
+  "id": "lane", "gardens": [{"id": "lane_garden", "pos": [3.6, 4.6], "kinds": ["coldfire", "violet", "toadcap"]}],
   "title": "Bakery Lane",
   "exits": [
    {

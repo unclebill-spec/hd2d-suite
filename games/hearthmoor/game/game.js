@@ -10,6 +10,7 @@ import { HEROES, HERO, SPELLS, SUMMONS, CHARM_DMG, CHARM_CD } from './heroes.js'
 import { Combat } from './combat.js';
 import { Glow } from './glow.js';
 import { Hollows } from './hollows.js';
+import { Garden } from './garden.js';
 import * as LO from './loot.js';
 import { Shop, drinkTonic, goodIconURL } from './shop.js';
 
@@ -44,6 +45,7 @@ const G = {
 G.combat = new Combat(G);
 G.glow = new Glow(G);
 G.hollows = new Hollows(G);
+G.garden = new Garden(G);
 G.loot = new LO.Loot(G); G.LO = LO; G.PR = PR;
 G.shopUI = new Shop(G); G.drinkTonic = () => drinkTonic(G);
 window.__hm = G;   // smoke tests + debugging
@@ -235,12 +237,12 @@ async function loadArea(id, spawnKey, pos) {
   const old = $('view'); if (old) old.remove();
   const canvas = document.createElement('canvas'); canvas.id = 'view'; document.body.prepend(canvas);
   G.area = id; G.S.area = id; G.armed = false;
-  G.combat.detach(); G.glow.detach(); G.hollows.detach(); G.loot.detach(); G.shopUI.detach();
+  G.combat.detach(); G.glow.detach(); G.hollows.detach(); G.garden.detach(); G.loot.detach(); G.shopUI.detach();
   G.game = await boot({ base: AREAS[id], canvas, spawn: sp, startT: G.S.t, glowLights: glowCap(), clockSpeed: 1 / DAY_SECONDS, spellCycle: slots(),
                         player: { role: G.S.cls || G.preview || 'wildcaller' }, castAdvance: false,
                         keepTitle: true, padHandled: true, hooks, toast: (m, t) => toast(m, t) });
   const ctx = G.ctx = G.game.ctx;
-  G.combat.attach(ctx, id); G.glow.attach(ctx, id); G.hollows.attach(ctx); G.loot.attach(ctx); G.shopUI.attach(ctx, id); PR.ensure(G.S); G.loot.restorePurse(id);
+  G.combat.attach(ctx, id); G.glow.attach(ctx, id); G.hollows.attach(ctx); G.garden.attach(ctx); G.loot.attach(ctx); G.shopUI.attach(ctx, id); PR.ensure(G.S); G.loot.restorePurse(id);
   // portrait source: this area's actor atlas
   portraitImg = new Image(); portraitImg.src = AREAS[id] + ctx.scene.atlas.image;
   // pickups already taken stay gone
@@ -312,7 +314,7 @@ function onFrame(dt, ctx) {
   if (toastT > 0) { toastT -= dt; const el = $('toast'); if (toastT <= 0.35) el.classList.add('out'); if (toastT <= 0) { el.hidden = true; el.classList.remove('out'); } }
   syncMarkers();
   padWheel();
-  G.hollows.update(dt); G.glow.update(dt);
+  G.hollows.update(dt); G.garden.update(dt); G.glow.update(dt);
   G.loot.update(dt); G.shopUI.update(dt);
   G.combat.update(dt, ctx);
   drawVitals(ctx);
@@ -377,6 +379,7 @@ const hooks = {
     if (G.log) { setLog(false); return true; }
     if (G.busy) return true;
     if (kind !== 'tap' && G.hollows.interact()) return true;   // gnome doors
+    if (kind !== 'tap' && G.garden.interact()) return true;    // glow-garden plots: plant / check / harvest
     return false;
   },
   onTalk: (npc, ctx) => {
@@ -432,7 +435,7 @@ const hooks = {
     return true;
   },
   onFrame,
-  nearThing: (ctx) => !!nearPickup(ctx, 1.4) || G.hollows.nearThing(ctx),
+  nearThing: (ctx) => !!nearPickup(ctx, 1.4) || G.hollows.nearThing(ctx) || G.garden.nearThing(ctx),
 };
 
 // ------------------------------------------------------------------ touch action buttons + slow-time spell wheel

@@ -2,6 +2,21 @@
 
 Dates are America/New_York. Newest first. Keep this current with every change you push.
 
+## 2026-10-03: Hearthmoor Stage 4, part 3: glow-gardening
+- **Garden plots:** a timber-edged soil bed with three beds in Bakery Lane on the open lower street (3.6, 4.6) under the lamp post, near Odile the gardener, in full view of the camera (the first spot, 5.1, 2.2, was hidden under the flower shop's awning), and one in Toadstool Hollows (0.6, 4.8, open ground away from the braziers, pools and toadstools). Area specs: `game.gardens` (`id`, `pos`, `kinds`).
+- **Grow:** E / controller A / the pad's MAIN button beside an empty bed plants one of Odo's glow seeds. It sprouts after one in-game day and blooms after two. `S.day` counts whole days as the clock passes midnight; growth is saved per bed in `S.garden`.
+- **Three glow blooms** (new `spells` effects, palette + neon accent pixels, no bloom):
+  - a **cold-fire bloom** (neon-blue flame flower, sparks; night pool `coldfire_pool`, blue light) -> harvest a frost core;
+  - a **violet glowbell** (three neon-violet bells, white glints; night pool `violet_pool`, violet light) -> a moon opal;
+  - a **red glow toadstool** (saturated red cap, crisp white spots; night pool `red_pool`, red light) -> 2 Hearth tonics.
+  - At night every bloom casts its light pool (ground decal + a point light in its colour) and is a light zone (`src: 'garden'`: glowlit, wraiths keep away).
+- **Neon accents:** violet and a saturated toadstool red are not in the cozy palette, so `spells.py` has a small named `NEON` set (`neon_red*`, `neon_violet*`; the red matches the Hollows kit's self-lit toadstools) for glowing effect pixels only. The world, sprites and HUD palette are unchanged.
+- New effects: `garden_plot` (decal), `glowplant_seed`, `glowplant_sprout`, `glowplant_coldfire`, `glowplant_violet`, `glowplant_toadcap`, `violet_pool`, `red_pool` (36 effects).
+- Odo's glow seed blurb now says where to plant it.
+- **Fix: the Hollows <-> Mossglen edge exits could not always be walked into.** Both trigger rects ended 0.075 m inside the area's last walkable cell (the nav grid keeps the hero's 0.28 m radius off the map edge), and a click / tap / path walk stops within 0.12 m of its goal, so on a quiet machine the hero could stop just short of the trigger. This was a real bug (it also caught tap-to-walk players), not box load. Both rects now reach 0.35 m further in (`x <= -12.45` west in the Hollows, `x >= 12.45` east in Mossglen); the arrival spawns (-11.4 and 12.2) stay outside them. All the other exits and portals were checked: their nav goals sit 0.3 m or more inside.
+- Screenshots: `docs/screenshots/stage4_garden_night_lane.png`, `stage4_garden_night_hollows.png` (all three blooms with their pools).
+- Checks: smoke PASS 134/134 (6 new garden steps). check-scene PASS: lane 10/10, hollows 10/10, plaza 11/11 (36 effects in the lineup).
+
 ## 2026-10-03: Hearthmoor Stage 4, part 2: the Nine Keys Bank (Bix Coppertuft, a shared 40-slot vault)
 - **Bix Coppertuft**, gnome clerk of the Nine Keys Bank, stands on open cobbles west of the plaza (-6.0, 4.4), clear of the bunting, the well, Sefa's spot and the start-to-lane path (checked against the baked collision grid). He uses the `gnome` sprite, now named on the Plaza sheet (`sprite_roles`).
 - **One vault for every save slot:** `localStorage` `hearthmoor-bank-v1` (`{v, items, gems, gold}`), not part of any slot save. 40 slots: each piece of gear takes one, each gem kind stacks in one. Gold has its own rows (deposit / withdraw 10, or all). Banked gold is not carried, so a faint never drops it.

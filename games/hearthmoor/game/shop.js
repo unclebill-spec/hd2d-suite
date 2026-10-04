@@ -5,7 +5,7 @@ import * as LO from './loot.js';
 
 export const GOODS = {
   tonic: { name: 'Hearth tonic', about: 'Drink (U, right-stick click, or tap it in the bag): heals 60 HP.', price: 12 },
-  glowseed: { name: 'Glow seed', about: 'A seed that hums in the dark. Keep a few: glow-gardens are coming.', price: 8 },
+  glowseed: { name: 'Glow seed', about: 'A seed that hums in the dark. Plant it in a garden plot (Bakery Lane by the inn, the Hollows): it blooms in two days.', price: 8 },
 };
 // buy price of a piece of gear by rarity (sell-back is a quarter of it, always more than scrapping)
 const GEAR_PRICE = [20, 45, 110, 260, 600];

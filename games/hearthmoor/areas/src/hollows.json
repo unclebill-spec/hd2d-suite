@@ -537,14 +537,14 @@
   }
  },
  "game": {
-  "id": "hollows",
+  "id": "hollows", "gardens": [{"id": "hollows_garden", "pos": [0.6, 4.8], "kinds": ["coldfire", "violet", "toadcap"]}],
   "title": "Toadstool Hollows",
   "exits": [
    {
     "rect": [
      -14.0,
      -0.6,
-     -12.8,
+     -12.45,
      2.8
     ],
     "to": "mossglen",

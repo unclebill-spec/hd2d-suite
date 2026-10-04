@@ -80,6 +80,7 @@ export class Glow {
     for (const p of this.pools) out.push({ x: p.x, z: p.z, r: p.r, src: 'spell' });
     for (const p of this.fixed) out.push({ x: p.x, z: p.z, r: p.r, src: 'pool' });
     if (this.G.hollows) out.push(...this.G.hollows.zones());   // lit braziers + the spring
+    if (this.G.garden) out.push(...this.G.garden.zones());     // glow-garden blooms at night
     const nm = this.G && this.G.shopUI && this.G.shopUI.nm;   // the night merchant's neon-blue lantern is a light zone too
     if (nm && nm.a) out.push({ x: nm.a.x + 0.35, z: nm.a.z + 0.1, r: 2.2, src: 'lantern' });
     return out;

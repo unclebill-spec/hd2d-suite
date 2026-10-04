@@ -18,6 +18,9 @@ no glow, no blur: brightness comes from the palette's lightest steps, fades are 
   bloom_ring, ember_slash -> ember_pop; enemy coldfire_bolt -> frost_puff; hit_spark, summon_poof
   glow pass (Hearthmoor): light_pool (ground decal under spells), glitter (twinkling motes), toadstools (night glow),
   coldfire_pool + coldfire_motes (Sefa's neon-blue lantern pool at night)
+  glow-gardening (Hearthmoor Stage 4): garden_plot (soil bed decal), glowplant_seed / _sprout, and the blooms
+  glowplant_coldfire (neon-blue), glowplant_violet (neon violet), glowplant_toadcap (neon red, crisp white spots);
+  violet_pool / red_pool (their night ground pools). Violet + saturated red use the named NEON glow accents.
 
 Writes spells.png (atlas, one row per effect), <effect>.png strips, spells.json (frames + effect presets the
 runtime plays: kind, fps, loop, pivot, lift, point-light flash curve), spells_contact_4x.png.
@@ -40,6 +43,14 @@ COLS = 8
 DECAL_SQUASH = math.sin(math.radians(36))
 
 
+# Neon glow accents (Hearthmoor glow-gardening): the story bible's signature glows are neon-blue cold fire, violet neon
+# and red neon. Blue is in the cozy palette (sky / flower_blue); violet and a saturated toadstool red are not, so the
+# emissive glow plants use these few named accents (same hexes as the Hollows kit's self-lit toadstools). Only for
+# glowing pixels: never for world, sprites or HUD.
+NEON = {"neon_red": "#e0302a", "neon_red_lo": "#a81c22", "neon_red_hi": "#ff5a4a",
+        "neon_violet": "#a45cf0", "neon_violet_hi": "#d4a8ff", "neon_violet_lo": "#6a34b8"}
+
+
 class Frame:
     def __init__(self, pal):
         self.pal = pal
@@ -48,7 +59,8 @@ class Frame:
     def set(self, x, y, c):
         x, y = int(round(x)), int(round(y))
         if c and 0 <= x < CELL and 0 <= y < CELL:
-            self.pal[c]  # raises if the colour is not in the biome
+            if c not in NEON:
+                self.pal[c]  # raises if the colour is not in the biome (or a named neon accent)
             self.p[y][x] = c
 
     def get(self, x, y):
@@ -91,7 +103,7 @@ class Frame:
             for x in range(CELL):
                 c = self.p[y][x]
                 if c:
-                    r, g, b = hex2rgb(self.pal[c])
+                    r, g, b = hex2rgb(NEON[c] if c in NEON else self.pal[c])
                     px[x, y] = (r, g, b, 255)
         return im
 
@@ -738,6 +750,177 @@ def toadstools(pal, seed):
     return out
 
 
+def garden_plot(pal, seed):
+    """A small glow-garden bed (ground decal): a timber-edged rectangle of dark tilled soil with three furrows."""
+    F = Frame(pal)
+    sq = DECAL_SQUASH
+    x0, x1 = 3, 28
+    y0, y1 = int(16 - 9 * sq), int(16 + 9 * sq)
+    for y in range(y0, y1 + 1):
+        for x in range(x0, x1 + 1):
+            edge = x in (x0, x1) or y in (y0, y1)
+            if edge:
+                F.set(x, y, "timber_hi" if y == y0 else "timber_lo" if y == y1 else "timber")
+            else:
+                fur = (x - x0) % 8
+                F.set(x, y, "shadow" if fur in (0, 1) else "timber_lo" if (x * 3 + y) % 5 else "stone_lo")
+    for x in (x0, x1):                                   # corner pegs
+        F.set(x, y0 - 1, "timber_hi"); F.set(x, y1 + 1, "timber_lo")
+    return [F]
+
+
+def _stem(F, cx, top, leaf=True, sway=0):
+    for y in range(31, top, -1):
+        F.set(cx + (sway if y < top + 4 else 0), y, "moss" if y > 27 else "grass")
+    if leaf:
+        for dx, dy, c in ((-1, 26, "grass"), (-2, 25, "grass_hi"), (-3, 25, "grass"), (1, 23, "grass"), (2, 22, "grass_hi"), (3, 22, "grass")):
+            F.set(cx + dx, dy, c)
+
+
+def glowplant_seed(pal, seed):
+    """A planted glow seed: a little soil mound with a faint gold hum (a pixel twinkle)."""
+    out = []
+    for f in range(4):
+        F = Frame(pal)
+        for x in range(12, 21):
+            h = 2 if 14 <= x <= 18 else 1
+            for y in range(31 - h, 32):
+                F.set(x, y, "timber" if y < 31 else "timber_lo")
+        _outline(F)
+        F.set(16, 28 - (f % 2), "flower_gold" if f % 2 else "lamp")
+        if f == 2:
+            F.set(15, 27, "white")
+        out.append(F)
+    return out
+
+
+def glowplant_sprout(pal, seed):
+    """A glow sprout: two leaves and a curled tip whose bud glows (gold-white twinkle)."""
+    out = []
+    for f in range(4):
+        F = Frame(pal)
+        sway = [0, 0, 1, 0][f]
+        _stem(F, 16, 21, leaf=True, sway=sway)
+        _outline(F)
+        F.set(16 + sway, 20, "lamp"); F.set(16 + sway, 19, "white" if f % 2 == 0 else "flower_gold")
+        out.append(F)
+    return out
+
+
+def glowplant_coldfire(pal, seed):
+    """A cold-fire bloom: a tall stem holding a neon-blue cold-fire flower (cloth rim, flower_blue petals, sky heart,
+    white core) that flickers, with sparks drifting off it."""
+    out = []
+    R = rng(seed, "gp_cold")
+    for f in range(6):
+        F = Frame(pal)
+        _stem(F, 16, 14)
+        fl = [0, 1, 0, -1, 0, 1][f]
+        for y in range(5, 17):
+            for x in range(9, 24):
+                d = math.hypot((x - 16) / 6.2, (y - 11 - fl * 0.3) / 5.2)
+                if d > 1:
+                    continue
+                k = (y - 5) / 12
+                c = "white" if d < 0.25 else "sky" if d < 0.5 else "flower_blue" if d < 0.82 else "cloth"
+                if d > 0.82 and (x + y + f) % 3 == 0 and k < 0.4:
+                    continue                                      # ragged flame-tongue petal tips
+                F.set(x, y, c)
+        _outline(F)
+        for k in range(3):
+            sy = 4 - ((f + k * 2) % 6) * 0.8
+            F.set(16 + R.choice([-4, -2, 2, 4]), sy, R.choice(["sky", "white"]))
+        out.append(F)
+    return out
+
+
+def glowplant_violet(pal, seed):
+    """A violet glowbell: three drooping neon-violet bells (dark-violet rim, violet body, lilac highlight, white glints
+    pulsing at the mouths) on arching green stalks."""
+    out = []
+    bells = [(11, 12), (21, 10), (16, 7)]
+    for f in range(6):
+        F = Frame(pal)
+        _stem(F, 16, 9)
+        for x in range(11, 22):                                   # arching stalks to the bells
+            F.set(x, 9 + abs(x - 16) // 3, "grass")
+        for bx, by in bells:
+            for y in range(by, by + 6):
+                w = 1 + (y - by) // 2
+                for x in range(bx - w, bx + w + 1):
+                    hi = x == bx - w + 1 or (x == bx and y == by)
+                    F.set(x, y, "neon_violet_hi" if hi else "neon_violet_lo" if x == bx + w else "neon_violet")
+            for x in range(bx - 3, bx + 4):
+                F.set(x, by + 6, "neon_violet_lo")
+        _outline(F)
+        for k, (bx, by) in enumerate(bells):
+            on = (f + k * 2) % 6 < 4
+            F.set(bx, by + 6, "white" if on else "neon_violet_hi")
+            if on and (f + k) % 3 == 0:
+                F.set(bx, by + 8, "neon_violet_hi")
+        out.append(F)
+    return out
+
+
+def glowplant_toadcap(pal, seed):
+    """A red glow toadstool grown from a glow seed: a saturated neon-red dome (deeper red rim, a bright red sheen),
+    crisp white spots that always stay white (a glint pixel twinkles beside them), a pale cream stem."""
+    out = []
+    spots = [(11, 14), (16, 11), (21, 14), (14, 17), (19, 17), (16, 15)]
+    for f in range(4):
+        F = Frame(pal)
+        for y in range(19, 31):
+            for x in range(14, 19):
+                F.set(x, y, "plaster_lo" if x == 18 else "plaster_hi" if x == 14 else "plaster")
+        for x in range(10, 23):                                   # grass at the foot
+            if (x * 5) % 3:
+                F.set(x, 31, "moss")
+        for y in range(9, 20):
+            for x in range(7, 26):
+                if ((x - 16) / 9) ** 2 + ((y - 19) / 10) ** 2 <= 1.0:
+                    sheen = (x - 12) ** 2 + (y - 12) ** 2 < 6
+                    F.set(x, y, "neon_red_lo" if y >= 18 else "neon_red_hi" if sheen else "neon_red")
+        for sx, sy in spots:                                      # crisp 2x2 white spots
+            for dx, dy in ((0, 0), (1, 0), (0, 1), (1, 1)):
+                if F.get(sx + dx, sy + dy) in ("neon_red", "neon_red_hi", "neon_red_lo"):
+                    F.set(sx + dx, sy + dy, "white")
+        _outline(F)
+        gx, gy = spots[f % len(spots)]
+        F.set(gx - 1, gy - 1, "plaster_hi")                       # a twinkle beside one spot
+        F.set(9 + f, 6 - f, "neon_red_hi" if f % 2 else "white")  # a drifting spore
+        out.append(F)
+    return out
+
+
+def _bloom_pool(pal, seed, cols, tag):
+    """A glow-bloom's night pool on the ground: a dithered disc in the bloom's neon, densest at the heart."""
+    out = []
+    sq = DECAL_SQUASH
+    R = rng(seed, tag)
+    jit = [[R.random() for _ in range(CELL)] for _ in range(CELL)]
+    for f in range(6):
+        F = Frame(pal)
+        rx = 13.5 * [1.0, 0.95, 0.98, 0.92, 1.0, 0.96][f]
+        for y in range(CELL):
+            for x in range(CELL):
+                d = math.hypot(x - 16, (y - 16) / sq) / rx
+                if d > 1:
+                    continue
+                if d < 0.22 or ((x + y + f) % 2 == 0 and jit[y][x] < 0.95 * (1 - d) ** 0.8 + 0.08):
+                    F.set(x, y, cols[0] if d < 0.22 else cols[1] if d < 0.55 else cols[2])
+        F.ring(16, 16, rx, rx * sq, cols[2], 1.0, start=f * 0.19, dots=4)
+        out.append(F)
+    return out
+
+
+def violet_pool(pal, seed):
+    return _bloom_pool(pal, seed, ["neon_violet_hi", "neon_violet", "neon_violet_lo"], "vpool")
+
+
+def red_pool(pal, seed):
+    return _bloom_pool(pal, seed, ["neon_red_hi", "neon_red", "neon_red_lo"], "rpool")
+
+
 EFFECTS = {
     "sparkle_burst": dict(fn=sparkle_burst, kind="billboard", fps=14, loop=False, pivot=[16, 31], lift=0.9,
                           glow=True, light={"color": "lamp", "intensity": 7, "range": 4.5, "curve": [1, 0.9, 0.7, 0.5, 0.3, 0.2, 0.1, 0]}),
@@ -788,6 +971,14 @@ EFFECTS = {
     "coldfire_motes": dict(fn=coldfire_motes, kind="billboard", fps=9, loop=True, pivot=[16, 31], lift=0.0, loops=1, glow=True, light=None, combat=True),
     "spring_bubbles": dict(fn=spring_bubbles, kind="billboard", fps=8, loop=True, pivot=[16, 31], lift=0.0, loops=1, glow=True, light=None, combat=True),
     "coldfire_flame": dict(fn=coldfire_flame, kind="billboard", fps=8, loop=True, pivot=[16, 31], lift=0.0, loops=1, glow=True, light=None, combat=True),
+    "garden_plot": dict(fn=garden_plot, kind="decal", fps=1, loop=True, loop_from=0, pivot=[16, 16], lift=0.015, loops=1, glow=False, light=None, combat=True),
+    "glowplant_seed": dict(fn=glowplant_seed, kind="billboard", fps=3, loop=True, pivot=[16, 31], lift=0.0, loops=1, glow=True, light=None, combat=True),
+    "glowplant_sprout": dict(fn=glowplant_sprout, kind="billboard", fps=3, loop=True, pivot=[16, 31], lift=0.0, loops=1, glow=True, light=None, combat=True),
+    "glowplant_coldfire": dict(fn=glowplant_coldfire, kind="billboard", fps=7, loop=True, pivot=[16, 31], lift=0.0, loops=1, glow=True, light=None, combat=True),
+    "glowplant_violet": dict(fn=glowplant_violet, kind="billboard", fps=4, loop=True, pivot=[16, 31], lift=0.0, loops=1, glow=True, light=None, combat=True),
+    "violet_pool": dict(fn=violet_pool, kind="decal", fps=6, loop=True, loop_from=0, pivot=[16, 16], lift=0.02, loops=1, glow=True, light=None, combat=True),
+    "red_pool": dict(fn=red_pool, kind="decal", fps=6, loop=True, loop_from=0, pivot=[16, 16], lift=0.02, loops=1, glow=True, light=None, combat=True),
+    "glowplant_toadcap": dict(fn=glowplant_toadcap, kind="billboard", fps=3, loop=True, pivot=[16, 31], lift=0.0, loops=1, glow=True, light=None, combat=True),
     "toadstools": dict(fn=toadstools, kind="billboard", fps=3, loop=True, pivot=[16, 31], lift=0.0, loops=1, glow=True, light=None, combat=True),
 }
 # what the player's spell key cycles through, and what a cast spawns (effect, where)
