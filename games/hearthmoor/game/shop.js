@@ -122,9 +122,10 @@ export class Shop {
     const S = this.G.S, D = SHOPS[this.open];
     if (D.bank) return this.bankRows();
     if (this.tab === 0) {
-      return [...D.goods.map((g) => ({ kind: 'good', id: g, name: GOODS[g].name, about: GOODS[g].about, price: GOODS[g].price, have: (S.inv[g] || 0) })),
-              ...(D.gems || []).map((g) => ({ kind: 'gem', id: g, name: LO.GEMS[g].name, about: `socket gem · ${LO.GEMS[g].about}`, price: LO.GEMS[g].price, have: (S.gems[g] || 0) })),
-              ...this.stockOf(this.open).map((it, k) => ({ kind: 'gear', it, k, name: it.name, about: `${LO.RARITY[it.rar].name} ${it.slot} · ${LO.describe(it)}`, price: buyPrice(it) }))];
+      const mul = this.G.factions ? this.G.factions.priceMul(this.open) : 1;   // faction Friend discounts
+      return [...D.goods.map((g) => ({ kind: 'good', id: g, name: GOODS[g].name, about: GOODS[g].about, price: Math.round(GOODS[g].price * mul), have: (S.inv[g] || 0) })),
+              ...(D.gems || []).map((g) => ({ kind: 'gem', id: g, name: LO.GEMS[g].name, about: `socket gem · ${LO.GEMS[g].about}`, price: Math.round(LO.GEMS[g].price * mul), have: (S.gems[g] || 0) })),
+              ...this.stockOf(this.open).map((it, k) => ({ kind: 'gear', it, k, name: it.name, about: `${LO.RARITY[it.rar].name} ${it.slot} · ${LO.describe(it)}`, price: Math.round(buyPrice(it) * mul) }))];
     }
     return (S.bag || []).map((it, k) => ({ kind: 'sell', it, k, name: it.name, about: `${LO.RARITY[it.rar].name} ${it.slot} · ${LO.describe(it)}`, price: sellPrice(it, D.sellMul) }));
   }
@@ -194,6 +195,7 @@ export class Shop {
       } else if (r.kind === 'gem') { S.gold -= r.price; S.gems[r.id] = (S.gems[r.id] || 0) + 1; }
       else { S.gold -= r.price; S.inv[r.id] = (S.inv[r.id] || 0) + 1; }
       G.toast && G.toast(`Bought ${r.name}`, 1.4); G.audio && G.audio.sfx('pickup');
+      if (this.open === 'night' && r.kind !== 'good' && G.factions) G.factions.onSmuggle();   // Corsair merit, a little Hearth standing lost
     }
     G.drawBag && G.drawBag(); this.draw();
     return true;

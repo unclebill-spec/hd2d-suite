@@ -658,6 +658,7 @@ def run(out, simscale=4, size=(960, 540)):
             KILL = ("(() => { const G = window.__hm, C = G.combat, p = G.ctx.player; G.peace = true;"
                     " for (const e of %s) for (let i = 0; i < 60 && e.state !== 'dead' && e.state !== 'gone'; i++) C.damageEnemy(e, 80, p); })()")
             T.ev("(() => { const G = window.__hm, C = G.combat; G.peace = true; G.loot.clear(); C.heal(999, true); })()")
+            hm0 = T.ev("window.__hm.S.merit.hearth")
             rare = T.ev("(() => { const G = window.__hm, p = G.ctx.player; const R = G.rares.spawn({ base: 'deathlord', el: 'gloam', traits: ['shielded'], pos: [p.x + 3.4, p.z - 0.3] });"
                         " return { name: R.name, id: R.e.id, light: !!R.e.light, aura: G.ctx.effects.list.some((f) => f.name === 'rare_aura_violet'), scale: R.D.scale, minRar: R.D.minRar }; })()")
             T.frames(8); pg.wait_for_timeout(500)
@@ -681,6 +682,7 @@ def run(out, simscale=4, size=(960, 540)):
             T.step("felling the rare: a hunt log entry and a guaranteed Rare-or-better drop; the aura goes",
                    (hunt.get("deathlord:gloam:shielded") or {}).get("kills") == 1 and any((d["rar"] or 0) >= 2 for d in drops)
                    and not T.ev("window.__hm.ctx.effects.list.some((f) => f.name === 'rare_aura_violet' && f.t < f.dur - 0.31)"), hunt=list(hunt), drops=drops)
+            T.step("merit: felling the one-trait rare earns the realm's faction 50 Hearth Tokens", T.ev("window.__hm.S.merit.hearth") == hm0 + 50, before=hm0, after=T.ev("window.__hm.S.merit.hearth"))
             traits = T.ev("(() => { const G = window.__hm, C = G.combat, p = G.ctx.player; const R = G.rares.spawn({ base: 'elderwraith', el: 'frost', traits: ['enraged', 'blinking', 'summoner'], pos: [p.x + 3.2, p.z + 0.6] });"
                           " const e = R.e; G.peace = false; e.state = 'chase'; const x0 = e.a.x, z0 = e.a.z; R.blinkT = 0; R.callT = 0; G.rares.tick(e, 0.05, false);"
                           " const moved = Math.hypot(e.a.x - x0, e.a.z - z0), sp0 = e.D.speed; C.damageEnemy(e, Math.ceil(e.hp * 0.6), p); G.rares.tick(e, 0.05, false); G.peace = true;"
@@ -700,7 +702,7 @@ def run(out, simscale=4, size=(960, 540)):
             GO = "(() => { const G = window.__hm, c = G.ctx, p = c.player, R = G.rifts.cur; p.x = R.pos[0] - 1.4; p.z = R.pos[1] + 0.6; p.y = c.heightAt(p.x, p.z); c.stopWalk(); })()"
             ALIVE = "window.__hm.rifts.alive()"
             for tier, tid, fx, shot in ((0, "minor", "rift_tear_minor", "rift_minor"), (1, "major", "rift_tear", "rift_major"), (2, "abyssal", "rift_tear_abyss", "rift_abyssal")):
-                c0 = (T.S().get("rifts") or {}).get(tid, 0)
+                c0 = (T.S().get("rifts") or {}).get(tid, 0); gm0 = T.ev("window.__hm.S.merit.gate"); gr0 = T.ev("window.__hm.S.ranks.gate")
                 st = T.ev(OPEN % (tier, 'true' if tier == 1 else 'false'))
                 T.frames(10); pg.wait_for_timeout(700)
                 rep["shots"][shot] = T.shot(shot)
@@ -714,12 +716,21 @@ def run(out, simscale=4, size=(960, 540)):
                     waves.append([r["wave"], r["alive"], r["rare"]])
                     T.ev(KILL % ALIVE); T.frames(8); pg.wait_for_timeout(500)
                 end = T.ev("window.__hm.rifts.state()")
+                if tier == 2:   # the Guild's rank-up toast shows (it may queue behind another rank-up, e.g. the Hearth's from the rift rare)
+                    try: T.wait("(() => { const t = document.getElementById('toast'); return !t.hidden && t.innerText.includes(\"Gatekeepers' Guild: Friend\"); })()", 30)
+                    except Exception: pass
+                ru = T.ev("(() => { const F = window.__hm.factions, t = document.getElementById('toast'); return { last: F.last, toast: t && !t.hidden ? t.innerText : '', merit: window.__hm.S.merit.gate, rank: window.__hm.S.ranks.gate }; })()")
+                if tier == 2: rep["shots"]["rank_up"] = T.shot("rank_up")
                 drops = T.ev("window.__hm.loot.qa()")
                 need = {0: 1, 1: 2, 2: 3}[tier]
                 T.step(f"random rift tier {tier + 1} ({tid}): opens with its tear, spits a wave when you come close, seals with a reward",
                        ok and f1 and f1["state"] == "fight" and f1["alive"] >= 3 and end["rift"] is None and end["closed"][tid] == c0 + 1
                        and any(d["gold"] for d in drops) and any((d["rar"] or 0) >= need for d in drops)
                        and (tier != 1 or (waves and waves[0][2])) and (tier != 2 or (len(waves) == 2 and waves[0][2] and waves[1][0] == 2)), waves=waves, fx=st["rift"] and st["rift"]["fx"])
+                T.step(f"merit: sealing the {tid} rift earns the Gatekeepers' Guild {(30, 60, 120)[tier]} Rift Marks", ru["merit"] == gm0 + (30, 60, 120)[tier], before=gm0, after=ru["merit"])
+                if tier == 2:
+                    T.step("rank-up: the abyssal seal lifts the Guild to Friend with a toast in its glow colour + a sparkle burst and a coloured light on the hero",
+                           gr0 == 0 and ru["rank"] == 1 and ru["last"] and ru["last"]["id"] == "gate" and ru["last"]["r"] == 1 and ru["last"]["spark"] and ru["last"]["glow"] and "Gatekeepers' Guild: Friend" in ru["toast"], ru=ru)
                 T.ev("window.__hm.loot.clear()")
             H = T.S().get("hunt") or {}
             T.step("rift rares go into the hunt log too (the abyssal one has two traits)", sum(h["kills"] for h in H.values()) >= 4 and any(len(h["traits"]) == 2 for h in H.values()),
@@ -934,8 +945,11 @@ def run(out, simscale=4, size=(960, 540)):
             T.step("talking to Odo opens the shop panel (tonic, glow seed, 3 pieces of gear)", T.ev("!!window.__hm.shop && !document.getElementById('shopui').hidden") and len(shop0["rows"]) == 5
                    and shop0["rows"][0]["name"] == "Hearth tonic", rows=[r["name"] for r in shop0["rows"]])
             g0, t0 = T.ev("window.__hm.S.gold"), T.ev("window.__hm.S.inv.tonic || 0")
+            hfr = T.ev("window.__hm.S.ranks.hearth") >= 1   # Order of the Hearth Friend: 10% off at Odo's (rounded)
+            tonic_p, seed_p = (11, 7) if hfr else (12, 8)
             pg.keyboard.press("Enter"); pg.wait_for_timeout(250)
-            T.step("keyboard: Enter buys a Hearth tonic (12 gold)", T.ev("window.__hm.S.gold") == g0 - 12 and T.ev("window.__hm.S.inv.tonic") == t0 + 1)
+            T.step(f"keyboard: Enter buys a Hearth tonic ({tonic_p} gold{', Hearth Friend 10% off' if hfr else ''})", shop0["rows"][0]["price"] == tonic_p
+                   and T.ev("window.__hm.S.gold") == g0 - tonic_p and T.ev("window.__hm.S.inv.tonic") == t0 + 1, price=shop0["rows"][0]["price"], hearth=T.ev("window.__hm.S.merit.hearth"))
             rep["shots"]["shop_buy"] = T.shot("shop_buy")
             T.btn(5); pg.wait_for_timeout(200)
             sell = T.ev("window.__hm.shopUI.qa()")
@@ -949,7 +963,7 @@ def run(out, simscale=4, size=(960, 540)):
             T.btn(4); pg.wait_for_timeout(200)
             g2 = T.ev("window.__hm.S.gold")
             pg.click("#shopBody .row[data-k='1'] button"); pg.wait_for_timeout(250)
-            T.step("touch: tapping 'buy 8g' buys a glow seed", T.ev("window.__hm.S.gold") == g2 - 8 and T.ev("window.__hm.S.inv.glowseed") >= 1)
+            T.step(f"touch: tapping 'buy {seed_p}g' buys a glow seed", T.ev("window.__hm.S.gold") == g2 - seed_p and T.ev("window.__hm.S.inv.glowseed") >= 1)
             pg.keyboard.press("Escape"); pg.wait_for_timeout(200)
             T.step("Esc closes the shop and the field takes input again", not T.ev("window.__hm.shop") and T.ev("document.getElementById('shopui').hidden"))
             T.ev("window.__hm.S.hp = 30"); tn = T.ev("window.__hm.S.inv.tonic")
@@ -1017,11 +1031,67 @@ def run(out, simscale=4, size=(960, 540)):
             socks = T.ev("window.__hm.shopUI.stockOf('night').map((it) => it.gems.length)")
             T.step("Sefa's shop: socket gems (rift shard, golem core, frost core, moon opal) + socketed Rare / Epic gear", ns["open"] == "night"
                    and [r["name"] for r in ns["rows"] if r["kind"] == "gem"] == ["Rift shard", "Golem core", "Frost core", "Moon opal"] and socks and min(socks) >= 1, rows=[r["name"] for r in ns["rows"]], sockets=socks)
+            rs0 = (T.S().get("gems") or {}).get("rift_shard", 0)   # a rare may already have dropped one (50%)
             T.ev("window.__hm.shopUI.i = 1; window.__hm.shopUI.draw()"); pg.keyboard.press("Enter"); pg.wait_for_timeout(250)
-            T.step("buy a rift shard (120 gold) into the gem pouch", T.ev("window.__hm.S.gold") == 280 and (T.S().get("gems") or {}).get("rift_shard") == 1, gems=T.S().get("gems"))
+            T.step("buy a rift shard (120 gold) into the gem pouch", T.ev("window.__hm.S.gold") == 280 and (T.S().get("gems") or {}).get("rift_shard") == rs0 + 1, gems=T.S().get("gems"), before=rs0)
             pg.keyboard.press("Escape"); pg.wait_for_timeout(200)
             T.ev("window.__hd2d.setTime(0.5)"); pg.wait_for_timeout(700)
             T.step("dawn: the night merchant packs up and his lantern light goes", not T.ev("!!window.__hm.ctx.npc('nightmerchant')") and not T.ev("!!window.__hm.shopUI.nm"))
+            # ---------------------------------------------------------- stage 5 part 3: factions + merit (five factions, six ranks)
+            fa0 = T.ev("window.__hm.factions.qa()")
+            nerr = sum(1 for v in T.S()["quests"].values() if v == 3)
+            T.step("merit so far comes from play: Hearth Tokens for errands + rares, Gilded Acorns for the riddle + secrets, Black Doubloons for Sefa's gem",
+                   fa0["merit"]["hearth"] >= 40 * nerr + 180 and fa0["merit"]["gnome"] >= 60 + 40 and fa0["merit"]["corsair"] == 15 and nerr >= 2, errands=nerr, q=T.S()["quests"], gn=fa0["merit"]["gnome"], co=fa0["merit"]["corsair"], he=fa0["merit"]["hearth"])
+            T.step("Warden Hilde of the Hearth stands on the plaza terrace (rune guard)", T.ev("(() => { const a = window.__hm.ctx.npc('hilde'); return !!a && a.role === 'runeguard'; })()"))
+            h0 = fa0["merit"]["hearth"]
+            pages, first = T.talk("hilde")
+            T.wait("window.__hm.heroUI && window.__hm.hui.tab === 4", 10)
+            rows = T.ev("Array.from(document.querySelectorAll('#heroBody .row.fac')).map((r) => [r.dataset.fac, getComputedStyle(r).borderLeftColor, getComputedStyle(r.querySelector('.fsw')).backgroundColor, r.querySelector('.fbar i').style.width])")
+            cols = T.ev("window.__hm.FA.FAC_IDS.map((id) => window.__hm.FA.FACTIONS[id].col)")
+            hexrgb = lambda h: f"rgb({int(h[1:3], 16)}, {int(h[3:5], 16)}, {int(h[5:7], 16)})"
+            T.step("talking to Hilde: 3 pages on the five banners, +20 Hearth Tokens once, and the Factions tab opens", pages == 3 and "Warden Hilde" in first
+                   and T.ev("window.__hm.S.merit.hearth") == h0 + 20 and T.ev("window.__hm.S.met.hilde") == 1, pages=pages, merit=T.ev("window.__hm.S.merit.hearth"))
+            T.step("Factions tab: five rows, each edged + swatched in its signature glow colour, with a progress bar", [r[0] for r in rows] == ["hearth", "gate", "gnome", "corsair", "embassy"]
+                   and [r[1] for r in rows] == [hexrgb(c) for c in cols] and [r[2] for r in rows] == [hexrgb(c) for c in cols] and all(r[3].endswith("%") for r in rows) and len(set(cols)) == 5, rows=rows)
+            pg.keyboard.press("h"); pg.wait_for_timeout(250); shut = T.ev("!window.__hm.heroUI")
+            pg.keyboard.press("h"); pg.wait_for_timeout(300)
+            T.step("keyboard: H closes and opens the Factions tab", shut and T.ev("window.__hm.heroUI && window.__hm.hui.tab === 4"))
+            pg.keyboard.press("Escape"); pg.wait_for_timeout(200)
+            T.ev("window.__hm.hui.tab = 0"); pg.keyboard.press("i"); pg.wait_for_timeout(250)
+            pg.click("#heroTabs button:nth-child(5)"); pg.wait_for_timeout(250)
+            T.step("touch: the hero screen's Factions tab button opens the panel", T.ev("window.__hm.hui.tab === 4") and T.ev("document.querySelector('#heroTabs button:nth-child(5)').classList.contains('on')"))
+            T.ev("window.__hm.hui.tab = 0; window.__hm.drawHero && window.__hm.drawHero()"); pg.keyboard.press("Escape"); pg.wait_for_timeout(200)
+            T.step("the Guild reached Friend in the rift fights (abyssal seal)", T.ev("window.__hm.S.ranks.gate") >= 1 and T.ev("window.__hm.S.merit.gate") >= 210, merit=T.ev("window.__hm.S.merit.gate"))
+            fa1 = T.ev("window.__hm.factions.qa()")
+            T.step("Friend rewards are live: rift seals pay +25% gold; Odo's prices are 10% off at Hearth Friend",
+                   T.ev("window.__hm.factions.riftGoldMul()") == 1.25 and T.ev("window.__hm.factions.priceMul('hearthmoor')") == (0.9 if T.ev("window.__hm.S.ranks.hearth") >= 1 else 1)
+                   and T.ev("window.__hm.factions.priceMul('night')") == (0.85 if T.ev("window.__hm.S.ranks.corsair") >= 1 else 1), hearth=T.ev("window.__hm.S.ranks.hearth"))
+            T.ev("window.__hm.loot.clear()")
+            # controller: Start (log) -> RB (hero) -> LB / RB to Factions, d-pad down to the Guild, A wears its title
+            T.btn(9); pg.wait_for_timeout(250); T.btn(5); pg.wait_for_timeout(250)
+            for _ in range(5):
+                if T.ev("window.__hm.hui.tab") == 4: break
+                T.btn(4); pg.wait_for_timeout(200)
+            T.btn(13); pg.wait_for_timeout(200); T.btn(0); pg.wait_for_timeout(300)
+            head = T.ev("document.getElementById('heroHead').innerText")
+            T.step("controller: Start, RB, LB to Factions, d-pad + A wears the Guild title (shown in the hero header)", T.ev("window.__hm.hui.tab") == 4 and T.ev("window.__hm.S.title") == "gate:1"
+                   and T.ev("window.__hm.factions.title()") == "Rift Warden" and "Rift Warden" in head, title=T.ev("window.__hm.S.title"), head=head[:80])
+            rep["shots"]["factions_panel"] = T.shot("factions_panel")
+            T.btn(1); pg.wait_for_timeout(250)
+            # save migration: a pre-factions save is seeded from finished errands, sealed rifts, the hunt log and the riddle; reload keeps merit
+            mig = T.ev("""(() => { const o = JSON.parse(JSON.stringify(window.__hm.S)); delete o.merit; delete o.ranks; delete o.factionsV; delete o.title;
+              o.quests = { a: 3, b: 3, c: 1 }; o.rifts = { minor: 2, major: 1, abyssal: 0 }; o.hunt = { x: { base: 'deathlord', traits: ['shielded', 'swift'], kills: 1 }, y: { base: 'sporemother', traits: ['gloam'], kills: 1 } }; o.flags = { riddle: 'solved' };
+              const did = window.__hm.FA.migrate(o), again = window.__hm.FA.migrate(o); return { did, again, merit: o.merit, ranks: o.ranks, v: o.factionsV }; })()""")
+            T.step("save migration: an old save gets merit seeded once (errands 80 + Death Lord 90 Hearth, rifts 120 Guild, Spore Mother 50 Embassy, riddle 60 Gnome)",
+                   mig["did"] and not mig["again"] and mig["v"] == 1 and mig["merit"] == {"hearth": 170, "gate": 120, "gnome": 60, "corsair": 0, "embassy": 50} and mig["ranks"]["hearth"] == 1 and mig["ranks"]["gate"] == 0, mig=mig)
+            T.ev("window.__hm.toast('✦ QA rank-up', 2.5, false, true); window.__hm.toast('QA loot toast', 1.5)")
+            tq = T.ev("[document.getElementById('toast').innerText, window.__hm.toastQueue()]")
+            T.wait("document.getElementById('toast').innerText === 'QA loot toast' && !document.getElementById('toast').hidden", 40)
+            T.step("a rank-up toast has priority: a toast arriving while it shows waits in the queue, then shows", tq[0] == "✦ QA rank-up" and tq[1] == ["QA loot toast"], tq=tq)
+            T.ev("window.__hm.save()")
+            sv = T.ev("window.__hm.readSave(window.__hm.slot)")
+            T.step("merit, ranks and the worn title are saved in the slot", sv and sv["merit"]["gate"] == fa1["merit"]["gate"] and sv["ranks"]["gate"] >= 1 and sv["title"] == "gate:1" and sv["factionsV"] == 1,
+                   saved=sv and {"merit": sv["merit"], "title": sv.get("title")})
             # ---------------------------------------------------------- glow-light cap (Options): 3 on desktop, 2 on phones
             g0 = T.ev("[window.__hm.glowCap(), window.__hm.ctx.glowN]")
             T.ev("document.getElementById('btnGlow').click()")

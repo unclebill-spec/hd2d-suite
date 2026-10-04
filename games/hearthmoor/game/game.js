@@ -15,6 +15,7 @@ import { Weather, weatherAt } from './weather.js';
 import { Intro } from './intro.js';
 import { Rares, ELEMENTS as RARE_EL } from './rares.js';
 import { Rifts } from './rifts.js';
+import { Factions, FACTIONS, IDS as FAC_IDS, RANKS as FAC_RANKS, NEED as FAC_NEED, migrate as facMigrate } from './factions.js';
 import * as LO from './loot.js';
 import { Shop, drinkTonic, goodIconURL } from './shop.js';
 
@@ -53,7 +54,9 @@ G.hollows = new Hollows(G);
 G.garden = new Garden(G);
 G.weather = new Weather(G);
 G.intro = new Intro(G);
-G.rares = new Rares(G); G.rifts = new Rifts(G); G.qs = Q; G.qa = QA;   // Stage 5 part 2: procedural rares + random rifts
+G.rares = new Rares(G); G.rifts = new Rifts(G); G.factions = new Factions(G); G.FA = { FACTIONS, FAC_IDS, FAC_RANKS, FAC_NEED, migrate: facMigrate };
+G.onRareKill = (R) => G.factions.onRare(R);   // Stage 5 part 3: merit
+ G.qs = Q; G.qa = QA;   // Stage 5 part 2: procedural rares + random rifts
 G.weatherAt = weatherAt;   // smoke: the weather calendar
 G.loot = new LO.Loot(G); G.LO = LO; G.PR = PR;
 G.shopUI = new Shop(G); G.drinkTonic = () => drinkTonic(G);
@@ -113,7 +116,7 @@ G.give = (id, n = 1) => { G.S.inv[id] = (G.S.inv[id] || 0) + n; drawBag(id); toa
 G.take = (id, n = 1) => { G.S.inv[id] = Math.max(0, (G.S.inv[id] || 0) - n); if (!G.S.inv[id]) delete G.S.inv[id]; drawBag(); };
 G.setQuest = (id, stage) => {
   const was = G.S.quests[id]; G.S.quests[id] = stage; drawLog();
-  if (stage === 3 && was !== 3) { toast(`Errand done: ${QUESTS[id].title}`, 2.6); G.audio.sfx('quest'); G.gainXP(PR.XP.errand); }
+  if (stage === 3 && was !== 3) { toast(`Errand done: ${QUESTS[id].title}`, 2.6); G.audio.sfx('quest'); G.gainXP(PR.XP.errand); G.factions.onErrand(); }
   else if (was === 0 && stage > 0) { toast(`New errand: ${QUESTS[id].title}`, 2.6); G.audio.sfx('pickup'); flashLog(); }
   refreshMarkers(); save();
 };
@@ -188,8 +191,20 @@ function spellName(id) { return (SPELLS[id] && SPELLS[id].name) || SPELL_NAMES[i
 G.spellName = spellName;
 function flashLog() { const b = $('btnLog'); b.classList.add('ping'); setTimeout(() => b.classList.remove('ping'), 1600); }
 function setLog(open) { G.log = open; $('log').hidden = !open; $('btnLog').classList.toggle('on', open); if (open) drawLog(); }
-let toastT = 0;
-function toast(msg, s = 2.0, html = false) { const el = $('toast'); if (html) el.innerHTML = msg; else el.textContent = msg; el.hidden = false; el.classList.remove('out'); toastT = s; }
+let toastT = 0, toastPrio = false;
+const toastQ = [];   // toasts that arrive while a priority toast (a faction rank-up) is up wait their turn instead of replacing it
+function toastShow(t) { const el = $('toast'); if (t.html) el.innerHTML = t.msg; else el.textContent = t.msg; el.hidden = false; el.classList.remove('out'); toastT = t.s; toastPrio = t.prio; }
+function toast(msg, s = 2.0, html = false, prio = false) {
+  const t = { msg, s, html, prio };
+  if (toastPrio && toastT > 0.35) {   // a rank-up is showing: queue (priority first, at most 4 waiting; drop the oldest plain one)
+    const k = prio ? toastQ.findIndex((q) => !q.prio) : -1;
+    toastQ.splice(k >= 0 ? k : toastQ.length, 0, t);
+    while (toastQ.length > 4) { const k = toastQ.findIndex((q) => !q.prio); toastQ.splice(k >= 0 ? k : 0, 1); }
+    return;
+  }
+  toastShow(t);
+}
+G.toastQueue = () => toastQ.map((q) => q.msg);
 G.toast = toast;
 G.say = (npc, page) => openDialogue(npc, { pages: Array.isArray(page) ? page : [page] });
 G.itemName = (id) => (ITEMS[id] ? ITEMS[id].name : id);
@@ -290,7 +305,7 @@ async function loadArea(id, spawnKey, pos) {
                         player: { role: G.S.cls || G.preview || 'wildcaller' }, castAdvance: false,
                         keepTitle: true, padHandled: true, hooks, toast: (m, t) => toast(m, t) });
   const ctx = G.ctx = G.game.ctx;
-  G.combat.attach(ctx, id); G.rares.attach(ctx, id); G.rifts.attach(ctx, id); G.glow.attach(ctx, id); G.hollows.attach(ctx); G.garden.attach(ctx); G.weather.attach(ctx, id); G.loot.attach(ctx); G.shopUI.attach(ctx, id); PR.ensure(G.S); G.loot.restorePurse(id);
+  G.combat.attach(ctx, id); G.rares.attach(ctx, id); G.rifts.attach(ctx, id); G.factions.attach(ctx, id); G.glow.attach(ctx, id); G.hollows.attach(ctx); G.garden.attach(ctx); G.weather.attach(ctx, id); G.loot.attach(ctx); G.shopUI.attach(ctx, id); PR.ensure(G.S); G.loot.restorePurse(id);
   // portrait source: this area's actor atlas
   portraitImg = new Image(); portraitImg.src = AREAS[id] + ctx.scene.atlas.image;
   // pickups already taken stay gone
@@ -398,7 +413,7 @@ function onFrame(dt, ctx) {
   G.S.t = ctx.clock.t;
   G.S.played += dt;
   typeDialogue(dt);
-  if (toastT > 0) { toastT -= dt; const el = $('toast'); if (toastT <= 0.35) el.classList.add('out'); if (toastT <= 0) { el.hidden = true; el.classList.remove('out'); } }
+  if (toastT > 0) { toastT -= dt; const el = $('toast'); if (toastT <= 0.35) el.classList.add('out'); if (toastT <= 0) { el.hidden = true; el.classList.remove('out'); toastPrio = false; if (toastQ.length) toastShow(toastQ.shift()); } }
   syncMarkers();
   padWheel();
   G.hollows.update(dt); G.garden.update(dt); G.glow.update(dt); G.weather.update(dt); G.intro.update(dt);
@@ -816,6 +831,7 @@ function wire() {
     if (k === 'i') { setHeroUI(true); return; }
     if (k === 'b') { HUI.tab = 2; HUI.i = 0; setHeroUI(true); return; }   // spellbook
     if (k === 'g') { HUI.tab = 3; HUI.i = 0; setHeroUI(true); return; }   // gear + bag
+    if (k === 'h') { HUI.tab = 4; HUI.i = 0; setHeroUI(true); return; }   // factions + merit
     if (k === 'o') { setOpts(!G.opts); return; }
     if (k === 'r' && G.opts) { cycleWeather(); return; }   // R in Options: weather on / light / off
     if (k === 'j' || k === 'l') setLog(!G.log);
@@ -926,7 +942,7 @@ async function newGame() {
   openPicker((cls) => startNew(cls));
 }
 async function startNew(cls) {
-  G.S = fresh(); G.S.cls = cls; G.S.mode = PICK.mode || 'adventurer'; PR.ensure(G.S); G.S.hp = HERO[cls].hp;
+  G.S = fresh(); G.S.cls = cls; G.S.mode = PICK.mode || 'adventurer'; PR.ensure(G.S); facMigrate(G.S); G.S.hp = HERO[cls].hp;
   closeTitle();
   if (G.area !== 'plaza') await go('plaza', 'start', 'walk');
   else { const s = G.ctx.scene.game.spawns.start; G.ctx.player.x = s[0]; G.ctx.player.z = s[1]; G.ctx.player.y = G.ctx.heightAt(s[0], s[1]); G.ctx.player.facing = s[2]; G.ctx.clock.set(G.S.t); }
@@ -958,7 +974,7 @@ async function cont() {
   resume(s);
 }
 async function resume(s) {
-  G.S = { ...fresh(), ...s, v: 2 }; PR.ensure(G.S);
+  G.S = { ...fresh(), ...s, v: 2 }; PR.ensure(G.S); facMigrate(G.S);   // older saves: merit from finished work
   G.introNext = false; if (G.S.flags && G.S.flags.intro === 'playing') G.S.flags.intro = 'skipped';   // Continue never replays the opening
   closeTitle();
   G.busy = true;
@@ -975,6 +991,7 @@ async function resume(s) {
 // ------------------------------------------------------------------ leveling: XP, level-up glow, auto-level ask, hero screen
 G.gainXP = (n, src) => {
   PR.ensure(G.S);
+  n = Math.round(n * G.factions.xpMul());   // Realm Embassies Friend: +10% XP in the realms
   const up = PR.addXP(G.S, n);
   const ctx = G.ctx, p = ctx && ctx.player;
   if (p && G.combat.ctx === ctx) G.combat.number('+' + Math.round(n) + 'xp', p.x + 0.4, p.y + 2.3, p.z, '#8ec8e8');
@@ -996,7 +1013,7 @@ const ASK = { yes: true };
 function askAuto() { G.asking = true; ASK.yes = true; $('autolv').hidden = false; syncAsk(); }
 function syncAsk() { $('btnAutoYes').classList.toggle('on', ASK.yes); $('btnAutoNo').classList.toggle('on', !ASK.yes); }
 function askMove() { ASK.yes = !ASK.yes; syncAsk(); }
-function playIntro() { if (G.introNext) { G.introNext = false; if (!G.intro.start()) { G.S.flags.intro = G.S.flags.intro || 'skipped'; save(); } } }
+function playIntro() { if (G.introNext) { G.introNext = false; if (!G.intro.start()) { G.S.flags.intro = G.S.flags.intro || 'skipped'; save(); G.ctx && G.factions.attach(G.ctx, G.area); } } }
 function askPick(yes) {
   G.asking = false; $('autolv').hidden = true;
   G.S.autoLevel = !!yes; if (yes) PR.autoSpend(G.S);
@@ -1015,10 +1032,14 @@ function setHeroUI(open) {
   if (open) { if (G.log) setLog(false); if (G.opts) setOpts(false); PR.ensure(G.S); drawHero(); }
 }
 G.setHeroUI = setHeroUI;
+G.openFactions = () => { HUI.tab = 4; HUI.i = 0; setHeroUI(true); };
+G.drawFactions = () => { if (G.heroUI && HUI.tab === 4) drawHero(); };
+G.hui = HUI;
 function drawHero() {
   drawBag();
   const S = G.S, C = G.combat, h = HERO[S.cls], M = C.M, tree = PR.TREES[S.cls] || [];
-  $('heroHead').innerHTML = `<b>${h.cls}</b> <span class="tag">Lv ${S.lv}</span> <span class="tag">${S.lv >= PR.LEVEL_CAP ? 'max level' : `${S.xp} / ${PR.xpNeed(S.lv)} xp`}</span>`
+  const ttl = G.factions.title();
+  $('heroHead').innerHTML = `<b>${h.cls}</b>${ttl ? ` <span class="tag ttl">${ttl}</span>` : ''} <span class="tag">Lv ${S.lv}</span> <span class="tag">${S.lv >= PR.LEVEL_CAP ? 'max level' : `${S.xp} / ${PR.xpNeed(S.lv)} xp`}</span>`
     + `<span class="tag">${(PR.MODES[S.mode] || PR.MODES.adventurer).name}</span><span class="tag">gold ${S.gold || 0}</span><span class="tag">HP ${C.maxHp()}</span><span class="tag">ST ${C.maxSt()}</span><span class="tag">crit ${Math.round(M.crit * 100)}%</span>`;
   document.querySelectorAll('#heroTabs button').forEach((b, k) => b.classList.toggle('on', k === HUI.tab));
   const body = $('heroBody');
@@ -1051,6 +1072,22 @@ function drawHero() {
     body.querySelectorAll('[data-uneq]').forEach((b) => { b.onclick = (e) => { e.stopPropagation(); if (LO.unequip(S, b.dataset.uneq)) { save(); drawHero(); } }; });
     body.querySelectorAll('[data-scrap]').forEach((b) => { b.onclick = (e) => { e.stopPropagation(); HUI.i = 3 + +b.dataset.scrap; heroScrap(); }; });
     const sel = body.querySelector('.row.sel'); if (sel && sel.scrollIntoView) sel.scrollIntoView({ block: 'nearest' });
+  } else if (HUI.tab === 4) {
+    facMigrate(S);
+    HUI.n = FAC_IDS.length;
+    const t = G.factions.title();
+    body.innerHTML = `<p class="pts">Merit ranks: ${FAC_RANKS.join(' → ')} · Enter / A / tap: wear that rank's title${t ? ` · wearing "${t}"` : ''}</p>`
+      + FAC_IDS.map((id, k) => {
+        const F = FACTIONS[id], r = S.ranks[id] || 0, m = S.merit[id] || 0, top = r >= FAC_NEED.length - 1;
+        const lo = FAC_NEED[r], hi = top ? lo : FAC_NEED[r + 1], pct = top ? 100 : Math.max(0, Math.min(100, Math.round(100 * (m - lo) / (hi - lo))));
+        const worn = S.title === `${id}:${r}` && r > 0;
+        return `<div class="row fac${r ? '' : ' r0'}${k === HUI.i ? ' sel' : ''}" data-k="${k}" data-fac="${id}" style="--fc:${F.col}"><b><i class="fsw"></i>${F.name}</b>`
+          + `<em>${FAC_RANKS[r]}${r ? ` · "${F.titles[r]}"` : ''}</em>`
+          + `<span><span class="fbar"><i style="width:${pct}%"></i></span>${m} ${F.cur}${top ? ' · max rank' : ` · ${hi - m} to ${FAC_RANKS[r + 1]}`}<br>`
+          + `<small>${r >= 1 ? '✓ ' : 'Friend: '}${F.reward} · earn: ${F.earn}</small></span>`
+          + `<button class="wbtn sm plus" data-title="${id}" ${r ? '' : 'disabled'}>${worn ? 'worn ✓' : 'title'}</button></div>`;
+      }).join('');
+    body.querySelectorAll('[data-title]').forEach((b) => { b.onclick = (e) => { e.stopPropagation(); if (G.factions.setTitle(b.dataset.title)) { G.audio.sfx('pickup'); save(); drawHero(); } }; });
   } else if (HUI.tab === 2) {
     const cur = slots(), raw = Array.isArray(S.slots) ? S.slots : cur;
     HUI.n = 4;
@@ -1102,7 +1139,7 @@ function gemCycle() {
   HUI.gem = owned[(owned.indexOf(HUI.gem) + 1) % owned.length]; drawHero();
 }
 G.heroSocket = heroSocket; G.gemCycle = gemCycle;
-function heroTab(d) { HUI.tab = (HUI.tab + d + 4) % 4; HUI.i = 0; drawHero(); }
+function heroTab(d) { HUI.tab = (HUI.tab + d + 5) % 5; HUI.i = 0; drawHero(); }
 function heroMove(d) { HUI.i = Math.max(0, Math.min((HUI.n || 1) - 1, HUI.i + d)); drawHero(); }
 function heroPad(name) {
   if (name === 'b' || name === 'start') setHeroUI(false);
@@ -1114,7 +1151,7 @@ function heroPad(name) {
   else if (name === 'a' || name === 'x') heroAct();
 }
 function heroKey(k, e) {
-  if (k === 'escape' || k === 'i' || k === 'b' || k === 'g') setHeroUI(false);
+  if (k === 'escape' || k === 'i' || k === 'b' || k === 'g' || k === 'h') setHeroUI(false);
   else if (HUI.tab === 3 && (k === 'x' || k === 'delete' || k === 'backspace')) { e.preventDefault(); heroScrap(); }
   else if (HUI.tab === 3 && k === 'r') heroSocket();
   else if (HUI.tab === 3 && k === 't') gemCycle();

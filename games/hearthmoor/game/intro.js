@@ -115,6 +115,7 @@ export class Intro {
     G.S.flags.intro = how;
     G.toast(how === 'done' ? 'Lantern Eve tasks are in your quest log (J): Marla, Wren and Tib need a hand.' : 'Intro skipped. Lantern Eve tasks are in your quest log (J).', 3.2);
     G.refreshMarkers && G.refreshMarkers();
+    if (ctx && G.factions) G.factions.attach(ctx, G.area);   // the Order's warden takes her post once the opening is over
     G.save();
   }
   skip() { if (this.active) this.finish('skipped'); return true; }

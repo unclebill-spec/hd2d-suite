@@ -41,6 +41,18 @@ const openBank = (G) => { G.S.met = { ...(G.S.met || {}), banker: 1 }; G.shopUI.
 const riddleWrong = (G) => { flags(G.S).riddle = 'tried'; return { pages: ['A soft clunk. The lock sulks.', 'A hint, free of charge: think about where you have been, not what you carry.'], then: openBank }; };
 
 export const TALK = {
+  // Stage 5 part 3: the Order of the Hearth's warden, the first faction contact (opens the Factions tab)
+  hilde(S) {
+    const first = !S.met?.hilde;
+    return {
+      pages: first ? ['Warden Hilde, Order of the Hearth. We keep Midgard\'s lamps lit and its roads walkable.',
+                      'Five banners matter out past the Rift: the Hearth, the Gatekeepers\' Guild, the Gnome Council, the Rift Corsairs and the realm embassies. Each remembers what you do for it.',
+                      'Run errands, seal rifts, fell the big brutes. Merit adds up: Stranger, Friend, Trusted, Honored, Champion, Legend. Here, your first Hearth Tokens.']
+                   : ['Lamps are lit, roads are walkable. Your standing is in the Factions tab (H). Wear a title if you have earned one.'],
+      // only the first talk opens the Factions tab (later chats just talk; the tab is on H / the hero screen)
+      then: first ? (G) => { const was = G.S.met?.hilde; G.S.met = { ...(G.S.met || {}), hilde: 1 }; if (!was) { G.factions.add('hearth', 20, 'warden'); G.openFactions(); } } : null,
+    };
+  },
   // ---------------------------------------------------------------- Hearthmoor Plaza
   nightmerchant(S) {
     const first = !S.met?.night;
@@ -58,7 +70,7 @@ export const TALK = {
                                   : 'Before the ledger: the Gnome Council fitted drawer nine with a riddle lock. Solve it, and what is inside is yours.',
               '"The more of me you take, the more of me you leave behind." What am I?'],
       choice: { id: 'riddle', options: [
-        { label: 'Footsteps.', pick: (G) => { flags(G.S).riddle = 'solved'; gem(G, 'moon_opal'); gold(G, 25);
+        { label: 'Footsteps.', pick: (G) => { flags(G.S).riddle = 'solved'; gem(G, 'moon_opal'); gold(G, 25); G.factions && G.factions.onRiddle();
             return { pages: ['Click. Drawer nine swings open.', 'A moon opal and twenty-five gold, Council seal and all. They will want to meet a mind like yours someday.'], then: openBank }; } },
         { label: 'Bread crumbs.', pick: riddleWrong },
         { label: 'Copper coins.', pick: riddleWrong },

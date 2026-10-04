@@ -47,7 +47,7 @@ export class Hollows {
     const G = this.G, S = G.S, key = d.id;
     if (d.kind === 'chest') {
       if (S.found[key]) { G.toast && G.toast('The little chest is empty (thank you kindly, says a tiny note).', 2.2); return true; }
-      S.found[key] = 1; S.gold = (S.gold || 0) + (d.gold || 0);
+      S.found[key] = 1; S.gold = (S.gold || 0) + (d.gold || 0); G.factions && G.factions.onSecret();
       if (d.item) G.give(d.item, 1);
       if (ctx.effects) ctx.effects.spawn('glitter', d.pos[0], ctx.heightAt(d.pos[0], d.pos[1]) + 0.1, d.pos[1] + 0.1, { duration: 1.2 });
       G.toast && G.toast(`The gnome door creaks open: a little chest! +${d.gold || 0} gold${d.item ? ' and a ' + (G.itemName ? G.itemName(d.item) : d.item) : ''}`, 2.8);
@@ -139,7 +139,7 @@ export class Hollows {
       p.x = q.to[0]; p.z = q.to[1]; p.y = b.y1; p.lift = 0; this.b = null;
       if (ctx.effects) ctx.effects.spawn('glitter', p.x, p.y + 0.1, p.z + 0.05, { duration: 0.7 });
       const S = this.G.S; S.found = S.found || {};
-      if (q.secret && !S.found[q.id || 'bounce']) { S.found[q.id || 'bounce'] = 1; this.G.toast && this.G.toast(q.secret, 2.6); this.G.audio && this.G.audio.sfx('quest'); }
+      if (q.secret && !S.found[q.id || 'bounce']) { S.found[q.id || 'bounce'] = 1; this.G.toast && this.G.toast(q.secret, 2.6); this.G.audio && this.G.audio.sfx('quest'); this.G.factions && this.G.factions.onSecret(); }
     }
   }
 }

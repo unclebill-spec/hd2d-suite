@@ -301,3 +301,15 @@ body.tv #dlg { width: min(900px, 80vw); } body.tv #dlg p { font-size: 20px; }
 #huntList li i { flex: none; width: 10px; height: 10px; border: 2px solid #2a1e1c; }
 #huntList li span { opacity: .8; font-size: 12px; margin-left: auto; }
 #log .rifts { margin: 4px 0 0; font-size: 12px; opacity: .85; }
+/* Factions tab (Stage 5 part 3): each faction's signature glow colour as hard pixel edges (no blur) */
+#heroBody .row.fac { grid-template-columns: minmax(150px, 1fr) minmax(120px, .9fr) 1.6fr auto; border-left: 6px solid var(--fc); box-shadow: inset 0 0 0 2px color-mix(in srgb, var(--fc) 45%, transparent); }
+#heroBody .row.fac b { display: flex; align-items: center; gap: 6px; }
+#heroBody .row.fac .fsw { flex: none; width: 12px; height: 12px; background: var(--fc); border: 2px solid #2a1c10; box-shadow: 0 0 0 2px var(--fc); image-rendering: pixelated; }
+#heroBody .row.fac:not(.r0) .fsw { animation: facglow 1.2s steps(2) infinite; }
+#heroBody .row.fac .fbar { display: block; height: 8px; margin: 1px 0 2px; border: 2px solid #2a1c10; background: #e8d6b0; }
+#heroBody .row.fac .fbar i { display: block; height: 100%; background: var(--fc); }
+#heroBody .row.fac small { font: 600 10px system-ui; color: #5a3e26; }
+#heroBody .row.fac.r0 { opacity: .78; }
+#heroBody .row.fac.r0 .fsw { box-shadow: none; }
+#heroHead .tag.ttl { background: #2a1c10; color: #f2c24a; border-color: #f2c24a; }
+@keyframes facglow { 0% { box-shadow: 0 0 0 2px var(--fc); } 50% { box-shadow: 0 0 0 3px var(--fc); } }

@@ -116,7 +116,7 @@ export class Rifts {
     S.rifts = S.rifts || { minor: 0, major: 0, abyssal: 0 };
     S.rifts[T.id] = (S.rifts[T.id] || 0) + 1;
     if (G.loot) {
-      G.loot.drop(R.pos[0] + 0.4, R.pos[1] + 0.3, { gold: T.gold + Math.floor(Math.random() * 10) });
+      G.loot.drop(R.pos[0] + 0.4, R.pos[1] + 0.3, { gold: Math.round((T.gold + Math.floor(Math.random() * 10)) * (G.factions ? G.factions.riftGoldMul() : 1)) });   // Guild Friend: +25%
       G.loot.dropItem && G.loot.dropItem(R.pos[0] - 0.4, R.pos[1] + 0.35, S.lv || 1, T.minRar);
       if (Math.random() < T.shard) G.loot.drop(R.pos[0], R.pos[1] - 0.4, { gem: 'rift_shard' });
     }
@@ -124,6 +124,7 @@ export class Rifts {
     G.audio && G.audio.sfx('quest');
     G.toast && G.toast(`${T.name} sealed! +${T.xp} XP and the rift's spoils.`, 2.8);
     G.drawHunt && G.drawHunt();
+    G.factions && G.factions.onRift(R.tier);   // Rift Marks + the realm's faction
   }
   state() {
     const R = this.cur;

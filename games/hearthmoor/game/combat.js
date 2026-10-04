@@ -312,6 +312,7 @@ export class Combat {
       }
       if (this.G.loot && !e.sp.noLoot) this.G.loot.onKill(a, this.G.S.lv || 1, { legendary: !!e.D.legendary, gold: e.D.boss ? 30 : e.D.rare ? 20 : 0, minRar: e.D.minRar });
       if (e.onKill) e.onKill(e);   // rares: hunt log, aura off
+      if (e.D.boss && !e.D.rare && this.G.factions) this.G.factions.onBoss(e);   // mini-bosses: the realm's merit
     } else e.t = 1.5;
   }
   shove(a, dx, dz, m) {

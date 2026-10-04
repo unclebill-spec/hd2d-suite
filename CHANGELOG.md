@@ -2,6 +2,45 @@
 
 Dates are America/New_York. Newest first. Keep this current with every change you push.
 
+## 2026-10-04: Hearthmoor Stage 5, part 3: factions + merit
+- **Five factions, six merit ranks** (`game/factions.js`, per `docs/story/STORY_SEEDS.md` and handoff §9). Ranks are Stranger → Friend → Trusted → Honored → Champion → Legend, at 0 / 150 / 400 / 800 / 1400 / 2200 merit. Each faction has its own currency name, signature glow colour, earn line, a title per rank and a Legend item (named for later).
+
+  | Faction | Merit | Glow | Friend reward (live now) |
+  |---|---|---|---|
+  | Order of the Hearth | Hearth Tokens | gold `#f2c24a` | 10% off at Odo's |
+  | Gatekeepers' Guild | Rift Marks | sky `#6cc8ff` | +25% gold from every rift you seal |
+  | Gnome Council | Gilded Acorns | moss `#7ccf5a` | +10% gold from everything you pick up |
+  | Rift Corsairs | Black Doubloons | red `#e0302a` | 15% off at Sefa's night stall |
+  | Realm Embassies | Realm Favor | violet `#a45cf0` | +10% XP in Vanaheim |
+
+- **How you earn merit** (hooked into what already exists):
+  - errands: +40 Hearth;
+  - sealing a rift: +30 / 60 / 120 Rift Marks by tier;
+  - rares: +50 (+40 per extra trait) for the realm's faction (Midgard areas → Hearth, Vanaheim → Embassies);
+  - Mossheart and other non-rare bosses: +80 for the realm's faction;
+  - the drawer-nine riddle: +60 Gnome; gnome-door secrets: +40 Gnome;
+  - Sefa's gems and gear: +15 Corsair, −5 Hearth (the rivalry; ranks never drop);
+  - the first talk with Warden Hilde: +20 Hearth.
+- **Saved per slot:** `S.merit`, `S.ranks`, `S.title`, `S.factionsV`. **Save migration:** a save from before factions is seeded once on load from its finished errands, sealed rifts, hunt log and solved riddle.
+- **Factions panel:** a fifth hero-screen tab. Open it with **H**, the Factions tab button (touch / mouse), or controller Start → RB → LB / RB. Each row is edged and swatched in the faction's glow colour (hard pixel edges, no blur) and shows the rank, merit, a progress bar to the next rank, the Friend reward and how to earn. Enter / A / tap **title** wears that rank's title, shown in the hero header.
+- **Rank-up:** a toast in the faction's colour ("✦ Gatekeepers' Guild: Friend! Title "Rift Warden" · unlocked: …"), a `sparkle_burst` on the hero, a 1.6 s point light in the faction colour, the quest chime, and a save. Rank-up toasts take priority: a toast that arrives while one shows (the rift's loot toast, a pickup) now waits in a short queue and shows after it, so the rank-up is never wiped out (`toast(msg, s, html, prio)`, `G.toastQueue()`).
+- **Warden Hilde of the Hearth** (rune guard sprite) stands on the Plaza terrace, right of the moss gate. She takes her post once Lantern Eve is over (or skipped), so she stays out of the opening's fight by the gate. Her three pages introduce the five banners and the ranks, pay the first Hearth Tokens and open the Factions tab. Later chats are a single line and leave the tab closed, so closing her dialogue never pops a panel over the field.
+- Shop rows show the faction price (`shop.js`). Rift seals and gold pickups apply the Guild and Gnome bonuses. Vanaheim XP applies the Embassy bonus.
+- **Smoke steps:**
+  - merit earned from play (errands, rares, riddle, secrets, Sefa);
+  - +50 for a one-trait rare; +30 / 60 / 120 per rift tier;
+  - the abyssal seal lifts the Guild to Friend with the toast, sparkle and light;
+  - Hilde's talk (+20, the panel opens);
+  - five rows in the five glow colours;
+  - H, the touch tab and the controller route;
+  - the Friend rewards; wearing a title;
+  - the save migration (seeded once, exact values);
+  - merit, ranks and the title saved in the slot;
+  - a toast arriving during a rank-up waits in the queue, then shows.
+  - The Odo tonic / glow-seed steps now expect the exact Hearth Friend price.
+- **Screenshots:** `docs/screenshots/stage5_factions_panel.png`, `stage5_rank_up.png`.
+- **Checks:** smoke 196/196. check-scene: plaza 11/11 and lane 10/10 on the final Hilde placement (16:42-16:57 ET); mossglen 11/11, hollows 10/10, rift 10/10 + height EXEMPT, vanaheim 11/11 on b779087 (15:12-15:35 ET; Hilde only stands in the plaza). Several smoke runs at load 12-19 died early on different timing-sensitive steps (first fight, controller hot-plug / hold-Y wheel, phone action buttons); none were weakened. Two real failures were fixed: Hilde overlapped the elder (plaza sprites_sharp / colours), and she stood in the opening fight and the phone's open-ground tap spots, so she moved right of the moss gate and arrives after Lantern Eve. The rank-up screenshot is a fresh capture with the toast up (the smoke-run shot caught it after it faded).
+
 ## 2026-10-04: Hearthmoor Stage 5, part 2: procedural rares + random rifts
 - **Procedural rares** (`game/rares.js`): a rare is a base body + an element affix + a trait, seeded by day and area.
   - **Bodies**, drawn natively at 2-3x the hero on each wild area's boss sheet (`tools/sprite/boss_sheet.py`, 50x80 frames like Mossheart, style lock: never upscaled):
