@@ -124,7 +124,7 @@ export class Particles {
       if (p.mode === 'life') fr = Math.min(p.frames - 1, Math.floor(q.age / q.life * p.frames));
       else fr = Math.floor(q.age * p.fps + q.ph) % p.frames;
       this.pos[n * 3] = q.x; this.pos[n * 3 + 1] = q.y; this.pos[n * 3 + 2] = q.z;
-      this.cellA[n * 2] = fr; this.cellA[n * 2 + 1] = p.row; this.glow[n] = p.glow ? 1 : 0;
+      this.cellA[n * 2] = fr; this.cellA[n * 2 + 1] = p.row; this.glow[n] = typeof p.glow === 'number' ? p.glow : (p.glow ? 1 : 0);   // a number = partly self-lit (rain catching lamp light)
       n++;
     }
     this.parts = keep;

@@ -20,7 +20,11 @@
   "pollen",
   "fountain_spray",
   "butterflies",
-  "footstep_dust"
+  "footstep_dust",
+  "mist",
+  "glow_mist",
+  "wet_glint",
+  "wet_glint_cool"
  ],
  "presets": {
   "dust_motes": {
@@ -321,7 +325,7 @@
    ],
    "gravity": 0,
    "sway": 0,
-   "glow": false,
+   "glow": 0.45,
    "area": [
     26,
     1,
@@ -360,7 +364,7 @@
    ],
    "gravity": 0,
    "sway": 0,
-   "glow": false,
+   "glow": 0.45,
    "manual": true
   },
   "embers": {
@@ -564,6 +568,140 @@
    "glow": false,
    "manual": true,
    "burst": 4
+  },
+  "mist": {
+   "row": 16,
+   "frames": 4,
+   "fps": 1,
+   "mode": "life",
+   "rate": 12,
+   "life": [
+    6,
+    9
+   ],
+   "grade": null,
+   "vel": [
+    [
+     0.12,
+     0.3
+    ],
+    [
+     -0.01,
+     0.02
+    ],
+    [
+     -0.05,
+     0.05
+    ]
+   ],
+   "gravity": 0,
+   "sway": 0.08,
+   "glow": false,
+   "area": [
+    24,
+    0.5,
+    16
+   ],
+   "y0": 0.45,
+   "follow": true
+  },
+  "glow_mist": {
+   "row": 17,
+   "frames": 4,
+   "fps": 1,
+   "mode": "life",
+   "rate": 8,
+   "life": [
+    6,
+    10
+   ],
+   "grade": null,
+   "vel": [
+    [
+     -0.12,
+     0.12
+    ],
+    [
+     0.0,
+     0.05
+    ],
+    [
+     -0.06,
+     0.06
+    ]
+   ],
+   "gravity": 0,
+   "sway": 0.22,
+   "glow": true,
+   "area": [
+    24,
+    0.6,
+    16
+   ],
+   "y0": 0.55,
+   "follow": true
+  },
+  "wet_glint": {
+   "row": 18,
+   "frames": 4,
+   "fps": 8,
+   "mode": "life",
+   "rate": 0,
+   "life": [
+    0.5,
+    0.9
+   ],
+   "grade": null,
+   "vel": [
+    [
+     0,
+     0
+    ],
+    [
+     0,
+     0
+    ],
+    [
+     0,
+     0
+    ]
+   ],
+   "gravity": 0,
+   "sway": 0,
+   "glow": true,
+   "manual": true,
+   "burst": 1
+  },
+  "wet_glint_cool": {
+   "row": 19,
+   "frames": 4,
+   "fps": 8,
+   "mode": "life",
+   "rate": 0,
+   "life": [
+    0.5,
+    0.9
+   ],
+   "grade": null,
+   "vel": [
+    [
+     0,
+     0
+    ],
+    [
+     0,
+     0
+    ],
+    [
+     0,
+     0
+    ]
+   ],
+   "gravity": 0,
+   "sway": 0,
+   "glow": true,
+   "manual": true,
+   "burst": 1
   }
  }
 }

@@ -662,6 +662,9 @@ def run(out, simscale=4, size=(960, 540)):
             zones = T.ev("window.__hm.glow.zones().filter((z) => z.src === 'garden').length")
             T.step("a whole day after planting they sprout, after two they bloom; at night each bloom casts a light pool and is a light zone",
                    mound and sprout and all(p["stage"] == 3 and p["lit"] for p in gp) and zones == 3, mound=mound, sprout=sprout, zones=zones, plots=gp)
+            pg.wait_for_timeout(1500)
+            hw = T.ev("window.__hm.weather.qa()")
+            T.step("Hollows at night: drifting self-lit glow mist (scheduled, not forced)", hw["kind"] == "glowmist" and not hw["forced"] and hw["parts"].get("glow_mist", 0) > 5, hw=hw)
             T.ev(f"(() => {{ const c = window.__hm.ctx, q = c.player; q.x = {gp[1]['x']}; q.z = {gp[1]['z']} + 1.9; q.y = c.heightAt(q.x, q.z); c.stopWalk(); }})()"); pg.wait_for_timeout(900)
             rep["shots"]["garden_night"] = T.shot("garden_night")
             fc, tn = T.ev("window.__hm.S.gems.frost_core || 0"), T.ev("window.__hm.S.inv.tonic || 0")
@@ -675,6 +678,11 @@ def run(out, simscale=4, size=(960, 540)):
             area = T.go_rect("exits")
             p = T.pos()
             T.step("edge exit: Toadstool Hollows -> Mossglen (arrive at the east edge)", area == "mossglen" and p[0] > 11, spawn=p)
+            T.ev("window.__hd2d.setTime(0.3)"); pg.wait_for_timeout(2500)
+            mw = T.ev("window.__hm.weather.qa()")
+            T.ev("window.__hd2d.setTime(0.45)"); pg.wait_for_timeout(1200)
+            mw2 = T.ev("window.__hm.weather.qa()")
+            T.step("Mossglen: mist rolls in on a morning (07:12) and lifts by late morning", mw["kind"] == "mist" and mw["parts"].get("mist", 0) > 0 and mw2["kind"] == "clear" and not mw2["emitters"], morning=mw, later=mw2)
             # ---------------------------------------------------------- save, reload, continue
             pg.keyboard.press("k"); pg.wait_for_timeout(300)
             saved = T.ev("JSON.parse(localStorage.getItem('hearthmoor-slot-1-v2'))")
@@ -815,6 +823,27 @@ def run(out, simscale=4, size=(960, 540)):
             g2 = T.ev("[window.__hm.glowCap(), window.__hm.ctx.glowN, window.__hm.area]")
             T.step("Options: glow lights toggles 3 <-> 2 (phone) and re-opens the area in place with that many pooled lights",
                    g0 == [3, 3] and g1[:2] == [2, 2] and "2" in g1[2] and g1[3] == "plaza" and g2 == [3, 3, "plaza"], g0=g0, g1=g1, g2=g2)
+            # ---------------------------------------------------------- weather: calendar, rain + wet glints, Options toggle
+            cal = T.ev("""(() => { const W = window.__hm.weatherAt, k = new Set(), same = []; for (let d = 0; d < 12; d++) for (let t = 0; t < 1; t += 0.125) { k.add(W('plaza', d, t)); same.push(W('plaza', d, t) === W('lane', d, t)); }
+              return { town: [...k].sort(), same: same.every(Boolean), glen: [W('mossglen', 3, 0.3), W('mossglen', 3, 0.6)], hollow: [W('hollows', 3, 0.9), W('hollows', 3, 0.1), W('hollows', 3, 0.5)] }; })()""")
+            T.step("weather calendar: Plaza + Lane share a sky of clear / drizzle / rain blocks; Mossglen misty mornings; Hollows glow mist at night",
+                   cal["town"] == ["clear", "drizzle", "rain"] and cal["same"] and cal["glen"] == ["mist", "clear"] and cal["hollow"] == ["glowmist", "glowmist", "clear"], cal=cal)
+            T.ev("window.__hd2d.setTime(0.95); window.__hm.weather.force('rain')"); pg.wait_for_timeout(3500)
+            wq = T.ev("window.__hm.weather.qa()")
+            T.step("rain at night: drops + splashes fall, the cobbles get wet and lamps / pools throw palette glints (no bloom)",
+                   wq["kind"] == "rain" and wq["mode"] == "on" and wq["parts"].get("rain", 0) > 20 and wq["parts"].get("rain_splash", 0) > 0 and wq["wet"] > 0.05
+                   and wq["glints"] > 0 and wq["parts"].get("wet_glint", 0) > 0, wq=wq)
+            pg.keyboard.press("o"); pg.wait_for_timeout(250)
+            T.ev("document.getElementById('btnWeather').click()"); pg.wait_for_timeout(200)
+            w1 = T.ev("[window.__hm.weather.mode, window.__hm.weather.qa().emitters.map((e) => e.rate), document.getElementById('btnWeather').textContent]")
+            pg.keyboard.press("r"); pg.wait_for_timeout(200)
+            w2 = T.ev("[window.__hm.weather.mode, window.__hm.weather.qa().emitters.length]")
+            T.btn(3); pg.wait_for_timeout(250)
+            w3 = T.ev("[window.__hm.weather.mode, window.__hm.weather.qa().emitters.map((e) => e.rate), window.__hm.opts]")
+            pg.keyboard.press("Escape"); pg.wait_for_timeout(200)
+            T.step("Options: weather on -> light (mouse: half the rain) -> off (R: no weather) -> on (controller Y)",
+                   w1[0] == "light" and w1[1] == [0.8] and "light" in w1[2] and w2 == ["off", 0] and w3[0] == "on" and w3[1] == [1.6] and w3[2], w1=w1, w2=w2, w3=w3)
+            T.ev("window.__hm.weather.force(null)")
             T.ev(f"window.__hd2d.setTime({t_day if 0.25 < t_day < 0.8 else 0.5})")
             T.ev("(() => { const S = window.__hm.S, LO = window.__hm.LO, it = LO.makeItem(3, 4, 'weapon'); it.name = 'Sunfire Rune Hammer'; S.bag.unshift(it); S.gems.golem_core = 1; S.gems.rift_shard = 1; })()")
             T.step("a Legendary always rolls 2 sockets; Rare+ roll 0-2", T.ev("window.__hm.S.bag[0].gems.length") == 2
@@ -1050,6 +1079,16 @@ def run(out, simscale=4, size=(960, 540)):
                 back = T.ev("!document.body.classList.contains('ctrl') && getComputedStyle(document.getElementById('pad')).display !== 'none'")
                 T.step("phone: on-screen pad hides while a controller is used and comes back on touch", hid and back, hidden=hid, back=back)
                 T.ev("__padPlug(false)")
+                q.wait_for_timeout(300)
+                def tap_el(sel):   # real touch (CDP, the suite's own timestamps) on an element's centre
+                    c = T.ev(f"(() => {{ const r = document.querySelector('{sel}').getBoundingClientRect(); return [r.left + r.width / 2, r.top + r.height / 2]; }})()")
+                    tap(c[0], c[1]); q.wait_for_timeout(300)
+                pm = [T.ev("window.__hm.weather.mode")]
+                tap_el("#btnOpts"); tap_el("#btnWeather")
+                pm.append(T.ev("[window.__hm.weather.mode, window.__hm.weather.qa().emitters.length]"))
+                tap_el("#btnWeather"); tap_el("#btnWeather")
+                pm.append(T.ev("window.__hm.weather.mode")); tap_el("#optsClose")
+                T.step("phone: weather defaults to light; the Options button cycles light -> off -> on -> light by touch", pm == ["light", ["off", 0], "light"] and not T.ev("window.__hm.opts"), modes=pm)
                 # phone landscape: the full action layout (report shot), nothing overlapping
                 q.set_viewport_size({"width": 844, "height": 390}); q.wait_for_timeout(1200)
                 lay = T.ev("""(() => { const els = [...document.querySelectorAll('#hud .chip, #hud button, #pad .pb, [data-hud]')].filter((e) => e.offsetParent && getComputedStyle(e).visibility !== 'hidden');

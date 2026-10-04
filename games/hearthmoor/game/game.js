@@ -11,6 +11,7 @@ import { Combat } from './combat.js';
 import { Glow } from './glow.js';
 import { Hollows } from './hollows.js';
 import { Garden } from './garden.js';
+import { Weather, weatherAt } from './weather.js';
 import * as LO from './loot.js';
 import { Shop, drinkTonic, goodIconURL } from './shop.js';
 
@@ -46,6 +47,8 @@ G.combat = new Combat(G);
 G.glow = new Glow(G);
 G.hollows = new Hollows(G);
 G.garden = new Garden(G);
+G.weather = new Weather(G);
+G.weatherAt = weatherAt;   // smoke: the weather calendar
 G.loot = new LO.Loot(G); G.LO = LO; G.PR = PR;
 G.shopUI = new Shop(G); G.drinkTonic = () => drinkTonic(G);
 window.__hm = G;   // smoke tests + debugging
@@ -237,12 +240,12 @@ async function loadArea(id, spawnKey, pos) {
   const old = $('view'); if (old) old.remove();
   const canvas = document.createElement('canvas'); canvas.id = 'view'; document.body.prepend(canvas);
   G.area = id; G.S.area = id; G.armed = false;
-  G.combat.detach(); G.glow.detach(); G.hollows.detach(); G.garden.detach(); G.loot.detach(); G.shopUI.detach();
+  G.combat.detach(); G.glow.detach(); G.hollows.detach(); G.garden.detach(); G.weather.detach(); G.loot.detach(); G.shopUI.detach();
   G.game = await boot({ base: AREAS[id], canvas, spawn: sp, startT: G.S.t, glowLights: glowCap(), clockSpeed: 1 / DAY_SECONDS, spellCycle: slots(),
                         player: { role: G.S.cls || G.preview || 'wildcaller' }, castAdvance: false,
                         keepTitle: true, padHandled: true, hooks, toast: (m, t) => toast(m, t) });
   const ctx = G.ctx = G.game.ctx;
-  G.combat.attach(ctx, id); G.glow.attach(ctx, id); G.hollows.attach(ctx); G.garden.attach(ctx); G.loot.attach(ctx); G.shopUI.attach(ctx, id); PR.ensure(G.S); G.loot.restorePurse(id);
+  G.combat.attach(ctx, id); G.glow.attach(ctx, id); G.hollows.attach(ctx); G.garden.attach(ctx); G.weather.attach(ctx, id); G.loot.attach(ctx); G.shopUI.attach(ctx, id); PR.ensure(G.S); G.loot.restorePurse(id);
   // portrait source: this area's actor atlas
   portraitImg = new Image(); portraitImg.src = AREAS[id] + ctx.scene.atlas.image;
   // pickups already taken stay gone
@@ -314,7 +317,7 @@ function onFrame(dt, ctx) {
   if (toastT > 0) { toastT -= dt; const el = $('toast'); if (toastT <= 0.35) el.classList.add('out'); if (toastT <= 0) { el.hidden = true; el.classList.remove('out'); } }
   syncMarkers();
   padWheel();
-  G.hollows.update(dt); G.garden.update(dt); G.glow.update(dt);
+  G.hollows.update(dt); G.garden.update(dt); G.glow.update(dt); G.weather.update(dt);
   G.loot.update(dt); G.shopUI.update(dt);
   G.combat.update(dt, ctx);
   drawVitals(ctx);
@@ -419,7 +422,7 @@ const hooks = {
     if (G.asking) { if (name === 'left' || name === 'right' || name === 'up' || name === 'down') askMove(); else if (name === 'a') askPick(ASK.yes); else if (name === 'b') askPick(false); return true; }
     if (G.heroUI) { heroPad(name); return true; }
     if (G.shop) { G.shopUI.pad(name); return true; }
-    if (G.opts) { if (name === 'b' || name === 'start' || name === 'a') setOpts(false); return true; }
+    if (G.opts) { if (name === 'y') cycleWeather(); else if (name === 'b' || name === 'start' || name === 'a') setOpts(false); return true; }
     if (G.busy || G.downed) return true;
     if (G.dlg) { if (name === 'a') advanceDialogue(); else if (name === 'b') closeDialogue(); return name !== 'select'; }
     if (G.log) { if (name === 'y' || name === 'rb' || name === 'lb') { setLog(false); setHeroUI(true); return true; } if (name === 'a' || name === 'b' || name === 'start') setLog(false); return name !== 'select'; }
@@ -561,8 +564,13 @@ async function toggleGlow() {
   if (G.ctx && !G.title) { const p = G.ctx.player; save(); await loadArea(G.area, null, [p.x, p.z, p.facing]); }
   toast(`Glow lights: ${glowCap()}`, 1.6);
 }
+// weather: on / light (default on phones: half the drops, mist and glints) / off; saved per device, not per slot
+function syncWeatherBtn() { const b = $('btnWeather'), m = G.weather.mode; if (b) b.textContent = `weather: ${m}${m === 'light' ? ' (phone)' : ''}`; }
+function cycleWeather() { const m = G.weather.cycle(); syncWeatherBtn(); toast(`Weather: ${m}`, 1.4); return m; }
+G.cycleWeather = cycleWeather;
 function wireOptions() {
   $('btnGlow').onclick = () => toggleGlow(); syncGlowBtn();
+  $('btnWeather').onclick = () => cycleWeather(); syncWeatherBtn();
   $('btnOpts').onclick = () => setOpts(!G.opts);
   $('optsClose').onclick = () => setOpts(false);
   $('opts').addEventListener('pointerdown', (e) => { if (e.target === $('opts')) setOpts(false); });
@@ -700,6 +708,7 @@ function wire() {
     if (k === 'b') { HUI.tab = 2; HUI.i = 0; setHeroUI(true); return; }   // spellbook
     if (k === 'g') { HUI.tab = 3; HUI.i = 0; setHeroUI(true); return; }   // gear + bag
     if (k === 'o') { setOpts(!G.opts); return; }
+    if (k === 'r' && G.opts) { cycleWeather(); return; }   // R in Options: weather on / light / off
     if (k === 'j' || k === 'l') setLog(!G.log);
     if (k === 'escape') { if (G.opts) setOpts(false); else if (G.dlg) closeDialogue(); else if (G.log) setLog(false); }
     if (k === 'k' || ((e.ctrlKey || e.metaKey) && k === 's')) { e.preventDefault(); save(true); }

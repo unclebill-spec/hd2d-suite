@@ -19,6 +19,10 @@ Sheet: 16 px cells, 4 frames per row, hard alpha, biome colours only.
   row 13 fountain_spray droplets thrown up and falling back (gravity + floor)
   row 14 butterflies   2-colour flappers on a meander (day)
   row 15 footstep_dust small dust kick under walking feet (burst by the runtime, life)
+  row 16 mist          low dithered mist puff (weather; follows the camera; thickens then thins by dither, life)
+  row 17 glow_mist     self-lit cool mist wisp for dark hollows at night (weather; glow; life)
+  row 18 wet_glint     warm 1-3 px vertical lamp reflection on wet cobbles (burst near lamps in the rain, life)
+  row 19 wet_glint_cool cool 1-3 px reflection for blue / cold-fire light on wet ground (burst, life)
 Also writes lamp_flicker.png (the native 4-frame strip), particles.json (presets), particles_preview_6x.png.
 """
 from __future__ import annotations
@@ -36,7 +40,7 @@ from hd2d_common import Pal, ensure, hex2rgb, load_biome, rng, write_json  # noq
 CELL = 16
 ROWS = ["dust_motes", "chimney_wisp", "leaf_bits", "lamp_bugs", "lamp_flicker",
         "fireflies", "petals", "snowfall", "rain", "rain_splash", "embers", "oven_steam", "pollen",
-        "fountain_spray", "butterflies", "footstep_dust"]
+        "fountain_spray", "butterflies", "footstep_dust", "mist", "glow_mist", "wet_glint", "wet_glint_cool"]
 R = {n: i for i, n in enumerate(ROWS)}
 
 
@@ -261,6 +265,29 @@ def footdust(C):
             C.set(r, f, x, y, c)
 
 
+def mist(C, row, cols):
+    """A low, wide puff of ordered-dither pixels (never a blur): 2x2 Bayer threshold rises then falls with life."""
+    bayer = [[0, 2], [3, 1]]
+    dens = [1, 2, 3, 1]
+    for f in range(4):
+        for y in range(5, 11):
+            for x in range(2, 14):
+                ex = abs(x - 7.5) / 6.0 + abs(y - 8) / 3.2
+                if ex > 1.0:
+                    continue
+                lvl = dens[f] - (1 if ex > 0.65 else 0)
+                if bayer[y % 2][x % 2] < lvl:
+                    C.set(row, f, x, y, cols[0] if ex < 0.45 else cols[1])
+
+
+def glints(C, row, hi, lo):
+    """Wet-cobble light reflection: a 1-3 px vertical streak that stretches and fades (palette only)."""
+    shapes = [[(8, 9, lo)], [(8, 8, hi), (8, 9, lo)], [(8, 7, lo), (8, 8, "white"), (8, 9, hi), (8, 10, lo)], [(8, 9, hi)]]
+    for f, sh in enumerate(shapes):
+        for x, y, c in sh:
+            C.set(row, f, x, y, c)
+
+
 PRESETS = {
     "dust_motes": {"row": 0, "frames": 4, "fps": 3, "mode": "loop", "rate": 5, "life": [4, 8], "grade": "motes",
                    "vel": [[-0.12, 0.12], [0.03, 0.14], [-0.08, 0.08]], "gravity": 0, "sway": 0.25, "glow": False,
@@ -287,10 +314,10 @@ PRESETS = {
                  "vel": [[-0.15, 0.15], [-0.9, -0.6], [-0.1, 0.1]], "gravity": 0, "sway": 0.35, "glow": False,
                  "area": [26, 1, 18], "y0": 5.5, "follow": True, "floor": 0.02, "weather": True},
     "rain": {"row": 8, "frames": 4, "fps": 10, "mode": "loop", "rate": 120, "life": [0.7, 0.9], "grade": None,
-             "vel": [[-0.6, -0.4], [-9.5, -8.5], [0, 0]], "gravity": 0, "sway": 0, "glow": False,
+             "vel": [[-0.6, -0.4], [-9.5, -8.5], [0, 0]], "gravity": 0, "sway": 0, "glow": 0.45,
              "area": [26, 1, 18], "y0": 7.0, "follow": True, "floor": 0.02, "on_floor": "rain_splash", "weather": True},
     "rain_splash": {"row": 9, "frames": 4, "fps": 10, "mode": "life", "rate": 0, "life": [0.38, 0.46], "grade": None,
-                    "vel": [[0, 0], [0, 0], [0, 0]], "gravity": 0, "sway": 0, "glow": False, "manual": True},
+                    "vel": [[0, 0], [0, 0], [0, 0]], "gravity": 0, "sway": 0, "glow": 0.45, "manual": True},
     "embers": {"row": 10, "frames": 4, "fps": 3, "mode": "life", "rate": 6, "life": [1.0, 2.0], "grade": None,
                "vel": [[-0.25, 0.25], [0.7, 1.4], [-0.25, 0.25]], "gravity": -0.2, "sway": 0.5, "glow": True,
                "area": [0.5, 0.1, 0.5]},
@@ -309,6 +336,17 @@ PRESETS = {
     "footstep_dust": {"row": 15, "frames": 4, "fps": 8, "mode": "life", "rate": 0, "life": [0.5, 0.65], "grade": None,
                       "vel": [[-0.35, 0.35], [0.05, 0.2], [-0.2, 0.2]], "gravity": -0.3, "sway": 0, "glow": False,
                       "manual": True, "burst": 4},
+    # ---- weather batch (Hearthmoor Stage 4): mist, glow mist, wet-cobble glints
+    "mist": {"row": 16, "frames": 4, "fps": 1, "mode": "life", "rate": 12, "life": [6, 9], "grade": None,
+             "vel": [[0.12, 0.3], [-0.01, 0.02], [-0.05, 0.05]], "gravity": 0, "sway": 0.08, "glow": False,
+             "area": [24, 0.5, 16], "y0": 0.45, "follow": True},
+    "glow_mist": {"row": 17, "frames": 4, "fps": 1, "mode": "life", "rate": 8, "life": [6, 10], "grade": None,
+                  "vel": [[-0.12, 0.12], [0.0, 0.05], [-0.06, 0.06]], "gravity": 0, "sway": 0.22, "glow": True,
+                  "area": [24, 0.6, 16], "y0": 0.55, "follow": True},
+    "wet_glint": {"row": 18, "frames": 4, "fps": 8, "mode": "life", "rate": 0, "life": [0.5, 0.9], "grade": None,
+                  "vel": [[0, 0], [0, 0], [0, 0]], "gravity": 0, "sway": 0, "glow": True, "manual": True, "burst": 1},
+    "wet_glint_cool": {"row": 19, "frames": 4, "fps": 8, "mode": "life", "rate": 0, "life": [0.5, 0.9], "grade": None,
+                       "vel": [[0, 0], [0, 0], [0, 0]], "gravity": 0, "sway": 0, "glow": True, "manual": True, "burst": 1},
 }
 
 
@@ -319,6 +357,8 @@ def build(biome="cozy-village", out="public/art/particles", project=None, seed=1
     motes(C); wisp(C, seed); leaves(C); bugs(C); flicker(C)
     fireflies(C); petals(C); snow(C); rain(C); splash(C); embers(C); steam(C, seed); pollen(C); spray(C)
     butterflies(C); footdust(C)
+    mist(C, R["mist"], ("plaster_hi", "stone_hi")); mist(C, R["glow_mist"], ("sky", "flower_blue"))
+    glints(C, R["wet_glint"], "lamp", "flower_gold"); glints(C, R["wet_glint_cool"], "sky", "flower_blue")
     C.im.save(out / "particles.png")
     C.im.crop((0, 4 * CELL, 4 * CELL, 5 * CELL)).save(out / "lamp_flicker.png")
     meta = {"tool": "hd2d particles", "biome": biome, "seed": seed, "image": "particles.png", "cell": CELL,

@@ -2,6 +2,19 @@
 
 Dates are America/New_York. Newest first. Keep this current with every change you push.
 
+## 2026-10-04: Hearthmoor Stage 4, part 4: weather
+- **Per-area weather on the day cycle** (`game/weather.js`, `weatherAt(area, day, t)`):
+  - Plaza and Bakery Lane share one town sky: each 6-hour block of each day is clear, drizzle or rain (seeded by the day, so it is the same on every machine). Day 0, Lantern Eve (the opening), is always clear.
+  - Mossglen: mist in the mornings (05:17-10:05).
+  - Toadstool Hollows: drifting self-lit glow mist all night (19:12-06:00).
+  - Snow is ready (the `snowfall` preset; `?wx=snow` or `weather.force('snow')`), but no area schedules it yet.
+- **Soft pixel particles** (`tools/particles/particles.py`, rows 16-19): `mist` (a low ordered-dither puff that thickens then thins, no blur), `glow_mist` (the same in cool sky / flower-blue, self-lit), `wet_glint` and `wet_glint_cool`. Rain drops and splashes are now 45% self-lit (`glow` may be a number in `particles.js`), so they still read in the dark.
+- **Wet cobbles shimmer:** rain soaks the ground over ~20 s and it dries over ~60 s. While wet, every light zone in view (lamps at night, glow and cold-fire pools, braziers, garden blooms, the night merchant's lantern, glowing toadstools) throws short 1-3 px vertical reflection glints on the ground around it. Warm lights give `lamp` / `flower_gold` glints, blue ones `sky` / `flower_blue`, and open ground gets a few sky glints. Palette pixels only, no bloom.
+- **Options -> weather: on / light / off** (`#btnWeather`, mouse or touch; R or controller Y while Options is open). Light halves the rain, mist and glints, and is the default on phones (coarse pointer). Saved per device (`hearthmoor-weather`), not per save slot. Arriving in an area pre-warms its weather, so it is already falling.
+- QA captures (`?qa`, check-scene) stay clear unless `?wx=<kind>` asks for weather.
+- Screenshots: `docs/screenshots/stage4_weather_rain_night_plaza.png`, `stage4_weather_glowmist_hollows.png`.
+- Checks: smoke PASS 140/140 (7 new weather steps: calendar, rain + splashes + glints at night, Options by mouse / R / controller Y, Hollows night glow mist, Mossglen morning mist, phone default light + touch cycle). check-scene PASS: plaza 11/11, lane 10/10, hollows 10/10, mossglen 11/11.
+
 ## 2026-10-03: Hearthmoor Stage 4, part 3: glow-gardening
 - **Garden plots:** a timber-edged soil bed with three beds in Bakery Lane on the open lower street (3.6, 4.6) under the lamp post, near Odile the gardener, in full view of the camera (the first spot, 5.1, 2.2, was hidden under the flower shop's awning), and one in Toadstool Hollows (0.6, 4.8, open ground away from the braziers, pools and toadstools). Area specs: `game.gardens` (`id`, `pos`, `kinds`).
 - **Grow:** E / controller A / the pad's MAIN button beside an empty bed plants one of Odo's glow seeds. It sprouts after one in-game day and blooms after two. `S.day` counts whole days as the clock passes midnight; growth is saved per bed in `S.garden`.
