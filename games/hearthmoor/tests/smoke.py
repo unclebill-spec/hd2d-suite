@@ -171,7 +171,7 @@ def run(out, simscale=4, size=(960, 540)):
     lines, errors = [], []
     log = lambda s: (print(s, flush=True), lines.append(s))  # noqa: E731
     rep = {"url": url, "shots": {}}
-    t0 = time.time()
+    T_START = time.time()
     with sync_playwright() as p:
         b = p.chromium.launch(args=ARGS)
         ctx = b.new_context(viewport={"width": size[0], "height": size[1]})
@@ -647,6 +647,33 @@ def run(out, simscale=4, size=(960, 540)):
             pg.reload()
             T.wait("window.__hm && window.__hm.ready", 120)
             T.step("after reload the title offers Continue", T.ev("!document.getElementById('btnCont').hidden"), info=T.ev("document.getElementById('saveInfo').textContent"))
+            # ---------------------------------------------------------- 3 save slots on the title (keys, controller, touch)
+            cards = "[...document.querySelectorAll('.slotcard')].map((b) => [+b.dataset.slot, b.dataset.icon, b.classList.contains('on'), b.textContent])"
+            T.wait("[...document.querySelectorAll('.slotcard')].some((b) => b.dataset.icon)", 30)
+            T.wait("!window.__hd2dGate.loading && window.__hd2d && window.__hd2d.ready", 90)   # keys are swallowed until the loading gate opens
+            sl = T.ev(cards)
+            T.step("title: 3 save slots; slot 1 shows the pixel hero, level, area and play time, slot 2 is empty",
+                   len(sl) == 3 and sl[0][1] == "stormborn" and sl[0][2] and "Lv " in sl[0][3] and "Mossglen" in sl[0][3] and "played" in sl[0][3] and "empty" in sl[1][3], slots=sl)
+            pg.keyboard.press("c"); pg.wait_for_timeout(200)
+            cp = T.ev("JSON.parse(localStorage.getItem('hearthmoor-slot-2-v2') || 'null')")
+            T.step("keyboard: C copies slot 1 into the first empty slot (2)", cp and cp["cls"] == "stormborn" and cp["area"] == "mossglen" and cp["quests"] == saved["quests"],
+                   copy=cp and [cp["cls"], cp["area"], cp["quests"]], toast=T.ev("document.getElementById('toast').textContent"), gate=T.ev("window.__hd2dGate.loading"))
+            pg.keyboard.press("ArrowRight"); pg.wait_for_timeout(200)
+            T.step("keyboard: right arrow picks slot 2 (the copy: Continue offered)", T.ev("window.__hm.slot") == 2 and T.ev("!document.getElementById('btnCont').hidden") and T.ev(cards)[1][1] == "stormborn")
+            T.ev("__padPlug(true)"); pg.wait_for_timeout(600)
+            T.btn(7)
+            armed = T.ev("window.__hm.slots3.state().armed") and T.ev("!!localStorage.getItem('hearthmoor-slot-2-v2')")
+            T.btn(7)
+            T.step("controller: RT asks first, a second RT deletes slot 2; an empty slot hides Continue", armed and T.ev("localStorage.getItem('hearthmoor-slot-2-v2')") is None
+                   and T.ev("document.getElementById('btnCont').hidden") and "empty" in T.ev(cards)[1][3])
+            T.btn(14)
+            T.step("controller: d-pad left goes back to slot 1", T.ev("window.__hm.slot") == 1)
+            T.ev("__padPlug(false)"); pg.wait_for_timeout(300)
+            pg.click(".slotcard[data-slot='3']"); pg.wait_for_timeout(200)
+            on3 = T.ev("window.__hm.slot") == 3 and T.ev("document.getElementById('btnDel').disabled")
+            pg.click(".slotcard[data-slot='1']"); pg.wait_for_timeout(200)
+            T.step("tap: a slot card selects it (empty slot 3: Delete disabled), tapping slot 1 comes back with its save intact",
+                   on3 and T.ev("window.__hm.slot") == 1 and T.ev("JSON.parse(localStorage.getItem('hearthmoor-slot-1-v2')).cls") == "stormborn" and not T.ev("document.getElementById('btnCont').hidden"))
             pg.click("#btnCont")
             T.idle()
             pg.wait_for_timeout(500)
@@ -1009,7 +1036,7 @@ def run(out, simscale=4, size=(960, 540)):
                 rep["error"] = f"migration: {e}"[:400]
         b.close()
     srv.shutdown()
-    rep["seconds"] = round(time.time() - t0, 1)
+    rep["seconds"] = round(time.time() - T_START, 1)
     rep["steps"] = T.steps
     (out / "smoke.json").write_text(json.dumps(rep, indent=1))
     log(f"smoke: {'PASS' if rep['pass'] else 'FAIL'} {sum(s['pass'] for s in T.steps)}/{len(T.steps)} steps in {rep['seconds']} s" + (f"  ({rep.get('error')})" if not rep["pass"] else ""))

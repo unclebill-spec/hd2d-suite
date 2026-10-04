@@ -52,6 +52,7 @@ Repo handoff docs (in the suite root): [`AGENTS.md`](../../AGENTS.md), [`CHANGEL
 | Gear + bag (equip / scrap) | G (or I, then → to Gear) | Start, Y, then RB to Gear; A equip, X scrap | tap the vitals chip, Gear tab |
 | Spellbook (assign the 4 slots) | B (or I, then → to Spells) | Start, Y, then RB to Spells | tap the vitals chip, Spells tab |
 | Zoom | + / - / wheel | right stick up / down | pinch |
+| Save slot (title) | ← → / 1-3, C copy, Del delete (twice) | d-pad / LB RB, Y copy, RT delete (twice) | tap a card, Copy / Delete buttons |
 | Close / cancel | Esc | B | tap |
 
 - 4 spell slots: slot 1 is the hero's class spell, slots 2-4 are the newest charms learned as errand rewards. Spells, the summon (30 s) and charms have cooldowns, shown as a dimmed sweep on the pad buttons.
@@ -117,7 +118,8 @@ Repo handoff docs (in the suite root): [`AGENTS.md`](../../AGENTS.md), [`CHANGEL
 - Moonpetal pickups glimmer. Quest tags ("!" and a gold star) float over whoever has an errand for you or is waiting on one.
 - Dialogue is a carved-wood frame with a parchment page, a pixel portrait cropped from the NPC's own sprite, a typewriter line and a page counter.
 - The parchment bag shows item icons (16 px, biome palette). On the pad, the rail shows the same items.
-- Saves go to `localStorage` key **`hearthmoor-slot-1-v2`** (`v: 2`):
+- **Save slots (Stage 4):** 3 slots, `localStorage` keys **`hearthmoor-slot-<n>-v2`** (slot 1 is the old `hearthmoor-slot-1-v2` key, so an existing save is slot 1). The title shows three cards (pixel hero, hero, level, area, play time); Continue / New game use the chosen card. Copy slot copies it into the first empty slot; Delete asks first (press again). Keys ← → / A D / 1-3, C copy, Del delete; controller d-pad / LB RB, Y copy, RT delete; tap a card (tap it again to continue). `?slot=N` picks a slot.
+- Saves go to `localStorage` key **`hearthmoor-slot-<n>-v2`** (`v: 2`):
   - what's saved: hero class, HP, area, position, clock, bag, errands, pickups taken, where Pudding is, charms;
   - autosave every 20 s, on area change, on errand steps, and when the tab hides;
   - the title screen offers Continue or New game (New game opens the hero picker);
@@ -156,7 +158,7 @@ Repo handoff docs (in the suite root): [`AGENTS.md`](../../AGENTS.md), [`CHANGEL
 - 3 errands complete end to end. Pudding follows across areas, the gate works both ways, and both edge exits fade.
 - Spell keys stay: F cast, Q next, 1-4 slots; pad ✦ tap casts, hold opens the slow-time wheel; controller Y tap casts (on release), hold Y opens the same wheel. Charms are rewards (start with sparkle burst); by default slot 1 is the class spell, and the spellbook (B / hero screen Spells tab, saved as `slots`) can put any known spell in any slot.
 - Combat keys stay: R attack, C hold guard, Z jump, X roll, V summon (controller X / LT / A / B / RT as in the table). Enemies are gloom-and-glow (stone, bone, cold blue fire), nothing slimy. Defeat stays cozy (nothing lost).
-- Save key `hearthmoor-slot-1-v2` (bump the version, don't silently change the format) and keep the v1 migration. Continue restores hero, area, position, clock, bag, errands, pickups, Pudding and charms.
+- Save keys `hearthmoor-slot-<n>-v2`, n = 1-3 (bump the version, don't silently change the format), slot 1 = the old key, and keep the v1 migration into slot 1. The title slot picker works with keys, controller and taps; Delete always asks twice. Continue restores hero, area, position, clock, bag, errands, pickups, Pudding and charms.
 - Title → hero picker for the 6 starters works with keys, controller and taps.
 - New game asks "Auto level? Yes / No"; the hero screen works with keys, controller and taps; stats and tier-I skills change combat numbers; no XP loss on defeat.
 - At night the toadstools glow and their pools light the ground; casting leaves a light pool + glitter; standing in light shows "✦ glowlit"; the night wraith will not enter light. No bloom anywhere.

@@ -37,13 +37,14 @@ Bill (GitHub `unclebill-spec`) hands this project between his bots and Cursor th
   - In `hollows.js`, from `game.doors` / `spring` / `braziers`: `interact()` (doors, hooked in game.js `onInteract` + `nearThing`), `drink()` (heal + `buffT` spring-fizz), and `spellAt(x, z)` / `onCast()` (light braziers; `glow.pool` and game.js `onCast` call them; `onCast` detects a real cast from `cd.spell` / `cd.charm` starting, because `Combat.cast` returns `false` for spells). `zones()` adds burning braziers and the spring to `glow.zones()`.
   - The `gnome` sprite role (`roles_more.py`, hat `gnome`, `named: true` = only on sheets that name it).
   - New effects in `spells.py`: `spring_bubbles` and `coldfire_flame`.
+  - **Stage 4 part 1 save slots (2026-10-03):** `game.js` `SLOT_N` = 3, `slotKey(n)` = `hearthmoor-slot-<n>-v2` (slot 1 = the old key, so old saves are slot 1), `G.slot` (`hearthmoor-lastslot`, `?slot=`), `readSave(n)` (v1 migration only into slot 1, skipped once `hearthmoor-v1-migrated` is set by deleting slot 1). Title cards `#slotRow` / `.slotcard` drawn by `syncSlots()` (hero icon = idle-down frame from `areas/plaza/.../actors.png`, `heroIcon`), `slotPick` / `slotMove` / `slotCopy` (into the first empty slot) / `slotDelete` (press twice); test API `G.slots3`, `G.slotInfo`. Next: the shared bank (`hearthmoor-bank-v1`, 40 slots, gear + gems + gold), then glow-gardening.
   - **In the game (Stage 1, 2026-10-03):** the title opens a hero picker for the 6 starters and the chosen class is the player (saved in `hearthmoor-slot-1-v2`). Real-time combat lives in `game/combat.js`: 3 enemies in Mossglen (stone golem, skeleton swordsman, cold-fire wraith, plus a night wraith), HP / stamina, guard, dodge-roll i-frames, pixel damage numbers, a class spell + summon per hero, cozy defeat. Enemy + summon sprites: `tools/sprite/roles_enemies.py` (`hd2d sprite --roles combat`); combat VFX: new `tools/spells` effects.
 - **Toolset:** a Python CLI `bin/hd2d` with 13 tools, which generates original pixel art and assembles lit three.js r160 dioramas (static ES modules, no build step).
 - **Demos:** `demos/hearthmoor-plaza`, `demos/bakery-lane` (+ zips).
 - **Game:** `games/hearthmoor/`:
   - title → hero picker (6 starters); 3 areas (Plaza, Bakery Lane, Mossglen through a portal), 3 errands, dialogue, quest log, bag;
   - real-time action combat in Mossglen (attack / guard / jump / dodge roll, 4 spell slots, summon, slow-time spell wheel on the phone);
-  - real-time day / dusk / night, charms, save / load (`hearthmoor-slot-1-v2`, migrates v1), PWA with an in-game Install button (iPhone: Add to Home Screen tip);
+  - real-time day / dusk / night, charms, 3 save slots with a slot picker (`hearthmoor-slot-<n>-v2`, slot 1 migrates v1), PWA with an in-game Install button (iPhone: Add to Home Screen tip);
   - options card: display presets (Auto / Phone landscape / 720p / 1080p TV / Retro 320x240), fullscreen, sound, pad, hand; rotate-to-landscape prompt; see-through player silhouette behind buildings;
   - touch with a floating stick + action buttons, Bluetooth / USB controller (no button double-mapped: zoom is on the right stick), keyboard + mouse.
   - Zip: `games/hearthmoor.zip`. Restore kit and do-not-regress list: `games/hearthmoor/RESTORE.md`.
@@ -151,7 +152,7 @@ python3 games/hearthmoor/tests/smoke.py        # ~10 min headless, writes games/
 ## Known issues
 - No real-device or real-GPU test yet (headless Chromium + SwiftShader and emulated phones only).
 - The controller is tested only through a simulated `navigator.getGamepads()`. There's no button remap, and non-standard pads are read as standard.
-- Dialogue is linear (no choices); there's one save slot; errands have a single path.
+- Dialogue is linear (no choices); errands have a single path.
 - Pathfinding ignores moving NPCs (they're avoided only by collision sliding).
 - Hero actions: wards are hidden from behind (`up` shows glow at the hands only). The demos' atlases weren't regenerated (only the game's were), so demo villagers have no attack / defend / jump frames.
 - Combat (Stage 1): no loot, XP or levels yet; one summon per hero; spell slots 2–4 are simply the newest charms (no spellbook UI); the controller has no hold-for-wheel (LB / RB step slots instead); enemies don't path-find (they chase straight and slide on walls); the golem's side view reads a little bird-like.

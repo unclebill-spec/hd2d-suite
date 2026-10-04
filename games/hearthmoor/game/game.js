@@ -19,8 +19,13 @@ addEventListener('beforeinstallprompt', (e) => { e.preventDefault(); installEvt 
 addEventListener('appinstalled', () => { installEvt = null; syncInstall(); });
 
 const Q = new URLSearchParams(location.search);
-const SLOT_V2 = 'hearthmoor-slot-1-v2';
-const SLOT_V1 = 'hearthmoor-slot-1-v1';       // read once for migration, never written or deleted
+// 3 save slots: hearthmoor-slot-<n>-v2. Slot 1 keeps the old single-slot key, so an existing save simply is slot 1.
+const SLOT_N = 3;
+const slotKey = (n) => `hearthmoor-slot-${n}-v2`;
+const SLOT_V2 = slotKey(1);
+const SLOT_V1 = 'hearthmoor-slot-1-v1';       // read once for migration (into slot 1), never written or deleted
+const V1_DONE = 'hearthmoor-v1-migrated';     // set when slot 1 is deleted, so the old v1 save doesn't come back
+const LAST_SLOT = 'hearthmoor-lastslot';
 const QA = Q.has('qa');                       // check-scene / screenshots: straight into ?area=, fresh state, no title, no saving
 const AREAS = { plaza: 'areas/plaza/', lane: 'areas/lane/', mossglen: 'areas/mossglen/', hollows: 'areas/hollows/' };
 const DAY_SECONDS = Number(Q.get('day') || 1440);  // one whole day = 24 real minutes (day, dusk, night, dawn)
@@ -44,8 +49,10 @@ G.shopUI = new Shop(G); G.drinkTonic = () => drinkTonic(G);
 window.__hm = G;   // smoke tests + debugging
 
 // ------------------------------------------------------------------ save / load
-function readSave() {
-  try { const s = JSON.parse(localStorage.getItem(SLOT_V2)); if (s && s.v === 2) return s; } catch (e) { /* corrupt: fall through */ }
+G.slot = Math.min(SLOT_N, Math.max(1, +(Q.get('slot') || localStorage.getItem(LAST_SLOT)) || 1));
+function readSave(n = G.slot) {
+  try { const s = JSON.parse(localStorage.getItem(slotKey(n))); if (s && s.v === 2) return s; } catch (e) { /* corrupt: fall through */ }
+  if (n !== 1 || localStorage.getItem(V1_DONE)) return null;
   try {   // migrate a v1 save: same fields, no class yet (Continue asks who you are, then carries on)
     const o = JSON.parse(localStorage.getItem(SLOT_V1));
     if (o && o.v === 1) return { ...fresh(), ...o, v: 2, cls: null, hp: null, migrated: 1 };
@@ -84,7 +91,7 @@ function save(note) {
   const p = G.ctx && G.ctx.player;
   if (p) G.S.pos = [+p.x.toFixed(2), +p.z.toFixed(2), p.facing];
   G.S.area = G.area; G.S.savedAt = new Date().toISOString();
-  localStorage.setItem(SLOT_V2, JSON.stringify(G.S));
+  localStorage.setItem(slotKey(G.slot), JSON.stringify(G.S)); localStorage.setItem(LAST_SLOT, String(G.slot));
   if (note) { toast('Saved ✓'); G.audio.sfx('save'); }
   return true;
 }
@@ -402,6 +409,8 @@ const hooks = {
     if (G.title) {
       if (name === 'a' || name === 'start') (readSave() ? cont : newGame)();
       else if (name === 'x') newGame();
+      else if (name === 'left' || name === 'lb') slotMove(-1); else if (name === 'right' || name === 'rb') slotMove(1);
+      else if (name === 'y') slotCopy(); else if (name === 'rt') slotDelete();
       return true;
     }
     if (G.asking) { if (name === 'left' || name === 'right' || name === 'up' || name === 'down') askMove(); else if (name === 'a') askPick(ASK.yes); else if (name === 'b') askPick(false); return true; }
@@ -673,7 +682,13 @@ function wire() {
       else if (k === 'm') pickMode();
       return;
     }
-    if (G.title) { if (k === 'enter' || k === ' ') { e.preventDefault(); (readSave() ? cont : newGame)(); } else if (k === 'n') newGame(); return; }
+    if (G.title) {
+      if (k === 'enter' || k === ' ') { e.preventDefault(); (readSave() ? cont : newGame)(); } else if (k === 'n') newGame();
+      else if (k === 'arrowleft' || k === 'a') slotMove(-1); else if (k === 'arrowright' || k === 'd') slotMove(1);
+      else if (k === '1' || k === '2' || k === '3') slotPick(+k);
+      else if (k === 'c') slotCopy(); else if (k === 'delete' || k === 'backspace') { e.preventDefault(); slotDelete(); }
+      return;
+    }
     if (G.asking) { if (k === 'y') askPick(true); else if (k === 'n' || k === 'escape') askPick(false); else if (k.startsWith('arrow') || k === 'a' || k === 'd') askMove(); else if (k === 'enter' || k === ' ') { e.preventDefault(); askPick(ASK.yes); } e.stopImmediatePropagation(); return; }
     if (G.heroUI) { e.stopImmediatePropagation(); heroKey(k, e); return; }
     if (G.shop) { e.stopImmediatePropagation(); G.shopUI.key(k, e); return; }
@@ -693,7 +708,88 @@ function wire() {
   addEventListener('pagehide', () => save());
   $('btnNew').onclick = () => newGame();
   $('btnCont').onclick = () => cont();
+  $('btnCopy').onclick = () => slotCopy();
+  $('btnDel').onclick = () => slotDelete();
 }
+// ------------------------------------------------------------------ save slots on the title (3 cards: pixel hero, level, area, play time)
+const AREA_NAME = { plaza: 'Hearthmoor Plaza', lane: 'Bakery Lane', mossglen: 'Mossglen', hollows: 'Toadstool Hollows' };
+const HERO_ATLAS = 'areas/plaza/public/art/sprite/';   // the plaza sheet carries all six heroes
+let heroSheet = null, heroMeta = null;
+function loadHeroSheet() {
+  if (heroSheet) return;
+  heroSheet = new Image(); heroSheet.onload = () => syncSlots(); heroSheet.src = HERO_ATLAS + 'actors.png';
+  fetch(HERO_ATLAS + 'actors.json').then((r) => r.json()).then((m) => { heroMeta = m; syncSlots(); }).catch(() => {});
+}
+function heroIcon(cv, cls) {
+  const g = cv.getContext('2d'); g.imageSmoothingEnabled = false; g.clearRect(0, 0, cv.width, cv.height);
+  const r = heroMeta && heroMeta.roles[cls]; if (!r || !heroSheet || !heroSheet.complete || !heroSheet.naturalWidth) return false;
+  const f = r.frames.find((q) => q.facing === 'down' && q.anim === 'idle') || r.frames[0];
+  const k = Math.max(1, Math.floor(Math.min(cv.width / f.w, cv.height / f.h)));   // integer scale only, nearest-neighbour
+  g.drawImage(heroSheet, f.x, f.y, f.w, f.h, Math.round((cv.width - f.w * k) / 2), cv.height - f.h * k, f.w * k, f.h * k);
+  return true;
+}
+const playTime = (sec) => { const m = Math.floor((sec || 0) / 60); return m < 60 ? `${m}m played` : `${Math.floor(m / 60)}h ${String(m % 60).padStart(2, '0')}m played`; };
+function slotInfo(n) {
+  const s = readSave(n); if (!s) return null;
+  return { cls: s.cls, hero: s.cls ? HERO[s.cls].cls : 'Older save', lv: s.lv || 1, area: AREA_NAME[s.area] || s.area || 'Hearthmoor Plaza',
+           played: s.played || 0, errands: Object.values(s.quests || {}).filter((v) => v === 3).length, savedAt: s.savedAt, migrated: !!s.migrated };
+}
+G.slotInfo = slotInfo;
+function syncSlots() {
+  const row = $('slotRow'); if (!row) return;
+  if (!row.children.length) {
+    for (let n = 1; n <= SLOT_N; n++) {
+      const b = document.createElement('button'); b.className = 'slotcard'; b.dataset.slot = n;
+      b.innerHTML = `<canvas width="40" height="64"></canvas><span class="st"></span>`;
+      b.onclick = () => { if (G.slot === n && readSave(n)) cont(); else slotPick(n); };
+      row.appendChild(b);
+    }
+  }
+  [...row.children].forEach((b) => {
+    const n = +b.dataset.slot, i = slotInfo(n);
+    b.classList.toggle('on', n === G.slot); b.classList.toggle('empty', !i);
+    const cv = b.querySelector('canvas');
+    b.dataset.icon = i && i.cls && heroIcon(cv, i.cls) ? i.cls : (cv.getContext('2d').clearRect(0, 0, cv.width, cv.height), '');
+    b.querySelector('.st').innerHTML = i ? `<b>Slot ${n}</b><em>${i.hero}</em><i>Lv ${i.lv} · ${i.area}</i><i>${playTime(i.played)}</i>`
+      : `<b>Slot ${n}</b><em>— empty —</em><i>New game starts here</i>`;
+  });
+  const s = readSave();
+  $('btnCont').hidden = !s;
+  $('btnCopy').disabled = !s; $('btnDel').disabled = !s;
+  $('saveInfo').textContent = s ? `Slot ${G.slot} · Saved: ${new Date(s.savedAt).toLocaleString([], { dateStyle: 'medium', timeStyle: 'short' })} · ${s.cls ? HERO[s.cls].cls + ' · ' : ''}${Object.values(s.quests).filter((v) => v === 3).length}/3 errands${s.migrated ? ' · (older save: pick your hero to continue)' : ''}`
+    : `Slot ${G.slot} is empty: New game starts here.`;
+  if (!delArmed) { $('btnDel').textContent = 'Delete'; $('btnDel').classList.remove('warn'); }
+}
+function slotPick(n) {
+  if (!G.title || G.picking || n < 1 || n > SLOT_N) return;
+  if (n !== G.slot) { G.slot = n; localStorage.setItem(LAST_SLOT, String(n)); delArmed = 0; newArmed = 0; $('btnNew').textContent = 'New game'; $('btnNew').classList.remove('warn'); G.audio.sfx('blip'); }
+  syncSlots();
+}
+function slotMove(d) { slotPick(((G.slot - 1 + d + SLOT_N) % SLOT_N) + 1); }
+function slotCopy() {   // copy the chosen slot into the first empty one
+  if (!G.title || G.picking) return false;
+  const s = localStorage.getItem(slotKey(G.slot)) || (readSave() && JSON.stringify(readSave()));
+  if (!s) { toast('This slot is empty: nothing to copy', 1.6); return false; }
+  let to = 0; for (let n = 1; n <= SLOT_N; n++) if (n !== G.slot && !readSave(n)) { to = n; break; }
+  if (!to) { toast('All three slots are full: delete one first', 2.0); return false; }
+  localStorage.setItem(slotKey(to), s); G.audio.sfx('save'); toast(`Slot ${G.slot} copied to slot ${to}`, 1.8); syncSlots();
+  return to;
+}
+// deleting takes a second press (touch, mouse, keys and the controller alike; no browser dialog)
+let delArmed = 0;
+function slotDelete() {
+  if (!G.title || G.picking || !readSave()) return false;
+  const b = $('btnDel');
+  if (performance.now() >= delArmed) {
+    delArmed = performance.now() + 4000; b.textContent = `Delete slot ${G.slot}? Press again`; b.classList.add('warn');
+    setTimeout(() => { if (delArmed && performance.now() >= delArmed) { delArmed = 0; syncSlots(); } }, 4100);
+    return false;
+  }
+  delArmed = 0; localStorage.removeItem(slotKey(G.slot)); if (G.slot === 1) localStorage.setItem(V1_DONE, '1');
+  G.audio.sfx('blip'); toast(`Slot ${G.slot} deleted`, 1.6); syncSlots();
+  return true;
+}
+G.slots3 = { pick: slotPick, move: slotMove, copy: slotCopy, del: slotDelete, key: slotKey, state: () => ({ slot: G.slot, armed: delArmed > 0 }) };
 function closeTitle() { G.title = false; $('titlescreen').hidden = true; document.body.classList.remove('titled'); $('vitals').hidden = false; G.audio.start(); }
 function applyHero() {
   const ctx = G.ctx; if (!ctx) return;
@@ -914,7 +1010,7 @@ G.ask = { open: askAuto, pick: askPick };
 // ------------------------------------------------------------------ start
 async function main() {
   wire();
-  if (Q.has('reset')) localStorage.removeItem(SLOT_V2);
+  if (Q.has('reset')) localStorage.removeItem(slotKey(G.slot));
   if (Q.has('pad') || (matchMedia('(pointer: coarse)').matches && !Q.has('nopad') && !QA)) document.body.classList.add('padon');
   const s = readSave();
   if (QA) {
@@ -924,8 +1020,7 @@ async function main() {
     await loadArea(Q.get('area') || 'plaza', Q.get('spawn') || 'start');
   } else {
     document.body.classList.add('titled');
-    $('btnCont').hidden = !s;
-    if (s) $('saveInfo').textContent = `Saved: ${new Date(s.savedAt).toLocaleString([], { dateStyle: 'medium', timeStyle: 'short' })} · ${s.cls ? HERO[s.cls].cls + ' · ' : ''}${Object.values(s.quests).filter((v) => v === 3).length}/3 errands${s.migrated ? ' · (older save: pick your hero to continue)' : ''}`;
+    loadHeroSheet(); syncSlots();
     G.preview = (s && s.cls) || 'wildcaller';
     await loadArea('plaza', 'start');    // the plaza idles behind the title card
   }

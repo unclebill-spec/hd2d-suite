@@ -2,6 +2,14 @@
 
 Dates are America/New_York. Newest first. Keep this current with every change you push.
 
+## 2026-10-03: Hearthmoor Stage 4, part 1: three save slots with a slot picker on the title
+- **Save slots:** three slots, `hearthmoor-slot-<n>-v2`. Slot 1 keeps the old single-slot key `hearthmoor-slot-1-v2`, so an existing save simply is slot 1 (no data moves). The v1 save still migrates, into slot 1. Deleting slot 1 sets `hearthmoor-v1-migrated` so an old v1 save can't reappear. The last slot used is remembered (`hearthmoor-lastslot`); `?slot=N` picks one.
+- **Slot picker on the title:** three carved-wood / parchment cards, each with the hero's own pixel sprite (idle-down frame from the Plaza atlas, integer scale, nearest-neighbour), hero, level, area and play time. Continue and New game act on the chosen slot.
+  - **Copy slot** copies the chosen slot into the first empty one. **Delete** asks first ("Delete slot N? Press again", 4 s), with no browser dialog.
+  - Keys: left / right (or A / D), 1-3, C copy, Delete / Backspace delete. Controller: d-pad / LB / RB pick, Y copy, RT delete, A / Start continue, X new game. Touch / mouse: tap a card to pick it, tap the picked card to continue.
+- **Smoke test:** 6 new steps (the cards, keyboard copy, keyboard pick, controller delete with its confirm, d-pad back, tap pick). Smoke: 123/123; check-scene plaza 11/11. The elapsed-time printout is fixed: the start time was being overwritten by a later `t0` (tonic count), so it printed the clock time.
+- Next in Stage 4: the shared bank (40 slots, gear + gems, gold deposit / withdraw), then glow-gardening.
+
 ## 2026-10-03: Hearthmoor Part 6: bright toadstools, gnome doors + Pipkin, the bubbly spring, cold-fire braziers
 - **Toadstool art fix:** the giant toadstool caps (and the clusters and bounce caps) are now a clear saturated red with crisp bright-white spots and warm glowing gills underneath.
   - They use a new self-lit `glow` world material (`world.js` `litify`: an unlit `MeshBasicMaterial` that shows the baked vertex colour). So they read against the gloom at every hour with no new lights and no bloom. The dome's lower rim is a deeper red so the shape still reads.
