@@ -73,6 +73,7 @@ Repo handoff docs (in the suite root): [`AGENTS.md`](../../AGENTS.md), [`CHANGEL
 - **Glow-gardening (Stage 4):** garden plots in Bakery Lane (open lower street under the lamp post, by Odile the gardener) and in Toadstool Hollows (three beds each). E / A / MAIN beside an empty bed plants a glow seed (Odo sells them); it sprouts after one in-game day and blooms after two: a neon-blue cold-fire bloom, a violet glowbell and a red white-spotted glow toadstool. At night each bloom casts a light pool in its colour and is a light zone. Harvest with E / A / MAIN: frost core, moon opal, or 2 Hearth tonics. Saved as `garden` + `day`.
 - **Weather (Stage 4):** Plaza and Lane share a town sky (clear, drizzle or rain, changing every 6 in-game hours), Mossglen has misty mornings and Toadstool Hollows has glow mist at night. Rain makes the cobbles wet, so lamps and glow pools shimmer with pixel glints. Options -> weather: on / light (the phone default) / off.
 - **Dialogue choices (Stage 4):** some conversations end in a choice (arrows / 1-4 / E, d-pad + A, or tap). Bix in the plaza has a riddle lock (answer right for a moon opal and gold), and Bram asks who your Lantern Eve lantern is for (the gift and his later lines depend on it).
+- **The Rift Shrine + Vanaheim (Stage 4):** once the three errands are done, the Plaza's moss gate asks where to go: Mossglen or the Rift Shrine, a stone circle floating in the rainbow-rift void. There, Vanaheim's gate is open (blue cold-fire swirl) and Alfheim, Niflheim and Muspelheim are sealed (E / A / tap to look). Mossbrook Springs in Vanaheim has spore elementals and a moss golem, Veyra's violet runes and the poisoned spring (sickly violet water with dark bubbles; it will turn clear blue once cleansed), wild glow-plant clusters and fireflies, and Elder Burrowmoss, who asks you to befriend or conquer Vanaheim (`S.flags.alliance.vanaheim`). The vine gate goes back to the shrine, and the shrine's moss gate goes home.
 - **Bank (Stage 4):** Bix Coppertuft, the gnome clerk (west plaza), opens the Nine Keys Bank: one 40-slot vault shared by all three save slots (`hearthmoor-bank-v1`) for gear and gems, plus gold deposit / withdraw (10 or all). Deposit / Vault tabs; Enter / A / tap act, arrows / d-pad move, LB / RB or the tabs switch.
 - **Night merchant + sockets:** Sefa (`nightmerchant`) only exists at night in the Plaza (her lantern casts a bright neon-blue cold-fire pool: strong blue light + `coldfire_pool` ground decal + `coldfire_motes`, light zone 2.2 m) and sells gems; Legendary = 2 sockets, Rare / Epic 0-2, Common / Uncommon none; Mossheart always drops a golem core; gems glow on item icons; socket with R / Y / the row button in the Gear tab.
 - **Legendary aura on the hero:** any Legendary equipped -> marching neon ring at the hero's feet (back arc skipped so it never covers the legs) + a following orange-gold point light; gone when unequipped or on the title.
@@ -130,7 +131,7 @@ Repo handoff docs (in the suite root): [`AGENTS.md`](../../AGENTS.md), [`CHANGEL
   - **migration:** an old `hearthmoor-slot-1-v1` save still loads. Continue opens the hero picker once (v1 had no class), then everything else carries over and is written to v2. The v1 key is left untouched.
 - Combat lives in `game/combat.js` (enemy AI, hitboxes, damage, guard, i-frames, defeat/respawn, spells, summons, damage numbers, HP bars). Enemy and summon sprites are drawn in code by `tools/sprite/roles_enemies.py` (same 20x32 cell, ink outline, biome palette) and baked into every area atlas; spells / hit sparks are `tools/spells` effects (glow pixels only).
 - PWA: `manifest.webmanifest`, icons, and a `sw.js` that precaches all files for offline play (cache-first, versioned name). `?nosw` skips registration.
-- QA URL: `?qa&area=plaza|lane|mossglen|hollows` boots an area with a fresh state, no title and no saving (for check-scene); enemies stay peaceful unless `&combat`, and `&hero=<id>` picks the hero (default wildcaller). `?peace` keeps enemies calm in normal play (smoke test). `?simscale=N` speeds the simulation up (smoke test). `?reset` clears the save. `?day=SECONDS` changes the day length.
+- QA URL: `?qa&area=plaza|lane|mossglen|hollows|rift|vanaheim` boots an area with a fresh state, no title and no saving (for check-scene); enemies stay peaceful unless `&combat`, and `&hero=<id>` picks the hero (default wildcaller). `?peace` keeps enemies calm in normal play (smoke test). `?simscale=N` speeds the simulation up (smoke test). `?reset` clears the save. `?day=SECONDS` changes the day length.
 
 ## Key files
 
@@ -155,7 +156,7 @@ Repo handoff docs (in the suite root): [`AGENTS.md`](../../AGENTS.md), [`CHANGEL
 ## Do not regress
 
 - Locked 3/4 camera: no yaw, no orbit, no free camera. Pinch / wheel zoom only inside the limits.
-- Sprites stay sharp: integer pixel scale, nearest, 1 px outline. No bloom, no blur halos, no blurred HUD. check-scene `sprites_sharp`, `effects_sharp`, `gamefx_sharp` and `no_bloom` must pass for all 4 areas.
+- Sprites stay sharp: integer pixel scale, nearest, 1 px outline. No bloom, no blur halos, no blurred HUD. check-scene `sprites_sharp`, `effects_sharp`, `gamefx_sharp` and `no_bloom` must pass for every area (plaza, lane, mossglen, hollows, rift, vanaheim).
 - Real height (terraces + stairs), one key sun plus lamps, sprite shadows, warm day / blue dusk / orange-window night.
 - HUD is parchment and carved wood only. No copied UI or IP from any other game.
 - Tap-to-walk uses A* (around walls and props, up the stairs). Tapping an NPC walks there and talks. Tapping a glimmer or the swirl walks onto it.
@@ -179,6 +180,8 @@ Repo handoff docs (in the suite root): [`AGENTS.md`](../../AGENTS.md), [`CHANGEL
 - Desktop: WASD / arrows, mouse click-to-walk and wheel zoom keep working alongside touch and the controller.
 - The decal ring sits under props and actors.
 - `tests/smoke.py` must PASS.
+- The Rift Shrine keeps a day / dusk / night grade (check-scene `grades` passes). Its `height` check is exempt by `game.qa_exempt` (one flat round isle); don't add exemptions for sharpness, bloom or phone.
+- A controller Y tap casts even through a frame hitch (hold = 350 ms and 3 drawn frames).
 - Preview binds `0.0.0.0:8080` (`startup.sh`).
 
 Player saves live in browser `localStorage`, not in this zip.

@@ -1,0 +1,612 @@
+{
+ "name": "Mossbrook Springs (Vanaheim)",
+ "seed": 88,
+ "biome": "cozy-village",
+ "about": "Vanaheim, the nature realm: the springs below Mossbrook, a mushroom village of gnome stumps and giant toadstools. Veyra has poisoned the spring and burned violet Alfheim runes into the moss to frame the elves; spore elementals and moss golems have woken angry. A vine arch with a cold-fire swirl leads back to the Rift Shrine.",
+ "time": {
+  "start": "dusk",
+  "speed": 0.0016
+ },
+ "spells": true,
+ "sprite_roles": [
+  "actors",
+  "heroes",
+  "combat",
+  "sporeling",
+  "mossgolem"
+ ],
+ "camera": {
+  "fov": 24,
+  "pitch": 36,
+  "distance": 31,
+  "zoom": [
+   23,
+   40
+  ],
+  "look": [
+   0,
+   0,
+   -5.4
+  ],
+  "bounds": [
+   -4.0,
+   -8.0,
+   4.0,
+   0.5
+  ]
+ },
+ "ground": {
+  "size": [
+   90,
+   76
+  ],
+  "mat": "moss",
+  "walk": [
+   -12.5,
+   -11.5,
+   12.5,
+   7.5
+  ]
+ },
+ "slabs": [
+  {
+   "name": "path_arch",
+   "rect": [
+    -12.0,
+    -0.6,
+    -4.0,
+    1.4
+   ],
+   "mat": "dirt",
+   "h": 0.04
+  },
+  {
+   "name": "spring_glade",
+   "rect": [
+    -4.0,
+    -5.4,
+    7.0,
+    3.6
+   ],
+   "mat": "grass",
+   "h": 0.03
+  }
+ ],
+ "terraces": [
+  {
+   "name": "terrace_back",
+   "rect": [
+    -30,
+    -26,
+    30,
+    -9.6
+   ],
+   "h": 2.4,
+   "top": "moss",
+   "coping": false
+  }
+ ],
+ "stairs": [],
+ "buildings": [],
+ "props": [
+  {
+   "piece": "vine_arch",
+   "pos": [
+    -9.6,
+    -1.0
+   ],
+   "glow": {
+    "color": "#2ab4ff",
+    "range": 5.5,
+    "fixed": 0.7
+   }
+  },
+  {
+   "piece": "spring_basin",
+   "pos": [
+    4.6,
+    -6.6
+   ]
+  },
+  {
+   "piece": "toadstool_big",
+   "pos": [
+    -5.6,
+    -6.2
+   ],
+   "rot": 20
+  },
+  {
+   "piece": "toadstool_big",
+   "pos": [
+    9.6,
+    2.8
+   ],
+   "rot": -15
+  },
+  {
+   "piece": "toadstool_big",
+   "pos": [
+    -7.0,
+    4.8
+   ],
+   "rot": 40
+  },
+  {
+   "piece": "toadstool_cluster",
+   "pos": [
+    -3.2,
+    -7.6
+   ]
+  },
+  {
+   "piece": "toadstool_cluster",
+   "pos": [
+    8.8,
+    -4.2
+   ]
+  },
+  {
+   "piece": "toadstool_cluster",
+   "pos": [
+    1.0,
+    5.4
+   ]
+  },
+  {
+   "piece": "toadstool_cluster",
+   "pos": [
+    -10.6,
+    -5.8
+   ]
+  },
+  {
+   "piece": "gnome_stump",
+   "pos": [
+    -0.8,
+    -7.8
+   ]
+  },
+  {
+   "piece": "gnome_stump",
+   "pos": [
+    10.0,
+    -7.6
+   ],
+   "rot": -20
+  },
+  {
+   "piece": "fern_bush",
+   "pos": [
+    -11.0,
+    3.8
+   ]
+  },
+  {
+   "piece": "fern_bush",
+   "pos": [
+    10.8,
+    5.6
+   ]
+  },
+  {
+   "piece": "fern_bush",
+   "pos": [
+    -4.0,
+    6.0
+   ]
+  },
+  {
+   "piece": "fern_bush",
+   "pos": [
+    6.4,
+    6.0
+   ]
+  },
+  {
+   "piece": "fern_bush",
+   "pos": [
+    -8.4,
+    -8.0
+   ]
+  },
+  {
+   "piece": "fern_bush",
+   "pos": [
+    2.2,
+    -8.6
+   ]
+  },
+  {
+   "piece": "standing_stone",
+   "pos": [
+    -6.4,
+    -1.8
+   ],
+   "rot": 10
+  },
+  {
+   "piece": "standing_stone",
+   "pos": [
+    7.4,
+    0.2
+   ],
+   "rot": -20
+  },
+  {
+   "piece": "brazier",
+   "pos": [
+    -7.6,
+    1.8
+   ]
+  },
+  {
+   "piece": "brazier",
+   "pos": [
+    2.4,
+    -4.4
+   ]
+  },
+  {
+   "piece": "mushroom_ring",
+   "pos": [
+    -2.6,
+    -2.8
+   ]
+  }
+ ],
+ "hedges": [],
+ "trees": [
+  {
+   "type": "oak",
+   "pos": [
+    -10.5,
+    -11.0
+   ],
+   "scale": 1.05
+  },
+  {
+   "type": "birch",
+   "pos": [
+    -5.2,
+    -11.6
+   ],
+   "scale": 0.95
+  },
+  {
+   "type": "oak",
+   "pos": [
+    0.6,
+    -12.0
+   ],
+   "scale": 1.15
+  },
+  {
+   "type": "birch",
+   "pos": [
+    6.0,
+    -11.4
+   ],
+   "scale": 0.9
+  },
+  {
+   "type": "oak",
+   "pos": [
+    11.0,
+    -11.0
+   ],
+   "scale": 1.05
+  },
+  {
+   "type": "apple",
+   "pos": [
+    -13.8,
+    -3.6
+   ],
+   "scale": 0.95
+  },
+  {
+   "type": "oak",
+   "pos": [
+    13.8,
+    -2.0
+   ],
+   "scale": 1.0
+  }
+ ],
+ "backdrop": {
+  "hills": [
+   0,
+   -34
+  ]
+ },
+ "emitters": [
+  {
+   "preset": "fireflies",
+   "pos": [
+    0.0,
+    1.2,
+    0.6
+   ],
+   "area": [
+    12,
+    1.4,
+    5
+   ],
+   "min_gate": 0.0
+  },
+  {
+   "preset": "fireflies",
+   "pos": [
+    4.6,
+    1.4,
+    -6.0
+   ],
+   "area": [
+    5,
+    1.2,
+    2.5
+   ],
+   "min_gate": 0.0
+  },
+  {
+   "preset": "fireflies",
+   "pos": [
+    -9.6,
+    1.6,
+    -0.4
+   ],
+   "area": [
+    3,
+    1.6,
+    1.6
+   ],
+   "min_gate": 0.0
+  },
+  {
+   "preset": "dust_motes",
+   "pos": [
+    0,
+    1.6,
+    -1.0
+   ],
+   "area": [
+    16,
+    2.6,
+    8
+   ]
+  },
+  {
+   "preset": "fireflies",
+   "pos": [
+    -4.4,
+    1.0,
+    3.8
+   ],
+   "area": [
+    3,
+    1.2,
+    2
+   ],
+   "min_gate": 0.0
+  },
+  {
+   "preset": "fireflies",
+   "pos": [
+    -8.2,
+    1.2,
+    -4.4
+   ],
+   "area": [
+    3,
+    1.2,
+    2
+   ],
+   "min_gate": 0.0
+  },
+  {
+   "preset": "fireflies",
+   "pos": [
+    1.8,
+    1.2,
+    -6.4
+   ],
+   "area": [
+    3,
+    1.2,
+    2
+   ],
+   "min_gate": 0.0
+  },
+  {
+   "preset": "fireflies",
+   "pos": [
+    -4.0,
+    1.0,
+    1.4
+   ],
+   "area": [
+    6,
+    1.0,
+    2
+   ],
+   "min_gate": 0.0
+  },
+  {
+   "preset": "lamp_bugs",
+   "pos": [
+    -2.2,
+    1.0,
+    2.2
+   ],
+   "area": [
+    2.4,
+    1.0,
+    2.0
+   ]
+  }
+ ],
+ "actors": [
+  {
+   "id": "warden",
+   "role": "gnome",
+   "name": "Elder Burrowmoss, spring-warden of Mossbrook",
+   "pos": [
+    -1.0,
+    -4.4
+   ],
+   "facing": "down",
+   "behavior": "idle",
+   "talkable": true,
+   "say": [
+    "Hmph. A Midgard face, through the Rift. Mind the spores: the springs went sour and the moss woke up angry."
+   ]
+  }
+ ],
+ "player": {
+  "role": "hedgewitch",
+  "pos": [
+   -9.6,
+   0.6
+  ],
+  "facing": "down"
+ },
+ "fx": [
+  {
+   "id": "gate_rift",
+   "name": "rift_vortex",
+   "pos": [
+    -9.6,
+    0.2,
+    -1.0
+   ]
+  },
+  {
+   "id": "rune_spring",
+   "name": "alf_rune",
+   "pos": [
+    4.6,
+    -4.5
+   ]
+  },
+  {
+   "id": "rune_glade",
+   "name": "alf_rune",
+   "pos": [
+    5.6,
+    1.8
+   ]
+  },
+  {
+   "id": "spring_water",
+   "name": "spring_poison",
+   "pos": [
+    4.6,
+    0.12,
+    -6.6
+   ]
+  }
+ ],
+ "grades": {
+  "day": {
+   "fog_color": "#bcd8a4",
+   "sky_bottom": "#e4eeb4",
+   "hemi_sky": "#a8d8a0",
+   "saturation": 1.16,
+   "bugs": 0.7,
+   "warmth": 0.05
+  },
+  "dusk": {
+   "fog_color": "#5c7c5a",
+   "sky_bottom": "#c49c6c",
+   "bugs": 1.0,
+   "exposure": 0.92
+  },
+  "night": {
+   "fog_color": "#163a30",
+   "sky_bottom": "#2e2c58",
+   "hemi_sky": "#3c5a6c",
+   "hemi_intensity": 0.5,
+   "bugs": 1.0,
+   "exposure": 1.16
+  }
+ },
+ "game": {
+  "id": "vanaheim",
+  "title": "Mossbrook Springs",
+  "exits": [],
+  "portals": [
+   {
+    "fx": "gate_rift",
+    "to": "rift",
+    "spawn": "from_vanaheim",
+    "rect": [
+     -10.35,
+     -1.4,
+     -8.85,
+     -0.55
+    ],
+    "label": "the vine gate to the Rift Shrine"
+   }
+  ],
+  "doors": [
+   {
+    "id": "door_vh_stump",
+    "pos": [
+     -0.8,
+     -6.9
+    ],
+    "kind": "peek",
+    "name": "A Mossbrook gnome",
+    "say": [
+     [
+      "(A round door opens a crack. A gnome with a moss-green beard squints at you.)",
+      "The warden's by the ring. Talk to him, not me! And don't drink the spring!"
+     ]
+    ]
+   }
+  ],
+  "braziers": [
+   {
+    "id": "brazier_vh_w",
+    "pos": [
+     -7.6,
+     1.8
+    ]
+   },
+   {
+    "id": "brazier_vh_spring",
+    "pos": [
+     2.4,
+     -4.4
+    ]
+   }
+  ],
+  "spawns": {
+   "start": [
+    -9.6,
+    0.6,
+    "down"
+   ],
+   "from_rift": [
+    -9.6,
+    0.6,
+    "down"
+   ],
+   "qa": [
+    -2.0,
+    -1.6,
+    "up"
+   ]
+  },
+  "swaps": [
+   {
+    "fx": "spring_water",
+    "flag": "vanaheim_spring",
+    "is": "cleansed",
+    "name": "spring_clean",
+    "base": "spring_poison"
+   }
+  ]
+ }
+}

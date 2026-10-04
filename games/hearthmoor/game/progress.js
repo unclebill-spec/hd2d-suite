@@ -30,7 +30,7 @@ export const CLASS_STATS = {
 };
 // XP to go from level L to L+1: gentle early, ~1.6 power curve
 export const xpNeed = (L) => Math.round(60 * Math.pow(L, 1.6));
-export const XP = { golem: 45, skeleton: 28, wraith: 34, icegolem: 55, skelmage: 36, eldergolem: 260, errand: 120, firstKill: 0.5 };
+export const XP = { golem: 45, skeleton: 28, wraith: 34, icegolem: 55, skelmage: 36, sporeling: 30, mossgolem: 60, eldergolem: 260, errand: 120, firstKill: 0.5 };
 
 // Skill trees: three branches per class, three tiers per branch (Part 4). Tier I: 1 point, any level. Tier II: 1 point,
 // level 5, needs that branch's tier I. Tier III (the branch capstone): 2 points, level 10, needs tier II. Rows are

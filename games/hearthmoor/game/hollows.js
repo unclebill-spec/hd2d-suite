@@ -55,7 +55,7 @@ export class Hollows {
       return true;
     }
     S.found[key] = (S.found[key] || 0) + 1;
-    const g = ctx.npc && ctx.npc('gnome');
+    const g = (ctx.npc && ctx.npc('gnome')) || { id: 'door', role: 'gnome' };   // Vanaheim's doors have no gnome named 'gnome'
     const pages = d.say || ['(The door opens a crack. A gnome peeks out.)'];
     if (G.say && g) G.say({ ...g, name: d.name || 'A gnome behind the door' }, pages[(S.found[key] - 1) % pages.length]);
     return true;

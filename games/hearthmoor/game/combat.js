@@ -277,7 +277,7 @@ export class Combat {
     if (d <= D.reach + 0.3 && (fv[0] * dx + fv[1] * dz) / d > 0.25 && this.hurtPlayer(D.dmg, a, D.push) && D.chill) {
       this.st = Math.max(0, this.st - D.chill); this.stT = PLAYER.regenDelay;   // frost golem: the cold saps your stamina
       if (ctx.effects) ctx.effects.spawn('frost_puff', p.x, p.y + 0.4, p.z + 0.05);
-      this.G.toast && !this.chillTold && (this.chillTold = true, this.G.toast('Chilled! The frost golem saps your stamina.', 2));
+      this.G.toast && !this.chillTold && (this.chillTold = true, this.G.toast(D.chillMsg || 'Chilled! The frost golem saps your stamina.', 2));
     }
   }
   damageEnemy(e, dmg, src, push = 0.35, color = PAL.white) {

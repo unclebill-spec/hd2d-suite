@@ -1,13 +1,14 @@
 // Hearthmoor weather (Stage 4): per-area skies that follow the day cycle, soft pixel particles, wet-cobble glints.
 //   Plaza + Bakery Lane share the town sky: each 6-hour block of each day is clear, drizzle or rain (seeded by the day).
 //   Mossglen: mist in the mornings. Toadstool Hollows: drifting self-lit glow mist through the night.
+//   The Rift Shrine floats in the void (no weather); Vanaheim's springs share Mossglen's morning mist.
 //   Snow is ready (the engine's `snowfall` preset) for a winter area or `?wx=snow`, but no area schedules it yet.
 // Rain wets the ground over ~20 s and dries over ~60 s; while wet, lamps, glow pools, braziers, garden blooms and
 // lanterns throw short 1-3 px vertical reflection glints (palette pixels, self-lit, no bloom) on the ground around
 // them, so every light pool shimmers in the wet. Options: weather on / light (phones by default) / off.
 const STORE = 'hearthmoor-weather';
 const MODES = ['on', 'light', 'off'];
-const SKY = { plaza: 'town', lane: 'town', mossglen: 'glen', hollows: 'hollow' };
+const SKY = { plaza: 'town', lane: 'town', mossglen: 'glen', hollows: 'hollow', rift: 'void', vanaheim: 'glen' };
 const NIGHT = (t) => t > 0.8 || t < 0.25;
 // kind -> particle emitters ({preset, rate}); rate scales the preset's own rate
 const KINDS = {

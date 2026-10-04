@@ -196,7 +196,7 @@ export class Loot {
       this.drop(a.x + 0.1, a.z - 0.35, { gem: 'golem_core' });
       return;
     }
-    const gemOdds = { golem: ['golem_core', 0.1], icegolem: ['frost_core', 0.25], wraith: ['rift_shard', 0.08], skelmage: ['rift_shard', 0.1] }[a.role];
+    const gemOdds = { golem: ['golem_core', 0.1], icegolem: ['frost_core', 0.25], wraith: ['rift_shard', 0.08], skelmage: ['rift_shard', 0.1], mossgolem: ['golem_core', 0.15], sporeling: ['rift_shard', 0.08] }[a.role];
     if (gemOdds && Math.random() < gemOdds[1]) this.drop(a.x + 0.05, a.z - 0.4, { gem: gemOdds[0] });
     if (Math.random() < 0.6 + luck * 0.1) this.drop(a.x - 0.3, a.z + 0.35, { item: makeItem(lv, null, null, Math.random, luck) });
   }

@@ -33,6 +33,7 @@ export const SPELL_NAMES = { sparkle_burst: 'sparkle burst', hearth_flame: 'hear
 
 const petals = (S) => S.inv.moonpetal || 0;
 const flags = (S) => (S.flags = S.flags || {});
+const ally = (S) => (flags(S).alliance = flags(S).alliance || {});   // realm alliances: { vanaheim: 'befriend' | 'conquer' }
 const gold = (G, n) => { G.S.gold = (G.S.gold || 0) + n; G.toast(`+${n} gold`); };
 const gem = (G, id) => { G.S.gems = G.S.gems || {}; G.S.gems[id] = (G.S.gems[id] || 0) + 1; };
 const openBank = (G) => { G.S.met = { ...(G.S.met || {}), banker: 1 }; G.shopUI.show('bank'); };
@@ -171,6 +172,28 @@ export const TALK = {
         : 'Saw your lantern drift east, toward the dark hills. Someone out there will follow it home.',
       'The laundry over the stairs? That\'s mine. Mind the socks.'] };
     return { pages: ['Welcome to the Kettle & Key. We\'re waiting on Marla\'s bread for supper, if you\'re heading up to the plaza.'] };
+  },
+  // Vanaheim (Stage 4): Elder Burrowmoss, spring-warden of Mossbrook. The realm's befriend-or-conquer choice: it only
+  // sets the alliance flag for now (S.flags.alliance.vanaheim = 'befriend' | 'conquer'); later stages read it
+  warden(S) {
+    const A = ((S.flags || {}).alliance || {}).vanaheim;
+    if (!A) return {
+      pages: ['Hmph. A Midgard face, come through the Rift. I\'m Burrowmoss, warden of the Mossbrook springs.',
+              'Someone poisoned our spring and burned elf-runes into the moss. Alfheim\'s mark, plain as day. The spores woke angry, and the moss golems with them.',
+              'Mossbrook is choosing sides in all this. So, hearth-walker: what are you to Vanaheim?'],
+      choice: { id: 'alliance_vanaheim', options: [
+        { label: 'A friend. I\'ll help heal the springs.', pick: (G) => { ally(G.S).vanaheim = 'befriend'; G.toast('Vanaheim: befriended', 2.2);
+            return { pages: ['Ha! Then you\'re welcome in Mossbrook. Calm the spores in the glade, and mind those runes: they don\'t smell like elf-work to me.',
+                             '(Vanaheim is your friend now. Its gate will stay open to you.)'] }; } },
+        { label: 'Vanaheim will bow to Hearthmoor.', pick: (G) => { ally(G.S).vanaheim = 'conquer'; G.toast('Vanaheim: conquered', 2.2);
+            return { pages: ['...So it\'s like that. Then take what you can, Midgarder. Mossbrook won\'t forget it.',
+                             '(Vanaheim stands against you now. Its people will remember.)'] }; } },
+        { label: 'I\'m only passing through.', cancel: true, pick: () => ({ pages: ['Then pass carefully. The spores don\'t care whose side you\'re on.'] }) },
+      ] },
+    };
+    return { pages: [A === 'befriend'
+      ? 'Friend of Mossbrook! The spring still tastes of violet. Whoever did this wanted us blaming the elves.'
+      : 'You again. Say what you came to say, Midgarder, and go.'] };
   },
   herbalist(S) {
     const q = S.quests.tea;

@@ -70,6 +70,11 @@ class Smoke:
         if not ok:
             raise AssertionError(name)
 
+    def frames(self, n=6, timeout=30):
+        """wait until the engine has drawn n more frames (fixed sleeps alone race slow frames on a loaded box)"""
+        f0 = self.ev("window.__hd2d.frames || 0")
+        self.wait(f"(window.__hd2d.frames || 0) >= {f0 + n}", timeout)
+
     def S(self):
         return self.ev("JSON.parse(JSON.stringify(window.__hm.S))")
 
@@ -299,9 +304,9 @@ def run(out, simscale=4, size=(960, 540)):
             T.step("controller hot-plug: 'controller connected' toast", "controller connected" in T.ev("document.getElementById('toast').textContent")
                    and T.ev("!document.getElementById('toast').hidden"))
             pa = T.pos()
-            T.ev("__padAxes(0.45, 0)"); pg.wait_for_timeout(600)
+            T.ev("__padAxes(0.45, 0)"); pg.wait_for_timeout(600); T.frames(8)
             half = T.ev("[window.__hm.ctx.player.speedScale, window.__hm.ctx.player.running]")
-            T.ev("__padAxes(1, 0)"); pg.wait_for_timeout(600)
+            T.ev("__padAxes(1, 0)"); pg.wait_for_timeout(600); T.frames(8)
             full = T.ev("[window.__hm.ctx.player.speedScale, window.__hm.ctx.player.running]")
             T.ev("__padAxes(0, 0)"); pg.wait_for_timeout(300)
             pb = T.pos()
@@ -315,10 +320,19 @@ def run(out, simscale=4, size=(960, 540)):
                 pc = T.pos()
             T.step("d-pad walks", abs(pc[1] - pb[1]) + abs(pc[0] - pb[0]) > 0.2, moved=[round(pc[0] - pb[0], 2), round(pc[1] - pb[1], 2)])
             pg.wait_for_timeout(1300)   # charm cooldown from the F cast above
+            T.wait("!window.__hm.combat || ((window.__hm.combat.cd.charm || 0) <= 0 && (window.__hm.combat.cd.spell || 0) <= 0)", 20)   # game-time cooldown, slow on a loaded box
             n0 = T.ev(near)
             k0 = T.ev("window.__hd2d.padPresses || 0")
             T.ev("__padBtn(3, 1)"); T.wait(f"(window.__hd2d.padPresses || 0) > {k0}", 20)
-            casting = T.ev("window.__hm.ctx.player.castT > 0"); pg.wait_for_timeout(150); T.ev("__padBtn(3, 0)"); pg.wait_for_timeout(300)
+            casting = T.ev("window.__hm.ctx.player.castT > 0"); pg.wait_for_timeout(150); T.ev("__padBtn(3, 0)")
+            # Y casts on release: watch for the cast itself (castT / a cooldown starting / an effect near) instead of one
+            # fixed 300 ms look, which misses it when the box only draws 1-2 frames a second
+            try:
+                T.wait(f"window.__hm.ctx.player.castT > 0 || (window.__hm.combat.cd.spell || 0) > 0 || (window.__hm.combat.cd.charm || 0) > 0 || {near} > {n0}", 15)
+                casting = True
+            except Exception:
+                pass
+            pg.wait_for_timeout(300)
             T.step("Y casts", casting or T.ev(near) > n0, casting=casting)
             n_cyc = T.ev("window.__hm.ctx.spellCycle().length")
             pg.wait_for_timeout(400)   # let the engine see Y up before the next press (slow frames under load)
@@ -930,6 +944,57 @@ def run(out, simscale=4, size=(960, 540)):
             T.step("reload #2: controller A on the title Continues; finished game state restored in Bakery Lane", T.ev("window.__hm.area") == "lane" and all(v == 3 for v in S["quests"].values())
                    and set(S["spells"]) >= {"sparkle_burst", "hearth_flame", "light_orb", "leaf_gust"})
             T.step("dialogue answers survive a reload (Bram's lantern wish, Bix's riddle)", (S.get("flags") or {}).get("lantern") == "lost" and (S.get("flags") or {}).get("riddle") == "solved", flags=S.get("flags"))
+            # ---------------------------------------------------------- stage 4: the Rift Shrine + Vanaheim (errands done: the moss gate asks)
+            area = T.go_rect("exits")
+            T.step("lane -> plaza (to the moss gate)", area == "plaza")
+            r = T.ev("window.__hm.ctx.scene.game.portals[0].rect")
+            T.ev(f"window.__hm.ctx.walkTo({(r[0] + r[2]) / 2}, {(r[1] + r[3]) / 2})")
+            T.wait("window.__hm.dlgChoice && window.__hm.dlgChoice()", 90)
+            ch = T.ev("window.__hm.dlgChoice()")
+            rep["shots"]["rift_gate_choice"] = T.shot("rift_gate_choice")
+            pg.keyboard.press("ArrowDown"); pg.wait_for_timeout(150); pg.keyboard.press("e")
+            T.wait("window.__hm.area === 'rift' || window.__hm.busy", 60); T.idle(); pg.wait_for_timeout(600)
+            T.step("the moss gate (3 errands done) asks Mossglen or the Rift Shrine; arrow down + E steps through to the Rift Shrine",
+                   bool(ch) and len(ch["options"]) == 3 and "Mossglen" in ch["options"][0] and "Rift" in ch["options"][1] and T.ev("window.__hm.area") == "rift", choice=ch)
+            g = T.ev("(() => { const c = window.__hm.ctx, f = c.fx; return { open: f.gate_vanaheim && f.gate_vanaheim.name, seals: ['alfheim', 'niflheim', 'muspelheim'].map((k) => f['gate_' + k] && f['gate_' + k].name),"
+                     " home: f.portal_0 && f.portal_0.name, ring: f.shrine_ring && f.shrine_ring.name, sealed: c.scene.game.sealed.length, glows: window.__hm.glow.fixed.length }; })()")
+            T.step("Rift Shrine: Vanaheim's gate swirls open (cold-fire vortex), three sealed gates glow faintly (violet / blue / red), a moss gate home",
+                   g["open"] == "rift_vortex" and g["seals"] == ["rift_seal_violet", "rift_seal_blue", "rift_seal_red"] and g["home"] == "portal_vortex" and g["ring"] == "rift_ring" and g["sealed"] == 3 and g["glows"] >= 4, g=g)
+            p0 = T.pos()
+            T.ev("(() => { const c = window.__hm.ctx, p = c.player; p.x = 0; p.z = 3.0; p.y = c.heightAt(0, 3.0); c.stopWalk(); })()"); pg.wait_for_timeout(500)
+            cv = T.ev("(() => { const r = document.getElementById('view').getBoundingClientRect(); return [r.left + r.width * 0.42, r.top + r.height * 0.42]; })()")
+            pg.mouse.click(cv[0], cv[1]); pg.wait_for_timeout(300)
+            walking = T.ev("window.__hm.ctx.walking()")
+            T.wait("!window.__hm.ctx.walking()", 60); p1 = T.pos()
+            T.walk(7.6, 5.4); pe = T.pos(); edge = round(((pe[0]) ** 2 + (pe[1] + 1.0) ** 2) ** 0.5, 2)
+            T.step("mouse: clicking the floating isle's paving walks there (the isle top is walkable); walking at the void stops at the round edge",
+                   walking and abs(p1[0]) + abs(p1[1] - 3.0) > 0.8 and 6.0 < edge < 7.55, p1=p1, edge=edge)
+            T.ev("(() => { const c = window.__hm.ctx, p = c.player; p.x = -3.4; p.z = -4.9; p.y = c.heightAt(-3.4, -4.9); c.stopWalk(); })()"); pg.wait_for_timeout(400)
+            pr = T.ev("document.getElementById('prompt').textContent")
+            T.btn(0); pg.wait_for_timeout(300)
+            who = T.ev("window.__hm.dlg ? window.__hm.dlg.npc.id : null"); txt = T.ev("window.__hm.dlg ? window.__hm.dlg.pages[0] : ''")
+            n = 0
+            while T.ev("!!window.__hm.dlg") and n < 10:
+                T.btn(0, 200); n += 1
+            T.step("controller: A at a sealed gate (Alfheim, violet) explains it is frozen shut; the prompt names the realm",
+                   who == "sealed_alfheim" and "froze it shut" in txt and "Alfheim" in pr and n >= 1, prompt=pr, who=who)
+            area = T.go_rect("portals", 1)
+            en = T.ev("window.__hm.combat.enemies.map((e) => e.a.role)")
+            T.step("Vanaheim's gate -> Mossbrook Springs: spore elementals + a moss golem, Veyra's violet runes, a vine gate home",
+                   area == "vanaheim" and en.count("sporeling") >= 2 and "mossgolem" in en and T.ev("window.__hm.ctx.fx.rune_spring.name") == "alf_rune"
+                   and T.ev("window.__hm.ctx.fx.gate_rift.name") == "rift_vortex", enemies=en)
+            T.talk("warden", keep_open=True); ch = T.to_choice()
+            rep["shots"]["alliance_choice"] = T.shot("alliance_choice")
+            pg.keyboard.press("1"); pg.wait_for_timeout(300)
+            reply = T.ev("window.__hm.dlg ? window.__hm.dlg.pages[0] : ''"); T.read_all()
+            T.step("the spring-warden asks what you are to Vanaheim (befriend / conquer / not now); key 1 befriends: the alliance flag is set",
+                   bool(ch) and len(ch["options"]) == 3 and "friend" in ch["options"][0].lower() and "bow" in ch["options"][1].lower()
+                   and T.ev("window.__hm.S.flags.alliance.vanaheim") == "befriend" and "welcome in Mossbrook" in reply, choice=ch, reply=reply[:60])
+            pages, first = T.talk("warden")
+            T.step("afterwards the warden greets a friend of Mossbrook (no second ask)", "Friend of Mossbrook" in first and pages == 1, line=first[:60])
+            area = T.go_rect("portals", 0)
+            a2 = T.go_rect("portals", 0)
+            T.step("way back: the vine gate returns to the Rift Shrine, its moss gate home to the Plaza", area == "rift" and a2 == "plaza" and T.ev("window.__hm.S.flags.alliance.vanaheim") == "befriend")
             T.step("no JS errors", not errors and not T.ev("window.__hd2d.errors.length"), errors=errors[:5])
             rep["pass"] = True
         except Exception as e:  # noqa: BLE001
@@ -1135,6 +1200,15 @@ def run(out, simscale=4, size=(960, 540)):
                 tap_el("#btnWeather"); tap_el("#btnWeather")
                 pm.append(T.ev("window.__hm.weather.mode")); tap_el("#optsClose")
                 T.step("phone: weather defaults to light; the Options button cycles light -> off -> on -> light by touch", pm == ["light", ["off", 0], "light"] and not T.ev("window.__hm.opts"), modes=pm)
+                # touch: the moss gate's destination choice (errands done) takes a tap on a row
+                r = T.ev("window.__hm.ctx.scene.game.portals[0].rect")
+                T.ev(f"window.__hm.ctx.walkTo({(r[0] + r[2]) / 2}, {(r[1] + r[3]) / 2})")
+                T.wait("window.__hm.dlgChoice && window.__hm.dlgChoice()", 90); q.wait_for_timeout(300)
+                gc = T.ev("window.__hm.dlgChoice()")
+                tap_el('#dlgChoices .choice[data-i="2"]'); q.wait_for_timeout(300)
+                T.step("touch: tapping 'Stay here.' on the moss gate's choice closes it and stays in the Plaza",
+                       bool(gc) and len(gc["options"]) == 3 and not T.ev("!!window.__hm.dlg") and T.ev("window.__hm.area") == "plaza" and T.ev("window.__hm.S.chose.moss_gate") == 2, choice=gc)
+                T.walk(-1.4, -5.6)
                 # phone landscape: the full action layout (report shot), nothing overlapping
                 q.set_viewport_size({"width": 844, "height": 390}); q.wait_for_timeout(1200)
                 lay = T.ev("""(() => { const els = [...document.querySelectorAll('#hud .chip, #hud button, #pad .pb, [data-hud]')].filter((e) => e.offsetParent && getComputedStyle(e).visibility !== 'hidden');

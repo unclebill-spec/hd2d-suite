@@ -917,11 +917,12 @@ export async function boot(opts = {}) {
       return names;
     },
     // QA lineup for game effects (portal vortex, ring, pickups, quest tags): same layout, own atlas
-    gamefxLineup: (frameFrac = 0.5) => {
+    gamefxLineup: (frameFrac = 0.5, page = 0, per = 7) => {
       if (!gamefx) return [];
       for (const f of gamefx.list) f.mesh.visible = false;
       API._gfxLine = (API._gfxLine || []).filter((f) => { gamefx.remove(f); return false; });
-      const names = gamefx.names();
+      // paged: one row of at most `per` (a single row of 13 effects ran off both screen edges); check-scene walks the pages
+      const names = gamefx.names().slice(page * per, page * per + per);
       names.forEach((n, i) => {
         const e = gMeta.effects[n];
         const x = target.x + (i - (names.length - 1) / 2) * 2.6;
@@ -931,6 +932,7 @@ export async function boot(opts = {}) {
       });
       return names;
     },
+    gamefxPages: (per = 7) => (gamefx ? Math.ceil(gamefx.names().length / per) : 0),
     gamefxLineupRects: () => (API._gfxLine || []).map((f) => ({ ...f.rect, buf: [bufW, bufH] })),
     clearGamefxLineup: () => { for (const f of API._gfxLine || []) gamefx.remove(f); API._gfxLine = []; if (gamefx) for (const f of gamefx.list) f.mesh.visible = true; },
     hold: (h = true) => { API.held = h; },

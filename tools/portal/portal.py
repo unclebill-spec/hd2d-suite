@@ -9,6 +9,16 @@
   moonpetal       a glade herb with pale petals and a glint (pickup billboard, loops)
   quest_mark      a parchment "!" tag that bobs over someone who has an errand (billboard, lifted)
   quest_turnin    a gold star tag over someone waiting for your delivery (billboard, lifted)
+  rift_vortex     the open Rift gate (Vanaheim): a green-gold spiral fringed with neon-blue cold-fire tongues
+  rift_seal_violet / rift_seal_blue / rift_seal_red
+                  a sealed Rift gate: dark slow swirl, a thin dashed neon rim and a lock rune that pulses faintly
+  rift_ring       the Rift Shrine's ground circle: dithered ellipse with blue / violet / red rune dashes (decal)
+  alf_rune        a violet Alfheim rune burned into the ground (Veyra's poison mark at Vanaheim's spring; decal)
+  spring_poison   the poisoned spring's water (decal over the basin): sickly violet swirl, slow dark bubbles that swell + pop
+  spring_clean    the same spring cleansed (for later, behind a flag): clear blue water, pale ripples, white sparkles
+
+Signature glows use the named NEON accents (the same approved set as hd2d spells, plus neon blue cold-fire)
+for effect pixels only; scenery stays in the biome palette.
 
 Style references (rift refs: swirling vortexes, stone-arch gates, flame rings) were looked at for ideas only;
 nothing is traced or copied. Writes gamefx.png, gamefx.json (same format as hd2d spells, so the runtime's
@@ -27,6 +37,9 @@ from PIL import Image, ImageDraw  # noqa: E402
 from hd2d_common import Pal, ensure, hex2rgb, load_biome, write_json  # noqa: E402
 
 CELL = 48
+NEON = {"neon_red": "#e0302a", "neon_red_lo": "#a81c22", "neon_red_hi": "#ff5a4a",
+        "neon_violet": "#a45cf0", "neon_violet_hi": "#d4a8ff", "neon_violet_lo": "#6a34b8",
+        "neon_blue": "#2ab4ff", "neon_blue_hi": "#a6ecff", "neon_blue_lo": "#1c62d8"}
 SQUASH = math.sin(math.radians(36))
 
 
@@ -43,7 +56,8 @@ class Frame:
     def set(self, x, y, c):
         x, y = int(round(x)), int(round(y))
         if c and 0 <= x < CELL and 0 <= y < CELL:
-            self.pal[c]
+            if c not in NEON:
+                self.pal[c]  # raises if the colour is not in the biome (or a named neon accent)
             self.p[y][x] = c
 
     def get(self, x, y):
@@ -65,7 +79,7 @@ class Frame:
             for x in range(CELL):
                 c = self.p[y][x]
                 if c:
-                    r, g, b = hex2rgb(self.pal[c])
+                    r, g, b = hex2rgb(NEON[c] if c in NEON else self.pal[c])
                     px[x, y] = (r, g, b, 255)
         return im
 
@@ -185,12 +199,241 @@ def tag(pal, kind):
     return out
 
 
+def rift_vortex(pal, seed):
+    """Open Rift gate: a two-arm spiral (deep shadow core, moss / grass-gold arms, pale sky streaks) whose rim
+    burns with neon-blue cold-fire tongues that lick upward and round; white pixel sparkles orbit and flicker."""
+    out = []
+    cx, cy, rx, ry = 23.5, 25.0, 12.5, 21.0
+    for f in range(8):
+        F = Frame(pal)
+        ph = f / 8.0
+        for y in range(CELL):
+            for x in range(CELL):
+                dx, dy = (x - cx) / rx, (y - cy) / ry
+                d = math.hypot(dx, dy)
+                a = math.atan2(dy, dx)
+                if d > 1.0:
+                    continue
+                s_ = (a / math.tau * 2 + math.log(d + 0.08) * 1.1 - ph) % 1.0
+                if d < 0.15:
+                    c = "ink"
+                elif d < 0.32:
+                    c = "neon_blue_lo" if s_ < 0.4 else "shadow"
+                elif d > 0.86:
+                    # rim: cold-fire band, dithered
+                    c = "neon_blue" if (x + y + f) % 2 == 0 or s_ < 0.5 else "neon_blue_lo"
+                else:
+                    c = ("white" if s_ < 0.08 else "grass_hi" if s_ < 0.26 else "moss" if s_ < 0.52
+                         else "neon_blue_lo" if s_ < 0.62 else "leaf_deep")
+                F.set(x, y, c)
+        # cold-fire tongues: short flames rising off the rim, each flickering through 3 heights
+        for k in range(12):
+            a = k / 12 * math.tau + ph * math.tau * 0.25
+            bx, by = cx + math.cos(a) * rx, cy + math.sin(a) * ry
+            hgt = 2 + int(3 * h2(k, f, seed))
+            for t in range(hgt):
+                c = "neon_blue_hi" if t == hgt - 1 else "neon_blue"
+                F.set(bx + math.cos(a) * (t * 0.6), by + math.sin(a) * (t * 0.6) - t * 0.7, c)
+        for k in range(6):
+            ang = -ph * math.tau + k * math.tau / 6
+            gx, gy = cx + math.cos(ang) * (rx + 4), cy + math.sin(ang) * (ry + 3)
+            if (k + f) % 3:
+                F.set(gx, gy, "white"); F.set(gx - 1, gy, "neon_blue_hi"); F.set(gx + 1, gy, "neon_blue_hi")
+                F.set(gx, gy - 1, "neon_blue_hi"); F.set(gx, gy + 1, "neon_blue_hi")
+            else:
+                F.set(gx, gy, "flower_gold")
+        out.append(F)
+    return out
+
+
+def rift_seal(hue):
+    """Sealed Rift gate: a dark, slow, barely-moving swirl (ink / shadow / the hue's low tone), a thin dashed rim
+    in the hue and a diamond lock rune that brightens on two frames of six (a faint heartbeat)."""
+    lo, mid, hi = f"neon_{hue}_lo", f"neon_{hue}", f"neon_{hue}_hi"
+
+    def fn(pal, seed):
+        out = []
+        cx, cy, rx, ry = 23.5, 25.0, 12.5, 21.0
+        for f in range(6):
+            F = Frame(pal)
+            ph = f / 6.0 * 0.25
+            beat = f in (2, 3)
+            for y in range(CELL):
+                for x in range(CELL):
+                    dx, dy = (x - cx) / rx, (y - cy) / ry
+                    d = math.hypot(dx, dy)
+                    if d > 1.0:
+                        continue
+                    a = math.atan2(dy, dx)
+                    s_ = (a / math.tau * 3 + math.log(d + 0.1) * 0.7 - ph) % 1.0
+                    if d > 0.93:
+                        c = mid if (int((a / math.tau) * 40) + f) % 3 else lo
+                    elif s_ < 0.1 and (x + y) % 2 == 0:
+                        c = lo
+                    elif s_ < 0.45:
+                        c = "shadow"
+                    else:
+                        c = "ink"
+                    F.set(x, y, c)
+            # lock rune: a diamond with a bar, centre of the gate
+            for t in range(-9, 10):
+                w = round(5 * (1 - abs(t) / 9))
+                for e in (-w, w):
+                    F.set(cx + e, cy + t, hi if beat else mid); F.set(cx + e + (1 if e < 0 else -1), cy + t, mid if beat else lo)
+            for t in range(-3, 4):
+                F.set(cx + t, cy, hi if beat else mid)
+            for t in range(-9, -4):
+                F.set(cx, cy + t, mid)
+            F.set(cx, cy, "white" if beat else mid)
+            # a few faint motes drifting up the face
+            for k in range(3):
+                mx = cx + (k - 1) * 6 + (1 if (f + k) % 2 else 0)
+                my = cy + 14 - ((f * 3 + k * 7) % 26)
+                F.set(mx, my, lo)
+            out.append(F)
+        return out
+    return fn
+
+
+def rift_ring(pal, seed):
+    """The shrine's ground circle (pre-squashed decal): a dithered stone-grey ellipse, an inner band of rune dashes
+    cycling blue -> violet -> red as it turns, and three glyph pips at the thirds."""
+    out = []
+    cx, cy, R = 23.5, 24.0, 22.0
+    hues = ("neon_blue", "neon_violet", "neon_red")
+    for f in range(8):
+        F = Frame(pal)
+        ph = f / 8.0
+        n = 160
+        for i in range(n):
+            a = i / n * math.tau
+            for rr, c in ((R, "shadow"), (R - 1, "stone_lo" if i % 2 else "shadow")):
+                F.set(cx + math.cos(a) * rr, cy + math.sin(a) * rr * SQUASH, c)
+        for k in range(18):
+            a = k / 18 * math.tau + ph * math.tau / 6
+            c = hues[(k // 6 + (f // 3)) % 3] if (k + f) % 4 else hues[k % 3] + "_hi"
+            for t in range(3):
+                aa = a + t * 0.04
+                F.set(cx + math.cos(aa) * (R - 4), cy + math.sin(aa) * (R - 4) * SQUASH, c)
+        for k in range(3):
+            a = k / 3 * math.tau + math.pi / 2
+            gx, gy = cx + math.cos(a) * (R - 9), cy + math.sin(a) * (R - 9) * SQUASH
+            c = hues[k] + ("_hi" if (f // 2 + k) % 2 else "")
+            for (ox, oy) in ((0, 0), (-1, 0), (1, 0), (0, -1), (0, 1)):
+                F.set(gx + ox, gy + oy, c)
+        out.append(F)
+    return out
+
+
+def alf_rune(pal, seed):
+    """Veyra's poison mark: a violet Alfheim rune (a branching stave inside a broken ring) burned into the ground,
+    pre-squashed; it smoulders (dim -> bright -> dim) over six frames."""
+    out = []
+    cx, cy, R = 23.5, 24.0, 15.0
+    for f in range(6):
+        F = Frame(pal)
+        hot = [0, 1, 2, 2, 1, 0][f]
+        c_ring = ("neon_violet_lo", "neon_violet", "neon_violet")[hot]
+        c_rune = ("neon_violet", "neon_violet_hi", "neon_violet_hi")[hot]
+        for i in range(110):
+            a = i / 110 * math.tau
+            if int(a / math.tau * 12) % 4 == 3:
+                continue
+            F.set(cx + math.cos(a) * R, cy + math.sin(a) * R * SQUASH, c_ring)
+        for t in range(-8, 9):
+            F.set(cx, cy + t * SQUASH, c_rune)
+        for (sx, sy, ex, ey) in ((0, -3, -5, -7), (0, -3, 5, -7), (0, 3, -4, 6), (0, 3, 4, 6)):
+            for k in range(7):
+                q = k / 6
+                F.set(cx + sx + (ex - sx) * q, cy + (sy + (ey - sy) * q) * SQUASH, c_rune)
+        if hot == 2:
+            F.set(cx, cy, "white")
+        out.append(F)
+    return out
+
+
+def spring_water(kind):
+    """Water surface decal sized to the spring basin (r 1.25 m, pre-squashed). poison: a slow dithered swirl of
+    neon-violet / shadow with ink bubbles that swell over three frames and pop into a violet ring; clean: sky and
+    flower-blue ripples with white sparkles that twinkle round."""
+    def fn(pal, seed):
+        out = []
+        cx, cy, rx = 23.5, 24.0, 23.0
+        ry = rx * SQUASH
+        n = 8
+        for f in range(n):
+            F = Frame(pal)
+            ph = f / n
+            for y in range(CELL):
+                for x in range(CELL):
+                    dx, dy = (x - cx) / rx, (y - cy) / ry
+                    d = math.hypot(dx, dy)
+                    if d > 1.0:
+                        continue
+                    a = math.atan2(dy, dx)
+                    w = (a / math.tau + d * 1.6 - ph * 0.5) % 1.0
+                    if kind == "poison":
+                        if d > 0.9:
+                            c = "shadow" if (x + y) % 2 else "neon_violet_lo"
+                        elif w < 0.18:
+                            c = "neon_violet" if (x + y + f) % 2 == 0 else "neon_violet_lo"
+                        elif w < 0.55:
+                            c = "neon_violet_lo"
+                        else:
+                            c = "neon_violet_lo" if (x + 2 * y) % 3 == 0 else "shadow"
+                    else:
+                        if d > 0.9:
+                            c = "flower_blue"
+                        elif w < 0.14:
+                            c = "white" if (x + y) % 2 == 0 else "sky"
+                        elif w < 0.6:
+                            c = "sky"
+                        else:
+                            c = "flower_blue" if (x + y) % 2 else "sky"
+                    F.set(x, y, c)
+            if kind == "poison":
+                # slow dark bubbles: each swells 3 frames, pops (violet ring), rests; staggered
+                for k, (bx, by) in enumerate(((-9, -2), (6, -4), (-2, 4), (12, 3), (-14, 2))):
+                    st = (f + k * 3) % 8
+                    X, Y = cx + bx, cy + by
+                    if st < 3:
+                        r_ = 2 + st * 1.2
+                        for t in range(22):
+                            aa = t / 16 * math.tau
+                            F.set(X + math.cos(aa) * r_, Y + math.sin(aa) * r_ * 0.7, "ink")
+                        F.set(X - r_ * 0.4, Y - r_ * 0.4, "neon_violet_hi")
+                    elif st == 3:
+                        for t in range(12):
+                            aa = t / 12 * math.tau
+                            F.set(X + math.cos(aa) * 4, Y + math.sin(aa) * 2.6, "neon_violet")
+                        F.set(X, Y, "ink")
+            else:
+                for k in range(6):
+                    aa = ph * math.tau + k * math.tau / 6
+                    X, Y = cx + math.cos(aa) * rx * 0.6, cy + math.sin(aa) * ry * 0.6
+                    if (k + f) % 3 == 0:
+                        F.set(X, Y, "white"); F.set(X - 1, Y, "sky"); F.set(X + 1, Y, "sky"); F.set(X, Y - 1, "white")
+                    else:
+                        F.set(X, Y, "white")
+            out.append(F)
+        return out
+    return fn
+
+
 EFFECTS = {
     "portal_vortex": dict(fn=vortex, fps=8, loop=True, kind="billboard", pivot=[24, 47], lift=0.18, glow=True),
     "portal_ring": dict(fn=ring, fps=6, loop=True, kind="decal", pivot=[24, 24], lift=0.02, glow=True),
     "moonpetal": dict(fn=moonpetal, fps=4, loop=True, kind="billboard", pivot=[24, 47], lift=0.0, glow=False),
     "quest_mark": dict(fn=lambda pal, seed: tag(pal, "mark"), fps=3, loop=True, kind="billboard", pivot=[24, 47], lift=2.05, glow=True),
     "quest_turnin": dict(fn=lambda pal, seed: tag(pal, "turnin"), fps=3, loop=True, kind="billboard", pivot=[24, 47], lift=2.05, glow=True),
+    "rift_vortex": dict(fn=rift_vortex, fps=8, loop=True, kind="billboard", pivot=[24, 47], lift=0.18, glow=True),
+    "rift_seal_violet": dict(fn=rift_seal("violet"), fps=4, loop=True, kind="billboard", pivot=[24, 47], lift=0.18, glow=True),
+    "rift_seal_blue": dict(fn=rift_seal("blue"), fps=4, loop=True, kind="billboard", pivot=[24, 47], lift=0.18, glow=True),
+    "rift_seal_red": dict(fn=rift_seal("red"), fps=4, loop=True, kind="billboard", pivot=[24, 47], lift=0.18, glow=True),
+    "rift_ring": dict(fn=rift_ring, fps=6, loop=True, kind="decal", pivot=[24, 24], lift=0.03, glow=True),
+    "alf_rune": dict(fn=alf_rune, fps=4, loop=True, kind="decal", pivot=[24, 24], lift=0.03, glow=True),
+    "spring_poison": dict(fn=spring_water("poison"), fps=3, loop=True, kind="decal", pivot=[24, 24], lift=0.0, glow=True),
+    "spring_clean": dict(fn=spring_water("clean"), fps=4, loop=True, kind="decal", pivot=[24, 24], lift=0.0, glow=True),
 }
 
 

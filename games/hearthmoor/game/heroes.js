@@ -53,6 +53,11 @@ export const ENEMIES = {
   // Mossheart, the Mossglen mini-boss (every third slam is a rune shockwave; always drops a Legendary)
   icegolem: { name: 'Frost golem', hp: 140, dmg: 15, speed: 1.0, reach: 1.6, windup: 0.66, cd: 2.0, aggro: 5.5, r: 0.36, push: 0.2, heavy: true, slam: true, chill: 18 },
   skelmage: { name: 'Skeleton mage', hp: 52, dmg: 11, speed: 1.7, reach: 6.5, keep: 3.8, windup: 0.6, cd: 2.5, aggro: 7.0, r: 0.28, push: 0.5, ranged: true, bolt: 'bolt' },
+  // stage 4 (Vanaheim, Mossbrook Springs): spore elementals lob spore pods from range and drift over the moss; moss
+  // golems are slow heavy sloggers whose slam roots you in place a moment (drains stamina, like the frost golem's chill)
+  sporeling: { name: 'Spore elemental', hp: 40, dmg: 8, speed: 1.5, reach: 6.0, keep: 3.4, windup: 0.55, cd: 2.4, aggro: 6.5, r: 0.28, push: 0.6, ranged: true, float: true, bolt: 'seed_bomb' },
+  mossgolem: { name: 'Moss golem', hp: 150, dmg: 16, speed: 0.95, reach: 1.6, windup: 0.7, cd: 2.1, aggro: 5.5, r: 0.38, push: 0.2, heavy: true, slam: true, chill: 14,
+               chillMsg: 'Rooted! The moss golem\'s vines sap your stamina.' },
   // scale: figure height in hero heights (style lock: mini-boss / rare ~2.5x, boss 5x+). The art is drawn natively on its
   // own boss sheet (tools/sprite/boss_sheet.py, area spec boss_roles); hitbox r, reach, wave ring, light and nav
   // clearance below are authored for that size, and combat.js scales the slam dust / telegraph / light by `scale`
@@ -77,6 +82,12 @@ export const SPAWNS = {
     { id: 'wraith_h0', role: 'wraith', pos: [7.6, -0.8] },
     { id: 'wraith_hnight', role: 'wraith', pos: [-6.4, -6.0], night: true },
     { id: 'skeleton_h0', role: 'skeleton', pos: [2.2, 5.4] },
+  ],
+  vanaheim: [
+    { id: 'sporeling_v0', role: 'sporeling', pos: [6.2, 0.4] },
+    { id: 'sporeling_v1', role: 'sporeling', pos: [8.6, -2.2] },
+    { id: 'sporeling_vnight', role: 'sporeling', pos: [3.6, 2.8], night: true },
+    { id: 'mossgolem_v0', role: 'mossgolem', pos: [7.4, -5.0] },
   ],
 };
 

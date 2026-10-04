@@ -616,6 +616,62 @@ def eldergolem(s, face, anim, i):
         s.set(x, y + b, "flower_rose" if (x + i) % 2 else "flower_gold")   # glow-flowers in the moss
 
 
+# ------------------------------------------------------------------ Vanaheim (first realm, Stage 4): spore elemental + moss golem
+def sporeling(s, face, anim, i):
+    """spore elemental: a floating puff of moss and glowing spores under a little rose mushroom cap, gold lamp eyes,
+    a ring of spores orbiting it; attack = the puff swells and spores burst out; die = it thins into a spore heap"""
+    b = [0, -1, -1, 0][i] if anim == "idle" else [0, -1, 0, 1][i] if anim == "walk" else [0, -1, -2, 0][i] if anim == "attack" else [0, 1, 3, 6][i]
+    if anim == "die" and i == 3:                       # a little heap of spent spores on the ground
+        ell(s, 9.5, 29.5, 4.5, 1.6, "moss")
+        for (x, y) in ((6, 29), (9, 28), (12, 29), (8, 30), (11, 30)):
+            s.set(x, y, "grass_hi" if x % 2 else "flower_gold")
+        return
+    swell = 1 if anim == "attack" and i in (1, 2) else 0
+    shrink = (i if anim == "die" else 0)
+    cy, rx, ry = 18 + b, 6.8 + swell - shrink * 1.4, 6.2 + swell - shrink * 1.2
+    ell(s, 9.5, cy, rx, ry, "grass", shader(9.5, rx, "grass_hi", "grass", "moss"))
+    for k in range(10):                                # fluffy dithered rim
+        a = k / 10 * 6.283 + i * 0.4
+        x, y = 9.5 + (rx + 0.6) * math.cos(a), cy + (ry + 0.6) * math.sin(a)
+        if (k + i) % 2 == 0:
+            s.set(int(round(x)), int(round(y)), "grass_hi" if math.sin(a) < 0 else "leaf_deep")
+    if shrink < 2:                                     # a little rose mushroom cap with cream spots
+        ell(s, 9.5, cy - ry - 0.3, 4.6 - shrink * 1.0, 2.3, "flower_rose", shader(9.5, 4.6, "plaster_hi", "flower_rose", "roof_lo"))
+        s.set(8, int(cy - ry - 1), "plaster_hi"); s.set(11, int(cy - ry), "plaster_hi")
+    if face == "down":
+        s.set(8, int(cy), "lamp"); s.set(11, int(cy), "lamp"); s.set(8, int(cy) + 1, "flower_gold"); s.set(11, int(cy) + 1, "flower_gold")
+    elif face == "left":
+        s.set(6, int(cy), "lamp"); s.set(6, int(cy) + 1, "flower_gold")
+    for y in range(int(cy + ry) + 1, int(cy + ry) + 4):   # a wisp trailing under the floating puff
+        if (y + i) % 2 == 0:
+            s.set(9 + (y + i) % 3 - 1, y, "moss")
+    n, R = (9, 9.6) if anim == "attack" and i == 2 else (6, 8.6)
+    for k in range(n):                                 # orbiting / bursting spores (palette glints)
+        a = k / n * 6.283 + i * 0.7 + (0.3 if anim == "walk" else 0)
+        x, y = 9.5 + R * math.cos(a), cy + R * 0.8 * math.sin(a)
+        if 0 <= x < 20 and 1 <= y < 31:
+            s.set(int(round(x)), int(round(y)), "flower_gold" if k % 2 else "grass_hi")
+
+
+MOSSG = {"stone_hi": "grass_hi", "stone": "grass", "stone_lo": "moss", "moss": "stone", "grass": "stone_hi", "shadow": "leaf_deep"}
+
+
+def mossgolem(s, face, anim, i):
+    """Vanaheim moss golem: the golem inverted (a body of living moss with old stone showing through), a crown of
+    leaf sprouts, rose and gold flowers in the moss, warm amber rune eyes"""
+    golem(_Remap(s, MOSSG), face, anim, i)
+    if anim == "die" and i >= 2:
+        s.set(6, 26, "flower_rose"); s.set(13, 27, "flower_gold"); s.set(9, 25, "grass_hi")
+        return
+    b = _golem_b(anim, i)
+    tops = ((8, 6), (10, 5), (12, 6)) if face != "left" else ((6, 6), (8, 5))
+    for (x, y) in tops:                                # leaf sprouts on the crown
+        s.set(x, y + b, "grass_hi"); s.set(x, y + b - 1, "grass_hi" if (x + i) % 2 else "grass"); s.set(x - 1, y + b - 1, "grass")
+    flowers = ((5, 14), (14, 15), (6, 20), (13, 21)) if face == "down" else ((6, 13), (13, 14), (9, 19)) if face == "up" else ((12, 14), (13, 19))
+    for k, (x, y) in enumerate(flowers):
+        s.set(x, y + b, "flower_rose" if (k + i) % 2 else "flower_gold")
+
+
 def skelmage(s, face, anim, i):
     """skeleton mage (caster line T1): skull under a red hood, long robe, a crooked staff with a cold-fire orb"""
     skeleton(s, face, anim, i, mage=True)
@@ -655,7 +711,7 @@ def _radiant(base):
     return draw
 
 
-DRAW = {"golem": golem, "icegolem": icegolem, "eldergolem": eldergolem, "skelmage": skelmage, "wraith": wraith, "skeleton": skeleton, "mushgolem": mushgolem, "runesentinel": runesentinel,
+DRAW = {"sporeling": sporeling, "mossgolem": mossgolem, "golem": golem, "icegolem": icegolem, "eldergolem": eldergolem, "skelmage": skelmage, "wraith": wraith, "skeleton": skeleton, "mushgolem": mushgolem, "runesentinel": runesentinel,
         "runewisp": runewisp, "stormsprite": stormsprite, "sapling": sapling, "emberimp": emberimp}
 
 for _k in ("mushgolem", "runesentinel", "runewisp", "stormsprite", "sapling", "emberimp"):
@@ -675,6 +731,8 @@ def enemy_roles(_r):
         "icegolem": _r(**E, draw="icegolem", desc="frost golem: the stone golem in pale ice, snowy shoulders, ice spikes, white rune light"),
         "skelmage": _r(**E, draw="skelmage", desc="skeleton mage: skull under a red hood, long gold-hemmed robe, crooked staff with a cold-fire orb"),
         "eldergolem": _r(**E, draw="eldergolem", desc="Mossheart the elder golem (mini-boss): dark ancient stone, amber crystal crown, glowing gold runes, glow-flowers"),
+        "sporeling": _r(**E, draw="sporeling", named=True, desc="Vanaheim spore elemental: a floating moss-and-spore puff under a rose mushroom cap, gold lamp eyes, orbiting spores"),
+        "mossgolem": _r(**E, draw="mossgolem", named=True, desc="Vanaheim moss golem: a body of living moss over old stone, leaf-sprout crown, rose and gold flowers, amber eyes"),
         "mushgolem": _r(**S, draw="mushgolem", desc="summon (Wildcaller): a little mushroom golem"),
         "runesentinel": _r(**S, draw="runesentinel", desc="summon (Runeguard): a floating rune stone on a pillar of light"),
         "runewisp": _r(**S, draw="runewisp", desc="summon (Seer): a blue rune-wisp with an orbiting glyph"),

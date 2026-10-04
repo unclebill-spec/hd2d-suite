@@ -883,6 +883,8 @@ import kit_glade as _glade  # noqa: E402  (Mossglen pieces: portal_arch, shrine,
 PROPS.update(_glade.pieces(__import__('types').SimpleNamespace(**globals())))
 import kit_hollows as _hollows  # noqa: E402  (Toadstool Hollows pieces: toadstools, gnome stump, spring, brazier)
 PROPS.update(_hollows.pieces(__import__('types').SimpleNamespace(**globals())))
+import kit_rift as _rift  # noqa: E402  (Rift Shrine + Vanaheim pieces: rift_isle, rift_arch, rift_shard, rift_dais, vine_arch)
+PROPS.update(_rift.pieces(__import__('types').SimpleNamespace(**globals())))
 
 
 def export_piece(cx: Ctx, pc: Piece, out: Path):

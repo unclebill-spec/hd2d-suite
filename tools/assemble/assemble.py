@@ -53,6 +53,8 @@ class Heights:
             self.rects.append((x0, z0, x1, z1, t["h"]))
         for st in spec.get("stairs", []):
             self.stairs.append(st)
+        # floating islands (the Rift Shrine): walk only inside an ellipse [cx, cz, rx, rz] (blocked outside it)
+        self.ellipse = spec["ground"].get("ellipse")
 
     def h(self, x, z):
         best = 0.0
@@ -68,6 +70,10 @@ class Heights:
         return best
 
     def blocked(self, x, z):
+        if self.ellipse:
+            ex, ez, rx, rz = self.ellipse
+            if ((x - ex) / rx) ** 2 + ((z - ez) / rz) ** 2 > 1.0:
+                return True
         for x0, z0, x1, z1 in self.blocks:
             if x0 <= x < x1 and z0 <= z < z1:
                 return True
@@ -188,9 +194,9 @@ def assemble(spec_path, out, do_zip=True):
             xa = st["x"] + sx * (w + 0.16)
             H.blocks.append((xa - 0.2, st["z_top"], xa + 0.2, st["z_top"] + L + 0.1))
 
-    def place(name, pos2, rot=0, occ=False):
+    def place(name, pos2, rot=0, occ=False, dy=0.0, glow=None):
         info = P[name]
-        y = H.h(pos2[0], pos2[1])
+        y = H.h(pos2[0], pos2[1]) + dy
         pos = [pos2[0], y, pos2[1]]
         objects.append({"glb": kitpath(name), "pos": pos, "rot": rot, **({"occluder": True} if occ else {})})
         for b in info["blockers"]:
@@ -214,6 +220,11 @@ def assemble(spec_path, out, do_zip=True):
             fx_out.append({"id": f"portal_{n}_ring", "name": "portal_ring", "pos": [fr[0], round(pos[1], 3), fr[2]]})
             lamps.append({"pos": [w[0], w[1] + 1.4, w[2] + 0.6], "range": 6.0, "kind": "portal", "color": colors["sky"], "glow": False, "fixed": 0.75})
             emitters.append({"preset": "fireflies", "pos": [w[0], w[1] + 1.2, w[2] + 0.8], "area": [2.2, 1.6, 1.4], "min_gate": 0.45})
+        for rm in mk.get("rift", []):   # rift / vine gates: the spec's fx list places the vortex; the prop's glow lights it
+            if glow:
+                w = to_world(rm, pos, rot)
+                lamps.append({"pos": [w[0], w[1] + 1.5, w[2] + 0.7], "range": glow.get("range", 5.0), "kind": "rift",
+                              "color": glow["color"], "glow": False, "fixed": glow.get("fixed", 0.6)})
         for o in mk.get("ovens", []):
             emitters.append({"preset": "oven_steam", "pos": to_world(o, pos, rot)})
         for sp_ in mk.get("spray", []):
@@ -224,7 +235,12 @@ def assemble(spec_path, out, do_zip=True):
     for b in spec.get("buildings", []):
         place(b["piece"], b["pos"], b.get("rot", 0), occ=True)
     for p in spec.get("props", []):
-        place(p["piece"], p["pos"], p.get("rot", 0), occ=p["piece"] in ("market_stall",))
+        n0 = len(objects)
+        place(p["piece"], p["pos"], p.get("rot", 0), occ=p["piece"] in ("market_stall",), dy=p.get("y", 0.0), glow=p.get("glow"))
+        if p.get("walkable"):   # e.g. the Rift isle's paved top: taps / clicks land on it
+            objects[n0]["walkable"] = True
+        if p.get("cast") is False:
+            objects[n0]["cast"] = False
     for i, hd in enumerate(spec.get("hedges", [])):
         place(f"scene_hedge_{i}", hd["pos"], hd.get("rot", 0))
     for i, b in enumerate(spec.get("bunting", [])):

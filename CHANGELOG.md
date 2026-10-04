@@ -2,6 +2,40 @@
 
 Dates are America/New_York. Newest first. Keep this current with every change you push.
 
+## 2026-10-04: Hearthmoor Stage 4, part 6: the Rift Shrine + Vanaheim
+- **The Rift Shrine** (`areas/src/rift.json`, area `rift`): a small gloom-and-glow stone circle floating in the rainbow-rift void. It's a paved isle with a tapering rock root, hanging roots and moss, plus floating rock shards in the dark violet void, a rune dais and standing stones. It is reached through the Plaza's moss gate: once the three errands are done (or `S.flags.rift`, or `?rift`), stepping into the swirl opens the dialogue choice panel ("Mossglen" / "The Rift Shrine" / "Stay here"). Before that the gate still goes straight to Mossglen.
+- **Realm gates:** Vanaheim's is open (a new `rift_vortex`: a green-gold spiral fringed with neon-blue cold-fire tongues). Alfheim (violet), Niflheim (blue) and Muspelheim (red) are sealed (`rift_seal_*`: a dark slow swirl, a dashed neon rim and a lock rune that pulses faintly). E / A / tap at a sealed gate says why it won't open. A mossy gate leads home to the Plaza. Bifrost Crossing's nine gates come in Stages 5-6.
+- **Vanaheim, Mossbrook Springs** (`areas/src/vanaheim.json`, area `vanaheim`), the first realm (the docs leave the order free; Vanaheim is the swing realm):
+  - the springs below the mushroom village, with gnome stumps, giant glowing toadstools, ferns and cold-fire braziers;
+  - the poisoned spring and a glade both marked with Veyra's violet Alfheim rune (`alf_rune`);
+  - a gold-green day grade and a teal and violet night;
+  - a vine-arch rift gate back to the shrine.
+- **Realm enemies** (style lock pixel billboards, `tools/sprite/roles_enemies.py`):
+  - the **spore elemental** (`sporeling`: a floating moss puffball with a rose cap, glowing eyes and orbiting spores; ranged, it lobs spore pods);
+  - the **moss golem** (`mossgolem`: a heavy slam that roots you and drains stamina).
+  - Three spore elementals (one only at night) and one moss golem patrol the springs.
+- **The alliance choice:** Elder Burrowmoss, spring-warden of Mossbrook (a gnome), tells you about the poisoned spring and asks what you are to Vanaheim:
+  - "A friend" sets `S.flags.alliance.vanaheim = 'befriend'`;
+  - "Vanaheim will bow to Hearthmoor" sets `'conquer'`;
+  - "only passing through" asks again next time.
+  - His later greeting depends on your answer. For now the choice only sets the flag.
+- **Mossbrook art pass (lusher gloom-and-glow at night):**
+  - **The poisoned spring** now reads as corrupted: a new `spring_poison` water decal over the basin (a sickly violet dithered swirl with slow dark bubbles that swell and pop into violet rings) and a violet light pool.
+  - **A cleansed state for later:** `spring_clean` (clear blue water, pale ripples, twinkling white sparkles) sits behind `S.flags.vanaheim_spring === 'cleansed'`. The area's `game.swaps` entry swaps the decal on load (`applySwaps`, test hook `G.applySwaps()`), and the spring's pool turns cold blue (a glow.js `POOLS` entry can carry a flag override).
+  - **Three wild glow-plant clusters** (the garden's cold-fire blooms and violet glowbells, a new glow.js pool kind `bloom`: three plants over their ground pool decal, no point light of their own) and two light pools on the path from the vine gate (cold-fire and warm gold).
+  - Five more firefly / bug emitters, and a slightly brighter teal night grade.
+  - Real point lights stay at the glow-light cap (3, or 2 on phones): the engine gives its fixed pool of lights to the strongest glows near the camera, and the new clusters add none.
+- **Portal art** (`tools/portal/portal.py`): Bill's rift refs were used for style only and redrawn fresh in the cozy palette. New effects: `rift_vortex`, `rift_seal_violet`, `rift_seal_blue`, `rift_seal_red`, `rift_ring` (the shrine's ground circle, with blue, violet and red rune dashes) and `alf_rune`. `portal.py` gains the named `NEON` set (violet and red as in `spells.py`, plus `neon_blue*` for cold-fire), used for effect pixels only.
+- **Kit:** `tools/kit/kit_rift.py` adds `rift_isle`, `rift_arch`, `rift_shard`, `rift_dais` and `vine_arch`.
+- **Assemble:**
+  - `ground.ellipse` gives a round walk edge.
+  - Props take `walkable` (taps and clicks land on the isle), `y` (floating shards), `cast: false`, and `glow` (a coloured lamp on rift and vine gates).
+- Screenshots: `docs/screenshots/stage4_rift_shrine_night.png`, `stage4_vanaheim_night.png` (retaken after the art pass), `stage4_vanaheim_alliance_choice.png`, `stage4_moss_gate_choice.png`, `stage4_vanaheim_spring_poisoned.png`, `stage4_vanaheim_spring_cleansed.png`.
+- **Rift Shrine grades + dais lanterns:** the void keeps its timeless violet look but now follows the clock a little: slightly brighter violet by day, bluer at dusk, deeper at night (check-scene `grades` passes for real). Two stone lanterns flank the back of the rune dais and give a faint warm glint at night. A raised 1 m terrace dais was tried and dropped: the walk-height grid only models rect terraces + stairs, and a square block looked wrong on the round isle (and buried Ondra), so the rift's spec carries a documented `game.qa_exempt.height` (check-scene now honours `qa_exempt` for `height` / `grades` only and prints `[EXEMPT]`; sharpness, bloom and phone checks can never be exempted).
+- **Controller Y tap fix:** a Y tap can only turn into a hold (the spell wheel) after 350 ms *and* 3 drawn frames, so a frame hitch on a slow phone no longer swallows a tap cast.
+- **QA:** the engine's gamefx lineup is paged (one row of at most 7 effects per page, `gamefxPages()`), and check-scene walks every page (`gamefx.png`, `gamefx_2.png`): with 13 game effects the single row ran off both screen edges and 6 were skipped. Smoke: `T.frames(n)` waits for drawn frames after the analog-stick input, and the Y-cast step waits for the cast (castT / a cooldown starting / an effect) instead of one fixed 300 ms look; the cooldown from the F cast is awaited first. Assertions are unchanged.
+- Checks: smoke PASS 155/155 (7 new rift / Vanaheim steps + the art-pass steps). check-scene PASS: rift 10/10 + height exempt (`game.qa_exempt`), vanaheim 11/11, plaza 11/11, mossglen 11/11.
+
 ## 2026-10-04: Hearthmoor Stage 4, part 5: dialogue choices
 - **Reusable choice panel:** any dialogue entry can end in `choice: { id, options: [{ label, pick(G) -> reply entry | null, cancel? }] }`. When the last page has typed out, numbered parchment rows appear inside the wooden frame. Keys: arrows / W S and E / Enter, or 1-4. Controller: d-pad and A. Touch / mouse: tap a row (a tap elsewhere on a choice page does nothing, so nothing is picked by accident). Esc / B takes the option marked `cancel`. Answers set `S.flags` (saved with the slot) and `S.chose[id]`.
 - **Bix's riddle lock** (the start of "Gnome in the Vault"): after your first visit, Bix offers drawer nine's riddle. "Footsteps" opens it (a moon opal + 25 gold, and his greeting changes for good); a wrong answer earns a hint and a retry; "not now" goes straight to the vault.

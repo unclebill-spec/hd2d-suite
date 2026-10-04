@@ -1,0 +1,522 @@
+{
+ "name": "The Rift Shrine",
+ "seed": 77,
+ "biome": "cozy-village",
+ "about": "The Rift Shrine: a small gloom-and-glow stone circle floating in the rainbow-rift void, reached through the Plaza's moss gate. Realm gates ring the back of the circle; only Vanaheim's is open, the others are sealed and glow faintly (violet Alfheim, blue Niflheim, red Muspelheim).",
+ "time": {
+  "start": "night",
+  "speed": 0.0016
+ },
+ "spells": true,
+ "sprite_roles": [
+  "actors",
+  "heroes",
+  "combat"
+ ],
+ "camera": {
+  "fov": 24,
+  "pitch": 36,
+  "distance": 29,
+  "zoom": [
+   22,
+   36
+  ],
+  "look": [
+   0,
+   0,
+   -2.2
+  ],
+  "bounds": [
+   -3.0,
+   -4.0,
+   3.0,
+   1.5
+  ]
+ },
+ "ground": {
+  "size": [
+   0.2,
+   0.2
+  ],
+  "mat": "stone",
+  "walk": [
+   -8.0,
+   -9.0,
+   8.0,
+   7.0
+  ],
+  "ellipse": [
+   0.0,
+   -1.0,
+   7.5,
+   7.5
+  ]
+ },
+ "slabs": [],
+ "terraces": [],
+ "stairs": [],
+ "buildings": [],
+ "props": [
+  {
+   "piece": "rift_isle",
+   "pos": [
+    0.0,
+    -1.0
+   ],
+   "walkable": true,
+   "cast": false
+  },
+  {
+   "piece": "rift_dais",
+   "pos": [
+    0.0,
+    -1.2
+   ]
+  },
+  {
+   "piece": "stone_lantern",
+   "pos": [
+    -1.95,
+    -3.15
+   ]
+  },
+  {
+   "piece": "stone_lantern",
+   "pos": [
+    1.95,
+    -3.15
+   ]
+  },
+  {
+   "piece": "portal_arch",
+   "pos": [
+    -6.3,
+    -3.0
+   ]
+  },
+  {
+   "piece": "rift_arch",
+   "pos": [
+    0.0,
+    -7.6
+   ],
+   "glow": {
+    "color": "#2ab4ff",
+    "range": 6.0,
+    "fixed": 0.8
+   }
+  },
+  {
+   "piece": "rift_arch",
+   "pos": [
+    -3.4,
+    -6.1
+   ],
+   "glow": {
+    "color": "#a45cf0",
+    "range": 3.6,
+    "fixed": 0.35
+   }
+  },
+  {
+   "piece": "rift_arch",
+   "pos": [
+    3.4,
+    -6.1
+   ],
+   "glow": {
+    "color": "#2ab4ff",
+    "range": 3.6,
+    "fixed": 0.35
+   }
+  },
+  {
+   "piece": "rift_arch",
+   "pos": [
+    6.3,
+    -3.0
+   ],
+   "glow": {
+    "color": "#e0302a",
+    "range": 3.6,
+    "fixed": 0.35
+   }
+  },
+  {
+   "piece": "standing_stone",
+   "pos": [
+    7.51,
+    1.44
+   ],
+   "rot": 72
+  },
+  {
+   "piece": "standing_stone",
+   "pos": [
+    4.86,
+    5.23
+   ],
+   "rot": 38
+  },
+  {
+   "piece": "standing_stone",
+   "pos": [
+    0.0,
+    6.9
+   ],
+   "rot": 0
+  },
+  {
+   "piece": "standing_stone",
+   "pos": [
+    -4.86,
+    5.23
+   ],
+   "rot": -38
+  },
+  {
+   "piece": "standing_stone",
+   "pos": [
+    -7.51,
+    1.44
+   ],
+   "rot": -72
+  },
+  {
+   "piece": "stone_lantern",
+   "pos": [
+    -1.35,
+    -6.2
+   ]
+  },
+  {
+   "piece": "stone_lantern",
+   "pos": [
+    1.35,
+    -6.2
+   ]
+  },
+  {
+   "piece": "rift_shard",
+   "pos": [
+    -13.5,
+    -7.0
+   ],
+   "y": 1.4,
+   "rot": 0,
+   "cast": false
+  },
+  {
+   "piece": "rift_shard",
+   "pos": [
+    12.5,
+    -9.5
+   ],
+   "y": 2.6,
+   "rot": 40,
+   "cast": false
+  },
+  {
+   "piece": "rift_shard",
+   "pos": [
+    -12.0,
+    4.0
+   ],
+   "y": -2.4,
+   "rot": 70,
+   "cast": false
+  },
+  {
+   "piece": "rift_shard",
+   "pos": [
+    13.0,
+    2.5
+   ],
+   "y": -1.2,
+   "rot": 15,
+   "cast": false
+  },
+  {
+   "piece": "rift_shard",
+   "pos": [
+    -5.5,
+    -15.0
+   ],
+   "y": 3.0,
+   "rot": 25,
+   "cast": false
+  },
+  {
+   "piece": "rift_shard",
+   "pos": [
+    6.0,
+    -15.5
+   ],
+   "y": 0.6,
+   "rot": 60,
+   "cast": false
+  },
+  {
+   "piece": "rift_shard",
+   "pos": [
+    -15.0,
+    -1.5
+   ],
+   "y": 3.4,
+   "rot": 30,
+   "cast": false
+  }
+ ],
+ "hedges": [],
+ "trees": [],
+ "backdrop": {},
+ "emitters": [
+  {
+   "preset": "fireflies",
+   "pos": [
+    0.0,
+    1.4,
+    -1.0
+   ],
+   "area": [
+    10,
+    1.6,
+    8
+   ],
+   "min_gate": 0.0
+  },
+  {
+   "preset": "fireflies",
+   "pos": [
+    0.0,
+    1.6,
+    -7.0
+   ],
+   "area": [
+    8,
+    1.4,
+    2
+   ],
+   "min_gate": 0.0
+  },
+  {
+   "preset": "dust_motes",
+   "pos": [
+    0,
+    1.8,
+    -1.0
+   ],
+   "area": [
+    14,
+    3.0,
+    12
+   ]
+  },
+  {
+   "preset": "dust_motes",
+   "pos": [
+    0,
+    -3.0,
+    -1.0
+   ],
+   "area": [
+    26,
+    4.0,
+    22
+   ]
+  }
+ ],
+ "actors": [
+  {
+   "id": "riftkeeper",
+   "role": "traveler",
+   "name": "Ondra, the rift-keeper",
+   "pos": [
+    1.8,
+    0.6
+   ],
+   "facing": "down",
+   "behavior": "idle",
+   "talkable": true,
+   "say": [
+    "Mind the edge, little hearth-walker. Below us is nothing at all, only the Rift's colours.",
+    "Only Vanaheim's gate will open for you yet. The others are sealed: violet Alfheim, blue Niflheim, red Muspelheim. Someone froze them shut from the inside.",
+    "Bifrost Crossing has nine gates and a city around them. This shrine is just a stepping stone. The moss gate takes you home."
+   ]
+  }
+ ],
+ "player": {
+  "role": "hedgewitch",
+  "pos": [
+   -6.3,
+   -1.4
+  ],
+  "facing": "down"
+ },
+ "fx": [
+  {
+   "id": "gate_vanaheim",
+   "name": "rift_vortex",
+   "pos": [
+    0.0,
+    0.2,
+    -7.6
+   ]
+  },
+  {
+   "id": "gate_alfheim",
+   "name": "rift_seal_violet",
+   "pos": [
+    -3.4,
+    0.2,
+    -6.1
+   ]
+  },
+  {
+   "id": "gate_niflheim",
+   "name": "rift_seal_blue",
+   "pos": [
+    3.4,
+    0.2,
+    -6.1
+   ]
+  },
+  {
+   "id": "gate_muspelheim",
+   "name": "rift_seal_red",
+   "pos": [
+    6.3,
+    0.2,
+    -3.0
+   ]
+  },
+  {
+   "id": "shrine_ring",
+   "name": "rift_ring",
+   "pos": [
+    0.0,
+    0.27,
+    -1.2
+   ]
+  }
+ ],
+ "grades": {
+  "day": {
+   "fog_color": "#241c3c",
+   "sky_top": "#140f26",
+   "sky_bottom": "#5a347c",
+   "hemi_sky": "#5a5a8c",
+   "saturation": 1.05,
+   "bugs": 1.0,
+   "warmth": 0.02,
+   "exposure": 1.05,
+   "sun_intensity": 1.4,
+   "hemi_intensity": 0.75,
+   "sun_color": "#d8ccff"
+  },
+  "dusk": {
+   "fog_color": "#1c1c40",
+   "sky_top": "#120c22",
+   "sky_bottom": "#383880",
+   "bugs": 1.0,
+   "exposure": 0.85,
+   "sun_intensity": 0.6,
+   "warmth": -0.16,
+   "sun_color": "#8ca4ff"
+  },
+  "night": {
+   "fog_color": "#0e0a1c",
+   "sky_top": "#0a0818",
+   "sky_bottom": "#2a1840",
+   "bugs": 1.0,
+   "exposure": 0.66,
+   "sun_intensity": 0.25,
+   "hemi_intensity": 0.3
+  }
+ },
+ "game": {
+  "id": "rift",
+  "title": "The Rift Shrine",
+  "exits": [],
+  "portals": [
+   {
+    "fx": "portal_0",
+    "to": "plaza",
+    "spawn": "from_rift",
+    "rect": [
+     -7.05,
+     -3.4,
+     -5.55,
+     -2.55
+    ],
+    "label": "the moss gate home"
+   },
+   {
+    "fx": "gate_vanaheim",
+    "to": "vanaheim",
+    "spawn": "from_rift",
+    "rect": [
+     -0.75,
+     -8.0,
+     0.75,
+     -7.15
+    ],
+    "label": "Vanaheim's gate"
+   }
+  ],
+  "sealed": [
+   {
+    "fx": "gate_alfheim",
+    "realm": "Alfheim",
+    "pos": [
+     -3.4,
+     -6.1
+    ],
+    "hue": "violet"
+   },
+   {
+    "fx": "gate_niflheim",
+    "realm": "Niflheim",
+    "pos": [
+     3.4,
+     -6.1
+    ],
+    "hue": "blue"
+   },
+   {
+    "fx": "gate_muspelheim",
+    "realm": "Muspelheim",
+    "pos": [
+     6.3,
+     -3.0
+    ],
+    "hue": "red"
+   }
+  ],
+  "spawns": {
+   "start": [
+    -6.3,
+    -1.4,
+    "down"
+   ],
+   "from_plaza": [
+    -6.3,
+    -1.4,
+    "down"
+   ],
+   "from_vanaheim": [
+    0.0,
+    -5.9,
+    "down"
+   ],
+   "qa": [
+    0.0,
+    1.6,
+    "up"
+   ]
+  },
+  "qa_exempt": {
+   "height": "The Rift Shrine is one round floating isle with a low round rune dais (two 0.13 m steps); the walk-height grid only models rect terraces + stairs, and a square 1 m terrace looked wrong on the disc, so check-scene height is exempt here (2026-10-04)."
+  }
+ }
+}

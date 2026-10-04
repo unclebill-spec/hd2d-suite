@@ -29,7 +29,8 @@ const SLOT_V1 = 'hearthmoor-slot-1-v1';       // read once for migration (into s
 const V1_DONE = 'hearthmoor-v1-migrated';     // set when slot 1 is deleted, so the old v1 save doesn't come back
 const LAST_SLOT = 'hearthmoor-lastslot';
 const QA = Q.has('qa');                       // check-scene / screenshots: straight into ?area=, fresh state, no title, no saving
-const AREAS = { plaza: 'areas/plaza/', lane: 'areas/lane/', mossglen: 'areas/mossglen/', hollows: 'areas/hollows/' };
+const AREAS = { plaza: 'areas/plaza/', lane: 'areas/lane/', mossglen: 'areas/mossglen/', hollows: 'areas/hollows/',
+                rift: 'areas/rift/', vanaheim: 'areas/vanaheim/' };
 const DAY_SECONDS = Number(Q.get('day') || 1440);  // one whole day = 24 real minutes (day, dusk, night, dawn)
 const $ = (id) => document.getElementById(id);
 
@@ -274,6 +275,7 @@ async function loadArea(id, spawnKey, pos) {
   portraitImg = new Image(); portraitImg.src = AREAS[id] + ctx.scene.atlas.image;
   // pickups already taken stay gone
   for (const pk of gm.pickups || []) if (G.S.picked[pk.fx] && ctx.fx[pk.fx]) { ctx.gamefx.remove(ctx.fx[pk.fx]); delete ctx.fx[pk.fx]; }
+  applySwaps(ctx);
   // Pudding tags along between areas
   if (G.S.cat === 'follow' && !ctx.npc('cat')) {
     ctx.addNpc({ id: 'cat', role: 'cat', name: 'Pudding', pos: [ctx.player.x - 0.7, ctx.player.z + 0.5], behavior: 'follow', speed: 2.4, say: ['Mrrp!'] });
@@ -284,6 +286,44 @@ async function loadArea(id, spawnKey, pos) {
   document.title = `Hearthmoor · ${ctx.scene.name}`;
 }
 G.loadArea = loadArea;
+// flag-driven fx swaps (game.swaps: [{ fx, flag, is, name }]): e.g. Vanaheim's poisoned spring water becomes the
+// cleansed one once S.flags.vanaheim_spring === 'cleansed' (a later befriend quest sets it)
+function applySwaps(ctx) {
+  const F = G.S.flags || {};
+  for (const sw of ctx.scene.game?.swaps || []) {
+    const f = ctx.fx[sw.fx]; if (!f) continue;
+    const want = F[sw.flag] === sw.is ? sw.name : (sw.base || f.name);
+    if (f.name !== want) { ctx.gamefx.remove(f); ctx.fx[sw.fx] = ctx.gamefx.spawn(want, f.x, f.y, f.z, { duration: Infinity }); }
+  }
+}
+G.applySwaps = () => G.ctx && applySwaps(G.ctx);
+
+// ---- the Rainbow Rift (Stage 4): the Plaza's moss gate also opens on the Rift Shrine once the three errands are done
+// (or S.flags.rift, or ?rift for QA). Stepping in then asks where to go with the dialogue choice panel.
+function riftOpen() {
+  const S = G.S; return Q.has('rift') || !!(S.flags && S.flags.rift) || Object.values(S.quests || {}).filter((v) => v === 3).length >= 3;
+}
+G.riftOpen = riftOpen;
+function gateChoice(po) {
+  const opts = po.choose.map((c) => ({ label: c.label, pick: () => { go(c.to, c.spawn, 'portal'); return null; } }));
+  opts.push({ label: 'Stay here.', cancel: true, pick: () => null });
+  openDialogue({ id: 'moss_gate', name: po.gate_name || 'The moss gate' },
+    { pages: [po.ask || 'The swirl hums with two pulls. Where do you step?'], choice: { id: 'moss_gate', options: opts } });
+}
+// sealed realm gates (Rift Shrine): a prompt nearby, and E / A shows why it will not open
+function sealedNear(ctx) {
+  const p = ctx.player; return (ctx.scene.game?.sealed || []).find((g) => Math.abs(p.x - g.pos[0]) < 1.3 && p.z > g.pos[1] && p.z < g.pos[1] + 2.0) || null;
+}
+const SEAL_SAY = {
+  violet: 'Violet light pulses behind the stone, slow as a sleeping heart. Frost rimes the seal from the other side: someone froze it shut.',
+  blue: 'Cold-fire flickers blue under a skin of ice. The seal breathes mist, and the mist smells of Niflheim snow.',
+  red: 'A red glow beats behind the seal like embers under ash. It is warm to the touch, and locked tight.',
+};
+function sealedLook(ctx) {
+  const g = sealedNear(ctx); if (!g) return false;
+  openDialogue({ id: 'sealed_' + g.realm.toLowerCase(), name: `${g.realm}'s gate (sealed)` }, { pages: [SEAL_SAY[g.hue] || 'The gate is sealed.', 'It will not open yet. Bifrost Crossing has keys for gates like this, they say.'] });
+  return true;
+}
 
 async function go(to, spawnKey, how) {
   if (G.busy) return; G.busy = true;
@@ -350,13 +390,17 @@ function onFrame(dt, ctx) {
   const trig = [...(gm.exits || []).map((e) => ({ ...e, how: 'walk' })), ...(gm.portals || []).map((e) => ({ ...e, how: 'portal' }))];
   const inside = trig.find((e) => inRect(p, e.rect));
   if (!inside) G.armed = true;
-  else if (G.armed && !G.dlg) { go(inside.to, inside.spawn, inside.how); return; }
+  else if (G.armed && !G.dlg) {
+    if (inside.choose && riftOpen()) { G.armed = false; gateChoice(inside); return; }   // the moss gate: Mossglen or the Rift
+    go(inside.to, inside.spawn, inside.how); return;
+  }
   // pickups: walk over a glimmer
   const pk = nearPickup(ctx, 0.7); if (pk) pick(ctx, pk);
   // prompt near a gate or a glimmer
   let prompt = '';
   const close = trig.find((e) => Math.max(e.rect[0] - p.x, p.x - e.rect[2], e.rect[1] - p.z, p.z - e.rect[3]) < 1.6);
-  if (close) prompt = close.how === 'portal' ? `step into the swirl: ${close.label}` : close.label;
+  if (close) prompt = close.how === 'portal' ? `step into the swirl: ${close.choose && riftOpen() ? close.label_rift || close.label : close.label}` : close.label;
+  else { const sg = sealedNear(ctx); if (sg) prompt = `${sg.realm}'s gate is sealed (E / A to look)`; }
   const pe = $('prompt'); if (pe.textContent !== prompt) { pe.textContent = prompt; pe.hidden = !prompt; }
   G.audio.setNight(ctx.clock.grade ? (ctx.clock.grade().bugs ?? 0) : 0);
   G.autosave -= dt; if (G.autosave <= 0) { G.autosave = 20; save(); }
@@ -406,6 +450,7 @@ const hooks = {
     if (G.log) { setLog(false); return true; }
     if (G.busy) return true;
     if (kind !== 'tap' && G.hollows.interact()) return true;   // gnome doors
+    if (kind !== 'tap' && sealedLook(ctx)) return true;        // sealed Rift gates
     if (kind !== 'tap' && G.garden.interact()) return true;    // glow-garden plots: plant / check / harvest
     return false;
   },
@@ -424,6 +469,12 @@ const hooks = {
     for (const po of ctx.scene.game?.portals || []) {
       const f = ctx.fx[po.fx]; if (!f) continue;
       if (Math.abs(f.x - hit.x) < 1.2 && hit.z > f.z - 1.2 && hit.z < f.z + 2.0) { ctx.walkTo(f.x, (po.rect[1] + po.rect[3]) / 2); return true; }
+    }
+    for (const g of ctx.scene.game?.sealed || []) {   // tapping a sealed gate walks up to it; tapping it again up close looks
+      if (Math.abs(g.pos[0] - hit.x) < 1.3 && hit.z > g.pos[1] - 1.2 && hit.z < g.pos[1] + 2.0) {
+        if (sealedNear(ctx)) sealedLook(ctx); else ctx.walkTo(g.pos[0], g.pos[1] + 1.2);
+        return true;
+      }
     }
     return false;
   },
@@ -453,7 +504,7 @@ const hooks = {
     if (G.log) { if (name === 'y' || name === 'rb' || name === 'lb') { setLog(false); setHeroUI(true); return true; } if (name === 'a' || name === 'b' || name === 'start') setLog(false); return name !== 'select'; }
     if (name === 'start') { setLog(true); return true; }
     if (name === 'rs') { G.drinkTonic(); return true; }   // right-stick click drinks a tonic
-    if (name === 'y') { PADW.t = performance.now(); PADW.on = true; PADW.fired = false; return true; }   // tap casts, hold opens the wheel
+    if (name === 'y') { PADW.t = performance.now(); PADW.f = (window.__hd2d && window.__hd2d.frames) || 0; PADW.on = true; PADW.fired = false; return true; }   // tap casts, hold opens the wheel
     return false;
   },
   onPadRelease: (name) => {
@@ -463,7 +514,7 @@ const hooks = {
     return true;
   },
   onFrame,
-  nearThing: (ctx) => !!nearPickup(ctx, 1.4) || G.hollows.nearThing(ctx) || G.garden.nearThing(ctx),
+  nearThing: (ctx) => !!nearPickup(ctx, 1.4) || G.hollows.nearThing(ctx) || G.garden.nearThing(ctx) || !!sealedNear(ctx),
 };
 
 // ------------------------------------------------------------------ touch action buttons + slow-time spell wheel
@@ -474,11 +525,11 @@ function press(id, down, up) {
 }
 const WHEEL = { open: false, x0: 0, y0: 0, sel: -1, timer: null };
 // controller: hold Y for 0.35 s -> the same slow-time wheel; the left stick (or d-pad) picks, letting go of Y casts
-const PADW = { on: false, t: 0, fired: false };
+const PADW = { on: false, t: 0, f: 0, fired: false };   // f = drawn-frame count at the press (a frame hitch must not turn a tap into a hold)
 function padWheel() {
   if (!PADW.on) return;
   if (!PADW.fired) {
-    if (performance.now() - PADW.t < 350) return;
+    if (performance.now() - PADW.t < 350 || ((window.__hd2d && window.__hd2d.frames) || 0) - PADW.f < 3) return;
     if (hooks.blockInput()) { PADW.on = false; return; }
     PADW.fired = true; openWheel(innerWidth / 2, innerHeight / 2);
     return;

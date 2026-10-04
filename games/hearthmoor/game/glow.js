@@ -10,18 +10,32 @@ const TOADS = {
   plaza: [[-9.5, 4.6], [9.5, 5.0], [3.2, -4.4], [-11.5, -8.6]],
   lane: [[-10.2, -6.0], [9.5, 5.0], [-10.5, 5.0], [-11.8, 8.6]],
   hollows: [[-3.4, -1.6], [3.6, 3.6], [-10.8, 4.8], [-6.8, -6.6], [11.0, 3.8], [0.8, -2.3], [-6.0, 3.4], [6.8, 3.0], [-11.6, -5.0], [12.6, -8.6]],
+  vanaheim: [[-5.6, -6.2], [9.6, 2.8], [-7.0, 4.8], [-3.2, -7.6], [8.8, -4.2], [1.0, 5.4], [-10.6, -5.8]],
 };
 // areas that glow at every hour (the hollow is always dim), and their standing light pools: [x, z, kind, colour]
-const ALWAYS = { hollows: true };
+const ALWAYS = { hollows: true, rift: true };
 const POOLS = {
   hollows: [[-1.0, 1.4, 'light', '#9a6cd4'], [5.0, 0.2, 'cold', '#5ac8ff'], [-8.2, 1.4, 'cold', '#5ac8ff'],
             [-9.4, -6.4, 'light', '#9a6cd4'], [8.6, -6.6, 'cold', '#5ac8ff'], [1.8, 5.6, 'light', '#e47c8c'],
             // warm glow under each giant toadstool cap: a dithered decal only (the cap itself is self-lit), no extra light
             [-3.4, -1.6, 'under'], [3.6, 3.6, 'under'], [-10.8, 4.8, 'under'], [-6.8, -6.6, 'under'], [11.0, 3.8, 'under']],
+  // the Rift Shrine: cold fire before Vanaheim's open gate, a violet heart on the dais, faint pools at two sealed gates
+  rift: [[0.0, -6.0, 'cold', '#2ab4ff'], [0.0, -1.2, 'light', '#a45cf0'], [-3.4, -4.8, 'light', '#a45cf0'], [6.3, -1.7, 'light', '#e0302a']],
+  // Vanaheim: Veyra's violet poison glows in the spring and on the rune she burned into the glade
+  // (a 5th field switches a pool by a save flag: the cleansed spring turns from violet poison to clear cold blue)
+  vanaheim: [[4.6, -5.0, 'light', '#a45cf0', { flag: 'vanaheim_spring', is: 'cleansed', kind: 'cold', color: '#2ab4ff' }],
+             [5.6, 1.8, 'light', '#a45cf0'], [-9.6, 0.2, 'cold', '#2ab4ff'],
+             // two light pools along the path from the vine gate: a cold-fire one and a warm gold one
+             [-6.0, 1.1, 'cold', '#2ab4ff'], [-2.2, 2.2, 'light', '#f2c24a'],
+             // glow-plant clusters (the garden's blooms, growing wild): sprites + a ground pool decal, no point light of their own
+             [-4.4, 3.8, 'bloom', 'coldfire'], [1.8, -6.6, 'bloom', 'violet'], [-8.2, -4.4, 'bloom', 'coldfire'],
+             [-5.6, -6.2, 'under'], [9.6, 2.8, 'under'], [-7.0, 4.8, 'under']],
 };
 export const POOL_R = 2.2;
+const BLOOM = { coldfire: { fx: 'glowplant_coldfire', pool: 'coldfire_pool' }, violet: { fx: 'glowplant_violet', pool: 'violet_pool' } };
+const BLOOM_AT = [[-0.5, -0.1], [0.45, -0.3], [0.05, 0.4]];   // three plants per cluster
 // lamp kinds that make a light zone at night, and how far it reaches on the ground (metres)
-const LAMP_R = { lamp_post: 3.0, stone_lantern: 2.2, shrine: 2.6, portal: 2.0 };
+const LAMP_R = { lamp_post: 3.0, stone_lantern: 2.2, shrine: 2.6, portal: 2.0, rift: 2.0 };
 const WINDOW_R = 1.8;                               // shop / cottage window lamps
 export const LIT = { dmg: 1.1, regen: 1.5, poolLife: 1.8, poolR: 2.4, toadR: 2.0 };
 
@@ -35,8 +49,19 @@ export class Glow {
   // standing light pools (always on): pink/violet glow pools and neon-blue cold-fire pools with motes
   poolsOn() {
     const ctx = this.ctx, still = !!this.G.qaStill; if (!ctx) return;
-    for (const [x, z, kind, color] of POOLS[this.area] || []) {
+    const F = this.G.S.flags || {};
+    for (const P of POOLS[this.area] || []) {
+      let [x, z, kind, color, alt] = P;
+      if (alt && F[alt.flag] === alt.is) { kind = alt.kind; color = alt.color; }
       const y = ctx.heightAt(x, z), fx = [];
+      if (kind === 'bloom') {   // a wild cluster of garden glow plants (cold-fire blooms or violet glowbells) over their night pool
+        if (ctx.effects) {
+          const fr = (f) => (still ? { frame: f } : {});
+          fx.push(ctx.effects.spawn(BLOOM[color].pool, x, y, z + 0.03, { duration: 1e9, fadeIn: still ? 0 : 1, ...fr(0) }));
+          BLOOM_AT.forEach(([ox, oz], i) => fx.push(ctx.effects.spawn(BLOOM[color].fx, x + ox, ctx.heightAt(x + ox, z + oz), z + oz, { duration: 1e9, fadeIn: still ? 0 : 1.2, ...fr(i) })));
+        }
+        this.fixed.push({ x, z, r: 1.8, kind, fx, light: null }); continue;
+      }
       if (kind === 'under') {
         if (ctx.effects) fx.push(ctx.effects.spawn('light_pool', x, y, z + 0.03, { duration: 1e9, fadeIn: still ? 0 : 1, ...(still ? { frame: 0 } : {}) }));
         this.fixed.push({ x, z, r: 1.4, kind, fx, light: null }); continue;

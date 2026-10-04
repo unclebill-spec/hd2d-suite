@@ -507,7 +507,26 @@
   "facing": "up"
  },
  "spells": true,
- "sprite_roles": ["actors", "cat", "heroes", "shopkeeper", "nightmerchant", "gnome", "mushgolem", "runesentinel", "runewisp", "stormsprite", "sapling", "emberimp", "mushgolem_r", "runesentinel_r", "runewisp_r", "stormsprite_r", "sapling_r", "emberimp_r"],
+ "sprite_roles": [
+  "actors",
+  "cat",
+  "heroes",
+  "shopkeeper",
+  "nightmerchant",
+  "gnome",
+  "mushgolem",
+  "runesentinel",
+  "runewisp",
+  "stormsprite",
+  "sapling",
+  "emberimp",
+  "mushgolem_r",
+  "runesentinel_r",
+  "runewisp_r",
+  "stormsprite_r",
+  "sapling_r",
+  "emberimp_r"
+ ],
  "game": {
   "id": "plaza",
   "title": "Hearthmoor Plaza",
@@ -535,7 +554,21 @@
      -0.65,
      -8.05
     ],
-    "label": "the moss gate"
+    "label": "the moss gate",
+    "label_rift": "the moss gate (Mossglen, or the Rift Shrine)",
+    "ask": "The swirl hums with two pulls: the green hush of Mossglen, and far below it a cold rainbow glow. Where do you step?",
+    "choose": [
+     {
+      "to": "mossglen",
+      "spawn": "from_portal",
+      "label": "Mossglen (the green hush)"
+     },
+     {
+      "to": "rift",
+      "spawn": "from_plaza",
+      "label": "The Rift Shrine (the rainbow glow)"
+     }
+    ]
    }
   ],
   "spawns": {
@@ -550,6 +583,11 @@
     "up"
    ],
    "from_portal": [
+    -1.4,
+    -6.9,
+    "down"
+   ],
+   "from_rift": [
     -1.4,
     -6.9,
     "down"
