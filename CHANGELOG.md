@@ -2,6 +2,12 @@
 
 Dates are America/New_York. Newest first. Keep this current with every change you push.
 
+## 2026-10-04: Hearthmoor Stage 5, part 1 polish: paper sky lanterns and a bigger rift tear
+- **Sky lanterns redrawn** (`sky_lantern` in `tools/spells/spells.py`): the rising lanterns no longer read as orange eyeballs (the old round orange disc had a dark fish in the middle). They are now paper sky lanterns, a little taller than wide with a rounded crown. The cream-gold paper glows from inside: white-hot just above the flame, cream in the body, gold at the shoulders and a warm amber rim. They have soft dithered ribs, a bamboo hoop with a bright flickering flame at the bottom opening, a warm glint on the paper and a small twinkle circling each one. There is no dark centre.
+- **Rift tear enlarged** (`rift_tear`): it now fills the full 32 px cell height, zigzags harder, and has a fixed jagged lip profile and four short side cracks. The void has violet lips and a hard neon-red edge line, with red embers and sparks spitting off. Palette and NEON pixels only, no bloom.
+- Screenshots `docs/screenshots/stage5_lantern_eve_lanterns.png` and `stage5_lantern_eve_rift_tear.png` were refreshed from the smoke run.
+- **Checks:** smoke 166/166, Plaza check-scene 11/11. The first Plaza run measured 0 effect rects even though its shot showed the full lineup, a one-off timing flake; the re-run passed.
+
 ## 2026-10-04: Hearthmoor Stage 5, part 1: the Lantern Eve opening
 - **A new game now opens on Lantern Eve** (`game/intro.js`, class `Intro`): day 0 at dusk in the Plaza. After the hero pick and the auto-level ask, seven paper sky lanterns are lit and float up over the square. Each carries a warm light pool and sparkles, and two warm point lights ride along with them. Bram (the innkeeper) steps out and speaks, then the elder, a kid and the baker, all in the usual dialogue panel.
 - **The story beat:** a violet-red tear (`rift_tear`) flickers open over the moss gate and the lanterns stop in the air. A cold-fire wraith (`evewraith`: hp 30, light hits, no loot) slips out, and Bram's line starts the hero's first fight under the lanterns. When the wraith falls, the tear seals, the lanterns drift on, and the villagers send you off. The three existing errands follow as the **Lantern Eve tasks** (the quest log heading and the welcome toast say so).
