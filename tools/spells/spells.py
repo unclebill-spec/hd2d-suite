@@ -21,6 +21,7 @@ no glow, no blur: brightness comes from the palette's lightest steps, fades are 
   glow-gardening (Hearthmoor Stage 4): garden_plot (soil bed decal), glowplant_seed / _sprout, and the blooms
   glowplant_coldfire (neon-blue), glowplant_violet (neon violet), glowplant_toadcap (neon red, crisp white spots);
   violet_pool / red_pool (their night ground pools). Violet + saturated red use the named NEON glow accents.
+  Lantern Eve (Hearthmoor Stage 5): sky_lantern (a floating fish-orb paper lantern), rift_tear (Veyra's violet-red omen).
 
 Writes spells.png (atlas, one row per effect), <effect>.png strips, spells.json (frames + effect presets the
 runtime plays: kind, fps, loop, pivot, lift, point-light flash curve), spells_contact_4x.png.
@@ -921,6 +922,80 @@ def red_pool(pal, seed):
     return _bloom_pool(pal, seed, ["neon_red_hi", "neon_red", "neon_red_lo"], "rpool")
 
 
+
+def sky_lantern(pal, seed):
+    """Lantern Eve (Hearthmoor opening): a floating paper orb lantern with a glowing fish swimming inside it.
+    Self-lit palette pixels only (no bloom): white-hot heart, lamp / flower_gold paper, a roof-red rim, a dark fish
+    silhouette that drifts across the orb, a timber cap and a tiny candle flame + tassel under it."""
+    out = []
+    for f in range(6):
+        F = Frame(pal)
+        bob = [0, 0, -1, -1, 0, 0][f]
+        cx, cy = 16, 15 + bob
+        F.disk(cx, cy, 6.4, ["white", "lamp", "lamp", "flower_gold", "flower_gold"])
+        F.ring(cx, cy, 6.6, 6.6, "roof")
+        for dy in (-4, 0, 4):                      # paper ribs
+            for x in range(cx - 5, cx + 6):
+                if F.get(x, cy + dy) in ("lamp", "flower_gold") and (x + f) % 2 == 0:
+                    F.set(x, cy + dy, "flower_gold")
+        fx = cx - 3 + [0, 1, 2, 3, 2, 1][f]      # the fish swims across the glow and back
+        face = 1 if f < 3 else -1
+        for (dx, dy) in ((0, 0), (1, 0), (-1, 0), (0, -1), (0, 1), (-1, -1), (-1, 1)):
+            F.set(fx + dx * face, cy + 1 + dy, "roof_lo")
+        F.set(fx - 2 * face, cy, "roof_lo"); F.set(fx - 2 * face, cy + 2, "roof_lo")   # tail
+        F.set(fx + face, cy, "white")                                                  # eye glint
+        F.set(cx - 2, cy - 4, "white"); F.set(cx - 3, cy - 3, "white")                 # paper highlight
+        for x in range(cx - 2, cx + 3):
+            F.set(x, cy - 7, "timber_lo")
+        F.set(cx, cy - 8, "timber")
+        fl = ["lamp", "white", "lamp", "flower_gold", "white", "lamp"][f]
+        F.set(cx, cy + 8, fl); F.set(cx, cy + 9, "flower_gold" if f % 2 else "lamp")
+        F.set(cx - 1, cy + 7, "roof"); F.set(cx + 1, cy + 7, "roof")
+        F.set(cx, cy + 11, "flower_rose"); F.set(cx, cy + 12, "flower_rose" if f % 3 else None)
+        out.append(F)
+    return out
+
+
+def rift_tear(pal, seed):
+    """Lantern Eve's omen: a jagged violet-red tear in the air over the moss gate. A black void seam with neon violet
+    lips, neon red flecks crawling along the edge and sparks spitting off; it breathes and flickers (no bloom)."""
+    out = []
+    R = rng(seed, "tear")
+    path = []
+    x = 16.0
+    for y in range(2, 31):
+        x += R.choice((-1, 0, 0, 1)) * (1 if 6 < y < 26 else 0)
+        x = max(12, min(20, x))
+        path.append((y, x))
+    sparks = [(R.randrange(len(path)), R.choice((-1, 1)), R.randrange(8)) for _ in range(7)]
+    for f in range(8):
+        F = Frame(pal)
+        breathe = [1.0, 1.25, 0.9, 1.4, 1.1, 0.8, 1.3, 1.0][f]
+        for i, (y, x) in enumerate(path):
+            t = i / (len(path) - 1)
+            w = max(0.0, math.sin(t * math.pi)) ** 0.7 * 3.4 * breathe
+            for dx in range(-7, 8):
+                d = abs(dx) - w
+                if d <= -1.0:
+                    F.set(x + dx, y, "ink" if (x + dx + 2 * y + f) % 7 else "neon_violet_lo")
+                elif d <= 0.0:
+                    F.set(x + dx, y, "neon_violet_hi" if (y + f) % 3 == 0 else "neon_violet")
+                elif d <= 1.0:
+                    F.set(x + dx, y, "neon_red" if (y + f) % 4 else "neon_red_hi")
+                elif d <= 2.2 and (y + dx + f) % 2 == 0:
+                    F.set(x + dx, y, "neon_red_lo")
+        for k, (i, side, ph) in enumerate(sparks):
+            b = (f + ph) % 8
+            if b > 4:
+                continue
+            y, x = path[i]
+            sx = x + side * (3 + b * 1.5)
+            F.set(sx, y - b * 0.5, "neon_red_hi" if b < 2 else "neon_red")
+            if b == 1:
+                F.set(sx, y - 1, "white")
+        out.append(F)
+    return out
+
 EFFECTS = {
     "sparkle_burst": dict(fn=sparkle_burst, kind="billboard", fps=14, loop=False, pivot=[16, 31], lift=0.9,
                           glow=True, light={"color": "lamp", "intensity": 7, "range": 4.5, "curve": [1, 0.9, 0.7, 0.5, 0.3, 0.2, 0.1, 0]}),
@@ -979,6 +1054,8 @@ EFFECTS = {
     "violet_pool": dict(fn=violet_pool, kind="decal", fps=6, loop=True, loop_from=0, pivot=[16, 16], lift=0.02, loops=1, glow=True, light=None, combat=True),
     "red_pool": dict(fn=red_pool, kind="decal", fps=6, loop=True, loop_from=0, pivot=[16, 16], lift=0.02, loops=1, glow=True, light=None, combat=True),
     "glowplant_toadcap": dict(fn=glowplant_toadcap, kind="billboard", fps=3, loop=True, pivot=[16, 31], lift=0.0, loops=1, glow=True, light=None, combat=True),
+    "sky_lantern": dict(fn=sky_lantern, kind="billboard", fps=6, loop=True, pivot=[16, 31], lift=0.0, loops=1, glow=True, light=None, combat=True),
+    "rift_tear": dict(fn=rift_tear, kind="billboard", fps=10, loop=True, pivot=[16, 31], lift=0.0, loops=1, glow=True, light=None, combat=True),
     "toadstools": dict(fn=toadstools, kind="billboard", fps=3, loop=True, pivot=[16, 31], lift=0.0, loops=1, glow=True, light=None, combat=True),
 }
 # what the player's spell key cycles through, and what a cast spawns (effect, where)

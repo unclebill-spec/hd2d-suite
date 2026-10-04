@@ -510,6 +510,8 @@
  "sprite_roles": [
   "actors",
   "cat",
+  "wraith",
+  "innkeeper",
   "heroes",
   "shopkeeper",
   "nightmerchant",

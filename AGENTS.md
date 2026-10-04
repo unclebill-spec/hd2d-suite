@@ -58,6 +58,12 @@ Bill (GitHub `unclebill-spec`) hands this project between his bots and Cursor th
     - Controller hold: `PADW.f` = `__hd2d.frames` at the press; the wheel opens only after 350 ms and 3 drawn frames.
     - QA lineup: `__hd2d.gamefxLineup(frameFrac, page, per = 7)` + `gamefxPages()`; check-scene loops the pages. Smoke helper `T.frames(n)`.
     - Mossbrook art pass: `game.swaps` [{fx, flag, is, name, base}] work through `applySwaps(ctx)` in `loadArea`, so `spring_water` is `spring_poison` until `S.flags.vanaheim_spring === 'cleansed'`, then `spring_clean`. In glow.js `POOLS`, a 5th field {flag, is, kind, color} overrides a pool, and the `bloom` kind ([x, z, 'bloom', 'coldfire' | 'violet']) spawns 3 garden glow plants plus their pool decal with no `addGlow`.
+  - **Stage 5 part 1 Lantern Eve opening (2026-10-04):**
+    - `game/intro.js` `Intro` (`G.intro`): `start(force)` runs in the Plaza only and only while `S.flags.intro` is unset (tests call `G.intro.start(true)`). Steps are `lanterns` → `talk` → `tear` → `fight` → `after`. `finish('done' | 'skipped')`, `skip()`, `abandon()` (called by `loadArea`), `blocking()` (in `blockInput`, lantern and tear beats only), test API `state()`.
+    - `S.flags.intro`: `playing` / `done` / `skipped`. `resume()` turns `playing` into `skipped`, so Continue never replays it. `startNew` sets `G.introNext` (not with `?nointro`), and `playIntro()` runs after the auto-level ask.
+    - Skip: Esc in keydown, pad B while active, `#introSkip` chip (`press()`, pointerdown; it needs `pointer-events: auto` because `#hud` passes clicks through).
+    - The lines use `G.openDialogue(id, pages, then)` / `G.dropDialogue()`. The wraith is `combat.spawnEnemy({id: 'eve_wraith', role: 'wraith', def: 'evewraith', noLoot: true})`. `sp.def` selects the `ENEMIES` entry, falling back to `sp.role`. Effects `sky_lantern` and `rift_tear` are in `spells.py`. The Plaza sheet has the `innkeeper` and `wraith` roles.
+    - Next (Stage 5): procedural rares + random rifts, then factions + merit, then a Ravenhold slice.
   - **In the game (Stage 1, 2026-10-03):** the title opens a hero picker for the 6 starters and the chosen class is the player (saved in `hearthmoor-slot-1-v2`). Real-time combat lives in `game/combat.js`: 3 enemies in Mossglen (stone golem, skeleton swordsman, cold-fire wraith, plus a night wraith), HP / stamina, guard, dodge-roll i-frames, pixel damage numbers, a class spell + summon per hero, cozy defeat. Enemy + summon sprites: `tools/sprite/roles_enemies.py` (`hd2d sprite --roles combat`); combat VFX: new `tools/spells` effects.
 - **Toolset:** a Python CLI `bin/hd2d` with 13 tools, which generates original pixel art and assembles lit three.js r160 dioramas (static ES modules, no build step).
 - **Demos:** `demos/hearthmoor-plaza`, `demos/bakery-lane` (+ zips).
@@ -120,7 +126,7 @@ bin/hd2d assemble scenes/hearthmoor-plaza.json --out demos/hearthmoor-plaza [--n
 python3 games/hearthmoor/build.py [--skip-assemble] [--no-zip]   # rebuild areas, icons, manifest, sw.js, zip
 ```
 
-Useful URL params: `?pad=1`, `?hand=left`, `?t=day|dusk|night`, `?freeze`. For the game: `?qa&area=plaza|lane|mossglen` (fresh state, no title, no saving), `?reset`, `?nosw`, `?day=SECONDS`, `?simscale=N`.
+Useful URL params: `?pad=1`, `?hand=left`, `?t=day|dusk|night`, `?freeze`. For the game: `?qa&area=plaza|lane|mossglen` (fresh state, no title, no saving), `?reset`, `?nosw`, `?day=SECONDS`, `?simscale=N`, `?nointro` (new game without the Lantern Eve opening).
 
 ## Checks and smoke test (must pass)
 ```

@@ -49,6 +49,8 @@ export const ENEMIES = {
   golem: { name: 'Stone golem', hp: 120, dmg: 18, speed: 1.05, reach: 1.6, windup: 0.62, cd: 1.9, aggro: 5.5, r: 0.36, push: 0.2 },
   skeleton: { name: 'Skeleton swordsman', hp: 60, dmg: 10, speed: 2.0, reach: 1.2, windup: 0.36, cd: 1.15, aggro: 6.0, r: 0.28, push: 0.5 },
   wraith: { name: 'Cold-fire wraith', hp: 45, dmg: 9, speed: 1.6, reach: 6.0, keep: 3.2, windup: 0.5, cd: 2.3, aggro: 6.5, r: 0.26, push: 0.6, ranged: true, float: true, shy: true },
+  // Lantern Eve's wraith (the opening fight, Plaza): the wraith sprite, not light-shy (it fights under the lanterns), gentler
+  evewraith: { name: 'Rift wraith', hp: 30, dmg: 5, speed: 1.5, reach: 5.0, keep: 2.6, windup: 0.7, cd: 2.8, aggro: 14, r: 0.26, push: 0.5, ranged: true, float: true },
   // stage 3: a frost golem (its slam chills: drains stamina), a skeleton mage (arcane bolts from range), and
   // Mossheart, the Mossglen mini-boss (every third slam is a rune shockwave; always drops a Legendary)
   icegolem: { name: 'Frost golem', hp: 140, dmg: 15, speed: 1.0, reach: 1.6, windup: 0.66, cd: 2.0, aggro: 5.5, r: 0.36, push: 0.2, heavy: true, slam: true, chill: 18 },

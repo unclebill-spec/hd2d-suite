@@ -286,3 +286,10 @@ body.tv #dlg { width: min(900px, 80vw); } body.tv #dlg p { font-size: 20px; }
 #dlg .choice .k { flex: none; width: 20px; height: 20px; display: grid; place-items: center; background: var(--wood); color: var(--parch-hi); border-radius: 2px; font: 700 12px system-ui; }
 #dlg .choice.sel { background: var(--parch-hi); box-shadow: inset 0 0 0 2px var(--wood-hi); }
 #dlg .choice.sel .k { background: var(--rose); }
+
+/* Lantern Eve opening: the skip chip (Esc / B / tap), carved wood, top centre (clear of the HUD chips), above the dialogue */
+#introSkip { position: fixed; top: max(10px, env(safe-area-inset-top)); left: 50%; transform: translateX(-50%); z-index: 40; min-width: 64px; min-height: 34px;
+             background: var(--wood); color: var(--parch-hi); border: 2px solid var(--wood-lo); border-radius: 5px; box-shadow: inset 0 0 0 2px var(--wood-hi), 0 2px 0 #1b1716a0;
+             font: 700 14px/1 "Trebuchet MS", system-ui, sans-serif; padding: 6px 12px; cursor: pointer; touch-action: none; pointer-events: auto; }
+#introSkip span { font-size: 11px; letter-spacing: -2px; }
+#introSkip:active { transform: translateX(-50%) translateY(1px); }

@@ -81,7 +81,7 @@ export class Combat {
     this.nums = []; this.bars.clear();
   }
   spawnEnemy(sp, poof = false) {
-    const ctx = this.ctx, D = ENEMIES[sp.role];
+    const ctx = this.ctx, D = ENEMIES[sp.def || sp.role];   // sp.def: a stat variant drawn with the role's sprite (Lantern Eve's wraith)
     const a = ctx.addNpc({ id: sp.id, role: sp.role, name: D.name, pos: sp.pos.slice(), behavior: 'idle', turn: false, speed: D.speed });
     a.ai = true; a.noTalk = true; a.r = D.r; a.facing = 'down';
     const e = { a, D, sp, id: sp.id, home: sp.pos.slice(), hp: D.hp, state: 'idle', t: 0, cd: 1, wt: 1 + Math.random() * 2, target: null,

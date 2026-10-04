@@ -12,6 +12,7 @@ import { Glow } from './glow.js';
 import { Hollows } from './hollows.js';
 import { Garden } from './garden.js';
 import { Weather, weatherAt } from './weather.js';
+import { Intro } from './intro.js';
 import * as LO from './loot.js';
 import { Shop, drinkTonic, goodIconURL } from './shop.js';
 
@@ -49,6 +50,7 @@ G.glow = new Glow(G);
 G.hollows = new Hollows(G);
 G.garden = new Garden(G);
 G.weather = new Weather(G);
+G.intro = new Intro(G);
 G.weatherAt = weatherAt;   // smoke: the weather calendar
 G.loot = new LO.Loot(G); G.LO = LO; G.PR = PR;
 G.shopUI = new Shop(G); G.drinkTonic = () => drinkTonic(G);
@@ -236,6 +238,9 @@ function choicePick(i) {
   save();
 }
 function choiceCancel() { const d = G.dlg, k = d.choice.options.findIndex((o) => o.cancel); if (k >= 0) choicePick(k); else { d.picking = false; d.then = null; closeDialogue(); } }
+G.openDialogue = (npc, entry) => openDialogue(npc, entry);
+G.dropDialogue = () => { G.dlg = null; $('dlg').hidden = true; $('dlgChoices').hidden = true; document.body.classList.remove('dlgopen'); };
+G.refreshMarkers = () => refreshMarkers();
 G.dlgChoice = () => (G.dlg && G.dlg.picking ? { options: G.dlg.choice.options.map((o) => o.label), ci: G.dlg.ci } : null);
 G.choicePick = (i) => choicePick(i);
 function drawPortrait(npc) {
@@ -261,6 +266,7 @@ async function loadArea(id, spawnKey, pos) {
   let sp = pos ? { x: pos[0], z: pos[1], facing: pos[2] } : null;
   if (!sp) { const s = (gm.spawns || {})[spawnKey] || (gm.spawns || {}).start; if (s) sp = { x: s[0], z: s[1], facing: s[2] }; }
   if (G.game) { G.game.dispose(); G.game = null; G.ctx = null; }
+  G.intro.abandon();
   G.markers = {};
   const old = $('view'); if (old) old.remove();
   const canvas = document.createElement('canvas'); canvas.id = 'view'; document.body.prepend(canvas);
@@ -381,7 +387,7 @@ function onFrame(dt, ctx) {
   if (toastT > 0) { toastT -= dt; const el = $('toast'); if (toastT <= 0.35) el.classList.add('out'); if (toastT <= 0) { el.hidden = true; el.classList.remove('out'); } }
   syncMarkers();
   padWheel();
-  G.hollows.update(dt); G.garden.update(dt); G.glow.update(dt); G.weather.update(dt);
+  G.hollows.update(dt); G.garden.update(dt); G.glow.update(dt); G.weather.update(dt); G.intro.update(dt);
   G.loot.update(dt); G.shopUI.update(dt);
   G.combat.update(dt, ctx);
   drawVitals(ctx);
@@ -432,7 +438,7 @@ function drawVitals(ctx) {
 }
 
 const hooks = {
-  blockInput: () => !!(G.dlg || G.busy || G.title || G.log || G.downed || G.opts || G.picking || G.heroUI || G.shop || G.asking || WHEEL.open || G.hollows.busy()),
+  blockInput: () => !!(G.dlg || G.busy || G.title || G.log || G.downed || G.opts || G.picking || G.heroUI || G.shop || G.asking || WHEEL.open || G.hollows.busy() || G.intro.blocking()),
   rollMods: () => { const M = G.combat.M; return { speed: M.rollSpeed, iframes: M.rollIframes }; },
   onCast: (name) => {
     const C = G.combat, s0 = C.cd.spell || 0, c0 = C.cd.charm || 0, ok = C.cast(name);
@@ -499,6 +505,7 @@ const hooks = {
     if (G.shop) { G.shopUI.pad(name); return true; }
     if (G.opts) { if (name === 'y') cycleWeather(); else if (name === 'b' || name === 'start' || name === 'a') setOpts(false); return true; }
     if (G.busy || G.downed) return true;
+    if (G.intro.active && name === 'b') { G.intro.skip(); return true; }   // B skips the Lantern Eve opening
     if (G.dlg && G.dlg.picking) { if (name === 'up') choiceMove(-1); else if (name === 'down') choiceMove(1); else if (name === 'a') choicePick(G.dlg.ci); else if (name === 'b') choiceCancel(); return true; }
     if (G.dlg) { if (name === 'a') advanceDialogue(); else if (name === 'b') closeDialogue(); return name !== 'select'; }
     if (G.log) { if (name === 'y' || name === 'rb' || name === 'lb') { setLog(false); setHeroUI(true); return true; } if (name === 'a' || name === 'b' || name === 'start') setLog(false); return name !== 'select'; }
@@ -788,6 +795,7 @@ function wire() {
       return;
     }
     if (G.asking) { if (k === 'y') askPick(true); else if (k === 'n' || k === 'escape') askPick(false); else if (k.startsWith('arrow') || k === 'a' || k === 'd') askMove(); else if (k === 'enter' || k === ' ') { e.preventDefault(); askPick(ASK.yes); } e.stopImmediatePropagation(); return; }
+    if (G.intro.active && k === 'escape' && !G.heroUI && !G.shop && !G.opts) { e.preventDefault(); e.stopImmediatePropagation(); G.intro.skip(); return; }   // Esc skips the opening
     if (G.heroUI) { e.stopImmediatePropagation(); heroKey(k, e); return; }
     if (G.shop) { e.stopImmediatePropagation(); G.shopUI.key(k, e); return; }
     if (k === 'u' && !hooks.blockInput()) { G.drinkTonic(); return; }
@@ -805,6 +813,7 @@ function wire() {
   addEventListener('keydown', () => G.audio.start(), { once: true });
   addEventListener('visibilitychange', () => { if (document.visibilityState === 'hidden') save(); });
   addEventListener('pagehide', () => save());
+  press('introSkip', () => G.intro.skip());   // tap / click 'skip' (pointerdown, so it never reaches the field)
   $('btnNew').onclick = () => newGame();
   $('btnCont').onclick = () => cont();
   $('btnCopy').onclick = () => slotCopy();
@@ -910,9 +919,10 @@ async function startNew(cls) {
   applyHero();
   drawBag(); drawLog(); refreshMarkers();
   save();
-  toast(`Welcome to Hearthmoor, ${HERO[cls].cls}. Marla the baker is waving at you.`, 3.2);
+  toast(`Welcome to Hearthmoor, ${HERO[cls].cls}. It is Lantern Eve!`, 3.2);
+  G.introNext = !Q.has('nointro');   // the Lantern Eve opening plays once the auto-level question is answered
   if (G.S.autoLevel == null && !Q.has('autolevel')) askAuto();
-  else if (Q.has('autolevel')) G.S.autoLevel = Q.get('autolevel') !== '0';
+  else { if (Q.has('autolevel')) G.S.autoLevel = Q.get('autolevel') !== '0'; playIntro(); }
   if (Q.has('mode') && PR.MODES[Q.get('mode')]) G.S.mode = Q.get('mode');
 }
 // replacing a save takes a second press of New game (works with touch, mouse, keys and a controller; no browser dialog)
@@ -935,6 +945,7 @@ async function cont() {
 }
 async function resume(s) {
   G.S = { ...fresh(), ...s, v: 2 }; PR.ensure(G.S);
+  G.introNext = false; if (G.S.flags && G.S.flags.intro === 'playing') G.S.flags.intro = 'skipped';   // Continue never replays the opening
   closeTitle();
   G.busy = true;
   $('fade').className = 'on';
@@ -971,10 +982,12 @@ const ASK = { yes: true };
 function askAuto() { G.asking = true; ASK.yes = true; $('autolv').hidden = false; syncAsk(); }
 function syncAsk() { $('btnAutoYes').classList.toggle('on', ASK.yes); $('btnAutoNo').classList.toggle('on', !ASK.yes); }
 function askMove() { ASK.yes = !ASK.yes; syncAsk(); }
+function playIntro() { if (G.introNext) { G.introNext = false; if (!G.intro.start()) { G.S.flags.intro = G.S.flags.intro || 'skipped'; save(); } } }
 function askPick(yes) {
   G.asking = false; $('autolv').hidden = true;
   G.S.autoLevel = !!yes; if (yes) PR.autoSpend(G.S);
   syncAutoBtn(); save();
+  setTimeout(playIntro, 300);
   toast(yes ? 'Auto level on: stat points follow your class. Change it in options (O).' : 'Manual leveling: spend points on the hero screen (I).', 3.2);
 }
 const MODE_TIP = { story: 'Story mode: gentle hits, no faint penalty.', adventurer: 'Adventurer mode: fainting drops 10% of your gold (walk back for it).', hero: 'Hero mode: foes hit harder, better loot; fainting drops 10% of your gold.' };

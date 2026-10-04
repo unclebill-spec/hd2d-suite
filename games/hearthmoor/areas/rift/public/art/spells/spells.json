@@ -6,7 +6,7 @@
  "cell": 32,
  "size": [
   256,
-  1152
+  1216
  ],
  "effects": {
   "sparkle_burst": {
@@ -2397,10 +2397,10 @@
    ],
    "duration": 1.333
   },
-  "toadstools": {
+  "sky_lantern": {
    "row": 35,
-   "frames": 4,
-   "fps": 3,
+   "frames": 6,
+   "fps": 6,
    "loop": true,
    "loop_from": 0,
    "loops": 1,
@@ -2415,7 +2415,7 @@
    "speed": null,
    "travel": null,
    "then": null,
-   "strip": "toadstools.png",
+   "strip": "sky_lantern.png",
    "frame_list": [
     {
      "x": 0,
@@ -2438,6 +2438,136 @@
     {
      "x": 96,
      "y": 1120,
+     "w": 32,
+     "h": 32
+    },
+    {
+     "x": 128,
+     "y": 1120,
+     "w": 32,
+     "h": 32
+    },
+    {
+     "x": 160,
+     "y": 1120,
+     "w": 32,
+     "h": 32
+    }
+   ],
+   "duration": 1.0
+  },
+  "rift_tear": {
+   "row": 36,
+   "frames": 8,
+   "fps": 10,
+   "loop": true,
+   "loop_from": 0,
+   "loops": 1,
+   "kind": "billboard",
+   "pivot": [
+    16,
+    31
+   ],
+   "lift": 0.0,
+   "glow": true,
+   "light": null,
+   "speed": null,
+   "travel": null,
+   "then": null,
+   "strip": "rift_tear.png",
+   "frame_list": [
+    {
+     "x": 0,
+     "y": 1152,
+     "w": 32,
+     "h": 32
+    },
+    {
+     "x": 32,
+     "y": 1152,
+     "w": 32,
+     "h": 32
+    },
+    {
+     "x": 64,
+     "y": 1152,
+     "w": 32,
+     "h": 32
+    },
+    {
+     "x": 96,
+     "y": 1152,
+     "w": 32,
+     "h": 32
+    },
+    {
+     "x": 128,
+     "y": 1152,
+     "w": 32,
+     "h": 32
+    },
+    {
+     "x": 160,
+     "y": 1152,
+     "w": 32,
+     "h": 32
+    },
+    {
+     "x": 192,
+     "y": 1152,
+     "w": 32,
+     "h": 32
+    },
+    {
+     "x": 224,
+     "y": 1152,
+     "w": 32,
+     "h": 32
+    }
+   ],
+   "duration": 0.8
+  },
+  "toadstools": {
+   "row": 37,
+   "frames": 4,
+   "fps": 3,
+   "loop": true,
+   "loop_from": 0,
+   "loops": 1,
+   "kind": "billboard",
+   "pivot": [
+    16,
+    31
+   ],
+   "lift": 0.0,
+   "glow": true,
+   "light": null,
+   "speed": null,
+   "travel": null,
+   "then": null,
+   "strip": "toadstools.png",
+   "frame_list": [
+    {
+     "x": 0,
+     "y": 1184,
+     "w": 32,
+     "h": 32
+    },
+    {
+     "x": 32,
+     "y": 1184,
+     "w": 32,
+     "h": 32
+    },
+    {
+     "x": 64,
+     "y": 1184,
+     "w": 32,
+     "h": 32
+    },
+    {
+     "x": 96,
+     "y": 1184,
      "w": 32,
      "h": 32
     }

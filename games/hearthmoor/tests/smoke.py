@@ -20,6 +20,7 @@ work, and the page never scrolls or zooms.
 Writes screenshots + smoke.json. Exit 0 = pass.
 """
 import argparse
+import math
 import functools
 import json
 import sys
@@ -245,6 +246,74 @@ def run(out, simscale=4, size=(960, 540)):
             pg.keyboard.press("ArrowRight"); pg.wait_for_timeout(100); pg.keyboard.press("Enter"); pg.wait_for_timeout(300)
             T.step("new game asks 'Auto level? Yes / No' (No = manual)", not T.ev("window.__hm.asking") and T.ev("window.__hm.S.autoLevel") is False and T.ev("window.__hm.S.mode") == "adventurer"
                    and T.ev("window.__hm.S.lv") == 1 and T.ev("window.__hm.S.stats.might") == 7)
+            # ---------------------------------------------------------- Lantern Eve opening (Stage 5): plays once on a new game
+            T.wait("window.__hm.intro.active", 30)
+            ist = lambda: T.ev("window.__hm.intro.state()")
+            i0 = ist()
+            T.step("Lantern Eve opening starts on a new game: day 0, dusk, 7 lanterns lit, skip chip up", i0["active"] and i0["lanterns"] == 7 and i0["flag"] == "playing"
+                   and abs(T.ev("window.__hm.ctx.clock.t") - 0.76) < 0.03 and T.ev("!document.getElementById('introSkip').hidden") and (T.S().get("day") or 0) == 0, intro=i0)
+            T.wait("window.__hm.intro.state().rising >= 5 && window.__hm.intro.state().maxUp > 0.5", 90)
+            pools = T.ev("window.__hd2d.effects.list.filter((f) => f.name === 'light_pool').length")
+            lan = T.ev("window.__hd2d.effects.list.filter((f) => f.name === 'sky_lantern').map((f) => +f.y.toFixed(2))")
+            warm = T.ev("window.__hm.ctx.glows.filter((g) => !g.kill && g.color.r > 0.9 && g.color.b < 0.5).length")
+            rep["shots"]["lantern_eve_lanterns"] = T.shot("lantern_eve_lanterns")
+            T.step("lanterns float up as glowing pools of light (light pools + sparkles, warm lights riding along)", len(lan) == 7 and max(lan) > min(lan) + 0.3
+                   and pools >= 5 and warm >= 2, lanterns=lan, pools=pools, warm=warm)
+            T.wait("!!window.__hm.dlg", 60)
+            who = []
+            for _ in range(60):
+                if T.ev("window.__hm.intro.state().step") != "talk":
+                    break
+                nm = T.ev("window.__hm.dlg ? document.getElementById('dlgName').textContent : ''")
+                if nm and (not who or who[-1] != nm):
+                    who.append(nm)
+                pg.keyboard.press("e"); pg.wait_for_timeout(160)
+            T.step("Bram and the villagers speak in the dialogue panel (Bram, Grandpa Alder, Tib, Marla)", len(who) == 4 and "Bram" in who[0] and "Alder" in who[1] and who[2] == "Tib" and "Marla" in who[3], who=who)
+            T.wait("window.__hm.intro.state().tear", 30); pg.wait_for_timeout(1200)
+            i1 = ist()
+            tear = T.ev("window.__hd2d.effects.list.some((f) => f.name === 'rift_tear')")
+            violet = T.ev("window.__hm.ctx.glows.some((g) => !g.kill && g.color.r > 0.5 && g.color.b > 0.5 && g.color.g < 0.4)")
+            rep["shots"]["lantern_eve_rift_tear"] = T.shot("lantern_eve_rift_tear")
+            T.step("a violet-red tear flickers open over the moss gate; the lanterns freeze in the air", i1["tear"] and i1["frozen"] and tear and violet, intro=i1)
+            T.wait("window.__hm.intro.state().wraith", 30)
+            ew = T.ev("(() => { const e = window.__hm.combat.enemies.find((x) => x.id === 'eve_wraith'); return e ? [e.a.role, e.D.name, e.D.shy || false] : null; })()")
+            T.read_all()
+            T.step("a cold-fire wraith slips out of the tear (not light-shy: it fights under the lanterns)", ew and ew[0] == "wraith" and not ew[2] and T.ev("window.__hm.intro.state().step") == "fight", wraith=ew)
+            hits = 0
+            for _ in range(40):
+                if not T.ev("window.__hm.intro.state().wraith"):
+                    break
+                w = T.ev("(() => { const e = window.__hm.combat.enemies.find((x) => x.id === 'eve_wraith'); return e ? [e.a.x, e.a.z] : null; })()")
+                p0 = T.pos()
+                if w and math.hypot(w[0] - p0[0], w[1] - p0[1]) > 1.1:
+                    T.walk(w[0], w[1] + 0.7, 30)
+                    T.ev(f"window.__hm.ctx.player.facing = 'up'")
+                pg.keyboard.press("r"); pg.wait_for_timeout(450); hits += 1
+            T.step("the first fight happens under the lanterns: R attacks land and the wraith falls", not T.ev("window.__hm.intro.state().wraith"), swings=hits)
+            for _ in range(40):
+                if not T.ev("window.__hm.intro.active"):
+                    break
+                if T.ev("!!window.__hm.dlg"):
+                    pg.keyboard.press("e")
+                pg.wait_for_timeout(160)
+            S = T.S()
+            T.step("the tear seals and the three errands follow as the Lantern Eve tasks (flag done, skip chip gone)", not T.ev("window.__hm.intro.active") and S["flags"].get("intro") == "done"
+                   and not T.ev("window.__hd2d.effects.list.some((f) => f.name === 'rift_tear' && f.t < f.dur - 0.5)") and T.ev("document.getElementById('introSkip').hidden")
+                   and S["quests"] == {"bread": 0, "tea": 0, "cat": 0} and "Lantern Eve tasks" in T.ev("document.querySelector('#log .head b').textContent")
+                   and not T.ev("!!window.__hm.ctx.npc('eve_bram')"))
+            # skip paths (replayed for the test): Esc on the keyboard, B on the controller
+            T.ev("window.__hm.intro.start(true)"); T.wait("window.__hm.intro.state().lanterns === 7", 20); pg.wait_for_timeout(300)
+            pg.keyboard.press("Escape"); pg.wait_for_timeout(400)
+            T.step("Esc skips the opening: lanterns, Bram and the tear cleaned up, flag 'skipped'", not T.ev("window.__hm.intro.active") and T.ev("window.__hm.S.flags.intro") == "skipped"
+                   and T.ev("document.getElementById('introSkip').hidden") and not T.ev("!!window.__hm.ctx.npc('eve_bram')") and not T.ev("!!window.__hm.dlg"))
+            T.ev("__padPlug(true)"); pg.wait_for_timeout(700)
+            T.ev("window.__hm.intro.start(true)"); T.wait("!!window.__hm.dlg", 60); pg.wait_for_timeout(300)
+            T.btn(1)
+            pg.wait_for_timeout(400)
+            T.step("controller B skips the opening (even mid-dialogue), nothing left behind", not T.ev("window.__hm.intro.active") and not T.ev("!!window.__hm.dlg")
+                   and not T.ev("window.__hm.combat.enemies.some((e) => e.id === 'eve_wraith' && e.state !== 'dead' && e.state !== 'gone')"))
+            T.ev("__padPlug(false)"); pg.wait_for_timeout(500)
+            T.ev("window.__hm.S.flags.intro = 'done'; window.__hm.save()")
             S = T.S()
             T.step("new game in Hearthmoor Plaza as the chosen hero", T.ev("window.__hm.area") == "plaza" and not T.ev("window.__hm.title") and S["quests"] == {"bread": 0, "tea": 0, "cat": 0}
                    and S["cls"] == "stormborn" and T.ev("window.__hm.ctx.player.role") == "stormborn" and T.ev("window.__hm.slots()") == ["chain_lightning", "sparkle_burst"],
@@ -768,6 +837,8 @@ def run(out, simscale=4, size=(960, 540)):
                    and abs(pos_after[0] - pos_before[0]) < 0.3 and abs(pos_after[1] - pos_before[1]) < 0.3
                    and T.ev("!window.__hm.ctx.fx.petal_0 && !window.__hm.ctx.fx.petal_1 && !window.__hm.ctx.fx.petal_2 && !!window.__hm.ctx.fx.petal_3"),
                    pos=[pos_before, pos_after])
+            T.step("Continue never replays the Lantern Eve opening", not T.ev("window.__hm.intro.active") and S["flags"].get("intro") == "done"
+                   and T.ev("document.getElementById('introSkip').hidden"))
 
             # ---------------------------------------------------------- home through the gate with Pudding
             area = T.go_rect("portals")
@@ -1208,6 +1279,12 @@ def run(out, simscale=4, size=(960, 540)):
                 tap_el('#dlgChoices .choice[data-i="2"]'); q.wait_for_timeout(300)
                 T.step("touch: tapping 'Stay here.' on the moss gate's choice closes it and stays in the Plaza",
                        bool(gc) and len(gc["options"]) == 3 and not T.ev("!!window.__hm.dlg") and T.ev("window.__hm.area") == "plaza" and T.ev("window.__hm.S.chose.moss_gate") == 2, choice=gc)
+                T.ev("window.__hm.intro.start(true)"); T.wait("window.__hm.intro.state().lanterns === 7", 30); q.wait_for_timeout(400)
+                on = T.ev("window.__hm.intro.active && !document.getElementById('introSkip').hidden")
+                sk = T.ev("(() => { const r = document.getElementById('introSkip').getBoundingClientRect(); return [r.width, r.height]; })()")
+                tap_el("#introSkip")
+                T.step("touch: tapping 'skip' ends the Lantern Eve opening (thumb-sized chip)", on and sk[0] >= 30 and sk[1] >= 30 and not T.ev("window.__hm.intro.active")
+                       and T.ev("document.getElementById('introSkip').hidden") and T.ev("window.__hm.S.flags.intro") == "skipped", chip=sk)
                 T.walk(-1.4, -5.6)
                 # phone landscape: the full action layout (report shot), nothing overlapping
                 q.set_viewport_size({"width": 844, "height": 390}); q.wait_for_timeout(1200)

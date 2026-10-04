@@ -41,6 +41,7 @@
   <div class="say" id="say" hidden></div>
   <div class="prompt" id="prompt" hidden></div>
   <div class="toast" id="toast" hidden></div>
+  <button id="introSkip" hidden title="Skip the Lantern Eve opening (Esc / B)">skip <span>▸▸</span></button>
   <div class="hint" id="hint" data-pad="🎮 stick walk · A talk / jump · B dodge · X attack · Y cast (hold: spell wheel) · LB / RB spell · LT guard · RT summon · R-stick zoom (click: tonic) · Start quests">WASD walk · R attack · C guard · Z jump · X dodge · F cast · Q / 1-4 spell · B spellbook · G gear · V summon · U tonic · E talk · J quests · O options</div>
 </div>
 
@@ -58,7 +59,7 @@
 <!-- quest log: parchment card with a wooden header -->
 <div id="log" hidden>
   <div class="card" data-scroll>
-    <div class="head"><b>Errands</b><span id="logCount">0/3 done</span><button class="x" id="logClose" title="Close (J / Esc)">✕</button></div>
+    <div class="head"><b>Lantern Eve tasks</b><span id="logCount">0/3 done</span><button class="x" id="logClose" title="Close (J / Esc)">✕</button></div>
     <ul id="logList"></ul>
     <p class="spells" id="logSpells"></p>
     <p class="tip" id="logTip">Hero screen, spellbook, gear: I / B / G · 🎮 Y or LB / RB here · tap the vitals chip</p>
