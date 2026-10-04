@@ -34,7 +34,7 @@ const DAY_SECONDS = Number(Q.get('day') || 1440);  // one whole day = 24 real mi
 const $ = (id) => document.getElementById(id);
 
 // v2 adds the hero class (cls) and current HP; everything from v1 carries over unchanged
-const fresh = () => ({ v: 2, cls: null, hp: null, area: 'plaza', pos: null, t: 0.62, inv: {}, quests: { bread: 0, tea: 0, cat: 0 }, picked: {},
+const fresh = () => ({ v: 2, cls: null, hp: null, area: 'plaza', pos: null, t: 0.62, inv: {}, quests: { bread: 0, tea: 0, cat: 0 }, picked: {}, flags: {},
                        cat: 'glade', spells: ['sparkle_burst'], played: 0, savedAt: null });
 
 const G = {
@@ -182,7 +182,7 @@ G.popText = (txt, at, col) => G.combat.number(txt, at.x, at.y + 0.9, at.z, col);
 // ------------------------------------------------------------------ dialogue (carved-wood frame, parchment page)
 let portraitImg = null;
 function openDialogue(npc, entry) {
-  G.dlg = { npc, pages: entry.pages, i: 0, then: entry.then, shown: 0, full: false };
+  G.dlg = { npc, pages: entry.pages, i: 0, then: entry.then, shown: 0, full: false, choice: entry.choice || null, ci: 0, picking: false };
   $('dlgName').textContent = npc.name || npc.role;
   drawPortrait(npc);
   $('dlg').hidden = false; document.body.classList.add('dlgopen');
@@ -191,17 +191,19 @@ function openDialogue(npc, entry) {
 }
 function showPage() {
   const d = G.dlg; d.shown = 0; d.full = false;
-  $('dlgText').textContent = '';
+  $('dlgText').textContent = ''; $('dlgChoices').hidden = true; d.picking = false;
   $('dlgMore').textContent = d.i < d.pages.length - 1 ? '▼' : '✕';
   $('dlgPage').textContent = `${d.i + 1}/${d.pages.length}`;
 }
 function advanceDialogue() {
   const d = G.dlg; if (!d) return;
-  if (!d.full) { d.shown = 1e9; return; }       // first press finishes the line
+  if (d.picking) { choicePick(d.ci); return; }   // E / Enter / A on a choice page picks the highlighted answer
+  if (!d.full) { d.shown = 1e9; typeDialogue(0); return; }       // first press finishes the line
   if (d.i < d.pages.length - 1) { d.i++; G.audio.sfx('blip'); showPage(); return; }
   closeDialogue();
 }
 function closeDialogue() {
+  if (G.dlg && G.dlg.picking) { choiceCancel(); return; }   // Esc / B on a choice page = the "not now" answer
   const d = G.dlg; G.dlg = null; $('dlg').hidden = true; document.body.classList.remove('dlgopen');
   if (d && d.then) d.then(G);
 }
@@ -211,8 +213,30 @@ function typeDialogue(dt) {
   const txt = d.pages[d.i];
   const n = Math.min(txt.length, Math.floor(d.shown));
   $('dlgText').textContent = txt.slice(0, n);
-  if (n >= txt.length) d.full = true;
+  if (n >= txt.length) { d.full = true; if (d.choice && d.i === d.pages.length - 1) showChoices(); }
 }
+// ---- dialogue choices: entry.choice = { options: [{ label, pick(G) -> next entry | null, cancel? }] } on the last page.
+// A pick replaces the entry's own `then` (the option's reply entry carries its own). Keys: arrows / W S, 1-4, E / Enter;
+// controller: d-pad, A, B (cancel); touch / mouse: tap a row. Esc / B picks the option marked cancel (or just closes).
+function showChoices() {
+  const d = G.dlg, box = $('dlgChoices'); d.picking = true; d.ci = Math.min(d.ci, d.choice.options.length - 1);
+  box.innerHTML = d.choice.options.map((o, i) => `<button class="choice" data-i="${i}"><span class="k">${i + 1}</span><span>${o.label}</span></button>`).join('');
+  box.hidden = false; $('dlgMore').textContent = ''; syncChoices();
+}
+function syncChoices() { const d = G.dlg; document.querySelectorAll('#dlgChoices .choice').forEach((b, i) => b.classList.toggle('sel', i === d.ci)); }
+function choiceMove(dir) { const d = G.dlg; if (!d || !d.picking) return; const n = d.choice.options.length; d.ci = (d.ci + dir + n) % n; G.audio.sfx('blip'); syncChoices(); }
+function choicePick(i) {
+  const d = G.dlg; if (!d || !d.picking || !d.choice.options[i]) return;
+  const o = d.choice.options[i]; d.picking = false; $('dlgChoices').hidden = true;
+  G.S.flags = G.S.flags || {};
+  (G.S.chose = G.S.chose || {})[d.choice.id || d.npc.id] = i;
+  const next = o.pick ? o.pick(G) : null;
+  if (next) openDialogue(d.npc, next); else { G.dlg = null; $('dlg').hidden = true; document.body.classList.remove('dlgopen'); }
+  save();
+}
+function choiceCancel() { const d = G.dlg, k = d.choice.options.findIndex((o) => o.cancel); if (k >= 0) choicePick(k); else { d.picking = false; d.then = null; closeDialogue(); } }
+G.dlgChoice = () => (G.dlg && G.dlg.picking ? { options: G.dlg.choice.options.map((o) => o.label), ci: G.dlg.ci } : null);
+G.choicePick = (i) => choicePick(i);
 function drawPortrait(npc) {
   const cv = $('dlgFace'), g = cv.getContext('2d');
   g.imageSmoothingEnabled = false; g.clearRect(0, 0, cv.width, cv.height);
@@ -424,6 +448,7 @@ const hooks = {
     if (G.shop) { G.shopUI.pad(name); return true; }
     if (G.opts) { if (name === 'y') cycleWeather(); else if (name === 'b' || name === 'start' || name === 'a') setOpts(false); return true; }
     if (G.busy || G.downed) return true;
+    if (G.dlg && G.dlg.picking) { if (name === 'up') choiceMove(-1); else if (name === 'down') choiceMove(1); else if (name === 'a') choicePick(G.dlg.ci); else if (name === 'b') choiceCancel(); return true; }
     if (G.dlg) { if (name === 'a') advanceDialogue(); else if (name === 'b') closeDialogue(); return name !== 'select'; }
     if (G.log) { if (name === 'y' || name === 'rb' || name === 'lb') { setLog(false); setHeroUI(true); return true; } if (name === 'a' || name === 'b' || name === 'start') setLog(false); return name !== 'select'; }
     if (name === 'start') { setLog(true); return true; }
@@ -678,7 +703,12 @@ function wire() {
   $('btnSave').onclick = () => save(true);
   $('btnSound').onclick = () => { G.audio.start(); const m = G.audio.toggle(); $('btnSound').textContent = m ? 'sound: off' : 'sound: on'; };
   $('btnSound').textContent = G.audio.muted ? 'sound: off' : 'sound: on';
-  $('dlg').addEventListener('pointerdown', (e) => { e.preventDefault(); advanceDialogue(); });
+  $('dlg').addEventListener('pointerdown', (e) => {
+    e.preventDefault();
+    const row = e.target.closest && e.target.closest('#dlgChoices .choice');
+    if (G.dlg && G.dlg.picking) { if (row) choicePick(+row.dataset.i); return; }
+    advanceDialogue();
+  });
   wirePad(); wireOptions(); wireLeveling(); G.shopUI.wire();
   $('btnBack').onclick = () => closePicker();
   $('btnBegin').onclick = () => pickBegin();
@@ -686,6 +716,12 @@ function wire() {
   addEventListener('keydown', (e) => {
     const k = e.key.toLowerCase();
     if (G.picking || G.title) e.stopImmediatePropagation();   // the engine's own keys (talk on Enter) wait for the field
+    if (G.dlg && G.dlg.picking) {   // choice page: arrows / W S move, 1-4 pick (E / Enter / Esc go through the usual dialogue keys)
+      const n = '1234'.indexOf(k);
+      if (k === 'arrowup' || k === 'w') { choiceMove(-1); e.preventDefault(); e.stopImmediatePropagation(); return; }
+      if (k === 'arrowdown' || k === 's') { choiceMove(1); e.preventDefault(); e.stopImmediatePropagation(); return; }
+      if (n >= 0) { choicePick(n); e.stopImmediatePropagation(); return; }
+    }
     if (G.picking) {
       if (k === 'arrowleft' || k === 'a') pickMove(-1); else if (k === 'arrowright' || k === 'd') pickMove(1);
       else if (k === 'arrowup' || k === 'w') pickMove(-3); else if (k === 'arrowdown' || k === 's') pickMove(3);

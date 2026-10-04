@@ -277,3 +277,12 @@ body.tv #dlg { width: min(900px, 80vw); } body.tv #dlg p { font-size: 20px; }
 .slotcard.on { border-color: #e0a640; box-shadow: inset 0 0 0 2px #f6d27a, 0 0 0 2px #4a2e20; background: #f8ebcb; }
 #btnCopy[disabled], #btnDel[disabled] { opacity: 0.45; }
 @media (max-height: 460px) { .slotcard { min-width: 128px; min-height: 60px; padding: 3px 6px; } .slotcard canvas { width: 30px; height: 48px; } #titlescreen .sub, #titlescreen .keys { display: none; } }
+
+/* dialogue choices (Stage 4): parchment rows inside the wooden frame; 1-4 / arrows / d-pad / tap */
+#dlg .choices { display: grid; gap: 4px; margin-top: 6px; }
+#dlg .choices[hidden] { display: none; }
+#dlg .choice { display: flex; align-items: center; gap: 8px; text-align: left; min-height: 40px; padding: 5px 10px; background: var(--parch-lo); color: #3a2a1e;
+  border: 2px solid var(--wood-lo); border-radius: 3px; font: 700 14px/1.2 Georgia, "Times New Roman", serif; cursor: pointer; touch-action: manipulation; }
+#dlg .choice .k { flex: none; width: 20px; height: 20px; display: grid; place-items: center; background: var(--wood); color: var(--parch-hi); border-radius: 2px; font: 700 12px system-ui; }
+#dlg .choice.sel { background: var(--parch-hi); box-shadow: inset 0 0 0 2px var(--wood-hi); }
+#dlg .choice.sel .k { background: var(--rose); }

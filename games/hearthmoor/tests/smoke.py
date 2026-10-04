@@ -117,6 +117,19 @@ class Smoke:
         self.read_all()
         return pages, first
 
+    def to_choice(self, n=80):
+        """read a dialogue up to its choice page without ever pressing E on it (E there would pick an answer)"""
+        for _ in range(n):
+            st = self.ev("(() => { const d = window.__hm.dlg; return d ? [d.picking, d.full, d.i === d.pages.length - 1] : null; })()")
+            if not st:
+                return None
+            if st[0]:
+                return self.ev("window.__hm.dlgChoice()")
+            if st[2]:
+                self.pg.wait_for_timeout(200); continue   # the last page types itself out, then the answers appear
+            self.pg.keyboard.press("e"); self.pg.wait_for_timeout(160)
+        return None
+
     def read_all(self):
         n = 0
         while self.ev("!!window.__hm.dlg") and n < 40:
@@ -250,6 +263,17 @@ def run(out, simscale=4, size=(960, 540)):
             S = T.S()
             T.step("deliver bread to Bram: errand 1 done", S["quests"]["bread"] == 3 and not S["inv"].get("loaf") and S["inv"].get("coin") == 3
                    and "hearth_flame" in S["spells"], line=first[:60])
+            # ---------------------------------------------------------- stage 4: dialogue choices (Bram's Lantern Eve wish, by mouse / touch)
+            T.talk("innkeeper", keep_open=True); ch = T.to_choice()
+            seeds0 = T.ev("window.__hm.S.inv.glowseed || 0")
+            rep["shots"]["dialogue_choice"] = T.shot("dialogue_choice")
+            pg.click("#dlgChoices .choice[data-i='2']"); pg.wait_for_timeout(300)
+            reply = T.ev("window.__hm.dlg ? window.__hm.dlg.pages[0] : ''"); T.read_all()
+            T.step("dialogue choices: Bram asks who your Lantern Eve lantern is for (4 answers); clicking one sets a flag and gives that gift",
+                   bool(ch) and len(ch["options"]) == 4 and ch["ci"] == 0 and T.ev("window.__hm.S.flags.lantern") == "lost"
+                   and T.ev("window.__hm.S.inv.glowseed") == seeds0 + 2 and "glow seeds" in reply, choice=ch, reply=reply[:60])
+            pages, first = T.talk("innkeeper")
+            T.step("the answer changes Bram's reply afterwards, and he does not ask again", "drift east" in first and pages == 2, line=first[:60])
             # Wren: dialogue box + quest log together for the report shot
             T.talk("herbalist", keep_open=True)
             pg.wait_for_timeout(1200)
@@ -792,6 +816,27 @@ def run(out, simscale=4, size=(960, 540)):
             T.step("the vault lives outside the save slot (hearthmoor-bank-v1, shared by all three slots)",
                    "bank" not in json.loads(T.ev("localStorage.getItem('hearthmoor-slot-1-v2')")) and T.ev("localStorage.getItem('hearthmoor-bank-v1')") is not None)
             pg.keyboard.press("Escape"); pg.wait_for_timeout(200)
+            # ---------------------------------------------------------- stage 4: dialogue choices (Bix's riddle lock, by keys + controller)
+            T.talk("banker", keep_open=True); ch = T.to_choice()
+            pg.keyboard.press("Escape"); pg.wait_for_timeout(250)
+            c1 = [T.ev("(window.__hm.S.flags || {}).riddle || null"), T.ev("window.__hm.dlg ? window.__hm.dlg.pages[0] : ''")]
+            T.read_all(); pg.keyboard.press("Escape"); pg.wait_for_timeout(250)   # his reply opens the bank: close it
+            T.talk("banker", keep_open=True); T.to_choice()
+            pg.keyboard.press("ArrowDown"); pg.wait_for_timeout(150); ci = T.ev("window.__hm.dlgChoice().ci")
+            pg.keyboard.press("e"); pg.wait_for_timeout(300)
+            c2 = [T.ev("window.__hm.S.flags.riddle"), T.ev("window.__hm.dlg ? window.__hm.dlg.pages.join(' ') : ''")]
+            T.read_all(); pg.keyboard.press("Escape"); pg.wait_for_timeout(250)
+            T.step("keys: Esc on a choice page takes the 'not now' answer; arrow down + E answers Bix's riddle wrong and earns a hint",
+                   bool(ch) and ch["options"][0] == "Footsteps." and c1[0] is None and "lock keeps" in c1[1] and ci == 1 and c2[0] == "tried" and "hint" in c2[1], c1=c1, ci=ci, c2=c2)
+            g0, op0 = T.ev("window.__hm.S.gold"), T.ev("(window.__hm.S.gems || {}).moon_opal || 0")
+            T.talk("banker", keep_open=True); T.to_choice()
+            T.btn(13); T.btn(12); ci2 = T.ev("window.__hm.dlgChoice().ci"); T.btn(0); pg.wait_for_timeout(300)
+            c3 = T.ev("window.__hm.dlg ? window.__hm.dlg.pages.join(' ') : ''")
+            T.read_all(); pg.keyboard.press("Escape"); pg.wait_for_timeout(250)
+            pages, first = T.talk("banker"); pg.keyboard.press("Escape"); pg.wait_for_timeout(250)
+            T.step("controller: d-pad down / up + A answers 'Footsteps': drawer nine gives a moon opal + 25 gold, and Bix's greeting changes",
+                   ci2 == 0 and T.ev("window.__hm.S.flags.riddle") == "solved" and T.ev("window.__hm.S.gold") == g0 + 25
+                   and T.ev("window.__hm.S.gems.moon_opal") == op0 + 1 and "drawer nine swings open" in c3.lower() and "contentedly" in first, c3=c3[:60], line=first[:60])
             # ---------------------------------------------------------- stage 3: the travelling night merchant + gem sockets
             t_day = T.ev("window.__hd2d.clock.t")
             T.ev("window.__hd2d.setTime(0.9)"); pg.wait_for_timeout(700)
@@ -884,6 +929,7 @@ def run(out, simscale=4, size=(960, 540)):
             S = T.S()
             T.step("reload #2: controller A on the title Continues; finished game state restored in Bakery Lane", T.ev("window.__hm.area") == "lane" and all(v == 3 for v in S["quests"].values())
                    and set(S["spells"]) >= {"sparkle_burst", "hearth_flame", "light_orb", "leaf_gust"})
+            T.step("dialogue answers survive a reload (Bram's lantern wish, Bix's riddle)", (S.get("flags") or {}).get("lantern") == "lost" and (S.get("flags") or {}).get("riddle") == "solved", flags=S.get("flags"))
             T.step("no JS errors", not errors and not T.ev("window.__hd2d.errors.length"), errors=errors[:5])
             rep["pass"] = True
         except Exception as e:  # noqa: BLE001

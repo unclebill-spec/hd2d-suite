@@ -8,7 +8,7 @@ export const ITEMS = {
   acorn:     { name: "Tib's lucky acorn", icon: 3, about: 'Polished smooth by a very small thumb.' },
   tea:       { name: 'Moonpetal tea', icon: 4, about: 'A tin of Wren\'s tea. Calms storms, and also grandparents.' },
   tonic:     { name: 'Hearth tonic', px: 'tonic', about: 'Heals 60 HP. Drink: U, right-stick click, or tap it here.' },
-  glowseed:  { name: 'Glow seed', px: 'glowseed', about: 'Hums in the dark. Glow-gardens are coming.' },
+  glowseed:  { name: 'Glow seed', px: 'glowseed', about: 'Hums in the dark. Plant it in a garden plot: it blooms in two days.' },
 };
 
 export const QUESTS = {
@@ -32,6 +32,12 @@ export const QUESTS = {
 export const SPELL_NAMES = { sparkle_burst: 'sparkle burst', hearth_flame: 'hearth flame', light_orb: 'light orb', leaf_gust: 'leaf gust', healing_petals: 'healing petals' };
 
 const petals = (S) => S.inv.moonpetal || 0;
+const flags = (S) => (S.flags = S.flags || {});
+const gold = (G, n) => { G.S.gold = (G.S.gold || 0) + n; G.toast(`+${n} gold`); };
+const gem = (G, id) => { G.S.gems = G.S.gems || {}; G.S.gems[id] = (G.S.gems[id] || 0) + 1; };
+const openBank = (G) => { G.S.met = { ...(G.S.met || {}), banker: 1 }; G.shopUI.show('bank'); };
+// Bix's riddle lock (the start of "Gnome in the Vault"): a wrong answer earns a hint and a retry, the right one opens drawer nine
+const riddleWrong = (G) => { flags(G.S).riddle = 'tried'; return { pages: ['A soft clunk. The lock sulks.', 'A hint, free of charge: think about where you have been, not what you carry.'], then: openBank }; };
 
 export const TALK = {
   // ---------------------------------------------------------------- Hearthmoor Plaza
@@ -45,7 +51,20 @@ export const TALK = {
     };
   },
   banker(S) {
-    const first = !S.met?.banker;
+    const first = !S.met?.banker, F = S.flags || {};
+    if (!first && F.riddle !== 'solved') return {
+      pages: [F.riddle === 'tried' ? 'Back for drawer nine? The lock is patient. So am I.'
+                                  : 'Before the ledger: the Gnome Council fitted drawer nine with a riddle lock. Solve it, and what is inside is yours.',
+              '"The more of me you take, the more of me you leave behind." What am I?'],
+      choice: { id: 'riddle', options: [
+        { label: 'Footsteps.', pick: (G) => { flags(G.S).riddle = 'solved'; gem(G, 'moon_opal'); gold(G, 25);
+            return { pages: ['Click. Drawer nine swings open.', 'A moon opal and twenty-five gold, Council seal and all. They will want to meet a mind like yours someday.'], then: openBank }; } },
+        { label: 'Bread crumbs.', pick: riddleWrong },
+        { label: 'Copper coins.', pick: riddleWrong },
+        { label: 'Not now. Just the vault, please.', cancel: true, pick: () => ({ pages: ['Of course. The lock keeps.'], then: openBank }) },
+      ] },
+    };
+    if (F.riddle === 'solved') return { pages: ['Keys, ledger, lantern. Drawer nine has hummed contentedly since you opened it. Deposit or withdraw?'], then: openBank };
     return {
       pages: first ? ['Bix Coppertuft, clerk of the Nine Keys Bank. Small desk, deep vault.',
                       'Forty slots, shared by every hero who carries your name. Gear, gems, gold. Banked gold stays put when you faint.']
@@ -131,7 +150,26 @@ export const TALK = {
       ],
       then: (G) => { G.take('loaf', 1); G.give('coin', 3); G.setQuest('bread', 3); G.learn('hearth_flame'); },
     };
-    if (q === 3) return { pages: ['Room\'s warm, stew\'s warmer, and the bread was perfect.', 'The laundry over the stairs? That\'s mine. Mind the socks.'] };
+    const L = (S.flags || {}).lantern;
+    // Bram's Lantern Eve wish: who you float your lantern for changes his gift and what he says after
+    if (q === 3 && !L) return {
+      pages: ['Room\'s warm, stew\'s warmer, and the bread was perfect.',
+              'It\'s Lantern Eve tonight. Everyone floats a fish-orb lantern up toward the Rift with a wish for someone. Who is yours for?'],
+      choice: { id: 'lantern', options: [
+        { label: 'My family.', pick: (G) => { flags(G.S).lantern = 'family'; G.give('tonic', 2);
+            return { pages: ['Family it is. Here, two Hearth tonics. Family worries most about scrapes, so humour them.'] }; } },
+        { label: 'All of Hearthmoor.', pick: (G) => { flags(G.S).lantern = 'hearth'; gold(G, 30);
+            return { pages: ['The whole village? Then the village fund thanks you: thirty gold. Pass it forward when you can.'] }; } },
+        { label: 'Whoever is lost out there.', pick: (G) => { flags(G.S).lantern = 'lost'; G.give('glowseed', 2);
+            return { pages: ['For the lost... Take these glow seeds. Plant them where a lost traveller might see the light.'] }; } },
+        { label: 'I\'ll decide later.', cancel: true, pick: () => ({ pages: ['No rush. The lanterns go up at dusk.'] }) },
+      ] },
+    };
+    if (q === 3) return { pages: [
+      L === 'family' ? 'Your lantern\'s the one with the little green fish, isn\'t it? Your family will see it from anywhere.'
+        : L === 'hearth' ? 'Half the lane says you floated a lantern for all of us. Stew\'s on the house, always.'
+        : 'Saw your lantern drift east, toward the dark hills. Someone out there will follow it home.',
+      'The laundry over the stairs? That\'s mine. Mind the socks.'] };
     return { pages: ['Welcome to the Kettle & Key. We\'re waiting on Marla\'s bread for supper, if you\'re heading up to the plaza.'] };
   },
   herbalist(S) {

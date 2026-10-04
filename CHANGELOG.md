@@ -2,6 +2,14 @@
 
 Dates are America/New_York. Newest first. Keep this current with every change you push.
 
+## 2026-10-04: Hearthmoor Stage 4, part 5: dialogue choices
+- **Reusable choice panel:** any dialogue entry can end in `choice: { id, options: [{ label, pick(G) -> reply entry | null, cancel? }] }`. When the last page has typed out, numbered parchment rows appear inside the wooden frame. Keys: arrows / W S and E / Enter, or 1-4. Controller: d-pad and A. Touch / mouse: tap a row (a tap elsewhere on a choice page does nothing, so nothing is picked by accident). Esc / B takes the option marked `cancel`. Answers set `S.flags` (saved with the slot) and `S.chose[id]`.
+- **Bix's riddle lock** (the start of "Gnome in the Vault"): after your first visit, Bix offers drawer nine's riddle. "Footsteps" opens it (a moon opal + 25 gold, and his greeting changes for good); a wrong answer earns a hint and a retry; "not now" goes straight to the vault.
+- **Bram's Lantern Eve wish:** once the bread is delivered, Bram asks who your lantern is for. Family gives 2 Hearth tonics, all of Hearthmoor 30 gold, whoever is lost 2 glow seeds, and each changes what he says afterwards. "I'll decide later" asks again next time.
+- Glow seed blurbs now point to the Lane plot's new spot.
+- Screenshot: `docs/screenshots/stage4_dialogue_choice_bram.png`.
+- Checks: smoke PASS 145/145 (5 new choice steps: Bram by mouse click and his changed reply, Bix by keys (Esc = not now, arrow + E wrong answer), Bix by controller (d-pad + A solves it), answers surviving reload #2). check-scene PASS: plaza 11/11, lane 10/10, hollows 10/10, mossglen 11/11.
+
 ## 2026-10-04: Hearthmoor Stage 4, part 4: weather
 - **Per-area weather on the day cycle** (`game/weather.js`, `weatherAt(area, day, t)`):
   - Plaza and Bakery Lane share one town sky: each 6-hour block of each day is clear, drizzle or rain (seeded by the day, so it is the same on every machine). Day 0, Lantern Eve (the opening), is always clear.
