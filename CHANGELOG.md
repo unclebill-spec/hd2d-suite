@@ -2,6 +2,48 @@
 
 Dates are America/New_York. Newest first. Keep this current with every change you push.
 
+## 2026-10-04: Hearthmoor Stage 5, part 4: Ravenhold Harbor (first playable slice)
+- **New area `ravenhold`:** the Harbor district of Ravenhold, Midgard's harbor capital at the foot of the Rainbow Rift (per `docs/story/STORY_SEEDS.md` and the builder handoff). Bakery Lane has a new west road with a waystone; it leads to the harbor's east road, and back.
+  - A stone quay (0.8 m) under an upper terrace (3 m) with the harbor stair.
+  - Two plank piers on posts, two skiffs (furled sails, cold-fire stern lamps) and three rowboats moored on dark water with faint swell lines.
+  - **Glow pass:** a row of six neon-blue cold-fire lanterns along the quay edge plus one at each pier end, each with a broken glow reflection on the water and twinkling glints on it. The first 7 lamps are real point lights (always faintly lit, brighter at night). Each lantern also stands in a cold-fire light pool (decal + motes; the 3 strongest near the camera share the pooled glow lights), so the cap holds and the quay stays dark between the pools.
+  - Violet and Corsair-red accents: two violet and one red float lantern bob among the boats with their own reflections, a violet pool glows before the Market Terraces gate and a red one by Sable's barrels.
+  - Three fish orbs (iron stands holding glass orbs full of glowing sea water with little gold, rose and coral fish) on the quay.
+  - Neon fireflies and cold-fire wisps drift low over the water. Ravenhold glows at every hour (`ALWAYS.ravenhold`). No bloom.
+  - Gloom-and-glow grades: an overcast blue day, a violet-blue dusk and a deep night with orange windows on the Rift Corsairs' counting house and the town houses on the terrace.
+  - Red-white toadstools in the corners, including two clusters with a giant cap at the foot of the terrace wall in plain view (they glow at night like the other areas' toadstools), and a hidden bubbly spring behind a crate stack in the west corner. It heals and gives spring-fizz like the Hollows spring; the first find is a secret (+40 Gnome Council merit).
+- **Clothing rule** (new in the style lock, Bill, 2026-10-04: separate top and bottom, a visible waist, readable shoes; no onesies or padded suits): the sprite tool takes `belt` and `sash` colours (the default brown belt is unchanged). Sable has a red waist sash, navy trousers and dark boots; Brannoc (fisher) a dark belt and yellow wellies; Ida (lamplighter) an open coat over a gold-buckled belt, grey trousers and dark shoes; Pip already passed. `docs/HD2D_COZY_STYLE_LOCK.md` gains an "Overrides from Bill" section with the boss-scale and clothing rules.
+- **Fix:** Ravenhold's quest tags never appeared because the area had no game-effects sheet (`fx` was empty). The spec now sets `"gamefx": true`.
+- **Sealed district gates:** the Market Terraces (top of the harbor stair), Old Temple and Forge Quarter (on the terrace) and the Undercity (at the waterline). Each is a stone arch with barred oak doors and a chain. The prompt says "sealed: coming soon"; E / A / tap shows its own text.
+- **NPCs:**
+  - Harbormaster Brannoc (fisher), who gives the story quest.
+  - Quartermaster Sable of the Rift Corsairs (new `corsair` sprite: red kerchief, dark vest, red sash, ledger). Meeting her pays +20 Black Doubloons. Her choice explains how to earn Corsair merit and lets you pay the harbor dues once (25 gold for +15).
+  - Ida Wickmere, cold-fire chandler (lamplighter), with Wickmere's Chandlery (`SHOPS.harbor`: tonics, glow seeds, a rift shard, gear).
+  - Pip (fisher kid), who hints at the spring.
+  - Rares and bosses in Ravenhold would count for the Corsairs (`REALM.ravenhold`).
+- **Story quest "The Road to the Rift"** (`QUESTS.harbor`, `story: true`): take Brannoc's tally to Sable, climb the stair and look at the Market Terraces gate, report back. Brannoc points up through the Market Terraces to the Rainbow Rift; +40 Corsair merit, +30 gold, errand XP. Story quests show in the quest log once started ("Story: …") and never count as one of the three Lantern Eve errands (`errandsDone(S)`), so "quests n/3" and the Rift's opening are unchanged.
+- **Waystones** (`game/ravenhold.js`): one by Bakery Lane's west road, one by the harbor's east road. E / A / Enter, or tap / click to walk up and tap again, opens a travel choice.
+- **Tools:**
+  - kit `tools/kit/kit_harbor.py`: harbor_water, pier, rowboat, skiff, pier / quay lanterns, bollard, waystone, district_gate.
+  - assemble: spec `decks` (walk heights without a mesh) and `blocks` (blocked rects), piece markers `lamp_color` / `lamp_fixed` / `lamp_range`.
+  - sprite: the `corsair` role.
+  - The engine (runtime) is unchanged.
+- **Smoke steps:**
+  - lane → harbor with all the parts present;
+  - the night shot;
+  - E with Brannoc starts the quest (tags, log, still 3/3);
+  - controller A with Sable (+20, step 2);
+  - up the stair, E at the Market gate (prompt + "Coming soon", step noted);
+  - Brannoc's turn-in (text, +40, +30 gold, still 3/3; quest shot);
+  - the chandlery opens and closes;
+  - the spring secret (+40 Gnome);
+  - mouse click-click at the waystone, then key 1 travels to the lane;
+  - controller A at the lane waystone travels back;
+  - the east road returns to the lane;
+  - phone: tap, tap the waystone, then tap "Stay here.".
+- **Screenshots:** `docs/screenshots/stage5_ravenhold_harbor_night.png` (the east quay at night: the lantern row with light pools and reflections, fish orbs, toadstools, the red pool, Sable), `stage5_ravenhold_brannoc.png` (Brannoc turning in "The Road to the Rift").
+- **Checks:** smoke PASS 207/207; check-scene PASS on all seven areas (plaza 12/12, lane 11/11, mossglen 12/12, hollows 11/11, rift 11/11, vanaheim 12/12, ravenhold 12/12). Lane's phone controller / tap-walk sub-checks flaked three times at load 15-19 (SwiftShader under 1 fps; the old ece94bc lane build measured no faster under the same load) and passed unchanged at lower load. No threshold was changed.
+
 ## 2026-10-04: Hearthmoor Stage 5, part 3: factions + merit
 - **Five factions, six merit ranks** (`game/factions.js`, per `docs/story/STORY_SEEDS.md` and handoff §9). Ranks are Stranger → Friend → Trusted → Honored → Champion → Legend, at 0 / 150 / 400 / 800 / 1400 / 2200 merit. Each faction has its own currency name, signature glow colour, earn line, a title per rank and a Legend item (named for later).
 

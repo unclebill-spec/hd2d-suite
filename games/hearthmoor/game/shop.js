@@ -16,6 +16,9 @@ export const SHOPS = {
   hearthmoor: { name: "Odo's Wares", keeper: 'Odo the merchant', goods: ['tonic', 'glowseed'], gear: { n: 3, rar: [0, 0, 1] }, sellMul: 1 },
   night: { name: 'The Lantern Pack', keeper: 'Sefa, the night merchant', goods: ['tonic'], gems: ['rift_shard', 'golem_core', 'frost_core', 'moon_opal'],
            gear: { n: 2, rar: [2, 3], sockets: 1 }, sellMul: 1.2 },
+  // Ravenhold Harbor: Ida Wickmere's chandlery on the quay (cold-fire, rope, tonics; a rift shard when the boats bring one)
+  harbor: { name: "Wickmere's Chandlery", keeper: 'Ida Wickmere, cold-fire chandler', goods: ['tonic', 'glowseed'], gems: ['rift_shard'],
+            gear: { n: 3, rar: [0, 1, 1] }, sellMul: 1.1 },
 };
 // the travelling night merchant: sets up by the well after dark, packs up at dawn (a neon-blue cold-fire lantern)
 export const NIGHT_MERCHANT = { plaza: { id: 'nightmerchant', role: 'nightmerchant', name: 'Sefa, the night merchant', pos: [-9.7, 1.7], facing: 'down',

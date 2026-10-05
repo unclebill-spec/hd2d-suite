@@ -53,6 +53,12 @@ class Heights:
             self.rects.append((x0, z0, x1, z1, t["h"]))
         for st in spec.get("stairs", []):
             self.stairs.append(st)
+        # decks: walk-height-only rects (piers whose planks are a prop, no slab mesh); blocks: unwalkable rects (water)
+        for d in spec.get("decks", []):
+            x0, z0, x1, z1 = d["rect"]
+            self.rects.append((x0, z0, x1, z1, d.get("h", 0)))
+        for b in spec.get("blocks", []):
+            self.blocks.append(tuple(b["rect"] if isinstance(b, dict) else b))
         # floating islands (the Rift Shrine): walk only inside an ellipse [cx, cz, rx, rz] (blocked outside it)
         self.ellipse = spec["ground"].get("ellipse")
 
@@ -207,7 +213,14 @@ def assemble(spec_path, out, do_zip=True):
             H.blocks.append((min(xs), min(zs), max(xs), max(zs)))
         mk = info["markers"]
         for L in mk.get("lamps", []):
-            lamps.append({"pos": to_world(L, pos, rot), "range": 7.5 if name == "lamp_post" else 5.5, "kind": name})
+            lamp = {"pos": to_world(L, pos, rot), "range": 7.5 if name == "lamp_post" else 5.5, "kind": name}
+            if "lamp_color" in mk:   # e.g. Ravenhold's cold-fire lanterns (neon blue); 'lamp_fixed' = a steady glow level
+                lamp["color"] = mk["lamp_color"]
+            if "lamp_fixed" in mk:
+                lamp["fixed"] = mk["lamp_fixed"]
+            if "lamp_range" in mk:
+                lamp["range"] = mk["lamp_range"]
+            lamps.append(lamp)
         for c in mk.get("chimneys", []):
             chimneys.append(to_world(c, pos, rot))
         if "vendor" in mk:

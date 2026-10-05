@@ -26,8 +26,18 @@ export const QUESTS = {
     title: "Where's Pudding?",
     giver: 'Tib',
     steps: { 1: 'Find Pudding the cat. Tib last saw her chasing a firefly toward the old gate.', 2: 'Pudding is following you. Walk her home to Tib in the plaza.', 3: 'Pudding is home, and already asleep on the bread crate.' },
+  },  // Stage 5 part 4: Ravenhold Harbor's first story quest (story: not one of the three Lantern Eve errands; pays Corsair merit)
+  harbor: {
+    title: 'The Road to the Rift',
+    giver: 'Harbormaster Brannoc',
+    story: true,
+    steps: { 1: 'Take the harbor tally to Quartermaster Sable of the Rift Corsairs, on the east quay.',
+             2: 'Climb the harbor stair and look at the Market Terraces gate, then tell Harbormaster Brannoc what you saw.',
+             3: 'Brannoc says the way to the Rainbow Rift runs up through the Market Terraces, once the gates open.' },
   },
 };
+// the three Lantern Eve errands (story quests do not count toward "quests n/3" or the Rift's opening)
+export const errandsDone = (S) => Object.entries(S.quests || {}).filter(([k, v]) => v === 3 && !(QUESTS[k] && QUESTS[k].story)).length;
 
 export const SPELL_NAMES = { sparkle_burst: 'sparkle burst', hearth_flame: 'hearth flame', light_orb: 'light orb', leaf_gust: 'leaf gust', healing_petals: 'healing petals' };
 
@@ -52,6 +62,64 @@ export const TALK = {
       // only the first talk opens the Factions tab (later chats just talk; the tab is on H / the hero screen)
       then: first ? (G) => { const was = G.S.met?.hilde; G.S.met = { ...(G.S.met || {}), hilde: 1 }; if (!was) { G.factions.add('hearth', 20, 'warden'); G.openFactions(); } } : null,
     };
+  },
+  // ---------------------------------------------------------------- Ravenhold Harbor (Stage 5 part 4)
+  harbormaster(S) {
+    const q = S.quests.harbor || 0, F = S.flags || {};
+    if (!q) return {
+      pages: ['Harbormaster Brannoc. Welcome to Ravenhold, at the foot of the Rainbow Rift. Mind the edge, the water is colder than it looks.',
+              'Since the Rift tore wider the city shut its district gates: Market Terraces, Forge Quarter, Old Temple, the Undercity. Only the Harbor stays open, because the boats will not wait.',
+              'Make yourself useful? This tally is owed to Quartermaster Sable, the Rift Corsairs\' woman on the east quay. She pays the harbor dues, and she pays them late.'],
+      then: (G) => { G.setQuest('harbor', 1); },
+    };
+    if (q === 1) return { pages: ['Sable is on the east quay, by the barrels. Red kerchief, sharper tongue.'] };
+    if (q === 2 && !F.rh_gate) return { pages: ['Sable sent you up the stair? Then go and see the Market Terraces gate for yourself. It is right at the top.'] };
+    if (q === 2) return {
+      pages: ['Barred and chained, aye. The Market Terraces climb from that gate right up toward the Rift. Every road to the Rainbow Rift goes through them.',
+              'When the city opens that gate, go up. The Rift Corsairs will want you on their ledger by then, and so will I.',
+              'Here, for your trouble. And the waystone by the east road will take you back to Hearthmoor whenever you like.'],
+      then: (G) => { G.setQuest('harbor', 3); G.S.gold = (G.S.gold || 0) + 30; G.toast('+30 gold', 1.8); G.factions.add('corsair', 40, 'harbor'); },
+    };
+    return { pages: ['The gates will open. Until then, the Harbor is yours to wander. Look up at night: you can see the Rift from the pier ends.'] };
+  },
+  quartermaster(S) {
+    const q = S.quests.harbor || 0, first = !S.met?.sable, F = S.flags || {};
+    const hooks = { id: 'sable', options: [
+      { label: 'How do I earn Corsair merit?', pick: () => ({ pages: ['Bring me rare cargo. Seal rifts, hunt the big brutes past them, buy from the night trade. The Corsairs remember who is useful.',
+                                                                    'Your standing is in the Factions tab (H). Rank up and the harbor treats you kinder.'] }) },
+      ...(F.rh_dues ? [] : [{ label: 'Pay the harbor dues (25 gold).', pick: (G) => {
+        if ((G.S.gold || 0) < 25) return { pages: ['Twenty-five gold, friend. Come back when your purse has caught up with your manners.'] };
+        G.S.gold -= 25; G.S.flags = G.S.flags || {}; G.S.flags.rh_dues = 1; G.factions.add('corsair', 15, 'dues');
+        return { pages: ['Paid in full. The Corsairs will remember that you paid without being asked.'] }; } }]),
+      { label: 'Just passing through.', cancel: true, pick: () => ({ pages: ['Then pass carefully. The quay is slippery.'] }) },
+    ] };
+    const meet = (G) => { const was = G.S.met?.sable; G.S.met = { ...(G.S.met || {}), sable: 1 }; if (!was) G.factions.add('corsair', 20, 'sable'); };
+    if (q === 1) return {
+      pages: ['Brannoc\'s tally? He counts every rope twice. Fine. Sable, quartermaster of the Rift Corsairs. We run cargo through the Rift when the gates let us.',
+              'The Market Terraces gate is shut, and every crate I need is stuck above it. Climb the stair and see for yourself, then tell Brannoc the Corsairs want it open.'],
+      then: (G) => { meet(G); G.setQuest('harbor', 2); },
+    };
+    return {
+      pages: first ? ['Sable, quartermaster of the Rift Corsairs. The harbor is ours, more or less. The Rift is where the money is.',
+                      'Do right by the Corsairs and the Corsairs do right by you. Merit, friend. It adds up.']
+                   : ['Back again. Business, or just admiring the boats?'],
+      // a pick replaces `then`, so the first meeting's merit rides on every answer (Esc / B picks the cancel one)
+      choice: { ...hooks, options: hooks.options.map((o) => ({ ...o, pick: (G) => { meet(G); return o.pick(G); } })) },
+    };
+  },
+  chandler(S) {
+    const first = !S.met?.chandler;
+    return {
+      pages: first ? ['Ida Wickmere, chandler. Cold-fire for your lantern, rope for your boat, tonics for your knees.',
+                      'Those blue lanterns on the piers are mine. Cold-fire does not care about rain, and it does not mind the Rift.']
+                   : ['Mind the wax. What will it be?'],
+      then: (G) => { G.S.met = { ...(G.S.met || {}), chandler: 1 }; G.shopUI.show('harbor'); },
+    };
+  },
+  dockkid(S) {
+    return { pages: (S.found || {}).rh_spring
+      ? ['You found the fizzy spring! Don\'t tell the gulls.']
+      : ['I\'m fishing for lantern-eels. They only bite at night.', 'There is a spring in the west corner, behind the crates. It fizzes! Brannoc says it is the Rift\'s doing.'] };
   },
   // ---------------------------------------------------------------- Hearthmoor Plaza
   nightmerchant(S) {
@@ -252,5 +320,8 @@ export function markerFor(id, S) {
   if (id === 'herbalist' && q.tea === 2) return 'quest_turnin';
   if (id === 'kid' && q.cat === 0) return 'quest_mark';
   if (id === 'kid' && q.cat === 2) return 'quest_turnin';
+  if (id === 'harbormaster' && !q.harbor) return 'quest_mark';
+  if (id === 'quartermaster' && q.harbor === 1) return 'quest_turnin';
+  if (id === 'harbormaster' && q.harbor === 2 && (S.flags || {}).rh_gate) return 'quest_turnin';
   return null;
 }

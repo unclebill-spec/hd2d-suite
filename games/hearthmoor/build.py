@@ -19,7 +19,7 @@ from PIL import Image  # noqa: E402
 
 from hd2d_common import load_biome  # noqa: E402
 
-AREAS = ["plaza", "lane", "mossglen", "hollows", "rift", "vanaheim"]
+AREAS = ["plaza", "lane", "mossglen", "hollows", "rift", "vanaheim", "ravenhold"]
 TMP = Path("/tmp/hearthmoor_build")
 
 

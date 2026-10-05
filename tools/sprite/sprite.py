@@ -126,9 +126,9 @@ ROLES = {
                 shirt="roof", apron="plaster_hi", item="loaf", pants="timber_lo"),
     "farmer": _r(desc="straw sun hat, blue overalls, straw in mouth", hat="straw", hatc="flower_gold", hair="timber_lo",
                  shirt="plaster", overalls="cloth", shoes="timber_lo", item="straw"),
-    "fisher": _r(desc="oilskin rain hat, striped jumper, grey beard, tall boots, fish basket", hat="rainhat",
-                 hatc="flower_gold", hair="stone_hi", beard="stone_hi", shirt="cloth", stripes="plaster_hi",
-                 pants="timber_lo", boots=True, item="fishbasket"),
+    "fisher": _r(desc="oilskin rain hat, striped jumper, grey beard, dark belt, brown trousers, yellow wellies, fish basket",
+                 hat="rainhat", hatc="flower_gold", hair="stone_hi", beard="stone_hi", shirt="cloth", stripes="plaster_hi",
+                 pants="timber_lo", belt="shadow", boots=True, shoes="flower_gold", item="fishbasket"),
     "shopkeeper": _r(desc="flat cap, green vest, moustache, ledger", hat="flatcap", hatc="timber_lo", hair="timber",
                      shirt="plaster_hi", vest="moss", beard="timber_lo", item="ledger"),
     "kid": _r(desc="small kid, cowlick, red shirt, blue shorts", layout="kid", hair="flower_gold", hairstyle="cowlick",
@@ -287,7 +287,7 @@ def draw_body(s, spec, L, face, bob, swing, stride, anim, i):
             s.set(x0 + 2, 26, s.pal.dk(sk))
             s.set(x0 + 2, 27, s.pal.dk(sk))
     else:
-        s.hspan(bottom, x0, x1, "timber_lo")  # belt
+        s.hspan(bottom, x0, x1, spec.get("belt") or "timber_lo")  # belt (a visible waist: clothing rule)
         if face == "down":
             s.set(9, bottom, "flower_gold")
     # vest / overalls / apron
@@ -381,6 +381,14 @@ def draw_body(s, spec, L, face, bob, swing, stride, anim, i):
             else:
                 s.hspan(y, x0, x1 + 1 - k, sh)
         s.set(9 if face != "left" else x0 + 1, top + 1, s.pal.lt(sh))
+    if spec.get("sash") and not spec["skirt"]:   # a cloth sash over the waist (2 rows) with a knotted tail
+        sa = spec["sash"]
+        for y in (bottom - 1, bottom):
+            s.hspan(y, x0, x1, sa)
+            s.set(x1, y, s.pal.dk(sa))
+        s.hspan(bottom - 1, x0 + 1, x1 - 1, s.pal.lt(sa)) if face != "up" else None
+        tx = x1 - 1 if face in ("down", "up") else x1
+        s.set(tx, bottom + 1, sa); s.set(tx, bottom + 2, s.pal.dk(sa))
     draw_arms(s, spec, L, face, top, swing, stride, x0, x1)
 
 

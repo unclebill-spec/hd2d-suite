@@ -29,8 +29,9 @@ export const FACTIONS = {
 };
 export const IDS = Object.keys(FACTIONS);
 // the realm faction of each area: rifts, rares and mini-bosses there earn its merit
-export const REALM = { plaza: 'hearth', lane: 'hearth', mossglen: 'hearth', hollows: 'hearth', vanaheim: 'embassy', rift: 'gate' };
-export const MERIT = { errand: 40, rift: [30, 60, 120], rare: 50, rareTrait: 40, boss: 80, riddle: 60, secret: 40, smuggle: 15, rival: 5, warden: 20 };
+export const REALM = { plaza: 'hearth', lane: 'hearth', mossglen: 'hearth', hollows: 'hearth', vanaheim: 'embassy', rift: 'gate', ravenhold: 'corsair' };
+export const MERIT = { errand: 40, rift: [30, 60, 120], rare: 50, rareTrait: 40, boss: 80, riddle: 60, secret: 40, smuggle: 15, rival: 5, warden: 20,
+                        sable: 20, dues: 15, harbor: 40 };   // Ravenhold: meeting Sable, paying harbor dues, the harbor story quest (all Corsair)
 export const rankOf = (m) => { let r = 0; for (let k = 1; k < NEED.length; k++) if (m >= NEED[k]) r = k; return r; };
 
 // save migration: older saves get the merit their finished work would have earned (errands, rifts sealed, rares felled)

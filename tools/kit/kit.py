@@ -885,6 +885,8 @@ import kit_hollows as _hollows  # noqa: E402  (Toadstool Hollows pieces: toadsto
 PROPS.update(_hollows.pieces(__import__('types').SimpleNamespace(**globals())))
 import kit_rift as _rift  # noqa: E402  (Rift Shrine + Vanaheim pieces: rift_isle, rift_arch, rift_shard, rift_dais, vine_arch)
 PROPS.update(_rift.pieces(__import__('types').SimpleNamespace(**globals())))
+import kit_harbor as _harbor  # noqa: E402  (Ravenhold Harbor pieces: water, pier, boats, cold-fire lanterns, waystone, district gate)
+PROPS.update(_harbor.pieces(__import__('types').SimpleNamespace(**globals())))
 
 
 def export_piece(cx: Ctx, pc: Piece, out: Path):

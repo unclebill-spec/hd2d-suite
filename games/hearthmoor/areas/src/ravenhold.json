@@ -1,0 +1,932 @@
+{
+ "name": "Ravenhold Harbor (Midgard)",
+ "seed": 104,
+ "biome": "cozy-village",
+ "about": "Ravenhold, Midgard's harbor capital at the foot of the Rainbow Rift. The Harbor district: stone quays, plank piers and moored boats on dark water, neon-blue cold-fire lanterns, and the Rift Corsairs' quartermaster. The other four districts (Market Terraces, Forge Quarter, Old Temple, Undercity) are sealed for now. The west road leads back to Hearthmoor.",
+ "time": {
+  "start": "night",
+  "speed": 0.0016
+ },
+ "spells": true,
+ "sprite_roles": [
+  "actors",
+  "heroes",
+  "combat"
+ ],
+ "boss_roles": [],
+ "camera": {
+  "fov": 24,
+  "pitch": 36,
+  "distance": 31,
+  "zoom": [
+   23,
+   40
+  ],
+  "look": [
+   0,
+   0,
+   -2.6
+  ],
+  "bounds": [
+   -12.0,
+   -9.5,
+   12.0,
+   3.6
+  ]
+ },
+ "ground": {
+  "size": [
+   90,
+   76
+  ],
+  "mat": "dirt",
+  "walk": [
+   -18.0,
+   -13.4,
+   18.0,
+   9.2
+  ]
+ },
+ "slabs": [],
+ "terraces": [
+  {
+   "name": "quay",
+   "rect": [
+    -40,
+    -9.0,
+    40,
+    1.0
+   ],
+   "h": 0.8,
+   "top": "cobble"
+  },
+  {
+   "name": "upper",
+   "rect": [
+    -40,
+    -40,
+    40,
+    -9.0
+   ],
+   "h": 3.0,
+   "top": "cobble",
+   "gaps": [
+    [
+     -0.85,
+     1.85
+    ]
+   ]
+  }
+ ],
+ "stairs": [
+  {
+   "name": "stair_market",
+   "x": 0.5,
+   "z_top": -9.0,
+   "width": 2.6,
+   "rise": 2.2,
+   "base": 0.8
+  }
+ ],
+ "decks": [
+  {
+   "rect": [
+    -7.2,
+    1.0,
+    -4.8,
+    9.0
+   ],
+   "h": 0.75
+  },
+  {
+   "rect": [
+    4.8,
+    1.0,
+    7.2,
+    9.0
+   ],
+   "h": 0.75
+  }
+ ],
+ "blocks": [
+  [
+   -40,
+   1.0,
+   -7.2,
+   30
+  ],
+  [
+   -4.8,
+   1.0,
+   4.8,
+   30
+  ],
+  [
+   7.2,
+   1.0,
+   40,
+   30
+  ],
+  [
+   -7.2,
+   9.0,
+   -4.8,
+   30
+  ],
+  [
+   4.8,
+   9.0,
+   7.2,
+   30
+  ]
+ ],
+ "buildings": [],
+ "props": [
+  {
+   "piece": "quay_lantern",
+   "pos": [
+    -9.8,
+    0.45
+   ]
+  },
+  {
+   "piece": "quay_lantern",
+   "pos": [
+    -2.2,
+    0.45
+   ]
+  },
+  {
+   "piece": "quay_lantern",
+   "pos": [
+    2.6,
+    0.45
+   ]
+  },
+  {
+   "piece": "quay_lantern",
+   "pos": [
+    9.8,
+    0.45
+   ]
+  },
+  {
+   "piece": "pier_lantern",
+   "pos": [
+    -6.85,
+    8.5
+   ]
+  },
+  {
+   "piece": "pier_lantern",
+   "pos": [
+    6.85,
+    8.5
+   ]
+  },
+  {
+   "piece": "waystone",
+   "pos": [
+    15.0,
+    -4.4
+   ]
+  },
+  {
+   "piece": "quay_lantern",
+   "pos": [
+    -14.6,
+    0.45
+   ]
+  },
+  {
+   "piece": "quay_lantern",
+   "pos": [
+    14.6,
+    0.45
+   ]
+  },
+  {
+   "piece": "float_lantern_violet",
+   "pos": [
+    0.4,
+    5.8
+   ]
+  },
+  {
+   "piece": "float_lantern_red",
+   "pos": [
+    -11.8,
+    3.0
+   ]
+  },
+  {
+   "piece": "float_lantern_violet",
+   "pos": [
+    12.2,
+    3.4
+   ]
+  },
+  {
+   "piece": "fish_orb",
+   "pos": [
+    -8.2,
+    -5.8
+   ]
+  },
+  {
+   "piece": "fish_orb",
+   "pos": [
+    -1.6,
+    -4.8
+   ]
+  },
+  {
+   "piece": "fish_orb",
+   "pos": [
+    8.6,
+    -0.4
+   ]
+  },
+  {
+   "piece": "bollard",
+   "pos": [
+    -8.4,
+    0.5
+   ]
+  },
+  {
+   "piece": "bollard",
+   "pos": [
+    -3.6,
+    0.5
+   ]
+  },
+  {
+   "piece": "bollard",
+   "pos": [
+    3.8,
+    0.5
+   ]
+  },
+  {
+   "piece": "bollard",
+   "pos": [
+    8.4,
+    0.5
+   ]
+  },
+  {
+   "piece": "toadstool_cluster",
+   "pos": [
+    -9.4,
+    -8.2
+   ]
+  },
+  {
+   "piece": "toadstool_big",
+   "pos": [
+    -10.2,
+    -8.0
+   ],
+   "rot": -20
+  },
+  {
+   "piece": "toadstool_cluster",
+   "pos": [
+    12.4,
+    -8.2
+   ]
+  },
+  {
+   "piece": "toadstool_big",
+   "pos": [
+    13.4,
+    -8.3
+   ],
+   "rot": 30
+  },
+  {
+   "piece": "skiff",
+   "pos": [
+    9.7,
+    5.4
+   ],
+   "rot": 4
+  },
+  {
+   "piece": "harbor_water",
+   "pos": [
+    0,
+    17.0
+   ]
+  },
+  {
+   "piece": "pier",
+   "pos": [
+    -6.0,
+    5.0
+   ]
+  },
+  {
+   "piece": "pier",
+   "pos": [
+    6.0,
+    5.0
+   ]
+  },
+  {
+   "piece": "skiff",
+   "pos": [
+    -2.4,
+    5.6
+   ],
+   "rot": -6
+  },
+  {
+   "piece": "rowboat",
+   "pos": [
+    -8.7,
+    4.2
+   ],
+   "rot": 8
+  },
+  {
+   "piece": "rowboat",
+   "pos": [
+    2.7,
+    3.9
+   ],
+   "rot": -14
+  },
+  {
+   "piece": "rowboat",
+   "pos": [
+    -10.6,
+    6.8
+   ],
+   "rot": 30
+  },
+  {
+   "piece": "district_gate",
+   "pos": [
+    0.5,
+    -11.7
+   ]
+  },
+  {
+   "piece": "district_gate",
+   "pos": [
+    -8.6,
+    -11.7
+   ]
+  },
+  {
+   "piece": "district_gate",
+   "pos": [
+    11.5,
+    -11.7
+   ]
+  },
+  {
+   "piece": "district_gate",
+   "pos": [
+    -12.6,
+    -9.7
+   ]
+  },
+  {
+   "piece": "cottage_stone",
+   "pos": [
+    5.6,
+    -6.7
+   ]
+  },
+  {
+   "piece": "cottage_tall",
+   "pos": [
+    -15.6,
+    -15.8
+   ]
+  },
+  {
+   "piece": "cottage_stone",
+   "pos": [
+    -4.0,
+    -16.2
+   ]
+  },
+  {
+   "piece": "cottage_tall",
+   "pos": [
+    5.0,
+    -16.4
+   ]
+  },
+  {
+   "piece": "inn",
+   "pos": [
+    15.2,
+    -16.0
+   ]
+  },
+  {
+   "piece": "crate",
+   "pos": [
+    -7.8,
+    -3.4
+   ]
+  },
+  {
+   "piece": "crate",
+   "pos": [
+    -8.5,
+    -2.6
+   ],
+   "rot": 20
+  },
+  {
+   "piece": "barrel",
+   "pos": [
+    -3.4,
+    -4.4
+   ]
+  },
+  {
+   "piece": "barrel",
+   "pos": [
+    8.6,
+    -3.8
+   ]
+  },
+  {
+   "piece": "barrel",
+   "pos": [
+    9.3,
+    -3.1
+   ]
+  },
+  {
+   "piece": "crate",
+   "pos": [
+    3.0,
+    -3.6
+   ],
+   "rot": -12
+  },
+  {
+   "piece": "market_stall",
+   "pos": [
+    -11.4,
+    -5.6
+   ]
+  },
+  {
+   "piece": "sign",
+   "pos": [
+    13.6,
+    -6.6
+   ]
+  },
+  {
+   "piece": "bench",
+   "pos": [
+    -2.6,
+    -7.9
+   ]
+  },
+  {
+   "piece": "crate",
+   "pos": [
+    -15.0,
+    -5.2
+   ]
+  },
+  {
+   "piece": "crate",
+   "pos": [
+    -15.9,
+    -5.0
+   ],
+   "rot": 12
+  },
+  {
+   "piece": "barrel",
+   "pos": [
+    -14.2,
+    -5.6
+   ]
+  },
+  {
+   "piece": "spring_basin",
+   "pos": [
+    -16.4,
+    -7.4
+   ]
+  },
+  {
+   "piece": "toadstool_cluster",
+   "pos": [
+    -17.0,
+    -4.6
+   ]
+  },
+  {
+   "piece": "toadstool_cluster",
+   "pos": [
+    16.8,
+    -8.2
+   ]
+  },
+  {
+   "piece": "toadstool_cluster",
+   "pos": [
+    -16.6,
+    -12.6
+   ]
+  },
+  {
+   "piece": "toadstool_cluster",
+   "pos": [
+    16.4,
+    -12.4
+   ]
+  },
+  {
+   "piece": "toadstool_big",
+   "pos": [
+    -17.3,
+    -8.6
+   ],
+   "rot": 25
+  },
+  {
+   "piece": "toadstool_cluster",
+   "pos": [
+    -5.0,
+    -12.8
+   ]
+  }
+ ],
+ "hedges": [],
+ "trees": [],
+ "backdrop": {
+  "hills": [
+   0,
+   -40
+  ]
+ },
+ "emitters": [
+  {
+   "preset": "fireflies",
+   "pos": [
+    -16.2,
+    1.2,
+    -7.2
+   ],
+   "area": [
+    3,
+    1.2,
+    2.4
+   ],
+   "min_gate": 0.0
+  },
+  {
+   "preset": "dust_motes",
+   "pos": [
+    0,
+    1.8,
+    -3.0
+   ],
+   "area": [
+    24,
+    2.6,
+    8
+   ]
+  },
+  {
+   "preset": "fireflies",
+   "pos": [
+    0.0,
+    1.4,
+    4.0
+   ],
+   "area": [
+    16,
+    1.2,
+    4
+   ],
+   "min_gate": 0.3
+  },
+  {
+   "preset": "fireflies",
+   "pos": [
+    0.0,
+    0.9,
+    5.0
+   ],
+   "area": [
+    26,
+    0.8,
+    6
+   ],
+   "min_gate": 0.0
+  },
+  {
+   "preset": "fireflies",
+   "pos": [
+    -8.0,
+    1.2,
+    -6.0
+   ],
+   "area": [
+    4,
+    1.2,
+    2
+   ],
+   "min_gate": 0.0
+  }
+ ],
+ "actors": [
+  {
+   "id": "harbormaster",
+   "role": "fisher",
+   "name": "Harbormaster Brannoc",
+   "pos": [
+    -5.6,
+    -2.4
+   ],
+   "facing": "down",
+   "behavior": "idle",
+   "talkable": true,
+   "say": [
+    "Mind the edge, the water's colder than it looks."
+   ]
+  },
+  {
+   "id": "quartermaster",
+   "role": "corsair",
+   "name": "Quartermaster Sable, Rift Corsairs",
+   "pos": [
+    6.6,
+    -2.2
+   ],
+   "facing": "down",
+   "behavior": "idle",
+   "talkable": true,
+   "say": [
+    "Corsair business. Unless you're here to make it yours."
+   ]
+  },
+  {
+   "id": "chandler",
+   "role": "lamplighter",
+   "name": "Ida Wickmere, cold-fire chandler",
+   "at": "stall_vendor",
+   "facing": "down",
+   "behavior": "idle",
+   "talkable": true,
+   "say": [
+    "Cold-fire, lamp oil, rope and tonics."
+   ]
+  },
+  {
+   "id": "dockkid",
+   "role": "fisherkid",
+   "name": "Pip",
+   "pos": [
+    -6.0,
+    6.2
+   ],
+   "facing": "down",
+   "behavior": "idle",
+   "talkable": true,
+   "say": [
+    "I'm fishing for lantern-eels. They only bite at night."
+   ]
+  }
+ ],
+ "player": {
+  "role": "traveler",
+  "pos": [
+   1.6,
+   -0.8
+  ],
+  "facing": "up"
+ },
+ "fx": [],
+ "grades": {
+  "day": {
+   "fog_color": "#5c6c84",
+   "sky_top": "#46587c",
+   "sky_bottom": "#8c9cb4",
+   "hemi_sky": "#7a8cb0",
+   "sun_intensity": 1.5,
+   "sun_color": "#d8dcf0",
+   "saturation": 0.92,
+   "exposure": 0.96,
+   "warmth": -0.06,
+   "window_emissive": "#ffa040",
+   "window_intensity": 0.9,
+   "lamp_intensity": 0.6,
+   "bugs": 0.3
+  },
+  "dusk": {
+   "fog_color": "#2c3a60",
+   "sky_bottom": "#7c6c9c",
+   "sky_top": "#1c2650",
+   "exposure": 0.98,
+   "sun_intensity": 0.7,
+   "bugs": 0.8,
+   "warmth": -0.1
+  },
+  "night": {
+   "fog_color": "#101c38",
+   "sky_top": "#080c20",
+   "sky_bottom": "#1c2a52",
+   "hemi_sky": "#3c5088",
+   "hemi_intensity": 0.5,
+   "exposure": 1.08,
+   "sun_intensity": 0.3,
+   "sun_color": "#8ea8e8",
+   "bugs": 1.0
+  }
+ },
+ "game": {
+  "id": "ravenhold",
+  "title": "Ravenhold Harbor",
+  "exits": [
+   {
+    "rect": [
+     16.6,
+     -8.8,
+     18.6,
+     0.8
+    ],
+    "to": "lane",
+    "spawn": "from_ravenhold",
+    "label": "the road back to Hearthmoor"
+   }
+  ],
+  "sealed": [
+   {
+    "id": "market",
+    "pos": [
+     0.5,
+     -11.7
+    ],
+    "name": "the Market Terraces",
+    "district": true,
+    "say": [
+     "The Market Terraces gate: oak doors, barred, chained, the city's market bell beyond. The stalls climb the hill toward the Rainbow Rift.",
+     "A watch notice is nailed to the beam: 'Closed until the Rift settles.' Coming soon."
+    ]
+   },
+   {
+    "id": "temple",
+    "pos": [
+     -8.6,
+     -11.7
+    ],
+    "name": "the Old Temple",
+    "district": true,
+    "say": [
+     "The Old Temple gate. Somewhere up there, old bells hang silent.",
+     "Sealed. Coming soon."
+    ]
+   },
+   {
+    "id": "forge",
+    "pos": [
+     11.5,
+     -11.7
+    ],
+    "name": "the Forge Quarter",
+    "district": true,
+    "say": [
+     "The Forge Quarter gate. You can smell coal smoke and hear a hammer, far off.",
+     "Sealed. Coming soon."
+    ]
+   },
+   {
+    "id": "undercity",
+    "pos": [
+     -12.6,
+     -9.7
+    ],
+    "name": "the Undercity",
+    "district": true,
+    "say": [
+     "The Undercity gate, down at the waterline. Cold air seeps through the bars. Something drips.",
+     "Sealed tight. Coming soon."
+    ]
+   }
+  ],
+  "spring": {
+   "pos": [
+    -16.4,
+    -7.4
+   ],
+   "r": 1.6,
+   "secret": "rh_spring"
+  },
+  "waystone": {
+   "pos": [
+    15.0,
+    -4.4
+   ]
+  },
+  "spawns": {
+   "start": [
+    1.6,
+    -0.8,
+    "up"
+   ],
+   "from_lane": [
+    14.6,
+    -1.8,
+    "left"
+   ],
+   "from_waystone": [
+    13.6,
+    -3.2,
+    "left"
+   ],
+   "qa": [
+    -1.0,
+    -2.0,
+    "up"
+   ]
+  },
+  "shimmer": {
+   "glints": [
+    [
+     -9.8,
+     2.0
+    ],
+    [
+     -2.2,
+     2.0
+    ],
+    [
+     2.6,
+     2.0
+    ],
+    [
+     9.8,
+     2.0
+    ],
+    [
+     -14.6,
+     2.0
+    ],
+    [
+     14.6,
+     2.0
+    ],
+    [
+     -6.85,
+     9.7
+    ],
+    [
+     6.85,
+     9.7
+    ],
+    [
+     0.4,
+     6.6
+    ],
+    [
+     -11.8,
+     3.8
+    ],
+    [
+     12.2,
+     4.2
+    ]
+   ],
+   "wisps": [
+    [
+     -4.0,
+     3.4
+    ],
+    [
+     4.2,
+     6.0
+    ],
+    [
+     -12.6,
+     5.2
+    ],
+    [
+     11.4,
+     7.4
+    ],
+    [
+     0.0,
+     8.6
+    ]
+   ]
+  }
+ },
+ "gamefx": true
+}

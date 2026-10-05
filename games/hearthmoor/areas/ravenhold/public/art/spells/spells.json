@@ -1,0 +1,3116 @@
+{
+ "tool": "hd2d spells",
+ "biome": "cozy-village",
+ "seed": 104,
+ "image": "spells.png",
+ "cell": 32,
+ "size": [
+  256,
+  1408
+ ],
+ "effects": {
+  "sparkle_burst": {
+   "row": 0,
+   "frames": 8,
+   "fps": 14,
+   "loop": false,
+   "loop_from": 0,
+   "loops": 1,
+   "kind": "billboard",
+   "pivot": [
+    16,
+    31
+   ],
+   "lift": 0.9,
+   "glow": true,
+   "light": {
+    "color": "#ffb24a",
+    "intensity": 7,
+    "range": 4.5,
+    "curve": [
+     1,
+     0.9,
+     0.7,
+     0.5,
+     0.3,
+     0.2,
+     0.1,
+     0
+    ]
+   },
+   "speed": null,
+   "travel": null,
+   "then": null,
+   "strip": "sparkle_burst.png",
+   "frame_list": [
+    {
+     "x": 0,
+     "y": 0,
+     "w": 32,
+     "h": 32
+    },
+    {
+     "x": 32,
+     "y": 0,
+     "w": 32,
+     "h": 32
+    },
+    {
+     "x": 64,
+     "y": 0,
+     "w": 32,
+     "h": 32
+    },
+    {
+     "x": 96,
+     "y": 0,
+     "w": 32,
+     "h": 32
+    },
+    {
+     "x": 128,
+     "y": 0,
+     "w": 32,
+     "h": 32
+    },
+    {
+     "x": 160,
+     "y": 0,
+     "w": 32,
+     "h": 32
+    },
+    {
+     "x": 192,
+     "y": 0,
+     "w": 32,
+     "h": 32
+    },
+    {
+     "x": 224,
+     "y": 0,
+     "w": 32,
+     "h": 32
+    }
+   ],
+   "duration": 0.571
+  },
+  "healing_petals": {
+   "row": 1,
+   "frames": 8,
+   "fps": 10,
+   "loop": true,
+   "loop_from": 0,
+   "loops": 2,
+   "kind": "billboard",
+   "pivot": [
+    16,
+    31
+   ],
+   "lift": 0.0,
+   "glow": false,
+   "light": {
+    "color": "#e47c8c",
+    "intensity": 3,
+    "range": 3.5,
+    "curve": [
+     0.4,
+     0.7,
+     1,
+     1,
+     1,
+     0.8,
+     0.6,
+     0.3
+    ]
+   },
+   "speed": null,
+   "travel": null,
+   "then": null,
+   "strip": "healing_petals.png",
+   "frame_list": [
+    {
+     "x": 0,
+     "y": 32,
+     "w": 32,
+     "h": 32
+    },
+    {
+     "x": 32,
+     "y": 32,
+     "w": 32,
+     "h": 32
+    },
+    {
+     "x": 64,
+     "y": 32,
+     "w": 32,
+     "h": 32
+    },
+    {
+     "x": 96,
+     "y": 32,
+     "w": 32,
+     "h": 32
+    },
+    {
+     "x": 128,
+     "y": 32,
+     "w": 32,
+     "h": 32
+    },
+    {
+     "x": 160,
+     "y": 32,
+     "w": 32,
+     "h": 32
+    },
+    {
+     "x": 192,
+     "y": 32,
+     "w": 32,
+     "h": 32
+    },
+    {
+     "x": 224,
+     "y": 32,
+     "w": 32,
+     "h": 32
+    }
+   ],
+   "duration": 1.6
+  },
+  "hearth_flame": {
+   "row": 2,
+   "frames": 8,
+   "fps": 10,
+   "loop": true,
+   "loop_from": 0,
+   "loops": 4,
+   "kind": "billboard",
+   "pivot": [
+    16,
+    31
+   ],
+   "lift": 0.0,
+   "glow": true,
+   "light": {
+    "color": "#ffb24a",
+    "intensity": 6,
+    "range": 5,
+    "curve": [
+     1,
+     0.9,
+     1.05,
+     0.95,
+     1,
+     0.85,
+     1.1,
+     0.95
+    ]
+   },
+   "speed": null,
+   "travel": null,
+   "then": null,
+   "strip": "hearth_flame.png",
+   "frame_list": [
+    {
+     "x": 0,
+     "y": 64,
+     "w": 32,
+     "h": 32
+    },
+    {
+     "x": 32,
+     "y": 64,
+     "w": 32,
+     "h": 32
+    },
+    {
+     "x": 64,
+     "y": 64,
+     "w": 32,
+     "h": 32
+    },
+    {
+     "x": 96,
+     "y": 64,
+     "w": 32,
+     "h": 32
+    },
+    {
+     "x": 128,
+     "y": 64,
+     "w": 32,
+     "h": 32
+    },
+    {
+     "x": 160,
+     "y": 64,
+     "w": 32,
+     "h": 32
+    },
+    {
+     "x": 192,
+     "y": 64,
+     "w": 32,
+     "h": 32
+    },
+    {
+     "x": 224,
+     "y": 64,
+     "w": 32,
+     "h": 32
+    }
+   ],
+   "duration": 3.2
+  },
+  "frost_puff": {
+   "row": 3,
+   "frames": 8,
+   "fps": 12,
+   "loop": false,
+   "loop_from": 0,
+   "loops": 1,
+   "kind": "billboard",
+   "pivot": [
+    16,
+    31
+   ],
+   "lift": 0.2,
+   "glow": false,
+   "light": {
+    "color": "#94c0dc",
+    "intensity": 3,
+    "range": 3.5,
+    "curve": [
+     1,
+     0.8,
+     0.6,
+     0.4,
+     0.3,
+     0.2,
+     0.1,
+     0
+    ]
+   },
+   "speed": null,
+   "travel": null,
+   "then": null,
+   "strip": "frost_puff.png",
+   "frame_list": [
+    {
+     "x": 0,
+     "y": 96,
+     "w": 32,
+     "h": 32
+    },
+    {
+     "x": 32,
+     "y": 96,
+     "w": 32,
+     "h": 32
+    },
+    {
+     "x": 64,
+     "y": 96,
+     "w": 32,
+     "h": 32
+    },
+    {
+     "x": 96,
+     "y": 96,
+     "w": 32,
+     "h": 32
+    },
+    {
+     "x": 128,
+     "y": 96,
+     "w": 32,
+     "h": 32
+    },
+    {
+     "x": 160,
+     "y": 96,
+     "w": 32,
+     "h": 32
+    },
+    {
+     "x": 192,
+     "y": 96,
+     "w": 32,
+     "h": 32
+    },
+    {
+     "x": 224,
+     "y": 96,
+     "w": 32,
+     "h": 32
+    }
+   ],
+   "duration": 0.667
+  },
+  "leaf_gust": {
+   "row": 4,
+   "frames": 8,
+   "fps": 12,
+   "loop": false,
+   "loop_from": 0,
+   "loops": 1,
+   "kind": "billboard",
+   "pivot": [
+    16,
+    31
+   ],
+   "lift": 0.1,
+   "glow": false,
+   "light": null,
+   "speed": null,
+   "travel": null,
+   "then": null,
+   "strip": "leaf_gust.png",
+   "frame_list": [
+    {
+     "x": 0,
+     "y": 128,
+     "w": 32,
+     "h": 32
+    },
+    {
+     "x": 32,
+     "y": 128,
+     "w": 32,
+     "h": 32
+    },
+    {
+     "x": 64,
+     "y": 128,
+     "w": 32,
+     "h": 32
+    },
+    {
+     "x": 96,
+     "y": 128,
+     "w": 32,
+     "h": 32
+    },
+    {
+     "x": 128,
+     "y": 128,
+     "w": 32,
+     "h": 32
+    },
+    {
+     "x": 160,
+     "y": 128,
+     "w": 32,
+     "h": 32
+    },
+    {
+     "x": 192,
+     "y": 128,
+     "w": 32,
+     "h": 32
+    },
+    {
+     "x": 224,
+     "y": 128,
+     "w": 32,
+     "h": 32
+    }
+   ],
+   "duration": 0.667
+  },
+  "light_orb": {
+   "row": 5,
+   "frames": 6,
+   "fps": 8,
+   "loop": true,
+   "loop_from": 0,
+   "loops": 5,
+   "kind": "billboard",
+   "pivot": [
+    16,
+    24
+   ],
+   "lift": 1.5,
+   "glow": true,
+   "light": {
+    "color": "#ffb24a",
+    "intensity": 5,
+    "range": 5,
+    "curve": [
+     1,
+     1.05,
+     1.1,
+     1.05,
+     1,
+     0.95
+    ]
+   },
+   "speed": null,
+   "travel": null,
+   "then": null,
+   "strip": "light_orb.png",
+   "frame_list": [
+    {
+     "x": 0,
+     "y": 160,
+     "w": 32,
+     "h": 32
+    },
+    {
+     "x": 32,
+     "y": 160,
+     "w": 32,
+     "h": 32
+    },
+    {
+     "x": 64,
+     "y": 160,
+     "w": 32,
+     "h": 32
+    },
+    {
+     "x": 96,
+     "y": 160,
+     "w": 32,
+     "h": 32
+    },
+    {
+     "x": 128,
+     "y": 160,
+     "w": 32,
+     "h": 32
+    },
+    {
+     "x": 160,
+     "y": 160,
+     "w": 32,
+     "h": 32
+    }
+   ],
+   "duration": 3.75
+  },
+  "rune_circle": {
+   "row": 6,
+   "frames": 8,
+   "fps": 8,
+   "loop": true,
+   "loop_from": 4,
+   "loops": 3,
+   "kind": "decal",
+   "pivot": [
+    16,
+    16
+   ],
+   "lift": 0.02,
+   "glow": true,
+   "light": {
+    "color": "#f2c24a",
+    "intensity": 2.5,
+    "range": 3,
+    "curve": [
+     0.2,
+     0.4,
+     0.7,
+     1,
+     1,
+     1,
+     1,
+     1
+    ]
+   },
+   "speed": null,
+   "travel": null,
+   "then": null,
+   "strip": "rune_circle.png",
+   "frame_list": [
+    {
+     "x": 0,
+     "y": 192,
+     "w": 32,
+     "h": 32
+    },
+    {
+     "x": 32,
+     "y": 192,
+     "w": 32,
+     "h": 32
+    },
+    {
+     "x": 64,
+     "y": 192,
+     "w": 32,
+     "h": 32
+    },
+    {
+     "x": 96,
+     "y": 192,
+     "w": 32,
+     "h": 32
+    },
+    {
+     "x": 128,
+     "y": 192,
+     "w": 32,
+     "h": 32
+    },
+    {
+     "x": 160,
+     "y": 192,
+     "w": 32,
+     "h": 32
+    },
+    {
+     "x": 192,
+     "y": 192,
+     "w": 32,
+     "h": 32
+    },
+    {
+     "x": 224,
+     "y": 192,
+     "w": 32,
+     "h": 32
+    }
+   ],
+   "duration": 3.0
+  },
+  "bolt": {
+   "row": 7,
+   "frames": 6,
+   "fps": 14,
+   "loop": true,
+   "loop_from": 0,
+   "loops": 1,
+   "kind": "projectile",
+   "pivot": [
+    16,
+    16
+   ],
+   "lift": 1.1,
+   "glow": true,
+   "light": {
+    "color": "#ffb24a",
+    "intensity": 4,
+    "range": 3.5,
+    "curve": [
+     1,
+     1,
+     1,
+     1,
+     1,
+     1
+    ]
+   },
+   "speed": 7.0,
+   "travel": 4.0,
+   "then": "impact",
+   "strip": "bolt.png",
+   "frame_list": [
+    {
+     "x": 0,
+     "y": 224,
+     "w": 32,
+     "h": 32
+    },
+    {
+     "x": 32,
+     "y": 224,
+     "w": 32,
+     "h": 32
+    },
+    {
+     "x": 64,
+     "y": 224,
+     "w": 32,
+     "h": 32
+    },
+    {
+     "x": 96,
+     "y": 224,
+     "w": 32,
+     "h": 32
+    },
+    {
+     "x": 128,
+     "y": 224,
+     "w": 32,
+     "h": 32
+    },
+    {
+     "x": 160,
+     "y": 224,
+     "w": 32,
+     "h": 32
+    }
+   ],
+   "duration": 0.429
+  },
+  "impact": {
+   "row": 8,
+   "frames": 6,
+   "fps": 14,
+   "loop": false,
+   "loop_from": 0,
+   "loops": 1,
+   "kind": "billboard",
+   "pivot": [
+    16,
+    26
+   ],
+   "lift": 0.6,
+   "glow": true,
+   "light": {
+    "color": "#fff8e6",
+    "intensity": 8,
+    "range": 4,
+    "curve": [
+     1,
+     0.8,
+     0.5,
+     0.3,
+     0.15,
+     0
+    ]
+   },
+   "speed": null,
+   "travel": null,
+   "then": null,
+   "strip": "impact.png",
+   "frame_list": [
+    {
+     "x": 0,
+     "y": 256,
+     "w": 32,
+     "h": 32
+    },
+    {
+     "x": 32,
+     "y": 256,
+     "w": 32,
+     "h": 32
+    },
+    {
+     "x": 64,
+     "y": 256,
+     "w": 32,
+     "h": 32
+    },
+    {
+     "x": 96,
+     "y": 256,
+     "w": 32,
+     "h": 32
+    },
+    {
+     "x": 128,
+     "y": 256,
+     "w": 32,
+     "h": 32
+    },
+    {
+     "x": 160,
+     "y": 256,
+     "w": 32,
+     "h": 32
+    }
+   ],
+   "duration": 0.429
+  },
+  "seed_bomb": {
+   "row": 9,
+   "frames": 6,
+   "fps": 12,
+   "loop": true,
+   "loop_from": 0,
+   "loops": 1,
+   "kind": "projectile",
+   "pivot": [
+    16,
+    16
+   ],
+   "lift": 1.0,
+   "glow": false,
+   "light": null,
+   "speed": 8.0,
+   "travel": 5.0,
+   "then": "earth_burst",
+   "strip": "seed_bomb.png",
+   "frame_list": [
+    {
+     "x": 0,
+     "y": 288,
+     "w": 32,
+     "h": 32
+    },
+    {
+     "x": 32,
+     "y": 288,
+     "w": 32,
+     "h": 32
+    },
+    {
+     "x": 64,
+     "y": 288,
+     "w": 32,
+     "h": 32
+    },
+    {
+     "x": 96,
+     "y": 288,
+     "w": 32,
+     "h": 32
+    },
+    {
+     "x": 128,
+     "y": 288,
+     "w": 32,
+     "h": 32
+    },
+    {
+     "x": 160,
+     "y": 288,
+     "w": 32,
+     "h": 32
+    }
+   ],
+   "duration": 0.5
+  },
+  "earth_burst": {
+   "row": 10,
+   "frames": 7,
+   "fps": 14,
+   "loop": false,
+   "loop_from": 0,
+   "loops": 1,
+   "kind": "billboard",
+   "pivot": [
+    16,
+    31
+   ],
+   "lift": 0.0,
+   "glow": false,
+   "light": {
+    "color": "#f2c24a",
+    "intensity": 3,
+    "range": 3,
+    "curve": [
+     1,
+     0.7,
+     0.4,
+     0.2,
+     0.1,
+     0,
+     0
+    ]
+   },
+   "speed": null,
+   "travel": null,
+   "then": null,
+   "strip": "earth_burst.png",
+   "frame_list": [
+    {
+     "x": 0,
+     "y": 320,
+     "w": 32,
+     "h": 32
+    },
+    {
+     "x": 32,
+     "y": 320,
+     "w": 32,
+     "h": 32
+    },
+    {
+     "x": 64,
+     "y": 320,
+     "w": 32,
+     "h": 32
+    },
+    {
+     "x": 96,
+     "y": 320,
+     "w": 32,
+     "h": 32
+    },
+    {
+     "x": 128,
+     "y": 320,
+     "w": 32,
+     "h": 32
+    },
+    {
+     "x": 160,
+     "y": 320,
+     "w": 32,
+     "h": 32
+    },
+    {
+     "x": 192,
+     "y": 320,
+     "w": 32,
+     "h": 32
+    }
+   ],
+   "duration": 0.5
+  },
+  "rune_slam": {
+   "row": 11,
+   "frames": 7,
+   "fps": 14,
+   "loop": false,
+   "loop_from": 0,
+   "loops": 1,
+   "kind": "decal",
+   "pivot": [
+    16,
+    16
+   ],
+   "lift": 0.03,
+   "glow": true,
+   "light": {
+    "color": "#ffb24a",
+    "intensity": 7,
+    "range": 4.5,
+    "curve": [
+     1,
+     0.9,
+     0.7,
+     0.5,
+     0.3,
+     0.15,
+     0
+    ]
+   },
+   "speed": null,
+   "travel": null,
+   "then": null,
+   "strip": "rune_slam.png",
+   "frame_list": [
+    {
+     "x": 0,
+     "y": 352,
+     "w": 32,
+     "h": 32
+    },
+    {
+     "x": 32,
+     "y": 352,
+     "w": 32,
+     "h": 32
+    },
+    {
+     "x": 64,
+     "y": 352,
+     "w": 32,
+     "h": 32
+    },
+    {
+     "x": 96,
+     "y": 352,
+     "w": 32,
+     "h": 32
+    },
+    {
+     "x": 128,
+     "y": 352,
+     "w": 32,
+     "h": 32
+    },
+    {
+     "x": 160,
+     "y": 352,
+     "w": 32,
+     "h": 32
+    },
+    {
+     "x": 192,
+     "y": 352,
+     "w": 32,
+     "h": 32
+    }
+   ],
+   "duration": 0.5
+  },
+  "rune_trap": {
+   "row": 12,
+   "frames": 8,
+   "fps": 12,
+   "loop": false,
+   "loop_from": 0,
+   "loops": 1,
+   "kind": "decal",
+   "pivot": [
+    16,
+    16
+   ],
+   "lift": 0.03,
+   "glow": true,
+   "light": {
+    "color": "#94c0dc",
+    "intensity": 3,
+    "range": 3,
+    "curve": [
+     0.2,
+     0.4,
+     0.6,
+     0.8,
+     0.8,
+     0.8,
+     1,
+     1
+    ]
+   },
+   "speed": null,
+   "travel": null,
+   "then": null,
+   "strip": "rune_trap.png",
+   "frame_list": [
+    {
+     "x": 0,
+     "y": 384,
+     "w": 32,
+     "h": 32
+    },
+    {
+     "x": 32,
+     "y": 384,
+     "w": 32,
+     "h": 32
+    },
+    {
+     "x": 64,
+     "y": 384,
+     "w": 32,
+     "h": 32
+    },
+    {
+     "x": 96,
+     "y": 384,
+     "w": 32,
+     "h": 32
+    },
+    {
+     "x": 128,
+     "y": 384,
+     "w": 32,
+     "h": 32
+    },
+    {
+     "x": 160,
+     "y": 384,
+     "w": 32,
+     "h": 32
+    },
+    {
+     "x": 192,
+     "y": 384,
+     "w": 32,
+     "h": 32
+    },
+    {
+     "x": 224,
+     "y": 384,
+     "w": 32,
+     "h": 32
+    }
+   ],
+   "duration": 0.667
+  },
+  "glyph_burst": {
+   "row": 13,
+   "frames": 6,
+   "fps": 14,
+   "loop": false,
+   "loop_from": 0,
+   "loops": 1,
+   "kind": "billboard",
+   "pivot": [
+    16,
+    31
+   ],
+   "lift": 0.0,
+   "glow": true,
+   "light": {
+    "color": "#94c0dc",
+    "intensity": 8,
+    "range": 4.5,
+    "curve": [
+     0.6,
+     1,
+     1,
+     0.7,
+     0.4,
+     0.1
+    ]
+   },
+   "speed": null,
+   "travel": null,
+   "then": null,
+   "strip": "glyph_burst.png",
+   "frame_list": [
+    {
+     "x": 0,
+     "y": 416,
+     "w": 32,
+     "h": 32
+    },
+    {
+     "x": 32,
+     "y": 416,
+     "w": 32,
+     "h": 32
+    },
+    {
+     "x": 64,
+     "y": 416,
+     "w": 32,
+     "h": 32
+    },
+    {
+     "x": 96,
+     "y": 416,
+     "w": 32,
+     "h": 32
+    },
+    {
+     "x": 128,
+     "y": 416,
+     "w": 32,
+     "h": 32
+    },
+    {
+     "x": 160,
+     "y": 416,
+     "w": 32,
+     "h": 32
+    }
+   ],
+   "duration": 0.429
+  },
+  "sky_strike": {
+   "row": 14,
+   "frames": 6,
+   "fps": 16,
+   "loop": false,
+   "loop_from": 0,
+   "loops": 1,
+   "kind": "billboard",
+   "pivot": [
+    16,
+    31
+   ],
+   "lift": 0.0,
+   "glow": true,
+   "light": {
+    "color": "#fff8e6",
+    "intensity": 9,
+    "range": 5,
+    "curve": [
+     1,
+     1,
+     0.4,
+     0.9,
+     0.3,
+     0
+    ]
+   },
+   "speed": null,
+   "travel": null,
+   "then": null,
+   "strip": "sky_strike.png",
+   "frame_list": [
+    {
+     "x": 0,
+     "y": 448,
+     "w": 32,
+     "h": 32
+    },
+    {
+     "x": 32,
+     "y": 448,
+     "w": 32,
+     "h": 32
+    },
+    {
+     "x": 64,
+     "y": 448,
+     "w": 32,
+     "h": 32
+    },
+    {
+     "x": 96,
+     "y": 448,
+     "w": 32,
+     "h": 32
+    },
+    {
+     "x": 128,
+     "y": 448,
+     "w": 32,
+     "h": 32
+    },
+    {
+     "x": 160,
+     "y": 448,
+     "w": 32,
+     "h": 32
+    }
+   ],
+   "duration": 0.375
+  },
+  "bloom_ring": {
+   "row": 15,
+   "frames": 8,
+   "fps": 12,
+   "loop": false,
+   "loop_from": 0,
+   "loops": 1,
+   "kind": "decal",
+   "pivot": [
+    16,
+    16
+   ],
+   "lift": 0.03,
+   "glow": false,
+   "light": {
+    "color": "#e47c8c",
+    "intensity": 3,
+    "range": 3.5,
+    "curve": [
+     0.3,
+     0.6,
+     1,
+     1,
+     1,
+     0.8,
+     0.5,
+     0.2
+    ]
+   },
+   "speed": null,
+   "travel": null,
+   "then": null,
+   "strip": "bloom_ring.png",
+   "frame_list": [
+    {
+     "x": 0,
+     "y": 480,
+     "w": 32,
+     "h": 32
+    },
+    {
+     "x": 32,
+     "y": 480,
+     "w": 32,
+     "h": 32
+    },
+    {
+     "x": 64,
+     "y": 480,
+     "w": 32,
+     "h": 32
+    },
+    {
+     "x": 96,
+     "y": 480,
+     "w": 32,
+     "h": 32
+    },
+    {
+     "x": 128,
+     "y": 480,
+     "w": 32,
+     "h": 32
+    },
+    {
+     "x": 160,
+     "y": 480,
+     "w": 32,
+     "h": 32
+    },
+    {
+     "x": 192,
+     "y": 480,
+     "w": 32,
+     "h": 32
+    },
+    {
+     "x": 224,
+     "y": 480,
+     "w": 32,
+     "h": 32
+    }
+   ],
+   "duration": 0.667
+  },
+  "ember_slash": {
+   "row": 16,
+   "frames": 6,
+   "fps": 16,
+   "loop": true,
+   "loop_from": 0,
+   "loops": 1,
+   "kind": "projectile",
+   "pivot": [
+    16,
+    16
+   ],
+   "lift": 0.9,
+   "glow": true,
+   "light": {
+    "color": "#ffb24a",
+    "intensity": 5,
+    "range": 3.5,
+    "curve": [
+     1,
+     1,
+     1,
+     1,
+     1,
+     1
+    ]
+   },
+   "speed": 10.0,
+   "travel": 4.5,
+   "then": "ember_pop",
+   "strip": "ember_slash.png",
+   "frame_list": [
+    {
+     "x": 0,
+     "y": 512,
+     "w": 32,
+     "h": 32
+    },
+    {
+     "x": 32,
+     "y": 512,
+     "w": 32,
+     "h": 32
+    },
+    {
+     "x": 64,
+     "y": 512,
+     "w": 32,
+     "h": 32
+    },
+    {
+     "x": 96,
+     "y": 512,
+     "w": 32,
+     "h": 32
+    },
+    {
+     "x": 128,
+     "y": 512,
+     "w": 32,
+     "h": 32
+    },
+    {
+     "x": 160,
+     "y": 512,
+     "w": 32,
+     "h": 32
+    }
+   ],
+   "duration": 0.375
+  },
+  "ember_pop": {
+   "row": 17,
+   "frames": 6,
+   "fps": 14,
+   "loop": false,
+   "loop_from": 0,
+   "loops": 1,
+   "kind": "billboard",
+   "pivot": [
+    16,
+    31
+   ],
+   "lift": 0.0,
+   "glow": true,
+   "light": {
+    "color": "#ffb24a",
+    "intensity": 6,
+    "range": 3.5,
+    "curve": [
+     1,
+     0.8,
+     0.5,
+     0.3,
+     0.1,
+     0
+    ]
+   },
+   "speed": null,
+   "travel": null,
+   "then": null,
+   "strip": "ember_pop.png",
+   "frame_list": [
+    {
+     "x": 0,
+     "y": 544,
+     "w": 32,
+     "h": 32
+    },
+    {
+     "x": 32,
+     "y": 544,
+     "w": 32,
+     "h": 32
+    },
+    {
+     "x": 64,
+     "y": 544,
+     "w": 32,
+     "h": 32
+    },
+    {
+     "x": 96,
+     "y": 544,
+     "w": 32,
+     "h": 32
+    },
+    {
+     "x": 128,
+     "y": 544,
+     "w": 32,
+     "h": 32
+    },
+    {
+     "x": 160,
+     "y": 544,
+     "w": 32,
+     "h": 32
+    }
+   ],
+   "duration": 0.429
+  },
+  "coldfire_bolt": {
+   "row": 18,
+   "frames": 6,
+   "fps": 12,
+   "loop": true,
+   "loop_from": 0,
+   "loops": 1,
+   "kind": "projectile",
+   "pivot": [
+    16,
+    16
+   ],
+   "lift": 1.0,
+   "glow": true,
+   "light": {
+    "color": "#94c0dc",
+    "intensity": 4,
+    "range": 3.5,
+    "curve": [
+     1,
+     1,
+     1,
+     1,
+     1,
+     1
+    ]
+   },
+   "speed": 5.0,
+   "travel": 7.0,
+   "then": "frost_puff",
+   "strip": "coldfire_bolt.png",
+   "frame_list": [
+    {
+     "x": 0,
+     "y": 576,
+     "w": 32,
+     "h": 32
+    },
+    {
+     "x": 32,
+     "y": 576,
+     "w": 32,
+     "h": 32
+    },
+    {
+     "x": 64,
+     "y": 576,
+     "w": 32,
+     "h": 32
+    },
+    {
+     "x": 96,
+     "y": 576,
+     "w": 32,
+     "h": 32
+    },
+    {
+     "x": 128,
+     "y": 576,
+     "w": 32,
+     "h": 32
+    },
+    {
+     "x": 160,
+     "y": 576,
+     "w": 32,
+     "h": 32
+    }
+   ],
+   "duration": 0.5
+  },
+  "hit_spark": {
+   "row": 19,
+   "frames": 5,
+   "fps": 18,
+   "loop": false,
+   "loop_from": 0,
+   "loops": 1,
+   "kind": "billboard",
+   "pivot": [
+    16,
+    26
+   ],
+   "lift": 0.5,
+   "glow": true,
+   "light": null,
+   "speed": null,
+   "travel": null,
+   "then": null,
+   "strip": "hit_spark.png",
+   "frame_list": [
+    {
+     "x": 0,
+     "y": 608,
+     "w": 32,
+     "h": 32
+    },
+    {
+     "x": 32,
+     "y": 608,
+     "w": 32,
+     "h": 32
+    },
+    {
+     "x": 64,
+     "y": 608,
+     "w": 32,
+     "h": 32
+    },
+    {
+     "x": 96,
+     "y": 608,
+     "w": 32,
+     "h": 32
+    },
+    {
+     "x": 128,
+     "y": 608,
+     "w": 32,
+     "h": 32
+    }
+   ],
+   "duration": 0.278
+  },
+  "summon_poof": {
+   "row": 20,
+   "frames": 7,
+   "fps": 12,
+   "loop": false,
+   "loop_from": 0,
+   "loops": 1,
+   "kind": "billboard",
+   "pivot": [
+    16,
+    31
+   ],
+   "lift": 0.0,
+   "glow": false,
+   "light": {
+    "color": "#ffb24a",
+    "intensity": 3,
+    "range": 3,
+    "curve": [
+     1,
+     0.8,
+     0.6,
+     0.4,
+     0.2,
+     0.1,
+     0
+    ]
+   },
+   "speed": null,
+   "travel": null,
+   "then": null,
+   "strip": "summon_poof.png",
+   "frame_list": [
+    {
+     "x": 0,
+     "y": 640,
+     "w": 32,
+     "h": 32
+    },
+    {
+     "x": 32,
+     "y": 640,
+     "w": 32,
+     "h": 32
+    },
+    {
+     "x": 64,
+     "y": 640,
+     "w": 32,
+     "h": 32
+    },
+    {
+     "x": 96,
+     "y": 640,
+     "w": 32,
+     "h": 32
+    },
+    {
+     "x": 128,
+     "y": 640,
+     "w": 32,
+     "h": 32
+    },
+    {
+     "x": 160,
+     "y": 640,
+     "w": 32,
+     "h": 32
+    },
+    {
+     "x": 192,
+     "y": 640,
+     "w": 32,
+     "h": 32
+    }
+   ],
+   "duration": 0.583
+  },
+  "light_pool": {
+   "row": 21,
+   "frames": 6,
+   "fps": 8,
+   "loop": true,
+   "loop_from": 3,
+   "loops": 2,
+   "kind": "decal",
+   "pivot": [
+    16,
+    16
+   ],
+   "lift": 0.02,
+   "glow": true,
+   "light": null,
+   "speed": null,
+   "travel": null,
+   "then": null,
+   "strip": "light_pool.png",
+   "frame_list": [
+    {
+     "x": 0,
+     "y": 672,
+     "w": 32,
+     "h": 32
+    },
+    {
+     "x": 32,
+     "y": 672,
+     "w": 32,
+     "h": 32
+    },
+    {
+     "x": 64,
+     "y": 672,
+     "w": 32,
+     "h": 32
+    },
+    {
+     "x": 96,
+     "y": 672,
+     "w": 32,
+     "h": 32
+    },
+    {
+     "x": 128,
+     "y": 672,
+     "w": 32,
+     "h": 32
+    },
+    {
+     "x": 160,
+     "y": 672,
+     "w": 32,
+     "h": 32
+    }
+   ],
+   "duration": 1.5
+  },
+  "glitter": {
+   "row": 22,
+   "frames": 8,
+   "fps": 10,
+   "loop": true,
+   "loop_from": 0,
+   "loops": 2,
+   "kind": "billboard",
+   "pivot": [
+    16,
+    31
+   ],
+   "lift": 0.0,
+   "glow": true,
+   "light": null,
+   "speed": null,
+   "travel": null,
+   "then": null,
+   "strip": "glitter.png",
+   "frame_list": [
+    {
+     "x": 0,
+     "y": 704,
+     "w": 32,
+     "h": 32
+    },
+    {
+     "x": 32,
+     "y": 704,
+     "w": 32,
+     "h": 32
+    },
+    {
+     "x": 64,
+     "y": 704,
+     "w": 32,
+     "h": 32
+    },
+    {
+     "x": 96,
+     "y": 704,
+     "w": 32,
+     "h": 32
+    },
+    {
+     "x": 128,
+     "y": 704,
+     "w": 32,
+     "h": 32
+    },
+    {
+     "x": 160,
+     "y": 704,
+     "w": 32,
+     "h": 32
+    },
+    {
+     "x": 192,
+     "y": 704,
+     "w": 32,
+     "h": 32
+    },
+    {
+     "x": 224,
+     "y": 704,
+     "w": 32,
+     "h": 32
+    }
+   ],
+   "duration": 1.6
+  },
+  "coldfire_pool": {
+   "row": 23,
+   "frames": 6,
+   "fps": 6,
+   "loop": true,
+   "loop_from": 0,
+   "loops": 1,
+   "kind": "decal",
+   "pivot": [
+    16,
+    16
+   ],
+   "lift": 0.02,
+   "glow": true,
+   "light": null,
+   "speed": null,
+   "travel": null,
+   "then": null,
+   "strip": "coldfire_pool.png",
+   "frame_list": [
+    {
+     "x": 0,
+     "y": 736,
+     "w": 32,
+     "h": 32
+    },
+    {
+     "x": 32,
+     "y": 736,
+     "w": 32,
+     "h": 32
+    },
+    {
+     "x": 64,
+     "y": 736,
+     "w": 32,
+     "h": 32
+    },
+    {
+     "x": 96,
+     "y": 736,
+     "w": 32,
+     "h": 32
+    },
+    {
+     "x": 128,
+     "y": 736,
+     "w": 32,
+     "h": 32
+    },
+    {
+     "x": 160,
+     "y": 736,
+     "w": 32,
+     "h": 32
+    }
+   ],
+   "duration": 1.0
+  },
+  "coldfire_motes": {
+   "row": 24,
+   "frames": 8,
+   "fps": 9,
+   "loop": true,
+   "loop_from": 0,
+   "loops": 1,
+   "kind": "billboard",
+   "pivot": [
+    16,
+    31
+   ],
+   "lift": 0.0,
+   "glow": true,
+   "light": null,
+   "speed": null,
+   "travel": null,
+   "then": null,
+   "strip": "coldfire_motes.png",
+   "frame_list": [
+    {
+     "x": 0,
+     "y": 768,
+     "w": 32,
+     "h": 32
+    },
+    {
+     "x": 32,
+     "y": 768,
+     "w": 32,
+     "h": 32
+    },
+    {
+     "x": 64,
+     "y": 768,
+     "w": 32,
+     "h": 32
+    },
+    {
+     "x": 96,
+     "y": 768,
+     "w": 32,
+     "h": 32
+    },
+    {
+     "x": 128,
+     "y": 768,
+     "w": 32,
+     "h": 32
+    },
+    {
+     "x": 160,
+     "y": 768,
+     "w": 32,
+     "h": 32
+    },
+    {
+     "x": 192,
+     "y": 768,
+     "w": 32,
+     "h": 32
+    },
+    {
+     "x": 224,
+     "y": 768,
+     "w": 32,
+     "h": 32
+    }
+   ],
+   "duration": 0.889
+  },
+  "spring_bubbles": {
+   "row": 25,
+   "frames": 10,
+   "fps": 8,
+   "loop": true,
+   "loop_from": 0,
+   "loops": 1,
+   "kind": "billboard",
+   "pivot": [
+    16,
+    31
+   ],
+   "lift": 0.0,
+   "glow": true,
+   "light": null,
+   "speed": null,
+   "travel": null,
+   "then": null,
+   "strip": "spring_bubbles.png",
+   "frame_list": [
+    {
+     "x": 0,
+     "y": 800,
+     "w": 32,
+     "h": 32
+    },
+    {
+     "x": 32,
+     "y": 800,
+     "w": 32,
+     "h": 32
+    },
+    {
+     "x": 64,
+     "y": 800,
+     "w": 32,
+     "h": 32
+    },
+    {
+     "x": 96,
+     "y": 800,
+     "w": 32,
+     "h": 32
+    },
+    {
+     "x": 128,
+     "y": 800,
+     "w": 32,
+     "h": 32
+    },
+    {
+     "x": 160,
+     "y": 800,
+     "w": 32,
+     "h": 32
+    },
+    {
+     "x": 192,
+     "y": 800,
+     "w": 32,
+     "h": 32
+    },
+    {
+     "x": 224,
+     "y": 800,
+     "w": 32,
+     "h": 32
+    },
+    {
+     "x": 256,
+     "y": 800,
+     "w": 32,
+     "h": 32
+    },
+    {
+     "x": 288,
+     "y": 800,
+     "w": 32,
+     "h": 32
+    }
+   ],
+   "duration": 1.25
+  },
+  "coldfire_flame": {
+   "row": 26,
+   "frames": 6,
+   "fps": 8,
+   "loop": true,
+   "loop_from": 0,
+   "loops": 1,
+   "kind": "billboard",
+   "pivot": [
+    16,
+    31
+   ],
+   "lift": 0.0,
+   "glow": true,
+   "light": null,
+   "speed": null,
+   "travel": null,
+   "then": null,
+   "strip": "coldfire_flame.png",
+   "frame_list": [
+    {
+     "x": 0,
+     "y": 832,
+     "w": 32,
+     "h": 32
+    },
+    {
+     "x": 32,
+     "y": 832,
+     "w": 32,
+     "h": 32
+    },
+    {
+     "x": 64,
+     "y": 832,
+     "w": 32,
+     "h": 32
+    },
+    {
+     "x": 96,
+     "y": 832,
+     "w": 32,
+     "h": 32
+    },
+    {
+     "x": 128,
+     "y": 832,
+     "w": 32,
+     "h": 32
+    },
+    {
+     "x": 160,
+     "y": 832,
+     "w": 32,
+     "h": 32
+    }
+   ],
+   "duration": 0.75
+  },
+  "garden_plot": {
+   "row": 27,
+   "frames": 1,
+   "fps": 1,
+   "loop": true,
+   "loop_from": 0,
+   "loops": 1,
+   "kind": "decal",
+   "pivot": [
+    16,
+    16
+   ],
+   "lift": 0.015,
+   "glow": false,
+   "light": null,
+   "speed": null,
+   "travel": null,
+   "then": null,
+   "strip": "garden_plot.png",
+   "frame_list": [
+    {
+     "x": 0,
+     "y": 864,
+     "w": 32,
+     "h": 32
+    }
+   ],
+   "duration": 1.0
+  },
+  "glowplant_seed": {
+   "row": 28,
+   "frames": 4,
+   "fps": 3,
+   "loop": true,
+   "loop_from": 0,
+   "loops": 1,
+   "kind": "billboard",
+   "pivot": [
+    16,
+    31
+   ],
+   "lift": 0.0,
+   "glow": true,
+   "light": null,
+   "speed": null,
+   "travel": null,
+   "then": null,
+   "strip": "glowplant_seed.png",
+   "frame_list": [
+    {
+     "x": 0,
+     "y": 896,
+     "w": 32,
+     "h": 32
+    },
+    {
+     "x": 32,
+     "y": 896,
+     "w": 32,
+     "h": 32
+    },
+    {
+     "x": 64,
+     "y": 896,
+     "w": 32,
+     "h": 32
+    },
+    {
+     "x": 96,
+     "y": 896,
+     "w": 32,
+     "h": 32
+    }
+   ],
+   "duration": 1.333
+  },
+  "glowplant_sprout": {
+   "row": 29,
+   "frames": 4,
+   "fps": 3,
+   "loop": true,
+   "loop_from": 0,
+   "loops": 1,
+   "kind": "billboard",
+   "pivot": [
+    16,
+    31
+   ],
+   "lift": 0.0,
+   "glow": true,
+   "light": null,
+   "speed": null,
+   "travel": null,
+   "then": null,
+   "strip": "glowplant_sprout.png",
+   "frame_list": [
+    {
+     "x": 0,
+     "y": 928,
+     "w": 32,
+     "h": 32
+    },
+    {
+     "x": 32,
+     "y": 928,
+     "w": 32,
+     "h": 32
+    },
+    {
+     "x": 64,
+     "y": 928,
+     "w": 32,
+     "h": 32
+    },
+    {
+     "x": 96,
+     "y": 928,
+     "w": 32,
+     "h": 32
+    }
+   ],
+   "duration": 1.333
+  },
+  "glowplant_coldfire": {
+   "row": 30,
+   "frames": 6,
+   "fps": 7,
+   "loop": true,
+   "loop_from": 0,
+   "loops": 1,
+   "kind": "billboard",
+   "pivot": [
+    16,
+    31
+   ],
+   "lift": 0.0,
+   "glow": true,
+   "light": null,
+   "speed": null,
+   "travel": null,
+   "then": null,
+   "strip": "glowplant_coldfire.png",
+   "frame_list": [
+    {
+     "x": 0,
+     "y": 960,
+     "w": 32,
+     "h": 32
+    },
+    {
+     "x": 32,
+     "y": 960,
+     "w": 32,
+     "h": 32
+    },
+    {
+     "x": 64,
+     "y": 960,
+     "w": 32,
+     "h": 32
+    },
+    {
+     "x": 96,
+     "y": 960,
+     "w": 32,
+     "h": 32
+    },
+    {
+     "x": 128,
+     "y": 960,
+     "w": 32,
+     "h": 32
+    },
+    {
+     "x": 160,
+     "y": 960,
+     "w": 32,
+     "h": 32
+    }
+   ],
+   "duration": 0.857
+  },
+  "glowplant_violet": {
+   "row": 31,
+   "frames": 6,
+   "fps": 4,
+   "loop": true,
+   "loop_from": 0,
+   "loops": 1,
+   "kind": "billboard",
+   "pivot": [
+    16,
+    31
+   ],
+   "lift": 0.0,
+   "glow": true,
+   "light": null,
+   "speed": null,
+   "travel": null,
+   "then": null,
+   "strip": "glowplant_violet.png",
+   "frame_list": [
+    {
+     "x": 0,
+     "y": 992,
+     "w": 32,
+     "h": 32
+    },
+    {
+     "x": 32,
+     "y": 992,
+     "w": 32,
+     "h": 32
+    },
+    {
+     "x": 64,
+     "y": 992,
+     "w": 32,
+     "h": 32
+    },
+    {
+     "x": 96,
+     "y": 992,
+     "w": 32,
+     "h": 32
+    },
+    {
+     "x": 128,
+     "y": 992,
+     "w": 32,
+     "h": 32
+    },
+    {
+     "x": 160,
+     "y": 992,
+     "w": 32,
+     "h": 32
+    }
+   ],
+   "duration": 1.5
+  },
+  "violet_pool": {
+   "row": 32,
+   "frames": 6,
+   "fps": 6,
+   "loop": true,
+   "loop_from": 0,
+   "loops": 1,
+   "kind": "decal",
+   "pivot": [
+    16,
+    16
+   ],
+   "lift": 0.02,
+   "glow": true,
+   "light": null,
+   "speed": null,
+   "travel": null,
+   "then": null,
+   "strip": "violet_pool.png",
+   "frame_list": [
+    {
+     "x": 0,
+     "y": 1024,
+     "w": 32,
+     "h": 32
+    },
+    {
+     "x": 32,
+     "y": 1024,
+     "w": 32,
+     "h": 32
+    },
+    {
+     "x": 64,
+     "y": 1024,
+     "w": 32,
+     "h": 32
+    },
+    {
+     "x": 96,
+     "y": 1024,
+     "w": 32,
+     "h": 32
+    },
+    {
+     "x": 128,
+     "y": 1024,
+     "w": 32,
+     "h": 32
+    },
+    {
+     "x": 160,
+     "y": 1024,
+     "w": 32,
+     "h": 32
+    }
+   ],
+   "duration": 1.0
+  },
+  "red_pool": {
+   "row": 33,
+   "frames": 6,
+   "fps": 6,
+   "loop": true,
+   "loop_from": 0,
+   "loops": 1,
+   "kind": "decal",
+   "pivot": [
+    16,
+    16
+   ],
+   "lift": 0.02,
+   "glow": true,
+   "light": null,
+   "speed": null,
+   "travel": null,
+   "then": null,
+   "strip": "red_pool.png",
+   "frame_list": [
+    {
+     "x": 0,
+     "y": 1056,
+     "w": 32,
+     "h": 32
+    },
+    {
+     "x": 32,
+     "y": 1056,
+     "w": 32,
+     "h": 32
+    },
+    {
+     "x": 64,
+     "y": 1056,
+     "w": 32,
+     "h": 32
+    },
+    {
+     "x": 96,
+     "y": 1056,
+     "w": 32,
+     "h": 32
+    },
+    {
+     "x": 128,
+     "y": 1056,
+     "w": 32,
+     "h": 32
+    },
+    {
+     "x": 160,
+     "y": 1056,
+     "w": 32,
+     "h": 32
+    }
+   ],
+   "duration": 1.0
+  },
+  "glowplant_toadcap": {
+   "row": 34,
+   "frames": 4,
+   "fps": 3,
+   "loop": true,
+   "loop_from": 0,
+   "loops": 1,
+   "kind": "billboard",
+   "pivot": [
+    16,
+    31
+   ],
+   "lift": 0.0,
+   "glow": true,
+   "light": null,
+   "speed": null,
+   "travel": null,
+   "then": null,
+   "strip": "glowplant_toadcap.png",
+   "frame_list": [
+    {
+     "x": 0,
+     "y": 1088,
+     "w": 32,
+     "h": 32
+    },
+    {
+     "x": 32,
+     "y": 1088,
+     "w": 32,
+     "h": 32
+    },
+    {
+     "x": 64,
+     "y": 1088,
+     "w": 32,
+     "h": 32
+    },
+    {
+     "x": 96,
+     "y": 1088,
+     "w": 32,
+     "h": 32
+    }
+   ],
+   "duration": 1.333
+  },
+  "sky_lantern": {
+   "row": 35,
+   "frames": 6,
+   "fps": 6,
+   "loop": true,
+   "loop_from": 0,
+   "loops": 1,
+   "kind": "billboard",
+   "pivot": [
+    16,
+    31
+   ],
+   "lift": 0.0,
+   "glow": true,
+   "light": null,
+   "speed": null,
+   "travel": null,
+   "then": null,
+   "strip": "sky_lantern.png",
+   "frame_list": [
+    {
+     "x": 0,
+     "y": 1120,
+     "w": 32,
+     "h": 32
+    },
+    {
+     "x": 32,
+     "y": 1120,
+     "w": 32,
+     "h": 32
+    },
+    {
+     "x": 64,
+     "y": 1120,
+     "w": 32,
+     "h": 32
+    },
+    {
+     "x": 96,
+     "y": 1120,
+     "w": 32,
+     "h": 32
+    },
+    {
+     "x": 128,
+     "y": 1120,
+     "w": 32,
+     "h": 32
+    },
+    {
+     "x": 160,
+     "y": 1120,
+     "w": 32,
+     "h": 32
+    }
+   ],
+   "duration": 1.0
+  },
+  "rift_tear": {
+   "row": 36,
+   "frames": 8,
+   "fps": 10,
+   "loop": true,
+   "loop_from": 0,
+   "loops": 1,
+   "kind": "billboard",
+   "pivot": [
+    16,
+    31
+   ],
+   "lift": 0.0,
+   "glow": true,
+   "light": null,
+   "speed": null,
+   "travel": null,
+   "then": null,
+   "strip": "rift_tear.png",
+   "frame_list": [
+    {
+     "x": 0,
+     "y": 1152,
+     "w": 32,
+     "h": 32
+    },
+    {
+     "x": 32,
+     "y": 1152,
+     "w": 32,
+     "h": 32
+    },
+    {
+     "x": 64,
+     "y": 1152,
+     "w": 32,
+     "h": 32
+    },
+    {
+     "x": 96,
+     "y": 1152,
+     "w": 32,
+     "h": 32
+    },
+    {
+     "x": 128,
+     "y": 1152,
+     "w": 32,
+     "h": 32
+    },
+    {
+     "x": 160,
+     "y": 1152,
+     "w": 32,
+     "h": 32
+    },
+    {
+     "x": 192,
+     "y": 1152,
+     "w": 32,
+     "h": 32
+    },
+    {
+     "x": 224,
+     "y": 1152,
+     "w": 32,
+     "h": 32
+    }
+   ],
+   "duration": 0.8
+  },
+  "rare_aura_blue": {
+   "row": 37,
+   "frames": 8,
+   "fps": 8,
+   "loop": true,
+   "loop_from": 0,
+   "loops": 1,
+   "kind": "decal",
+   "pivot": [
+    16,
+    16
+   ],
+   "lift": 0.02,
+   "glow": true,
+   "light": null,
+   "speed": null,
+   "travel": null,
+   "then": null,
+   "strip": "rare_aura_blue.png",
+   "frame_list": [
+    {
+     "x": 0,
+     "y": 1184,
+     "w": 32,
+     "h": 32
+    },
+    {
+     "x": 32,
+     "y": 1184,
+     "w": 32,
+     "h": 32
+    },
+    {
+     "x": 64,
+     "y": 1184,
+     "w": 32,
+     "h": 32
+    },
+    {
+     "x": 96,
+     "y": 1184,
+     "w": 32,
+     "h": 32
+    },
+    {
+     "x": 128,
+     "y": 1184,
+     "w": 32,
+     "h": 32
+    },
+    {
+     "x": 160,
+     "y": 1184,
+     "w": 32,
+     "h": 32
+    },
+    {
+     "x": 192,
+     "y": 1184,
+     "w": 32,
+     "h": 32
+    },
+    {
+     "x": 224,
+     "y": 1184,
+     "w": 32,
+     "h": 32
+    }
+   ],
+   "duration": 1.0
+  },
+  "rare_aura_violet": {
+   "row": 38,
+   "frames": 8,
+   "fps": 8,
+   "loop": true,
+   "loop_from": 0,
+   "loops": 1,
+   "kind": "decal",
+   "pivot": [
+    16,
+    16
+   ],
+   "lift": 0.02,
+   "glow": true,
+   "light": null,
+   "speed": null,
+   "travel": null,
+   "then": null,
+   "strip": "rare_aura_violet.png",
+   "frame_list": [
+    {
+     "x": 0,
+     "y": 1216,
+     "w": 32,
+     "h": 32
+    },
+    {
+     "x": 32,
+     "y": 1216,
+     "w": 32,
+     "h": 32
+    },
+    {
+     "x": 64,
+     "y": 1216,
+     "w": 32,
+     "h": 32
+    },
+    {
+     "x": 96,
+     "y": 1216,
+     "w": 32,
+     "h": 32
+    },
+    {
+     "x": 128,
+     "y": 1216,
+     "w": 32,
+     "h": 32
+    },
+    {
+     "x": 160,
+     "y": 1216,
+     "w": 32,
+     "h": 32
+    },
+    {
+     "x": 192,
+     "y": 1216,
+     "w": 32,
+     "h": 32
+    },
+    {
+     "x": 224,
+     "y": 1216,
+     "w": 32,
+     "h": 32
+    }
+   ],
+   "duration": 1.0
+  },
+  "rare_aura_red": {
+   "row": 39,
+   "frames": 8,
+   "fps": 8,
+   "loop": true,
+   "loop_from": 0,
+   "loops": 1,
+   "kind": "decal",
+   "pivot": [
+    16,
+    16
+   ],
+   "lift": 0.02,
+   "glow": true,
+   "light": null,
+   "speed": null,
+   "travel": null,
+   "then": null,
+   "strip": "rare_aura_red.png",
+   "frame_list": [
+    {
+     "x": 0,
+     "y": 1248,
+     "w": 32,
+     "h": 32
+    },
+    {
+     "x": 32,
+     "y": 1248,
+     "w": 32,
+     "h": 32
+    },
+    {
+     "x": 64,
+     "y": 1248,
+     "w": 32,
+     "h": 32
+    },
+    {
+     "x": 96,
+     "y": 1248,
+     "w": 32,
+     "h": 32
+    },
+    {
+     "x": 128,
+     "y": 1248,
+     "w": 32,
+     "h": 32
+    },
+    {
+     "x": 160,
+     "y": 1248,
+     "w": 32,
+     "h": 32
+    },
+    {
+     "x": 192,
+     "y": 1248,
+     "w": 32,
+     "h": 32
+    },
+    {
+     "x": 224,
+     "y": 1248,
+     "w": 32,
+     "h": 32
+    }
+   ],
+   "duration": 1.0
+  },
+  "rift_tear_minor": {
+   "row": 40,
+   "frames": 8,
+   "fps": 10,
+   "loop": true,
+   "loop_from": 0,
+   "loops": 1,
+   "kind": "billboard",
+   "pivot": [
+    16,
+    31
+   ],
+   "lift": 0.0,
+   "glow": true,
+   "light": null,
+   "speed": null,
+   "travel": null,
+   "then": null,
+   "strip": "rift_tear_minor.png",
+   "frame_list": [
+    {
+     "x": 0,
+     "y": 1280,
+     "w": 32,
+     "h": 32
+    },
+    {
+     "x": 32,
+     "y": 1280,
+     "w": 32,
+     "h": 32
+    },
+    {
+     "x": 64,
+     "y": 1280,
+     "w": 32,
+     "h": 32
+    },
+    {
+     "x": 96,
+     "y": 1280,
+     "w": 32,
+     "h": 32
+    },
+    {
+     "x": 128,
+     "y": 1280,
+     "w": 32,
+     "h": 32
+    },
+    {
+     "x": 160,
+     "y": 1280,
+     "w": 32,
+     "h": 32
+    },
+    {
+     "x": 192,
+     "y": 1280,
+     "w": 32,
+     "h": 32
+    },
+    {
+     "x": 224,
+     "y": 1280,
+     "w": 32,
+     "h": 32
+    }
+   ],
+   "duration": 0.8
+  },
+  "rift_tear_abyss": {
+   "row": 41,
+   "frames": 8,
+   "fps": 10,
+   "loop": true,
+   "loop_from": 0,
+   "loops": 1,
+   "kind": "billboard",
+   "pivot": [
+    16,
+    31
+   ],
+   "lift": 0.0,
+   "glow": true,
+   "light": null,
+   "speed": null,
+   "travel": null,
+   "then": null,
+   "strip": "rift_tear_abyss.png",
+   "frame_list": [
+    {
+     "x": 0,
+     "y": 1312,
+     "w": 32,
+     "h": 32
+    },
+    {
+     "x": 32,
+     "y": 1312,
+     "w": 32,
+     "h": 32
+    },
+    {
+     "x": 64,
+     "y": 1312,
+     "w": 32,
+     "h": 32
+    },
+    {
+     "x": 96,
+     "y": 1312,
+     "w": 32,
+     "h": 32
+    },
+    {
+     "x": 128,
+     "y": 1312,
+     "w": 32,
+     "h": 32
+    },
+    {
+     "x": 160,
+     "y": 1312,
+     "w": 32,
+     "h": 32
+    },
+    {
+     "x": 192,
+     "y": 1312,
+     "w": 32,
+     "h": 32
+    },
+    {
+     "x": 224,
+     "y": 1312,
+     "w": 32,
+     "h": 32
+    }
+   ],
+   "duration": 0.8
+  },
+  "rift_ring_abyss": {
+   "row": 42,
+   "frames": 8,
+   "fps": 6,
+   "loop": true,
+   "loop_from": 0,
+   "loops": 1,
+   "kind": "decal",
+   "pivot": [
+    16,
+    16
+   ],
+   "lift": 0.02,
+   "glow": true,
+   "light": null,
+   "speed": null,
+   "travel": null,
+   "then": null,
+   "strip": "rift_ring_abyss.png",
+   "frame_list": [
+    {
+     "x": 0,
+     "y": 1344,
+     "w": 32,
+     "h": 32
+    },
+    {
+     "x": 32,
+     "y": 1344,
+     "w": 32,
+     "h": 32
+    },
+    {
+     "x": 64,
+     "y": 1344,
+     "w": 32,
+     "h": 32
+    },
+    {
+     "x": 96,
+     "y": 1344,
+     "w": 32,
+     "h": 32
+    },
+    {
+     "x": 128,
+     "y": 1344,
+     "w": 32,
+     "h": 32
+    },
+    {
+     "x": 160,
+     "y": 1344,
+     "w": 32,
+     "h": 32
+    },
+    {
+     "x": 192,
+     "y": 1344,
+     "w": 32,
+     "h": 32
+    },
+    {
+     "x": 224,
+     "y": 1344,
+     "w": 32,
+     "h": 32
+    }
+   ],
+   "duration": 1.333
+  },
+  "toadstools": {
+   "row": 43,
+   "frames": 4,
+   "fps": 3,
+   "loop": true,
+   "loop_from": 0,
+   "loops": 1,
+   "kind": "billboard",
+   "pivot": [
+    16,
+    31
+   ],
+   "lift": 0.0,
+   "glow": true,
+   "light": null,
+   "speed": null,
+   "travel": null,
+   "then": null,
+   "strip": "toadstools.png",
+   "frame_list": [
+    {
+     "x": 0,
+     "y": 1376,
+     "w": 32,
+     "h": 32
+    },
+    {
+     "x": 32,
+     "y": 1376,
+     "w": 32,
+     "h": 32
+    },
+    {
+     "x": 64,
+     "y": 1376,
+     "w": 32,
+     "h": 32
+    },
+    {
+     "x": 96,
+     "y": 1376,
+     "w": 32,
+     "h": 32
+    }
+   ],
+   "duration": 1.333
+  }
+ },
+ "cast_sets": {
+  "sparkle_burst": [
+   [
+    "sparkle_burst",
+    "front"
+   ]
+  ],
+  "healing_petals": [
+   [
+    "rune_circle",
+    "feet"
+   ],
+   [
+    "healing_petals",
+    "feet"
+   ]
+  ],
+  "hearth_flame": [
+   [
+    "hearth_flame",
+    "front"
+   ]
+  ],
+  "frost_puff": [
+   [
+    "frost_puff",
+    "front"
+   ]
+  ],
+  "leaf_gust": [
+   [
+    "leaf_gust",
+    "front"
+   ]
+  ],
+  "light_orb": [
+   [
+    "light_orb",
+    "front"
+   ]
+  ],
+  "rune_circle": [
+   [
+    "rune_circle",
+    "feet"
+   ],
+   [
+    "sparkle_burst",
+    "feet"
+   ]
+  ],
+  "bolt": [
+   [
+    "bolt",
+    "hands"
+   ]
+  ],
+  "seed_bomb": [
+   [
+    "seed_bomb",
+    "hands"
+   ]
+  ],
+  "rune_slam": [
+   [
+    "rune_slam",
+    "feet"
+   ],
+   [
+    "impact",
+    "feet"
+   ]
+  ],
+  "rune_trap": [
+   [
+    "rune_trap",
+    "front"
+   ]
+  ],
+  "chain_lightning": [
+   [
+    "sky_strike",
+    "front"
+   ]
+  ],
+  "bloom": [
+   [
+    "bloom_ring",
+    "feet"
+   ],
+   [
+    "healing_petals",
+    "feet"
+   ]
+  ],
+  "ember_slash": [
+   [
+    "ember_slash",
+    "hands"
+   ]
+  ]
+ },
+ "cycle": [
+  "sparkle_burst",
+  "healing_petals",
+  "hearth_flame",
+  "frost_puff",
+  "leaf_gust",
+  "light_orb",
+  "rune_circle",
+  "bolt"
+ ]
+}

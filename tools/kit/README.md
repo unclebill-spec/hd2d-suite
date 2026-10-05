@@ -17,6 +17,7 @@ hd2d kit --biome cozy-village --out PROJECT/public/art/kit --texel PROJECT/publi
   - `hanging_sign_{loaf,mug,flower,key}`: iron bracket, chains and board, also as standalone pieces.
   - `laundry`: a washing line between two world points with posts, sheets and shirts. Scene spec `"laundry": [{"from": [x,y,z], "to": [...], "sag": 0.3, "base": [y0, y1]}]`.
   - `fountain`: small open basin with a visible water disc and a top bowl. Markers: `spray` (jet top) and `water` (water height).
+- Added for Ravenhold Harbor (`kit_harbor.py`): `harbor_water` (64 x 34 m dark water with faint swell lines), `pier` (plank jetty, deck at y 0, posts into the water; pair it with a spec `decks` rect), `rowboat`, `skiff` (furled sail, cold-fire stern lamp), `pier_lantern` / `quay_lantern` (cold-fire `#5ab4f0` glow panes and a dashed glow reflection on the water below; markers `lamp_color` / `lamp_fixed` / `lamp_range`), `bollard`, `waystone` (glowing rune stone), `district_gate` (stone arch, barred oak doors, chain; no text).
 - `meshlib.py`: list-based mesh builder with UVs in metres and normals. glTF PBR uses metallic 0 / roughness 1 (no chrome), a nearest-mag + mipmapped-min sampler, and sRGB vertex colours (tint + contact AO).
 - `kit.json`: sizes, collision blockers, markers (lamps, chimneys, windows, doors, stall vendor, ovens, spray, water).
 - Scale: 1 unit = 1 m. A sprite is 1.8 m, doors are 2.0 m, storeys are 2.4-2.9 m.

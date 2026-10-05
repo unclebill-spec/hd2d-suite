@@ -11,9 +11,10 @@ const TOADS = {
   lane: [[-10.2, -6.0], [9.5, 5.0], [-10.5, 5.0], [-11.8, 8.6]],
   hollows: [[-3.4, -1.6], [3.6, 3.6], [-10.8, 4.8], [-6.8, -6.6], [11.0, 3.8], [0.8, -2.3], [-6.0, 3.4], [6.8, 3.0], [-11.6, -5.0], [12.6, -8.6]],
   vanaheim: [[-5.6, -6.2], [9.6, 2.8], [-7.0, 4.8], [-3.2, -7.6], [8.8, -4.2], [1.0, 5.4], [-10.6, -5.8]],
+  ravenhold: [[-9.4, -8.2], [12.4, -8.2], [-17.0, -4.6], [16.8, -8.2], [-16.6, -12.6], [16.4, -12.4], [-5.0, -12.8]],
 };
 // areas that glow at every hour (the hollow is always dim), and their standing light pools: [x, z, kind, colour]
-const ALWAYS = { hollows: true, rift: true };
+const ALWAYS = { hollows: true, rift: true, ravenhold: true };   // Ravenhold sits in the Rift's gloom: its glow never sleeps
 const POOLS = {
   hollows: [[-1.0, 1.4, 'light', '#9a6cd4'], [5.0, 0.2, 'cold', '#5ac8ff'], [-8.2, 1.4, 'cold', '#5ac8ff'],
             [-9.4, -6.4, 'light', '#9a6cd4'], [8.6, -6.6, 'cold', '#5ac8ff'], [1.8, 5.6, 'light', '#e47c8c'],
@@ -30,12 +31,18 @@ const POOLS = {
              // glow-plant clusters (the garden's blooms, growing wild): sprites + a ground pool decal, no point light of their own
              [-4.4, 3.8, 'bloom', 'coldfire'], [1.8, -6.6, 'bloom', 'violet'], [-8.2, -4.4, 'bloom', 'coldfire'],
              [-5.6, -6.2, 'under'], [9.6, 2.8, 'under'], [-7.0, 4.8, 'under']],
+  // Ravenhold Harbor (Stage 5 part 4): a cold-fire light pool under every quay lantern and at both pier ends (only the 3
+  // strongest near the camera get one of the pooled point lights), a violet pool before the Market Terraces gate (the
+  // Rift's light beyond it) and a Corsair-red one by Sable's barrels. Dark quay between the pools.
+  ravenhold: [[-14.6, -0.1, 'cold', '#5ab4f0'], [-9.8, -0.1, 'cold', '#5ab4f0'], [-2.2, -0.1, 'cold', '#5ab4f0'], [2.6, -0.1, 'cold', '#5ab4f0'],
+              [9.8, -0.1, 'cold', '#5ab4f0'], [14.6, -0.1, 'cold', '#5ab4f0'], [-6.0, 7.9, 'cold', '#5ab4f0'], [6.0, 7.9, 'cold', '#5ab4f0'],
+              [0.5, -10.0, 'violet', '#a45cf0'], [11.2, -1.6, 'red', '#e0302a']],
 };
 export const POOL_R = 2.2;
 const BLOOM = { coldfire: { fx: 'glowplant_coldfire', pool: 'coldfire_pool' }, violet: { fx: 'glowplant_violet', pool: 'violet_pool' } };
 const BLOOM_AT = [[-0.5, -0.1], [0.45, -0.3], [0.05, 0.4]];   // three plants per cluster
 // lamp kinds that make a light zone at night, and how far it reaches on the ground (metres)
-const LAMP_R = { lamp_post: 3.0, stone_lantern: 2.2, shrine: 2.6, portal: 2.0, rift: 2.0 };
+const LAMP_R = { lamp_post: 3.0, stone_lantern: 2.2, shrine: 2.6, portal: 2.0, rift: 2.0, quay_lantern: 2.4, pier_lantern: 2.4, fish_orb: 1.6 };
 const WINDOW_R = 1.8;                               // shop / cottage window lamps
 export const LIT = { dmg: 1.1, regen: 1.5, poolLife: 1.8, poolR: 2.4, toadR: 2.0 };
 
@@ -68,7 +75,8 @@ export class Glow {
       }
       if (ctx.effects) {
         const cold = kind === 'cold', fr = (f) => (still ? { frame: f } : {});
-        fx.push(ctx.effects.spawn(cold ? 'coldfire_pool' : 'light_pool', x, y, z + 0.03, { duration: 1e9, fadeIn: still ? 0 : 1, ...fr(0) }));
+        const decal = { cold: 'coldfire_pool', violet: 'violet_pool', red: 'red_pool' }[kind] || 'light_pool';   // violet / red: Ravenhold's accents
+        fx.push(ctx.effects.spawn(decal, x, y, z + 0.03, { duration: 1e9, fadeIn: still ? 0 : 1, ...fr(0) }));
         fx.push(ctx.effects.spawn(cold ? 'coldfire_motes' : 'glitter', x + 0.2, y + 0.1, z + 0.1, { duration: 1e9, fadeIn: still ? 0 : 1.4, ...fr(2) }));
       }
       const light = ctx.addGlow ? ctx.addGlow(x, y, z, { color, intensity: 7, range: 4.0, fadeIn: still ? 0.01 : 1.2, lift: 0.5 }) : null;

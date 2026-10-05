@@ -32,6 +32,8 @@ export class Hollows {
     const G = this.G, C = G.combat, S = G.S, ctx = this.ctx;
     S.hp = C.maxHp(); C.st = C.maxSt(); this.buffT = SPRING.buff; this.springCd = SPRING.cd;
     S.found.spring = 1;
+    const sec = this.spring && this.spring.secret;   // Ravenhold's hidden spring: a first find is a secret (Gnome Council merit)
+    if (sec && !S.found[sec]) { S.found[sec] = 1; G.factions && G.factions.onSecret(); }
     if (ctx.effects) ctx.effects.spawn('healing_petals', ctx.player.x, ctx.player.y, ctx.player.z + 0.05);
     G.toast && G.toast(`The spring fizzes through you: healed, and spring-fizz for ${SPRING.buff} s (+15% damage, faster stamina)`, 3.2);
     G.audio && G.audio.sfx('quest');

@@ -1215,6 +1215,90 @@ def run(out, simscale=4, size=(960, 540)):
             area = T.go_rect("portals", 0)
             a2 = T.go_rect("portals", 0)
             T.step("way back: the vine gate returns to the Rift Shrine, its moss gate home to the Plaza", area == "rift" and a2 == "plaza" and T.ev("window.__hm.S.flags.alliance.vanaheim") == "befriend")
+            # ---------------------------------------------------------- stage 5 part 4: Ravenhold Harbor (Bakery Lane's west road)
+            area = T.go_rect("exits")   # plaza -> lane
+            ln = T.ev("(() => { const g = window.__hm.ctx.scene.game; return { ex: g.exits.map((e) => e.to), way: !!g.waystone, glb: window.__hm.ctx.scene.objects.some((o) => o.glb.endsWith('/waystone.glb')) }; })()")
+            a3 = T.go_rect("exits", 1)
+            rh = T.ev("""(() => { const c = window.__hm.ctx, sc = c.scene, glb = (n) => sc.objects.filter((o) => o.glb.endsWith('/' + n + '.glb')).length;
+              return { water: glb('harbor_water'), piers: glb('pier'), boats: glb('skiff') + glb('rowboat'), lanterns: glb('quay_lantern') + glb('pier_lantern'),
+                       cold: sc.lamps.filter((l) => l.color === '#5ab4f0').length, toads: glb('toadstool_cluster') + glb('toadstool_big'), spring: glb('spring_basin'),
+                       gates: sc.game.sealed.filter((g) => g.district).map((g) => g.id), soon: sc.game.sealed.every((g) => g.say.join(' ').includes('oming soon')),
+                       npcs: ['harbormaster', 'quartermaster', 'chandler', 'dockkid'].filter((i) => c.npc(i)), realm: window.__hm.factions.realm(),
+                       orbs: glb('fish_orb'), floats: glb('float_lantern_violet') + glb('float_lantern_red'), pools: window.__hm.glow.fixed.map((f) => f.kind) }; })()""")
+            T.step("Bakery Lane's west road (by its new waystone) -> Ravenhold Harbor: piers, boats, dark water, cold-fire lanterns + light pools, violet / red floats, fish orbs, toadstools, a spring, 4 sealed gates, 4 NPCs",
+                   area == "lane" and ln["ex"] == ["plaza", "ravenhold"] and ln["way"] and ln["glb"] and a3 == "ravenhold" and rh["water"] == 1 and rh["piers"] == 2 and rh["boats"] >= 4
+                   and rh["lanterns"] >= 5 and rh["cold"] >= 6 and rh["toads"] >= 4 and rh["spring"] == 1 and rh["gates"] == ["market", "temple", "forge", "undercity"] and rh["soon"]
+                   and len(rh["npcs"]) == 4 and rh["realm"] == "corsair" and rh["orbs"] == 3 and rh["floats"] == 3
+                   and rh["pools"].count("cold") >= 8 and "violet" in rh["pools"] and "red" in rh["pools"], lane=ln, rh=rh)
+            T.ev("window.__hd2d.setTime('night')"); pg.wait_for_timeout(900)
+            rep["shots"]["ravenhold_night"] = T.shot("ravenhold_night")
+            # keys: E with the harbormaster (quest tag) starts the story quest; it is not one of the three errands
+            mk0 = T.ev("window.__hm.markers.harbormaster ? window.__hm.markers.harbormaster.name : null")
+            T.talk("harbormaster")
+            S = T.S()
+            T.step("keys: E with Harbormaster Brannoc (quest tag) starts the story quest 'The Road to the Rift'; the log lists it, the errand count stays 3/3",
+                   mk0 == "quest_mark" and S["quests"].get("harbor") == 1 and "The Road to the Rift" in T.ev("document.getElementById('logList').innerText")
+                   and T.ev("document.getElementById('btnLog').textContent") == "quests 3/3"
+                   and T.ev("window.__hm.markers.quartermaster ? window.__hm.markers.quartermaster.name : null") == "quest_turnin", tag=mk0)
+            # controller: A with Quartermaster Sable (Rift Corsairs): merit for meeting her, the quest moves on
+            c0 = T.ev("window.__hm.S.merit.corsair")
+            T.talk_pad("quartermaster")
+            c1 = T.ev("window.__hm.S.merit.corsair")
+            T.step("controller: A with Quartermaster Sable of the Rift Corsairs: +20 Corsair merit for meeting her; the quest moves on to the Market Terraces gate",
+                   c1 - c0 == 20 and T.ev("window.__hm.S.quests.harbor") == 2, merit=[c0, c1])
+            # keys: up the harbor stair; the Market Terraces gate is sealed, coming soon (E looks, the quest notes it)
+            T.walk(0.5, -10.2)
+            pr = T.ev("document.getElementById('prompt').textContent")
+            pg.keyboard.press("e"); pg.wait_for_timeout(300)
+            who = T.ev("window.__hm.dlg ? window.__hm.dlg.npc.id : null"); txt = T.ev("window.__hm.dlg ? window.__hm.dlg.pages.join(' ') : ''")
+            T.read_all()
+            T.step("keys: up the harbor stair onto the 3 m terrace, E at the Market Terraces gate: sealed, coming soon; the quest notes it",
+                   T.ev("window.__hm.ctx.player.y") > 2.9 and "Market Terraces" in pr and "coming soon" in pr and who == "sealed_market" and "Coming soon" in txt
+                   and T.ev("window.__hm.S.flags.rh_gate") == 1, prompt=pr, who=who, y=T.ev("window.__hm.ctx.player.y"))
+            # back to Brannoc: done; he points up through the Market Terraces to the Rainbow Rift (Corsair merit + gold)
+            c2 = T.ev("window.__hm.S.merit.corsair"); g0 = T.ev("window.__hm.S.gold || 0")
+            mk1 = T.ev("window.__hm.markers.harbormaster ? window.__hm.markers.harbormaster.name : null")
+            T.talk("harbormaster", keep_open=True)
+            alltxt = T.ev("window.__hm.dlg.pages.join(' ')"); pg.wait_for_timeout(1600)
+            rep["shots"]["ravenhold_quest"] = T.shot("ravenhold_quest")
+            T.read_all(); pg.wait_for_timeout(300)
+            S = T.S()
+            T.step("Brannoc (turn-in tag) finishes 'The Road to the Rift': up through the Market Terraces to the Rainbow Rift; +40 Corsair merit, +30 gold; errands stay 3/3",
+                   mk1 == "quest_turnin" and S["quests"]["harbor"] == 3 and "Market Terraces" in alltxt and "Rainbow Rift" in alltxt and S["merit"]["corsair"] - c2 == 40
+                   and (S.get("gold") or 0) - g0 == 30 and T.ev("document.getElementById('btnLog').textContent") == "quests 3/3" and not T.ev("window.__hm.markers.harbormaster"), merit=[c2, S["merit"]["corsair"]])
+            # the chandler's shop (her own stock)
+            T.talk("chandler")
+            sh = T.ev("[window.__hm.shop, window.__hm.shopUI.open, document.getElementById('shopName') ? document.getElementById('shopName').textContent : '']")
+            pg.keyboard.press("Escape"); pg.wait_for_timeout(300)
+            T.step("Ida Wickmere the chandler opens Wickmere's Chandlery (tonics, glow seeds, a rift shard, harbor kit); Esc closes it", sh[0] is True and sh[1] == "harbor" and not T.ev("window.__hm.shop"), shop=sh)
+            # the hidden bubbly spring in the west corner, behind the crates: heals + spring-fizz, a first find is a secret (Gnome Council merit)
+            n0 = T.ev("window.__hm.S.merit.gnome")
+            T.walk(-16.4, -7.4); pg.wait_for_timeout(600)
+            T.step("the hidden spring behind the crates fizzes (spring-fizz buff); a first find is a secret: +40 Gnome Council merit",
+                   T.ev("window.__hm.hollows.buffOn()") and T.ev("window.__hm.S.found.rh_spring") == 1 and T.ev("window.__hm.S.merit.gnome") - n0 == 40, merit=[n0, T.ev("window.__hm.S.merit.gnome")])
+            # mouse: click the waystone (walks up), click again (its travel choice), key 1 travels to Bakery Lane
+            T.walk(13.0, -1.6)
+            def click_world(x, z):
+                s_ = T.ev(f"(() => {{ const c = window.__hd2d.ctx; return c.project({x}, c.heightAt({x}, {z}), {z}); }})()")
+                pg.mouse.click(s_["x"], s_["y"]); pg.wait_for_timeout(300)
+            click_world(15.0, -3.6); T.wait("!window.__hm.ctx.walking()", 60); pg.wait_for_timeout(300)
+            near = T.ev("window.__hm.harbor.near()")
+            click_world(15.0, -3.6)
+            wc = T.to_choice()
+            pg.keyboard.press("1")
+            T.wait("window.__hm.area === 'lane' && !window.__hm.busy", 90); T.idle(); pg.wait_for_timeout(400)
+            T.step("mouse: clicking Ravenhold's waystone walks up to it, a second click opens its travel choice; key 1 travels to Bakery Lane's waystone",
+                   near and bool(wc) and "Bakery Lane" in wc["options"][0] and T.ev("window.__hm.area") == "lane" and T.ev("window.__hm.harbor.near(3.2)"), choice=wc)
+            # controller: A at Bakery Lane's waystone, A picks 'Travel to Ravenhold Harbor'
+            T.walk(-13.4, 3.2)
+            n = 0
+            while T.ev("window.__hm.area") == "lane" and n < 10:
+                T.btn(0, 200); n += 1
+            T.wait("window.__hm.area === 'ravenhold' && !window.__hm.busy", 90); T.idle(); pg.wait_for_timeout(400)
+            T.step("controller: A at Bakery Lane's waystone opens it, A again travels to Ravenhold Harbor (by its waystone)",
+                   T.ev("window.__hm.area") == "ravenhold" and T.ev("window.__hm.harbor.near(3.2)") and T.ev("(window.__hm.S.flags.ways || {}).lane") == 1, presses=n)
+            area = T.go_rect("exits", 0)
+            T.step("the road east from the harbor leads back to Bakery Lane", area == "lane")
             T.step("no JS errors", not errors and not T.ev("window.__hd2d.errors.length"), errors=errors[:5])
             rep["pass"] = True
         except Exception as e:  # noqa: BLE001
@@ -1434,6 +1518,20 @@ def run(out, simscale=4, size=(960, 540)):
                 tap_el("#introSkip")
                 T.step("touch: tapping 'skip' ends the Lantern Eve opening (thumb-sized chip)", on and sk[0] >= 30 and sk[1] >= 30 and not T.ev("window.__hm.intro.active")
                        and T.ev("document.getElementById('introSkip').hidden") and T.ev("window.__hm.S.flags.intro") == "skipped", chip=sk)
+                # touch: Ravenhold's waystone takes a tap to walk up and a second tap to open; tapping 'Stay here.' closes it
+                T.ev("window.__hm.go('ravenhold', 'from_lane')"); T.wait("window.__hm.area === 'ravenhold' && !window.__hm.busy", 90); T.idle(); q.wait_for_timeout(600)
+                def tap_world(x, z):
+                    s_ = T.ev(f"(() => {{ const c = window.__hd2d.ctx; const s = c.project({x}, c.heightAt({x}, {z}), {z}); const el = document.elementFromPoint(s.x, s.y); return [s.x, s.y, el ? el.tagName : null]; }})()")
+                    tap(s_[0], s_[1]); q.wait_for_timeout(300); return s_[2]
+                el1 = tap_world(15.0, -3.6); T.wait("!window.__hm.ctx.walking()", 60); q.wait_for_timeout(300)
+                near = T.ev("window.__hm.harbor.near()")
+                tap_world(15.0, -3.6)
+                T.wait("window.__hm.dlgChoice && window.__hm.dlgChoice()", 60); q.wait_for_timeout(300)
+                wc = T.ev("window.__hm.dlgChoice()")
+                tap_el('#dlgChoices .choice[data-i="1"]'); q.wait_for_timeout(300)
+                T.step("touch: tapping Ravenhold's waystone walks up to it, a second tap opens its travel choice; tapping 'Stay here.' stays in the harbor",
+                       el1 == "CANVAS" and near and bool(wc) and "Bakery Lane" in wc["options"][0] and not T.ev("!!window.__hm.dlg") and T.ev("window.__hm.area") == "ravenhold", choice=wc, el=el1)
+                T.ev("window.__hm.go('plaza', 'from_lane')"); T.wait("window.__hm.area === 'plaza' && !window.__hm.busy", 90); T.idle(); q.wait_for_timeout(400)
                 T.walk(-1.4, -5.6)
                 # phone landscape: the full action layout (report shot), nothing overlapping
                 q.set_viewport_size({"width": 844, "height": 390}); q.wait_for_timeout(1200)

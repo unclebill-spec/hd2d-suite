@@ -270,7 +270,8 @@
     -2.6,
     -12.0
    ]
-  }
+  },
+  {"piece": "waystone", "pos": [-13.4, 4.4]}
  ],
  "hedges": [
   {
@@ -596,8 +597,10 @@
     "to": "plaza",
     "spawn": "from_lane",
     "label": "up to the Plaza"
-   }
+   },
+   {"rect": [-17.4, -1.6, -15.6, 5.2], "to": "ravenhold", "spawn": "from_lane", "label": "the west road to Ravenhold"}
   ],
+  "waystone": {"pos": [-13.4, 4.4]},
   "spawns": {
    "start": [
     0.5,
@@ -609,6 +612,7 @@
     -12.8,
     "down"
    ],
+   "from_ravenhold": [-13.8, 1.6, "right"],
    "qa": [
     1.5,
     4.2,

@@ -73,6 +73,11 @@ The Layout One pad (stick, MAIN, potions, rail) may be used. Layout One's Starde
 - Soft-filtered sprites
 - Mobile bloom soup
 
+## 8. Overrides from Bill
+
+- **Boss scale (2026-10-03):** the one-sprite-scale rule covers heroes, NPCs and ordinary enemies only. Bosses are drawn at least 5x the player's height; mini-bosses and rares at 2-3x (aim ~2.5x). Draw them at that size natively (more pixels, same texel density, nearest-neighbour); never upscale a small sprite. Hitboxes, shadows, attack reach and camera framing scale with them.
+- **Clothing (2026-10-04):** character sprites must never read as onesies, diapers, padded suits or armour-like body suits. Draw normal clothing: a separate top and bottom (shirt / tunic / coat + trousers / skirt), a visible waist (belt, sash or colour break) and readable shoes. Bosses and overlords may wear real armour plates; townsfolk and heroes wear clothes. (`tools/sprite`: every non-skirt human gets a belt row; `belt` and `sash` set its colour; pick `shoes` that contrast with `pants`.)
+
 ## How this repo enforces it
 
 - `hd2d check-sprite`: alpha is 0/255 only, palette-locked colours, a 1 px outline, every frame present.

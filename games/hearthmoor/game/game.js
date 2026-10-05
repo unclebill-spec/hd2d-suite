@@ -3,7 +3,8 @@
 // 3 errands + quest log, bag, persistent clock, 4 spell slots, save/load (localStorage hearthmoor-slot-1-v2, migrates
 // v1), ambient audio, PWA install + fullscreen + display presets.
 import { boot, DISPLAY_PRESETS, getDisplay, setDisplay } from '../engine/main.js';
-import { ITEMS, QUESTS, TALK, SPELL_NAMES, markerFor } from './data.js';
+import { ITEMS, QUESTS, TALK, SPELL_NAMES, markerFor, errandsDone } from './data.js';
+import { Harbor } from './ravenhold.js';
 import { Ambient } from './audio.js';
 import * as PR from './progress.js';
 import { HEROES, HERO, SPELLS, SUMMONS, CHARM_DMG, CHARM_CD } from './heroes.js';
@@ -34,7 +35,7 @@ const V1_DONE = 'hearthmoor-v1-migrated';     // set when slot 1 is deleted, so 
 const LAST_SLOT = 'hearthmoor-lastslot';
 const QA = Q.has('qa');                       // check-scene / screenshots: straight into ?area=, fresh state, no title, no saving
 const AREAS = { plaza: 'areas/plaza/', lane: 'areas/lane/', mossglen: 'areas/mossglen/', hollows: 'areas/hollows/',
-                rift: 'areas/rift/', vanaheim: 'areas/vanaheim/' };
+                rift: 'areas/rift/', vanaheim: 'areas/vanaheim/', ravenhold: 'areas/ravenhold/' };
 const DAY_SECONDS = Number(Q.get('day') || 1440);  // one whole day = 24 real minutes (day, dusk, night, dawn)
 const $ = (id) => document.getElementById(id);
 
@@ -51,6 +52,7 @@ const G = {
 G.combat = new Combat(G);
 G.glow = new Glow(G);
 G.hollows = new Hollows(G);
+G.harbor = new Harbor(G);   // Ravenhold Harbor: waystones + the district gates' story hook
 G.garden = new Garden(G);
 G.weather = new Weather(G);
 G.intro = new Intro(G);
@@ -116,8 +118,9 @@ G.give = (id, n = 1) => { G.S.inv[id] = (G.S.inv[id] || 0) + n; drawBag(id); toa
 G.take = (id, n = 1) => { G.S.inv[id] = Math.max(0, (G.S.inv[id] || 0) - n); if (!G.S.inv[id]) delete G.S.inv[id]; drawBag(); };
 G.setQuest = (id, stage) => {
   const was = G.S.quests[id]; G.S.quests[id] = stage; drawLog();
-  if (stage === 3 && was !== 3) { toast(`Errand done: ${QUESTS[id].title}`, 2.6); G.audio.sfx('quest'); G.gainXP(PR.XP.errand); G.factions.onErrand(); }
-  else if (was === 0 && stage > 0) { toast(`New errand: ${QUESTS[id].title}`, 2.6); G.audio.sfx('pickup'); flashLog(); }
+  const story = !!QUESTS[id].story;   // story quests (Ravenhold) pay their own merit in data.js; errands pay Hearth merit
+  if (stage === 3 && was !== 3) { toast(`${story ? 'Story quest' : 'Errand'} done: ${QUESTS[id].title}`, 2.6); G.audio.sfx('quest'); G.gainXP(PR.XP.errand); if (!story) G.factions.onErrand(); }
+  else if (!was && stage > 0) { toast(`New ${story ? 'story quest' : 'errand'}: ${QUESTS[id].title}`, 2.6); G.audio.sfx('pickup'); flashLog(); }
   refreshMarkers(); save();
 };
 G.learn = (spell) => {
@@ -159,13 +162,14 @@ function drawLog() {
   const el = $('logList'); if (!el) return;
   const rows = Object.entries(QUESTS).map(([id, q]) => {
     const st = G.S.quests[id];
+    if (!st && q.story) return '';   // story quests appear once they start
     if (!st) return `<li class="todo"><b>${q.title}</b><span>Someone in town may need a hand… (${q.giver})</span></li>`;
     let step = q.steps[st] || '';
     if (id === 'tea' && st === 1) step += ` (${G.S.inv.moonpetal || 0}/3)`;
-    return `<li class="${st === 3 ? 'done' : 'active'}"><b>${st === 3 ? '✓ ' : '◆ '}${q.title}</b><span>${step}</span></li>`;
+    return `<li class="${st === 3 ? 'done' : 'active'}${q.story ? ' story' : ''}"><b>${st === 3 ? '✓ ' : '◆ '}${q.story ? 'Story: ' : ''}${q.title}</b><span>${step}</span></li>`;
   });
   el.innerHTML = rows.join('');
-  const n = Object.values(G.S.quests).filter((v) => v === 3).length;
+  const n = errandsDone(G.S);
   $('logCount').textContent = `${n}/3 done`;
   $('btnLog').textContent = `quests ${n}/3`;
   drawHunt();
@@ -300,12 +304,12 @@ async function loadArea(id, spawnKey, pos) {
   const old = $('view'); if (old) old.remove();
   const canvas = document.createElement('canvas'); canvas.id = 'view'; document.body.prepend(canvas);
   G.area = id; G.S.area = id; G.armed = false;
-  G.rifts.detach(); G.rares.detach(); G.combat.detach(); G.glow.detach(); G.hollows.detach(); G.garden.detach(); G.weather.detach(); G.loot.detach(); G.shopUI.detach();
+  G.rifts.detach(); G.rares.detach(); G.combat.detach(); G.glow.detach(); G.hollows.detach(); G.harbor.detach(); G.garden.detach(); G.weather.detach(); G.loot.detach(); G.shopUI.detach();
   G.game = await boot({ base: AREAS[id], canvas, spawn: sp, startT: G.S.t, glowLights: glowCap(), clockSpeed: 1 / DAY_SECONDS, spellCycle: slots(),
                         player: { role: G.S.cls || G.preview || 'wildcaller' }, castAdvance: false,
                         keepTitle: true, padHandled: true, hooks, toast: (m, t) => toast(m, t) });
   const ctx = G.ctx = G.game.ctx;
-  G.combat.attach(ctx, id); G.rares.attach(ctx, id); G.rifts.attach(ctx, id); G.factions.attach(ctx, id); G.glow.attach(ctx, id); G.hollows.attach(ctx); G.garden.attach(ctx); G.weather.attach(ctx, id); G.loot.attach(ctx); G.shopUI.attach(ctx, id); PR.ensure(G.S); G.loot.restorePurse(id);
+  G.combat.attach(ctx, id); G.rares.attach(ctx, id); G.rifts.attach(ctx, id); G.factions.attach(ctx, id); G.glow.attach(ctx, id); G.hollows.attach(ctx); G.harbor.attach(ctx, id); G.garden.attach(ctx); G.weather.attach(ctx, id); G.loot.attach(ctx); G.shopUI.attach(ctx, id); PR.ensure(G.S); G.loot.restorePurse(id);
   // portrait source: this area's actor atlas
   portraitImg = new Image(); portraitImg.src = AREAS[id] + ctx.scene.atlas.image;
   // pickups already taken stay gone
@@ -336,7 +340,7 @@ G.applySwaps = () => G.ctx && applySwaps(G.ctx);
 // ---- the Rainbow Rift (Stage 4): the Plaza's moss gate also opens on the Rift Shrine once the three errands are done
 // (or S.flags.rift, or ?rift for QA). Stepping in then asks where to go with the dialogue choice panel.
 function riftOpen() {
-  const S = G.S; return Q.has('rift') || !!(S.flags && S.flags.rift) || Object.values(S.quests || {}).filter((v) => v === 3).length >= 3;
+  const S = G.S; return Q.has('rift') || !!(S.flags && S.flags.rift) || errandsDone(S) >= 3;
 }
 G.riftOpen = riftOpen;
 function gateChoice(po) {
@@ -356,6 +360,10 @@ const SEAL_SAY = {
 };
 function sealedLook(ctx) {
   const g = sealedNear(ctx); if (!g) return false;
+  if (g.district) {   // Ravenhold's district gates: their own text, "coming soon"; the Market gate is a story-quest step
+    openDialogue({ id: 'sealed_' + g.id, name: `The gate to ${g.name} (sealed)` }, { pages: g.say || ['Sealed. Coming soon.'] });
+    G.harbor.onSealedLook(g); return true;
+  }
   openDialogue({ id: 'sealed_' + g.realm.toLowerCase(), name: `${g.realm}'s gate (sealed)` }, { pages: [SEAL_SAY[g.hue] || 'The gate is sealed.', 'It will not open yet. Bifrost Crossing has keys for gates like this, they say.'] });
   return true;
 }
@@ -435,7 +443,7 @@ function onFrame(dt, ctx) {
   let prompt = '';
   const close = trig.find((e) => Math.max(e.rect[0] - p.x, p.x - e.rect[2], e.rect[1] - p.z, p.z - e.rect[3]) < 1.6);
   if (close) prompt = close.how === 'portal' ? `step into the swirl: ${close.choose && riftOpen() ? close.label_rift || close.label : close.label}` : close.label;
-  else { const sg = sealedNear(ctx); if (sg) prompt = `${sg.realm}'s gate is sealed (E / A to look)`; }
+  else { const sg = sealedNear(ctx); if (sg) prompt = sg.district ? `the gate to ${sg.name} is sealed: coming soon (E / A to look)` : `${sg.realm}'s gate is sealed (E / A to look)`; else prompt = G.harbor.prompt(); }
   const pe = $('prompt'); if (pe.textContent !== prompt) { pe.textContent = prompt; pe.hidden = !prompt; }
   G.audio.setNight(ctx.clock.grade ? (ctx.clock.grade().bugs ?? 0) : 0);
   G.autosave -= dt; if (G.autosave <= 0) { G.autosave = 20; save(); }
@@ -485,7 +493,8 @@ const hooks = {
     if (G.log) { setLog(false); return true; }
     if (G.busy) return true;
     if (kind !== 'tap' && G.hollows.interact()) return true;   // gnome doors
-    if (kind !== 'tap' && sealedLook(ctx)) return true;        // sealed Rift gates
+    if (kind !== 'tap' && sealedLook(ctx)) return true;        // sealed Rift gates + Ravenhold's district gates
+    if (kind !== 'tap' && G.harbor.interact()) return true;    // waystones (Bakery Lane <-> Ravenhold)
     if (kind !== 'tap' && G.garden.interact()) return true;    // glow-garden plots: plant / check / harvest
     return false;
   },
@@ -505,6 +514,7 @@ const hooks = {
       const f = ctx.fx[po.fx]; if (!f) continue;
       if (Math.abs(f.x - hit.x) < 1.2 && hit.z > f.z - 1.2 && hit.z < f.z + 2.0) { ctx.walkTo(f.x, (po.rect[1] + po.rect[3]) / 2); return true; }
     }
+    if (G.harbor.onTap(hit)) return true;              // tapping a waystone walks up to it; tapping again up close opens it
     for (const g of ctx.scene.game?.sealed || []) {   // tapping a sealed gate walks up to it; tapping it again up close looks
       if (Math.abs(g.pos[0] - hit.x) < 1.3 && hit.z > g.pos[1] - 1.2 && hit.z < g.pos[1] + 2.0) {
         if (sealedNear(ctx)) sealedLook(ctx); else ctx.walkTo(g.pos[0], g.pos[1] + 1.2);
@@ -550,7 +560,7 @@ const hooks = {
     return true;
   },
   onFrame,
-  nearThing: (ctx) => !!nearPickup(ctx, 1.4) || G.hollows.nearThing(ctx) || G.garden.nearThing(ctx) || !!sealedNear(ctx),
+  nearThing: (ctx) => !!nearPickup(ctx, 1.4) || G.hollows.nearThing(ctx) || G.garden.nearThing(ctx) || !!sealedNear(ctx) || G.harbor.nearThing(),
 };
 
 // ------------------------------------------------------------------ touch action buttons + slow-time spell wheel
@@ -870,7 +880,7 @@ const playTime = (sec) => { const m = Math.floor((sec || 0) / 60); return m < 60
 function slotInfo(n) {
   const s = readSave(n); if (!s) return null;
   return { cls: s.cls, hero: s.cls ? HERO[s.cls].cls : 'Older save', lv: s.lv || 1, area: AREA_NAME[s.area] || s.area || 'Hearthmoor Plaza',
-           played: s.played || 0, errands: Object.values(s.quests || {}).filter((v) => v === 3).length, savedAt: s.savedAt, migrated: !!s.migrated };
+           played: s.played || 0, errands: errandsDone(s), savedAt: s.savedAt, migrated: !!s.migrated };
 }
 G.slotInfo = slotInfo;
 function syncSlots() {
@@ -894,7 +904,7 @@ function syncSlots() {
   const s = readSave();
   $('btnCont').hidden = !s;
   $('btnCopy').disabled = !s; $('btnDel').disabled = !s;
-  $('saveInfo').textContent = s ? `Slot ${G.slot} · Saved: ${new Date(s.savedAt).toLocaleString([], { dateStyle: 'medium', timeStyle: 'short' })} · ${s.cls ? HERO[s.cls].cls + ' · ' : ''}${Object.values(s.quests).filter((v) => v === 3).length}/3 errands${s.migrated ? ' · (older save: pick your hero to continue)' : ''}`
+  $('saveInfo').textContent = s ? `Slot ${G.slot} · Saved: ${new Date(s.savedAt).toLocaleString([], { dateStyle: 'medium', timeStyle: 'short' })} · ${s.cls ? HERO[s.cls].cls + ' · ' : ''}${errandsDone(s)}/3 errands${s.migrated ? ' · (older save: pick your hero to continue)' : ''}`
     : `Slot ${G.slot} is empty: New game starts here.`;
   if (!delArmed) { $('btnDel').textContent = 'Delete'; $('btnDel').classList.remove('warn'); }
 }
