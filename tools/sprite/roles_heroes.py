@@ -5,7 +5,7 @@ pose in the cast columns (8-11). Everyone casts; the brawlers swing a weapon wre
 is crisp emissive pixels (gloom-and-glow, no bloom). Each class has its own silhouette cue so they read apart:
   wildcaller    Midgard farmhand  mortal   blond mop, rust tunic, rolled sleeves, satchel, long hoe; hearth sparks
   runeguard     Shield-warden     mortal   chestnut braids, mail + leather, round shield with glowing light runes, axe
-  seer          Rune-reader       mortal   grey hooded cloak with a stitched rune, rune-stone pouch, rune staff
+  seer          Rune-reader       mortal   short grey hooded robe cinched with a blue sash, brown trousers, dark boots, stitched rune, rune-stone pouch, rune staff
   stormborn     Child of thunder  demigod  bulky build, storm-blue cloak, silver circlet, stone war-hammer; lightning
   grovekeeper   Child of the Vanir demigod moss-green hair, flower crown, leaf mantle, mushroom charms; neon heal
   cinderknight  Ember-born        demigod  bulky dark plate, ember hair, ash cheek marks, greatsword with ember edge
@@ -25,14 +25,14 @@ def hero_roles(_r):
                          satchel="timber_hi", sleeves="rolled", forearm="skin"),
         "runeguard": _r(**H, cls="Runeguard", origin="mortal", origin_name="Shield-warden", style="brawler",
                         weapon="axe", shield=True, fx="light", trail=("flower_gold", "white"),
-                        desc="Runeguard (Shield-warden, mortal paladin brawler): chestnut braids, mail, leather jerkin, round shield with glowing light runes, axe",
-                        hair="timber_hi", hairstyle="braids", shirt="stone", vest="timber", pants="timber_lo",
-                        boots=True, shoes="timber_lo", mail=True),
+                        desc="Runeguard (Shield-warden, mortal paladin brawler): chestnut braids, grey mail shirt and sleeves, tan leather tabard to the hip with a gold rune, dark belt, brown trousers, dark boots, round shield with glowing light runes, axe",
+                        hair="timber_hi", hairstyle="braids", shirt="stone", tabard="timber_hi", belt="timber_lo",
+                        pants="timber", boots=True, shoes="shadow", mail=True),
         "seer": _r(**H, cls="Seer", origin="mortal", origin_name="Rune-reader", style="caster",
                    weapon="runestaff", fx="rune", pouch=True,
-                   desc="Seer (Rune-reader, mortal): grey hooded cloak with a stitched rune, rune-stone pouch, rune-carved staff; rune glow",
-                   hat="hood", hatc="stone", hair="timber", shirt="plaster_lo", cloak="stone",
-                   pants="timber_lo", shoes="timber_lo", hem="flower_blue"),
+                   desc="Seer (Rune-reader, mortal): grey hood, short pale-grey tunic-robe to mid-thigh cinched with a rune-blue sash, dark trousers, tan boots, stitched rune, rune-stone pouch, rune-carved staff; rune glow",
+                   hat="hood", hatc="stone", hair="timber", shirt="stone_hi", tunic=2, sash="flower_blue",
+                   pants="shadow", shoes="timber_hi", hem="flower_blue"),
         "stormborn": _r(**H, cls="Stormborn", origin="demigod", origin_name="Child of thunder", style="brawler",
                         weapon="stormhammer", fx="thunder", layout="broad", trail=("sky", "white"),
                         desc="Stormborn (Child of thunder, demigod brawler): bulky build, storm-blue cloak, silver circlet, stone war-hammer; lightning",
@@ -40,15 +40,16 @@ def hero_roles(_r):
                         cloak="cloth", pants="shadow", shoes="shadow", boots=True),
         "grovekeeper": _r(**H, cls="Grovekeeper", origin="demigod", origin_name="Child of the Vanir", style="caster",
                           fx="vanir", charms=True,
-                          desc="Grovekeeper (Child of the Vanir, demigod): moss-green hair, flower crown, leaf-and-moss mantle, mushroom charms; neon green heal",
-                          hat="crown", hair="grass_hi", hairstyle="long", shirt="plaster_hi", skirt="plaster_hi",
-                          cloak="leaf_deep", shawl="moss", shoes="timber", leaves=True),
+                          desc="Grovekeeper (Child of the Vanir, demigod): moss-green hair, flower crown, leaf-and-moss mantle over a cream blouse, dark belt, grass-green skirt, mushroom charms; neon green heal",
+                          hat="crown", hair="grass_hi", hairstyle="long", shirt="plaster_hi", skirt="grass",
+                          belt="timber_lo", cloak="leaf_deep", shawl="moss", shoes="timber", leaves=True),
         "cinderknight": _r(**H, cls="Cinderknight", origin="demigod", origin_name="Ember-born", style="brawler",
                            weapon="greatsword", fx="ember", ash=True, layout="broad", plate=True,
                            trail=("roof_hi", "lamp"),
-                           desc="Cinderknight (Ember-born, demigod dark-knight brawler): heavy dark plate, ember hair, ash cheek marks and hands, greatsword with an ember edge",
-                           hair="roof_hi", hairstyle="flame", shirt="shadow", vest=None, pants="stone_lo",
-                           shoes="ink", boots=True, sleeves="rolled", forearm="stone_lo", handc="stone_hi"),
+                           desc="Cinderknight (Ember-born, demigod brawler): ember-red jerkin over a pale shirt collar, one small plate pauldron, bracers, dark belt with a glowing ember buckle, charcoal trousers, brown boots, ember hair, ash cheek marks, greatsword with an ember edge",
+                           hair="roof_hi", hairstyle="flame", shirt="roof", collar="plaster_lo", vest=None,
+                           belt="timber_lo", pants="stone_lo", shoes="timber", boots=True, sleeves="rolled",
+                           forearm="stone_lo", handc="stone_hi"),
     }
 
 
@@ -804,7 +805,12 @@ def draw_extras(s, spec, L, face, bob, swing, stride, act=None):
                 if s.p[y][x] == s.pal[spec["shirt"]]:
                     s.set(x, y, "stone_lo")
     # leaf flecks on the Vanir mantle, rune stitching on the reader's hem
-    if spec.get("leaves") or spec.get("hem"):
+    if spec.get("hem") and spec.get("tunic"):
+        y = L["hip"] + bob - 1 + spec["tunic"]                        # rune stitching on the tunic hem
+        for x in range(1, 19, 2):
+            if s.p[y][x] is not None and s.p[y][x] != s.pal["ink"]:
+                s.set(x, y, spec["hem"])
+    if spec.get("leaves") or (spec.get("hem") and spec.get("cloak")):
         cl = s.pal[spec["cloak"]]
         for y in range(top, 29):
             for x in range(20):
@@ -886,16 +892,17 @@ def draw_extras(s, spec, L, face, bob, swing, stride, act=None):
     # always-on gear
     # heavy dark plate: pauldrons and a glowing ember seam on the chest
     if spec.get("plate"):
+        # clothes, not armour: one small plate pauldron, ember lacing on the jerkin, a glowing ember buckle
         if face in ("down", "up"):
-            for (a, b) in ((x0 - 2, x0 + 1), (x1 - 1, x1 + 2)):
-                s.hspan(top, a, b, "stone_lo"); s.hspan(top + 1, a, b, "stone_lo")
-                s.set(a + 1, top, "stone"); s.set(b, top + 1, "shadow")
+            a, b = (x1 - 1, x1 + 1) if face == "down" else (x0 - 1, x0 + 1)   # the character's left shoulder
+            s.hspan(top, a, b, "stone"); s.hspan(top + 1, a, b, "stone_lo")
+            s.set(a + 1, top, "stone_hi"); s.set(b, top + 1, "shadow")
             if face == "down":
-                s.set(9, top + 3, "lamp"); s.set(10, top + 4, "roof_hi"); s.set(9, top + 5, "lamp")
-                s.hspan(bottom, x0 + 1, x1 - 1, "stone_lo"); s.set(9, bottom, "lamp"); s.set(10, bottom, "lamp")
+                s.set(10, top + 3, "lamp"); s.set(10, top + 5, "lamp")          # ember lacing
+                s.set(9, bottom, "lamp"); s.set(10, bottom, "lamp")              # ember buckle on the belt
         else:
-            s.hspan(top, 8, 12, "stone_lo"); s.hspan(top + 1, 8, 12, "stone_lo"); s.set(9, top, "stone")
-            s.set(7, top + 4, "lamp")
+            s.hspan(top, 8, 10, "stone"); s.hspan(top + 1, 8, 10, "stone_lo"); s.set(9, top, "stone_hi")
+            s.set(x0, bottom, "lamp")
     if spec.get("shield") and act is None:
         if face == "down":
             _shield(s, 16, top + 5)

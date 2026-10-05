@@ -286,8 +286,18 @@ def draw_body(s, spec, L, face, bob, swing, stride, anim, i):
         if face == "left":
             s.set(x0 + 2, 26, s.pal.dk(sk))
             s.set(x0 + 2, 27, s.pal.dk(sk))
+        if spec.get("belt"):   # a cinched waist over the skirt top (clothing rule: never one long onesie)
+            s.hspan(bottom - 1, x0, x1, spec["belt"])
+            s.set(x1, bottom - 1, s.pal.dk(spec["belt"]))
+            if face == "down":
+                s.set(9, bottom - 1, "flower_gold")
     else:
         s.hspan(bottom, x0, x1, spec.get("belt") or "timber_lo")  # belt (a visible waist: clothing rule)
+        if spec.get("belt_w", 1) > 1:                               # a broad belt: two rows, a tall buckle
+            s.hspan(bottom - 1, x0, x1, spec["belt"])
+            s.hspan(bottom, x0, x1, s.pal.dk(spec["belt"]))
+            if face == "down":
+                s.set(9, bottom - 1, "flower_gold"); s.set(10, bottom - 1, "flower_gold")
         if face == "down":
             s.set(9, bottom, "flower_gold")
     # vest / overalls / apron
@@ -309,6 +319,22 @@ def draw_body(s, spec, L, face, bob, swing, stride, anim, i):
             for y in range(top, bottom):
                 s.hspan(y, x0 + 2, x1, v)
                 s.set(x1, y, s.pal.dk(v))
+    if spec.get("tabard"):
+        # a tabard over the shirt: a front/back panel that ends at the belt, the shirt shows at the sides and sleeves
+        tb = spec["tabard"]
+        if face in ("down", "up"):
+            a, b = x0 + 2, x1 - 2
+        else:
+            a, b = x0 + 1, x1 - 1
+        for y in range(top + 1, bottom):
+            s.hspan(y, a, b, tb)
+            s.set(b, y, s.pal.dk(tb))
+        s.hspan(top + 1, a, b - 1, s.pal.lt(tb))
+        if face != "up":
+            s.set((a + b) // 2, top + 3, "flower_gold"); s.set((a + b) // 2, top + 4, "flower_gold")   # a gold rune
+        s.hspan(bottom, x0, x1, spec.get("belt") or "timber_lo")
+        if face == "down":
+            s.set(9, bottom, "flower_gold")
     if spec["overalls"]:
         o = spec["overalls"]
         if face == "down":
@@ -349,26 +375,27 @@ def draw_body(s, spec, L, face, bob, swing, stride, anim, i):
         s.set(9, bottom, spec["apron"]); s.set(10, bottom, spec["apron"]); s.set(10, bottom + 1, spec["apron"])
     if spec["cloak"]:
         c = spec["cloak"]
+        clen = 0 if spec.get("cloak_short") else 2       # a short robe stops at the waist: trousers + boots show
         if face == "down":
-            for y in range(top, min(28, hip + 2)):
+            for y in range(top, min(28, hip + clen)):
                 s.hspan(y, x0 - 2, x0, c)
                 s.hspan(y, x1, x1 + 2, c)
                 s.set(x1 + 2, y, s.pal.dk(c))
             s.hspan(top, x0 - 1, x1 + 1, c)
         elif face == "up":
-            for y in range(top, min(29, hip + 3)):
+            for y in range(top, min(29, hip + clen + 1)):
                 s.hspan(y, x0 - 2, x1 + 2, c)
                 s.set(x1 + 2, y, s.pal.dk(c))
                 s.set(x0 - 1, y, s.pal.lt(c))
-            s.hspan(min(28, hip + 2), x0 - 2, x1 + 2, s.pal.dk(c))
-            for y in range(top + 3, min(28, hip + 2), 3):
+            s.hspan(min(28, hip + clen), x0 - 2, x1 + 2, s.pal.dk(c))
+            for y in range(top + 3, min(28, hip + clen), 3):
                 s.set(10, y, s.pal.dk(c))
         else:
             sway = 1 if stride != 0 else 0
-            for y in range(top, min(29, hip + 3)):
+            for y in range(top, min(29, hip + clen + 1)):
                 k = (y - top) // 4
                 s.hspan(y, x1 - 1, x1 + 1 + min(k, 2) + (sway if y > top + 5 else 0), c)
-            for y in range(top, min(29, hip + 3)):
+            for y in range(top, min(29, hip + clen + 1)):
                 xe = x1 + 1 + min((y - top) // 4, 2) + (sway if y > top + 5 else 0)
                 s.set(xe, y, s.pal.dk(c))
     if spec["shawl"]:
@@ -381,14 +408,43 @@ def draw_body(s, spec, L, face, bob, swing, stride, anim, i):
             else:
                 s.hspan(y, x0, x1 + 1 - k, sh)
         s.set(9 if face != "left" else x0 + 1, top + 1, s.pal.lt(sh))
-    if spec.get("sash") and not spec["skirt"]:   # a cloth sash over the waist (2 rows) with a knotted tail
+    if spec.get("sash") and not spec["skirt"]:   # a cloth sash over the waist (2 rows, the lower one darker) + knot tail
         sa = spec["sash"]
-        for y in (bottom - 1, bottom):
-            s.hspan(y, x0, x1, sa)
-            s.set(x1, y, s.pal.dk(sa))
-        s.hspan(bottom - 1, x0 + 1, x1 - 1, s.pal.lt(sa)) if face != "up" else None
+        s.hspan(bottom - 1, x0, x1, sa)
+        s.hspan(bottom, x0, x1, s.pal.dk(sa))
+        s.set(x1, bottom - 1, s.pal.dk(sa))
         tx = x1 - 1 if face in ("down", "up") else x1
         s.set(tx, bottom + 1, sa); s.set(tx, bottom + 2, s.pal.dk(sa))
+    if spec.get("tunic"):
+        # the tunic / short robe hangs below the waist band to mid-thigh; the trousers and the leg split show under it
+        tc = spec.get("tunic_c") or shirt
+        n = spec["tunic"]
+        for k, y in enumerate(range(bottom + 1, bottom + 1 + n)):
+            fl = 1 if k == n - 1 and face != "left" else 0
+            s.hspan(y, x0 - fl, x1 + fl, tc)
+            s.set(x1 + fl, y, s.pal.dk(tc))
+        s.hspan(bottom + n, x0 - (1 if face != "left" else 0), x1 + (1 if face != "left" else 0), s.pal.dk(tc))
+        if face in ("down", "up"):
+            s.set(9, bottom + n, s.pal.dk(tc, 2)); s.set(10, bottom + n, s.pal.dk(tc, 2))   # the front slit
+        if spec.get("sash"):
+            tx = x1 - 1 if face in ("down", "up") else x1
+            s.set(tx, bottom + 1, spec["sash"]); s.set(tx, bottom + 2, s.pal.dk(spec["sash"]))
+    if spec.get("collar") and face != "up":
+        co = spec["collar"]
+        if face == "down":
+            s.hspan(top, 8, 11, co); s.set(9, top + 1, co); s.set(10, top + 1, co)
+        else:
+            s.hspan(top, x0, x0 + 2, co); s.set(x0, top + 1, co)
+    elif spec.get("collar"):
+        s.hspan(top, x0 + 2, x1 - 2, spec["collar"])
+    if spec.get("suspenders"):
+        su = spec["suspenders"]
+        cols = (x0 + 2, x1 - 2) if face in ("down", "up") else (x0 + 2,)
+        for cx in cols:
+            for y in range(top, bottom):
+                s.set(cx, y, su)
+            if face == "down":
+                s.set(cx, top + 2, "flower_gold")
     draw_arms(s, spec, L, face, top, swing, stride, x0, x1)
 
 

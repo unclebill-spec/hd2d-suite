@@ -2,6 +2,21 @@
 
 Dates are America/New_York. Newest first. Keep this current with every change you push.
 
+## 2026-10-04: Hearthmoor clothing-rule pass (older cast)
+Follow-up to Stage 5 part 4. The older sprites flagged against the style lock's clothing rule now wear clothes, not onesies, padded suits or armour: the top and bottom are clearly different colours / values, a darker waist band sits between them, trousers show the leg split, and the shoes contrast with the trousers. Palettes, silhouettes and glows are kept. Before/after: `docs/screenshots/clothing_pass_before_after.png`; in game: `docs/screenshots/clothing_pass_ingame.png` (Plaza by day, a staged QA line-up: extra NPCs added with `ctx.addNpc`, the player as the Seer).
+- **Seer:** the long grey cloak is now a short pale-grey tunic-robe to mid-thigh (rune-stitched hem, the back rune), cinched with a rune-blue sash, over dark trousers and tan shoes. The grey hood, pouch and staff are unchanged.
+- **Cinderknight:** no plate body. An ember-red jerkin over a pale shirt collar, ember lacing, one small plate pauldron (left shoulder) and the bracers, a dark belt with the glowing ember buckle, charcoal trousers, brown boots. The flame hair, ash marks and ember greatsword stay.
+- **Runeguard:** a tan leather tabard that ends at the hip (gold rune on the chest), grey mail sleeves and sides showing, a dark belt, brown trousers, dark boots. The light-rune shield and axe stay.
+- **Gardener:** cream shirt with moss suspender straps, a dark belt with a gold buckle, moss-green trousers, brown boots (no bib overalls).
+- **Sefa (night merchant):** the open night-blue cloak frames a sky-blue tunic with a deep-blue sash; brown trousers, dark boots. Her neon-blue lantern and scarf are unchanged.
+- **Hedge-witch:** a sky-blue bodice, dark belt with a gold buckle, deep-blue skirt under the night-blue cloak.
+- **Grovekeeper:** a cream blouse under the moss shawl and leaf mantle, dark belt, grass-green skirt.
+- **Gnome:** a broad two-row dark belt with a tall gold buckle over the blue smock, tan trousers, dark brown shoes.
+- **Sable (corsair):** the sash's lower row is now darker (every sash does this), so her waist band reads.
+- **Sprite tool:** `tunic` (rows of the top hanging below the waist band, with a front slit), `collar`, `suspenders`, `belt_w` (2 = broad belt), `tabard` (ends at the belt), `cloak_short`, and `belt` on skirt roles (cinches the skirt top). Sash = a light row over a darker row. Roles that don't use these render exactly as before. All seven area atlases regenerated; only the nine roles above changed.
+- **Smoke fix (test only):** the controller step at Bakery Lane's waystone kept pressing A while the area was already loading; a press during the load can't be polled, so `T.btn` could time out after a successful trip to Ravenhold. The loop now stops once the travel has started (`busy`). The step's checks are unchanged.
+- **Checks:** smoke PASS 207/207; check-scene PASS on all seven areas (plaza 11/11, lane 10/10, mossglen 11/11, hollows 10/10, rift 10/10, vanaheim 11/11, ravenhold 11/11). Two earlier smoke runs hit timing flakes at different steps while check-scene ran alongside (loot pick-up 4/5 at a 250 ms teleport; the bounce toadstool's 250 ms mid-flight lift sample read 0). Both steps passed unchanged in the green run; this commit changes no game code or area data.
+
 ## 2026-10-04: Hearthmoor Stage 5, part 4: Ravenhold Harbor (first playable slice)
 - **New area `ravenhold`:** the Harbor district of Ravenhold, Midgard's harbor capital at the foot of the Rainbow Rift (per `docs/story/STORY_SEEDS.md` and the builder handoff). Bakery Lane has a new west road with a waystone; it leads to the harbor's east road, and back.
   - A stone quay (0.8 m) under an upper terrace (3 m) with the harbor stair.
@@ -42,7 +57,7 @@ Dates are America/New_York. Newest first. Keep this current with every change yo
   - the east road returns to the lane;
   - phone: tap, tap the waystone, then tap "Stay here.".
 - **Screenshots:** `docs/screenshots/stage5_ravenhold_harbor_night.png` (the east quay at night: the lantern row with light pools and reflections, fish orbs, toadstools, the red pool, Sable), `stage5_ravenhold_brannoc.png` (Brannoc turning in "The Road to the Rift").
-- **Checks:** smoke PASS 207/207; check-scene PASS on all seven areas (plaza 12/12, lane 11/11, mossglen 12/12, hollows 11/11, rift 11/11, vanaheim 12/12, ravenhold 12/12). Lane's phone controller / tap-walk sub-checks flaked three times at load 15-19 (SwiftShader under 1 fps; the old ece94bc lane build measured no faster under the same load) and passed unchanged at lower load. No threshold was changed.
+- **Checks:** smoke PASS 207/207; check-scene PASS on all seven areas (plaza 11/11, lane 10/10, mossglen 11/11, hollows 10/10, rift 10/10, vanaheim 11/11, ravenhold 11/11). Lane's phone controller / tap-walk sub-checks flaked three times at load 15-19 (SwiftShader under 1 fps; the old ece94bc lane build measured no faster under the same load) and passed unchanged at lower load. No threshold was changed.
 
 ## 2026-10-04: Hearthmoor Stage 5, part 3: factions + merit
 - **Five factions, six merit ranks** (`game/factions.js`, per `docs/story/STORY_SEEDS.md` and handoff §9). Ranks are Stranger → Friend → Trusted → Honored → Champion → Legend, at 0 / 150 / 400 / 800 / 1400 / 2200 merit. Each faction has its own currency name, signature glow colour, earn line, a title per rank and a Legend item (named for later).

@@ -30,11 +30,13 @@ There are six playable classes; `--roles heroes` selects them. All are original 
 | role | class (origin) | read at 1x |
 |---|---|---|
 | `wildcaller` | Wildcaller (Midgard farmhand, mortal) | blond mop, rust tunic, rolled sleeves, satchel, long hoe |
-| `runeguard` | Runeguard (Shield-warden, mortal brawler) | chestnut braids, mail and leather, round shield with a light rune, axe |
-| `seer` | Seer (Rune-reader, mortal) | grey hood with a stitched back rune, rune-stone pouch, rune staff |
+| `runeguard` | Runeguard (Shield-warden, mortal brawler) | chestnut braids, grey mail sleeves, tan tabard to the hip, dark belt, brown trousers, boots, round shield with a light rune, axe |
+| `seer` | Seer (Rune-reader, mortal) | grey hood, short pale-grey tunic-robe with a rune-blue sash, dark trousers, tan shoes, stitched back rune, rune-stone pouch, rune staff |
 | `stormborn` | Stormborn (Child of thunder, demigod brawler) | `broad` build, storm-blue cloak, silver circlet, stone war-hammer |
-| `grovekeeper` | Grovekeeper (Child of the Vanir, demigod) | moss-green hair, flower crown, leaf mantle, mushroom charms |
-| `cinderknight` | Cinderknight (Ember-born, demigod brawler) | `broad` dark plate with an ember seam, flame-tuft hair, ash cheek marks and hands, greatsword with an ember edge |
+| `grovekeeper` | Grovekeeper (Child of the Vanir, demigod) | moss-green hair, flower crown, leaf mantle, cream blouse, dark belt, green skirt, mushroom charms |
+| `cinderknight` | Cinderknight (Ember-born, demigod brawler) | `broad` ember-red jerkin over a pale collar, one small pauldron, belt with a glowing ember buckle, charcoal trousers, brown boots, flame-tuft hair, ash cheek marks and hands, greatsword with an ember edge |
+
+Clothing rule (style lock): every human has a separate top and bottom in different values, a darker waist band, a leg split and shoes that contrast with the trousers. Spec keys: `belt` / `sash` colours (a `belt` on a `skirt` role cinches the skirt top), `belt_w` (2 = broad belt), `tunic` (rows of the top below the waist), `collar`, `suspenders`, `tabard` (a panel ending at the belt), `cloak_short` (the cloak / robe ends at the waist).
 
 ### Hero action sets (all four facings: down, up, left; right is the mirrored left)
 

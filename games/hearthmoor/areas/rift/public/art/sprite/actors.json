@@ -106,7 +106,7 @@
   "hedgewitch": {
    "row": 0,
    "kind": "human",
-   "desc": "kind hedge-witch: wide pointed hat with a flower band, night-blue cloak, oak staff",
+   "desc": "kind hedge-witch: wide pointed hat with a flower band, night-blue cloak over a sky-blue bodice, dark belt, deep-blue skirt, oak staff",
    "size_bounds": [
     [
      14,
@@ -2645,7 +2645,7 @@
   "runeguard": {
    "row": 12,
    "kind": "human",
-   "desc": "Runeguard (Shield-warden, mortal paladin brawler): chestnut braids, mail, leather jerkin, round shield with glowing light runes, axe",
+   "desc": "Runeguard (Shield-warden, mortal paladin brawler): chestnut braids, grey mail shirt and sleeves, tan leather tabard to the hip with a gold rune, dark belt, brown trousers, dark boots, round shield with glowing light runes, axe",
    "size_bounds": [
     [
      14,
@@ -4019,7 +4019,7 @@
   "seer": {
    "row": 16,
    "kind": "human",
-   "desc": "Seer (Rune-reader, mortal): grey hooded cloak with a stitched rune, rune-stone pouch, rune-carved staff; rune glow",
+   "desc": "Seer (Rune-reader, mortal): grey hood, short pale-grey tunic-robe to mid-thigh cinched with a rune-blue sash, dark trousers, tan boots, stitched rune, rune-stone pouch, rune-carved staff; rune glow",
    "size_bounds": [
     [
      14,
@@ -6767,7 +6767,7 @@
   "grovekeeper": {
    "row": 24,
    "kind": "human",
-   "desc": "Grovekeeper (Child of the Vanir, demigod): moss-green hair, flower crown, leaf-and-moss mantle, mushroom charms; neon green heal",
+   "desc": "Grovekeeper (Child of the Vanir, demigod): moss-green hair, flower crown, leaf-and-moss mantle over a cream blouse, dark belt, grass-green skirt, mushroom charms; neon green heal",
    "size_bounds": [
     [
      14,
@@ -8141,7 +8141,7 @@
   "cinderknight": {
    "row": 28,
    "kind": "human",
-   "desc": "Cinderknight (Ember-born, demigod dark-knight brawler): heavy dark plate, ember hair, ash cheek marks and hands, greatsword with an ember edge",
+   "desc": "Cinderknight (Ember-born, demigod brawler): ember-red jerkin over a pale shirt collar, one small plate pauldron, bracers, dark belt with a glowing ember buckle, charcoal trousers, brown boots, ember hair, ash cheek marks, greatsword with an ember edge",
    "size_bounds": [
     [
      14,

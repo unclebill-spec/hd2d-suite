@@ -1292,7 +1292,8 @@ def run(out, simscale=4, size=(960, 540)):
             # controller: A at Bakery Lane's waystone, A picks 'Travel to Ravenhold Harbor'
             T.walk(-13.4, 3.2)
             n = 0
-            while T.ev("window.__hm.area") == "lane" and n < 10:
+            # stop pressing once the travel has started (busy): a press during the area load can't be polled
+            while T.ev("window.__hm.area === 'lane' && !window.__hm.busy") and n < 10:
                 T.btn(0, 200); n += 1
             T.wait("window.__hm.area === 'ravenhold' && !window.__hm.busy", 90); T.idle(); pg.wait_for_timeout(400)
             T.step("controller: A at Bakery Lane's waystone opens it, A again travels to Ravenhold Harbor (by its waystone)",
