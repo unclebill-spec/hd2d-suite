@@ -1,0 +1,1977 @@
+{
+ "tool": "hd2d sprite",
+ "biome": "cozy-village",
+ "seed": 104,
+ "frame": [
+  20,
+  32
+ ],
+ "pivot": [
+  10,
+  32
+ ],
+ "ground_row": 31,
+ "facings": [
+  "down",
+  "up",
+  "left",
+  "right"
+ ],
+ "anims": {
+  "idle": {
+   "start": 0,
+   "count": 4,
+   "fps": 3,
+   "loop": [
+    0,
+    1,
+    2,
+    1
+   ],
+   "blink": 3
+  },
+  "walk": {
+   "start": 4,
+   "count": 4,
+   "fps": 8
+  },
+  "cast": {
+   "start": 8,
+   "count": 4,
+   "fps": 6,
+   "loop": [
+    0,
+    1,
+    2,
+    2,
+    3,
+    3
+   ],
+   "casters_only": true
+  },
+  "attack": {
+   "start": 12,
+   "count": 4,
+   "fps": 10,
+   "loop": [
+    0,
+    1,
+    2,
+    2,
+    3
+   ],
+   "heroes_only": true
+  },
+  "defend": {
+   "start": 16,
+   "count": 4,
+   "fps": 6,
+   "loop": [
+    0,
+    1
+   ],
+   "hold": [
+    2,
+    3
+   ],
+   "heroes_only": true
+  },
+  "jump": {
+   "start": 20,
+   "count": 4,
+   "fps": 8,
+   "phases": [
+    "crouch",
+    "launch",
+    "airborne",
+    "land"
+   ],
+   "heroes_only": true
+  },
+  "die": {
+   "start": 24,
+   "count": 4,
+   "fps": 6,
+   "once": true,
+   "enemies_only": true
+  }
+ },
+ "cols": 28,
+ "image": "prism_vault_enemies.png",
+ "size": [
+  560,
+  256
+ ],
+ "roles": {
+  "prismshard": {
+   "row": 0,
+   "kind": "enemy",
+   "desc": "Prism shard (Prism Vault common): a floating diamond crystal with slit eyes and two orbiting splinters, a sparkle trail to the ground; attack = rears back and flings its splinters (frame 14); die = cracks, splits and falls into a pile of glinting shards",
+   "size_bounds": [
+    [
+     6,
+     20
+    ],
+    [
+     6,
+     32
+    ]
+   ],
+   "caster": false,
+   "anims": [
+    "idle",
+    "walk",
+    "attack",
+    "die"
+   ],
+   "frames": [
+    {
+     "name": "prismshard_down_idle0",
+     "facing": "down",
+     "anim": "idle",
+     "i": 0,
+     "x": 0,
+     "y": 0,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      10,
+      32
+     ]
+    },
+    {
+     "name": "prismshard_down_idle1",
+     "facing": "down",
+     "anim": "idle",
+     "i": 1,
+     "x": 20,
+     "y": 0,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      30,
+      32
+     ]
+    },
+    {
+     "name": "prismshard_down_idle2",
+     "facing": "down",
+     "anim": "idle",
+     "i": 2,
+     "x": 40,
+     "y": 0,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      50,
+      32
+     ]
+    },
+    {
+     "name": "prismshard_down_idle3",
+     "facing": "down",
+     "anim": "idle",
+     "i": 3,
+     "x": 60,
+     "y": 0,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      70,
+      32
+     ]
+    },
+    {
+     "name": "prismshard_down_walk0",
+     "facing": "down",
+     "anim": "walk",
+     "i": 0,
+     "x": 80,
+     "y": 0,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      90,
+      32
+     ]
+    },
+    {
+     "name": "prismshard_down_walk1",
+     "facing": "down",
+     "anim": "walk",
+     "i": 1,
+     "x": 100,
+     "y": 0,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      110,
+      32
+     ]
+    },
+    {
+     "name": "prismshard_down_walk2",
+     "facing": "down",
+     "anim": "walk",
+     "i": 2,
+     "x": 120,
+     "y": 0,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      130,
+      32
+     ]
+    },
+    {
+     "name": "prismshard_down_walk3",
+     "facing": "down",
+     "anim": "walk",
+     "i": 3,
+     "x": 140,
+     "y": 0,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      150,
+      32
+     ]
+    },
+    {
+     "name": "prismshard_down_attack0",
+     "facing": "down",
+     "anim": "attack",
+     "i": 0,
+     "x": 240,
+     "y": 0,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      250,
+      32
+     ]
+    },
+    {
+     "name": "prismshard_down_attack1",
+     "facing": "down",
+     "anim": "attack",
+     "i": 1,
+     "x": 260,
+     "y": 0,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      270,
+      32
+     ]
+    },
+    {
+     "name": "prismshard_down_attack2",
+     "facing": "down",
+     "anim": "attack",
+     "i": 2,
+     "x": 280,
+     "y": 0,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      290,
+      32
+     ]
+    },
+    {
+     "name": "prismshard_down_attack3",
+     "facing": "down",
+     "anim": "attack",
+     "i": 3,
+     "x": 300,
+     "y": 0,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      310,
+      32
+     ]
+    },
+    {
+     "name": "prismshard_down_die0",
+     "facing": "down",
+     "anim": "die",
+     "i": 0,
+     "x": 480,
+     "y": 0,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      490,
+      32
+     ]
+    },
+    {
+     "name": "prismshard_down_die1",
+     "facing": "down",
+     "anim": "die",
+     "i": 1,
+     "x": 500,
+     "y": 0,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      510,
+      32
+     ]
+    },
+    {
+     "name": "prismshard_down_die2",
+     "facing": "down",
+     "anim": "die",
+     "i": 2,
+     "x": 520,
+     "y": 0,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      530,
+      32
+     ]
+    },
+    {
+     "name": "prismshard_down_die3",
+     "facing": "down",
+     "anim": "die",
+     "i": 3,
+     "x": 540,
+     "y": 0,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      550,
+      32
+     ]
+    },
+    {
+     "name": "prismshard_up_idle0",
+     "facing": "up",
+     "anim": "idle",
+     "i": 0,
+     "x": 0,
+     "y": 32,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      10,
+      64
+     ]
+    },
+    {
+     "name": "prismshard_up_idle1",
+     "facing": "up",
+     "anim": "idle",
+     "i": 1,
+     "x": 20,
+     "y": 32,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      30,
+      64
+     ]
+    },
+    {
+     "name": "prismshard_up_idle2",
+     "facing": "up",
+     "anim": "idle",
+     "i": 2,
+     "x": 40,
+     "y": 32,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      50,
+      64
+     ]
+    },
+    {
+     "name": "prismshard_up_idle3",
+     "facing": "up",
+     "anim": "idle",
+     "i": 3,
+     "x": 60,
+     "y": 32,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      70,
+      64
+     ]
+    },
+    {
+     "name": "prismshard_up_walk0",
+     "facing": "up",
+     "anim": "walk",
+     "i": 0,
+     "x": 80,
+     "y": 32,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      90,
+      64
+     ]
+    },
+    {
+     "name": "prismshard_up_walk1",
+     "facing": "up",
+     "anim": "walk",
+     "i": 1,
+     "x": 100,
+     "y": 32,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      110,
+      64
+     ]
+    },
+    {
+     "name": "prismshard_up_walk2",
+     "facing": "up",
+     "anim": "walk",
+     "i": 2,
+     "x": 120,
+     "y": 32,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      130,
+      64
+     ]
+    },
+    {
+     "name": "prismshard_up_walk3",
+     "facing": "up",
+     "anim": "walk",
+     "i": 3,
+     "x": 140,
+     "y": 32,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      150,
+      64
+     ]
+    },
+    {
+     "name": "prismshard_up_attack0",
+     "facing": "up",
+     "anim": "attack",
+     "i": 0,
+     "x": 240,
+     "y": 32,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      250,
+      64
+     ]
+    },
+    {
+     "name": "prismshard_up_attack1",
+     "facing": "up",
+     "anim": "attack",
+     "i": 1,
+     "x": 260,
+     "y": 32,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      270,
+      64
+     ]
+    },
+    {
+     "name": "prismshard_up_attack2",
+     "facing": "up",
+     "anim": "attack",
+     "i": 2,
+     "x": 280,
+     "y": 32,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      290,
+      64
+     ]
+    },
+    {
+     "name": "prismshard_up_attack3",
+     "facing": "up",
+     "anim": "attack",
+     "i": 3,
+     "x": 300,
+     "y": 32,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      310,
+      64
+     ]
+    },
+    {
+     "name": "prismshard_up_die0",
+     "facing": "up",
+     "anim": "die",
+     "i": 0,
+     "x": 480,
+     "y": 32,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      490,
+      64
+     ]
+    },
+    {
+     "name": "prismshard_up_die1",
+     "facing": "up",
+     "anim": "die",
+     "i": 1,
+     "x": 500,
+     "y": 32,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      510,
+      64
+     ]
+    },
+    {
+     "name": "prismshard_up_die2",
+     "facing": "up",
+     "anim": "die",
+     "i": 2,
+     "x": 520,
+     "y": 32,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      530,
+      64
+     ]
+    },
+    {
+     "name": "prismshard_up_die3",
+     "facing": "up",
+     "anim": "die",
+     "i": 3,
+     "x": 540,
+     "y": 32,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      550,
+      64
+     ]
+    },
+    {
+     "name": "prismshard_left_idle0",
+     "facing": "left",
+     "anim": "idle",
+     "i": 0,
+     "x": 0,
+     "y": 64,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      10,
+      96
+     ]
+    },
+    {
+     "name": "prismshard_left_idle1",
+     "facing": "left",
+     "anim": "idle",
+     "i": 1,
+     "x": 20,
+     "y": 64,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      30,
+      96
+     ]
+    },
+    {
+     "name": "prismshard_left_idle2",
+     "facing": "left",
+     "anim": "idle",
+     "i": 2,
+     "x": 40,
+     "y": 64,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      50,
+      96
+     ]
+    },
+    {
+     "name": "prismshard_left_idle3",
+     "facing": "left",
+     "anim": "idle",
+     "i": 3,
+     "x": 60,
+     "y": 64,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      70,
+      96
+     ]
+    },
+    {
+     "name": "prismshard_left_walk0",
+     "facing": "left",
+     "anim": "walk",
+     "i": 0,
+     "x": 80,
+     "y": 64,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      90,
+      96
+     ]
+    },
+    {
+     "name": "prismshard_left_walk1",
+     "facing": "left",
+     "anim": "walk",
+     "i": 1,
+     "x": 100,
+     "y": 64,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      110,
+      96
+     ]
+    },
+    {
+     "name": "prismshard_left_walk2",
+     "facing": "left",
+     "anim": "walk",
+     "i": 2,
+     "x": 120,
+     "y": 64,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      130,
+      96
+     ]
+    },
+    {
+     "name": "prismshard_left_walk3",
+     "facing": "left",
+     "anim": "walk",
+     "i": 3,
+     "x": 140,
+     "y": 64,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      150,
+      96
+     ]
+    },
+    {
+     "name": "prismshard_left_attack0",
+     "facing": "left",
+     "anim": "attack",
+     "i": 0,
+     "x": 240,
+     "y": 64,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      250,
+      96
+     ]
+    },
+    {
+     "name": "prismshard_left_attack1",
+     "facing": "left",
+     "anim": "attack",
+     "i": 1,
+     "x": 260,
+     "y": 64,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      270,
+      96
+     ]
+    },
+    {
+     "name": "prismshard_left_attack2",
+     "facing": "left",
+     "anim": "attack",
+     "i": 2,
+     "x": 280,
+     "y": 64,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      290,
+      96
+     ]
+    },
+    {
+     "name": "prismshard_left_attack3",
+     "facing": "left",
+     "anim": "attack",
+     "i": 3,
+     "x": 300,
+     "y": 64,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      310,
+      96
+     ]
+    },
+    {
+     "name": "prismshard_left_die0",
+     "facing": "left",
+     "anim": "die",
+     "i": 0,
+     "x": 480,
+     "y": 64,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      490,
+      96
+     ]
+    },
+    {
+     "name": "prismshard_left_die1",
+     "facing": "left",
+     "anim": "die",
+     "i": 1,
+     "x": 500,
+     "y": 64,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      510,
+      96
+     ]
+    },
+    {
+     "name": "prismshard_left_die2",
+     "facing": "left",
+     "anim": "die",
+     "i": 2,
+     "x": 520,
+     "y": 64,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      530,
+      96
+     ]
+    },
+    {
+     "name": "prismshard_left_die3",
+     "facing": "left",
+     "anim": "die",
+     "i": 3,
+     "x": 540,
+     "y": 64,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      550,
+      96
+     ]
+    },
+    {
+     "name": "prismshard_right_idle0",
+     "facing": "right",
+     "anim": "idle",
+     "i": 0,
+     "x": 0,
+     "y": 96,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      10,
+      128
+     ]
+    },
+    {
+     "name": "prismshard_right_idle1",
+     "facing": "right",
+     "anim": "idle",
+     "i": 1,
+     "x": 20,
+     "y": 96,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      30,
+      128
+     ]
+    },
+    {
+     "name": "prismshard_right_idle2",
+     "facing": "right",
+     "anim": "idle",
+     "i": 2,
+     "x": 40,
+     "y": 96,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      50,
+      128
+     ]
+    },
+    {
+     "name": "prismshard_right_idle3",
+     "facing": "right",
+     "anim": "idle",
+     "i": 3,
+     "x": 60,
+     "y": 96,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      70,
+      128
+     ]
+    },
+    {
+     "name": "prismshard_right_walk0",
+     "facing": "right",
+     "anim": "walk",
+     "i": 0,
+     "x": 80,
+     "y": 96,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      90,
+      128
+     ]
+    },
+    {
+     "name": "prismshard_right_walk1",
+     "facing": "right",
+     "anim": "walk",
+     "i": 1,
+     "x": 100,
+     "y": 96,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      110,
+      128
+     ]
+    },
+    {
+     "name": "prismshard_right_walk2",
+     "facing": "right",
+     "anim": "walk",
+     "i": 2,
+     "x": 120,
+     "y": 96,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      130,
+      128
+     ]
+    },
+    {
+     "name": "prismshard_right_walk3",
+     "facing": "right",
+     "anim": "walk",
+     "i": 3,
+     "x": 140,
+     "y": 96,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      150,
+      128
+     ]
+    },
+    {
+     "name": "prismshard_right_attack0",
+     "facing": "right",
+     "anim": "attack",
+     "i": 0,
+     "x": 240,
+     "y": 96,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      250,
+      128
+     ]
+    },
+    {
+     "name": "prismshard_right_attack1",
+     "facing": "right",
+     "anim": "attack",
+     "i": 1,
+     "x": 260,
+     "y": 96,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      270,
+      128
+     ]
+    },
+    {
+     "name": "prismshard_right_attack2",
+     "facing": "right",
+     "anim": "attack",
+     "i": 2,
+     "x": 280,
+     "y": 96,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      290,
+      128
+     ]
+    },
+    {
+     "name": "prismshard_right_attack3",
+     "facing": "right",
+     "anim": "attack",
+     "i": 3,
+     "x": 300,
+     "y": 96,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      310,
+      128
+     ]
+    },
+    {
+     "name": "prismshard_right_die0",
+     "facing": "right",
+     "anim": "die",
+     "i": 0,
+     "x": 480,
+     "y": 96,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      490,
+      128
+     ]
+    },
+    {
+     "name": "prismshard_right_die1",
+     "facing": "right",
+     "anim": "die",
+     "i": 1,
+     "x": 500,
+     "y": 96,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      510,
+      128
+     ]
+    },
+    {
+     "name": "prismshard_right_die2",
+     "facing": "right",
+     "anim": "die",
+     "i": 2,
+     "x": 520,
+     "y": 96,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      530,
+      128
+     ]
+    },
+    {
+     "name": "prismshard_right_die3",
+     "facing": "right",
+     "anim": "die",
+     "i": 3,
+     "x": 540,
+     "y": 96,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      550,
+      128
+     ]
+    }
+   ],
+   "enemy": true,
+   "named": true,
+   "light": {
+    "color": "#a6ecff",
+    "intensity": 0.5,
+    "range": 1.8,
+    "pool": "pool_blue_small"
+   },
+   "stats_hint": {
+    "tier": "common",
+    "hp": "low",
+    "speed": "fast (hover)",
+    "attack": "splinter volley (frame 14)",
+    "fx": {
+     "hit": "prism_shatter",
+     "die": "prism_shatter on frame 25"
+    }
+   }
+  },
+  "mirrorduelist": {
+   "row": 4,
+   "kind": "enemy",
+   "desc": "Mirror Duelist (Prism Vault elite): oval hand-mirror face under a plumed hat, deep-blue frock coat, white cravat, dark belt with a gold buckle, pale trousers, black boots, white gloves, silver rapier; attack = en garde, lunge, thrust (hit 14); die = mirror cracks, kneels, collapses into coat + shards",
+   "size_bounds": [
+    [
+     6,
+     20
+    ],
+    [
+     6,
+     32
+    ]
+   ],
+   "caster": false,
+   "anims": [
+    "idle",
+    "walk",
+    "attack",
+    "die"
+   ],
+   "frames": [
+    {
+     "name": "mirrorduelist_down_idle0",
+     "facing": "down",
+     "anim": "idle",
+     "i": 0,
+     "x": 0,
+     "y": 128,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      10,
+      160
+     ]
+    },
+    {
+     "name": "mirrorduelist_down_idle1",
+     "facing": "down",
+     "anim": "idle",
+     "i": 1,
+     "x": 20,
+     "y": 128,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      30,
+      160
+     ]
+    },
+    {
+     "name": "mirrorduelist_down_idle2",
+     "facing": "down",
+     "anim": "idle",
+     "i": 2,
+     "x": 40,
+     "y": 128,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      50,
+      160
+     ]
+    },
+    {
+     "name": "mirrorduelist_down_idle3",
+     "facing": "down",
+     "anim": "idle",
+     "i": 3,
+     "x": 60,
+     "y": 128,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      70,
+      160
+     ]
+    },
+    {
+     "name": "mirrorduelist_down_walk0",
+     "facing": "down",
+     "anim": "walk",
+     "i": 0,
+     "x": 80,
+     "y": 128,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      90,
+      160
+     ]
+    },
+    {
+     "name": "mirrorduelist_down_walk1",
+     "facing": "down",
+     "anim": "walk",
+     "i": 1,
+     "x": 100,
+     "y": 128,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      110,
+      160
+     ]
+    },
+    {
+     "name": "mirrorduelist_down_walk2",
+     "facing": "down",
+     "anim": "walk",
+     "i": 2,
+     "x": 120,
+     "y": 128,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      130,
+      160
+     ]
+    },
+    {
+     "name": "mirrorduelist_down_walk3",
+     "facing": "down",
+     "anim": "walk",
+     "i": 3,
+     "x": 140,
+     "y": 128,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      150,
+      160
+     ]
+    },
+    {
+     "name": "mirrorduelist_down_attack0",
+     "facing": "down",
+     "anim": "attack",
+     "i": 0,
+     "x": 240,
+     "y": 128,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      250,
+      160
+     ]
+    },
+    {
+     "name": "mirrorduelist_down_attack1",
+     "facing": "down",
+     "anim": "attack",
+     "i": 1,
+     "x": 260,
+     "y": 128,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      270,
+      160
+     ]
+    },
+    {
+     "name": "mirrorduelist_down_attack2",
+     "facing": "down",
+     "anim": "attack",
+     "i": 2,
+     "x": 280,
+     "y": 128,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      290,
+      160
+     ]
+    },
+    {
+     "name": "mirrorduelist_down_attack3",
+     "facing": "down",
+     "anim": "attack",
+     "i": 3,
+     "x": 300,
+     "y": 128,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      310,
+      160
+     ]
+    },
+    {
+     "name": "mirrorduelist_down_die0",
+     "facing": "down",
+     "anim": "die",
+     "i": 0,
+     "x": 480,
+     "y": 128,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      490,
+      160
+     ]
+    },
+    {
+     "name": "mirrorduelist_down_die1",
+     "facing": "down",
+     "anim": "die",
+     "i": 1,
+     "x": 500,
+     "y": 128,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      510,
+      160
+     ]
+    },
+    {
+     "name": "mirrorduelist_down_die2",
+     "facing": "down",
+     "anim": "die",
+     "i": 2,
+     "x": 520,
+     "y": 128,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      530,
+      160
+     ]
+    },
+    {
+     "name": "mirrorduelist_down_die3",
+     "facing": "down",
+     "anim": "die",
+     "i": 3,
+     "x": 540,
+     "y": 128,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      550,
+      160
+     ]
+    },
+    {
+     "name": "mirrorduelist_up_idle0",
+     "facing": "up",
+     "anim": "idle",
+     "i": 0,
+     "x": 0,
+     "y": 160,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      10,
+      192
+     ]
+    },
+    {
+     "name": "mirrorduelist_up_idle1",
+     "facing": "up",
+     "anim": "idle",
+     "i": 1,
+     "x": 20,
+     "y": 160,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      30,
+      192
+     ]
+    },
+    {
+     "name": "mirrorduelist_up_idle2",
+     "facing": "up",
+     "anim": "idle",
+     "i": 2,
+     "x": 40,
+     "y": 160,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      50,
+      192
+     ]
+    },
+    {
+     "name": "mirrorduelist_up_idle3",
+     "facing": "up",
+     "anim": "idle",
+     "i": 3,
+     "x": 60,
+     "y": 160,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      70,
+      192
+     ]
+    },
+    {
+     "name": "mirrorduelist_up_walk0",
+     "facing": "up",
+     "anim": "walk",
+     "i": 0,
+     "x": 80,
+     "y": 160,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      90,
+      192
+     ]
+    },
+    {
+     "name": "mirrorduelist_up_walk1",
+     "facing": "up",
+     "anim": "walk",
+     "i": 1,
+     "x": 100,
+     "y": 160,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      110,
+      192
+     ]
+    },
+    {
+     "name": "mirrorduelist_up_walk2",
+     "facing": "up",
+     "anim": "walk",
+     "i": 2,
+     "x": 120,
+     "y": 160,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      130,
+      192
+     ]
+    },
+    {
+     "name": "mirrorduelist_up_walk3",
+     "facing": "up",
+     "anim": "walk",
+     "i": 3,
+     "x": 140,
+     "y": 160,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      150,
+      192
+     ]
+    },
+    {
+     "name": "mirrorduelist_up_attack0",
+     "facing": "up",
+     "anim": "attack",
+     "i": 0,
+     "x": 240,
+     "y": 160,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      250,
+      192
+     ]
+    },
+    {
+     "name": "mirrorduelist_up_attack1",
+     "facing": "up",
+     "anim": "attack",
+     "i": 1,
+     "x": 260,
+     "y": 160,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      270,
+      192
+     ]
+    },
+    {
+     "name": "mirrorduelist_up_attack2",
+     "facing": "up",
+     "anim": "attack",
+     "i": 2,
+     "x": 280,
+     "y": 160,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      290,
+      192
+     ]
+    },
+    {
+     "name": "mirrorduelist_up_attack3",
+     "facing": "up",
+     "anim": "attack",
+     "i": 3,
+     "x": 300,
+     "y": 160,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      310,
+      192
+     ]
+    },
+    {
+     "name": "mirrorduelist_up_die0",
+     "facing": "up",
+     "anim": "die",
+     "i": 0,
+     "x": 480,
+     "y": 160,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      490,
+      192
+     ]
+    },
+    {
+     "name": "mirrorduelist_up_die1",
+     "facing": "up",
+     "anim": "die",
+     "i": 1,
+     "x": 500,
+     "y": 160,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      510,
+      192
+     ]
+    },
+    {
+     "name": "mirrorduelist_up_die2",
+     "facing": "up",
+     "anim": "die",
+     "i": 2,
+     "x": 520,
+     "y": 160,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      530,
+      192
+     ]
+    },
+    {
+     "name": "mirrorduelist_up_die3",
+     "facing": "up",
+     "anim": "die",
+     "i": 3,
+     "x": 540,
+     "y": 160,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      550,
+      192
+     ]
+    },
+    {
+     "name": "mirrorduelist_left_idle0",
+     "facing": "left",
+     "anim": "idle",
+     "i": 0,
+     "x": 0,
+     "y": 192,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      10,
+      224
+     ]
+    },
+    {
+     "name": "mirrorduelist_left_idle1",
+     "facing": "left",
+     "anim": "idle",
+     "i": 1,
+     "x": 20,
+     "y": 192,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      30,
+      224
+     ]
+    },
+    {
+     "name": "mirrorduelist_left_idle2",
+     "facing": "left",
+     "anim": "idle",
+     "i": 2,
+     "x": 40,
+     "y": 192,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      50,
+      224
+     ]
+    },
+    {
+     "name": "mirrorduelist_left_idle3",
+     "facing": "left",
+     "anim": "idle",
+     "i": 3,
+     "x": 60,
+     "y": 192,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      70,
+      224
+     ]
+    },
+    {
+     "name": "mirrorduelist_left_walk0",
+     "facing": "left",
+     "anim": "walk",
+     "i": 0,
+     "x": 80,
+     "y": 192,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      90,
+      224
+     ]
+    },
+    {
+     "name": "mirrorduelist_left_walk1",
+     "facing": "left",
+     "anim": "walk",
+     "i": 1,
+     "x": 100,
+     "y": 192,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      110,
+      224
+     ]
+    },
+    {
+     "name": "mirrorduelist_left_walk2",
+     "facing": "left",
+     "anim": "walk",
+     "i": 2,
+     "x": 120,
+     "y": 192,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      130,
+      224
+     ]
+    },
+    {
+     "name": "mirrorduelist_left_walk3",
+     "facing": "left",
+     "anim": "walk",
+     "i": 3,
+     "x": 140,
+     "y": 192,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      150,
+      224
+     ]
+    },
+    {
+     "name": "mirrorduelist_left_attack0",
+     "facing": "left",
+     "anim": "attack",
+     "i": 0,
+     "x": 240,
+     "y": 192,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      250,
+      224
+     ]
+    },
+    {
+     "name": "mirrorduelist_left_attack1",
+     "facing": "left",
+     "anim": "attack",
+     "i": 1,
+     "x": 260,
+     "y": 192,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      270,
+      224
+     ]
+    },
+    {
+     "name": "mirrorduelist_left_attack2",
+     "facing": "left",
+     "anim": "attack",
+     "i": 2,
+     "x": 280,
+     "y": 192,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      290,
+      224
+     ]
+    },
+    {
+     "name": "mirrorduelist_left_attack3",
+     "facing": "left",
+     "anim": "attack",
+     "i": 3,
+     "x": 300,
+     "y": 192,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      310,
+      224
+     ]
+    },
+    {
+     "name": "mirrorduelist_left_die0",
+     "facing": "left",
+     "anim": "die",
+     "i": 0,
+     "x": 480,
+     "y": 192,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      490,
+      224
+     ]
+    },
+    {
+     "name": "mirrorduelist_left_die1",
+     "facing": "left",
+     "anim": "die",
+     "i": 1,
+     "x": 500,
+     "y": 192,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      510,
+      224
+     ]
+    },
+    {
+     "name": "mirrorduelist_left_die2",
+     "facing": "left",
+     "anim": "die",
+     "i": 2,
+     "x": 520,
+     "y": 192,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      530,
+      224
+     ]
+    },
+    {
+     "name": "mirrorduelist_left_die3",
+     "facing": "left",
+     "anim": "die",
+     "i": 3,
+     "x": 540,
+     "y": 192,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      550,
+      224
+     ]
+    },
+    {
+     "name": "mirrorduelist_right_idle0",
+     "facing": "right",
+     "anim": "idle",
+     "i": 0,
+     "x": 0,
+     "y": 224,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      10,
+      256
+     ]
+    },
+    {
+     "name": "mirrorduelist_right_idle1",
+     "facing": "right",
+     "anim": "idle",
+     "i": 1,
+     "x": 20,
+     "y": 224,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      30,
+      256
+     ]
+    },
+    {
+     "name": "mirrorduelist_right_idle2",
+     "facing": "right",
+     "anim": "idle",
+     "i": 2,
+     "x": 40,
+     "y": 224,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      50,
+      256
+     ]
+    },
+    {
+     "name": "mirrorduelist_right_idle3",
+     "facing": "right",
+     "anim": "idle",
+     "i": 3,
+     "x": 60,
+     "y": 224,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      70,
+      256
+     ]
+    },
+    {
+     "name": "mirrorduelist_right_walk0",
+     "facing": "right",
+     "anim": "walk",
+     "i": 0,
+     "x": 80,
+     "y": 224,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      90,
+      256
+     ]
+    },
+    {
+     "name": "mirrorduelist_right_walk1",
+     "facing": "right",
+     "anim": "walk",
+     "i": 1,
+     "x": 100,
+     "y": 224,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      110,
+      256
+     ]
+    },
+    {
+     "name": "mirrorduelist_right_walk2",
+     "facing": "right",
+     "anim": "walk",
+     "i": 2,
+     "x": 120,
+     "y": 224,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      130,
+      256
+     ]
+    },
+    {
+     "name": "mirrorduelist_right_walk3",
+     "facing": "right",
+     "anim": "walk",
+     "i": 3,
+     "x": 140,
+     "y": 224,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      150,
+      256
+     ]
+    },
+    {
+     "name": "mirrorduelist_right_attack0",
+     "facing": "right",
+     "anim": "attack",
+     "i": 0,
+     "x": 240,
+     "y": 224,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      250,
+      256
+     ]
+    },
+    {
+     "name": "mirrorduelist_right_attack1",
+     "facing": "right",
+     "anim": "attack",
+     "i": 1,
+     "x": 260,
+     "y": 224,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      270,
+      256
+     ]
+    },
+    {
+     "name": "mirrorduelist_right_attack2",
+     "facing": "right",
+     "anim": "attack",
+     "i": 2,
+     "x": 280,
+     "y": 224,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      290,
+      256
+     ]
+    },
+    {
+     "name": "mirrorduelist_right_attack3",
+     "facing": "right",
+     "anim": "attack",
+     "i": 3,
+     "x": 300,
+     "y": 224,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      310,
+      256
+     ]
+    },
+    {
+     "name": "mirrorduelist_right_die0",
+     "facing": "right",
+     "anim": "die",
+     "i": 0,
+     "x": 480,
+     "y": 224,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      490,
+      256
+     ]
+    },
+    {
+     "name": "mirrorduelist_right_die1",
+     "facing": "right",
+     "anim": "die",
+     "i": 1,
+     "x": 500,
+     "y": 224,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      510,
+      256
+     ]
+    },
+    {
+     "name": "mirrorduelist_right_die2",
+     "facing": "right",
+     "anim": "die",
+     "i": 2,
+     "x": 520,
+     "y": 224,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      530,
+      256
+     ]
+    },
+    {
+     "name": "mirrorduelist_right_die3",
+     "facing": "right",
+     "anim": "die",
+     "i": 3,
+     "x": 540,
+     "y": 224,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      550,
+      256
+     ]
+    }
+   ],
+   "enemy": true,
+   "named": true,
+   "stats_hint": {
+    "tier": "elite",
+    "hp": "medium",
+    "speed": "fast",
+    "attack": "lunge thrust (frame 14) + mirror_flash",
+    "fx": {
+     "hit": "mirror_flash at the rapier tip",
+     "die": "prism_shatter on frame 26"
+    }
+   }
+  }
+ }
+}

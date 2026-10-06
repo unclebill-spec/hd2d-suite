@@ -1,0 +1,26 @@
+{
+ "sheets": {
+  "lumi": {
+   "json": "lumi.json",
+   "image": "lumi.png"
+  }
+ },
+ "roles": {
+  "lumi": {
+   "sheet": "lumi",
+   "row": 0,
+   "kind": "creature",
+   "companion": true,
+   "speaks": true,
+   "anims": [
+    "idle",
+    "walk",
+    "follow",
+    "talk",
+    "happy",
+    "worried",
+    "surprised"
+   ]
+  }
+ }
+}

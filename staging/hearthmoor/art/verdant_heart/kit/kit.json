@@ -1,0 +1,688 @@
+{
+ "tool": "hd2d kit",
+ "biome": "cozy-village",
+ "seed": 1,
+ "sprite_height_m": 1.8,
+ "pieces": {
+  "vh_floor": {
+   "file": "vh_floor.glb",
+   "kind": "prop",
+   "tris": 904,
+   "size": [
+    4.0,
+    0.1,
+    4.0
+   ],
+   "markers": {
+    "lamps": [],
+    "chimneys": [],
+    "windows": [],
+    "doors": []
+   },
+   "blockers": [],
+   "tile_m": 4.0,
+   "note": "grid 4 m; rotate 0/90/180/270 freely to break repeats"
+  },
+  "vh_wall": {
+   "file": "vh_wall.glb",
+   "kind": "prop",
+   "tris": 1704,
+   "size": [
+    4.0,
+    3.6,
+    1.1
+   ],
+   "markers": {
+    "lamps": [],
+    "chimneys": [],
+    "windows": [],
+    "doors": []
+   },
+   "blockers": [
+    [
+     -2.0,
+     -0.5,
+     2.0,
+     0.5
+    ]
+   ],
+   "run_m": 4.0,
+   "note": "back / side walls; front face +z"
+  },
+  "vh_ceiling_lip": {
+   "file": "vh_ceiling_lip.glb",
+   "kind": "prop",
+   "tris": 312,
+   "size": [
+    4.6,
+    0.6,
+    1.0
+   ],
+   "markers": {
+    "lamps": [],
+    "chimneys": [],
+    "windows": [],
+    "doors": []
+   },
+   "blockers": [],
+   "note": "above walls at y 4.4; hang hanging_vines / dripcaps beneath"
+  },
+  "glowroot_arch": {
+   "file": "glowroot_arch.glb",
+   "kind": "prop",
+   "tris": 656,
+   "size": [
+    3.8,
+    3.6,
+    1.2
+   ],
+   "markers": {
+    "lamps": [
+     [
+      0,
+      2.6,
+      0.3
+     ]
+    ],
+    "chimneys": [],
+    "windows": [],
+    "doors": [],
+    "lamp_color": "#2ab4ff",
+    "lamp_fixed": 0.5,
+    "lamp_range": 5.0
+   },
+   "blockers": [
+    [
+     -1.8,
+     -0.35,
+     -1.2,
+     0.35
+    ],
+    [
+     1.2,
+     -0.35,
+     1.8,
+     0.35
+    ]
+   ],
+   "fx": [
+    "glowroot_pool"
+   ],
+   "note": "room doorway; walk-through"
+  },
+  "stream_straight": {
+   "file": "stream_straight.glb",
+   "kind": "prop",
+   "tris": 680,
+   "size": [
+    2.0,
+    0.3,
+    2.0
+   ],
+   "markers": {
+    "lamps": [
+     [
+      0,
+      0.3,
+      0
+     ]
+    ],
+    "chimneys": [],
+    "windows": [],
+    "doors": [],
+    "lamp_color": "#2ab4ff",
+    "lamp_fixed": 0.35,
+    "lamp_range": 3.5
+   },
+   "blockers": [],
+   "fx": [
+    "stream_flow",
+    "glow_mist_blue"
+   ],
+   "flow": "+z",
+   "tile_m": 2.0
+  },
+  "stream_bend": {
+   "file": "stream_bend.glb",
+   "kind": "prop",
+   "tris": 904,
+   "size": [
+    2.0,
+    0.3,
+    2.0
+   ],
+   "markers": {
+    "lamps": [],
+    "chimneys": [],
+    "windows": [],
+    "doors": []
+   },
+   "blockers": [],
+   "fx": [
+    "stream_flow"
+   ],
+   "flow": "-z in, +x out",
+   "tile_m": 2.0
+  },
+  "glow_pool": {
+   "file": "glow_pool.glb",
+   "kind": "prop",
+   "tris": 1032,
+   "size": [
+    3.8,
+    0.4,
+    3.8
+   ],
+   "markers": {
+    "lamps": [
+     [
+      0,
+      0.4,
+      0
+     ]
+    ],
+    "chimneys": [],
+    "windows": [],
+    "doors": [],
+    "lamp_color": "#2ab4ff",
+    "lamp_fixed": 0.45,
+    "lamp_range": 5.0
+   },
+   "blockers": [
+    [
+     -1.5,
+     -1.5,
+     1.5,
+     1.5
+    ]
+   ],
+   "fx": [
+    "glow_mist_blue",
+    "glowfrog_*_idle"
+   ],
+   "note": "frogs on the lily pads / stones"
+  },
+  "waterfall": {
+   "file": "waterfall.glb",
+   "kind": "prop",
+   "tris": 1790,
+   "size": [
+    4.4,
+    3.6,
+    2.8
+   ],
+   "markers": {
+    "lamps": [
+     [
+      0,
+      1.4,
+      0.2
+     ]
+    ],
+    "chimneys": [],
+    "windows": [],
+    "doors": [],
+    "lamp_color": "#2ab4ff",
+    "lamp_fixed": 0.6,
+    "lamp_range": 6.5
+   },
+   "blockers": [
+    [
+     -2.2,
+     -1.4,
+     2.2,
+     -0.4
+    ],
+    [
+     -1.3,
+     -0.4,
+     1.3,
+     1.2
+    ]
+   ],
+   "fx": [
+    "waterfall_sheet",
+    "waterfall_splash",
+    "glow_mist_blue"
+   ],
+   "outlet": [
+    0,
+    0,
+    1.4
+   ],
+   "note": "connect stream_straight at the outlet"
+  },
+  "heart_spring": {
+   "file": "heart_spring.glb",
+   "kind": "prop",
+   "tris": 772,
+   "size": [
+    3.2,
+    0.6,
+    3.2
+   ],
+   "markers": {
+    "lamps": [
+     [
+      0,
+      0.6,
+      0
+     ]
+    ],
+    "chimneys": [],
+    "windows": [],
+    "doors": [],
+    "lamp_color": "#5ab4f0",
+    "lamp_fixed": 0.5,
+    "lamp_range": 5.0
+   },
+   "blockers": [],
+   "fx": [
+    "heart_spring_bubbles",
+    "heart_spring_pool"
+   ]
+  },
+  "glowroot_cluster": {
+   "file": "glowroot_cluster.glb",
+   "kind": "prop",
+   "tris": 384,
+   "size": [
+    2.0,
+    1.3,
+    1.6
+   ],
+   "markers": {
+    "lamps": [
+     [
+      0,
+      1.0,
+      0
+     ]
+    ],
+    "chimneys": [],
+    "windows": [],
+    "doors": [],
+    "lamp_color": "#2ab4ff",
+    "lamp_fixed": 0.35,
+    "lamp_range": 3.5
+   },
+   "blockers": [
+    [
+     -0.4,
+     -0.4,
+     0.4,
+     0.4
+    ]
+   ],
+   "fx": [
+    "glowroot_pool"
+   ]
+  },
+  "toadstool_giant": {
+   "file": "toadstool_giant.glb",
+   "kind": "prop",
+   "tris": 572,
+   "size": [
+    3.0,
+    3.4,
+    3.0
+   ],
+   "markers": {
+    "lamps": [
+     [
+      0,
+      2.3,
+      0.4
+     ]
+    ],
+    "chimneys": [],
+    "windows": [],
+    "doors": [],
+    "lamp_color": "#ff5a4a",
+    "lamp_fixed": 0.4,
+    "lamp_range": 4.5
+   },
+   "blockers": [
+    [
+     -0.45,
+     -0.45,
+     0.45,
+     0.45
+    ]
+   ],
+   "fx": [
+    "toadstool_glow_pool",
+    "spore_motes"
+   ]
+  },
+  "toadstool_shelf": {
+   "file": "toadstool_shelf.glb",
+   "kind": "prop",
+   "tris": 484,
+   "size": [
+    1.4,
+    1.7,
+    1.4
+   ],
+   "markers": {
+    "lamps": [],
+    "chimneys": [],
+    "windows": [],
+    "doors": []
+   },
+   "blockers": [
+    [
+     -0.5,
+     -0.5,
+     0.5,
+     0.5
+    ]
+   ],
+   "fx": [
+    "toadstool_glow_pool"
+   ]
+  },
+  "neon_mushrooms_pink": {
+   "file": "neon_mushrooms_pink.glb",
+   "kind": "prop",
+   "tris": 1188,
+   "size": [
+    1.9,
+    1.9,
+    1.6
+   ],
+   "markers": {
+    "lamps": [
+     [
+      0,
+      1.2,
+      0.3
+     ]
+    ],
+    "chimneys": [],
+    "windows": [],
+    "doors": [],
+    "lamp_color": "#ff4fc8",
+    "lamp_fixed": 0.45,
+    "lamp_range": 4.0
+   },
+   "blockers": [
+    [
+     -0.3,
+     -0.3,
+     0.3,
+     0.3
+    ]
+   ],
+   "fx": [
+    "pool_pink"
+   ]
+  },
+  "neon_mushrooms_blue": {
+   "file": "neon_mushrooms_blue.glb",
+   "kind": "prop",
+   "tris": 1188,
+   "size": [
+    1.9,
+    1.9,
+    1.6
+   ],
+   "markers": {
+    "lamps": [
+     [
+      0,
+      1.2,
+      0.3
+     ]
+    ],
+    "chimneys": [],
+    "windows": [],
+    "doors": [],
+    "lamp_color": "#2ab4ff",
+    "lamp_fixed": 0.45,
+    "lamp_range": 4.0
+   },
+   "blockers": [
+    [
+     -0.3,
+     -0.3,
+     0.3,
+     0.3
+    ]
+   ],
+   "fx": [
+    "glowroot_pool"
+   ]
+  },
+  "neon_mushrooms_violet": {
+   "file": "neon_mushrooms_violet.glb",
+   "kind": "prop",
+   "tris": 1188,
+   "size": [
+    1.9,
+    1.9,
+    1.6
+   ],
+   "markers": {
+    "lamps": [
+     [
+      0,
+      1.2,
+      0.3
+     ]
+    ],
+    "chimneys": [],
+    "windows": [],
+    "doors": [],
+    "lamp_color": "#a45cf0",
+    "lamp_fixed": 0.45,
+    "lamp_range": 4.0
+   },
+   "blockers": [
+    [
+     -0.3,
+     -0.3,
+     0.3,
+     0.3
+    ]
+   ],
+   "fx": [
+    "pool_violet"
+   ]
+  },
+  "dripcap": {
+   "file": "dripcap.glb",
+   "kind": "prop",
+   "tris": 532,
+   "size": [
+    2.0,
+    3.0,
+    2.0
+   ],
+   "markers": {
+    "lamps": [
+     [
+      0,
+      2.2,
+      0.2
+     ]
+    ],
+    "chimneys": [],
+    "windows": [],
+    "doors": [],
+    "lamp_color": "#ff4fc8",
+    "lamp_fixed": 0.5,
+    "lamp_range": 5.0
+   },
+   "blockers": [
+    [
+     -0.2,
+     -0.2,
+     0.2,
+     0.2
+    ]
+   ],
+   "fx": [
+    "pool_pink"
+   ]
+  },
+  "glowfern": {
+   "file": "glowfern.glb",
+   "kind": "prop",
+   "tris": 1284,
+   "size": [
+    1.6,
+    1.2,
+    1.6
+   ],
+   "markers": {
+    "lamps": [
+     [
+      0,
+      0.6,
+      0
+     ]
+    ],
+    "chimneys": [],
+    "windows": [],
+    "doors": [],
+    "lamp_color": "#a45cf0",
+    "lamp_fixed": 0.3,
+    "lamp_range": 2.5
+   },
+   "blockers": [],
+   "fx": [
+    "pool_violet"
+   ]
+  },
+  "glowfern_blue": {
+   "file": "glowfern_blue.glb",
+   "kind": "prop",
+   "tris": 1284,
+   "size": [
+    1.6,
+    1.2,
+    1.6
+   ],
+   "markers": {
+    "lamps": [
+     [
+      0,
+      0.6,
+      0
+     ]
+    ],
+    "chimneys": [],
+    "windows": [],
+    "doors": [],
+    "lamp_color": "#2ab4ff",
+    "lamp_fixed": 0.3,
+    "lamp_range": 2.5
+   },
+   "blockers": [],
+   "fx": [
+    "glowroot_pool"
+   ]
+  },
+  "hanging_vines": {
+   "file": "hanging_vines.glb",
+   "kind": "prop",
+   "tris": 1196,
+   "size": [
+    2.8,
+    4.4,
+    0.4
+   ],
+   "markers": {
+    "lamps": [
+     [
+      0,
+      2.4,
+      0.3
+     ]
+    ],
+    "chimneys": [],
+    "windows": [],
+    "doors": [],
+    "lamp_color": "#3cf08a",
+    "lamp_fixed": 0.35,
+    "lamp_range": 4.0
+   },
+   "blockers": [],
+   "fx": [
+    "pool_green",
+    "fireflies_green"
+   ]
+  },
+  "blight_bloom": {
+   "file": "blight_bloom.glb",
+   "kind": "prop",
+   "tris": 368,
+   "size": [
+    1.3,
+    0.9,
+    1.3
+   ],
+   "markers": {
+    "lamps": [
+     [
+      0,
+      0.8,
+      0
+     ]
+    ],
+    "chimneys": [],
+    "windows": [],
+    "doors": [],
+    "lamp_color": "#a45cf0",
+    "lamp_fixed": 0.4,
+    "lamp_range": 3.0
+   },
+   "blockers": [],
+   "fx": [
+    "pool_violet",
+    "glow_mist_violet"
+   ],
+   "note": "cleansing dims it (swap lamp off)"
+  },
+  "heartseed_cradle": {
+   "file": "heartseed_cradle.glb",
+   "kind": "prop",
+   "tris": 972,
+   "size": [
+    3.6,
+    2.5,
+    3.6
+   ],
+   "markers": {
+    "lamps": [
+     [
+      0,
+      1.5,
+      0
+     ]
+    ],
+    "chimneys": [],
+    "windows": [],
+    "doors": [],
+    "lamp_color": "#3cf08a",
+    "lamp_fixed": 0.7,
+    "lamp_range": 7.0
+   },
+   "blockers": [
+    [
+     -1.6,
+     -1.6,
+     1.6,
+     1.6
+    ]
+   ],
+   "fx": [
+    "pool_green",
+    "glow_mist_green",
+    "greenheart_aura"
+   ],
+   "note": "Hjortur's arena centre"
+  }
+ }
+}

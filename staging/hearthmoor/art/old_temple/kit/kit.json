@@ -1,0 +1,299 @@
+{
+ "tool": "hd2d kit",
+ "biome": "cozy-village",
+ "seed": 1,
+ "sprite_height_m": 1.8,
+ "pieces": {
+  "riftgate_arch": {
+   "file": "riftgate_arch.glb",
+   "kind": "prop",
+   "tris": 1196,
+   "size": [
+    5.2,
+    5.41,
+    2.4
+   ],
+   "markers": {
+    "lamps": [],
+    "chimneys": [],
+    "windows": [],
+    "doors": [],
+    "rift": [
+     [
+      0,
+      0.4,
+      0.0
+     ]
+    ]
+   },
+   "blockers": [
+    [
+     -1.87,
+     -0.5,
+     -0.95,
+     0.5
+    ],
+    [
+     0.95,
+     -0.5,
+     1.87,
+     0.5
+    ]
+   ],
+   "pair": [
+    "riftgate_glow_dormant",
+    "riftgate_glow_lit"
+   ],
+   "fx": {
+    "dormant": "riftgate_seal_dormant",
+    "lit": "riftgate_vortex_lit",
+    "transition": "riftgate_awaken",
+    "ground": "riftgate_ring_lit"
+   },
+   "opening_m": [
+    1.9,
+    3.1
+   ],
+   "rift_marker": [
+    0,
+    0.4,
+    0
+   ]
+  },
+  "riftgate_glow_lit": {
+   "file": "riftgate_glow_lit.glb",
+   "kind": "prop",
+   "tris": 792,
+   "size": [
+    3.7,
+    4.17,
+    0.9
+   ],
+   "markers": {
+    "lamps": [
+     [
+      0,
+      1.9,
+      0.6
+     ],
+     [
+      -1.3699999999999999,
+      0.9,
+      0.7
+     ],
+     [
+      1.3699999999999999,
+      0.9,
+      0.7
+     ]
+    ],
+    "chimneys": [],
+    "windows": [],
+    "doors": [],
+    "lamp_color": "#2ab4ff",
+    "lamp_fixed": 0.8,
+    "lamp_range": 7.0
+   },
+   "blockers": [],
+   "light": {
+    "color": "#2ab4ff",
+    "range": 7.0,
+    "fixed": 0.8
+   },
+   "note": "place at the arch's pos/rot"
+  },
+  "riftgate_glow_dormant": {
+   "file": "riftgate_glow_dormant.glb",
+   "kind": "prop",
+   "tris": 804,
+   "size": [
+    3.7,
+    4.17,
+    0.9
+   ],
+   "markers": {
+    "lamps": [
+     [
+      0,
+      1.6,
+      0.6
+     ]
+    ],
+    "chimneys": [],
+    "windows": [],
+    "doors": [],
+    "lamp_color": "#2a6cb0",
+    "lamp_fixed": 0.12,
+    "lamp_range": 2.5
+   },
+   "blockers": [],
+   "light": {
+    "color": "#2a6cb0",
+    "range": 2.5,
+    "fixed": 0.12
+   },
+   "note": "place at the arch's pos/rot"
+  },
+  "temple_brazier_cold": {
+   "file": "temple_brazier_cold.glb",
+   "kind": "prop",
+   "tris": 242,
+   "size": [
+    0.94,
+    2.2,
+    0.94
+   ],
+   "markers": {
+    "lamps": [
+     [
+      0,
+      1.6,
+      0.0
+     ]
+    ],
+    "chimneys": [],
+    "windows": [],
+    "doors": [],
+    "lamp_color": "#2ab4ff",
+    "lamp_fixed": 0.85,
+    "lamp_range": 5.5
+   },
+   "blockers": [
+    [
+     -0.3,
+     -0.3,
+     0.3,
+     0.3
+    ]
+   ],
+   "fx": [
+    "temple_coldfire",
+    "coldfire_pool_wide"
+   ],
+   "light_zone_m": 2.4
+  },
+  "temple_brazier_out": {
+   "file": "temple_brazier_out.glb",
+   "kind": "prop",
+   "tris": 216,
+   "size": [
+    0.94,
+    1.2,
+    0.94
+   ],
+   "markers": {
+    "lamps": [],
+    "chimneys": [],
+    "windows": [],
+    "doors": []
+   },
+   "blockers": [
+    [
+     -0.3,
+     -0.3,
+     0.3,
+     0.3
+    ]
+   ],
+   "note": "The Cold Altar: swap for temple_brazier_cold when relit"
+  },
+  "faceless_statue": {
+   "file": "faceless_statue.glb",
+   "kind": "prop",
+   "tris": 520,
+   "size": [
+    1.0,
+    2.65,
+    1.0
+   ],
+   "markers": {
+    "lamps": [],
+    "chimneys": [],
+    "windows": [],
+    "doors": []
+   },
+   "blockers": [
+    [
+     -0.45,
+     -0.45,
+     0.45,
+     0.45
+    ]
+   ],
+   "fx_night": "faceless_gaze",
+   "note": "rotate toward the Rift-gate at night (The Faceless Statues)"
+  },
+  "stained_window": {
+   "file": "stained_window.glb",
+   "kind": "prop",
+   "tris": 456,
+   "size": [
+    1.96,
+    3.76,
+    0.6
+   ],
+   "markers": {
+    "lamps": [
+     [
+      0,
+      1.9,
+      0.6
+     ]
+    ],
+    "chimneys": [],
+    "windows": [],
+    "doors": [],
+    "lamp_color": "#a45cf0",
+    "lamp_fixed": 0.35,
+    "lamp_range": 4.0,
+    "window_light": {
+     "decals": [
+      "glasslight_violet",
+      "glasslight_gold"
+     ],
+     "at": [
+      0,
+      0,
+      1.8
+     ]
+    }
+   },
+   "blockers": [
+    [
+     -0.9,
+     -0.25,
+     0.9,
+     0.25
+    ]
+   ],
+   "fx_dusk": [
+    "glasslight_violet",
+    "glasslight_gold"
+   ]
+  },
+  "temple_column": {
+   "file": "temple_column.glb",
+   "kind": "prop",
+   "tris": 376,
+   "size": [
+    0.9,
+    2.7,
+    0.9
+   ],
+   "markers": {
+    "lamps": [],
+    "chimneys": [],
+    "windows": [],
+    "doors": []
+   },
+   "blockers": [
+    [
+     -0.4,
+     -0.4,
+     0.4,
+     0.4
+    ]
+   ]
+  }
+ }
+}

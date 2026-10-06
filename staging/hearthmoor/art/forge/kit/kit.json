@@ -1,0 +1,241 @@
+{
+ "tool": "hd2d kit",
+ "biome": "cozy-village",
+ "seed": 1,
+ "sprite_height_m": 1.8,
+ "pieces": {
+  "forge_anvil": {
+   "file": "forge_anvil.glb",
+   "kind": "prop",
+   "tris": 180,
+   "size": [
+    0.9,
+    0.95,
+    0.75
+   ],
+   "markers": {
+    "lamps": [
+     [
+      0,
+      1.0,
+      0.2
+     ]
+    ],
+    "chimneys": [],
+    "windows": [],
+    "doors": [],
+    "lamp_color": "#ff5a4a",
+    "lamp_fixed": 0.25,
+    "lamp_range": 2.0
+   },
+   "blockers": [
+    [
+     -0.35,
+     -0.3,
+     0.35,
+     0.3
+    ]
+   ],
+   "fx": [
+    "anvil_glow",
+    "forge_sparks"
+   ],
+   "npc": "smith stands at local [0.75, 0, 0.1] facing left"
+  },
+  "forge_hearth": {
+   "file": "forge_hearth.glb",
+   "kind": "prop",
+   "tris": 508,
+   "size": [
+    3.2,
+    3.7,
+    1.4
+   ],
+   "markers": {
+    "lamps": [
+     [
+      0,
+      0.55,
+      0.9
+     ]
+    ],
+    "chimneys": [],
+    "windows": [],
+    "doors": [],
+    "lamp_color": "#ff5a4a",
+    "lamp_fixed": 0.6,
+    "lamp_range": 6.0
+   },
+   "blockers": [
+    [
+     -1.05,
+     -0.7,
+     1.6,
+     0.7
+    ]
+   ],
+   "fx": [
+    "forge_fire",
+    "forge_fire_top",
+    "embers_drift",
+    "forge_pool_red"
+   ],
+   "mouth": [
+    0,
+    0.27,
+    0.72
+   ],
+   "chimney_top": [
+    0,
+    3.66,
+    -0.1
+   ]
+  },
+  "quench_tank": {
+   "file": "quench_tank.glb",
+   "kind": "prop",
+   "tris": 180,
+   "size": [
+    1.45,
+    0.7,
+    0.76
+   ],
+   "markers": {
+    "lamps": [
+     [
+      0,
+      0.8,
+      0.3
+     ]
+    ],
+    "chimneys": [],
+    "windows": [],
+    "doors": [],
+    "lamp_color": "#5ab4f0",
+    "lamp_fixed": 0.45,
+    "lamp_range": 4.0
+   },
+   "blockers": [
+    [
+     -0.72,
+     -0.38,
+     0.72,
+     0.38
+    ]
+   ],
+   "fx": [
+    "quench_steam",
+    "quench_pool_blue"
+   ],
+   "note": "Ravenhold's blue cold-fire quench"
+  },
+  "tool_rack": {
+   "file": "tool_rack.glb",
+   "kind": "prop",
+   "tris": 180,
+   "size": [
+    1.3,
+    1.7,
+    0.2
+   ],
+   "markers": {
+    "lamps": [],
+    "chimneys": [],
+    "windows": [],
+    "doors": []
+   },
+   "blockers": [
+    [
+     -0.65,
+     -0.1,
+     0.65,
+     0.1
+    ]
+   ]
+  },
+  "grindstone": {
+   "file": "grindstone.glb",
+   "kind": "prop",
+   "tris": 148,
+   "size": [
+    0.75,
+    1.1,
+    0.6
+   ],
+   "markers": {
+    "lamps": [],
+    "chimneys": [],
+    "windows": [],
+    "doors": []
+   },
+   "blockers": [
+    [
+     -0.35,
+     -0.25,
+     0.35,
+     0.25
+    ]
+   ]
+  },
+  "coal_bin": {
+   "file": "coal_bin.glb",
+   "kind": "prop",
+   "tris": 328,
+   "size": [
+    0.84,
+    0.66,
+    0.59
+   ],
+   "markers": {
+    "lamps": [
+     [
+      0,
+      0.7,
+      0.1
+     ]
+    ],
+    "chimneys": [],
+    "windows": [],
+    "doors": [],
+    "lamp_color": "#e0302a",
+    "lamp_fixed": 0.1,
+    "lamp_range": 1.2
+   },
+   "blockers": [
+    [
+     -0.4,
+     -0.28,
+     0.4,
+     0.28
+    ]
+   ],
+   "fx": [
+    "embers_drift"
+   ]
+  },
+  "forge_sign": {
+   "file": "forge_sign.glb",
+   "kind": "prop",
+   "tris": 132,
+   "size": [
+    1.0,
+    2.6,
+    0.2
+   ],
+   "markers": {
+    "lamps": [],
+    "chimneys": [],
+    "windows": [],
+    "doors": []
+   },
+   "blockers": [
+    [
+     -0.1,
+     -0.1,
+     0.1,
+     0.1
+    ]
+   ]
+  }
+ }
+}

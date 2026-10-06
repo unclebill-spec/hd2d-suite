@@ -1,0 +1,695 @@
+{
+ "tool": "hd2d portal",
+ "biome": "cozy-village",
+ "seed": 104,
+ "image": "orb_fx_48.png",
+ "cell": 48,
+ "size": [
+  384,
+  480
+ ],
+ "cast_sets": {},
+ "cycle": [],
+ "effects": {
+  "orb_pool_blue": {
+   "row": 0,
+   "frames": 6,
+   "fps": 4,
+   "loop": true,
+   "loop_from": 0,
+   "loops": 1,
+   "kind": "decal",
+   "pivot": [
+    24,
+    24
+   ],
+   "lift": 0.02,
+   "glow": true,
+   "light": null,
+   "speed": null,
+   "travel": null,
+   "then": null,
+   "duration": 9999,
+   "strip": "strips/orb_pool_blue.png",
+   "frame_list": [
+    {
+     "x": 0,
+     "y": 0,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 48,
+     "y": 0,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 96,
+     "y": 0,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 144,
+     "y": 0,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 192,
+     "y": 0,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 240,
+     "y": 0,
+     "w": 48,
+     "h": 48
+    }
+   ],
+   "notes": "light pool under any blue orb lantern (radius ~1.9 m)"
+  },
+  "orb_pool_violet": {
+   "row": 1,
+   "frames": 6,
+   "fps": 4,
+   "loop": true,
+   "loop_from": 0,
+   "loops": 1,
+   "kind": "decal",
+   "pivot": [
+    24,
+    24
+   ],
+   "lift": 0.02,
+   "glow": true,
+   "light": null,
+   "speed": null,
+   "travel": null,
+   "then": null,
+   "duration": 9999,
+   "strip": "strips/orb_pool_violet.png",
+   "frame_list": [
+    {
+     "x": 0,
+     "y": 48,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 48,
+     "y": 48,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 96,
+     "y": 48,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 144,
+     "y": 48,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 192,
+     "y": 48,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 240,
+     "y": 48,
+     "w": 48,
+     "h": 48
+    }
+   ],
+   "notes": "light pool under any violet orb lantern (radius ~1.9 m)"
+  },
+  "orb_pool_red": {
+   "row": 2,
+   "frames": 6,
+   "fps": 4,
+   "loop": true,
+   "loop_from": 0,
+   "loops": 1,
+   "kind": "decal",
+   "pivot": [
+    24,
+    24
+   ],
+   "lift": 0.02,
+   "glow": true,
+   "light": null,
+   "speed": null,
+   "travel": null,
+   "then": null,
+   "duration": 9999,
+   "strip": "strips/orb_pool_red.png",
+   "frame_list": [
+    {
+     "x": 0,
+     "y": 96,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 48,
+     "y": 96,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 96,
+     "y": 96,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 144,
+     "y": 96,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 192,
+     "y": 96,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 240,
+     "y": 96,
+     "w": 48,
+     "h": 48
+    }
+   ],
+   "notes": "light pool under any red orb lantern (radius ~1.9 m)"
+  },
+  "glow_orb_blue": {
+   "row": 3,
+   "frames": 8,
+   "fps": 6,
+   "loop": true,
+   "loop_from": 0,
+   "loops": 1,
+   "kind": "billboard",
+   "pivot": [
+    24,
+    47
+   ],
+   "lift": 1.1,
+   "glow": true,
+   "light": {
+    "color": "#2ab4ff",
+    "intensity": 0.8,
+    "range": 4.0
+   },
+   "speed": null,
+   "travel": null,
+   "then": null,
+   "duration": 9999,
+   "strip": "strips/glow_orb_blue.png",
+   "frame_list": [
+    {
+     "x": 0,
+     "y": 144,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 48,
+     "y": 144,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 96,
+     "y": 144,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 144,
+     "y": 144,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 192,
+     "y": 144,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 240,
+     "y": 144,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 288,
+     "y": 144,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 336,
+     "y": 144,
+     "w": 48,
+     "h": 48
+    }
+   ],
+   "notes": "hovering blue glow orb (garden / house ambient light); pool: orb_pool_blue"
+  },
+  "glow_orb_violet": {
+   "row": 4,
+   "frames": 8,
+   "fps": 6,
+   "loop": true,
+   "loop_from": 0,
+   "loops": 1,
+   "kind": "billboard",
+   "pivot": [
+    24,
+    47
+   ],
+   "lift": 1.1,
+   "glow": true,
+   "light": {
+    "color": "#a45cf0",
+    "intensity": 0.8,
+    "range": 4.0
+   },
+   "speed": null,
+   "travel": null,
+   "then": null,
+   "duration": 9999,
+   "strip": "strips/glow_orb_violet.png",
+   "frame_list": [
+    {
+     "x": 0,
+     "y": 192,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 48,
+     "y": 192,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 96,
+     "y": 192,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 144,
+     "y": 192,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 192,
+     "y": 192,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 240,
+     "y": 192,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 288,
+     "y": 192,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 336,
+     "y": 192,
+     "w": 48,
+     "h": 48
+    }
+   ],
+   "notes": "hovering violet glow orb (garden / house ambient light); pool: orb_pool_violet"
+  },
+  "glow_orb_red": {
+   "row": 5,
+   "frames": 8,
+   "fps": 6,
+   "loop": true,
+   "loop_from": 0,
+   "loops": 1,
+   "kind": "billboard",
+   "pivot": [
+    24,
+    47
+   ],
+   "lift": 1.1,
+   "glow": true,
+   "light": {
+    "color": "#e0302a",
+    "intensity": 0.8,
+    "range": 4.0
+   },
+   "speed": null,
+   "travel": null,
+   "then": null,
+   "duration": 9999,
+   "strip": "strips/glow_orb_red.png",
+   "frame_list": [
+    {
+     "x": 0,
+     "y": 240,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 48,
+     "y": 240,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 96,
+     "y": 240,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 144,
+     "y": 240,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 192,
+     "y": 240,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 240,
+     "y": 240,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 288,
+     "y": 240,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 336,
+     "y": 240,
+     "w": 48,
+     "h": 48
+    }
+   ],
+   "notes": "hovering red glow orb (garden / house ambient light); pool: orb_pool_red"
+  },
+  "glow_orb_green": {
+   "row": 6,
+   "frames": 8,
+   "fps": 6,
+   "loop": true,
+   "loop_from": 0,
+   "loops": 1,
+   "kind": "billboard",
+   "pivot": [
+    24,
+    47
+   ],
+   "lift": 1.1,
+   "glow": true,
+   "light": {
+    "color": "#3cf08a",
+    "intensity": 0.8,
+    "range": 4.0
+   },
+   "speed": null,
+   "travel": null,
+   "then": null,
+   "duration": 9999,
+   "strip": "strips/glow_orb_green.png",
+   "frame_list": [
+    {
+     "x": 0,
+     "y": 288,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 48,
+     "y": 288,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 96,
+     "y": 288,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 144,
+     "y": 288,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 192,
+     "y": 288,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 240,
+     "y": 288,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 288,
+     "y": 288,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 336,
+     "y": 288,
+     "w": 48,
+     "h": 48
+    }
+   ],
+   "notes": "hovering green glow orb (garden / house ambient light); pool: glow_orb_pool_green"
+  },
+  "glow_orb_pink": {
+   "row": 7,
+   "frames": 8,
+   "fps": 6,
+   "loop": true,
+   "loop_from": 0,
+   "loops": 1,
+   "kind": "billboard",
+   "pivot": [
+    24,
+    47
+   ],
+   "lift": 1.1,
+   "glow": true,
+   "light": {
+    "color": "#ff4fc8",
+    "intensity": 0.8,
+    "range": 4.0
+   },
+   "speed": null,
+   "travel": null,
+   "then": null,
+   "duration": 9999,
+   "strip": "strips/glow_orb_pink.png",
+   "frame_list": [
+    {
+     "x": 0,
+     "y": 336,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 48,
+     "y": 336,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 96,
+     "y": 336,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 144,
+     "y": 336,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 192,
+     "y": 336,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 240,
+     "y": 336,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 288,
+     "y": 336,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 336,
+     "y": 336,
+     "w": 48,
+     "h": 48
+    }
+   ],
+   "notes": "hovering pink glow orb (garden / house ambient light); pool: glow_orb_pool_pink"
+  },
+  "glow_orb_pool_green": {
+   "row": 8,
+   "frames": 6,
+   "fps": 4,
+   "loop": true,
+   "loop_from": 0,
+   "loops": 1,
+   "kind": "decal",
+   "pivot": [
+    24,
+    24
+   ],
+   "lift": 0.02,
+   "glow": true,
+   "light": null,
+   "speed": null,
+   "travel": null,
+   "then": null,
+   "duration": 9999,
+   "strip": "strips/glow_orb_pool_green.png",
+   "frame_list": [
+    {
+     "x": 0,
+     "y": 384,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 48,
+     "y": 384,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 96,
+     "y": 384,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 144,
+     "y": 384,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 192,
+     "y": 384,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 240,
+     "y": 384,
+     "w": 48,
+     "h": 48
+    }
+   ],
+   "notes": "pool under a green glow orb"
+  },
+  "glow_orb_pool_pink": {
+   "row": 9,
+   "frames": 6,
+   "fps": 4,
+   "loop": true,
+   "loop_from": 0,
+   "loops": 1,
+   "kind": "decal",
+   "pivot": [
+    24,
+    24
+   ],
+   "lift": 0.02,
+   "glow": true,
+   "light": null,
+   "speed": null,
+   "travel": null,
+   "then": null,
+   "duration": 9999,
+   "strip": "strips/glow_orb_pool_pink.png",
+   "frame_list": [
+    {
+     "x": 0,
+     "y": 432,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 48,
+     "y": 432,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 96,
+     "y": 432,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 144,
+     "y": 432,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 192,
+     "y": 432,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 240,
+     "y": 432,
+     "w": 48,
+     "h": 48
+    }
+   ],
+   "notes": "pool under a pink glow orb"
+  }
+ }
+}

@@ -1,0 +1,248 @@
+{
+ "tool": "hd2d kit",
+ "biome": "cozy-village",
+ "seed": 1,
+ "sprite_height_m": 1.8,
+ "pieces": {
+  "cauldron_blue": {
+   "file": "cauldron_blue.glb",
+   "kind": "prop",
+   "tris": 724,
+   "size": [
+    1.0,
+    1.1,
+    1.0
+   ],
+   "markers": {
+    "lamps": [
+     [
+      0,
+      1.25,
+      0.1
+     ]
+    ],
+    "chimneys": [],
+    "windows": [],
+    "doors": [],
+    "lamp_color": "#2ab4ff",
+    "lamp_fixed": 0.55,
+    "lamp_range": 4.5
+   },
+   "blockers": [
+    [
+     -0.48,
+     -0.48,
+     0.48,
+     0.48
+    ]
+   ],
+   "fx": [
+    "cauldron_brew_blue",
+    "cauldron_fire",
+    "cauldron_pool_blue"
+   ],
+   "brew_surface": [
+    0,
+    0.98,
+    0
+   ],
+   "fire": [
+    0,
+    0.04,
+    0.32
+   ],
+   "craft_fx": "brew_puff_blue"
+  },
+  "cauldron_violet": {
+   "file": "cauldron_violet.glb",
+   "kind": "prop",
+   "tris": 724,
+   "size": [
+    1.0,
+    1.1,
+    1.0
+   ],
+   "markers": {
+    "lamps": [
+     [
+      0,
+      1.25,
+      0.1
+     ]
+    ],
+    "chimneys": [],
+    "windows": [],
+    "doors": [],
+    "lamp_color": "#a45cf0",
+    "lamp_fixed": 0.55,
+    "lamp_range": 4.5
+   },
+   "blockers": [
+    [
+     -0.48,
+     -0.48,
+     0.48,
+     0.48
+    ]
+   ],
+   "fx": [
+    "cauldron_brew_violet",
+    "cauldron_fire",
+    "cauldron_pool_violet"
+   ],
+   "brew_surface": [
+    0,
+    0.98,
+    0
+   ],
+   "fire": [
+    0,
+    0.04,
+    0.32
+   ],
+   "craft_fx": "brew_puff_violet"
+  },
+  "cauldron_green": {
+   "file": "cauldron_green.glb",
+   "kind": "prop",
+   "tris": 724,
+   "size": [
+    1.0,
+    1.1,
+    1.0
+   ],
+   "markers": {
+    "lamps": [
+     [
+      0,
+      1.25,
+      0.1
+     ]
+    ],
+    "chimneys": [],
+    "windows": [],
+    "doors": [],
+    "lamp_color": "#3cf08a",
+    "lamp_fixed": 0.55,
+    "lamp_range": 4.5
+   },
+   "blockers": [
+    [
+     -0.48,
+     -0.48,
+     0.48,
+     0.48
+    ]
+   ],
+   "fx": [
+    "cauldron_brew_green",
+    "cauldron_fire",
+    "cauldron_pool_green"
+   ],
+   "brew_surface": [
+    0,
+    0.98,
+    0
+   ],
+   "fire": [
+    0,
+    0.04,
+    0.32
+   ],
+   "craft_fx": "brew_puff_green"
+  },
+  "alchemy_table": {
+   "file": "alchemy_table.glb",
+   "kind": "prop",
+   "tris": 656,
+   "size": [
+    1.5,
+    1.15,
+    0.75
+   ],
+   "markers": {
+    "lamps": [
+     [
+      0.1,
+      1.1,
+      0.2
+     ]
+    ],
+    "chimneys": [],
+    "windows": [],
+    "doors": [],
+    "lamp_color": "#3cf08a",
+    "lamp_fixed": 0.3,
+    "lamp_range": 3.0
+   },
+   "blockers": [
+    [
+     -0.75,
+     -0.38,
+     0.75,
+     0.38
+    ]
+   ],
+   "note": "crafting station; glowing flasks + alembic"
+  },
+  "potion_shelf": {
+   "file": "potion_shelf.glb",
+   "kind": "prop",
+   "tris": 1008,
+   "size": [
+    1.35,
+    1.9,
+    0.32
+   ],
+   "markers": {
+    "lamps": [
+     [
+      0,
+      1.0,
+      0.3
+     ]
+    ],
+    "chimneys": [],
+    "windows": [],
+    "doors": [],
+    "lamp_color": "#a45cf0",
+    "lamp_fixed": 0.25,
+    "lamp_range": 2.5
+   },
+   "blockers": [
+    [
+     -0.67,
+     -0.18,
+     0.67,
+     0.18
+    ]
+   ],
+   "note": "wall prop; back against a wall"
+  },
+  "herb_rack": {
+   "file": "herb_rack.glb",
+   "kind": "prop",
+   "tris": 468,
+   "size": [
+    1.5,
+    1.9,
+    0.2
+   ],
+   "markers": {
+    "lamps": [],
+    "chimneys": [],
+    "windows": [],
+    "doors": []
+   },
+   "blockers": [
+    [
+     -0.72,
+     -0.08,
+     0.72,
+     0.08
+    ]
+   ],
+   "note": "drying herbs; pairs with ingredient icons"
+  }
+ }
+}

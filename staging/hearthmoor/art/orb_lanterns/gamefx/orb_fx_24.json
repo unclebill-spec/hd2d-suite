@@ -1,0 +1,243 @@
+{
+ "tool": "hd2d portal",
+ "biome": "cozy-village",
+ "seed": 104,
+ "image": "orb_fx_24.png",
+ "cell": 24,
+ "size": [
+  192,
+  72
+ ],
+ "cast_sets": {},
+ "cycle": [],
+ "effects": {
+  "orb_small_blue": {
+   "row": 0,
+   "frames": 8,
+   "fps": 6,
+   "loop": true,
+   "loop_from": 0,
+   "loops": 1,
+   "kind": "billboard",
+   "pivot": [
+    12,
+    12
+   ],
+   "lift": 0.0,
+   "glow": true,
+   "light": {
+    "color": "#2ab4ff",
+    "intensity": 0.7,
+    "range": 4.0
+   },
+   "speed": null,
+   "travel": null,
+   "then": null,
+   "duration": 9999,
+   "strip": "strips/orb_small_blue.png",
+   "frame_list": [
+    {
+     "x": 0,
+     "y": 0,
+     "w": 24,
+     "h": 24
+    },
+    {
+     "x": 24,
+     "y": 0,
+     "w": 24,
+     "h": 24
+    },
+    {
+     "x": 48,
+     "y": 0,
+     "w": 24,
+     "h": 24
+    },
+    {
+     "x": 72,
+     "y": 0,
+     "w": 24,
+     "h": 24
+    },
+    {
+     "x": 96,
+     "y": 0,
+     "w": 24,
+     "h": 24
+    },
+    {
+     "x": 120,
+     "y": 0,
+     "w": 24,
+     "h": 24
+    },
+    {
+     "x": 144,
+     "y": 0,
+     "w": 24,
+     "h": 24
+    },
+    {
+     "x": 168,
+     "y": 0,
+     "w": 24,
+     "h": 24
+    }
+   ],
+   "notes": "anchor (pivot = orb centre) at the kit lamp marker of orb_table / orb_hanging / orb_standing"
+  },
+  "orb_small_violet": {
+   "row": 1,
+   "frames": 8,
+   "fps": 6,
+   "loop": true,
+   "loop_from": 0,
+   "loops": 1,
+   "kind": "billboard",
+   "pivot": [
+    12,
+    12
+   ],
+   "lift": 0.0,
+   "glow": true,
+   "light": {
+    "color": "#a45cf0",
+    "intensity": 0.7,
+    "range": 4.0
+   },
+   "speed": null,
+   "travel": null,
+   "then": null,
+   "duration": 9999,
+   "strip": "strips/orb_small_violet.png",
+   "frame_list": [
+    {
+     "x": 0,
+     "y": 24,
+     "w": 24,
+     "h": 24
+    },
+    {
+     "x": 24,
+     "y": 24,
+     "w": 24,
+     "h": 24
+    },
+    {
+     "x": 48,
+     "y": 24,
+     "w": 24,
+     "h": 24
+    },
+    {
+     "x": 72,
+     "y": 24,
+     "w": 24,
+     "h": 24
+    },
+    {
+     "x": 96,
+     "y": 24,
+     "w": 24,
+     "h": 24
+    },
+    {
+     "x": 120,
+     "y": 24,
+     "w": 24,
+     "h": 24
+    },
+    {
+     "x": 144,
+     "y": 24,
+     "w": 24,
+     "h": 24
+    },
+    {
+     "x": 168,
+     "y": 24,
+     "w": 24,
+     "h": 24
+    }
+   ],
+   "notes": "anchor (pivot = orb centre) at the kit lamp marker of orb_table / orb_hanging / orb_standing"
+  },
+  "orb_small_red": {
+   "row": 2,
+   "frames": 8,
+   "fps": 6,
+   "loop": true,
+   "loop_from": 0,
+   "loops": 1,
+   "kind": "billboard",
+   "pivot": [
+    12,
+    12
+   ],
+   "lift": 0.0,
+   "glow": true,
+   "light": {
+    "color": "#e0302a",
+    "intensity": 0.7,
+    "range": 4.0
+   },
+   "speed": null,
+   "travel": null,
+   "then": null,
+   "duration": 9999,
+   "strip": "strips/orb_small_red.png",
+   "frame_list": [
+    {
+     "x": 0,
+     "y": 48,
+     "w": 24,
+     "h": 24
+    },
+    {
+     "x": 24,
+     "y": 48,
+     "w": 24,
+     "h": 24
+    },
+    {
+     "x": 48,
+     "y": 48,
+     "w": 24,
+     "h": 24
+    },
+    {
+     "x": 72,
+     "y": 48,
+     "w": 24,
+     "h": 24
+    },
+    {
+     "x": 96,
+     "y": 48,
+     "w": 24,
+     "h": 24
+    },
+    {
+     "x": 120,
+     "y": 48,
+     "w": 24,
+     "h": 24
+    },
+    {
+     "x": 144,
+     "y": 48,
+     "w": 24,
+     "h": 24
+    },
+    {
+     "x": 168,
+     "y": 48,
+     "w": 24,
+     "h": 24
+    }
+   ],
+   "notes": "anchor (pivot = orb centre) at the kit lamp marker of orb_table / orb_hanging / orb_standing"
+  }
+ }
+}

@@ -1,0 +1,1040 @@
+{
+ "tool": "hd2d boss_sheet",
+ "biome": "cozy-village",
+ "frame": [
+  128,
+  176
+ ],
+ "pivot": [
+  64,
+  176
+ ],
+ "ground_row": 175,
+ "facings": [
+  "down",
+  "up",
+  "left",
+  "right"
+ ],
+ "anims": {
+  "idle": {
+   "start": 0,
+   "count": 4,
+   "fps": 3,
+   "loop": [
+    0,
+    1,
+    2,
+    1
+   ],
+   "blink": 3
+  },
+  "walk": {
+   "start": 4,
+   "count": 4,
+   "fps": 8
+  },
+  "cast": {
+   "start": 8,
+   "count": 4,
+   "fps": 6,
+   "loop": [
+    0,
+    1,
+    2,
+    2,
+    3,
+    3
+   ],
+   "casters_only": true
+  },
+  "attack": {
+   "start": 12,
+   "count": 4,
+   "fps": 10,
+   "loop": [
+    0,
+    1,
+    2,
+    2,
+    3
+   ],
+   "heroes_only": true
+  },
+  "defend": {
+   "start": 16,
+   "count": 4,
+   "fps": 6,
+   "loop": [
+    0,
+    1
+   ],
+   "hold": [
+    2,
+    3
+   ],
+   "heroes_only": true
+  },
+  "jump": {
+   "start": 20,
+   "count": 4,
+   "fps": 8,
+   "phases": [
+    "crouch",
+    "launch",
+    "airborne",
+    "land"
+   ],
+   "heroes_only": true
+  },
+  "die": {
+   "start": 24,
+   "count": 4,
+   "fps": 6,
+   "once": true,
+   "enemies_only": true
+  }
+ },
+ "cols": 28,
+ "image": "boss_blight_regent.png",
+ "size": [
+  3584,
+  704
+ ],
+ "roles": {
+  "blightregent": {
+   "row": 0,
+   "kind": "enemy",
+   "enemy": true,
+   "boss": true,
+   "scale": 5.5,
+   "desc": "The Blight Regent, corrupted nature lord: gnarled bark body, moss mantle with toadstools, antlers of branch hung with red white-spotted toadstools, mauve blight blossoms and gold spore-lanterns, sickly violet-rose eyes in a hollow bark mask, a dead-sapling staff, a root ribcage around a violet wound with the blue frost-iron spike and rime frost-flowers (the only blue on him). Die: kneels, the spike slides out and lies on the mossy root mound, then a fresh sapling (cleansed; V0 Sapling Door). Rotwood Hollow R7 boss.",
+   "anims": [
+    "idle",
+    "walk",
+    "attack",
+    "die"
+   ],
+   "size_bounds": [
+    [
+     12,
+     126
+    ],
+    [
+     12,
+     176
+    ]
+   ],
+   "caster": false,
+   "frames": [
+    {
+     "name": "blightregent_down_idle0",
+     "facing": "down",
+     "anim": "idle",
+     "i": 0,
+     "x": 0,
+     "y": 0,
+     "w": 128,
+     "h": 176,
+     "pivot": [
+      64,
+      176
+     ]
+    },
+    {
+     "name": "blightregent_down_idle1",
+     "facing": "down",
+     "anim": "idle",
+     "i": 1,
+     "x": 128,
+     "y": 0,
+     "w": 128,
+     "h": 176,
+     "pivot": [
+      192,
+      176
+     ]
+    },
+    {
+     "name": "blightregent_down_idle2",
+     "facing": "down",
+     "anim": "idle",
+     "i": 2,
+     "x": 256,
+     "y": 0,
+     "w": 128,
+     "h": 176,
+     "pivot": [
+      320,
+      176
+     ]
+    },
+    {
+     "name": "blightregent_down_idle3",
+     "facing": "down",
+     "anim": "idle",
+     "i": 3,
+     "x": 384,
+     "y": 0,
+     "w": 128,
+     "h": 176,
+     "pivot": [
+      448,
+      176
+     ]
+    },
+    {
+     "name": "blightregent_down_walk0",
+     "facing": "down",
+     "anim": "walk",
+     "i": 0,
+     "x": 512,
+     "y": 0,
+     "w": 128,
+     "h": 176,
+     "pivot": [
+      576,
+      176
+     ]
+    },
+    {
+     "name": "blightregent_down_walk1",
+     "facing": "down",
+     "anim": "walk",
+     "i": 1,
+     "x": 640,
+     "y": 0,
+     "w": 128,
+     "h": 176,
+     "pivot": [
+      704,
+      176
+     ]
+    },
+    {
+     "name": "blightregent_down_walk2",
+     "facing": "down",
+     "anim": "walk",
+     "i": 2,
+     "x": 768,
+     "y": 0,
+     "w": 128,
+     "h": 176,
+     "pivot": [
+      832,
+      176
+     ]
+    },
+    {
+     "name": "blightregent_down_walk3",
+     "facing": "down",
+     "anim": "walk",
+     "i": 3,
+     "x": 896,
+     "y": 0,
+     "w": 128,
+     "h": 176,
+     "pivot": [
+      960,
+      176
+     ]
+    },
+    {
+     "name": "blightregent_down_attack0",
+     "facing": "down",
+     "anim": "attack",
+     "i": 0,
+     "x": 1536,
+     "y": 0,
+     "w": 128,
+     "h": 176,
+     "pivot": [
+      1600,
+      176
+     ]
+    },
+    {
+     "name": "blightregent_down_attack1",
+     "facing": "down",
+     "anim": "attack",
+     "i": 1,
+     "x": 1664,
+     "y": 0,
+     "w": 128,
+     "h": 176,
+     "pivot": [
+      1728,
+      176
+     ]
+    },
+    {
+     "name": "blightregent_down_attack2",
+     "facing": "down",
+     "anim": "attack",
+     "i": 2,
+     "x": 1792,
+     "y": 0,
+     "w": 128,
+     "h": 176,
+     "pivot": [
+      1856,
+      176
+     ]
+    },
+    {
+     "name": "blightregent_down_attack3",
+     "facing": "down",
+     "anim": "attack",
+     "i": 3,
+     "x": 1920,
+     "y": 0,
+     "w": 128,
+     "h": 176,
+     "pivot": [
+      1984,
+      176
+     ]
+    },
+    {
+     "name": "blightregent_down_die0",
+     "facing": "down",
+     "anim": "die",
+     "i": 0,
+     "x": 3072,
+     "y": 0,
+     "w": 128,
+     "h": 176,
+     "pivot": [
+      3136,
+      176
+     ]
+    },
+    {
+     "name": "blightregent_down_die1",
+     "facing": "down",
+     "anim": "die",
+     "i": 1,
+     "x": 3200,
+     "y": 0,
+     "w": 128,
+     "h": 176,
+     "pivot": [
+      3264,
+      176
+     ]
+    },
+    {
+     "name": "blightregent_down_die2",
+     "facing": "down",
+     "anim": "die",
+     "i": 2,
+     "x": 3328,
+     "y": 0,
+     "w": 128,
+     "h": 176,
+     "pivot": [
+      3392,
+      176
+     ]
+    },
+    {
+     "name": "blightregent_down_die3",
+     "facing": "down",
+     "anim": "die",
+     "i": 3,
+     "x": 3456,
+     "y": 0,
+     "w": 128,
+     "h": 176,
+     "pivot": [
+      3520,
+      176
+     ]
+    },
+    {
+     "name": "blightregent_up_idle0",
+     "facing": "up",
+     "anim": "idle",
+     "i": 0,
+     "x": 0,
+     "y": 176,
+     "w": 128,
+     "h": 176,
+     "pivot": [
+      64,
+      352
+     ]
+    },
+    {
+     "name": "blightregent_up_idle1",
+     "facing": "up",
+     "anim": "idle",
+     "i": 1,
+     "x": 128,
+     "y": 176,
+     "w": 128,
+     "h": 176,
+     "pivot": [
+      192,
+      352
+     ]
+    },
+    {
+     "name": "blightregent_up_idle2",
+     "facing": "up",
+     "anim": "idle",
+     "i": 2,
+     "x": 256,
+     "y": 176,
+     "w": 128,
+     "h": 176,
+     "pivot": [
+      320,
+      352
+     ]
+    },
+    {
+     "name": "blightregent_up_idle3",
+     "facing": "up",
+     "anim": "idle",
+     "i": 3,
+     "x": 384,
+     "y": 176,
+     "w": 128,
+     "h": 176,
+     "pivot": [
+      448,
+      352
+     ]
+    },
+    {
+     "name": "blightregent_up_walk0",
+     "facing": "up",
+     "anim": "walk",
+     "i": 0,
+     "x": 512,
+     "y": 176,
+     "w": 128,
+     "h": 176,
+     "pivot": [
+      576,
+      352
+     ]
+    },
+    {
+     "name": "blightregent_up_walk1",
+     "facing": "up",
+     "anim": "walk",
+     "i": 1,
+     "x": 640,
+     "y": 176,
+     "w": 128,
+     "h": 176,
+     "pivot": [
+      704,
+      352
+     ]
+    },
+    {
+     "name": "blightregent_up_walk2",
+     "facing": "up",
+     "anim": "walk",
+     "i": 2,
+     "x": 768,
+     "y": 176,
+     "w": 128,
+     "h": 176,
+     "pivot": [
+      832,
+      352
+     ]
+    },
+    {
+     "name": "blightregent_up_walk3",
+     "facing": "up",
+     "anim": "walk",
+     "i": 3,
+     "x": 896,
+     "y": 176,
+     "w": 128,
+     "h": 176,
+     "pivot": [
+      960,
+      352
+     ]
+    },
+    {
+     "name": "blightregent_up_attack0",
+     "facing": "up",
+     "anim": "attack",
+     "i": 0,
+     "x": 1536,
+     "y": 176,
+     "w": 128,
+     "h": 176,
+     "pivot": [
+      1600,
+      352
+     ]
+    },
+    {
+     "name": "blightregent_up_attack1",
+     "facing": "up",
+     "anim": "attack",
+     "i": 1,
+     "x": 1664,
+     "y": 176,
+     "w": 128,
+     "h": 176,
+     "pivot": [
+      1728,
+      352
+     ]
+    },
+    {
+     "name": "blightregent_up_attack2",
+     "facing": "up",
+     "anim": "attack",
+     "i": 2,
+     "x": 1792,
+     "y": 176,
+     "w": 128,
+     "h": 176,
+     "pivot": [
+      1856,
+      352
+     ]
+    },
+    {
+     "name": "blightregent_up_attack3",
+     "facing": "up",
+     "anim": "attack",
+     "i": 3,
+     "x": 1920,
+     "y": 176,
+     "w": 128,
+     "h": 176,
+     "pivot": [
+      1984,
+      352
+     ]
+    },
+    {
+     "name": "blightregent_up_die0",
+     "facing": "up",
+     "anim": "die",
+     "i": 0,
+     "x": 3072,
+     "y": 176,
+     "w": 128,
+     "h": 176,
+     "pivot": [
+      3136,
+      352
+     ]
+    },
+    {
+     "name": "blightregent_up_die1",
+     "facing": "up",
+     "anim": "die",
+     "i": 1,
+     "x": 3200,
+     "y": 176,
+     "w": 128,
+     "h": 176,
+     "pivot": [
+      3264,
+      352
+     ]
+    },
+    {
+     "name": "blightregent_up_die2",
+     "facing": "up",
+     "anim": "die",
+     "i": 2,
+     "x": 3328,
+     "y": 176,
+     "w": 128,
+     "h": 176,
+     "pivot": [
+      3392,
+      352
+     ]
+    },
+    {
+     "name": "blightregent_up_die3",
+     "facing": "up",
+     "anim": "die",
+     "i": 3,
+     "x": 3456,
+     "y": 176,
+     "w": 128,
+     "h": 176,
+     "pivot": [
+      3520,
+      352
+     ]
+    },
+    {
+     "name": "blightregent_left_idle0",
+     "facing": "left",
+     "anim": "idle",
+     "i": 0,
+     "x": 0,
+     "y": 352,
+     "w": 128,
+     "h": 176,
+     "pivot": [
+      64,
+      528
+     ]
+    },
+    {
+     "name": "blightregent_left_idle1",
+     "facing": "left",
+     "anim": "idle",
+     "i": 1,
+     "x": 128,
+     "y": 352,
+     "w": 128,
+     "h": 176,
+     "pivot": [
+      192,
+      528
+     ]
+    },
+    {
+     "name": "blightregent_left_idle2",
+     "facing": "left",
+     "anim": "idle",
+     "i": 2,
+     "x": 256,
+     "y": 352,
+     "w": 128,
+     "h": 176,
+     "pivot": [
+      320,
+      528
+     ]
+    },
+    {
+     "name": "blightregent_left_idle3",
+     "facing": "left",
+     "anim": "idle",
+     "i": 3,
+     "x": 384,
+     "y": 352,
+     "w": 128,
+     "h": 176,
+     "pivot": [
+      448,
+      528
+     ]
+    },
+    {
+     "name": "blightregent_left_walk0",
+     "facing": "left",
+     "anim": "walk",
+     "i": 0,
+     "x": 512,
+     "y": 352,
+     "w": 128,
+     "h": 176,
+     "pivot": [
+      576,
+      528
+     ]
+    },
+    {
+     "name": "blightregent_left_walk1",
+     "facing": "left",
+     "anim": "walk",
+     "i": 1,
+     "x": 640,
+     "y": 352,
+     "w": 128,
+     "h": 176,
+     "pivot": [
+      704,
+      528
+     ]
+    },
+    {
+     "name": "blightregent_left_walk2",
+     "facing": "left",
+     "anim": "walk",
+     "i": 2,
+     "x": 768,
+     "y": 352,
+     "w": 128,
+     "h": 176,
+     "pivot": [
+      832,
+      528
+     ]
+    },
+    {
+     "name": "blightregent_left_walk3",
+     "facing": "left",
+     "anim": "walk",
+     "i": 3,
+     "x": 896,
+     "y": 352,
+     "w": 128,
+     "h": 176,
+     "pivot": [
+      960,
+      528
+     ]
+    },
+    {
+     "name": "blightregent_left_attack0",
+     "facing": "left",
+     "anim": "attack",
+     "i": 0,
+     "x": 1536,
+     "y": 352,
+     "w": 128,
+     "h": 176,
+     "pivot": [
+      1600,
+      528
+     ]
+    },
+    {
+     "name": "blightregent_left_attack1",
+     "facing": "left",
+     "anim": "attack",
+     "i": 1,
+     "x": 1664,
+     "y": 352,
+     "w": 128,
+     "h": 176,
+     "pivot": [
+      1728,
+      528
+     ]
+    },
+    {
+     "name": "blightregent_left_attack2",
+     "facing": "left",
+     "anim": "attack",
+     "i": 2,
+     "x": 1792,
+     "y": 352,
+     "w": 128,
+     "h": 176,
+     "pivot": [
+      1856,
+      528
+     ]
+    },
+    {
+     "name": "blightregent_left_attack3",
+     "facing": "left",
+     "anim": "attack",
+     "i": 3,
+     "x": 1920,
+     "y": 352,
+     "w": 128,
+     "h": 176,
+     "pivot": [
+      1984,
+      528
+     ]
+    },
+    {
+     "name": "blightregent_left_die0",
+     "facing": "left",
+     "anim": "die",
+     "i": 0,
+     "x": 3072,
+     "y": 352,
+     "w": 128,
+     "h": 176,
+     "pivot": [
+      3136,
+      528
+     ]
+    },
+    {
+     "name": "blightregent_left_die1",
+     "facing": "left",
+     "anim": "die",
+     "i": 1,
+     "x": 3200,
+     "y": 352,
+     "w": 128,
+     "h": 176,
+     "pivot": [
+      3264,
+      528
+     ]
+    },
+    {
+     "name": "blightregent_left_die2",
+     "facing": "left",
+     "anim": "die",
+     "i": 2,
+     "x": 3328,
+     "y": 352,
+     "w": 128,
+     "h": 176,
+     "pivot": [
+      3392,
+      528
+     ]
+    },
+    {
+     "name": "blightregent_left_die3",
+     "facing": "left",
+     "anim": "die",
+     "i": 3,
+     "x": 3456,
+     "y": 352,
+     "w": 128,
+     "h": 176,
+     "pivot": [
+      3520,
+      528
+     ]
+    },
+    {
+     "name": "blightregent_right_idle0",
+     "facing": "right",
+     "anim": "idle",
+     "i": 0,
+     "x": 0,
+     "y": 528,
+     "w": 128,
+     "h": 176,
+     "pivot": [
+      64,
+      704
+     ]
+    },
+    {
+     "name": "blightregent_right_idle1",
+     "facing": "right",
+     "anim": "idle",
+     "i": 1,
+     "x": 128,
+     "y": 528,
+     "w": 128,
+     "h": 176,
+     "pivot": [
+      192,
+      704
+     ]
+    },
+    {
+     "name": "blightregent_right_idle2",
+     "facing": "right",
+     "anim": "idle",
+     "i": 2,
+     "x": 256,
+     "y": 528,
+     "w": 128,
+     "h": 176,
+     "pivot": [
+      320,
+      704
+     ]
+    },
+    {
+     "name": "blightregent_right_idle3",
+     "facing": "right",
+     "anim": "idle",
+     "i": 3,
+     "x": 384,
+     "y": 528,
+     "w": 128,
+     "h": 176,
+     "pivot": [
+      448,
+      704
+     ]
+    },
+    {
+     "name": "blightregent_right_walk0",
+     "facing": "right",
+     "anim": "walk",
+     "i": 0,
+     "x": 512,
+     "y": 528,
+     "w": 128,
+     "h": 176,
+     "pivot": [
+      576,
+      704
+     ]
+    },
+    {
+     "name": "blightregent_right_walk1",
+     "facing": "right",
+     "anim": "walk",
+     "i": 1,
+     "x": 640,
+     "y": 528,
+     "w": 128,
+     "h": 176,
+     "pivot": [
+      704,
+      704
+     ]
+    },
+    {
+     "name": "blightregent_right_walk2",
+     "facing": "right",
+     "anim": "walk",
+     "i": 2,
+     "x": 768,
+     "y": 528,
+     "w": 128,
+     "h": 176,
+     "pivot": [
+      832,
+      704
+     ]
+    },
+    {
+     "name": "blightregent_right_walk3",
+     "facing": "right",
+     "anim": "walk",
+     "i": 3,
+     "x": 896,
+     "y": 528,
+     "w": 128,
+     "h": 176,
+     "pivot": [
+      960,
+      704
+     ]
+    },
+    {
+     "name": "blightregent_right_attack0",
+     "facing": "right",
+     "anim": "attack",
+     "i": 0,
+     "x": 1536,
+     "y": 528,
+     "w": 128,
+     "h": 176,
+     "pivot": [
+      1600,
+      704
+     ]
+    },
+    {
+     "name": "blightregent_right_attack1",
+     "facing": "right",
+     "anim": "attack",
+     "i": 1,
+     "x": 1664,
+     "y": 528,
+     "w": 128,
+     "h": 176,
+     "pivot": [
+      1728,
+      704
+     ]
+    },
+    {
+     "name": "blightregent_right_attack2",
+     "facing": "right",
+     "anim": "attack",
+     "i": 2,
+     "x": 1792,
+     "y": 528,
+     "w": 128,
+     "h": 176,
+     "pivot": [
+      1856,
+      704
+     ]
+    },
+    {
+     "name": "blightregent_right_attack3",
+     "facing": "right",
+     "anim": "attack",
+     "i": 3,
+     "x": 1920,
+     "y": 528,
+     "w": 128,
+     "h": 176,
+     "pivot": [
+      1984,
+      704
+     ]
+    },
+    {
+     "name": "blightregent_right_die0",
+     "facing": "right",
+     "anim": "die",
+     "i": 0,
+     "x": 3072,
+     "y": 528,
+     "w": 128,
+     "h": 176,
+     "pivot": [
+      3136,
+      704
+     ]
+    },
+    {
+     "name": "blightregent_right_die1",
+     "facing": "right",
+     "anim": "die",
+     "i": 1,
+     "x": 3200,
+     "y": 528,
+     "w": 128,
+     "h": 176,
+     "pivot": [
+      3264,
+      704
+     ]
+    },
+    {
+     "name": "blightregent_right_die2",
+     "facing": "right",
+     "anim": "die",
+     "i": 2,
+     "x": 3328,
+     "y": 528,
+     "w": 128,
+     "h": 176,
+     "pivot": [
+      3392,
+      704
+     ]
+    },
+    {
+     "name": "blightregent_right_die3",
+     "facing": "right",
+     "anim": "die",
+     "i": 3,
+     "x": 3456,
+     "y": 528,
+     "w": 128,
+     "h": 176,
+     "pivot": [
+      3520,
+      704
+     ]
+    }
+   ],
+   "light": {
+    "color": "#a45cf0",
+    "intensity": 0.9,
+    "range": 6.0,
+    "pool": "blight_aura"
+   },
+   "notes": "attack frame 14 = two-arm root slam (spawn root_eruption x3-5); die frame 27 -> regent_cleansed fx",
+   "stats_hint": {
+    "tier": "boss",
+    "height_x_player": 5.5
+   }
+  }
+ }
+}

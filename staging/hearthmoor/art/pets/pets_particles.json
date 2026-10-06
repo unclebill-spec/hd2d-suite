@@ -1,0 +1,154 @@
+{
+ "tool": "hearthmoor-art pets_gen (particles format)",
+ "biome": "cozy-village",
+ "image": "pets_particles.png",
+ "cell": 16,
+ "rows": [
+  "pet_wisp_spark",
+  "pet_moth_dust",
+  "pet_fox_ember",
+  "pet_mosspup_spore"
+ ],
+ "presets": {
+  "pet_wisp_spark": {
+   "row": 0,
+   "frames": 4,
+   "fps": 6,
+   "mode": "life",
+   "rate": 3.0,
+   "life": [
+    0.6,
+    1.2
+   ],
+   "grade": null,
+   "vel": [
+    [
+     -0.15,
+     0.15
+    ],
+    [
+     0.25,
+     0.6
+    ],
+    [
+     -0.15,
+     0.15
+    ]
+   ],
+   "gravity": 0,
+   "sway": 0.4,
+   "glow": true,
+   "area": [
+    0.35,
+    0.25,
+    0.35
+   ],
+   "follow_pet": true
+  },
+  "pet_moth_dust": {
+   "row": 1,
+   "frames": 4,
+   "fps": 5,
+   "mode": "life",
+   "rate": 3.5,
+   "life": [
+    0.9,
+    1.6
+   ],
+   "grade": null,
+   "vel": [
+    [
+     -0.12,
+     0.12
+    ],
+    [
+     -0.35,
+     -0.12
+    ],
+    [
+     -0.12,
+     0.12
+    ]
+   ],
+   "gravity": 0,
+   "sway": 0.6,
+   "glow": true,
+   "area": [
+    0.45,
+    0.15,
+    0.3
+   ],
+   "follow_pet": true
+  },
+  "pet_fox_ember": {
+   "row": 2,
+   "frames": 4,
+   "fps": 5,
+   "mode": "life",
+   "rate": 2.5,
+   "life": [
+    0.6,
+    1.1
+   ],
+   "grade": null,
+   "vel": [
+    [
+     -0.15,
+     0.15
+    ],
+    [
+     0.5,
+     0.9
+    ],
+    [
+     -0.15,
+     0.15
+    ]
+   ],
+   "gravity": -0.2,
+   "sway": 0.5,
+   "glow": true,
+   "area": [
+    0.15,
+    0.1,
+    0.15
+   ],
+   "follow_pet": true
+  },
+  "pet_mosspup_spore": {
+   "row": 3,
+   "frames": 4,
+   "fps": 4,
+   "mode": "life",
+   "rate": 2.8,
+   "life": [
+    1.2,
+    2.2
+   ],
+   "grade": null,
+   "vel": [
+    [
+     -0.1,
+     0.1
+    ],
+    [
+     0.15,
+     0.35
+    ],
+    [
+     -0.1,
+     0.1
+    ]
+   ],
+   "gravity": 0,
+   "sway": 0.7,
+   "glow": true,
+   "area": [
+    0.35,
+    0.15,
+    0.25
+   ],
+   "follow_pet": true
+  }
+ }
+}

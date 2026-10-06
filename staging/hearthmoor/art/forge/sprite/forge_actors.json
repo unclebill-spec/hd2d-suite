@@ -1,0 +1,1049 @@
+{
+ "tool": "hd2d sprite",
+ "biome": "cozy-village",
+ "seed": 104,
+ "frame": [
+  20,
+  32
+ ],
+ "pivot": [
+  10,
+  32
+ ],
+ "ground_row": 31,
+ "facings": [
+  "down",
+  "up",
+  "left",
+  "right"
+ ],
+ "anims": {
+  "idle": {
+   "start": 0,
+   "count": 4,
+   "fps": 3,
+   "loop": [
+    0,
+    1,
+    2,
+    1
+   ],
+   "blink": 3
+  },
+  "walk": {
+   "start": 4,
+   "count": 4,
+   "fps": 8
+  },
+  "cast": {
+   "start": 8,
+   "count": 4,
+   "fps": 6,
+   "loop": [
+    0,
+    1,
+    2,
+    2,
+    3,
+    3
+   ],
+   "casters_only": true
+  },
+  "attack": {
+   "start": 12,
+   "count": 4,
+   "fps": 10,
+   "loop": [
+    0,
+    1,
+    2,
+    2,
+    3
+   ],
+   "heroes_only": true
+  },
+  "defend": {
+   "start": 16,
+   "count": 4,
+   "fps": 6,
+   "loop": [
+    0,
+    1
+   ],
+   "hold": [
+    2,
+    3
+   ],
+   "heroes_only": true
+  },
+  "jump": {
+   "start": 20,
+   "count": 4,
+   "fps": 8,
+   "phases": [
+    "crouch",
+    "launch",
+    "airborne",
+    "land"
+   ],
+   "heroes_only": true
+  },
+  "die": {
+   "start": 24,
+   "count": 4,
+   "fps": 6,
+   "once": true,
+   "enemies_only": true
+  }
+ },
+ "cols": 12,
+ "image": "forge_actors.png",
+ "size": [
+  240,
+  256
+ ],
+ "roles": {
+  "smith": {
+   "row": 0,
+   "kind": "human",
+   "desc": "Hilde Anvilsong, master smith of the Ravenhold Forge Quarter: auburn bun, red neckerchief, cream work shirt with a brown leather apron, dark belt at the waist, slate trousers, black boots, smith's hammer",
+   "size_bounds": [
+    [
+     14,
+     24
+    ],
+    [
+     24,
+     40
+    ]
+   ],
+   "caster": false,
+   "anims": [
+    "idle",
+    "walk"
+   ],
+   "frames": [
+    {
+     "name": "smith_down_idle0",
+     "facing": "down",
+     "anim": "idle",
+     "i": 0,
+     "x": 0,
+     "y": 0,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      10,
+      32
+     ]
+    },
+    {
+     "name": "smith_down_idle1",
+     "facing": "down",
+     "anim": "idle",
+     "i": 1,
+     "x": 20,
+     "y": 0,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      30,
+      32
+     ]
+    },
+    {
+     "name": "smith_down_idle2",
+     "facing": "down",
+     "anim": "idle",
+     "i": 2,
+     "x": 40,
+     "y": 0,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      50,
+      32
+     ]
+    },
+    {
+     "name": "smith_down_idle3",
+     "facing": "down",
+     "anim": "idle",
+     "i": 3,
+     "x": 60,
+     "y": 0,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      70,
+      32
+     ]
+    },
+    {
+     "name": "smith_down_walk0",
+     "facing": "down",
+     "anim": "walk",
+     "i": 0,
+     "x": 80,
+     "y": 0,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      90,
+      32
+     ]
+    },
+    {
+     "name": "smith_down_walk1",
+     "facing": "down",
+     "anim": "walk",
+     "i": 1,
+     "x": 100,
+     "y": 0,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      110,
+      32
+     ]
+    },
+    {
+     "name": "smith_down_walk2",
+     "facing": "down",
+     "anim": "walk",
+     "i": 2,
+     "x": 120,
+     "y": 0,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      130,
+      32
+     ]
+    },
+    {
+     "name": "smith_down_walk3",
+     "facing": "down",
+     "anim": "walk",
+     "i": 3,
+     "x": 140,
+     "y": 0,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      150,
+      32
+     ]
+    },
+    {
+     "name": "smith_up_idle0",
+     "facing": "up",
+     "anim": "idle",
+     "i": 0,
+     "x": 0,
+     "y": 32,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      10,
+      64
+     ]
+    },
+    {
+     "name": "smith_up_idle1",
+     "facing": "up",
+     "anim": "idle",
+     "i": 1,
+     "x": 20,
+     "y": 32,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      30,
+      64
+     ]
+    },
+    {
+     "name": "smith_up_idle2",
+     "facing": "up",
+     "anim": "idle",
+     "i": 2,
+     "x": 40,
+     "y": 32,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      50,
+      64
+     ]
+    },
+    {
+     "name": "smith_up_idle3",
+     "facing": "up",
+     "anim": "idle",
+     "i": 3,
+     "x": 60,
+     "y": 32,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      70,
+      64
+     ]
+    },
+    {
+     "name": "smith_up_walk0",
+     "facing": "up",
+     "anim": "walk",
+     "i": 0,
+     "x": 80,
+     "y": 32,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      90,
+      64
+     ]
+    },
+    {
+     "name": "smith_up_walk1",
+     "facing": "up",
+     "anim": "walk",
+     "i": 1,
+     "x": 100,
+     "y": 32,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      110,
+      64
+     ]
+    },
+    {
+     "name": "smith_up_walk2",
+     "facing": "up",
+     "anim": "walk",
+     "i": 2,
+     "x": 120,
+     "y": 32,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      130,
+      64
+     ]
+    },
+    {
+     "name": "smith_up_walk3",
+     "facing": "up",
+     "anim": "walk",
+     "i": 3,
+     "x": 140,
+     "y": 32,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      150,
+      64
+     ]
+    },
+    {
+     "name": "smith_left_idle0",
+     "facing": "left",
+     "anim": "idle",
+     "i": 0,
+     "x": 0,
+     "y": 64,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      10,
+      96
+     ]
+    },
+    {
+     "name": "smith_left_idle1",
+     "facing": "left",
+     "anim": "idle",
+     "i": 1,
+     "x": 20,
+     "y": 64,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      30,
+      96
+     ]
+    },
+    {
+     "name": "smith_left_idle2",
+     "facing": "left",
+     "anim": "idle",
+     "i": 2,
+     "x": 40,
+     "y": 64,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      50,
+      96
+     ]
+    },
+    {
+     "name": "smith_left_idle3",
+     "facing": "left",
+     "anim": "idle",
+     "i": 3,
+     "x": 60,
+     "y": 64,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      70,
+      96
+     ]
+    },
+    {
+     "name": "smith_left_walk0",
+     "facing": "left",
+     "anim": "walk",
+     "i": 0,
+     "x": 80,
+     "y": 64,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      90,
+      96
+     ]
+    },
+    {
+     "name": "smith_left_walk1",
+     "facing": "left",
+     "anim": "walk",
+     "i": 1,
+     "x": 100,
+     "y": 64,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      110,
+      96
+     ]
+    },
+    {
+     "name": "smith_left_walk2",
+     "facing": "left",
+     "anim": "walk",
+     "i": 2,
+     "x": 120,
+     "y": 64,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      130,
+      96
+     ]
+    },
+    {
+     "name": "smith_left_walk3",
+     "facing": "left",
+     "anim": "walk",
+     "i": 3,
+     "x": 140,
+     "y": 64,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      150,
+      96
+     ]
+    },
+    {
+     "name": "smith_right_idle0",
+     "facing": "right",
+     "anim": "idle",
+     "i": 0,
+     "x": 0,
+     "y": 96,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      10,
+      128
+     ]
+    },
+    {
+     "name": "smith_right_idle1",
+     "facing": "right",
+     "anim": "idle",
+     "i": 1,
+     "x": 20,
+     "y": 96,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      30,
+      128
+     ]
+    },
+    {
+     "name": "smith_right_idle2",
+     "facing": "right",
+     "anim": "idle",
+     "i": 2,
+     "x": 40,
+     "y": 96,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      50,
+      128
+     ]
+    },
+    {
+     "name": "smith_right_idle3",
+     "facing": "right",
+     "anim": "idle",
+     "i": 3,
+     "x": 60,
+     "y": 96,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      70,
+      128
+     ]
+    },
+    {
+     "name": "smith_right_walk0",
+     "facing": "right",
+     "anim": "walk",
+     "i": 0,
+     "x": 80,
+     "y": 96,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      90,
+      128
+     ]
+    },
+    {
+     "name": "smith_right_walk1",
+     "facing": "right",
+     "anim": "walk",
+     "i": 1,
+     "x": 100,
+     "y": 96,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      110,
+      128
+     ]
+    },
+    {
+     "name": "smith_right_walk2",
+     "facing": "right",
+     "anim": "walk",
+     "i": 2,
+     "x": 120,
+     "y": 96,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      130,
+      128
+     ]
+    },
+    {
+     "name": "smith_right_walk3",
+     "facing": "right",
+     "anim": "walk",
+     "i": 3,
+     "x": 140,
+     "y": 96,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      150,
+      128
+     ]
+    }
+   ],
+   "named": true
+  },
+  "dwarfsmith": {
+   "row": 4,
+   "kind": "human",
+   "desc": "Orri Flintcog, dwarf smith (bonus): ginger hair and braided beard with a copper bead, blue shirt under a brown vest, dark belt, brown trousers, black boots, a rune-chisel in his hand (steel shank, cold-blue rune, bright edge; his crossed-cog tongs are the stolen ones, so he doesn't carry them)",
+   "size_bounds": [
+    [
+     14,
+     24
+    ],
+    [
+     24,
+     40
+    ]
+   ],
+   "caster": false,
+   "anims": [
+    "idle",
+    "walk"
+   ],
+   "frames": [
+    {
+     "name": "dwarfsmith_down_idle0",
+     "facing": "down",
+     "anim": "idle",
+     "i": 0,
+     "x": 0,
+     "y": 128,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      10,
+      160
+     ]
+    },
+    {
+     "name": "dwarfsmith_down_idle1",
+     "facing": "down",
+     "anim": "idle",
+     "i": 1,
+     "x": 20,
+     "y": 128,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      30,
+      160
+     ]
+    },
+    {
+     "name": "dwarfsmith_down_idle2",
+     "facing": "down",
+     "anim": "idle",
+     "i": 2,
+     "x": 40,
+     "y": 128,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      50,
+      160
+     ]
+    },
+    {
+     "name": "dwarfsmith_down_idle3",
+     "facing": "down",
+     "anim": "idle",
+     "i": 3,
+     "x": 60,
+     "y": 128,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      70,
+      160
+     ]
+    },
+    {
+     "name": "dwarfsmith_down_walk0",
+     "facing": "down",
+     "anim": "walk",
+     "i": 0,
+     "x": 80,
+     "y": 128,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      90,
+      160
+     ]
+    },
+    {
+     "name": "dwarfsmith_down_walk1",
+     "facing": "down",
+     "anim": "walk",
+     "i": 1,
+     "x": 100,
+     "y": 128,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      110,
+      160
+     ]
+    },
+    {
+     "name": "dwarfsmith_down_walk2",
+     "facing": "down",
+     "anim": "walk",
+     "i": 2,
+     "x": 120,
+     "y": 128,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      130,
+      160
+     ]
+    },
+    {
+     "name": "dwarfsmith_down_walk3",
+     "facing": "down",
+     "anim": "walk",
+     "i": 3,
+     "x": 140,
+     "y": 128,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      150,
+      160
+     ]
+    },
+    {
+     "name": "dwarfsmith_up_idle0",
+     "facing": "up",
+     "anim": "idle",
+     "i": 0,
+     "x": 0,
+     "y": 160,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      10,
+      192
+     ]
+    },
+    {
+     "name": "dwarfsmith_up_idle1",
+     "facing": "up",
+     "anim": "idle",
+     "i": 1,
+     "x": 20,
+     "y": 160,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      30,
+      192
+     ]
+    },
+    {
+     "name": "dwarfsmith_up_idle2",
+     "facing": "up",
+     "anim": "idle",
+     "i": 2,
+     "x": 40,
+     "y": 160,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      50,
+      192
+     ]
+    },
+    {
+     "name": "dwarfsmith_up_idle3",
+     "facing": "up",
+     "anim": "idle",
+     "i": 3,
+     "x": 60,
+     "y": 160,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      70,
+      192
+     ]
+    },
+    {
+     "name": "dwarfsmith_up_walk0",
+     "facing": "up",
+     "anim": "walk",
+     "i": 0,
+     "x": 80,
+     "y": 160,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      90,
+      192
+     ]
+    },
+    {
+     "name": "dwarfsmith_up_walk1",
+     "facing": "up",
+     "anim": "walk",
+     "i": 1,
+     "x": 100,
+     "y": 160,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      110,
+      192
+     ]
+    },
+    {
+     "name": "dwarfsmith_up_walk2",
+     "facing": "up",
+     "anim": "walk",
+     "i": 2,
+     "x": 120,
+     "y": 160,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      130,
+      192
+     ]
+    },
+    {
+     "name": "dwarfsmith_up_walk3",
+     "facing": "up",
+     "anim": "walk",
+     "i": 3,
+     "x": 140,
+     "y": 160,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      150,
+      192
+     ]
+    },
+    {
+     "name": "dwarfsmith_left_idle0",
+     "facing": "left",
+     "anim": "idle",
+     "i": 0,
+     "x": 0,
+     "y": 192,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      10,
+      224
+     ]
+    },
+    {
+     "name": "dwarfsmith_left_idle1",
+     "facing": "left",
+     "anim": "idle",
+     "i": 1,
+     "x": 20,
+     "y": 192,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      30,
+      224
+     ]
+    },
+    {
+     "name": "dwarfsmith_left_idle2",
+     "facing": "left",
+     "anim": "idle",
+     "i": 2,
+     "x": 40,
+     "y": 192,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      50,
+      224
+     ]
+    },
+    {
+     "name": "dwarfsmith_left_idle3",
+     "facing": "left",
+     "anim": "idle",
+     "i": 3,
+     "x": 60,
+     "y": 192,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      70,
+      224
+     ]
+    },
+    {
+     "name": "dwarfsmith_left_walk0",
+     "facing": "left",
+     "anim": "walk",
+     "i": 0,
+     "x": 80,
+     "y": 192,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      90,
+      224
+     ]
+    },
+    {
+     "name": "dwarfsmith_left_walk1",
+     "facing": "left",
+     "anim": "walk",
+     "i": 1,
+     "x": 100,
+     "y": 192,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      110,
+      224
+     ]
+    },
+    {
+     "name": "dwarfsmith_left_walk2",
+     "facing": "left",
+     "anim": "walk",
+     "i": 2,
+     "x": 120,
+     "y": 192,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      130,
+      224
+     ]
+    },
+    {
+     "name": "dwarfsmith_left_walk3",
+     "facing": "left",
+     "anim": "walk",
+     "i": 3,
+     "x": 140,
+     "y": 192,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      150,
+      224
+     ]
+    },
+    {
+     "name": "dwarfsmith_right_idle0",
+     "facing": "right",
+     "anim": "idle",
+     "i": 0,
+     "x": 0,
+     "y": 224,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      10,
+      256
+     ]
+    },
+    {
+     "name": "dwarfsmith_right_idle1",
+     "facing": "right",
+     "anim": "idle",
+     "i": 1,
+     "x": 20,
+     "y": 224,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      30,
+      256
+     ]
+    },
+    {
+     "name": "dwarfsmith_right_idle2",
+     "facing": "right",
+     "anim": "idle",
+     "i": 2,
+     "x": 40,
+     "y": 224,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      50,
+      256
+     ]
+    },
+    {
+     "name": "dwarfsmith_right_idle3",
+     "facing": "right",
+     "anim": "idle",
+     "i": 3,
+     "x": 60,
+     "y": 224,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      70,
+      256
+     ]
+    },
+    {
+     "name": "dwarfsmith_right_walk0",
+     "facing": "right",
+     "anim": "walk",
+     "i": 0,
+     "x": 80,
+     "y": 224,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      90,
+      256
+     ]
+    },
+    {
+     "name": "dwarfsmith_right_walk1",
+     "facing": "right",
+     "anim": "walk",
+     "i": 1,
+     "x": 100,
+     "y": 224,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      110,
+      256
+     ]
+    },
+    {
+     "name": "dwarfsmith_right_walk2",
+     "facing": "right",
+     "anim": "walk",
+     "i": 2,
+     "x": 120,
+     "y": 224,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      130,
+      256
+     ]
+    },
+    {
+     "name": "dwarfsmith_right_walk3",
+     "facing": "right",
+     "anim": "walk",
+     "i": 3,
+     "x": 140,
+     "y": 224,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      150,
+      256
+     ]
+    }
+   ],
+   "named": true
+  }
+ }
+}

@@ -1,0 +1,511 @@
+{
+ "tool": "hd2d portal",
+ "biome": "cozy-village",
+ "seed": 104,
+ "image": "verdant_critters.png",
+ "cell": 24,
+ "size": [
+  144,
+  192
+ ],
+ "cast_sets": {},
+ "cycle": [],
+ "effects": {
+  "glowfrog_blue_idle": {
+   "row": 0,
+   "frames": 6,
+   "fps": 4,
+   "loop": true,
+   "loop_from": 0,
+   "loops": 1,
+   "kind": "billboard",
+   "pivot": [
+    12,
+    23
+   ],
+   "lift": 0.0,
+   "glow": true,
+   "light": {
+    "color": "#2ab4ff",
+    "intensity": 0.3,
+    "range": 1.2
+   },
+   "speed": null,
+   "travel": null,
+   "then": null,
+   "duration": 9999,
+   "strip": "strips/glowfrog_blue_idle.png",
+   "frame_list": [
+    {
+     "x": 0,
+     "y": 0,
+     "w": 24,
+     "h": 24
+    },
+    {
+     "x": 24,
+     "y": 0,
+     "w": 24,
+     "h": 24
+    },
+    {
+     "x": 48,
+     "y": 0,
+     "w": 24,
+     "h": 24
+    },
+    {
+     "x": 72,
+     "y": 0,
+     "w": 24,
+     "h": 24
+    },
+    {
+     "x": 96,
+     "y": 0,
+     "w": 24,
+     "h": 24
+    },
+    {
+     "x": 120,
+     "y": 0,
+     "w": 24,
+     "h": 24
+    }
+   ],
+   "notes": "ambient blue glow frog: throat-sac pulse + blink; 24 px cell (frog ~9x6 px = 0.5 m wide at 18 px/m: oversized a touch so it reads)"
+  },
+  "glowfrog_blue_hop": {
+   "row": 1,
+   "frames": 6,
+   "fps": 10,
+   "loop": true,
+   "loop_from": 0,
+   "loops": 1,
+   "kind": "billboard",
+   "pivot": [
+    12,
+    23
+   ],
+   "lift": 0.0,
+   "glow": true,
+   "light": null,
+   "speed": null,
+   "travel": null,
+   "then": null,
+   "duration": 9999,
+   "strip": "strips/glowfrog_blue_hop.png",
+   "frame_list": [
+    {
+     "x": 0,
+     "y": 24,
+     "w": 24,
+     "h": 24
+    },
+    {
+     "x": 24,
+     "y": 24,
+     "w": 24,
+     "h": 24
+    },
+    {
+     "x": 48,
+     "y": 24,
+     "w": 24,
+     "h": 24
+    },
+    {
+     "x": 72,
+     "y": 24,
+     "w": 24,
+     "h": 24
+    },
+    {
+     "x": 96,
+     "y": 24,
+     "w": 24,
+     "h": 24
+    },
+    {
+     "x": 120,
+     "y": 24,
+     "w": 24,
+     "h": 24
+    }
+   ],
+   "notes": "one hop (0.6 s): move the frog ~0.5 m across the 6 frames, then back to idle"
+  },
+  "glowfrog_green_idle": {
+   "row": 2,
+   "frames": 6,
+   "fps": 4,
+   "loop": true,
+   "loop_from": 0,
+   "loops": 1,
+   "kind": "billboard",
+   "pivot": [
+    12,
+    23
+   ],
+   "lift": 0.0,
+   "glow": true,
+   "light": {
+    "color": "#3cf08a",
+    "intensity": 0.3,
+    "range": 1.2
+   },
+   "speed": null,
+   "travel": null,
+   "then": null,
+   "duration": 9999,
+   "strip": "strips/glowfrog_green_idle.png",
+   "frame_list": [
+    {
+     "x": 0,
+     "y": 48,
+     "w": 24,
+     "h": 24
+    },
+    {
+     "x": 24,
+     "y": 48,
+     "w": 24,
+     "h": 24
+    },
+    {
+     "x": 48,
+     "y": 48,
+     "w": 24,
+     "h": 24
+    },
+    {
+     "x": 72,
+     "y": 48,
+     "w": 24,
+     "h": 24
+    },
+    {
+     "x": 96,
+     "y": 48,
+     "w": 24,
+     "h": 24
+    },
+    {
+     "x": 120,
+     "y": 48,
+     "w": 24,
+     "h": 24
+    }
+   ],
+   "notes": "ambient green glow frog: throat-sac pulse + blink; 24 px cell (frog ~9x6 px = 0.5 m wide at 18 px/m: oversized a touch so it reads)"
+  },
+  "glowfrog_green_hop": {
+   "row": 3,
+   "frames": 6,
+   "fps": 10,
+   "loop": true,
+   "loop_from": 0,
+   "loops": 1,
+   "kind": "billboard",
+   "pivot": [
+    12,
+    23
+   ],
+   "lift": 0.0,
+   "glow": true,
+   "light": null,
+   "speed": null,
+   "travel": null,
+   "then": null,
+   "duration": 9999,
+   "strip": "strips/glowfrog_green_hop.png",
+   "frame_list": [
+    {
+     "x": 0,
+     "y": 72,
+     "w": 24,
+     "h": 24
+    },
+    {
+     "x": 24,
+     "y": 72,
+     "w": 24,
+     "h": 24
+    },
+    {
+     "x": 48,
+     "y": 72,
+     "w": 24,
+     "h": 24
+    },
+    {
+     "x": 72,
+     "y": 72,
+     "w": 24,
+     "h": 24
+    },
+    {
+     "x": 96,
+     "y": 72,
+     "w": 24,
+     "h": 24
+    },
+    {
+     "x": 120,
+     "y": 72,
+     "w": 24,
+     "h": 24
+    }
+   ],
+   "notes": "one hop (0.6 s): move the frog ~0.5 m across the 6 frames, then back to idle"
+  },
+  "glowfrog_pink_idle": {
+   "row": 4,
+   "frames": 6,
+   "fps": 4,
+   "loop": true,
+   "loop_from": 0,
+   "loops": 1,
+   "kind": "billboard",
+   "pivot": [
+    12,
+    23
+   ],
+   "lift": 0.0,
+   "glow": true,
+   "light": {
+    "color": "#ff4fc8",
+    "intensity": 0.3,
+    "range": 1.2
+   },
+   "speed": null,
+   "travel": null,
+   "then": null,
+   "duration": 9999,
+   "strip": "strips/glowfrog_pink_idle.png",
+   "frame_list": [
+    {
+     "x": 0,
+     "y": 96,
+     "w": 24,
+     "h": 24
+    },
+    {
+     "x": 24,
+     "y": 96,
+     "w": 24,
+     "h": 24
+    },
+    {
+     "x": 48,
+     "y": 96,
+     "w": 24,
+     "h": 24
+    },
+    {
+     "x": 72,
+     "y": 96,
+     "w": 24,
+     "h": 24
+    },
+    {
+     "x": 96,
+     "y": 96,
+     "w": 24,
+     "h": 24
+    },
+    {
+     "x": 120,
+     "y": 96,
+     "w": 24,
+     "h": 24
+    }
+   ],
+   "notes": "ambient pink glow frog: throat-sac pulse + blink; 24 px cell (frog ~9x6 px = 0.5 m wide at 18 px/m: oversized a touch so it reads)"
+  },
+  "glowfrog_pink_hop": {
+   "row": 5,
+   "frames": 6,
+   "fps": 10,
+   "loop": true,
+   "loop_from": 0,
+   "loops": 1,
+   "kind": "billboard",
+   "pivot": [
+    12,
+    23
+   ],
+   "lift": 0.0,
+   "glow": true,
+   "light": null,
+   "speed": null,
+   "travel": null,
+   "then": null,
+   "duration": 9999,
+   "strip": "strips/glowfrog_pink_hop.png",
+   "frame_list": [
+    {
+     "x": 0,
+     "y": 120,
+     "w": 24,
+     "h": 24
+    },
+    {
+     "x": 24,
+     "y": 120,
+     "w": 24,
+     "h": 24
+    },
+    {
+     "x": 48,
+     "y": 120,
+     "w": 24,
+     "h": 24
+    },
+    {
+     "x": 72,
+     "y": 120,
+     "w": 24,
+     "h": 24
+    },
+    {
+     "x": 96,
+     "y": 120,
+     "w": 24,
+     "h": 24
+    },
+    {
+     "x": 120,
+     "y": 120,
+     "w": 24,
+     "h": 24
+    }
+   ],
+   "notes": "one hop (0.6 s): move the frog ~0.5 m across the 6 frames, then back to idle"
+  },
+  "glowfrog_violet_idle": {
+   "row": 6,
+   "frames": 6,
+   "fps": 4,
+   "loop": true,
+   "loop_from": 0,
+   "loops": 1,
+   "kind": "billboard",
+   "pivot": [
+    12,
+    23
+   ],
+   "lift": 0.0,
+   "glow": true,
+   "light": {
+    "color": "#a45cf0",
+    "intensity": 0.3,
+    "range": 1.2
+   },
+   "speed": null,
+   "travel": null,
+   "then": null,
+   "duration": 9999,
+   "strip": "strips/glowfrog_violet_idle.png",
+   "frame_list": [
+    {
+     "x": 0,
+     "y": 144,
+     "w": 24,
+     "h": 24
+    },
+    {
+     "x": 24,
+     "y": 144,
+     "w": 24,
+     "h": 24
+    },
+    {
+     "x": 48,
+     "y": 144,
+     "w": 24,
+     "h": 24
+    },
+    {
+     "x": 72,
+     "y": 144,
+     "w": 24,
+     "h": 24
+    },
+    {
+     "x": 96,
+     "y": 144,
+     "w": 24,
+     "h": 24
+    },
+    {
+     "x": 120,
+     "y": 144,
+     "w": 24,
+     "h": 24
+    }
+   ],
+   "notes": "ambient violet glow frog: throat-sac pulse + blink; 24 px cell (frog ~9x6 px = 0.5 m wide at 18 px/m: oversized a touch so it reads)"
+  },
+  "glowfrog_violet_hop": {
+   "row": 7,
+   "frames": 6,
+   "fps": 10,
+   "loop": true,
+   "loop_from": 0,
+   "loops": 1,
+   "kind": "billboard",
+   "pivot": [
+    12,
+    23
+   ],
+   "lift": 0.0,
+   "glow": true,
+   "light": null,
+   "speed": null,
+   "travel": null,
+   "then": null,
+   "duration": 9999,
+   "strip": "strips/glowfrog_violet_hop.png",
+   "frame_list": [
+    {
+     "x": 0,
+     "y": 168,
+     "w": 24,
+     "h": 24
+    },
+    {
+     "x": 24,
+     "y": 168,
+     "w": 24,
+     "h": 24
+    },
+    {
+     "x": 48,
+     "y": 168,
+     "w": 24,
+     "h": 24
+    },
+    {
+     "x": 72,
+     "y": 168,
+     "w": 24,
+     "h": 24
+    },
+    {
+     "x": 96,
+     "y": 168,
+     "w": 24,
+     "h": 24
+    },
+    {
+     "x": 120,
+     "y": 168,
+     "w": 24,
+     "h": 24
+    }
+   ],
+   "notes": "one hop (0.6 s): move the frog ~0.5 m across the 6 frames, then back to idle"
+  }
+ }
+}

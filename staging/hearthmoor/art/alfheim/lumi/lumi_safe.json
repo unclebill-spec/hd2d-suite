@@ -1,0 +1,1474 @@
+{
+ "tool": "hearthmoor-art lumi_gen",
+ "biome": "cozy-village",
+ "frame": [
+  32,
+  40
+ ],
+ "pivot": [
+  16,
+  40
+ ],
+ "ground_row": 39,
+ "facings": [
+  "down",
+  "up",
+  "left",
+  "right"
+ ],
+ "anims": {
+  "idle": {
+   "start": 0,
+   "count": 4,
+   "fps": 3,
+   "loop": [
+    0,
+    1,
+    2,
+    1
+   ],
+   "blink": 3
+  },
+  "walk": {
+   "start": 4,
+   "count": 4,
+   "fps": 8
+  },
+  "follow": {
+   "start": 8,
+   "count": 4,
+   "fps": 10
+  },
+  "talk": {
+   "start": 12,
+   "count": 4,
+   "fps": 8,
+   "loop": [
+    0,
+    1,
+    2,
+    1,
+    0,
+    3,
+    2,
+    1
+   ]
+  },
+  "happy": {
+   "start": 16,
+   "count": 2,
+   "fps": 4,
+   "loop": [
+    0,
+    1
+   ]
+  },
+  "worried": {
+   "start": 18,
+   "count": 2,
+   "fps": 5,
+   "loop": [
+    0,
+    1
+   ]
+  },
+  "surprised": {
+   "start": 20,
+   "count": 2,
+   "fps": 6,
+   "loop": [
+    0,
+    1,
+    1,
+    1
+   ],
+   "hold": [
+    1
+   ]
+  }
+ },
+ "cols": 22,
+ "size": [
+  704,
+  160
+ ],
+ "signature": {
+  "name": "Lumi blue core + violet halo",
+  "hex": "#5ab4f0",
+  "hi": "#d8f4ff",
+  "lo": "#2a6cb0",
+  "halo": {
+   "hex": "#a45cf0",
+   "hi": "#d4a8ff",
+   "lo": "#6a34b8"
+  },
+  "prism_flecks": [
+   "#a6ecff",
+   "#f2c24a",
+   "#d4a8ff",
+   "#fff8e6"
+  ]
+ },
+ "neon_accents": {
+  "cold": "#5ab4f0",
+  "cold_hi": "#d8f4ff",
+  "cold_lo": "#2a6cb0",
+  "neon_violet_lo": "#6a34b8",
+  "neon_blue_hi": "#a6ecff",
+  "neon_violet_hi": "#d4a8ff",
+  "neon_violet": "#a45cf0"
+ },
+ "fx": "lumi_fx.json",
+ "particles": "lumi_particles.json",
+ "portrait": "lumi_portrait.json",
+ "image": "lumi_safe.png",
+ "roles": {
+  "lumi": {
+   "row": 0,
+   "kind": "creature",
+   "companion": true,
+   "speaks": true,
+   "name": "Lumi",
+   "desc": "Lumi, the Alfheim story companion: a speaking neon-blue cold-fire starlight wisp with a pulsing violet halo, a big readable face, a five-tongue flame crown that throws prism flecks, little flame hands that gesture when she talks and a curling starry tail. Hovers at the hero's eye level; follows like a pet but talks like a person.",
+   "size_bounds": [
+    [
+     12,
+     32
+    ],
+    [
+     24,
+     40
+    ]
+   ],
+   "caster": false,
+   "anims": [
+    "idle",
+    "walk",
+    "follow",
+    "talk",
+    "happy",
+    "worried",
+    "surprised"
+   ],
+   "frames": [
+    {
+     "name": "lumi_down_idle0",
+     "facing": "down",
+     "anim": "idle",
+     "i": 0,
+     "x": 0,
+     "y": 0,
+     "w": 32,
+     "h": 40,
+     "pivot": [
+      16,
+      40
+     ]
+    },
+    {
+     "name": "lumi_down_idle1",
+     "facing": "down",
+     "anim": "idle",
+     "i": 1,
+     "x": 32,
+     "y": 0,
+     "w": 32,
+     "h": 40,
+     "pivot": [
+      48,
+      40
+     ]
+    },
+    {
+     "name": "lumi_down_idle2",
+     "facing": "down",
+     "anim": "idle",
+     "i": 2,
+     "x": 64,
+     "y": 0,
+     "w": 32,
+     "h": 40,
+     "pivot": [
+      80,
+      40
+     ]
+    },
+    {
+     "name": "lumi_down_idle3",
+     "facing": "down",
+     "anim": "idle",
+     "i": 3,
+     "x": 96,
+     "y": 0,
+     "w": 32,
+     "h": 40,
+     "pivot": [
+      112,
+      40
+     ]
+    },
+    {
+     "name": "lumi_down_walk0",
+     "facing": "down",
+     "anim": "walk",
+     "i": 0,
+     "x": 128,
+     "y": 0,
+     "w": 32,
+     "h": 40,
+     "pivot": [
+      144,
+      40
+     ]
+    },
+    {
+     "name": "lumi_down_walk1",
+     "facing": "down",
+     "anim": "walk",
+     "i": 1,
+     "x": 160,
+     "y": 0,
+     "w": 32,
+     "h": 40,
+     "pivot": [
+      176,
+      40
+     ]
+    },
+    {
+     "name": "lumi_down_walk2",
+     "facing": "down",
+     "anim": "walk",
+     "i": 2,
+     "x": 192,
+     "y": 0,
+     "w": 32,
+     "h": 40,
+     "pivot": [
+      208,
+      40
+     ]
+    },
+    {
+     "name": "lumi_down_walk3",
+     "facing": "down",
+     "anim": "walk",
+     "i": 3,
+     "x": 224,
+     "y": 0,
+     "w": 32,
+     "h": 40,
+     "pivot": [
+      240,
+      40
+     ]
+    },
+    {
+     "name": "lumi_down_follow0",
+     "facing": "down",
+     "anim": "follow",
+     "i": 0,
+     "x": 256,
+     "y": 0,
+     "w": 32,
+     "h": 40,
+     "pivot": [
+      272,
+      40
+     ]
+    },
+    {
+     "name": "lumi_down_follow1",
+     "facing": "down",
+     "anim": "follow",
+     "i": 1,
+     "x": 288,
+     "y": 0,
+     "w": 32,
+     "h": 40,
+     "pivot": [
+      304,
+      40
+     ]
+    },
+    {
+     "name": "lumi_down_follow2",
+     "facing": "down",
+     "anim": "follow",
+     "i": 2,
+     "x": 320,
+     "y": 0,
+     "w": 32,
+     "h": 40,
+     "pivot": [
+      336,
+      40
+     ]
+    },
+    {
+     "name": "lumi_down_follow3",
+     "facing": "down",
+     "anim": "follow",
+     "i": 3,
+     "x": 352,
+     "y": 0,
+     "w": 32,
+     "h": 40,
+     "pivot": [
+      368,
+      40
+     ]
+    },
+    {
+     "name": "lumi_down_talk0",
+     "facing": "down",
+     "anim": "talk",
+     "i": 0,
+     "x": 384,
+     "y": 0,
+     "w": 32,
+     "h": 40,
+     "pivot": [
+      400,
+      40
+     ]
+    },
+    {
+     "name": "lumi_down_talk1",
+     "facing": "down",
+     "anim": "talk",
+     "i": 1,
+     "x": 416,
+     "y": 0,
+     "w": 32,
+     "h": 40,
+     "pivot": [
+      432,
+      40
+     ]
+    },
+    {
+     "name": "lumi_down_talk2",
+     "facing": "down",
+     "anim": "talk",
+     "i": 2,
+     "x": 448,
+     "y": 0,
+     "w": 32,
+     "h": 40,
+     "pivot": [
+      464,
+      40
+     ]
+    },
+    {
+     "name": "lumi_down_talk3",
+     "facing": "down",
+     "anim": "talk",
+     "i": 3,
+     "x": 480,
+     "y": 0,
+     "w": 32,
+     "h": 40,
+     "pivot": [
+      496,
+      40
+     ]
+    },
+    {
+     "name": "lumi_down_happy0",
+     "facing": "down",
+     "anim": "happy",
+     "i": 0,
+     "x": 512,
+     "y": 0,
+     "w": 32,
+     "h": 40,
+     "pivot": [
+      528,
+      40
+     ]
+    },
+    {
+     "name": "lumi_down_happy1",
+     "facing": "down",
+     "anim": "happy",
+     "i": 1,
+     "x": 544,
+     "y": 0,
+     "w": 32,
+     "h": 40,
+     "pivot": [
+      560,
+      40
+     ]
+    },
+    {
+     "name": "lumi_down_worried0",
+     "facing": "down",
+     "anim": "worried",
+     "i": 0,
+     "x": 576,
+     "y": 0,
+     "w": 32,
+     "h": 40,
+     "pivot": [
+      592,
+      40
+     ]
+    },
+    {
+     "name": "lumi_down_worried1",
+     "facing": "down",
+     "anim": "worried",
+     "i": 1,
+     "x": 608,
+     "y": 0,
+     "w": 32,
+     "h": 40,
+     "pivot": [
+      624,
+      40
+     ]
+    },
+    {
+     "name": "lumi_down_surprised0",
+     "facing": "down",
+     "anim": "surprised",
+     "i": 0,
+     "x": 640,
+     "y": 0,
+     "w": 32,
+     "h": 40,
+     "pivot": [
+      656,
+      40
+     ]
+    },
+    {
+     "name": "lumi_down_surprised1",
+     "facing": "down",
+     "anim": "surprised",
+     "i": 1,
+     "x": 672,
+     "y": 0,
+     "w": 32,
+     "h": 40,
+     "pivot": [
+      688,
+      40
+     ]
+    },
+    {
+     "name": "lumi_up_idle0",
+     "facing": "up",
+     "anim": "idle",
+     "i": 0,
+     "x": 0,
+     "y": 40,
+     "w": 32,
+     "h": 40,
+     "pivot": [
+      16,
+      80
+     ]
+    },
+    {
+     "name": "lumi_up_idle1",
+     "facing": "up",
+     "anim": "idle",
+     "i": 1,
+     "x": 32,
+     "y": 40,
+     "w": 32,
+     "h": 40,
+     "pivot": [
+      48,
+      80
+     ]
+    },
+    {
+     "name": "lumi_up_idle2",
+     "facing": "up",
+     "anim": "idle",
+     "i": 2,
+     "x": 64,
+     "y": 40,
+     "w": 32,
+     "h": 40,
+     "pivot": [
+      80,
+      80
+     ]
+    },
+    {
+     "name": "lumi_up_idle3",
+     "facing": "up",
+     "anim": "idle",
+     "i": 3,
+     "x": 96,
+     "y": 40,
+     "w": 32,
+     "h": 40,
+     "pivot": [
+      112,
+      80
+     ]
+    },
+    {
+     "name": "lumi_up_walk0",
+     "facing": "up",
+     "anim": "walk",
+     "i": 0,
+     "x": 128,
+     "y": 40,
+     "w": 32,
+     "h": 40,
+     "pivot": [
+      144,
+      80
+     ]
+    },
+    {
+     "name": "lumi_up_walk1",
+     "facing": "up",
+     "anim": "walk",
+     "i": 1,
+     "x": 160,
+     "y": 40,
+     "w": 32,
+     "h": 40,
+     "pivot": [
+      176,
+      80
+     ]
+    },
+    {
+     "name": "lumi_up_walk2",
+     "facing": "up",
+     "anim": "walk",
+     "i": 2,
+     "x": 192,
+     "y": 40,
+     "w": 32,
+     "h": 40,
+     "pivot": [
+      208,
+      80
+     ]
+    },
+    {
+     "name": "lumi_up_walk3",
+     "facing": "up",
+     "anim": "walk",
+     "i": 3,
+     "x": 224,
+     "y": 40,
+     "w": 32,
+     "h": 40,
+     "pivot": [
+      240,
+      80
+     ]
+    },
+    {
+     "name": "lumi_up_follow0",
+     "facing": "up",
+     "anim": "follow",
+     "i": 0,
+     "x": 256,
+     "y": 40,
+     "w": 32,
+     "h": 40,
+     "pivot": [
+      272,
+      80
+     ]
+    },
+    {
+     "name": "lumi_up_follow1",
+     "facing": "up",
+     "anim": "follow",
+     "i": 1,
+     "x": 288,
+     "y": 40,
+     "w": 32,
+     "h": 40,
+     "pivot": [
+      304,
+      80
+     ]
+    },
+    {
+     "name": "lumi_up_follow2",
+     "facing": "up",
+     "anim": "follow",
+     "i": 2,
+     "x": 320,
+     "y": 40,
+     "w": 32,
+     "h": 40,
+     "pivot": [
+      336,
+      80
+     ]
+    },
+    {
+     "name": "lumi_up_follow3",
+     "facing": "up",
+     "anim": "follow",
+     "i": 3,
+     "x": 352,
+     "y": 40,
+     "w": 32,
+     "h": 40,
+     "pivot": [
+      368,
+      80
+     ]
+    },
+    {
+     "name": "lumi_up_talk0",
+     "facing": "up",
+     "anim": "talk",
+     "i": 0,
+     "x": 384,
+     "y": 40,
+     "w": 32,
+     "h": 40,
+     "pivot": [
+      400,
+      80
+     ]
+    },
+    {
+     "name": "lumi_up_talk1",
+     "facing": "up",
+     "anim": "talk",
+     "i": 1,
+     "x": 416,
+     "y": 40,
+     "w": 32,
+     "h": 40,
+     "pivot": [
+      432,
+      80
+     ]
+    },
+    {
+     "name": "lumi_up_talk2",
+     "facing": "up",
+     "anim": "talk",
+     "i": 2,
+     "x": 448,
+     "y": 40,
+     "w": 32,
+     "h": 40,
+     "pivot": [
+      464,
+      80
+     ]
+    },
+    {
+     "name": "lumi_up_talk3",
+     "facing": "up",
+     "anim": "talk",
+     "i": 3,
+     "x": 480,
+     "y": 40,
+     "w": 32,
+     "h": 40,
+     "pivot": [
+      496,
+      80
+     ]
+    },
+    {
+     "name": "lumi_up_happy0",
+     "facing": "up",
+     "anim": "happy",
+     "i": 0,
+     "x": 512,
+     "y": 40,
+     "w": 32,
+     "h": 40,
+     "pivot": [
+      528,
+      80
+     ]
+    },
+    {
+     "name": "lumi_up_happy1",
+     "facing": "up",
+     "anim": "happy",
+     "i": 1,
+     "x": 544,
+     "y": 40,
+     "w": 32,
+     "h": 40,
+     "pivot": [
+      560,
+      80
+     ]
+    },
+    {
+     "name": "lumi_up_worried0",
+     "facing": "up",
+     "anim": "worried",
+     "i": 0,
+     "x": 576,
+     "y": 40,
+     "w": 32,
+     "h": 40,
+     "pivot": [
+      592,
+      80
+     ]
+    },
+    {
+     "name": "lumi_up_worried1",
+     "facing": "up",
+     "anim": "worried",
+     "i": 1,
+     "x": 608,
+     "y": 40,
+     "w": 32,
+     "h": 40,
+     "pivot": [
+      624,
+      80
+     ]
+    },
+    {
+     "name": "lumi_up_surprised0",
+     "facing": "up",
+     "anim": "surprised",
+     "i": 0,
+     "x": 640,
+     "y": 40,
+     "w": 32,
+     "h": 40,
+     "pivot": [
+      656,
+      80
+     ]
+    },
+    {
+     "name": "lumi_up_surprised1",
+     "facing": "up",
+     "anim": "surprised",
+     "i": 1,
+     "x": 672,
+     "y": 40,
+     "w": 32,
+     "h": 40,
+     "pivot": [
+      688,
+      80
+     ]
+    },
+    {
+     "name": "lumi_left_idle0",
+     "facing": "left",
+     "anim": "idle",
+     "i": 0,
+     "x": 0,
+     "y": 80,
+     "w": 32,
+     "h": 40,
+     "pivot": [
+      16,
+      120
+     ]
+    },
+    {
+     "name": "lumi_left_idle1",
+     "facing": "left",
+     "anim": "idle",
+     "i": 1,
+     "x": 32,
+     "y": 80,
+     "w": 32,
+     "h": 40,
+     "pivot": [
+      48,
+      120
+     ]
+    },
+    {
+     "name": "lumi_left_idle2",
+     "facing": "left",
+     "anim": "idle",
+     "i": 2,
+     "x": 64,
+     "y": 80,
+     "w": 32,
+     "h": 40,
+     "pivot": [
+      80,
+      120
+     ]
+    },
+    {
+     "name": "lumi_left_idle3",
+     "facing": "left",
+     "anim": "idle",
+     "i": 3,
+     "x": 96,
+     "y": 80,
+     "w": 32,
+     "h": 40,
+     "pivot": [
+      112,
+      120
+     ]
+    },
+    {
+     "name": "lumi_left_walk0",
+     "facing": "left",
+     "anim": "walk",
+     "i": 0,
+     "x": 128,
+     "y": 80,
+     "w": 32,
+     "h": 40,
+     "pivot": [
+      144,
+      120
+     ]
+    },
+    {
+     "name": "lumi_left_walk1",
+     "facing": "left",
+     "anim": "walk",
+     "i": 1,
+     "x": 160,
+     "y": 80,
+     "w": 32,
+     "h": 40,
+     "pivot": [
+      176,
+      120
+     ]
+    },
+    {
+     "name": "lumi_left_walk2",
+     "facing": "left",
+     "anim": "walk",
+     "i": 2,
+     "x": 192,
+     "y": 80,
+     "w": 32,
+     "h": 40,
+     "pivot": [
+      208,
+      120
+     ]
+    },
+    {
+     "name": "lumi_left_walk3",
+     "facing": "left",
+     "anim": "walk",
+     "i": 3,
+     "x": 224,
+     "y": 80,
+     "w": 32,
+     "h": 40,
+     "pivot": [
+      240,
+      120
+     ]
+    },
+    {
+     "name": "lumi_left_follow0",
+     "facing": "left",
+     "anim": "follow",
+     "i": 0,
+     "x": 256,
+     "y": 80,
+     "w": 32,
+     "h": 40,
+     "pivot": [
+      272,
+      120
+     ]
+    },
+    {
+     "name": "lumi_left_follow1",
+     "facing": "left",
+     "anim": "follow",
+     "i": 1,
+     "x": 288,
+     "y": 80,
+     "w": 32,
+     "h": 40,
+     "pivot": [
+      304,
+      120
+     ]
+    },
+    {
+     "name": "lumi_left_follow2",
+     "facing": "left",
+     "anim": "follow",
+     "i": 2,
+     "x": 320,
+     "y": 80,
+     "w": 32,
+     "h": 40,
+     "pivot": [
+      336,
+      120
+     ]
+    },
+    {
+     "name": "lumi_left_follow3",
+     "facing": "left",
+     "anim": "follow",
+     "i": 3,
+     "x": 352,
+     "y": 80,
+     "w": 32,
+     "h": 40,
+     "pivot": [
+      368,
+      120
+     ]
+    },
+    {
+     "name": "lumi_left_talk0",
+     "facing": "left",
+     "anim": "talk",
+     "i": 0,
+     "x": 384,
+     "y": 80,
+     "w": 32,
+     "h": 40,
+     "pivot": [
+      400,
+      120
+     ]
+    },
+    {
+     "name": "lumi_left_talk1",
+     "facing": "left",
+     "anim": "talk",
+     "i": 1,
+     "x": 416,
+     "y": 80,
+     "w": 32,
+     "h": 40,
+     "pivot": [
+      432,
+      120
+     ]
+    },
+    {
+     "name": "lumi_left_talk2",
+     "facing": "left",
+     "anim": "talk",
+     "i": 2,
+     "x": 448,
+     "y": 80,
+     "w": 32,
+     "h": 40,
+     "pivot": [
+      464,
+      120
+     ]
+    },
+    {
+     "name": "lumi_left_talk3",
+     "facing": "left",
+     "anim": "talk",
+     "i": 3,
+     "x": 480,
+     "y": 80,
+     "w": 32,
+     "h": 40,
+     "pivot": [
+      496,
+      120
+     ]
+    },
+    {
+     "name": "lumi_left_happy0",
+     "facing": "left",
+     "anim": "happy",
+     "i": 0,
+     "x": 512,
+     "y": 80,
+     "w": 32,
+     "h": 40,
+     "pivot": [
+      528,
+      120
+     ]
+    },
+    {
+     "name": "lumi_left_happy1",
+     "facing": "left",
+     "anim": "happy",
+     "i": 1,
+     "x": 544,
+     "y": 80,
+     "w": 32,
+     "h": 40,
+     "pivot": [
+      560,
+      120
+     ]
+    },
+    {
+     "name": "lumi_left_worried0",
+     "facing": "left",
+     "anim": "worried",
+     "i": 0,
+     "x": 576,
+     "y": 80,
+     "w": 32,
+     "h": 40,
+     "pivot": [
+      592,
+      120
+     ]
+    },
+    {
+     "name": "lumi_left_worried1",
+     "facing": "left",
+     "anim": "worried",
+     "i": 1,
+     "x": 608,
+     "y": 80,
+     "w": 32,
+     "h": 40,
+     "pivot": [
+      624,
+      120
+     ]
+    },
+    {
+     "name": "lumi_left_surprised0",
+     "facing": "left",
+     "anim": "surprised",
+     "i": 0,
+     "x": 640,
+     "y": 80,
+     "w": 32,
+     "h": 40,
+     "pivot": [
+      656,
+      120
+     ]
+    },
+    {
+     "name": "lumi_left_surprised1",
+     "facing": "left",
+     "anim": "surprised",
+     "i": 1,
+     "x": 672,
+     "y": 80,
+     "w": 32,
+     "h": 40,
+     "pivot": [
+      688,
+      120
+     ]
+    },
+    {
+     "name": "lumi_right_idle0",
+     "facing": "right",
+     "anim": "idle",
+     "i": 0,
+     "x": 0,
+     "y": 120,
+     "w": 32,
+     "h": 40,
+     "pivot": [
+      16,
+      160
+     ]
+    },
+    {
+     "name": "lumi_right_idle1",
+     "facing": "right",
+     "anim": "idle",
+     "i": 1,
+     "x": 32,
+     "y": 120,
+     "w": 32,
+     "h": 40,
+     "pivot": [
+      48,
+      160
+     ]
+    },
+    {
+     "name": "lumi_right_idle2",
+     "facing": "right",
+     "anim": "idle",
+     "i": 2,
+     "x": 64,
+     "y": 120,
+     "w": 32,
+     "h": 40,
+     "pivot": [
+      80,
+      160
+     ]
+    },
+    {
+     "name": "lumi_right_idle3",
+     "facing": "right",
+     "anim": "idle",
+     "i": 3,
+     "x": 96,
+     "y": 120,
+     "w": 32,
+     "h": 40,
+     "pivot": [
+      112,
+      160
+     ]
+    },
+    {
+     "name": "lumi_right_walk0",
+     "facing": "right",
+     "anim": "walk",
+     "i": 0,
+     "x": 128,
+     "y": 120,
+     "w": 32,
+     "h": 40,
+     "pivot": [
+      144,
+      160
+     ]
+    },
+    {
+     "name": "lumi_right_walk1",
+     "facing": "right",
+     "anim": "walk",
+     "i": 1,
+     "x": 160,
+     "y": 120,
+     "w": 32,
+     "h": 40,
+     "pivot": [
+      176,
+      160
+     ]
+    },
+    {
+     "name": "lumi_right_walk2",
+     "facing": "right",
+     "anim": "walk",
+     "i": 2,
+     "x": 192,
+     "y": 120,
+     "w": 32,
+     "h": 40,
+     "pivot": [
+      208,
+      160
+     ]
+    },
+    {
+     "name": "lumi_right_walk3",
+     "facing": "right",
+     "anim": "walk",
+     "i": 3,
+     "x": 224,
+     "y": 120,
+     "w": 32,
+     "h": 40,
+     "pivot": [
+      240,
+      160
+     ]
+    },
+    {
+     "name": "lumi_right_follow0",
+     "facing": "right",
+     "anim": "follow",
+     "i": 0,
+     "x": 256,
+     "y": 120,
+     "w": 32,
+     "h": 40,
+     "pivot": [
+      272,
+      160
+     ]
+    },
+    {
+     "name": "lumi_right_follow1",
+     "facing": "right",
+     "anim": "follow",
+     "i": 1,
+     "x": 288,
+     "y": 120,
+     "w": 32,
+     "h": 40,
+     "pivot": [
+      304,
+      160
+     ]
+    },
+    {
+     "name": "lumi_right_follow2",
+     "facing": "right",
+     "anim": "follow",
+     "i": 2,
+     "x": 320,
+     "y": 120,
+     "w": 32,
+     "h": 40,
+     "pivot": [
+      336,
+      160
+     ]
+    },
+    {
+     "name": "lumi_right_follow3",
+     "facing": "right",
+     "anim": "follow",
+     "i": 3,
+     "x": 352,
+     "y": 120,
+     "w": 32,
+     "h": 40,
+     "pivot": [
+      368,
+      160
+     ]
+    },
+    {
+     "name": "lumi_right_talk0",
+     "facing": "right",
+     "anim": "talk",
+     "i": 0,
+     "x": 384,
+     "y": 120,
+     "w": 32,
+     "h": 40,
+     "pivot": [
+      400,
+      160
+     ]
+    },
+    {
+     "name": "lumi_right_talk1",
+     "facing": "right",
+     "anim": "talk",
+     "i": 1,
+     "x": 416,
+     "y": 120,
+     "w": 32,
+     "h": 40,
+     "pivot": [
+      432,
+      160
+     ]
+    },
+    {
+     "name": "lumi_right_talk2",
+     "facing": "right",
+     "anim": "talk",
+     "i": 2,
+     "x": 448,
+     "y": 120,
+     "w": 32,
+     "h": 40,
+     "pivot": [
+      464,
+      160
+     ]
+    },
+    {
+     "name": "lumi_right_talk3",
+     "facing": "right",
+     "anim": "talk",
+     "i": 3,
+     "x": 480,
+     "y": 120,
+     "w": 32,
+     "h": 40,
+     "pivot": [
+      496,
+      160
+     ]
+    },
+    {
+     "name": "lumi_right_happy0",
+     "facing": "right",
+     "anim": "happy",
+     "i": 0,
+     "x": 512,
+     "y": 120,
+     "w": 32,
+     "h": 40,
+     "pivot": [
+      528,
+      160
+     ]
+    },
+    {
+     "name": "lumi_right_happy1",
+     "facing": "right",
+     "anim": "happy",
+     "i": 1,
+     "x": 544,
+     "y": 120,
+     "w": 32,
+     "h": 40,
+     "pivot": [
+      560,
+      160
+     ]
+    },
+    {
+     "name": "lumi_right_worried0",
+     "facing": "right",
+     "anim": "worried",
+     "i": 0,
+     "x": 576,
+     "y": 120,
+     "w": 32,
+     "h": 40,
+     "pivot": [
+      592,
+      160
+     ]
+    },
+    {
+     "name": "lumi_right_worried1",
+     "facing": "right",
+     "anim": "worried",
+     "i": 1,
+     "x": 608,
+     "y": 120,
+     "w": 32,
+     "h": 40,
+     "pivot": [
+      624,
+      160
+     ]
+    },
+    {
+     "name": "lumi_right_surprised0",
+     "facing": "right",
+     "anim": "surprised",
+     "i": 0,
+     "x": 640,
+     "y": 120,
+     "w": 32,
+     "h": 40,
+     "pivot": [
+      656,
+      160
+     ]
+    },
+    {
+     "name": "lumi_right_surprised1",
+     "facing": "right",
+     "anim": "surprised",
+     "i": 1,
+     "x": 672,
+     "y": 120,
+     "w": 32,
+     "h": 40,
+     "pivot": [
+      688,
+      160
+     ]
+    }
+   ],
+   "lumifx": {
+    "hover": {
+     "lift": 0.3,
+     "bob": 0.08,
+     "hz": 0.7
+    },
+    "light": {
+     "color": "#5ab4f0",
+     "intensity": 7.0,
+     "range": 5.0,
+     "lift": 1.45,
+     "fadeIn": 0.5,
+     "r": 3.0,
+     "pulse": [
+      0.85,
+      1.12,
+      0.7
+     ],
+     "talk_pulse": {
+      "by_frame": [
+       1.0,
+       1.12,
+       1.3,
+       1.15
+      ],
+      "note": "multiply base by this per talk column 12-15"
+     },
+     "emote": {
+      "happy": 1.25,
+      "worried": 0.7,
+      "surprised": 1.45
+     },
+     "halo": {
+      "color": "#a45cf0",
+      "hi": "#d4a8ff",
+      "mode": "tint_pulse",
+      "mix": [
+       0.0,
+       0.35
+      ],
+      "hz": 0.7,
+      "sync": "pulse",
+      "note": "lerp the core light toward violet by mix[0]..mix[1] in step with the intensity pulse (peak = most violet); talk col 14 / happy / surprised = mix[1]",
+      "second_light": {
+       "optional": true,
+       "color": "#a45cf0",
+       "intensity": 2.5,
+       "range": 6.5,
+       "lift": 1.45,
+       "pulse": [
+        0.4,
+        1.0,
+        0.7
+       ],
+       "note": "only where the 2-3 light cap allows (cutscenes, Wisp Night): a wide faint violet halo light"
+      }
+     },
+     "prism_shift": {
+      "optional": true,
+      "colors": [
+       "#5ab4f0",
+       "#a6ecff",
+       "#d4a8ff",
+       "#ffd27a"
+      ],
+      "period_s": 6.0,
+      "mix": 0.25,
+      "note": "Wisp Night / Prism Vault only: lerp the light colour 25% toward each in turn"
+     }
+    },
+    "aura": "lumi_aura",
+    "pool": "lumi_pool",
+    "talk_fx": "lumi_talk_pulse",
+    "emote_fx": {
+     "happy": "lumi_emote_happy",
+     "worried": "lumi_emote_worried",
+     "surprised": "lumi_emote_surprised"
+    },
+    "particles": [
+     "lumi_starlight",
+     "lumi_prism_glint"
+    ],
+    "speed": 2.6,
+    "behavior": "follow"
+   }
+  }
+ }
+}

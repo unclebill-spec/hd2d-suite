@@ -1,0 +1,561 @@
+{
+ "tool": "hd2d portal",
+ "biome": "cozy-village",
+ "seed": 104,
+ "image": "forge_fx.png",
+ "cell": 48,
+ "size": [
+  384,
+  384
+ ],
+ "cast_sets": {},
+ "cycle": [],
+ "effects": {
+  "forge_fire": {
+   "row": 0,
+   "frames": 8,
+   "fps": 10,
+   "loop": true,
+   "loop_from": 0,
+   "loops": 1,
+   "kind": "billboard",
+   "pivot": [
+    24,
+    47
+   ],
+   "lift": 0.27,
+   "glow": true,
+   "light": {
+    "color": "#ff5a4a",
+    "intensity": 1.4,
+    "range": 6.0
+   },
+   "speed": null,
+   "travel": null,
+   "then": null,
+   "duration": 9999,
+   "strip": "strips/forge_fire.png",
+   "frame_list": [
+    {
+     "x": 0,
+     "y": 0,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 48,
+     "y": 0,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 96,
+     "y": 0,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 144,
+     "y": 0,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 192,
+     "y": 0,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 240,
+     "y": 0,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 288,
+     "y": 0,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 336,
+     "y": 0,
+     "w": 48,
+     "h": 48
+    }
+   ],
+   "notes": "in forge_hearth's mouth (local [0, 0.27, 0.72])"
+  },
+  "forge_fire_top": {
+   "row": 1,
+   "frames": 8,
+   "fps": 10,
+   "loop": true,
+   "loop_from": 0,
+   "loops": 1,
+   "kind": "billboard",
+   "pivot": [
+    24,
+    47
+   ],
+   "lift": 1.05,
+   "glow": true,
+   "light": null,
+   "speed": null,
+   "travel": null,
+   "then": null,
+   "duration": 9999,
+   "strip": "strips/forge_fire_top.png",
+   "frame_list": [
+    {
+     "x": 0,
+     "y": 48,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 48,
+     "y": 48,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 96,
+     "y": 48,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 144,
+     "y": 48,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 192,
+     "y": 48,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 240,
+     "y": 48,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 288,
+     "y": 48,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 336,
+     "y": 48,
+     "w": 48,
+     "h": 48
+    }
+   ],
+   "notes": "on forge_hearth's top fire bed (local [0, 1.05, 0.05])"
+  },
+  "forge_sparks": {
+   "row": 2,
+   "frames": 6,
+   "fps": 14,
+   "loop": false,
+   "loop_from": 0,
+   "loops": 1,
+   "kind": "billboard",
+   "pivot": [
+    24,
+    40
+   ],
+   "lift": 0.92,
+   "glow": true,
+   "light": {
+    "color": "#ffb24a",
+    "intensity": 1.2,
+    "range": 3.0,
+    "curve": [
+     1.0,
+     0.8,
+     0.5,
+     0.3,
+     0.2,
+     0.1
+    ]
+   },
+   "speed": null,
+   "travel": null,
+   "then": null,
+   "duration": 0.429,
+   "strip": "strips/forge_sparks.png",
+   "frame_list": [
+    {
+     "x": 0,
+     "y": 96,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 48,
+     "y": 96,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 96,
+     "y": 96,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 144,
+     "y": 96,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 192,
+     "y": 96,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 240,
+     "y": 96,
+     "w": 48,
+     "h": 48
+    }
+   ],
+   "notes": "anvil strike (on forge_anvil's face, y 0.92); fire every ~1.2 s while Hilde works"
+  },
+  "quench_steam": {
+   "row": 3,
+   "frames": 8,
+   "fps": 10,
+   "loop": false,
+   "loop_from": 0,
+   "loops": 1,
+   "kind": "billboard",
+   "pivot": [
+    24,
+    47
+   ],
+   "lift": 0.65,
+   "glow": true,
+   "light": {
+    "color": "#a6ecff",
+    "intensity": 1.0,
+    "range": 3.5,
+    "curve": [
+     1.0,
+     0.9,
+     0.7,
+     0.5,
+     0.4,
+     0.3,
+     0.2,
+     0.1
+    ]
+   },
+   "speed": null,
+   "travel": null,
+   "then": null,
+   "duration": 0.8,
+   "strip": "strips/quench_steam.png",
+   "frame_list": [
+    {
+     "x": 0,
+     "y": 144,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 48,
+     "y": 144,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 96,
+     "y": 144,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 144,
+     "y": 144,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 192,
+     "y": 144,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 240,
+     "y": 144,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 288,
+     "y": 144,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 336,
+     "y": 144,
+     "w": 48,
+     "h": 48
+    }
+   ],
+   "notes": "over quench_tank when a blade is quenched"
+  },
+  "embers_drift": {
+   "row": 4,
+   "frames": 8,
+   "fps": 6,
+   "loop": true,
+   "loop_from": 0,
+   "loops": 1,
+   "kind": "billboard",
+   "pivot": [
+    24,
+    47
+   ],
+   "lift": 1.0,
+   "glow": true,
+   "light": null,
+   "speed": null,
+   "travel": null,
+   "then": null,
+   "duration": 9999,
+   "strip": "strips/embers_drift.png",
+   "frame_list": [
+    {
+     "x": 0,
+     "y": 192,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 48,
+     "y": 192,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 96,
+     "y": 192,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 144,
+     "y": 192,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 192,
+     "y": 192,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 240,
+     "y": 192,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 288,
+     "y": 192,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 336,
+     "y": 192,
+     "w": 48,
+     "h": 48
+    }
+   ],
+   "notes": "over the hearth / chimney top (lift 3.6) / coal bin"
+  },
+  "anvil_glow": {
+   "row": 5,
+   "frames": 4,
+   "fps": 4,
+   "loop": true,
+   "loop_from": 0,
+   "loops": 1,
+   "kind": "billboard",
+   "pivot": [
+    24,
+    47
+   ],
+   "lift": 0.48,
+   "glow": true,
+   "light": null,
+   "speed": null,
+   "travel": null,
+   "then": null,
+   "duration": 9999,
+   "strip": "strips/anvil_glow.png",
+   "frame_list": [
+    {
+     "x": 0,
+     "y": 240,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 48,
+     "y": 240,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 96,
+     "y": 240,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 144,
+     "y": 240,
+     "w": 48,
+     "h": 48
+    }
+   ],
+   "notes": "optional: animate the hot bar (place on the anvil face)"
+  },
+  "forge_pool_red": {
+   "row": 6,
+   "frames": 6,
+   "fps": 4,
+   "loop": true,
+   "loop_from": 0,
+   "loops": 1,
+   "kind": "decal",
+   "pivot": [
+    24,
+    24
+   ],
+   "lift": 0.02,
+   "glow": true,
+   "light": null,
+   "speed": null,
+   "travel": null,
+   "then": null,
+   "duration": 9999,
+   "strip": "strips/forge_pool_red.png",
+   "frame_list": [
+    {
+     "x": 0,
+     "y": 288,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 48,
+     "y": 288,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 96,
+     "y": 288,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 144,
+     "y": 288,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 192,
+     "y": 288,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 240,
+     "y": 288,
+     "w": 48,
+     "h": 48
+    }
+   ],
+   "notes": "in front of the forge mouth (light zone r ~2.4 m)"
+  },
+  "quench_pool_blue": {
+   "row": 7,
+   "frames": 6,
+   "fps": 4,
+   "loop": true,
+   "loop_from": 0,
+   "loops": 1,
+   "kind": "decal",
+   "pivot": [
+    24,
+    24
+   ],
+   "lift": 0.02,
+   "glow": true,
+   "light": null,
+   "speed": null,
+   "travel": null,
+   "then": null,
+   "duration": 9999,
+   "strip": "strips/quench_pool_blue.png",
+   "frame_list": [
+    {
+     "x": 0,
+     "y": 336,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 48,
+     "y": 336,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 96,
+     "y": 336,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 144,
+     "y": 336,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 192,
+     "y": 336,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 240,
+     "y": 336,
+     "w": 48,
+     "h": 48
+    }
+   ],
+   "notes": "around the quench tank"
+  }
+ }
+}

@@ -1,0 +1,2 @@
+orb_lanterns: READY (2026-10-05, Hearthmoor Art seat)
+See README.md + contact_sheet.png. 13 kit pieces, 3 gamefx atlases (24/32/48 px), 12 inventory icons.

@@ -1,0 +1,2 @@
+verdant_heart: READY (2026-10-05, Hearthmoor Art seat)
+See README.md + contact_sheet.png. Sprites pass check-sprite; kit .glb + kit.json; gamefx verdant_fx (48 px) + verdant_critters (24 px).

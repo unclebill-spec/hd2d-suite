@@ -1,0 +1,76 @@
+{
+ "alfheim_npcs": {
+  "atlas": "/workspace/hearthmoor-staging/art/alfheim/sprite/alfheim_npcs.png",
+  "biome": "cozy-village",
+  "roles": {
+   "elf_lampwright": {
+    "frames": 32,
+    "colors": 17,
+    "issues": []
+   },
+   "elf_scholar": {
+    "frames": 32,
+    "colors": 17,
+    "issues": []
+   },
+   "elf_gardener": {
+    "frames": 32,
+    "colors": 14,
+    "issues": []
+   },
+   "elf_child": {
+    "frames": 32,
+    "colors": 15,
+    "issues": []
+   }
+  },
+  "summary": {
+   "roles": 4,
+   "failures": 0,
+   "semi_transparent": 0,
+   "pass": true
+  },
+  "failures": []
+ },
+ "prism_vault_enemies": {
+  "atlas": "/workspace/hearthmoor-staging/art/alfheim/sprite/prism_vault_enemies.png",
+  "biome": "cozy-village",
+  "roles": {
+   "prismshard": {
+    "frames": 64,
+    "colors": 8,
+    "issues": []
+   },
+   "mirrorduelist": {
+    "frames": 64,
+    "colors": 15,
+    "issues": []
+   }
+  },
+  "summary": {
+   "roles": 2,
+   "failures": 0,
+   "semi_transparent": 0,
+   "pass": true
+  },
+  "failures": []
+ },
+ "boss_sylvaine": {
+  "atlas": "/workspace/hearthmoor-staging/art/alfheim/sprite/boss_sylvaine.png",
+  "biome": "cozy-village",
+  "roles": {
+   "sylvaine": {
+    "frames": 64,
+    "colors": 18,
+    "issues": []
+   }
+  },
+  "summary": {
+   "roles": 1,
+   "failures": 0,
+   "semi_transparent": 0,
+   "pass": true
+  },
+  "failures": []
+ }
+}

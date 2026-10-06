@@ -1,0 +1,553 @@
+{
+ "tool": "hearthmoor-art pets_gen (spells format)",
+ "biome": "cozy-village",
+ "image": "pets_fx.png",
+ "cell": 32,
+ "size": [
+  256,
+  256
+ ],
+ "neon": {
+  "neon_red": "#e0302a",
+  "neon_red_lo": "#a81c22",
+  "neon_red_hi": "#ff5a4a",
+  "neon_violet": "#a45cf0",
+  "neon_violet_hi": "#d4a8ff",
+  "neon_violet_lo": "#6a34b8",
+  "neon_green": "#5aec3c",
+  "neon_green_hi": "#c4ff8a",
+  "neon_green_lo": "#24a03a"
+ },
+ "effects": {
+  "pet_aura_wisp": {
+   "row": 0,
+   "frames": 8,
+   "fps": 10,
+   "loop": true,
+   "loop_from": 0,
+   "loops": 1,
+   "kind": "billboard",
+   "pivot": [
+    16,
+    31
+   ],
+   "lift": 0.0,
+   "glow": true,
+   "light": null,
+   "speed": null,
+   "travel": null,
+   "then": null,
+   "frame_list": [
+    {
+     "x": 0,
+     "y": 0,
+     "w": 32,
+     "h": 32
+    },
+    {
+     "x": 32,
+     "y": 0,
+     "w": 32,
+     "h": 32
+    },
+    {
+     "x": 64,
+     "y": 0,
+     "w": 32,
+     "h": 32
+    },
+    {
+     "x": 96,
+     "y": 0,
+     "w": 32,
+     "h": 32
+    },
+    {
+     "x": 128,
+     "y": 0,
+     "w": 32,
+     "h": 32
+    },
+    {
+     "x": 160,
+     "y": 0,
+     "w": 32,
+     "h": 32
+    },
+    {
+     "x": 192,
+     "y": 0,
+     "w": 32,
+     "h": 32
+    },
+    {
+     "x": 224,
+     "y": 0,
+     "w": 32,
+     "h": 32
+    }
+   ],
+   "combat": true,
+   "duration": 0.8,
+   "desc": "cold-fire sparkles orbiting the wisp + blue motes rising (palette only)",
+   "follow_lift": "hover"
+  },
+  "pet_aura_moth": {
+   "row": 1,
+   "frames": 8,
+   "fps": 8,
+   "loop": true,
+   "loop_from": 0,
+   "loops": 1,
+   "kind": "billboard",
+   "pivot": [
+    16,
+    31
+   ],
+   "lift": 0.0,
+   "glow": true,
+   "light": null,
+   "speed": null,
+   "travel": null,
+   "then": null,
+   "frame_list": [
+    {
+     "x": 0,
+     "y": 32,
+     "w": 32,
+     "h": 32
+    },
+    {
+     "x": 32,
+     "y": 32,
+     "w": 32,
+     "h": 32
+    },
+    {
+     "x": 64,
+     "y": 32,
+     "w": 32,
+     "h": 32
+    },
+    {
+     "x": 96,
+     "y": 32,
+     "w": 32,
+     "h": 32
+    },
+    {
+     "x": 128,
+     "y": 32,
+     "w": 32,
+     "h": 32
+    },
+    {
+     "x": 160,
+     "y": 32,
+     "w": 32,
+     "h": 32
+    },
+    {
+     "x": 192,
+     "y": 32,
+     "w": 32,
+     "h": 32
+    },
+    {
+     "x": 224,
+     "y": 32,
+     "w": 32,
+     "h": 32
+    }
+   ],
+   "combat": true,
+   "duration": 1.0,
+   "desc": "violet neon wing-dust twinkling and drifting down around the moth (NEON violet)",
+   "follow_lift": "hover"
+  },
+  "pet_aura_fox": {
+   "row": 2,
+   "frames": 8,
+   "fps": 10,
+   "loop": true,
+   "loop_from": 0,
+   "loops": 1,
+   "kind": "billboard",
+   "pivot": [
+    16,
+    31
+   ],
+   "lift": 0.0,
+   "glow": true,
+   "light": null,
+   "speed": null,
+   "travel": null,
+   "then": null,
+   "frame_list": [
+    {
+     "x": 0,
+     "y": 64,
+     "w": 32,
+     "h": 32
+    },
+    {
+     "x": 32,
+     "y": 64,
+     "w": 32,
+     "h": 32
+    },
+    {
+     "x": 64,
+     "y": 64,
+     "w": 32,
+     "h": 32
+    },
+    {
+     "x": 96,
+     "y": 64,
+     "w": 32,
+     "h": 32
+    },
+    {
+     "x": 128,
+     "y": 64,
+     "w": 32,
+     "h": 32
+    },
+    {
+     "x": 160,
+     "y": 64,
+     "w": 32,
+     "h": 32
+    },
+    {
+     "x": 192,
+     "y": 64,
+     "w": 32,
+     "h": 32
+    },
+    {
+     "x": 224,
+     "y": 64,
+     "w": 32,
+     "h": 32
+    }
+   ],
+   "combat": true,
+   "duration": 0.8,
+   "desc": "red neon foxfire embers rising off the lantern tail (NEON red)"
+  },
+  "pet_pool_wisp": {
+   "row": 3,
+   "frames": 6,
+   "fps": 6,
+   "loop": true,
+   "loop_from": 0,
+   "loops": 1,
+   "kind": "decal",
+   "pivot": [
+    16,
+    16
+   ],
+   "lift": 0.02,
+   "glow": true,
+   "light": null,
+   "speed": null,
+   "travel": null,
+   "then": null,
+   "frame_list": [
+    {
+     "x": 0,
+     "y": 96,
+     "w": 32,
+     "h": 32
+    },
+    {
+     "x": 32,
+     "y": 96,
+     "w": 32,
+     "h": 32
+    },
+    {
+     "x": 64,
+     "y": 96,
+     "w": 32,
+     "h": 32
+    },
+    {
+     "x": 96,
+     "y": 96,
+     "w": 32,
+     "h": 32
+    },
+    {
+     "x": 128,
+     "y": 96,
+     "w": 32,
+     "h": 32
+    },
+    {
+     "x": 160,
+     "y": 96,
+     "w": 32,
+     "h": 32
+    }
+   ],
+   "combat": true,
+   "duration": 1.0,
+   "desc": "soft cold-fire ground pool under the wisp (palette sky / flower_blue / cloth)"
+  },
+  "pet_pool_moth": {
+   "row": 4,
+   "frames": 6,
+   "fps": 5,
+   "loop": true,
+   "loop_from": 0,
+   "loops": 1,
+   "kind": "decal",
+   "pivot": [
+    16,
+    16
+   ],
+   "lift": 0.02,
+   "glow": true,
+   "light": null,
+   "speed": null,
+   "travel": null,
+   "then": null,
+   "frame_list": [
+    {
+     "x": 0,
+     "y": 128,
+     "w": 32,
+     "h": 32
+    },
+    {
+     "x": 32,
+     "y": 128,
+     "w": 32,
+     "h": 32
+    },
+    {
+     "x": 64,
+     "y": 128,
+     "w": 32,
+     "h": 32
+    },
+    {
+     "x": 96,
+     "y": 128,
+     "w": 32,
+     "h": 32
+    },
+    {
+     "x": 128,
+     "y": 128,
+     "w": 32,
+     "h": 32
+    },
+    {
+     "x": 160,
+     "y": 128,
+     "w": 32,
+     "h": 32
+    }
+   ],
+   "combat": true,
+   "duration": 1.2,
+   "desc": "soft violet ground pool under the moth (NEON violet), the widest (lights caves)"
+  },
+  "pet_pool_fox": {
+   "row": 5,
+   "frames": 6,
+   "fps": 7,
+   "loop": true,
+   "loop_from": 0,
+   "loops": 1,
+   "kind": "decal",
+   "pivot": [
+    16,
+    16
+   ],
+   "lift": 0.02,
+   "glow": true,
+   "light": null,
+   "speed": null,
+   "travel": null,
+   "then": null,
+   "frame_list": [
+    {
+     "x": 0,
+     "y": 160,
+     "w": 32,
+     "h": 32
+    },
+    {
+     "x": 32,
+     "y": 160,
+     "w": 32,
+     "h": 32
+    },
+    {
+     "x": 64,
+     "y": 160,
+     "w": 32,
+     "h": 32
+    },
+    {
+     "x": 96,
+     "y": 160,
+     "w": 32,
+     "h": 32
+    },
+    {
+     "x": 128,
+     "y": 160,
+     "w": 32,
+     "h": 32
+    },
+    {
+     "x": 160,
+     "y": 160,
+     "w": 32,
+     "h": 32
+    }
+   ],
+   "combat": true,
+   "duration": 0.857,
+   "desc": "soft red foxfire ground pool under the fox's tail (NEON red)"
+  },
+  "pet_aura_mosspup": {
+   "row": 6,
+   "frames": 8,
+   "fps": 8,
+   "loop": true,
+   "loop_from": 0,
+   "loops": 1,
+   "kind": "billboard",
+   "pivot": [
+    16,
+    31
+   ],
+   "lift": 0.0,
+   "glow": true,
+   "light": null,
+   "speed": null,
+   "travel": null,
+   "then": null,
+   "frame_list": [
+    {
+     "x": 0,
+     "y": 192,
+     "w": 32,
+     "h": 32
+    },
+    {
+     "x": 32,
+     "y": 192,
+     "w": 32,
+     "h": 32
+    },
+    {
+     "x": 64,
+     "y": 192,
+     "w": 32,
+     "h": 32
+    },
+    {
+     "x": 96,
+     "y": 192,
+     "w": 32,
+     "h": 32
+    },
+    {
+     "x": 128,
+     "y": 192,
+     "w": 32,
+     "h": 32
+    },
+    {
+     "x": 160,
+     "y": 192,
+     "w": 32,
+     "h": 32
+    },
+    {
+     "x": 192,
+     "y": 192,
+     "w": 32,
+     "h": 32
+    },
+    {
+     "x": 224,
+     "y": 192,
+     "w": 32,
+     "h": 32
+    }
+   ],
+   "combat": true,
+   "duration": 1.0,
+   "desc": "neon-green glowing spores puffing up off the moss-pup's toadstools (NEON green, a red fleck now and then)"
+  },
+  "pet_pool_mosspup": {
+   "row": 7,
+   "frames": 6,
+   "fps": 5,
+   "loop": true,
+   "loop_from": 0,
+   "loops": 1,
+   "kind": "decal",
+   "pivot": [
+    16,
+    16
+   ],
+   "lift": 0.02,
+   "glow": true,
+   "light": null,
+   "speed": null,
+   "travel": null,
+   "then": null,
+   "frame_list": [
+    {
+     "x": 0,
+     "y": 224,
+     "w": 32,
+     "h": 32
+    },
+    {
+     "x": 32,
+     "y": 224,
+     "w": 32,
+     "h": 32
+    },
+    {
+     "x": 64,
+     "y": 224,
+     "w": 32,
+     "h": 32
+    },
+    {
+     "x": 96,
+     "y": 224,
+     "w": 32,
+     "h": 32
+    },
+    {
+     "x": 128,
+     "y": 224,
+     "w": 32,
+     "h": 32
+    },
+    {
+     "x": 160,
+     "y": 224,
+     "w": 32,
+     "h": 32
+    }
+   ],
+   "combat": true,
+   "duration": 1.2,
+   "desc": "soft toxic-green ground pool under the moss-pup (NEON green)"
+  }
+ }
+}
