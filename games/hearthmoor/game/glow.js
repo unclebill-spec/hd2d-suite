@@ -12,9 +12,10 @@ const TOADS = {
   hollows: [[-3.4, -1.6], [3.6, 3.6], [-10.8, 4.8], [-6.8, -6.6], [11.0, 3.8], [0.8, -2.3], [-6.0, 3.4], [6.8, 3.0], [-11.6, -5.0], [12.6, -8.6]],
   vanaheim: [[-5.6, -6.2], [9.6, 2.8], [-7.0, 4.8], [-3.2, -7.6], [8.8, -4.2], [1.0, 5.4], [-10.6, -5.8]],
   ravenhold: [[-9.4, -8.2], [12.4, -8.2], [-17.0, -4.6], [16.8, -8.2], [-16.6, -12.6], [16.4, -12.4], [-5.0, -12.8]],
+  bifrost: [[-11.4, 1.0], [-12.2, 2.6], [11.6, 0.8], [-12.1, -9.7], [12.2, -9.8], [8.6, -7.4], [-8.6, -7.5], [-3.1, 14.6]],
 };
 // areas that glow at every hour (the hollow is always dim), and their standing light pools: [x, z, kind, colour]
-const ALWAYS = { hollows: true, rift: true, ravenhold: true };   // Ravenhold sits in the Rift's gloom: its glow never sleeps
+const ALWAYS = { hollows: true, rift: true, ravenhold: true, bifrost: true };   // Ravenhold + Bifrost sit in the Rift's gloom: their glow never sleeps
 const POOLS = {
   hollows: [[-1.0, 1.4, 'light', '#9a6cd4'], [5.0, 0.2, 'cold', '#5ac8ff'], [-8.2, 1.4, 'cold', '#5ac8ff'],
             [-9.4, -6.4, 'light', '#9a6cd4'], [8.6, -6.6, 'cold', '#5ac8ff'], [1.8, 5.6, 'light', '#e47c8c'],
@@ -37,6 +38,12 @@ const POOLS = {
   ravenhold: [[-14.6, -0.1, 'cold', '#5ab4f0'], [-9.8, -0.1, 'cold', '#5ab4f0'], [-2.2, -0.1, 'cold', '#5ab4f0'], [2.6, -0.1, 'cold', '#5ab4f0'],
               [9.8, -0.1, 'cold', '#5ab4f0'], [14.6, -0.1, 'cold', '#5ab4f0'], [-6.0, 7.9, 'cold', '#5ab4f0'], [6.0, 7.9, 'cold', '#5ab4f0'],
               [0.5, -10.0, 'violet', '#a45cf0'], [11.2, -1.6, 'red', '#e0302a']],
+  // Bifrost Crossing (Stage 6 part 1): cold fire at the gate stair and the bridge head, Vanaheim's open gate, the violet and
+  // red braziers, a rose / gold glow before two sealed gates and the waystone; the pooled point lights go to the strongest
+  // near the camera (glow-light cap), the rest are decals + motes only
+  bifrost: [[-2.4, -4.9, 'cold', '#5ab4f0'], [2.4, -4.9, 'cold', '#5ab4f0'], [0.0, -10.4, 'cold', '#2ab4ff'], [-8.8, 2.9, 'violet', '#a45cf0'],
+            [8.8, 2.9, 'red', '#e0302a'], [-2.2, 6.1, 'cold', '#5ab4f0'], [2.2, 6.1, 'cold', '#5ab4f0'], [-5.0, -10.4, 'violet', '#a45cf0'],
+            [-11.0, -3.6, 'red', '#e0302a'], [6.6, -3.6, 'cold', '#2ab4ff'], [4.6, 0.2, 'cold', '#5ab4f0'], [0.0, 2.6, 'light', '#a45cf0']],
 };
 export const POOL_R = 2.2;
 const BLOOM = { coldfire: { fx: 'glowplant_coldfire', pool: 'coldfire_pool' }, violet: { fx: 'glowplant_violet', pool: 'violet_pool' } };

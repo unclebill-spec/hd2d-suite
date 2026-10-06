@@ -1255,7 +1255,8 @@ def run(out, simscale=4, size=(960, 540)):
             T.step("keys: up the harbor stair onto the 3 m terrace, E at the Market Terraces gate: sealed, coming soon; the quest notes it",
                    T.ev("window.__hm.ctx.player.y") > 2.9 and "Market Terraces" in pr and "coming soon" in pr and who == "sealed_market" and "Coming soon" in txt
                    and T.ev("window.__hm.S.flags.rh_gate") == 1, prompt=pr, who=who, y=T.ev("window.__hm.ctx.player.y"))
-            # back to Brannoc: done; he points up through the Market Terraces to the Rainbow Rift (Corsair merit + gold)
+            # back to Brannoc: the Market Terraces stay sealed, so he pays (Corsair merit + gold) and sends you the other way, by
+            # Sable's rift-skiff up to Bifrost Crossing (Stage 6 part 1); the quest moves to its skiff step
             c2 = T.ev("window.__hm.S.merit.corsair"); g0 = T.ev("window.__hm.S.gold || 0")
             mk1 = T.ev("window.__hm.markers.harbormaster ? window.__hm.markers.harbormaster.name : null")
             T.talk("harbormaster", keep_open=True)
@@ -1263,9 +1264,11 @@ def run(out, simscale=4, size=(960, 540)):
             rep["shots"]["ravenhold_quest"] = T.shot("ravenhold_quest")
             T.read_all(); pg.wait_for_timeout(300)
             S = T.S()
-            T.step("Brannoc (turn-in tag) finishes 'The Road to the Rift': up through the Market Terraces to the Rainbow Rift; +40 Corsair merit, +30 gold; errands stay 3/3",
-                   mk1 == "quest_turnin" and S["quests"]["harbor"] == 3 and "Market Terraces" in alltxt and "Rainbow Rift" in alltxt and S["merit"]["corsair"] - c2 == 40
-                   and (S.get("gold") or 0) - g0 == 30 and T.ev("document.getElementById('btnLog').textContent") == "quests 3/3" and not T.ev("window.__hm.markers.harbormaster"), merit=[c2, S["merit"]["corsair"]])
+            lg = T.ev("document.getElementById('logList').innerText")
+            T.step("Brannoc (turn-in tag): the Market Terraces stay sealed, so he sends you by Sable's rift-skiff to Bifrost Crossing; +40 Corsair merit, +30 gold; the log shows the skiff step; errands stay 3/3",
+                   mk1 == "quest_turnin" and S["quests"]["harbor"] == 2 and S["flags"].get("rh_road") == 1 and "Market Terraces" in alltxt and "Bifrost Crossing" in alltxt
+                   and "rift-skiff" in alltxt and S["merit"]["corsair"] - c2 == 40 and (S.get("gold") or 0) - g0 == 30 and "rift-skiff" in lg and "Gatekeepers' Guild" in lg
+                   and T.ev("document.getElementById('btnLog').textContent") == "quests 3/3" and not T.ev("window.__hm.markers.harbormaster"), merit=[c2, S["merit"]["corsair"]])
             # the chandler's shop (her own stock)
             T.talk("chandler")
             sh = T.ev("[window.__hm.shop, window.__hm.shopUI.open, document.getElementById('shopName') ? document.getElementById('shopName').textContent : '']")
@@ -1298,6 +1301,79 @@ def run(out, simscale=4, size=(960, 540)):
             T.wait("window.__hm.area === 'ravenhold' && !window.__hm.busy", 90); T.idle(); pg.wait_for_timeout(400)
             T.step("controller: A at Bakery Lane's waystone opens it, A again travels to Ravenhold Harbor (by its waystone)",
                    T.ev("window.__hm.area") == "ravenhold" and T.ev("window.__hm.harbor.near(3.2)") and T.ev("(window.__hm.S.flags.ways || {}).lane") == 1, presses=n)
+            # ---------------------------------------------------------- stage 6 part 1: Bifrost Crossing, by Sable's rift-skiff
+            T.walk(6.6, 4.6)
+            pr = T.ev("document.getElementById('prompt').textContent")
+            pg.keyboard.press("e"); pg.wait_for_timeout(300)
+            fc = T.to_choice()
+            pg.keyboard.press("1")
+            T.wait("window.__hm.area === 'bifrost' && !window.__hm.busy", 90); T.idle(); pg.wait_for_timeout(600)
+            bf = T.ev("""(() => { const c = window.__hm.ctx, sc = c.scene, g = sc.game, glb = (n) => sc.objects.filter((o) => o.glb.endsWith('/' + n + '.glb')).length;
+              const fx = Object.values(c.fx).map((f) => f.name);
+              return { arches: glb('realm_arch'), glows: sc.objects.filter((o) => /realm_glow_/.test(o.glb)).length, seals: fx.filter((n) => n.startsWith('rift_seal_')).length,
+                       vortex: c.fx.gate_vanaheim ? c.fx.gate_vanaheim.name : null, sealed: g.sealed.map((s) => s.arch), portal: g.portals.map((p) => p.to),
+                       isle: [glb('bifrost_plaza'), glb('bifrost_bridge'), glb('bifrost_landing')], skiff: glb('skiff'), way: glb('waystone'), kiosk: glb('guild_kiosk'),
+                       braz: ['cold', 'violet', 'red'].map((k) => glb('rift_brazier_' + k)), toads: glb('toadstool_cluster') + glb('toadstool_big'),
+                       npc: !!c.npc('gatewright'), realm: window.__hm.factions.realm(), pools: window.__hm.glow.fixed.map((f) => f.kind),
+                       glowN: c.glowN, cap: window.__hm.glowCap(), terrace: c.heightAt(0, -10.5), seen: window.__hm.S.flags.bf_seen,
+                       pos: [c.player.x, c.player.z] }; })()""")
+            T.step("keys: E at Sable's rift-skiff on Ravenhold's east pier (Brannoc's word given) opens its choice; key 1 sails to Bifrost Crossing's landing",
+                   "rift-skiff" in pr and bool(fc) and "Bifrost Crossing" in fc["options"][0] and T.ev("window.__hm.area") == "bifrost" and bf["pos"][1] > 11.5, prompt=pr, choice=fc, pos=bf["pos"])
+            T.step("Bifrost Crossing: a floating plaza, rainbow bridge + skiff landing, 9 realm gates (8 sealed seals + Vanaheim's open swirl) on a 1.2 m gate terrace, the Guild kiosk + gatewright, a waystone, cold-fire / violet / red braziers + pools, toadstools; pooled lights at the cap",
+                   bf["arches"] == 9 and bf["glows"] == 9 and bf["seals"] == 8 and bf["vortex"] == "rift_vortex" and len(bf["sealed"]) == 8 and bf["portal"] == ["vanaheim"]
+                   and bf["isle"] == [1, 1, 1] and bf["skiff"] == 1 and bf["way"] == 1 and bf["kiosk"] == 1 and bf["braz"] == [4, 1, 1] and bf["toads"] >= 6
+                   and bf["npc"] and bf["realm"] == "gate" and bf["pools"].count("cold") >= 6 and "violet" in bf["pools"] and "red" in bf["pools"]
+                   and bf["glowN"] == bf["cap"] == 3 and abs(bf["terrace"] - 1.2) < 0.01 and bf["seen"] == 1, bf=bf)
+            T.ev("window.__hd2d.setTime('night')"); pg.wait_for_timeout(900)
+            rep["shots"]["bifrost_night"] = T.shot("bifrost_night")
+            # controller: A with Gatewright Halvard Ness (turn-in tag) finishes the harbor story quest at the Crossing
+            g0 = T.ev("window.__hm.S.merit.gate"); gd0 = T.ev("window.__hm.S.gold || 0"); gm0 = T.ev("(window.__hm.S.gems || {}).rift_shard || 0")
+            mk2 = T.ev("window.__hm.markers.gatewright ? window.__hm.markers.gatewright.name : null")
+            T.talk_pad("gatewright")
+            S = T.S(); lg = T.ev("document.getElementById('logList').innerText")
+            T.step("controller: A with Gatewright Halvard Ness (turn-in tag) finishes 'The Road to the Rift' at the Crossing: +80 Rift Marks (meeting + quest), +50 gold, a rift shard; errands stay 3/3",
+                   mk2 == "quest_turnin" and S["quests"]["harbor"] == 3 and S["flags"].get("bf_done") == 1 and S["merit"]["gate"] - g0 == 80 and (S.get("gold") or 0) - gd0 == 50
+                   and (S.get("gems") or {}).get("rift_shard", 0) - gm0 == 1 and "Guild ledger" in lg and T.ev("document.getElementById('btnLog').textContent") == "quests 3/3"
+                   and not T.ev("window.__hm.markers.gatewright"), merit=[g0, S["merit"]["gate"]], gold=[gd0, S.get("gold")])
+            # keys: E at a sealed realm gate says why it is shut, the key it needs (a faction rank) and where you stand
+            T.walk(-6.6, -3.6)
+            pr = T.ev("document.getElementById('prompt').textContent")
+            pg.keyboard.press("e"); pg.wait_for_timeout(300)
+            who = T.ev("window.__hm.dlg ? window.__hm.dlg.npc.id : null"); txt = T.ev("window.__hm.dlg ? window.__hm.dlg.pages.join(' ') : ''")
+            T.read_all()
+            T.step("keys: E at Svartalfheim's sealed gate (copper light): why it is shut, its key (Gnome Council at Trusted) and your standing",
+                   who == "sealed_svartalfheim" and "Svartalfheim" in pr and "Gnome Council" in txt and "Trusted" in txt and "You:" in txt and "Gilded Acorns" in txt, prompt=pr, txt=txt[:160])
+            # mouse: up the gate stair, click Vanaheim's open gate: it walks in (Mossbrook Springs)
+            T.walk(0.0, -9.8)
+            yt = T.ev("window.__hm.ctx.player.y")
+            click_world(0.0, -11.6)
+            T.wait("window.__hm.area === 'vanaheim' && !window.__hm.busy", 90); T.idle(); pg.wait_for_timeout(400)
+            T.step("mouse: up the gate stair onto the 1.2 m terrace, clicking Vanaheim's open gate walks into its swirl: Mossbrook Springs", yt > 1.1 and T.ev("window.__hm.area") == "vanaheim", y=yt)
+            # Vanaheim's vine gate now asks where to: the Rift Shrine or Bifrost Crossing; key 2 steps out of Bifrost's open gate
+            r = T.ev("window.__hm.ctx.scene.game.portals[0].rect")
+            T.ev(f"window.__hm.ctx.walkTo({(r[0] + r[2]) / 2}, {(r[1] + r[3]) / 2})")
+            T.wait("window.__hm.dlgChoice && window.__hm.dlgChoice()", 90); pg.wait_for_timeout(300)
+            vc = T.ev("window.__hm.dlgChoice()")
+            pg.keyboard.press("2")
+            T.wait("window.__hm.area === 'bifrost' && !window.__hm.busy", 90); T.idle(); pg.wait_for_timeout(400)
+            T.step("Vanaheim's vine gate (Bifrost seen) asks: the Rift Shrine or Bifrost Crossing; key 2 steps out of the Crossing's Vanaheim gate on the terrace",
+                   bool(vc) and len(vc["options"]) == 3 and "Rift Shrine" in vc["options"][0] and "Bifrost" in vc["options"][1] and T.ev("window.__hm.area") == "bifrost"
+                   and T.ev("window.__hm.ctx.player.y") > 1.1, choice=vc)
+            # controller: A at the Crossing's waystone, A again takes its first row (Bakery Lane); the Lane's waystone now lists Bifrost
+            T.walk(3.6, 0.0)
+            n = 0
+            while T.ev("window.__hm.area === 'bifrost' && !window.__hm.busy") and n < 10:
+                T.btn(0, 200); n += 1
+            T.wait("window.__hm.area === 'lane' && !window.__hm.busy", 90); T.idle(); pg.wait_for_timeout(400)
+            a4 = T.ev("window.__hm.area")
+            T.walk(-13.4, 3.2)
+            pg.keyboard.press("e"); pg.wait_for_timeout(300)
+            lc = T.to_choice()
+            pg.keyboard.press("1")
+            T.wait("window.__hm.area === 'ravenhold' && !window.__hm.busy", 90); T.idle(); pg.wait_for_timeout(400)
+            T.step("controller: A at Bifrost's waystone travels to Bakery Lane; the Lane's waystone now lists Bifrost Crossing too (attuned), key 1 goes on to Ravenhold",
+                   a4 == "lane" and bool(lc) and "Ravenhold" in lc["options"][0] and "Bifrost Crossing" in lc["options"][1] and T.ev("window.__hm.area") == "ravenhold"
+                   and T.ev("(window.__hm.S.flags.ways || {}).bifrost") == 1, presses=n, choice=lc)
             area = T.go_rect("exits", 0)
             T.step("the road east from the harbor leads back to Bakery Lane", area == "lane")
             T.step("no JS errors", not errors and not T.ev("window.__hd2d.errors.length"), errors=errors[:5])
@@ -1529,9 +1605,22 @@ def run(out, simscale=4, size=(960, 540)):
                 tap_world(15.0, -3.6)
                 T.wait("window.__hm.dlgChoice && window.__hm.dlgChoice()", 60); q.wait_for_timeout(300)
                 wc = T.ev("window.__hm.dlgChoice()")
-                tap_el('#dlgChoices .choice[data-i="1"]'); q.wait_for_timeout(300)
-                T.step("touch: tapping Ravenhold's waystone walks up to it, a second tap opens its travel choice; tapping 'Stay here.' stays in the harbor",
-                       el1 == "CANVAS" and near and bool(wc) and "Bakery Lane" in wc["options"][0] and not T.ev("!!window.__hm.dlg") and T.ev("window.__hm.area") == "ravenhold", choice=wc, el=el1)
+                stay = len(wc["options"]) - 1 if wc else 1   # 'Stay here.' is the last row (Bifrost Crossing is attuned by now)
+                tap_el(f'#dlgChoices .choice[data-i="{stay}"]'); q.wait_for_timeout(300)
+                T.step("touch: tapping Ravenhold's waystone walks up to it, a second tap opens its travel choice (Lane + Bifrost); tapping 'Stay here.' stays in the harbor",
+                       el1 == "CANVAS" and near and bool(wc) and "Bakery Lane" in wc["options"][0] and "Bifrost" in wc["options"][1] and wc["options"][stay].startswith("Stay")
+                       and not T.ev("!!window.__hm.dlg") and T.ev("window.__hm.area") == "ravenhold", choice=wc, el=el1)
+                # touch: Bifrost Crossing's Midgard gate (rainbow seal) takes a tap to walk up and a second tap to look.
+                # Phone portrait's HFOV can't see x=11 from the waystone spawn; walk into camera range first (same idea as Ravenhold spawning next to its waystone).
+                T.ev("window.__hm.go('bifrost', 'from_waystone')"); T.wait("window.__hm.area === 'bifrost' && !window.__hm.busy", 90); T.idle(); q.wait_for_timeout(600)
+                T.walk(8.5, -2.5); q.wait_for_timeout(300)
+                el2 = tap_world(11.0, -4.2); T.wait("!window.__hm.ctx.walking()", 60); q.wait_for_timeout(300)
+                pz = T.ev("[window.__hm.ctx.player.x, window.__hm.ctx.player.z]")
+                tap_world(11.0, -4.2); q.wait_for_timeout(300)
+                who = T.ev("window.__hm.dlg ? window.__hm.dlg.npc.id : null"); txt = T.ev("window.__hm.dlg ? window.__hm.dlg.pages.join(' ') : ''")
+                T.read_all()
+                T.step("touch: tapping Midgard's sealed gate at the Crossing walks up to it, a second tap looks: the Old Temple's Rift-gate is dark, its key is Hearth merit",
+                       el2 == "CANVAS" and abs(pz[0] - 11.0) < 1.3 and who == "sealed_midgard" and "Old Temple" in txt and "Order of the Hearth" in txt and not T.ev("!!window.__hm.dlg"), pos=pz, who=who)
                 T.ev("window.__hm.go('plaza', 'from_lane')"); T.wait("window.__hm.area === 'plaza' && !window.__hm.busy", 90); T.idle(); q.wait_for_timeout(400)
                 T.walk(-1.4, -5.6)
                 # phone landscape: the full action layout (report shot), nothing overlapping

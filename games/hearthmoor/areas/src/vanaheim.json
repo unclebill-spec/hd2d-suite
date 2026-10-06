@@ -549,7 +549,24 @@
      -8.85,
      -0.55
     ],
-    "label": "the vine gate to the Rift Shrine"
+    "label": "the vine gate to the Rift Shrine",
+    "label_rift": "the vine gate (the Rift Shrine, or Bifrost Crossing)",
+    "choose_if": "bf_seen",
+    "choice_id": "vine_gate",
+    "gate_name": "The vine gate",
+    "ask": "The vine gate hums with two pulls: the Rift Shrine's quiet ring of stones, and a bright rainbow road up to Bifrost Crossing. Where do you step?",
+    "choose": [
+     {
+      "to": "rift",
+      "spawn": "from_vanaheim",
+      "label": "The Rift Shrine (the ring of stones)"
+     },
+     {
+      "to": "bifrost",
+      "spawn": "from_vanaheim",
+      "label": "Bifrost Crossing (the rainbow road)"
+     }
+    ]
    }
   ],
   "doors": [
@@ -600,6 +617,11 @@
     -2.0,
     -1.6,
     "up"
+   ],
+   "from_bifrost": [
+    -9.6,
+    0.6,
+    "down"
    ]
   },
   "swaps": [

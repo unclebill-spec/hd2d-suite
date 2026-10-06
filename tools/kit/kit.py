@@ -887,6 +887,8 @@ import kit_rift as _rift  # noqa: E402  (Rift Shrine + Vanaheim pieces: rift_isl
 PROPS.update(_rift.pieces(__import__('types').SimpleNamespace(**globals())))
 import kit_harbor as _harbor  # noqa: E402  (Ravenhold Harbor pieces: water, pier, boats, cold-fire lanterns, waystone, district gate)
 PROPS.update(_harbor.pieces(__import__('types').SimpleNamespace(**globals())))
+import kit_bifrost as _bifrost  # noqa: E402  (Bifrost Crossing pieces: plaza, rainbow bridge, landing, realm arches + glows, Guild kiosk, braziers)
+PROPS.update(_bifrost.pieces(__import__('types').SimpleNamespace(**globals())))
 
 
 def export_piece(cx: Ctx, pc: Piece, out: Path):

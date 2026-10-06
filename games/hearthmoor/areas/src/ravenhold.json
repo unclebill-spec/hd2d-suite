@@ -855,6 +855,11 @@
     -1.0,
     -2.0,
     "up"
+   ],
+   "from_bifrost": [
+    6.0,
+    4.4,
+    "down"
    ]
   },
   "shimmer": {
@@ -926,6 +931,21 @@
      8.6
     ]
    ]
+  },
+  "ferry": {
+   "pos": [
+    6.6,
+    5.4
+   ],
+   "to": "bifrost",
+   "spawn": "from_ravenhold",
+   "tap": [
+    8.7,
+    2.8,
+    10.7,
+    8.0
+   ],
+   "name": "Sable's rift-skiff"
   }
  },
  "gamefx": true

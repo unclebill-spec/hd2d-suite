@@ -6,7 +6,7 @@
  "cell": 48,
  "size": [
   384,
-  624
+  864
  ],
  "effects": {
   "portal_vortex": {
@@ -189,8 +189,108 @@
    "then": null,
    "duration": 9999
   },
-  "rift_ring": {
+  "rift_seal_gold": {
    "row": 9,
+   "frames": 6,
+   "fps": 4,
+   "loop": true,
+   "loop_from": 0,
+   "loops": 1,
+   "kind": "billboard",
+   "pivot": [
+    24,
+    47
+   ],
+   "lift": 0.18,
+   "glow": true,
+   "light": null,
+   "speed": null,
+   "travel": null,
+   "then": null,
+   "duration": 9999
+  },
+  "rift_seal_ice": {
+   "row": 10,
+   "frames": 6,
+   "fps": 4,
+   "loop": true,
+   "loop_from": 0,
+   "loops": 1,
+   "kind": "billboard",
+   "pivot": [
+    24,
+    47
+   ],
+   "lift": 0.18,
+   "glow": true,
+   "light": null,
+   "speed": null,
+   "travel": null,
+   "then": null,
+   "duration": 9999
+  },
+  "rift_seal_amber": {
+   "row": 11,
+   "frames": 6,
+   "fps": 4,
+   "loop": true,
+   "loop_from": 0,
+   "loops": 1,
+   "kind": "billboard",
+   "pivot": [
+    24,
+    47
+   ],
+   "lift": 0.18,
+   "glow": true,
+   "light": null,
+   "speed": null,
+   "travel": null,
+   "then": null,
+   "duration": 9999
+  },
+  "rift_seal_rose": {
+   "row": 12,
+   "frames": 6,
+   "fps": 4,
+   "loop": true,
+   "loop_from": 0,
+   "loops": 1,
+   "kind": "billboard",
+   "pivot": [
+    24,
+    47
+   ],
+   "lift": 0.18,
+   "glow": true,
+   "light": null,
+   "speed": null,
+   "travel": null,
+   "then": null,
+   "duration": 9999
+  },
+  "rift_seal_rainbow": {
+   "row": 13,
+   "frames": 6,
+   "fps": 4,
+   "loop": true,
+   "loop_from": 0,
+   "loops": 1,
+   "kind": "billboard",
+   "pivot": [
+    24,
+    47
+   ],
+   "lift": 0.18,
+   "glow": true,
+   "light": null,
+   "speed": null,
+   "travel": null,
+   "then": null,
+   "duration": 9999
+  },
+  "rift_ring": {
+   "row": 14,
    "frames": 8,
    "fps": 6,
    "loop": true,
@@ -210,7 +310,7 @@
    "duration": 9999
   },
   "alf_rune": {
-   "row": 10,
+   "row": 15,
    "frames": 6,
    "fps": 4,
    "loop": true,
@@ -230,7 +330,7 @@
    "duration": 9999
   },
   "spring_poison": {
-   "row": 11,
+   "row": 16,
    "frames": 8,
    "fps": 3,
    "loop": true,
@@ -250,7 +350,7 @@
    "duration": 9999
   },
   "spring_clean": {
-   "row": 12,
+   "row": 17,
    "frames": 8,
    "fps": 4,
    "loop": true,

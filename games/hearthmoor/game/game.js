@@ -5,6 +5,7 @@
 import { boot, DISPLAY_PRESETS, getDisplay, setDisplay } from '../engine/main.js';
 import { ITEMS, QUESTS, TALK, SPELL_NAMES, markerFor, errandsDone } from './data.js';
 import { Harbor } from './ravenhold.js';
+import { Crossing } from './bifrost.js';
 import { Ambient } from './audio.js';
 import * as PR from './progress.js';
 import { HEROES, HERO, SPELLS, SUMMONS, CHARM_DMG, CHARM_CD } from './heroes.js';
@@ -35,7 +36,7 @@ const V1_DONE = 'hearthmoor-v1-migrated';     // set when slot 1 is deleted, so 
 const LAST_SLOT = 'hearthmoor-lastslot';
 const QA = Q.has('qa');                       // check-scene / screenshots: straight into ?area=, fresh state, no title, no saving
 const AREAS = { plaza: 'areas/plaza/', lane: 'areas/lane/', mossglen: 'areas/mossglen/', hollows: 'areas/hollows/',
-                rift: 'areas/rift/', vanaheim: 'areas/vanaheim/', ravenhold: 'areas/ravenhold/' };
+                rift: 'areas/rift/', vanaheim: 'areas/vanaheim/', ravenhold: 'areas/ravenhold/', bifrost: 'areas/bifrost/' };
 const DAY_SECONDS = Number(Q.get('day') || 1440);  // one whole day = 24 real minutes (day, dusk, night, dawn)
 const $ = (id) => document.getElementById(id);
 
@@ -52,7 +53,8 @@ const G = {
 G.combat = new Combat(G);
 G.glow = new Glow(G);
 G.hollows = new Hollows(G);
-G.harbor = new Harbor(G);   // Ravenhold Harbor: waystones + the district gates' story hook
+G.harbor = new Harbor(G);   // Ravenhold Harbor: waystones + the district gates' story hook + Sable's rift-skiff ferry
+G.crossing = new Crossing(G);   // Bifrost Crossing: the realm gates' looks (alliance / merit keys)
 G.garden = new Garden(G);
 G.weather = new Weather(G);
 G.intro = new Intro(G);
@@ -165,6 +167,7 @@ function drawLog() {
     if (!st && q.story) return '';   // story quests appear once they start
     if (!st) return `<li class="todo"><b>${q.title}</b><span>Someone in town may need a hand… (${q.giver})</span></li>`;
     let step = q.steps[st] || '';
+    if (typeof step === 'function') step = step(G.S);   // story steps can depend on the save (the harbor quest's road to Bifrost)
     if (id === 'tea' && st === 1) step += ` (${G.S.inv.moonpetal || 0}/3)`;
     return `<li class="${st === 3 ? 'done' : 'active'}${q.story ? ' story' : ''}"><b>${st === 3 ? '✓ ' : '◆ '}${q.story ? 'Story: ' : ''}${q.title}</b><span>${step}</span></li>`;
   });
@@ -304,12 +307,12 @@ async function loadArea(id, spawnKey, pos) {
   const old = $('view'); if (old) old.remove();
   const canvas = document.createElement('canvas'); canvas.id = 'view'; document.body.prepend(canvas);
   G.area = id; G.S.area = id; G.armed = false;
-  G.rifts.detach(); G.rares.detach(); G.combat.detach(); G.glow.detach(); G.hollows.detach(); G.harbor.detach(); G.garden.detach(); G.weather.detach(); G.loot.detach(); G.shopUI.detach();
+  G.rifts.detach(); G.rares.detach(); G.combat.detach(); G.glow.detach(); G.hollows.detach(); G.harbor.detach(); G.crossing.detach(); G.garden.detach(); G.weather.detach(); G.loot.detach(); G.shopUI.detach();
   G.game = await boot({ base: AREAS[id], canvas, spawn: sp, startT: G.S.t, glowLights: glowCap(), clockSpeed: 1 / DAY_SECONDS, spellCycle: slots(),
                         player: { role: G.S.cls || G.preview || 'wildcaller' }, castAdvance: false,
                         keepTitle: true, padHandled: true, hooks, toast: (m, t) => toast(m, t) });
   const ctx = G.ctx = G.game.ctx;
-  G.combat.attach(ctx, id); G.rares.attach(ctx, id); G.rifts.attach(ctx, id); G.factions.attach(ctx, id); G.glow.attach(ctx, id); G.hollows.attach(ctx); G.harbor.attach(ctx, id); G.garden.attach(ctx); G.weather.attach(ctx, id); G.loot.attach(ctx); G.shopUI.attach(ctx, id); PR.ensure(G.S); G.loot.restorePurse(id);
+  G.combat.attach(ctx, id); G.rares.attach(ctx, id); G.rifts.attach(ctx, id); G.factions.attach(ctx, id); G.glow.attach(ctx, id); G.hollows.attach(ctx); G.harbor.attach(ctx, id); G.crossing.attach(ctx, id); G.garden.attach(ctx); G.weather.attach(ctx, id); G.loot.attach(ctx); G.shopUI.attach(ctx, id); PR.ensure(G.S); G.loot.restorePurse(id);
   // portrait source: this area's actor atlas
   portraitImg = new Image(); portraitImg.src = AREAS[id] + ctx.scene.atlas.image;
   // pickups already taken stay gone
@@ -343,11 +346,15 @@ function riftOpen() {
   const S = G.S; return Q.has('rift') || !!(S.flags && S.flags.rift) || errandsDone(S) >= 3;
 }
 G.riftOpen = riftOpen;
+// a gate with two destinations: the moss gate (once the Rift is open) and Vanaheim's vine gate (once Bifrost is seen:
+// `choose_if` names the save flag)
+function canChoose(po) { return !!po.choose && (po.choose_if ? !!(G.S.flags || {})[po.choose_if] : riftOpen()); }
 function gateChoice(po) {
   const opts = po.choose.map((c) => ({ label: c.label, pick: () => { go(c.to, c.spawn, 'portal'); return null; } }));
   opts.push({ label: 'Stay here.', cancel: true, pick: () => null });
-  openDialogue({ id: 'moss_gate', name: po.gate_name || 'The moss gate' },
-    { pages: [po.ask || 'The swirl hums with two pulls. Where do you step?'], choice: { id: 'moss_gate', options: opts } });
+  const id = po.choice_id || 'moss_gate';
+  openDialogue({ id, name: po.gate_name || 'The moss gate' },
+    { pages: [po.ask || 'The swirl hums with two pulls. Where do you step?'], choice: { id, options: opts } });
 }
 // sealed realm gates (Rift Shrine): a prompt nearby, and E / A shows why it will not open
 function sealedNear(ctx) {
@@ -364,6 +371,7 @@ function sealedLook(ctx) {
     openDialogue({ id: 'sealed_' + g.id, name: `The gate to ${g.name} (sealed)` }, { pages: g.say || ['Sealed. Coming soon.'] });
     G.harbor.onSealedLook(g); return true;
   }
+  if (g.arch) return G.crossing.look(g);   // Bifrost Crossing's realm gates: the key each needs, and your standing
   openDialogue({ id: 'sealed_' + g.realm.toLowerCase(), name: `${g.realm}'s gate (sealed)` }, { pages: [SEAL_SAY[g.hue] || 'The gate is sealed.', 'It will not open yet. Bifrost Crossing has keys for gates like this, they say.'] });
   return true;
 }
@@ -434,7 +442,7 @@ function onFrame(dt, ctx) {
   const inside = trig.find((e) => inRect(p, e.rect));
   if (!inside) G.armed = true;
   else if (G.armed && !G.dlg) {
-    if (inside.choose && riftOpen()) { G.armed = false; gateChoice(inside); return; }   // the moss gate: Mossglen or the Rift
+    if (canChoose(inside)) { G.armed = false; gateChoice(inside); return; }   // the moss gate (Mossglen / the Rift), the vine gate (Rift / Bifrost)
     go(inside.to, inside.spawn, inside.how); return;
   }
   // pickups: walk over a glimmer
@@ -442,7 +450,7 @@ function onFrame(dt, ctx) {
   // prompt near a gate or a glimmer
   let prompt = '';
   const close = trig.find((e) => Math.max(e.rect[0] - p.x, p.x - e.rect[2], e.rect[1] - p.z, p.z - e.rect[3]) < 1.6);
-  if (close) prompt = close.how === 'portal' ? `step into the swirl: ${close.choose && riftOpen() ? close.label_rift || close.label : close.label}` : close.label;
+  if (close) prompt = close.how === 'portal' ? `step into the swirl: ${canChoose(close) ? close.label_rift || close.label : close.label}` : close.label;
   else { const sg = sealedNear(ctx); if (sg) prompt = sg.district ? `the gate to ${sg.name} is sealed: coming soon (E / A to look)` : `${sg.realm}'s gate is sealed (E / A to look)`; else prompt = G.harbor.prompt(); }
   const pe = $('prompt'); if (pe.textContent !== prompt) { pe.textContent = prompt; pe.hidden = !prompt; }
   G.audio.setNight(ctx.clock.grade ? (ctx.clock.grade().bugs ?? 0) : 0);
@@ -494,7 +502,7 @@ const hooks = {
     if (G.busy) return true;
     if (kind !== 'tap' && G.hollows.interact()) return true;   // gnome doors
     if (kind !== 'tap' && sealedLook(ctx)) return true;        // sealed Rift gates + Ravenhold's district gates
-    if (kind !== 'tap' && G.harbor.interact()) return true;    // waystones (Bakery Lane <-> Ravenhold)
+    if (kind !== 'tap' && G.harbor.interact()) return true;    // waystones (Lane <-> Ravenhold <-> Bifrost) + the rift-skiff
     if (kind !== 'tap' && G.garden.interact()) return true;    // glow-garden plots: plant / check / harvest
     return false;
   },
@@ -514,7 +522,7 @@ const hooks = {
       const f = ctx.fx[po.fx]; if (!f) continue;
       if (Math.abs(f.x - hit.x) < 1.2 && hit.z > f.z - 1.2 && hit.z < f.z + 2.0) { ctx.walkTo(f.x, (po.rect[1] + po.rect[3]) / 2); return true; }
     }
-    if (G.harbor.onTap(hit)) return true;              // tapping a waystone walks up to it; tapping again up close opens it
+    if (G.harbor.onTap(hit)) return true;              // tapping a waystone / the skiff walks up to it; tapping again up close opens it
     for (const g of ctx.scene.game?.sealed || []) {   // tapping a sealed gate walks up to it; tapping it again up close looks
       if (Math.abs(g.pos[0] - hit.x) < 1.3 && hit.z > g.pos[1] - 1.2 && hit.z < g.pos[1] + 2.0) {
         if (sealedNear(ctx)) sealedLook(ctx); else ctx.walkTo(g.pos[0], g.pos[1] + 1.2);

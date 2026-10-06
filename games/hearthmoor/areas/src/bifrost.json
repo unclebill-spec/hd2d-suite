@@ -1,0 +1,1168 @@
+{
+ "name": "Bifrost Crossing (the portal capital)",
+ "seed": 106,
+ "biome": "cozy-village",
+ "about": "Bifrost Crossing, the portal capital between the Nine Realms: a floating flagstone plaza in the Rift's gloom, a rainbow bridge of light out to the Corsairs' skiff landing, and nine realm gates, each lit in its realm's colour. Vanaheim's gate is open; the other eight are sealed until you have the alliance or the Gatekeepers' Guild merit to earn a key. The Guild's gatewright keeps the ledger.",
+ "time": {
+  "start": "night",
+  "speed": 0.0016
+ },
+ "spells": true,
+ "sprite_roles": [
+  "actors",
+  "heroes",
+  "combat"
+ ],
+ "boss_roles": [],
+ "camera": {
+  "fov": 24,
+  "pitch": 36,
+  "distance": 33,
+  "zoom": [
+   24,
+   42
+  ],
+  "look": [
+   0,
+   0,
+   -2.4
+  ],
+  "bounds": [
+   -11.0,
+   -9.6,
+   11.0,
+   12.0
+  ]
+ },
+ "ground": {
+  "size": [
+   0.2,
+   0.2
+  ],
+  "mat": "stone",
+  "walk": [
+   -14.0,
+   -14.5,
+   14.0,
+   16.5
+  ]
+ },
+ "slabs": [],
+ "terraces": [
+  {
+   "name": "gates",
+   "rect": [
+    -13.1,
+    -13.5,
+    13.1,
+    -8.6
+   ],
+   "h": 1.2,
+   "top": "cobble",
+   "gaps": [
+    [
+     -1.6,
+     1.6
+    ]
+   ]
+  }
+ ],
+ "stairs": [
+  {
+   "name": "stair_gates",
+   "x": 0.0,
+   "z_top": -8.6,
+   "width": 3.0,
+   "rise": 1.2,
+   "base": 0.0
+  }
+ ],
+ "decks": [],
+ "blocks": [
+  [
+   -14,
+   -14.5,
+   14,
+   -13.35
+  ],
+  [
+   -14,
+   -14.5,
+   -13.05,
+   -8.6
+  ],
+  [
+   13.05,
+   -14.5,
+   14,
+   -8.6
+  ],
+  [
+   -14,
+   -8.6,
+   -13.3,
+   2.5
+  ],
+  [
+   13.3,
+   -8.6,
+   14,
+   2.5
+  ],
+  [
+   -14,
+   2.5,
+   -13.175,
+   2.75
+  ],
+  [
+   13.175,
+   2.5,
+   14,
+   2.75
+  ],
+  [
+   -14,
+   2.75,
+   -12.925,
+   3.0
+  ],
+  [
+   12.925,
+   2.75,
+   14,
+   3.0
+  ],
+  [
+   -14,
+   3.0,
+   -12.675,
+   3.25
+  ],
+  [
+   12.675,
+   3.0,
+   14,
+   3.25
+  ],
+  [
+   -14,
+   3.25,
+   -12.425,
+   3.5
+  ],
+  [
+   12.425,
+   3.25,
+   14,
+   3.5
+  ],
+  [
+   -14,
+   3.5,
+   -12.175,
+   3.75
+  ],
+  [
+   12.175,
+   3.5,
+   14,
+   3.75
+  ],
+  [
+   -14,
+   3.75,
+   -11.925,
+   4.0
+  ],
+  [
+   11.925,
+   3.75,
+   14,
+   4.0
+  ],
+  [
+   -14,
+   4.0,
+   -11.675,
+   4.25
+  ],
+  [
+   11.675,
+   4.0,
+   14,
+   4.25
+  ],
+  [
+   -14,
+   4.25,
+   -11.425,
+   4.5
+  ],
+  [
+   11.425,
+   4.25,
+   14,
+   4.5
+  ],
+  [
+   -14,
+   4.5,
+   -11.175,
+   4.75
+  ],
+  [
+   11.175,
+   4.5,
+   14,
+   4.75
+  ],
+  [
+   -14,
+   4.75,
+   -10.925,
+   5.0
+  ],
+  [
+   10.925,
+   4.75,
+   14,
+   5.0
+  ],
+  [
+   -14,
+   5.0,
+   -10.675,
+   5.25
+  ],
+  [
+   10.675,
+   5.0,
+   14,
+   5.25
+  ],
+  [
+   -14,
+   5.25,
+   -10.425,
+   5.5
+  ],
+  [
+   10.425,
+   5.25,
+   14,
+   5.5
+  ],
+  [
+   -14,
+   5.5,
+   -10.175,
+   5.75
+  ],
+  [
+   10.175,
+   5.5,
+   14,
+   5.75
+  ],
+  [
+   -14,
+   5.75,
+   -9.925,
+   6.0
+  ],
+  [
+   9.925,
+   5.75,
+   14,
+   6.0
+  ],
+  [
+   -14,
+   5.85,
+   -1.3,
+   11.65
+  ],
+  [
+   1.3,
+   5.85,
+   14,
+   11.65
+  ],
+  [
+   -14,
+   11.65,
+   -3.85,
+   15.5
+  ],
+  [
+   3.85,
+   11.65,
+   14,
+   15.5
+  ],
+  [
+   -14,
+   15.45,
+   14,
+   16.5
+  ],
+  [
+   -3.85,
+   14.75,
+   -3.1,
+   15.5
+  ],
+  [
+   3.1,
+   14.75,
+   3.85,
+   15.5
+  ]
+ ],
+ "buildings": [],
+ "props": [
+  {
+   "piece": "bifrost_plaza",
+   "pos": [
+    0.0,
+    -3.75
+   ],
+   "walkable": true,
+   "cast": false
+  },
+  {
+   "piece": "bifrost_bridge",
+   "pos": [
+    0.0,
+    8.75
+   ],
+   "walkable": true,
+   "cast": false
+  },
+  {
+   "piece": "bifrost_landing",
+   "pos": [
+    0.0,
+    13.55
+   ],
+   "walkable": true,
+   "cast": false
+  },
+  {
+   "piece": "realm_arch",
+   "pos": [
+    -10.0,
+    -11.9
+   ],
+   "glow": {
+    "color": "#f2c24a",
+    "range": 3.6,
+    "fixed": 0.35
+   }
+  },
+  {
+   "piece": "realm_glow_gold",
+   "pos": [
+    -10.0,
+    -11.9
+   ]
+  },
+  {
+   "piece": "realm_arch",
+   "pos": [
+    -5.0,
+    -11.9
+   ],
+   "glow": {
+    "color": "#a45cf0",
+    "range": 3.6,
+    "fixed": 0.35
+   }
+  },
+  {
+   "piece": "realm_glow_violet",
+   "pos": [
+    -5.0,
+    -11.9
+   ]
+  },
+  {
+   "piece": "realm_arch",
+   "pos": [
+    0.0,
+    -11.9
+   ],
+   "glow": {
+    "color": "#2ab4ff",
+    "range": 6.0,
+    "fixed": 0.8
+   }
+  },
+  {
+   "piece": "realm_glow_green",
+   "pos": [
+    0.0,
+    -11.9
+   ]
+  },
+  {
+   "piece": "realm_arch",
+   "pos": [
+    5.0,
+    -11.9
+   ],
+   "glow": {
+    "color": "#94c0dc",
+    "range": 3.6,
+    "fixed": 0.35
+   }
+  },
+  {
+   "piece": "realm_glow_ice",
+   "pos": [
+    5.0,
+    -11.9
+   ]
+  },
+  {
+   "piece": "realm_arch",
+   "pos": [
+    10.0,
+    -11.9
+   ],
+   "glow": {
+    "color": "#e47c8c",
+    "range": 3.6,
+    "fixed": 0.35
+   }
+  },
+  {
+   "piece": "realm_glow_rose",
+   "pos": [
+    10.0,
+    -11.9
+   ]
+  },
+  {
+   "piece": "realm_arch",
+   "pos": [
+    -11.0,
+    -5.0
+   ],
+   "glow": {
+    "color": "#e0302a",
+    "range": 3.6,
+    "fixed": 0.35
+   }
+  },
+  {
+   "piece": "realm_glow_red",
+   "pos": [
+    -11.0,
+    -5.0
+   ]
+  },
+  {
+   "piece": "realm_arch",
+   "pos": [
+    -6.6,
+    -5.0
+   ],
+   "glow": {
+    "color": "#d0704a",
+    "range": 3.6,
+    "fixed": 0.35
+   }
+  },
+  {
+   "piece": "realm_glow_amber",
+   "pos": [
+    -6.6,
+    -5.0
+   ]
+  },
+  {
+   "piece": "realm_arch",
+   "pos": [
+    6.6,
+    -5.0
+   ],
+   "glow": {
+    "color": "#2ab4ff",
+    "range": 3.6,
+    "fixed": 0.35
+   }
+  },
+  {
+   "piece": "realm_glow_blue",
+   "pos": [
+    6.6,
+    -5.0
+   ]
+  },
+  {
+   "piece": "realm_arch",
+   "pos": [
+    11.0,
+    -5.0
+   ],
+   "glow": {
+    "color": "#a45cf0",
+    "range": 3.6,
+    "fixed": 0.35
+   }
+  },
+  {
+   "piece": "realm_glow_rainbow",
+   "pos": [
+    11.0,
+    -5.0
+   ]
+  },
+  {
+   "piece": "guild_kiosk",
+   "pos": [
+    -4.4,
+    -1.6
+   ]
+  },
+  {
+   "piece": "waystone",
+   "pos": [
+    4.6,
+    -1.0
+   ]
+  },
+  {
+   "piece": "rift_brazier_cold",
+   "pos": [
+    -2.4,
+    -6.0
+   ]
+  },
+  {
+   "piece": "rift_brazier_cold",
+   "pos": [
+    2.4,
+    -6.0
+   ]
+  },
+  {
+   "piece": "rift_brazier_violet",
+   "pos": [
+    -8.8,
+    1.8
+   ]
+  },
+  {
+   "piece": "rift_brazier_red",
+   "pos": [
+    8.8,
+    1.8
+   ]
+  },
+  {
+   "piece": "rift_brazier_cold",
+   "pos": [
+    -2.2,
+    5.0
+   ]
+  },
+  {
+   "piece": "rift_brazier_cold",
+   "pos": [
+    2.2,
+    5.0
+   ]
+  },
+  {
+   "piece": "toadstool_cluster",
+   "pos": [
+    -11.4,
+    1.0
+   ]
+  },
+  {
+   "piece": "toadstool_big",
+   "pos": [
+    -12.2,
+    2.6
+   ],
+   "rot": 20
+  },
+  {
+   "piece": "toadstool_cluster",
+   "pos": [
+    11.6,
+    0.8
+   ]
+  },
+  {
+   "piece": "toadstool_cluster",
+   "pos": [
+    -12.1,
+    -9.7
+   ]
+  },
+  {
+   "piece": "toadstool_cluster",
+   "pos": [
+    12.2,
+    -9.8
+   ]
+  },
+  {
+   "piece": "toadstool_big",
+   "pos": [
+    8.6,
+    -7.4
+   ],
+   "rot": -25
+  },
+  {
+   "piece": "toadstool_cluster",
+   "pos": [
+    -8.6,
+    -7.5
+   ]
+  },
+  {
+   "piece": "toadstool_cluster",
+   "pos": [
+    -3.1,
+    14.6
+   ]
+  },
+  {
+   "piece": "skiff",
+   "pos": [
+    5.6,
+    13.55
+   ],
+   "y": -0.35,
+   "rot": 3
+  },
+  {
+   "piece": "skiff_keel",
+   "pos": [
+    5.6,
+    13.55
+   ],
+   "y": -0.38,
+   "cast": false
+  },
+  {
+   "piece": "bench",
+   "pos": [
+    -9.4,
+    -1.8
+   ]
+  },
+  {
+   "piece": "crate",
+   "pos": [
+    -2.2,
+    -0.9
+   ],
+   "rot": 15
+  },
+  {
+   "piece": "barrel",
+   "pos": [
+    -1.7,
+    -1.6
+   ]
+  },
+  {
+   "piece": "rift_shard",
+   "pos": [
+    -17.5,
+    -6.0
+   ],
+   "y": 1.5,
+   "rot": 0,
+   "cast": false
+  },
+  {
+   "piece": "rift_shard",
+   "pos": [
+    17.8,
+    -9.0
+   ],
+   "y": 3.0,
+   "rot": 40,
+   "cast": false
+  },
+  {
+   "piece": "rift_shard",
+   "pos": [
+    -16.5,
+    6.5
+   ],
+   "y": -2.2,
+   "rot": 70,
+   "cast": false
+  },
+  {
+   "piece": "rift_shard",
+   "pos": [
+    16.4,
+    7.5
+   ],
+   "y": -1.2,
+   "rot": 15,
+   "cast": false
+  },
+  {
+   "piece": "rift_shard",
+   "pos": [
+    -8.0,
+    12.5
+   ],
+   "y": -3.0,
+   "rot": 25,
+   "cast": false
+  },
+  {
+   "piece": "rift_shard",
+   "pos": [
+    9.5,
+    10.8
+   ],
+   "y": -2.4,
+   "rot": 60,
+   "cast": false
+  },
+  {
+   "piece": "rift_shard",
+   "pos": [
+    -19.0,
+    -14.0
+   ],
+   "y": 4.0,
+   "rot": 30,
+   "cast": false
+  },
+  {
+   "piece": "rift_shard",
+   "pos": [
+    19.5,
+    -2.0
+   ],
+   "y": 0.6,
+   "rot": 10,
+   "cast": false
+  }
+ ],
+ "hedges": [],
+ "trees": [],
+ "backdrop": {},
+ "emitters": [
+  {
+   "preset": "fireflies",
+   "pos": [
+    0.0,
+    2.6,
+    -11.0
+   ],
+   "area": [
+    22,
+    1.6,
+    2
+   ],
+   "min_gate": 0.0
+  },
+  {
+   "preset": "fireflies",
+   "pos": [
+    0.0,
+    1.2,
+    0.0
+   ],
+   "area": [
+    20,
+    1.2,
+    8
+   ],
+   "min_gate": 0.0
+  },
+  {
+   "preset": "dust_motes",
+   "pos": [
+    0,
+    1.8,
+    -3.0
+   ],
+   "area": [
+    24,
+    3.0,
+    16
+   ]
+  },
+  {
+   "preset": "dust_motes",
+   "pos": [
+    0,
+    -3.0,
+    2.0
+   ],
+   "area": [
+    36,
+    4.0,
+    28
+   ]
+  }
+ ],
+ "actors": [
+  {
+   "id": "gatewright",
+   "role": "gatewright",
+   "name": "Gatewright Halvard Ness, Gatekeepers' Guild",
+   "pos": [
+    -4.4,
+    -0.3
+   ],
+   "facing": "down",
+   "behavior": "idle",
+   "talkable": true,
+   "say": [
+    "Keys, gates and ledgers. Mind the bridge, it is mostly light."
+   ]
+  }
+ ],
+ "player": {
+  "role": "traveler",
+  "pos": [
+   0.0,
+   1.2
+  ],
+  "facing": "up"
+ },
+ "fx": [
+  {
+   "id": "gate_asgard",
+   "name": "rift_seal_gold",
+   "pos": [
+    -10.0,
+    1.4,
+    -11.9
+   ]
+  },
+  {
+   "id": "gate_alfheim",
+   "name": "rift_seal_violet",
+   "pos": [
+    -5.0,
+    1.4,
+    -11.9
+   ]
+  },
+  {
+   "id": "gate_vanaheim",
+   "name": "rift_vortex",
+   "pos": [
+    0.0,
+    1.4,
+    -11.9
+   ]
+  },
+  {
+   "id": "gate_jotunheim",
+   "name": "rift_seal_ice",
+   "pos": [
+    5.0,
+    1.4,
+    -11.9
+   ]
+  },
+  {
+   "id": "gate_helheim",
+   "name": "rift_seal_rose",
+   "pos": [
+    10.0,
+    1.4,
+    -11.9
+   ]
+  },
+  {
+   "id": "gate_muspelheim",
+   "name": "rift_seal_red",
+   "pos": [
+    -11.0,
+    0.2,
+    -5.0
+   ]
+  },
+  {
+   "id": "gate_svartalfheim",
+   "name": "rift_seal_amber",
+   "pos": [
+    -6.6,
+    0.2,
+    -5.0
+   ]
+  },
+  {
+   "id": "gate_niflheim",
+   "name": "rift_seal_blue",
+   "pos": [
+    6.6,
+    0.2,
+    -5.0
+   ]
+  },
+  {
+   "id": "gate_midgard",
+   "name": "rift_seal_rainbow",
+   "pos": [
+    11.0,
+    0.2,
+    -5.0
+   ]
+  },
+  {
+   "id": "plaza_ring",
+   "name": "rift_ring",
+   "pos": [
+    0.0,
+    0.03,
+    -0.6
+   ]
+  }
+ ],
+ "grades": {
+  "day": {
+   "fog_color": "#221c3e",
+   "sky_top": "#120e26",
+   "sky_bottom": "#4a3480",
+   "hemi_sky": "#5a5a8c",
+   "saturation": 1.05,
+   "bugs": 1.0,
+   "warmth": 0.0,
+   "exposure": 1.05,
+   "sun_intensity": 1.4,
+   "hemi_intensity": 0.75,
+   "sun_color": "#d8d0ff"
+  },
+  "dusk": {
+   "fog_color": "#1a1c42",
+   "sky_top": "#100c22",
+   "sky_bottom": "#363c84",
+   "bugs": 1.0,
+   "exposure": 0.86,
+   "sun_intensity": 0.6,
+   "warmth": -0.14,
+   "sun_color": "#8ca4ff"
+  },
+  "night": {
+   "fog_color": "#0c0a1c",
+   "sky_top": "#080616",
+   "sky_bottom": "#261a44",
+   "bugs": 1.0,
+   "exposure": 0.7,
+   "sun_intensity": 0.26,
+   "hemi_intensity": 0.32
+  }
+ },
+ "game": {
+  "id": "bifrost",
+  "title": "Bifrost Crossing",
+  "exits": [],
+  "portals": [
+   {
+    "fx": "gate_vanaheim",
+    "to": "vanaheim",
+    "spawn": "from_bifrost",
+    "rect": [
+     -0.75,
+     -12.3,
+     0.75,
+     -11.45
+    ],
+    "label": "Vanaheim's gate"
+   }
+  ],
+  "sealed": [
+   {
+    "fx": "gate_asgard",
+    "realm": "Asgard",
+    "hue": "gold",
+    "pos": [
+     -10.0,
+     -11.9
+    ],
+    "arch": "asgard"
+   },
+   {
+    "fx": "gate_alfheim",
+    "realm": "Alfheim",
+    "hue": "violet",
+    "pos": [
+     -5.0,
+     -11.9
+    ],
+    "arch": "alfheim"
+   },
+   {
+    "fx": "gate_jotunheim",
+    "realm": "Jotunheim",
+    "hue": "ice",
+    "pos": [
+     5.0,
+     -11.9
+    ],
+    "arch": "jotunheim"
+   },
+   {
+    "fx": "gate_helheim",
+    "realm": "Helheim",
+    "hue": "rose",
+    "pos": [
+     10.0,
+     -11.9
+    ],
+    "arch": "helheim"
+   },
+   {
+    "fx": "gate_muspelheim",
+    "realm": "Muspelheim",
+    "hue": "red",
+    "pos": [
+     -11.0,
+     -5.0
+    ],
+    "arch": "muspelheim"
+   },
+   {
+    "fx": "gate_svartalfheim",
+    "realm": "Svartalfheim",
+    "hue": "amber",
+    "pos": [
+     -6.6,
+     -5.0
+    ],
+    "arch": "svartalfheim"
+   },
+   {
+    "fx": "gate_niflheim",
+    "realm": "Niflheim",
+    "hue": "blue",
+    "pos": [
+     6.6,
+     -5.0
+    ],
+    "arch": "niflheim"
+   },
+   {
+    "fx": "gate_midgard",
+    "realm": "Midgard",
+    "hue": "rainbow",
+    "pos": [
+     11.0,
+     -5.0
+    ],
+    "arch": "midgard"
+   }
+  ],
+  "waystone": {
+   "pos": [
+    4.6,
+    -1.0
+   ]
+  },
+  "ferry": {
+   "pos": [
+    3.2,
+    13.55
+   ],
+   "to": "ravenhold",
+   "spawn": "from_bifrost",
+   "tap": [
+    4.6,
+    11.0,
+    6.6,
+    16.1
+   ],
+   "name": "Sable's rift-skiff"
+  },
+  "spawns": {
+   "start": [
+    0.0,
+    1.2,
+    "up"
+   ],
+   "from_ravenhold": [
+    1.8,
+    13.2,
+    "up"
+   ],
+   "from_waystone": [
+    3.3,
+    0.2,
+    "right"
+   ],
+   "from_vanaheim": [
+    0.0,
+    -10.1,
+    "down"
+   ],
+   "qa": [
+    0.0,
+    2.0,
+    "up"
+   ]
+  },
+  "shimmer": {
+   "glints": [
+    [
+     0.0,
+     6.8
+    ],
+    [
+     -0.6,
+     8.6
+    ],
+    [
+     0.5,
+     10.4
+    ],
+    [
+     0.0,
+     1.0
+    ],
+    [
+     0.3,
+     -3.2
+    ]
+   ],
+   "wisps": [
+    [
+     -6.0,
+     9.0
+    ],
+    [
+     6.4,
+     9.6
+    ],
+    [
+     -15.2,
+     -2.0
+    ],
+    [
+     15.0,
+     -4.4
+    ],
+    [
+     -9.4,
+     7.6
+    ],
+    [
+     9.8,
+     7.2
+    ]
+   ]
+  }
+ },
+ "gamefx": true
+}

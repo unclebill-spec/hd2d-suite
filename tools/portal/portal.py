@@ -12,6 +12,9 @@
   rift_vortex     the open Rift gate (Vanaheim): a green-gold spiral fringed with neon-blue cold-fire tongues
   rift_seal_violet / rift_seal_blue / rift_seal_red
                   a sealed Rift gate: dark slow swirl, a thin dashed neon rim and a lock rune that pulses faintly
+  rift_seal_gold / _ice / _amber / _rose / _rainbow
+                  Bifrost Crossing's other realm seals (Asgard, Jotunheim, Svartalfheim, Helheim, Midgard): the same
+                  sealed swirl in biome-palette lights; Midgard's rim cycles the rainbow bridge's seven bands
   rift_ring       the Rift Shrine's ground circle: dithered ellipse with blue / violet / red rune dashes (decal)
   alf_rune        a violet Alfheim rune burned into the ground (Veyra's poison mark at Vanaheim's spring; decal)
   spring_poison   the poisoned spring's water (decal over the basin): sickly violet swirl, slow dark bubbles that swell + pop
@@ -246,10 +249,19 @@ def rift_vortex(pal, seed):
     return out
 
 
+# Bifrost Crossing's realm seals (Stage 6 part 1): the other realms' lights are biome-palette triplets (lo, mid, hi);
+# only the three approved NEON accents stay neon. "rainbow" (Midgard) runs its rim through the bridge's seven bands.
+SEAL_HUES = {"gold": ("plaster_lo", "flower_gold", "white"), "ice": ("stone_hi", "sky", "white"),
+             "amber": ("timber", "roof_hi", "lamp"), "rose": ("roof", "flower_rose", "white"),
+             "rainbow": ("neon_violet_lo", "neon_blue", "white")}
+RAINBOW = ("neon_red", "lamp", "flower_gold", "grass_hi", "neon_blue", "flower_blue", "neon_violet")
+
+
 def rift_seal(hue):
     """Sealed Rift gate: a dark, slow, barely-moving swirl (ink / shadow / the hue's low tone), a thin dashed rim
     in the hue and a diamond lock rune that brightens on two frames of six (a faint heartbeat)."""
-    lo, mid, hi = f"neon_{hue}_lo", f"neon_{hue}", f"neon_{hue}_hi"
+    lo, mid, hi = SEAL_HUES.get(hue) or (f"neon_{hue}_lo", f"neon_{hue}", f"neon_{hue}_hi")
+    rainbow = hue == "rainbow"
 
     def fn(pal, seed):
         out = []
@@ -266,7 +278,9 @@ def rift_seal(hue):
                         continue
                     a = math.atan2(dy, dx)
                     s_ = (a / math.tau * 3 + math.log(d + 0.1) * 0.7 - ph) % 1.0
-                    if d > 0.93:
+                    if d > 0.93 and rainbow:   # Midgard: the rim turns slowly through the seven bridge bands
+                        c = RAINBOW[(int((a / math.tau) * 21) + f) % 7]
+                    elif d > 0.93:
                         c = mid if (int((a / math.tau) * 40) + f) % 3 else lo
                     elif s_ < 0.1 and (x + y) % 2 == 0:
                         c = lo
@@ -430,6 +444,7 @@ EFFECTS = {
     "rift_seal_violet": dict(fn=rift_seal("violet"), fps=4, loop=True, kind="billboard", pivot=[24, 47], lift=0.18, glow=True),
     "rift_seal_blue": dict(fn=rift_seal("blue"), fps=4, loop=True, kind="billboard", pivot=[24, 47], lift=0.18, glow=True),
     "rift_seal_red": dict(fn=rift_seal("red"), fps=4, loop=True, kind="billboard", pivot=[24, 47], lift=0.18, glow=True),
+    **{f"rift_seal_{h}": dict(fn=rift_seal(h), fps=4, loop=True, kind="billboard", pivot=[24, 47], lift=0.18, glow=True) for h in SEAL_HUES},
     "rift_ring": dict(fn=rift_ring, fps=6, loop=True, kind="decal", pivot=[24, 24], lift=0.03, glow=True),
     "alf_rune": dict(fn=alf_rune, fps=4, loop=True, kind="decal", pivot=[24, 24], lift=0.03, glow=True),
     "spring_poison": dict(fn=spring_water("poison"), fps=3, loop=True, kind="decal", pivot=[24, 24], lift=0.0, glow=True),

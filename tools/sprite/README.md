@@ -16,6 +16,7 @@ hd2d sprite --list
 - 24 original roles:
   - Original set: baker, farmer, fisher, shopkeeper, kid, elder, traveler (player), florist, postie, cat.
   - New humans: blacksmith, librarian, guard, innkeeper, musician, gardener, herbalist (caster), hedgewitch (caster), fisherkid (kid layout), lamplighter.
+  - Named (only when a spec lists them): gnome, corsair (Sable), gatewright (Gatewright Halvard Ness, Bifrost: sky-blue guild coat, collar, dark belt, charcoal trousers, tan boots, `keystaff` item).
   - New animals: dog, goat, chicken, owl.
 - CAST pose (casters only, `roles_more.py: draw_cast_arms`): 4 frames (gather, raise, raised + glow, release), played as `[0,1,2,2,3,3]` at 6 fps. Roles in the JSON carry `caster` and `anims`.
 - Outputs: `actors.png` + `actors.json` (frames, pivot; anims: idle 3 fps [0,1,2,1] + blink, walk 8 fps, cast 6 fps, hero-only attack 10 fps / defend / jump), `actors_preview_4x.png` (nearest), and per-role strips.

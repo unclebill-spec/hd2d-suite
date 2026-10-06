@@ -55,6 +55,13 @@ def more_roles(_r):
                            "dark vest, red waist sash, navy trousers, tall dark boots, a tally ledger", hat="kerchief",
                       hatc="roof_hi", hair="shadow", hairstyle="long", shirt="plaster_hi", vest="shadow", sash="roof",
                       pants="cloth", boots=True, shoes="ink", item="ledger", named=True),
+        # Stage 6 part 1 (Bifrost Crossing): the Gatekeepers' Guild's portal keeper. Clothing rule: a sky-blue guild
+        # coat to the hip over a cream collar, a dark 1 px belt, charcoal trousers split at the legs, tan boots
+        "gatewright": _r(desc="Gatekeepers' Guild gatewright (Bifrost Crossing): grey hair and short grey beard, sky-blue "
+                              "guild coat to the hip with a cream collar, dark belt, charcoal trousers, tan boots, "
+                              "a rune-key staff tipped with a cold-fire crystal", hair="stone_hi", hairstyle="short",
+                         beard="stone_hi", shirt="sky", collar="plaster_hi", tunic=1, belt="shadow", pants="stone_lo",
+                         boots=True, shoes="timber_hi", item="keystaff", named=True),
         "dog": _r(kind="creature", animal="dog", desc="scruffy cream terrier with floppy brown ears", fur="plaster",
                   spot="timber_hi", belly="plaster_hi"),
         "goat": _r(kind="creature", animal="goat", desc="small white goat with curled horns and a bell",
@@ -205,6 +212,12 @@ def draw_items(s, spec, L, face, top, hand_y, x0, x1, stride):
                 s.set(hr + 1, y, "timber")
             s.set(hr + 1, top - 8, "flower_gold"); s.set(hr, top - 7, "grass"); s.set(hr + 2, top - 7, "grass")
             s.set(hr + 1, top - 7, "lamp")
+        elif item == "keystaff":                    # gatewright: an oak staff with a key-bit collar and a cold-fire crystal tip
+            for y in range(top - 6, 29):
+                s.set(hr + 1, y, "timber")
+            s.set(hr + 2, top - 3, "flower_gold"); s.set(hr + 2, top - 1, "flower_gold")   # the key bits
+            s.set(hr + 1, top - 9, "white"); s.set(hr + 1, top - 8, "sky"); s.set(hr + 1, top - 7, "flower_blue")
+            s.set(hr, top - 8, "flower_blue"); s.set(hr + 2, top - 8, "flower_blue")
         elif item == "rod":
             tip = L["head_top"] - 3
             for y in range(tip, hand_y + 1):
@@ -216,10 +229,10 @@ def draw_items(s, spec, L, face, top, hand_y, x0, x1, stride):
             s.set(hr + 1, top - 12, "lamp"); s.set(hr + 1, top - 11, "flower_gold"); s.set(hr + 2, top - 11, "lamp")
     elif face == "up":
         hr, hl = x1 + 1, x0 - 2
-        if item in ("spear", "staff", "wick"):
+        if item in ("spear", "staff", "wick", "keystaff"):
             x = hl - 1
-            tipc = {"spear": "stone_hi", "staff": "flower_gold", "wick": "lamp"}[item]
-            lo = top - (10 if item == "spear" else 6 if item == "staff" else 10)
+            tipc = {"spear": "stone_hi", "staff": "flower_gold", "wick": "lamp", "keystaff": "sky"}[item]
+            lo = top - (10 if item == "spear" else 6 if item in ("staff", "keystaff") else 10)
             for y in range(lo, 29 if item != "wick" else hand_y + 2):
                 s.set(x, y, "timber" if item != "wick" else "timber_lo")
             s.set(x, lo - 1, tipc); s.set(x, lo - 2, tipc)
@@ -238,10 +251,10 @@ def draw_items(s, spec, L, face, top, hand_y, x0, x1, stride):
             s.hspan(hand_y - 4, hx - 3, hx + 1, "stone_lo"); s.hspan(hand_y - 5, hx - 3, hx + 1, "stone")
         elif item == "book":
             s.hspan(top + 3, 4, 7, "roof"); s.hspan(top + 4, 4, 7, "cloth"); s.set(4, top + 3, "plaster_hi")
-        elif item in ("spear", "staff", "wick"):
+        elif item in ("spear", "staff", "wick", "keystaff"):
             x = 5
-            tipc = {"spear": "stone_hi", "staff": "flower_gold", "wick": "lamp"}[item]
-            lo = top - (10 if item == "spear" else 6 if item == "staff" else 10)
+            tipc = {"spear": "stone_hi", "staff": "flower_gold", "wick": "lamp", "keystaff": "sky"}[item]
+            lo = top - (10 if item == "spear" else 6 if item in ("staff", "keystaff") else 10)
             for y in range(lo, 29 if item != "wick" else hand_y + 2):
                 s.set(x, y, "timber" if item != "wick" else "timber_lo")
             s.set(x, lo - 1, tipc); s.set(x, lo - 2, tipc)
