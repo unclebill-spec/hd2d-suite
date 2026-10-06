@@ -232,3 +232,10 @@ Hearthmoor is being built in stages (milestones in `docs/HEARTHMOOR_BUILDER_HAND
 3. Day-night effects on gameplay (night spawns, lamp-lit safe zones) and light weather.
 4. More enemy types, a mini-boss in Mossglen, difficulty settings, a controller hold-for-wheel and button remap.
 5. Then: first realm areas and the Rainbow Rift portal hub, dialogue choices, more save slots, mushroom villages / gnomes / bubbly springs.
+
+## Alfheim realm (WIP, paused)
+This lives on branch `realm-alfheim` only. Do not merge it.
+- Not yet run: all four areas (Glimmer Steps, Lumen Court, Wispwood, Prism Vault) and the bosses are coded, but they have never been loaded in a browser. Expect JS errors on the first load.
+- Art: only Sylvaine's art is wired. The staging art is in `/workspace/hearthmoor-staging/art/alfheim/`.
+- Paused because Bill set the game focus to Gravewake and Nick's Bad Day.
+- Next: (1) quick-load each area and fix JS errors; (2) rewrite tests/smoke_alfheim.py and run check-scene per area; (3) wire Lumi's own sheet and portraits, use per-role portraits in drawPortrait, add a `lumi` neon allow-list entry, and re-pull alfheim.md for the Svartalfheim choice edits; (4) once Cozy Builder's 5-6x boss and camera support is on main, rebase and pick one Sylvaine size; (5) take screenshots, update docs/ALFHEIM.md, run the secret scan, push. Full list: `ALFHEIM_PROGRESS.md` (RESUME HERE).

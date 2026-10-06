@@ -2,6 +2,12 @@
 
 Dates are America/New_York. Newest first. Keep this current with every change you push.
 
+## 2026-10-06: [ALFHEIM] WIP / PAUSED (branch realm-alfheim, not merged)
+- Not yet run: all four areas (Glimmer Steps, Lumen Court, Wispwood, Prism Vault) and the bosses are coded, but they have never been loaded in a browser. Expect JS errors on the first load.
+- Art: only Sylvaine's art is wired. The staging art is in `/workspace/hearthmoor-staging/art/alfheim/`.
+- Paused because Bill set the game focus to Gravewake and Nick's Bad Day.
+- Next: (1) quick-load each area and fix JS errors; (2) rewrite tests/smoke_alfheim.py and run check-scene per area; (3) wire Lumi's own sheet and portraits, use per-role portraits in drawPortrait, add a `lumi` neon allow-list entry, and re-pull alfheim.md for the Svartalfheim choice edits; (4) once Cozy Builder's 5-6x boss and camera support is on main, rebase and pick one Sylvaine size; (5) take screenshots, update docs/ALFHEIM.md, run the secret scan, push. Full list: `ALFHEIM_PROGRESS.md` (RESUME HERE).
+
 ## 2026-10-04: Hearthmoor Stage 6, part 1: Bifrost Crossing (the portal capital)
 World flow per `docs/story/STORY_SEEDS.md` and the builder handoff: Hearthmoor → Ravenhold → **Bifrost Crossing** → one city per realm. Screenshots: `docs/screenshots/stage6_bifrost_night.png` (the Crossing at night) and `docs/screenshots/stage6_bifrost_arches.png` (the realm gates).
 - **New area `bifrost`:** a floating, chamfered flagstone plaza in the Rift's gloom. A seven-band rainbow inlay runs up its middle from the **rainbow bridge** (bands of glowing light with light dripping off the underside into the void) out to a small skiff landing. Underneath hang a tapering rock root, roots and cold-fire crystals. Rift shards float in the void around it.
