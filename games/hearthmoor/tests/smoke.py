@@ -116,7 +116,8 @@ class Smoke:
             while self.ev("!!window.__hm.dlg"):
                 self.pg.keyboard.press("Escape"); self.pg.wait_for_timeout(100)
         else:
-            raise AssertionError(f"could not talk to {npc_id}")
+            st = self.ev(f"(() => {{ const G = window.__hm, c = G.ctx, p = c.player, a = c.npc('{npc_id}'); return {{ p: [p.x, p.z, p.y].map((v) => +v.toFixed(2)), a: a && [a.x, a.z, a.y], busy: !!G.busy, walking: c.walking(), prompt: (document.getElementById('prompt') || {{}}).textContent }}; }})()")
+            raise AssertionError(f"could not talk to {npc_id}: {st}")
         pages = self.ev("window.__hm.dlg.pages.length")
         first = self.ev("window.__hm.dlg.pages[0]")
         if keep_open:
@@ -1873,16 +1874,17 @@ def run(out, simscale=4, size=(960, 540), segs=SEGS):
                 ps = T.ev("window.__hm.pets.state()")
                 p0 = T.pos(); T.walk(p0[0] + 5.5, p0[1] - 1.0, 60)
                 # drop the pet 4.5 m away on open flagstones (east of the Den yard, never inside the woodpile / house blockers)
-                T.ev("(() => { const G = window.__hm, a = G.pets.a, p = G.ctx.player; a.x = p.x + 4.5; a.z = p.z + 0.4; a.y = G.ctx.heightAt(a.x, a.z); })()"); T.frames(2)
+                # the catch-up is quick (speed scales with the gap), so the game records the first follow-gait frame itself
+                T.ev("(() => { const G = window.__hm, a = G.pets.a, p = G.ctx.player; G.pets.gait = null; a.x = p.x + 4.5; a.z = p.z + 0.4; a.y = G.ctx.heightAt(a.x, a.z); })()"); T.frames(2)
                 try:
-                    T.wait("(() => { const s = window.__hm.pets.state().actor; return s && s.hurry && s.anim === 'follow'; })()", 4)
+                    T.wait("!!window.__hm.pets.state().gait", 4)
                 except Exception:  # noqa: BLE001
                     pass
-                far = T.ev("window.__hm.pets.state().actor")
+                far = T.ev("window.__hm.pets.state().gait") or {}
                 f.wait_for_timeout(2600); T.frames(6)
                 near = T.ev("(() => { const a = window.__hm.pets.a, p = window.__hm.ctx.player; return Math.hypot(a.x - p.x, a.z - p.z); })()")
                 T.step("the pet follows on its own pets sheet (role pet_fox); more than 3 m behind it switches to the follow gait, then catches up within ~2 m",
-                       ps["actor"] and ps["role"] == "pet_fox" and ps["actor"]["sheet"] == "pets" and far["hurry"] and far["anim"] == "follow" and near < 2.2, actor=ps["actor"], far=far, near=round(near, 2))
+                       ps["actor"] and ps["role"] == "pet_fox" and ps["actor"]["sheet"] == "pets" and far.get("hurry") and far.get("anim") == "follow" and far.get("d", 0) > 3 and near < 2.2, actor=ps["actor"], far=far, near=round(near, 2))
                 # glow: Bifrost is one of the Rift's dim places, so the fox's red tail-lantern is a light pool (light + pool + aura fx + embers), a light zone; aura mods apply
                 T.ev("window.__hd2d.setTime('night')"); T.frames(10); f.wait_for_timeout(600)
                 gl = T.ev("window.__hm.pets.state()")

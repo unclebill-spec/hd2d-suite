@@ -178,6 +178,7 @@ export class Pets {
     if (P && !a) { this.spawn(); return; }
     if (!a || !P) return;
     this.t += dt; if (this.boostT > 0) this.boostT -= dt;
+    if (a.hurry && a.anim === 'follow' && !this.gait) { const p = ctx.player; this.gait = { anim: a.anim, hurry: true, d: +Math.hypot(a.x - p.x, a.z - p.z).toFixed(2) }; }   // first catch-up gait frame (QA)
     if (!a.act) a.lift = P.hover.lift ? P.hover.lift + Math.sin(this.t * 2 * Math.PI * P.hover.hz) * P.hover.bob : 0;
     const want = this.dark() || this.boostT > 0;
     if (want && !this.lit) this.lightOn(); else if (!want && this.lit) this.lightOff();
@@ -206,6 +207,7 @@ export class Pets {
     const a = this.a, P = this.def(), S = this.S;
     return { pet: S.pet, owned: Object.keys(S.pets), role: P && P.role, aura: petAura(S), dark: this.dark(), lit: this.lit, boost: this.boostT > 0,
              actor: a ? { x: +a.x.toFixed(2), z: +a.z.toFixed(2), lift: +(a.lift || 0).toFixed(3), anim: a.anim, hurry: !!a.hurry, sheet: a.S && a.S.name } : null,
+             gait: this.gait || null,
              light: this.light ? { color: '#' + this.light.color.getHexString(), base: +this.light.base.toFixed(2), range: this.light.range, power: +this.light.power.toFixed(2) } : null,
              fx: (this.fx || []).map((f) => f && f.name), emitter: !!this.emitter, sensed: this.lastSense, warned: this.lastWarn };
   }

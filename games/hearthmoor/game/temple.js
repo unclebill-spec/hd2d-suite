@@ -42,7 +42,7 @@ export class Temple {
     this.ctx = ctx; this.area = area; this.lit = []; this.chain = []; this.cameo = 0;
     const gm = ctx.scene.game || (ctx.scene.game = {}), S = this.S;
     if (area === 'ravenhold') {
-      if (!ctx.npc('novice') && ctx.actors.sheetOf(EDDA.role)) { const a = ctx.addNpc({ ...EDDA, behavior: 'idle' }); a.y = ctx.heightAt(a.x, a.z); }
+      if (!ctx.npc('novice') && ctx.actors.sheetOf(EDDA.role)) { const a = ctx.addNpc({ ...EDDA, pos: EDDA.pos.slice(), behavior: 'idle', talkable: true }); a.y = ctx.heightAt(a.x, a.z); }
       if (templeOpen(S)) {   // the Hearth writ opens the Old Temple's district gate: an exit up the stair
         gm.sealed = (gm.sealed || []).filter((g) => g.id !== 'temple');
         gm.exits = (gm.exits || []).filter((e) => e.to !== 'temple').concat([{ ...HARBOR_EXIT }]);

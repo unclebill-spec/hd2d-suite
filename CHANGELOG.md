@@ -2,6 +2,12 @@
 
 Dates are America/New_York. Newest first. Keep this current with every change you push.
 
+## 2026-10-06: PAUSED by Bill (work in progress saved on branch `hearthmoor-batch1-wip`)
+- Work on Hearthmoor is paused until Bill restarts it. The live game is still Bifrost Crossing (main 56f9b2f).
+- The batch 1 work in progress (6.2 pets + Stray Den, 6.3 Old Temple, 6.4 groundwork, 6.5 rift storms, sharded tests) is on branch `hearthmoor-batch1-wip`. It is NOT green yet and NOT merged to main.
+- Open test failures: smoke segment G "could not talk to novice" (Edda in Ravenhold at -7,-10.2; the fix is in this commit but not re-run) and the segment F pet-follow step (it samples the gait too late; a gaitSeen fix is in this commit but not re-run).
+- Next, when resumed: re-run `smoke.py --segments FGHI --jobs 2` plus the temple check-scene, then build 6.4 Verdant Heart (story and art are in /workspace/hearthmoor-staging), then the full smoke + check_all, then merge to main and publish. After that: batch 2 (6.6 orb lanterns, 6.7 forge, 6.8 alchemy), merging Master Builder's paused `realm-alfheim` branch, then Svartalfheim (script ready).
+
 ## 2026-10-05: Hearthmoor Stage 6.2 (the Stray Den + glowing pets), 6.3 (the Old Temple), 6.4 groundwork, 6.5 (rift storms), faster tests (local; batch not pushed yet)
 Story: the Hearthmoor Story bot's `pets.md`, `old_temple.md`, `verdant_heart.md` and `rift_storms.md` (staging), with Bill's decisions. Art: **the Hearthmoor Art bot** drew the pet sheets (wisp-kit, glowmoth, lantern fox and the moss-pup: `art/pets/pets.png` + `pets_fx` + `pets_particles`) and the **Old Temple pack** (`art/old_temple/`: riftgate arch + dormant glow, temple braziers, faceless statues, stained windows, broken columns, Mother Ilse `templekeeper` and Brother Tamsin `archivist`, and the riftgate / cold-fire gamefx). Screenshots: `docs/screenshots/stage6_pet_pick.png`, `stage6_pet_glow.png`, `stage6_pet_mosspup.png`.
 - **The Stray Den (6.2):** a round stone house in Bifrost Crossing's west yard, with three cold-fire lantern posts, a woodpile and Signe Larkspur (new `denkeeper` sprite). The side quest **Strays of the Rift** has stages 1-2 driven by flags; 3 = done.
