@@ -27,8 +27,8 @@ def sh(*a):
     subprocess.run([str(x) for x in a], check=True)
 
 
-def assemble():
-    for a in AREAS:
+def assemble(areas=AREAS):
+    for a in areas:
         out = TMP / a
         if out.exists():
             shutil.rmtree(out)
@@ -72,13 +72,13 @@ def used_files(scene, root):
     return keep
 
 
-def copy_areas():
+def copy_areas(areas=AREAS):
     for d in ("engine", "vendor"):
         if (GAME / d).exists():
             shutil.rmtree(GAME / d)
         # always the suite's current runtime (not the assemble output, which is stale with --skip-assemble)
         shutil.copytree(SUITE / "tools/runtime/web" / d, GAME / d, ignore=shutil.ignore_patterns("__pycache__"))
-    for a in AREAS:
+    for a in areas:
         src, dst = TMP / a, GAME / "areas" / a
         if dst.exists():
             shutil.rmtree(dst)
@@ -96,6 +96,63 @@ def copy_areas():
             shutil.copytree(src / "public/art/trees", dst / "public/art/trees", dirs_exist_ok=True)
         size = sum(f.stat().st_size for f in dst.rglob("*") if f.is_file())
         print(f"area {a}: {len(keep)} files, {size / 1e6:.1f} MB" + (f", missing {missing}" if missing else ""))
+
+
+# ------------------------------------------------------------------ pets (Stage 6 part 2): one shared pet sheet in every area
+# The pet art (art/pets/, from the Hearthmoor Art bot; pets.png is the NEON variant Bill approved 2026-10-05) follows
+# the hero everywhere, so every area gets: the pet sheet next to its actor atlas (meta.sheets.pets + stub roles, the
+# boss-sheet mechanism), the pet aura / pool effects appended under its spells atlas, and the pet particles appended
+# under its particles atlas. Idempotent: a re-run strips the previous pet rows first (`pets_from` remembers the cut).
+PET_ROLES = ("pet_wisp", "pet_moth", "pet_fox")
+
+
+def _append_atlas(img_path, meta, add_img, add_meta, key, rows_key=None):
+    base = Image.open(img_path).convert("RGBA")
+    h0 = meta.get("pets_from", base.size[1])
+    base = base.crop((0, 0, base.size[0], h0))
+    add = Image.open(add_img).convert("RGBA")
+    out = Image.new("RGBA", (max(base.size[0], add.size[0]), h0 + add.size[1]), (0, 0, 0, 0))
+    out.paste(base, (0, 0)); out.paste(add, (0, h0))
+    out.save(img_path)
+    cell = meta["cell"]; row0 = h0 // cell
+    items = meta[key]
+    for k in list(items):
+        if k in add_meta[key]:
+            del items[k]
+    for k, v in add_meta[key].items():
+        v = json.loads(json.dumps(v)); v["row"] = v["row"] + row0
+        for f in v.get("frame_list", []):
+            f["y"] += h0
+        items[k] = v
+    if rows_key:
+        meta[rows_key] = [r for r in meta[rows_key] if r not in add_meta[rows_key]][:row0] + list(add_meta[rows_key])
+    meta["pets_from"] = h0
+    meta["size"] = [out.size[0], out.size[1]]
+    return meta
+
+
+def install_pets(areas=AREAS):
+    P = GAME / "art" / "pets"
+    pm = json.loads((P / "pets.json").read_text())
+    fxm = json.loads((P / "pets_fx.json").read_text())
+    ptm = json.loads((P / "pets_particles.json").read_text())
+    for a in areas:
+        root = GAME / "areas" / a
+        scene = json.loads((root / "scene.json").read_text())
+        sp = root / scene["atlas"]["json"]
+        am = json.loads(sp.read_text())
+        shutil.copy2(P / "pets.png", sp.parent / "pets.png")
+        (sp.parent / "pets.json").write_text(json.dumps(pm, indent=1))
+        am.setdefault("sheets", {})["pets"] = {"json": "pets.json", "image": "pets.png"}
+        for r in PET_ROLES:
+            am["roles"][r] = {"sheet": "pets", "row": pm["roles"][r]["row"], "kind": "creature", "pet": True, "anims": ["idle", "walk", "follow"]}
+        sp.write_text(json.dumps(am, indent=1))
+        for k, add_img, add_meta, key, rows in (("spells", P / "pets_fx.png", fxm, "effects", None),
+                                                 ("particles", P / "pets_particles.png", ptm, "presets", "rows")):
+            jp = root / scene[k]["json"]; ip = root / scene[k]["image"]
+            m = _append_atlas(ip, json.loads(jp.read_text()), add_img, add_meta, key, rows)
+            jp.write_text(json.dumps(m, indent=1))
+    print(f"pets: sheet + {len(fxm['effects'])} effects + {len(ptm['presets'])} particle presets in {len(areas)} areas")
 
 
 # ------------------------------------------------------------------ icons (biome palette only, 16 px, hard alpha)
@@ -330,10 +387,13 @@ if __name__ == "__main__":
     ap = argparse.ArgumentParser()
     ap.add_argument("--no-zip", action="store_true")
     ap.add_argument("--skip-assemble", action="store_true")
+    ap.add_argument("--areas", default=None, help="comma list: rebuild only these areas (the others stay as built)")
     a = ap.parse_args()
+    only = a.areas.split(",") if a.areas else AREAS
     if not a.skip_assemble:
-        assemble()
-    copy_areas()
+        assemble(only)
+    copy_areas(only)
+    install_pets(only)
     draw_icons()
     draw_button_icons()
     write_pwa()

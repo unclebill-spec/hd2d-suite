@@ -12,7 +12,7 @@ const TOADS = {
   hollows: [[-3.4, -1.6], [3.6, 3.6], [-10.8, 4.8], [-6.8, -6.6], [11.0, 3.8], [0.8, -2.3], [-6.0, 3.4], [6.8, 3.0], [-11.6, -5.0], [12.6, -8.6]],
   vanaheim: [[-5.6, -6.2], [9.6, 2.8], [-7.0, 4.8], [-3.2, -7.6], [8.8, -4.2], [1.0, 5.4], [-10.6, -5.8]],
   ravenhold: [[-9.4, -8.2], [12.4, -8.2], [-17.0, -4.6], [16.8, -8.2], [-16.6, -12.6], [16.4, -12.4], [-5.0, -12.8]],
-  bifrost: [[-11.4, 1.0], [-12.2, 2.6], [11.6, 0.8], [-12.1, -9.7], [12.2, -9.8], [8.6, -7.4], [-8.6, -7.5], [-3.1, 14.6]],
+  bifrost: [[-12.6, -2.6], [-12.5, -1.2], [11.6, 0.8], [-12.1, -9.7], [12.2, -9.8], [8.6, -7.4], [-8.6, -7.5], [-3.1, 14.6]],
 };
 // areas that glow at every hour (the hollow is always dim), and their standing light pools: [x, z, kind, colour]
 const ALWAYS = { hollows: true, rift: true, ravenhold: true, bifrost: true };   // Ravenhold + Bifrost sit in the Rift's gloom: their glow never sleeps
@@ -121,6 +121,7 @@ export class Glow {
     for (const p of this.fixed) out.push({ x: p.x, z: p.z, r: p.r, src: 'pool' });
     if (this.G.hollows) out.push(...this.G.hollows.zones());   // lit braziers + the spring
     if (this.G.garden) out.push(...this.G.garden.zones());     // glow-garden blooms at night
+    if (this.G.pets) out.push(...this.G.pets.zones());         // the active pet's glow (Stage 6 part 2)
     const nm = this.G && this.G.shopUI && this.G.shopUI.nm;   // the night merchant's neon-blue lantern is a light zone too
     if (nm && nm.a) out.push({ x: nm.a.x + 0.35, z: nm.a.z + 0.1, r: 2.2, src: 'lantern' });
     return out;

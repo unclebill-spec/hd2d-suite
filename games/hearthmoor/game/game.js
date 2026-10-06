@@ -20,6 +20,7 @@ import { Rifts } from './rifts.js';
 import { Factions, FACTIONS, IDS as FAC_IDS, RANKS as FAC_RANKS, NEED as FAC_NEED, migrate as facMigrate } from './factions.js';
 import * as LO from './loot.js';
 import { Shop, drinkTonic, goodIconURL } from './shop.js';
+import { Pets, PETS, ensurePets, petAura } from './pets.js';
 
 // PWA install: catch the browser's prompt as early as possible (Chrome / Edge / Android); iPhone gets a tip instead
 let installEvt = null;
@@ -42,7 +43,7 @@ const $ = (id) => document.getElementById(id);
 
 // v2 adds the hero class (cls) and current HP; everything from v1 carries over unchanged
 const fresh = () => ({ v: 2, cls: null, hp: null, area: 'plaza', pos: null, t: 0.62, inv: {}, quests: { bread: 0, tea: 0, cat: 0 }, picked: {}, flags: {},
-                       cat: 'glade', spells: ['sparkle_burst'], played: 0, savedAt: null });
+                       cat: 'glade', spells: ['sparkle_burst'], played: 0, savedAt: null, pet: null, pets: {} });
 
 const G = {
   S: fresh(), game: null, ctx: null, busy: false, title: !QA, dlg: null, log: false, markers: {}, scenes: {}, armed: false,
@@ -64,6 +65,7 @@ G.onRareKill = (R) => G.factions.onRare(R);   // Stage 5 part 3: merit
 G.weatherAt = weatherAt;   // smoke: the weather calendar
 G.loot = new LO.Loot(G); G.LO = LO; G.PR = PR;
 G.shopUI = new Shop(G); G.drinkTonic = () => drinkTonic(G);
+G.pets = new Pets(G); G.PETS = PETS;   // Stage 6 part 2: glowing pets (the Stray Den)
 window.__hm = G;   // smoke tests + debugging
 
 // ------------------------------------------------------------------ save / load
@@ -121,8 +123,9 @@ G.take = (id, n = 1) => { G.S.inv[id] = Math.max(0, (G.S.inv[id] || 0) - n); if 
 G.setQuest = (id, stage) => {
   const was = G.S.quests[id]; G.S.quests[id] = stage; drawLog();
   const story = !!QUESTS[id].story;   // story quests (Ravenhold) pay their own merit in data.js; errands pay Hearth merit
-  if (stage === 3 && was !== 3) { toast(`${story ? 'Story quest' : 'Errand'} done: ${QUESTS[id].title}`, 2.6); G.audio.sfx('quest'); G.gainXP(PR.XP.errand); if (!story) G.factions.onErrand(); }
-  else if (!was && stage > 0) { toast(`New ${story ? 'story quest' : 'errand'}: ${QUESTS[id].title}`, 2.6); G.audio.sfx('pickup'); flashLog(); }
+  const kind = story ? 'Story quest' : QUESTS[id].side ? 'Side quest' : 'Errand';   // side quests (the Stray Den) still pay the errand merit
+  if (stage === 3 && was !== 3) { toast(`${kind} done: ${QUESTS[id].title}`, 2.6); G.audio.sfx('quest'); G.gainXP(PR.XP.errand); if (!story) G.factions.onErrand(); }
+  else if (!was && stage > 0) { toast(`New ${kind.toLowerCase()}: ${QUESTS[id].title}`, 2.6); G.audio.sfx('pickup'); flashLog(); }
   refreshMarkers(); save();
 };
 G.learn = (spell) => {
@@ -164,12 +167,12 @@ function drawLog() {
   const el = $('logList'); if (!el) return;
   const rows = Object.entries(QUESTS).map(([id, q]) => {
     const st = G.S.quests[id];
-    if (!st && q.story) return '';   // story quests appear once they start
+    if (!st && (q.story || q.side)) return '';   // story and side quests appear once they start
     if (!st) return `<li class="todo"><b>${q.title}</b><span>Someone in town may need a hand… (${q.giver})</span></li>`;
     let step = q.steps[st] || '';
     if (typeof step === 'function') step = step(G.S);   // story steps can depend on the save (the harbor quest's road to Bifrost)
     if (id === 'tea' && st === 1) step += ` (${G.S.inv.moonpetal || 0}/3)`;
-    return `<li class="${st === 3 ? 'done' : 'active'}${q.story ? ' story' : ''}"><b>${st === 3 ? '✓ ' : '◆ '}${q.story ? 'Story: ' : ''}${q.title}</b><span>${step}</span></li>`;
+    return `<li class="${st === 3 ? 'done' : 'active'}${q.story ? ' story' : ''}${q.side ? ' side' : ''}"><b>${st === 3 ? '✓ ' : '◆ '}${q.story ? 'Story: ' : q.side ? 'Side: ' : ''}${q.title}</b><span>${step}</span></li>`;
   });
   el.innerHTML = rows.join('');
   const n = errandsDone(G.S);
@@ -276,7 +279,7 @@ function choicePick(i) {
 function choiceCancel() { const d = G.dlg, k = d.choice.options.findIndex((o) => o.cancel); if (k >= 0) choicePick(k); else { d.picking = false; d.then = null; closeDialogue(); } }
 G.openDialogue = (npc, entry) => openDialogue(npc, entry);
 G.dropDialogue = () => { G.dlg = null; $('dlg').hidden = true; $('dlgChoices').hidden = true; document.body.classList.remove('dlgopen'); };
-G.refreshMarkers = () => refreshMarkers();
+G.refreshMarkers = () => refreshMarkers(); G.drawLog = () => drawLog();
 G.dlgChoice = () => (G.dlg && G.dlg.picking ? { options: G.dlg.choice.options.map((o) => o.label), ci: G.dlg.ci } : null);
 G.choicePick = (i) => choicePick(i);
 function drawPortrait(npc) {
@@ -307,7 +310,7 @@ async function loadArea(id, spawnKey, pos) {
   const old = $('view'); if (old) old.remove();
   const canvas = document.createElement('canvas'); canvas.id = 'view'; document.body.prepend(canvas);
   G.area = id; G.S.area = id; G.armed = false;
-  G.rifts.detach(); G.rares.detach(); G.combat.detach(); G.glow.detach(); G.hollows.detach(); G.harbor.detach(); G.crossing.detach(); G.garden.detach(); G.weather.detach(); G.loot.detach(); G.shopUI.detach();
+  G.rifts.detach(); G.rares.detach(); G.combat.detach(); G.glow.detach(); G.hollows.detach(); G.harbor.detach(); G.crossing.detach(); G.garden.detach(); G.weather.detach(); G.loot.detach(); G.shopUI.detach(); G.pets.detach();
   G.game = await boot({ base: AREAS[id], canvas, spawn: sp, startT: G.S.t, glowLights: glowCap(), clockSpeed: 1 / DAY_SECONDS, spellCycle: slots(),
                         player: { role: G.S.cls || G.preview || 'wildcaller' }, castAdvance: false,
                         keepTitle: true, padHandled: true, hooks, toast: (m, t) => toast(m, t) });
@@ -322,6 +325,7 @@ async function loadArea(id, spawnKey, pos) {
   if (G.S.cat === 'follow' && !ctx.npc('cat')) {
     ctx.addNpc({ id: 'cat', role: 'cat', name: 'Pudding', pos: [ctx.player.x - 0.7, ctx.player.z + 0.5], behavior: 'follow', speed: 2.4, say: ['Mrrp!'] });
   } else if (G.S.cat === 'follow') { const a = ctx.npc('cat'); a.behavior = 'follow'; a.speed = 2.4; }
+  ensurePets(G.S); G.pets.attach(ctx, id);   // the active pet follows you into every area
   G.audio.setArea(id);
   refreshMarkers();
   drawBag(); drawLog();
@@ -433,7 +437,7 @@ function onFrame(dt, ctx) {
   syncMarkers();
   padWheel();
   G.hollows.update(dt); G.garden.update(dt); G.glow.update(dt); G.weather.update(dt); G.intro.update(dt);
-  G.loot.update(dt); G.shopUI.update(dt); G.rares.update(dt); G.rifts.update(dt);
+  G.loot.update(dt); G.shopUI.update(dt); G.rares.update(dt); G.rifts.update(dt); G.pets.update(dt);
   G.combat.update(dt, ctx);
   drawVitals(ctx);
   if (G.title || G.busy) return;
@@ -1077,7 +1081,7 @@ function drawHero() {
     const owned = LO.GEM_IDS.filter((g) => S.gems[g] > 0);
     if (!owned.includes(HUI.gem)) HUI.gem = owned[0] || null;
     const sockBtn = (it, k) => (it && (it.gems || []).includes(null) && HUI.gem ? `<button class="wbtn sm plus" data-sock="${k}">socket</button>` : '');
-    body.innerHTML = `<p class="pts">Gold ${S.gold} · bag ${S.bag.length} / ${LO.BAG_MAX} · Enter / A equip · X scrap for gold</p>`
+    body.innerHTML = petStrip(S) + `<p class="pts">Gold ${S.gold} · bag ${S.bag.length} / ${LO.BAG_MAX} · Enter / A equip · X scrap for gold</p>`
       + `<p class="pts gems">${owned.length ? `gems: ${owned.map((g) => `<span class="gemtag${g === HUI.gem ? ' on' : ''}" style="--gc:${LO.GEMS[g].col}">◆ ${LO.GEMS[g].name} ×${S.gems[g]}</span>`).join(' ')}`
         + ` <button class="wbtn sm" id="gemCycle">gem ▸</button> · R / Y socket into the chosen row · T / RT next gem` : 'gems: none yet (golem cores, rift shards: beat foes, or ask the night merchant)'}</p>`
       + eq.map(([sl, it], k) => rowOf(it, k, sl, (it ? `<button class="wbtn sm plus" data-uneq="${sl}">take off</button>` : '') + sockBtn(it, k))).join('')
@@ -1086,6 +1090,7 @@ function drawHero() {
     body.querySelectorAll('[data-ic]').forEach((el) => { const [sl, r, gs] = el.dataset.ic.split(':'); const cv = LO.iconCanvas(sl, +r, 3, gs ? gs.split(',').map((g) => (g === '-' ? null : g)) : null); el.replaceWith(cv); cv.className = 'gicon'; });
     body.querySelectorAll('[data-sock]').forEach((b) => { b.onclick = (e) => { e.stopPropagation(); HUI.i = +b.dataset.sock; heroSocket(); }; });
     const gc = $('gemCycle'); if (gc) gc.onclick = (e) => { e.stopPropagation(); gemCycle(); };
+    const pf = $('petFeed'); if (pf) pf.onclick = (e) => { e.stopPropagation(); petFeed(); };
     body.querySelectorAll('[data-eq]').forEach((b) => { b.onclick = (e) => { e.stopPropagation(); if (LO.equip(S, +b.dataset.eq)) { G.audio.sfx('pickup'); save(); drawHero(); } }; });
     body.querySelectorAll('[data-uneq]').forEach((b) => { b.onclick = (e) => { e.stopPropagation(); if (LO.unequip(S, b.dataset.uneq)) { save(); drawHero(); } }; });
     body.querySelectorAll('[data-scrap]').forEach((b) => { b.onclick = (e) => { e.stopPropagation(); HUI.i = 3 + +b.dataset.scrap; heroScrap(); }; });
@@ -1157,6 +1162,17 @@ function gemCycle() {
   HUI.gem = owned[(owned.indexOf(HUI.gem) + 1) % owned.length]; drawHero();
 }
 G.heroSocket = heroSocket; G.gemCycle = gemCycle;
+// the pet slot (Gear tab): name, species, aura, bond hearts; P / LT feeds a Den biscuit
+function petStrip(S) {
+  ensurePets(S); const p = S.pet;
+  if (!p) return `<p class="pts pet none">pet: none yet${S.quests.strays ? '' : ' (the Stray Den at Bifrost Crossing takes in the Rift\'s strays)'}</p>`;
+  const P = PETS[p.id], b = p.bond || 1, bis = S.inv.denbiscuit || 0, au = (p.bond || 1) >= 3 ? P.aura.bond3 : P.aura.mods;
+  return `<p class="pts pet" style="--pc:${P.light.color}"><b class="petname">✦ ${p.name}</b> the ${P.species} · <span class="hearts">${'♥'.repeat(b)}${'♡'.repeat(3 - b)}</span>`
+    + ` · <u>${P.aura.name}</u>: ${P.aura.desc} <small>(now ${Object.entries(au).map(([k, v]) => `${k} ${v}`).join(', ')})</small>`
+    + ` · biscuits ×${bis} <button class="wbtn sm plus" id="petFeed" ${bis ? '' : 'disabled'}>feed (P)</button></p>`;
+}
+function petFeed() { const r = G.pets.feed(); if (r.ok) { save(); G.combat.refresh && G.combat.refresh(); } else toast(r.why === 'no pet' ? 'No pet yet.' : 'No Den biscuits. Signe sells them at the Stray Den.', 2); drawHero(); return r; }
+G.petFeed = petFeed;
 function heroTab(d) { HUI.tab = (HUI.tab + d + 5) % 5; HUI.i = 0; drawHero(); }
 function heroMove(d) { HUI.i = Math.max(0, Math.min((HUI.n || 1) - 1, HUI.i + d)); drawHero(); }
 function heroPad(name) {
@@ -1166,6 +1182,7 @@ function heroPad(name) {
   else if (name === 'x' && HUI.tab === 3) heroScrap();
   else if (name === 'y' && HUI.tab === 3) heroSocket();
   else if (name === 'rt' && HUI.tab === 3) gemCycle();
+  else if (name === 'lt' && HUI.tab === 3) petFeed();
   else if (name === 'a' || name === 'x') heroAct();
 }
 function heroKey(k, e) {
@@ -1173,6 +1190,7 @@ function heroKey(k, e) {
   else if (HUI.tab === 3 && (k === 'x' || k === 'delete' || k === 'backspace')) { e.preventDefault(); heroScrap(); }
   else if (HUI.tab === 3 && k === 'r') heroSocket();
   else if (HUI.tab === 3 && k === 't') gemCycle();
+  else if (HUI.tab === 3 && k === 'p') petFeed();
   else if (k === 'arrowleft' || k === 'a' || k === 'q') heroTab(-1); else if (k === 'arrowright' || k === 'd' || k === 'e') heroTab(1);
   else if (k === 'arrowup' || k === 'w') heroMove(-1); else if (k === 'arrowdown' || k === 's') heroMove(1);
   else if (k === 'enter' || k === ' ' || k === 'f') { e.preventDefault(); heroAct(); }

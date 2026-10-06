@@ -678,8 +678,9 @@ export async function boot(opts = {}) {
     } else if (a.behavior === 'follow') {
       // a pet or friend tagging along: keep ~1.3 m behind the player, hop over when left far behind
       const ex = player.x - a.x, ez = player.z - a.z, d = Math.hypot(ex, ez);
+      a.hurry = d > 3;   // more than 3 m behind: 1.5x speed and the catch-up gait (pets' follow anim)
       if (d > 7) { a.x = player.x - 0.8; a.z = player.z + 0.4; a.y = player.y; }
-      else if (d > 1.3) moving = moveActor(a, ex, ez, dt * (d > 3 ? 1.5 : 1));
+      else if (d > (a.followGap || 1.3)) moving = moveActor(a, ex, ez, dt * (d > 3 ? 1.5 : 1));
     } else if (a.behavior === 'caster' && a.spell) {
       a.castClock -= dt;
       if (a.castClock <= 0) { a.castClock = a.every; a.facing = a.castFacing || 'down'; castSpell(a, a.spell); }

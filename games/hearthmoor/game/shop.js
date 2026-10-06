@@ -5,6 +5,7 @@ import * as LO from './loot.js';
 
 export const GOODS = {
   tonic: { name: 'Hearth tonic', about: 'Drink (U, right-stick click, or tap it in the bag): heals 60 HP.', price: 12 },
+  denbiscuit: { name: 'Den biscuit', about: "Signe's oat-and-moonpetal biscuit. Feed your pet once a day (hero screen, Gear tab, pet row): bond grows, and its glow doubles for 60 s.", price: 6 },
   glowseed: { name: 'Glow seed', about: 'A seed that hums in the dark. Plant it in a garden plot (on the lower street of Bakery Lane by the lamp post, or in the Hollows): it blooms in two days.', price: 8 },
 };
 // buy price of a piece of gear by rarity (sell-back is a quarter of it, always more than scrapping)
@@ -17,6 +18,8 @@ export const SHOPS = {
   night: { name: 'The Lantern Pack', keeper: 'Sefa, the night merchant', goods: ['tonic'], gems: ['rift_shard', 'golem_core', 'frost_core', 'moon_opal'],
            gear: { n: 2, rar: [2, 3], sockets: 1 }, sellMul: 1.2 },
   // Ravenhold Harbor: Ida Wickmere's chandlery on the quay (cold-fire, rope, tonics; a rift shard when the boats bring one)
+  // Bifrost Crossing: Signe Larkspur's Stray Den (biscuits only; unlocked by 'Strays of the Rift')
+  den: { name: 'The Stray Den', keeper: 'Signe Larkspur, keeper of the Stray Den', goods: ['denbiscuit'], gear: { n: 0, rar: [] }, sellMul: 1 },
   harbor: { name: "Wickmere's Chandlery", keeper: 'Ida Wickmere, cold-fire chandler', goods: ['tonic', 'glowseed'], gems: ['rift_shard'],
             gear: { n: 3, rar: [0, 1, 1] }, sellMul: 1.1 },
 };
@@ -243,6 +246,8 @@ const GOOD_PX = {
   glowseed: ['................', '.......5........', '......66.5......', '.....6..6.......', '.......66.......', '.......6........', '......777.......', '.....77887......',
              '....7788887.....', '....7888887.....', '....7888877..5..', '.....78877......', '......777.......', '..5.............', '................', '................'],
 };
+GOOD_PX.denbiscuit = ['................', '................', '.....222222.....', '....28888882....', '...2885888582...', '...2888888882...', '...2858888882...',
+  '...2888885882...', '...2888888882...', '...2885888582...', '....28888882....', '.....222222.....', '................', '.......5........', '................', '................'];
 const GOOD_COL = { 1: '#c4d8e4', 2: '#fff8e6', 3: '#9a6a3c', 4: '#e47c8c', 5: '#f2c24a', 6: '#b2c464', 7: '#6a4428', 8: '#a8743e' };
 export function goodIcon(id, scale = 2) {
   const rows = GOOD_PX[id] || GOOD_PX.tonic;

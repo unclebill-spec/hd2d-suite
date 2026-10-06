@@ -579,15 +579,15 @@
   {
    "piece": "toadstool_cluster",
    "pos": [
-    -11.4,
-    1.0
+    -12.6,
+    -2.6
    ]
   },
   {
    "piece": "toadstool_big",
    "pos": [
-    -12.2,
-    2.6
+    -12.5,
+    -1.2
    ],
    "rot": 20
   },
@@ -658,6 +658,42 @@
     -9.4,
     -1.8
    ]
+  },
+  {
+   "piece": "stray_den",
+   "pos": [
+    -10.9,
+    1.9
+   ]
+  },
+  {
+   "piece": "den_post",
+   "pos": [
+    -9.7,
+    3.9
+   ]
+  },
+  {
+   "piece": "den_post",
+   "pos": [
+    -7.2,
+    2.9
+   ]
+  },
+  {
+   "piece": "den_post",
+   "pos": [
+    -9.4,
+    0.2
+   ]
+  },
+  {
+   "piece": "den_woodpile",
+   "pos": [
+    -5.9,
+    4.9
+   ],
+   "rot": -10
   },
   {
    "piece": "crate",
@@ -828,6 +864,22 @@
    "talkable": true,
    "say": [
     "Keys, gates and ledgers. Mind the bridge, it is mostly light."
+   ]
+  },
+  {
+   "id": "denkeeper",
+   "role": "denkeeper",
+   "name": "Signe Larkspur, keeper of the Stray Den",
+   "pos": [
+    -8.3,
+    4.1
+   ],
+   "facing": "down",
+   "behavior": "idle",
+   "talkable": true,
+   "turn": false,
+   "say": [
+    "Knock, then wait, then knock softer. The strays are listening."
    ]
   }
  ],
@@ -1161,6 +1213,47 @@
      9.8,
      7.2
     ]
+   ]
+  },
+  "braziers": [
+   {
+    "id": "den_l1",
+    "pos": [
+     -9.7,
+     3.9
+    ],
+    "den": true
+   },
+   {
+    "id": "den_l2",
+    "pos": [
+     -7.2,
+     2.9
+    ],
+    "den": true
+   },
+   {
+    "id": "den_l3",
+    "pos": [
+     -9.4,
+     0.2
+    ],
+    "den": true
+   }
+  ],
+  "den": {
+   "pos": [
+    -10.9,
+    3.2
+   ],
+   "keeper": "denkeeper",
+   "rift": [
+    -5.6,
+    3.9
+   ],
+   "hearth": [
+    -10.9,
+    3.4
    ]
   }
  },

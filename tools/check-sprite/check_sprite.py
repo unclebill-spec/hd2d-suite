@@ -30,6 +30,15 @@ def _hex(px):
     return "#%02x%02x%02x" % px[:3]
 
 
+# Scoped palette exception. Bill approved neon pets 2026-10-05: on the Hearthmoor pet sheet only, the glow-moth may use
+# the NEON violet accents and the lantern-fox the NEON red accents (the spells.py NEON hexes). Nothing else is exempt:
+# any other role, or any other off-palette colour on these roles, still fails.
+NEON_PETS_ALLOW = {
+    "pet_moth": {"#6a34b8", "#a45cf0", "#d4a8ff"},   # neon violet lo / mid / hi
+    "pet_fox": {"#a81c22", "#e0302a", "#ff5a4a"},    # neon red lo / mid / hi
+}
+
+
 def check(atlas_path, json_path=None, biome=None, max_colors=20, project=None):
     atlas_path = Path(atlas_path)
     json_path = Path(json_path) if json_path else atlas_path.with_suffix(".json")
@@ -69,7 +78,7 @@ def check(atlas_path, json_path=None, biome=None, max_colors=20, project=None):
                         opaque.append((x, y))
                         c = _hex(p)
                         colors.add(c)
-                        if c not in palette:
+                        if c not in palette and c not in NEON_PETS_ALLOW.get(role, ()):
                             rr["issues"].append(f"{fr['name']}: colour {c} not in {biome}")
             if not opaque:
                 rr["issues"].append(f"{fr['name']}: empty frame")

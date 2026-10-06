@@ -1762,6 +1762,185 @@ def run(out, simscale=4, size=(960, 540), segs=SEGS):
             except Exception as e:  # noqa: BLE001
                 rep["pass"] = False
                 rep["error"] = f"migration: {e}"[:400]
+        # ---------------------------------------------------------- F: the Stray Den + glowing pets (Stage 6 part 2, continues cp3)
+        if rep["pass"] and "F" in segs:
+            seg_mark("F")
+            try:
+                saved = cp_load(None, T, url, "cp3")["hearthmoor-slot-1-v2"]
+                pc = b.new_context(viewport={"width": size[0], "height": size[1]})
+                pc.add_init_script(f"if (!sessionStorage.getItem('seeded')) {{ localStorage.clear(); localStorage.setItem('hearthmoor-slot-1-v2', {json.dumps(saved)}); sessionStorage.setItem('seeded', '1'); }}")
+                pc.add_init_script(STUB)
+                f = pc.new_page()
+                f.on("pageerror", lambda e: errors.append(f"PAGEERROR {e}"))
+                f.on("console", lambda m: errors.append(f"console.error {m.text}") if m.type == "error" else None)
+                T.pg = f
+                f.goto(url)
+                T.wait("window.__hm && window.__hm.ready && window.__hd2d && window.__hd2d.ready && !window.__hd2dGate.loading", 120)
+                f.click("#btnCont"); T.idle(); f.wait_for_timeout(400)
+                T.ev("window.__hm.loadArea('bifrost', 'start')"); T.wait("window.__hm.area === 'bifrost' && window.__hm.ctx && window.__hm.ctx.npc('denkeeper')", 120); T.idle(); f.wait_for_timeout(400)
+                T.ev("(() => { const S = window.__hm.S; S.gold = Math.max(S.gold || 0, 200); })()")   # QA: enough gold for the Den's donation, whatever the fixture holds
+                den = T.ev("""(() => { const G = window.__hm, c = G.ctx, sc = c.scene, glb = (n) => sc.objects.filter((o) => o.glb.endsWith('/' + n + '.glb')).length;
+                  return { glb: [glb('stray_den'), glb('den_post'), glb('den_woodpile')], npc: !!c.npc('denkeeper'), name: c.npc('denkeeper').name, mark: G.markers.denkeeper ? G.markers.denkeeper.name : null,
+                           lanterns: G.hollows.braziers.filter((b) => b.den).map((b) => b.lit), log: document.getElementById('logList').innerHTML.includes('Strays of the Rift'),
+                           pet: G.S.pet, sheet: !!c.actors.sheetOf('pet_fox'), count: document.getElementById('btnLog').textContent }; })()""")
+                T.step("the Stray Den at Bifrost: a round stone house, 3 yard lantern posts + a woodpile, Signe Larkspur with a quest tag; lanterns unlit, no pet, the side quest hidden in the log",
+                       den["glb"] == [1, 3, 1] and den["npc"] and "Signe" in den["name"] and den["mark"] == "quest_mark" and den["lanterns"] == [False] * 3
+                       and not den["log"] and den["pet"] is None and den["sheet"], den=den)
+                # keys: E with Signe starts 'Strays of the Rift' (a side quest: 'Side:' in the log, never counted in quests n/3)
+                pages, first = T.talk("denkeeper")
+                S = T.S(); logh = T.ev("document.getElementById('logList').innerHTML")
+                T.step("keys: E with Signe Larkspur (4 pages) starts the side quest 'Strays of the Rift': 'Side:' in the log, quests n/3 unchanged",
+                       pages == 4 and "Signe Larkspur" in first and S["quests"].get("strays") == 1 and S["met"].get("signe") == 1 and "Side: Strays of the Rift" in logh
+                       and "0/3" in logh and T.ev("document.getElementById('btnLog').textContent") == den["count"], first=first[:80])
+                # cast beside each yard lantern: it lights (the Hollows brazier rule) and stays lit as a light zone
+                lit = []
+                for b_ in T.ev("window.__hm.hollows.braziers.filter((b) => b.den).map((b) => [b.id, b.pos])"):
+                    T.walk(b_[1][0] + 0.6, b_[1][1] + 0.7)
+                    for _ in range(3):
+                        T.ev("window.__hm.combat.cd = {}"); f.keyboard.press("f"); f.wait_for_timeout(700)
+                        if T.ev(f"!!window.__hm.S.found.{b_[0]}"): break
+                    lit.append(T.ev(f"!!window.__hm.S.found.{b_[0]}"))
+                T.frames(6)
+                ln = T.ev("""(() => { const G = window.__hm; return { burning: G.hollows.braziers.filter((b) => b.den && b.burning).length, zones: G.glow.zones().filter((z) => z.src === 'brazier').length,
+                  toast: document.getElementById('toast').innerText, mark: G.markers.denkeeper ? G.markers.denkeeper.name : null, step: document.getElementById('logList').innerText }; })()""")
+                T.step("cast any spell beside each Den yard lantern: all 3 light and stay lit (cold-fire flames + light zones); Signe shows a turn-in tag",
+                       lit == [True] * 3 and ln["burning"] == 3 and ln["zones"] >= 3 and ln["mark"] == "quest_turnin" and "Tell Signe the lanterns are lit" in ln["step"], lanterns=ln)
+                # turn in: Signe opens the little rift behind the woodpile (scripted tier I: 2 wraiths + a skeleton, no rare, never closes by itself)
+                g0 = T.ev("window.__hm.S.merit.gate")
+                T.talk("denkeeper")
+                rs = T.ev("window.__hm.rifts.state()")
+                def to_den(n=30):
+                    """page through Signe's lines until the Den's own scene opens (E on its choice page would pick an answer)"""
+                    for _ in range(n):
+                        if T.ev("!!(window.__hm.dlg && window.__hm.dlg.npc.id === 'den')"):
+                            return
+                        if T.ev("!!(window.__hm.dlg && window.__hm.dlg.picking)"):
+                            raise AssertionError("unexpected choice before the Den scene")
+                        f.keyboard.press("e"); f.wait_for_timeout(160)
+                    raise AssertionError("the Den scene never opened")
+                KILL_F = ("(() => { const G = window.__hm, C = G.combat, p = G.ctx.player; G.peace = true;"
+                          " for (const e of G.rifts.alive()) for (let i = 0; i < 60 && e.state !== 'dead' && e.state !== 'gone'; i++) C.damageEnemy(e, 80, p); })()")
+                T.ev("window.__hm.rifts.cur.t = 999; window.__hm.rifts.update(0.016)")
+                still = T.ev("!!window.__hm.rifts.cur")
+                T.ev("(() => { const G = window.__hm, c = G.ctx, p = c.player, R = G.rifts.cur; p.x = R.pos[0] - 1.4; p.z = R.pos[1] + 0.6; p.y = c.heightAt(p.x, p.z); c.stopWalk(); })()")
+                T.frames(6); f.wait_for_timeout(400)
+                w = T.ev("window.__hm.rifts.state()")["rift"]
+                for _ in range(3):
+                    if not T.ev("window.__hm.rifts.cur"): break
+                    T.ev(KILL_F); T.frames(8); f.wait_for_timeout(500)
+                F_ = T.ev("window.__hm.S.flags")
+                T.step("Signe's turn-in opens the little rift behind the woodpile (tier I, tagged 'den', no rare, does not fizzle out); its wave of 2 wraiths + a skeleton sealed sets den_rift and pays Rift Marks",
+                       rs["rift"] and rs["rift"]["tag"] == "den" and rs["rift"]["id"] == "minor" and abs(rs["rift"]["pos"][0] + 5.6) < 1.2 and still and w and w["wave"] == 1
+                       and w["rare"] is None and not T.ev("window.__hm.rifts.cur") and F_.get("den_rift") == 1 and F_.get("den_riftOpen") == 1
+                       and T.ev("window.__hm.S.merit.gate") > g0 and T.ev("window.__hm.markers.denkeeper ? window.__hm.markers.denkeeper.name : null") == "quest_turnin", rift=rs["rift"], wave=w)
+                T.talk("denkeeper")
+                T.ev("(() => { const S = window.__hm.S; delete S.inv.glowseed; delete S.inv.moonpetal; })()")   # QA: start stage 2 with nothing that hums
+                p2, f2 = T.talk("denkeeper")
+                T.ev("window.__hm.give('glowseed', 1)")
+                mk = T.ev("window.__hm.markers.denkeeper ? window.__hm.markers.denkeeper.name : null")
+                T.step("stage 2: without a glow seed / moonpetal Signe only reminds you; with a glow seed she shows a turn-in tag",
+                       T.ev("window.__hm.S.quests.strays") == 2 and p2 == 1 and "hums" in f2 and mk == "quest_turnin", reminder=f2, mark=mk)
+                # 'Can we make it dark now?' takes the seed, draws the shutters, and the hearth scene asks which stray
+                T.talk("denkeeper", keep_open=True); dc = T.to_choice()
+                f.keyboard.press("2"); f.wait_for_timeout(300)
+                to_den()
+                pc_ = T.to_choice()
+                f.wait_for_timeout(300)
+                shot_pick = T.shot("stage6_pet_pick")
+                rep["shots"]["stage6_pet_pick"] = shot_pick
+                T.step("'Can we make it dark now?' takes the glow seed, draws the shutters: the hearth scene (5 pages) ends on the pick: wisp kit / glow-moth / lantern-fox / not yet",
+                       bool(dc) and "dark now" in dc["options"][1] and T.ev("window.__hm.S.flags.den_dark") == 1 and T.ev("window.__hm.S.flags.den_seed") == 1
+                       and not T.ev("window.__hm.S.inv.glowseed") and bool(pc_) and len(pc_["options"]) == 4 and "wisp kit" in pc_["options"][0] and "glow-moth" in pc_["options"][1]
+                       and "lantern-fox" in pc_["options"][2], dark=dc, pick=pc_)
+                S0 = T.S(); h0 = S0["merit"].get("hearth", 0); gd0 = S0.get("gold", 0)
+                f.keyboard.press("3"); f.wait_for_timeout(300)
+                nc = T.to_choice()
+                f.keyboard.press("1"); f.wait_for_timeout(300)
+                T.read_all(); T.frames(8); f.wait_for_timeout(400)
+                S = T.S(); nm = nc["options"][0] if nc else None
+                T.step("pick the lantern-fox (key 3), name it from 4 seeded names + 'Just \"Lantern-fox\"' (key 1): S.pet / S.pets set, +25 gold, 3 Den biscuits, the Den unlocked, side quest done (+40 Hearth Tokens through the errand payout, no new merit key), quests n/3 unchanged",
+                       bool(nc) and len(nc["options"]) == 5 and nc["options"][4] == 'Just "Lantern-fox".' and S["pet"] == {"id": "lanternfox", "name": nm, "bond": 1}
+                       and S["pets"]["lanternfox"]["name"] == nm and S["quests"]["strays"] == 3 and S["flags"].get("den") == 1 and S["inv"].get("denbiscuit") == 3
+                       and S.get("gold", 0) >= gd0 + 25 and S["merit"].get("hearth", 0) == h0 + 40 and T.ev("document.getElementById('btnLog').textContent") == den["count"]
+                       and "Side: Strays of the Rift" in T.ev("document.getElementById('logList').innerText"), names=nc, pet=S["pet"], hearth=[h0, S["merit"].get("hearth")])
+                # the pet follows on its own sheet; far behind it uses the follow gait
+                ps = T.ev("window.__hm.pets.state()")
+                p0 = T.pos(); T.walk(p0[0] + 5.5, p0[1] - 1.0, 60)
+                T.ev("(() => { const G = window.__hm, a = G.pets.a, p = G.ctx.player; a.x = p.x - 5.0; a.z = p.z + 0.4; })()"); T.frames(3)
+                far = T.ev("window.__hm.pets.state().actor")
+                f.wait_for_timeout(2600); T.frames(6)
+                near = T.ev("(() => { const a = window.__hm.pets.a, p = window.__hm.ctx.player; return Math.hypot(a.x - p.x, a.z - p.z); })()")
+                T.step("the pet follows on its own pets sheet (role pet_fox); more than 3 m behind it switches to the follow gait, then catches up within ~2 m",
+                       ps["actor"] and ps["role"] == "pet_fox" and ps["actor"]["sheet"] == "pets" and far["hurry"] and far["anim"] == "follow" and near < 2.2, actor=ps["actor"], far=far, near=round(near, 2))
+                # glow: Bifrost is one of the Rift's dim places, so the fox's red tail-lantern is a light pool (light + pool + aura fx + embers), a light zone; aura mods apply
+                T.ev("window.__hd2d.setTime('night')"); T.frames(10); f.wait_for_timeout(600)
+                gl = T.ev("window.__hm.pets.state()")
+                M = T.ev("(() => { const M = window.__hm.combat.M; return { riftWarn: M.riftWarn, riftMarkMul: M.riftMarkMul, stRegen: M.stRegen }; })()")
+                zone = T.ev("window.__hm.glow.zones().filter((z) => z.src === 'pet').map((z) => z.r)")
+                rep["shots"]["stage6_pet_glow"] = T.shot("stage6_pet_glow")
+                T.step("pet glow at night / in the Rift's dim places: a red light (#ff4a3a-ish), its pool + aura effects, the ember particles, a 1.6 m light zone; Rift-sense mods in combat (riftWarn 10, +10% Rift Marks, stamina +8%)",
+                       gl["lit"] and gl["light"] and gl["light"]["color"].startswith("#ff") and gl["fx"] == ["pet_pool_fox", "pet_aura_fox"] and gl["emitter"] and zone == [1.6]
+                       and M["riftWarn"] == 10 and abs(M["riftMarkMul"] - 0.10) < 1e-9 and M["stRegen"] >= 0.08, glow=gl, mods=M)
+                # Rift-sense: in Mossglen the fox's tail flares riftWarn seconds early, pointing where the tear will open
+                T.ev("window.__hm.loadArea('mossglen', 'start')"); T.wait("window.__hm.area === 'mossglen' && window.__hm.pets.a", 120); T.idle(); f.wait_for_timeout(300)
+                T.ev("window.__hm.peace = false; window.__hm.rifts.setTimer(10.5)")
+                T.wait("window.__hm.rifts.warned", 30)
+                wn = T.ev("({ warn: window.__hm.pets.state().warned, toast: document.getElementById('toast').innerText, next: window.__hm.rifts.nextPos, open: !!window.__hm.rifts.cur })")
+                T.ev("window.__hm.rifts.setTimer(0.01)"); T.wait("!!window.__hm.rifts.cur", 30)
+                op = T.ev("window.__hm.rifts.state().rift")
+                T.ev("window.__hm.rifts.close(false, true); window.__hm.peace = true")
+                T.step("lantern-fox Rift-sense: the tail flares red with a direction ~10 s before a random rift opens, and the rift opens where it pointed",
+                       wn["warn"] and not wn["open"] and "tail flares red" in wn["toast"] and wn["warn"]["t"] <= 10.5 and op and wn["next"]
+                       and math.hypot(op["pos"][0] - wn["next"][0], op["pos"][1] - wn["next"][1]) < 1.5, warn=wn, rift=op)
+                # hero screen Gear tab: the pet slot; P feeds a Den biscuit (bond counts once a day, the glow doubles for 60 s)
+                f.keyboard.press("i"); T.wait("window.__hm.heroUI", 20); f.wait_for_timeout(200)
+                for _ in range(6):
+                    if T.ev("document.querySelector('#heroTabs button.on') && document.querySelector('#heroTabs button.on').textContent.toLowerCase().includes('gear')"): break
+                    f.keyboard.press("ArrowRight"); f.wait_for_timeout(150)
+                slot = T.ev("(() => { const e = document.querySelector('#heroBody .pet'); return e ? e.innerText : ''; })()")
+                b0 = T.ev("window.__hm.S.inv.denbiscuit || 0")
+                f.keyboard.press("p"); f.wait_for_timeout(300)
+                fd = T.ev("({ b: window.__hm.S.inv.denbiscuit || 0, own: window.__hm.S.pets.lanternfox, boost: window.__hm.pets.boostT, slot: document.querySelector('#heroBody .pet').innerText })")
+                f.keyboard.press("Escape"); f.wait_for_timeout(200)
+                T.step("hero screen Gear tab: the pet slot (name, species, aura, bond hearts, biscuits); P feeds a Den biscuit: fed day counted, glow boost for 60 s",
+                       nm in slot and "lantern-fox" in slot and "Rift-sense" in slot and "♥♡♡" in slot and fd["b"] == b0 - 1 and fd["own"]["fed"] == 1
+                       and fd["own"]["lastFed"] is not None and fd["boost"] > 50 and f"×{b0 - 1}" in fd["slot"], slot=slot[:160], fed=fd)
+                # the Den hub: adoption needs Hearth Friend + 40 gold; swap pets
+                T.ev("window.__hm.loadArea('bifrost', 'start')"); T.wait("window.__hm.area === 'bifrost' && window.__hm.pets.a", 120); T.idle(); f.wait_for_timeout(300)
+                hr = T.ev("window.__hm.S.ranks.hearth || 0"); T.ev("window.__hm.S.ranks.hearth = 0")
+                T.talk("denkeeper", keep_open=True); hub = T.to_choice()
+                f.keyboard.press("3"); f.wait_for_timeout(300)
+                lock = T.ev("window.__hm.dlg ? window.__hm.dlg.pages.join(' ') : ''"); T.read_all()
+                T.ev(f"window.__hm.S.ranks.hearth = Math.max(1, {hr}); window.__hm.S.merit.hearth = Math.max(window.__hm.S.merit.hearth || 0, 150)")
+                gd1 = T.ev("window.__hm.S.gold")
+                T.talk("denkeeper", keep_open=True); T.to_choice(); f.keyboard.press("3"); f.wait_for_timeout(300)
+                ac = T.to_choice(); f.keyboard.press("1"); f.wait_for_timeout(300)
+                to_den(); an = T.to_choice(); f.keyboard.press("2"); f.wait_for_timeout(300); T.read_all(); T.frames(6)
+                A = T.S(); Mw = T.ev("window.__hm.combat.M.spellCd")
+                T.ev("window.__hm.pets.a && 1"); T.talk("denkeeper", keep_open=True); T.to_choice(); f.keyboard.press("1"); f.wait_for_timeout(300)
+                sw = T.to_choice(); f.keyboard.press("1"); f.wait_for_timeout(300); T.read_all(); T.frames(6)
+                B = T.S()
+                T.step("the Den hub (swap / biscuits / adopt / auras / visiting): adopting needs Hearth Friend, then a 40-gold donation brings the wisp kit home (named, active, spellCd +0.06); 'Swap my pet' brings the fox back",
+                       bool(hub) and len(hub["options"]) == 5 and "Swap" in hub["options"][0] and "Hearth" in lock and "Friend" in lock and bool(ac) and "wisp kit" in ac["options"][0]
+                       and A["pet"]["id"] == "wispkit" and A["pets"]["wispkit"]["name"] == an["options"][1] and A["gold"] == gd1 - 40 and Mw >= 0.06
+                       and bool(sw) and B["pet"]["id"] == "lanternfox" and B["pet"]["name"] == nm and T.ev("window.__hm.pets.state().role") == "pet_fox", hub=hub, adopt=ac, swap=sw)
+                # save + reload: the pet comes back at your side
+                T.ev("window.__hm.save(true)"); f.wait_for_timeout(300)
+                f.reload(); T.wait("window.__hm && window.__hm.ready && window.__hd2d && window.__hd2d.ready && !window.__hd2dGate.loading", 120)
+                f.click("#btnCont"); T.idle(); T.wait("!!window.__hm.pets.a", 60); T.frames(6)
+                R = T.S(); ra = T.ev("(() => { const a = window.__hm.pets.a, p = window.__hm.ctx.player; return { d: Math.hypot(a.x - p.x, a.z - p.z), role: a.role || window.__hm.pets.state().role }; })()")
+                T.step("save + reload + Continue: S.pet and S.pets round-trip (both pets, names, the fed day), and the active pet spawns beside the hero",
+                       R["pet"] == B["pet"] and set(R["pets"]) == {"lanternfox", "wispkit"} and R["pets"]["lanternfox"]["fed"] == 1 and ra["d"] < 2.5, pet=R["pet"], at=ra)
+                T.step("no JS errors (pets)", not errors and not T.ev("window.__hd2d.errors.length"), errors=errors[:5])
+                pc.close()
+                seg_done("F")
+            except Exception as e:  # noqa: BLE001
+                rep["pass"] = False
+                rep["error"] = f"pets: {type(e).__name__}: {e}"[:400]
+                try:
+                    rep["shots"]["failure_F"] = T.shot("failure_F"); rep["state"] = T.S()
+                except Exception:  # noqa: BLE001
+                    pass
         # every shard checks its own pages for JS errors even when the counted 'no JS errors' steps live in another shard
         if rep["pass"] and errors:
             rep["pass"] = False; rep["error"] = f"JS errors: {errors[:3]}"

@@ -15,6 +15,8 @@ export const RIFT_AREAS = {
   mossglen: { foes: ['skeleton', 'wraith', 'golem', 'skelmage'], spots: [[1.6, 1.0], [-1.2, 5.6], [5.0, 2.6], [-2.6, 2.6]] },
   hollows: { foes: ['wraith', 'skeleton'], spots: [[2.2, 5.4], [7.6, -0.8], [-6.4, -6.0]] },
   vanaheim: { foes: ['sporeling', 'mossgolem', 'sporeling'], spots: [[6.2, 0.4], [3.6, 2.8], [8.6, -2.2]] },
+  // Bifrost Crossing (Stage 6 part 2): scripted only (the Stray Den's little rift behind the woodpile); never opens by itself
+  bifrost: { foes: ['wraith', 'wraith', 'skeleton'], spots: [[-5.6, 3.9]], scripted: true },
 };
 export const FIRST = [45, 80], EVERY = [120, 200], LIFE = 90, NEAR = 3.4;
 
@@ -22,23 +24,26 @@ export class Rifts {
   constructor(G) { this.G = G; this.cur = null; this.timer = 0; }
   get S() { return this.G.S; }
   attach(ctx, area) {
-    this.ctx = ctx; this.area = area; this.cur = null;
+    this.ctx = ctx; this.area = area; this.cur = null; this.nextPos = null; this.warned = false;
     const r = rngOf(hashStr(`rift:${area}:${this.S.day || 0}:${Math.floor(Date.now() / 60000)}`));
     this.timer = FIRST[0] + r() * (FIRST[1] - FIRST[0]);
     const q = this.G.qs, t = q && q.get('riftnow');
-    if (t && RIFT_AREAS[area]) setTimeout(() => this.ctx === ctx && this.open(Math.max(0, Math.min(2, (+t || 1) - 1))), 600);
+    if (t && RIFT_AREAS[area] && !RIFT_AREAS[area].scripted) setTimeout(() => this.ctx === ctx && this.open(Math.max(0, Math.min(2, (+t || 1) - 1))), 600);
   }
   detach() { this.close(false, true); this.ctx = null; }
   auto() { const G = this.G; return !(G.qa || G.peace || G.qaStill) || (G.qs && G.qs.has('rifts')); }   // QA / smoke: only on request
   // open a tier (0-2) rift at a spot (or near the player for tests)
-  open(tier = 0, at = null) {
+  // opts.tag: a scripted rift (the Stray Den's 'den': no rare, never closes by itself, sets S.flags.den_rift when sealed)
+  open(tier = 0, at = null, opts = {}) {
     const ctx = this.ctx, A = RIFT_AREAS[this.area]; if (!ctx || !A) return null;
     if (this.cur) this.close(false, true);
     const T = TIERS[tier], G = this.G;
-    let pos = at || A.spots[Math.floor(Math.random() * A.spots.length)];
+    let pos = at || this.nextPos || A.spots[Math.floor(Math.random() * A.spots.length)];
+    this.nextPos = null; this.warned = false;
     pos = this.walk(pos);
     const y = ctx.heightAt(pos[0], pos[1]);
-    const R = { tier, T, pos, y, t: 0, state: 'open', wave: 0, foes: [], rare: null, fx: [], light: null };
+    const R = { tier, T, pos, y, t: 0, state: 'open', wave: 0, foes: [], rare: null, fx: [], light: null, tag: opts.tag || null };
+    if (R.tag || !RARE_AREAS[this.area]) R.forceRare = false;   // scripted tears and rare-less areas spit out no rare
     if (ctx.effects) {
       R.fx.push(ctx.effects.spawn(T.fx, pos[0], y + T.y, pos[1], { duration: 1e9, fadeIn: 0.5 }));
       if (T.ring) R.fx.push(ctx.effects.spawn(T.ring, pos[0], y + 0.02, pos[1], { duration: 1e9, fadeIn: 0.5 }));
@@ -82,8 +87,15 @@ export class Rifts {
     const R = this.cur, ctx = this.ctx, G = this.G; if (!ctx) return;
     const paused = G.title || G.busy || G.dlg || G.log || G.downed || G.picking || (G.intro && G.intro.active);
     if (!R) {
-      if (!RIFT_AREAS[this.area] || paused || !this.auto()) return;
-      if ((this.timer -= dt) <= 0) {
+      if (!RIFT_AREAS[this.area] || RIFT_AREAS[this.area].scripted || paused || !this.auto()) return;
+      this.timer -= dt;
+      // the lantern-fox's Rift-sense: its tail flares riftWarn seconds early, pointing at where the tear will open
+      const warn = G.pets ? G.pets.riftWarn() : 0;
+      if (warn && !this.warned && this.timer <= warn) {
+        const A = RIFT_AREAS[this.area]; this.nextPos = A.spots[Math.floor(Math.random() * A.spots.length)]; this.warned = true;
+        G.pets.senseRift(this.nextPos);
+      }
+      if (this.timer <= 0) {
         const night = this.night(), w = night ? [45, 38, 17] : [60, 30, 10], x = Math.random() * 100;
         this.open(x < w[0] ? 0 : x < w[0] + w[1] ? 1 : 2);
       }
@@ -95,7 +107,7 @@ export class Rifts {
     const p = ctx.player, d = Math.hypot(p.x - R.pos[0], p.z - R.pos[1]);
     if (R.state === 'open') {
       if (d < NEAR) this.engage();
-      else if (R.t > LIFE) { G.toast && G.toast('The rift flickers and closes on its own.', 2); this.close(false); }
+      else if (R.t > LIFE && !R.tag) { G.toast && G.toast('The rift flickers and closes on its own.', 2); this.close(false); }
     } else if (R.state === 'fight' && !this.alive().length) {
       if (R.wave < R.T.waves) this.engage();
       else this.close(true);
@@ -125,10 +137,17 @@ export class Rifts {
     G.toast && G.toast(`${T.name} sealed! +${T.xp} XP and the rift's spoils.`, 2.8);
     G.drawHunt && G.drawHunt();
     G.factions && G.factions.onRift(R.tier);   // Rift Marks + the realm's faction
+    if (R.tag === 'den') {   // 'Strays of the Rift': the little rift behind the woodpile is sealed
+      S.flags = S.flags || {}; S.flags.den_rift = 1;
+      G.toast && G.toast('The little rift seals. A fox kit peeks out, then thinks better of it.', 3);
+      G.refreshMarkers && G.refreshMarkers(); G.drawLog && G.drawLog(); G.save && G.save();
+    }
   }
+  // QA / smoke: jump the random timer (the fox warning fires on the next frame when t <= riftWarn)
+  setTimer(t) { this.timer = t; this.warned = false; this.nextPos = null; }
   state() {
     const R = this.cur;
-    return { area: this.area, timer: +this.timer.toFixed(1), rift: R ? { tier: R.tier, id: R.T.id, state: R.state, wave: R.wave, waves: R.T.waves, foes: R.foes.length,
+    return { area: this.area, timer: +this.timer.toFixed(1), nextPos: this.nextPos, warned: this.warned, rift: R ? { tag: R.tag, tier: R.tier, id: R.T.id, state: R.state, wave: R.wave, waves: R.T.waves, foes: R.foes.length,
              alive: this.alive().length, rare: R.rare ? R.rare.name : null, pos: R.pos.map((v) => +v.toFixed(2)), fx: R.fx.map((f) => f && f.name) } : null,
              closed: this.S.rifts || { minor: 0, major: 0, abyssal: 0 } };
   }

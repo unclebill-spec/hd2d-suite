@@ -95,7 +95,9 @@ export class Factions {
   realm() { return REALM[this.G.area] || 'hearth'; }
   onErrand() { this.add('hearth', MERIT.errand, 'errand'); }
   onRift(tier) {
-    const g = MERIT.rift[tier] || 0; this.add('gate', g, 'rift');
+    const g = MERIT.rift[tier] || 0;
+    const mul = 1 + ((this.G.combat && this.G.combat.M.riftMarkMul) || 0);   // the lantern-fox's aura: more Rift Marks (gate merit only)
+    this.add('gate', Math.round(g * mul), 'rift');
     const r = this.realm(); if (r !== 'gate') this.add(r, Math.round(g / 2), 'rift');
   }
   onRare(R) { this.add(this.realm(), MERIT.rare + MERIT.rareTrait * Math.max(0, (R.traits || []).length - 1), 'rare'); }

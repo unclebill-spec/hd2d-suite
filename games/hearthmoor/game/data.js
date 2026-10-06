@@ -1,5 +1,6 @@
 // Hearthmoor: items, quests and every line of dialogue (all original text).
 // A talk() entry returns { pages: [...], then?: (G) => void } for the current save state S.
+import { PETS, PET_IDS, DEN, petNames, isNight } from './pets.js';
 
 export const ITEMS = {
   loaf:      { name: 'Hearthloaf', icon: 0, about: 'A round loaf, still warm. Smells like Tuesday mornings.' },
@@ -9,7 +10,10 @@ export const ITEMS = {
   tea:       { name: 'Moonpetal tea', icon: 4, about: 'A tin of Wren\'s tea. Calms storms, and also grandparents.' },
   tonic:     { name: 'Hearth tonic', px: 'tonic', about: 'Heals 60 HP. Drink: U, right-stick click, or tap it here.' },
   glowseed:  { name: 'Glow seed', px: 'glowseed', about: 'Hums in the dark. Plant it in a garden plot: it blooms in two days.' },
+  denbiscuit: { name: 'Den biscuit', px: 'denbiscuit', about: "Signe's oat-and-moonpetal biscuit. Feed your pet once a day (hero screen, Gear tab): bond grows, and its glow doubles for 60 s." },
 };
+// the Stray Den's three yard lanterns (Hollows brazier rule: S.found.den_l1..3)
+export const denLit = (S) => ['den_l1', 'den_l2', 'den_l3'].filter((k) => (S.found || {})[k]).length;
 
 export const QUESTS = {
   bread: {
@@ -41,9 +45,25 @@ export const QUESTS = {
                ? 'Gatewright Halvard Ness has your name in the Gatekeepers\' Guild ledger. Earn Rift Marks, and the realm gates will open.'
                : 'Brannoc says the way to the Rainbow Rift runs up through the Market Terraces, once the gates open.') },
   },
+  // Stage 6 part 2: the Stray Den's side quest (Story bot's pets doc). Stage 3 is hard-wired as done (toast, XP, the
+  // errand's 40 Hearth Tokens through onErrand), so the four objectives ride stages 1-2 with flags, like 'harbor'.
+  strays: {
+    title: 'Strays of the Rift',
+    giver: 'Signe Larkspur',
+    side: true,
+    steps: { 1: (S) => { const F = S.flags || {}, n = denLit(S);
+               if (n < 3) return `Light the 3 cold-fire lanterns in the Stray Den's yard (cast any spell at one). ${n}/3`;
+               if (!F.den_riftOpen) return 'Tell Signe the lanterns are lit.';
+               if (!F.den_rift) return 'Seal the little rift behind the Stray Den\'s woodpile.';
+               return 'Tell Signe the rift is sealed.'; },
+             2: (S) => ((S.flags || {}).den_seed
+               ? 'Come back to the Stray Den after dusk and sit by the cold-fire hearth.'
+               : 'Bring Signe a glow seed (Odo\'s Wares or Wickmere\'s Chandlery) or a moonpetal.'),
+             3: (S) => `${(S.pet && S.pet.name) || 'Your pet'} has a home with you now. The other strays wait at the Den.` },
+  },
 };
-// the three Lantern Eve errands (story quests do not count toward "quests n/3" or the Rift's opening)
-export const errandsDone = (S) => Object.entries(S.quests || {}).filter(([k, v]) => v === 3 && !(QUESTS[k] && QUESTS[k].story)).length;
+// the three Lantern Eve errands (story and side quests do not count toward "quests n/3" or the Rift's opening)
+export const errandsDone = (S) => Object.entries(S.quests || {}).filter(([k, v]) => v === 3 && !(QUESTS[k] && (QUESTS[k].story || QUESTS[k].side || QUESTS[k].ripple))).length;   // ripple: 6.4 Vanaheim follow-ups
 
 export const SPELL_NAMES = { sparkle_burst: 'sparkle burst', hearth_flame: 'hearth flame', light_orb: 'light orb', leaf_gust: 'leaf gust', healing_petals: 'healing petals' };
 
@@ -347,6 +367,168 @@ export const TALK = {
   },
 };
 
+// ---------------------------------------------------------------- the Stray Den (Stage 6 part 2): Signe Larkspur
+const DEN_NPC = { id: 'den', name: 'The Stray Den' };
+const petName = (S) => (S.pet && S.pet.name) || 'your pet';
+const PICK_SAY = {
+  wispkit: 'The wisp kit flares so bright the whole Den goes blue. That\'s a yes, if you were wondering.',
+  glowmoth: 'The glow-moth settles on your shoulder like it\'s always lived there. Moths don\'t do that for just anyone.',
+  lanternfox: 'The fox kit flops onto your boots, tail-lantern thumping. The little fish does a loop. Smitten, both of them.',
+};
+function namePet(G, id, name) {
+  return {
+    pages: [`There. ${name} is yours, and you're ${name}'s, which is the bigger job.`,
+            'Three Den biscuits, a little gold for the road, and a good word to the Order. They like a pet with a home.',
+            'The other two can stay with me. Come back when you\'re ready for more company, or for a swap.'],
+    then: (G) => {
+      const S = G.S; S.pets = S.pets || {};
+      S.pets[id] = { name, bond: 1, fed: 0, lastFed: null };
+      if (G.pets) G.pets.adopt(id, name); else S.pet = { id, name, bond: 1 };
+      gold(G, 25); G.give('denbiscuit', 3); flags(S).den = 1;
+      G.setQuest('strays', 3);   // 'Side quest done', XP, and the errand's +40 Hearth Tokens (onErrand): no new merit key
+      G.toast(`✦ ${name} the ${PETS[id].species} joined you. Aura: ${PETS[id].aura.name}. (One pet at a time. Swap at the Stray Den.)`, 4);
+    },
+  };
+}
+function pickPet(G, id) {
+  const names = petNames(G.S, id);
+  return {
+    pages: [PICK_SAY[id], 'Now it\'ll need a name. Something short, so it comes when you call.'],
+    choice: { id: 'pet_name', options: [...names.map((n) => ({ label: n, pick: (G) => namePet(G, id, n) })),
+                                        { label: `Just "${PETS[id].name}".`, pick: (G) => namePet(G, id, PETS[id].name) }] },
+  };
+}
+function denNight(G) {
+  G.openDialogue(DEN_NPC, {
+    pages: ['You sit by the hearth. The cold-fire burns low and blue. One by one, three small lights creep out.',
+            'A wisp kit bobs up first, humming like a kettle. It bumps your knee and fizzes.',
+            'A glow-moth lands on your sleeve, fanning violet eyespots. It smells of old books and summer.',
+            'A fox kit pads out last. Its round tail-lantern glows red, and a tiny light-fish swims inside it.',
+            'Signe: "They\'ve all picked you. Rude of them, really. You only get to pick one, though."'],
+    choice: { id: 'pet_pick', options: [
+      { label: 'The wisp kit. (A cold-fire light, quicker spells.)', pick: (G) => pickPet(G, 'wispkit') },
+      { label: 'The glow-moth. (Finds hidden things, better healing.)', pick: (G) => pickPet(G, 'glowmoth') },
+      { label: 'The lantern-fox. (Senses rifts, more Rift Marks.)', pick: (G) => pickPet(G, 'lanternfox') },
+      { label: 'I need a minute.', cancel: true, pick: () => ({ pages: ['Take your time. They\'re not going anywhere. Well. They might.'] }) },
+    ] },
+  });
+}
+function denSwap(G) {
+  const S = G.S, cur = S.pet && S.pet.id, others = PET_IDS.filter((k) => (S.pets || {})[k] && k !== cur);
+  if (!others.length) return { pages: ['Swap? You\'ve only the one. Adopt another stray first, then we\'ll talk baskets.'] };
+  return { pages: ['Who\'s coming with you?'], choice: { id: 'den_swap', options: [
+    ...others.map((k) => ({ label: `${S.pets[k].name} the ${PETS[k].species}. (${PETS[k].aura.name})`, pick: (G) => {
+      const old = petName(G.S); G.pets.swap(k);
+      G.toast(`(${G.S.pet.name} shakes off the basket straw and falls in beside you.)`, 2.6);
+      return { pages: [`Swapping? ${old} gets the warm basket. ${G.S.pet.name}, up you get. No sulking, either of you.`] }; } })),
+    { label: 'Never mind.', cancel: true, pick: () => null },
+  ] } };
+}
+function buyBiscuit(G) {
+  if ((G.S.gold || 0) < DEN.biscuit) return { pages: ['Six gold, love. The strays are cheap. The biscuits aren\'t.'] };
+  G.S.gold -= DEN.biscuit; G.give('denbiscuit', 1);
+  return { pages: ['Oat and moonpetal. Don\'t eat them yourself. Everyone tries it once.'] };
+}
+function denAdopt(G) {
+  const S = G.S, left = PET_IDS.filter((k) => !(S.pets || {})[k]);
+  if (!left.length) return { pages: ['Every stray in the Den has a name now. The Rift will send more. It always does.'] };
+  if (!G.factions.has('hearth', 1)) return { pages: ['I don\'t hand out strays to just anyone. Get the Hearth to call you Friend, then we\'ll talk.'] };
+  return { pages: ['Which one?'], choice: { id: 'den_adopt', options: [
+    ...left.map((k) => ({ label: `The ${PETS[k].species}. (${PETS[k].aura.name}, ${DEN.adopt} gold)`, pick: (G) => {
+      if ((G.S.gold || 0) < DEN.adopt) return { pages: [`A forty-gold gift to the Den, and the ${PETS[k].species} goes home with you. It's a donation, not a sale. Come back with forty.`] };
+      G.S.gold -= DEN.adopt;
+      return { pages: [`A forty-gold gift to the Den, and the ${PETS[k].species} goes home with you. It's a donation, not a sale.`, PICK_SAY[k]],
+               then: (G) => G.openDialogue(DEN_NPC, adoptName(G, k)) }; } })),
+    { label: 'Not today.', cancel: true, pick: () => null },
+  ] } };
+}
+function adoptName(G, id) {
+  const done = (n) => ({ pages: [`${n} it is. Mind the biscuits, ${n}.`], then: (G) => { G.S.pets[id] = { name: n, bond: 1, fed: 0, lastFed: null }; G.pets.swap(id);
+    G.toast(`✦ ${n} the ${PETS[id].species} joined you. Aura: ${PETS[id].aura.name}.`, 3); } });
+  return { pages: ['Now it\'ll need a name. Something short, so it comes when you call.'],
+           choice: { id: 'pet_name', options: [...petNames(G.S, id).map((n) => ({ label: n, pick: () => done(n) })), { label: `Just "${PETS[id].name}".`, pick: () => done(PETS[id].name) }] } };
+}
+function denHubLine(S) {
+  const F = S.flags || {}, A = F.alliance || {}, nm = petName(S);
+  if (F.storm === 'bifrost') return 'Storm\'s up. The strays are under the floor again. Bring a light if you\'re staying.';
+  if (F.fainted_recent) return `Heard ${nm} hauled you home again. Biscuit for ${nm}. Nothing for you, you know what you did.`;
+  if (F.gateday) return 'Gate Day! Every stray in the Crossing turns up for the fish lanterns. Even the ones who don\'t eat fish.';
+  if (S.pet && (S.pet.bond || 1) >= 3) return `${nm} looks at you like you hung the moon. Took me thirty years to get that look from a cat.`;
+  if (A.vanaheim === 'befriend') return 'The moss-pups heard you\'re a friend of Mossbrook. They\'ve been wagging since breakfast.';
+  if (A.vanaheim === 'conquer') return 'A stray came in from Mossbrook, singed and shaking. I don\'t ask whose side you\'re on. I just ask.';
+  if (isNight(S.t || 0)) return 'Shh. The moths are reading. Well, sitting on books. Same thing.';
+  if (Object.keys(A).length && !F.halvard_betrayal) return 'Funny thing. Not one stray will go near the Gatewright. Animals can be wrong. Not often.';
+  return 'Strays fed, hearth lit, roof mostly on. What can the Den do for you?';
+}
+const DEN_TALK = {
+  denkeeper(S) {
+    const q = S.quests.strays || 0, F = S.flags || {};
+    const meet = (G) => { G.S.met = { ...(G.S.met || {}), signe: 1 }; };
+    if (!q && !F.bf_done) return { pages: ['The Den\'s shut to new faces till the Guild has your name. Go and see Halvard first, then come back.'] };
+    if (!q) return {
+      pages: ['Mind the basket! Signe Larkspur, keeper of the Stray Den. Everything in here fell out of the Rift and landed on me.',
+              'Since Lantern Eve the tears keep spitting out strays. Wisps, moths, a fox kit with a lamp for a tail.',
+              'Three new ones came through last night, and they\'re hiding under the floor. Will you help me coax them out?',
+              'Strays creep toward a kind light. Light my three yard lanterns. Any spell will do.'],
+      then: (G) => { meet(G); G.setQuest('strays', 1); },
+    };
+    if (q === 1 && denLit(S) < 3) return { pages: ['Any spell will do. Cold-fire catches on anything that means well.'] };
+    if (q === 1 && !F.den_riftOpen) return {
+      pages: ['Look at that, three noses! ...Oh. And a tear behind the woodpile. No wonder they won\'t come out.',
+              'It\'s only a little one. Seal it for me? I\'ll hold the biscuits.'],
+      then: (G) => { flags(G.S).den_riftOpen = 1; G.rifts.open(0, G.ctx.scene.game.den.rift, { tag: 'den' }); G.refreshMarkers(); G.drawLog && G.drawLog(); },
+    };
+    if (q === 1 && !F.den_rift) return {
+      pages: ['Behind the woodpile. Cold-fire wraiths hate a lit yard, so stay near the lanterns if it gets busy.'],
+      // the tear closed some other way (an area change, a faint): open it again so the quest can never stall
+      then: (G) => { if (G.rifts && !G.rifts.cur) G.rifts.open(0, G.ctx.scene.game.den.rift, { tag: 'den' }); },
+    };
+    if (q === 1) return {
+      pages: ['Sealed! You\'ve a steady hand. Now they need something that smells like somewhere.',
+              'A glow seed hums like a garden at night. Odo and Ida Wickmere both sell them. A moonpetal works too.'],
+      then: (G) => G.setQuest('strays', 2),
+    };
+    if (q === 2 && !F.den_seed) {
+      if (!((S.inv.glowseed || 0) + (S.inv.moonpetal || 0))) return { pages: ['A glow seed or a moonpetal. Anything that hums. Strays trust a hum.'] };
+      return {
+        pages: ['That hum! Hear it? The whole floor just went quiet to listen.',
+                'Now we wait for dusk. Strays are brave in the dark, same as wisps. Come back after sundown and sit by the hearth.'],
+        choice: { id: 'den_dark', options: [
+          { label: 'I\'ll come back after dark.', cancel: true,
+            pick: (G) => { takeHum(G); flags(G.S).den_seed = 1; G.refreshMarkers(); return { pages: ['Rest at an inn if you like. Night comes quicker that way.'] }; } },
+          { label: 'Can we make it dark now?',
+            pick: (G) => { takeHum(G); flags(G.S).den_seed = 1; flags(G.S).den_dark = 1;
+                           return { pages: ['Ha. I\'ll draw the shutters. The Den\'s dark enough inside. Sit, sit.'], then: denNight }; } },
+        ] },
+      };
+    }
+    if (q === 2) {
+      if (F.den_dark || isNight(S.t || 0)) return { pages: [isNight(S.t || 0) ? 'There you are. Hearth\'s lit, and the floor\'s gone very quiet. Sit.' : 'Shutters are still drawn. Sit, sit.'], then: denNight };
+      return { pages: ['Not yet. Strays are brave in the dark. Come back after sundown, or ask me to draw the shutters.'],
+               choice: { id: 'den_dark', options: [
+                 { label: 'I\'ll come back after dark.', cancel: true, pick: () => ({ pages: ['Rest at an inn if you like. Night comes quicker that way.'] }) },
+                 { label: 'Can we make it dark now?', pick: (G) => { flags(G.S).den_dark = 1; return { pages: ['Ha. I\'ll draw the shutters. Sit, sit.'], then: denNight }; } },
+               ] } };
+    }
+    return {
+      pages: [denHubLine(S)],
+      choice: { id: 'den', options: [
+        { label: 'Swap my pet.', pick: (G) => denSwap(G) },
+        { label: 'Buy Den biscuits (6 gold).', pick: (G) => buyBiscuit(G) },
+        { label: 'Adopt another stray.', pick: (G) => denAdopt(G) },
+        { label: 'Tell me about pet auras.', pick: () => ({ pages: [
+          'Every pet hums a little aura. Small, but it adds up, like biscuits.',
+          'Feed a biscuit once a day and the bond grows. At three hearts, the aura grows with it.',
+          'At night your pet\'s glow is a light pool. Wraiths keep out of it, same as a lantern.'] }) },
+        { label: 'Just visiting.', cancel: true, pick: () => ({ pages: ['Visit any time. Knock softer on the way out.'] }) },
+      ] },
+    };
+  },
+};
+// the hum for the strays: a glow seed first, else a moonpetal
+const takeHum = (G) => { if ((G.S.inv.glowseed || 0) > 0) G.take('glowseed', 1); else if ((G.S.inv.moonpetal || 0) > 0) G.take('moonpetal', 1); };
+Object.assign(TALK, DEN_TALK);
+
 // quest tags over heads: '!' = has an errand for you, star = waiting for your delivery
 export function markerFor(id, S) {
   const q = S.quests;
@@ -360,5 +542,11 @@ export function markerFor(id, S) {
   if (id === 'quartermaster' && q.harbor === 1) return 'quest_turnin';
   if (id === 'harbormaster' && q.harbor === 2 && (S.flags || {}).rh_gate && !(S.flags || {}).rh_road) return 'quest_turnin';
   if (id === 'gatewright' && q.harbor === 2 && (S.flags || {}).rh_road && !(S.flags || {}).bf_done) return 'quest_turnin';
+  const F = S.flags || {};   // the Stray Den (pets doc 4.4)
+  if (id === 'denkeeper' && F.bf_done && !q.strays) return 'quest_mark';
+  if (id === 'denkeeper' && q.strays === 1 && denLit(S) >= 3 && !F.den_riftOpen) return 'quest_turnin';
+  if (id === 'denkeeper' && q.strays === 1 && F.den_rift) return 'quest_turnin';
+  if (id === 'denkeeper' && q.strays === 2 && !F.den_seed && ((S.inv.glowseed || 0) + (S.inv.moonpetal || 0)) > 0) return 'quest_turnin';
+  if (id === 'denkeeper' && q.strays === 2 && F.den_seed) return 'quest_turnin';
   return null;
 }

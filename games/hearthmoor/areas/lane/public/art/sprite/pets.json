@@ -1,0 +1,2223 @@
+{
+ "tool": "hearthmoor-art pets_gen",
+ "biome": "cozy-village",
+ "seed": 7,
+ "frame": [
+  20,
+  32
+ ],
+ "pivot": [
+  10,
+  32
+ ],
+ "ground_row": 31,
+ "facings": [
+  "down",
+  "up",
+  "left",
+  "right"
+ ],
+ "anims": {
+  "idle": {
+   "start": 0,
+   "count": 4,
+   "fps": 3,
+   "loop": [
+    0,
+    1,
+    2,
+    1
+   ],
+   "blink": 3
+  },
+  "walk": {
+   "start": 4,
+   "count": 4,
+   "fps": 8
+  },
+  "follow": {
+   "start": 8,
+   "count": 4,
+   "fps": 10,
+   "pets_only": true
+  }
+ },
+ "cols": 12,
+ "image": "pets.png",
+ "image_neon": "pets_neon.png",
+ "size": [
+  240,
+  384
+ ],
+ "fx": "pets_fx.json",
+ "particles": "pets_particles.json",
+ "roles": {
+  "pet_wisp": {
+   "row": 0,
+   "kind": "creature",
+   "pet": true,
+   "name": "Wisp kit",
+   "desc": "Wisp kit: a round neon-blue cold-fire wisp with a flickering flame crown, a curling flame tail and little cloth-blue eyes; hovers at the hero's hip (neon pulse, night light, slow mana regen)",
+   "size_bounds": [
+    [
+     8,
+     20
+    ],
+    [
+     8,
+     28
+    ]
+   ],
+   "caster": false,
+   "anims": [
+    "idle",
+    "walk",
+    "follow"
+   ],
+   "frames": [
+    {
+     "name": "pet_wisp_down_idle0",
+     "facing": "down",
+     "anim": "idle",
+     "i": 0,
+     "x": 0,
+     "y": 0,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      10,
+      32
+     ]
+    },
+    {
+     "name": "pet_wisp_down_idle1",
+     "facing": "down",
+     "anim": "idle",
+     "i": 1,
+     "x": 20,
+     "y": 0,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      30,
+      32
+     ]
+    },
+    {
+     "name": "pet_wisp_down_idle2",
+     "facing": "down",
+     "anim": "idle",
+     "i": 2,
+     "x": 40,
+     "y": 0,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      50,
+      32
+     ]
+    },
+    {
+     "name": "pet_wisp_down_idle3",
+     "facing": "down",
+     "anim": "idle",
+     "i": 3,
+     "x": 60,
+     "y": 0,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      70,
+      32
+     ]
+    },
+    {
+     "name": "pet_wisp_down_walk0",
+     "facing": "down",
+     "anim": "walk",
+     "i": 0,
+     "x": 80,
+     "y": 0,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      90,
+      32
+     ]
+    },
+    {
+     "name": "pet_wisp_down_walk1",
+     "facing": "down",
+     "anim": "walk",
+     "i": 1,
+     "x": 100,
+     "y": 0,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      110,
+      32
+     ]
+    },
+    {
+     "name": "pet_wisp_down_walk2",
+     "facing": "down",
+     "anim": "walk",
+     "i": 2,
+     "x": 120,
+     "y": 0,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      130,
+      32
+     ]
+    },
+    {
+     "name": "pet_wisp_down_walk3",
+     "facing": "down",
+     "anim": "walk",
+     "i": 3,
+     "x": 140,
+     "y": 0,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      150,
+      32
+     ]
+    },
+    {
+     "name": "pet_wisp_down_follow0",
+     "facing": "down",
+     "anim": "follow",
+     "i": 0,
+     "x": 160,
+     "y": 0,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      170,
+      32
+     ]
+    },
+    {
+     "name": "pet_wisp_down_follow1",
+     "facing": "down",
+     "anim": "follow",
+     "i": 1,
+     "x": 180,
+     "y": 0,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      190,
+      32
+     ]
+    },
+    {
+     "name": "pet_wisp_down_follow2",
+     "facing": "down",
+     "anim": "follow",
+     "i": 2,
+     "x": 200,
+     "y": 0,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      210,
+      32
+     ]
+    },
+    {
+     "name": "pet_wisp_down_follow3",
+     "facing": "down",
+     "anim": "follow",
+     "i": 3,
+     "x": 220,
+     "y": 0,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      230,
+      32
+     ]
+    },
+    {
+     "name": "pet_wisp_up_idle0",
+     "facing": "up",
+     "anim": "idle",
+     "i": 0,
+     "x": 0,
+     "y": 32,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      10,
+      64
+     ]
+    },
+    {
+     "name": "pet_wisp_up_idle1",
+     "facing": "up",
+     "anim": "idle",
+     "i": 1,
+     "x": 20,
+     "y": 32,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      30,
+      64
+     ]
+    },
+    {
+     "name": "pet_wisp_up_idle2",
+     "facing": "up",
+     "anim": "idle",
+     "i": 2,
+     "x": 40,
+     "y": 32,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      50,
+      64
+     ]
+    },
+    {
+     "name": "pet_wisp_up_idle3",
+     "facing": "up",
+     "anim": "idle",
+     "i": 3,
+     "x": 60,
+     "y": 32,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      70,
+      64
+     ]
+    },
+    {
+     "name": "pet_wisp_up_walk0",
+     "facing": "up",
+     "anim": "walk",
+     "i": 0,
+     "x": 80,
+     "y": 32,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      90,
+      64
+     ]
+    },
+    {
+     "name": "pet_wisp_up_walk1",
+     "facing": "up",
+     "anim": "walk",
+     "i": 1,
+     "x": 100,
+     "y": 32,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      110,
+      64
+     ]
+    },
+    {
+     "name": "pet_wisp_up_walk2",
+     "facing": "up",
+     "anim": "walk",
+     "i": 2,
+     "x": 120,
+     "y": 32,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      130,
+      64
+     ]
+    },
+    {
+     "name": "pet_wisp_up_walk3",
+     "facing": "up",
+     "anim": "walk",
+     "i": 3,
+     "x": 140,
+     "y": 32,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      150,
+      64
+     ]
+    },
+    {
+     "name": "pet_wisp_up_follow0",
+     "facing": "up",
+     "anim": "follow",
+     "i": 0,
+     "x": 160,
+     "y": 32,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      170,
+      64
+     ]
+    },
+    {
+     "name": "pet_wisp_up_follow1",
+     "facing": "up",
+     "anim": "follow",
+     "i": 1,
+     "x": 180,
+     "y": 32,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      190,
+      64
+     ]
+    },
+    {
+     "name": "pet_wisp_up_follow2",
+     "facing": "up",
+     "anim": "follow",
+     "i": 2,
+     "x": 200,
+     "y": 32,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      210,
+      64
+     ]
+    },
+    {
+     "name": "pet_wisp_up_follow3",
+     "facing": "up",
+     "anim": "follow",
+     "i": 3,
+     "x": 220,
+     "y": 32,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      230,
+      64
+     ]
+    },
+    {
+     "name": "pet_wisp_left_idle0",
+     "facing": "left",
+     "anim": "idle",
+     "i": 0,
+     "x": 0,
+     "y": 64,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      10,
+      96
+     ]
+    },
+    {
+     "name": "pet_wisp_left_idle1",
+     "facing": "left",
+     "anim": "idle",
+     "i": 1,
+     "x": 20,
+     "y": 64,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      30,
+      96
+     ]
+    },
+    {
+     "name": "pet_wisp_left_idle2",
+     "facing": "left",
+     "anim": "idle",
+     "i": 2,
+     "x": 40,
+     "y": 64,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      50,
+      96
+     ]
+    },
+    {
+     "name": "pet_wisp_left_idle3",
+     "facing": "left",
+     "anim": "idle",
+     "i": 3,
+     "x": 60,
+     "y": 64,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      70,
+      96
+     ]
+    },
+    {
+     "name": "pet_wisp_left_walk0",
+     "facing": "left",
+     "anim": "walk",
+     "i": 0,
+     "x": 80,
+     "y": 64,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      90,
+      96
+     ]
+    },
+    {
+     "name": "pet_wisp_left_walk1",
+     "facing": "left",
+     "anim": "walk",
+     "i": 1,
+     "x": 100,
+     "y": 64,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      110,
+      96
+     ]
+    },
+    {
+     "name": "pet_wisp_left_walk2",
+     "facing": "left",
+     "anim": "walk",
+     "i": 2,
+     "x": 120,
+     "y": 64,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      130,
+      96
+     ]
+    },
+    {
+     "name": "pet_wisp_left_walk3",
+     "facing": "left",
+     "anim": "walk",
+     "i": 3,
+     "x": 140,
+     "y": 64,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      150,
+      96
+     ]
+    },
+    {
+     "name": "pet_wisp_left_follow0",
+     "facing": "left",
+     "anim": "follow",
+     "i": 0,
+     "x": 160,
+     "y": 64,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      170,
+      96
+     ]
+    },
+    {
+     "name": "pet_wisp_left_follow1",
+     "facing": "left",
+     "anim": "follow",
+     "i": 1,
+     "x": 180,
+     "y": 64,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      190,
+      96
+     ]
+    },
+    {
+     "name": "pet_wisp_left_follow2",
+     "facing": "left",
+     "anim": "follow",
+     "i": 2,
+     "x": 200,
+     "y": 64,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      210,
+      96
+     ]
+    },
+    {
+     "name": "pet_wisp_left_follow3",
+     "facing": "left",
+     "anim": "follow",
+     "i": 3,
+     "x": 220,
+     "y": 64,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      230,
+      96
+     ]
+    },
+    {
+     "name": "pet_wisp_right_idle0",
+     "facing": "right",
+     "anim": "idle",
+     "i": 0,
+     "x": 0,
+     "y": 96,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      10,
+      128
+     ]
+    },
+    {
+     "name": "pet_wisp_right_idle1",
+     "facing": "right",
+     "anim": "idle",
+     "i": 1,
+     "x": 20,
+     "y": 96,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      30,
+      128
+     ]
+    },
+    {
+     "name": "pet_wisp_right_idle2",
+     "facing": "right",
+     "anim": "idle",
+     "i": 2,
+     "x": 40,
+     "y": 96,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      50,
+      128
+     ]
+    },
+    {
+     "name": "pet_wisp_right_idle3",
+     "facing": "right",
+     "anim": "idle",
+     "i": 3,
+     "x": 60,
+     "y": 96,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      70,
+      128
+     ]
+    },
+    {
+     "name": "pet_wisp_right_walk0",
+     "facing": "right",
+     "anim": "walk",
+     "i": 0,
+     "x": 80,
+     "y": 96,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      90,
+      128
+     ]
+    },
+    {
+     "name": "pet_wisp_right_walk1",
+     "facing": "right",
+     "anim": "walk",
+     "i": 1,
+     "x": 100,
+     "y": 96,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      110,
+      128
+     ]
+    },
+    {
+     "name": "pet_wisp_right_walk2",
+     "facing": "right",
+     "anim": "walk",
+     "i": 2,
+     "x": 120,
+     "y": 96,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      130,
+      128
+     ]
+    },
+    {
+     "name": "pet_wisp_right_walk3",
+     "facing": "right",
+     "anim": "walk",
+     "i": 3,
+     "x": 140,
+     "y": 96,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      150,
+      128
+     ]
+    },
+    {
+     "name": "pet_wisp_right_follow0",
+     "facing": "right",
+     "anim": "follow",
+     "i": 0,
+     "x": 160,
+     "y": 96,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      170,
+      128
+     ]
+    },
+    {
+     "name": "pet_wisp_right_follow1",
+     "facing": "right",
+     "anim": "follow",
+     "i": 1,
+     "x": 180,
+     "y": 96,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      190,
+      128
+     ]
+    },
+    {
+     "name": "pet_wisp_right_follow2",
+     "facing": "right",
+     "anim": "follow",
+     "i": 2,
+     "x": 200,
+     "y": 96,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      210,
+      128
+     ]
+    },
+    {
+     "name": "pet_wisp_right_follow3",
+     "facing": "right",
+     "anim": "follow",
+     "i": 3,
+     "x": 220,
+     "y": 96,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      230,
+      128
+     ]
+    }
+   ],
+   "petfx": {
+    "hover": {
+     "lift": 0.5,
+     "bob": 0.06,
+     "hz": 0.8
+    },
+    "light": {
+     "color": "#5ab4f0",
+     "intensity": 4.0,
+     "range": 3.2,
+     "lift": 0.75,
+     "fadeIn": 0.4,
+     "pulse": {
+      "min": 0.75,
+      "max": 1.15,
+      "hz": 0.9,
+      "shape": "sine"
+     }
+    },
+    "aura": "pet_aura_wisp",
+    "pool": "pet_pool_wisp",
+    "particles": "pet_wisp_spark",
+    "speed": 2.4,
+    "look": "neon blue cold fire (palette sky / flower_blue / cloth / white; the cold-fire LANTERN hex for the light)"
+   }
+  },
+  "pet_moth": {
+   "row": 4,
+   "kind": "creature",
+   "pet": true,
+   "name": "Glow-moth",
+   "desc": "Glow-moth (lantern moth): fuzzy cream body, feathery antennae with glowing tips, lilac-blue wings with rose eyespots and white glints, a lit lantern tip on the abdomen; hovers at shoulder height (lights caves, reveals hidden doors)",
+   "size_bounds": [
+    [
+     8,
+     20
+    ],
+    [
+     8,
+     28
+    ]
+   ],
+   "caster": false,
+   "anims": [
+    "idle",
+    "walk",
+    "follow"
+   ],
+   "frames": [
+    {
+     "name": "pet_moth_down_idle0",
+     "facing": "down",
+     "anim": "idle",
+     "i": 0,
+     "x": 0,
+     "y": 128,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      10,
+      160
+     ]
+    },
+    {
+     "name": "pet_moth_down_idle1",
+     "facing": "down",
+     "anim": "idle",
+     "i": 1,
+     "x": 20,
+     "y": 128,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      30,
+      160
+     ]
+    },
+    {
+     "name": "pet_moth_down_idle2",
+     "facing": "down",
+     "anim": "idle",
+     "i": 2,
+     "x": 40,
+     "y": 128,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      50,
+      160
+     ]
+    },
+    {
+     "name": "pet_moth_down_idle3",
+     "facing": "down",
+     "anim": "idle",
+     "i": 3,
+     "x": 60,
+     "y": 128,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      70,
+      160
+     ]
+    },
+    {
+     "name": "pet_moth_down_walk0",
+     "facing": "down",
+     "anim": "walk",
+     "i": 0,
+     "x": 80,
+     "y": 128,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      90,
+      160
+     ]
+    },
+    {
+     "name": "pet_moth_down_walk1",
+     "facing": "down",
+     "anim": "walk",
+     "i": 1,
+     "x": 100,
+     "y": 128,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      110,
+      160
+     ]
+    },
+    {
+     "name": "pet_moth_down_walk2",
+     "facing": "down",
+     "anim": "walk",
+     "i": 2,
+     "x": 120,
+     "y": 128,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      130,
+      160
+     ]
+    },
+    {
+     "name": "pet_moth_down_walk3",
+     "facing": "down",
+     "anim": "walk",
+     "i": 3,
+     "x": 140,
+     "y": 128,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      150,
+      160
+     ]
+    },
+    {
+     "name": "pet_moth_down_follow0",
+     "facing": "down",
+     "anim": "follow",
+     "i": 0,
+     "x": 160,
+     "y": 128,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      170,
+      160
+     ]
+    },
+    {
+     "name": "pet_moth_down_follow1",
+     "facing": "down",
+     "anim": "follow",
+     "i": 1,
+     "x": 180,
+     "y": 128,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      190,
+      160
+     ]
+    },
+    {
+     "name": "pet_moth_down_follow2",
+     "facing": "down",
+     "anim": "follow",
+     "i": 2,
+     "x": 200,
+     "y": 128,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      210,
+      160
+     ]
+    },
+    {
+     "name": "pet_moth_down_follow3",
+     "facing": "down",
+     "anim": "follow",
+     "i": 3,
+     "x": 220,
+     "y": 128,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      230,
+      160
+     ]
+    },
+    {
+     "name": "pet_moth_up_idle0",
+     "facing": "up",
+     "anim": "idle",
+     "i": 0,
+     "x": 0,
+     "y": 160,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      10,
+      192
+     ]
+    },
+    {
+     "name": "pet_moth_up_idle1",
+     "facing": "up",
+     "anim": "idle",
+     "i": 1,
+     "x": 20,
+     "y": 160,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      30,
+      192
+     ]
+    },
+    {
+     "name": "pet_moth_up_idle2",
+     "facing": "up",
+     "anim": "idle",
+     "i": 2,
+     "x": 40,
+     "y": 160,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      50,
+      192
+     ]
+    },
+    {
+     "name": "pet_moth_up_idle3",
+     "facing": "up",
+     "anim": "idle",
+     "i": 3,
+     "x": 60,
+     "y": 160,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      70,
+      192
+     ]
+    },
+    {
+     "name": "pet_moth_up_walk0",
+     "facing": "up",
+     "anim": "walk",
+     "i": 0,
+     "x": 80,
+     "y": 160,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      90,
+      192
+     ]
+    },
+    {
+     "name": "pet_moth_up_walk1",
+     "facing": "up",
+     "anim": "walk",
+     "i": 1,
+     "x": 100,
+     "y": 160,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      110,
+      192
+     ]
+    },
+    {
+     "name": "pet_moth_up_walk2",
+     "facing": "up",
+     "anim": "walk",
+     "i": 2,
+     "x": 120,
+     "y": 160,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      130,
+      192
+     ]
+    },
+    {
+     "name": "pet_moth_up_walk3",
+     "facing": "up",
+     "anim": "walk",
+     "i": 3,
+     "x": 140,
+     "y": 160,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      150,
+      192
+     ]
+    },
+    {
+     "name": "pet_moth_up_follow0",
+     "facing": "up",
+     "anim": "follow",
+     "i": 0,
+     "x": 160,
+     "y": 160,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      170,
+      192
+     ]
+    },
+    {
+     "name": "pet_moth_up_follow1",
+     "facing": "up",
+     "anim": "follow",
+     "i": 1,
+     "x": 180,
+     "y": 160,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      190,
+      192
+     ]
+    },
+    {
+     "name": "pet_moth_up_follow2",
+     "facing": "up",
+     "anim": "follow",
+     "i": 2,
+     "x": 200,
+     "y": 160,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      210,
+      192
+     ]
+    },
+    {
+     "name": "pet_moth_up_follow3",
+     "facing": "up",
+     "anim": "follow",
+     "i": 3,
+     "x": 220,
+     "y": 160,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      230,
+      192
+     ]
+    },
+    {
+     "name": "pet_moth_left_idle0",
+     "facing": "left",
+     "anim": "idle",
+     "i": 0,
+     "x": 0,
+     "y": 192,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      10,
+      224
+     ]
+    },
+    {
+     "name": "pet_moth_left_idle1",
+     "facing": "left",
+     "anim": "idle",
+     "i": 1,
+     "x": 20,
+     "y": 192,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      30,
+      224
+     ]
+    },
+    {
+     "name": "pet_moth_left_idle2",
+     "facing": "left",
+     "anim": "idle",
+     "i": 2,
+     "x": 40,
+     "y": 192,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      50,
+      224
+     ]
+    },
+    {
+     "name": "pet_moth_left_idle3",
+     "facing": "left",
+     "anim": "idle",
+     "i": 3,
+     "x": 60,
+     "y": 192,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      70,
+      224
+     ]
+    },
+    {
+     "name": "pet_moth_left_walk0",
+     "facing": "left",
+     "anim": "walk",
+     "i": 0,
+     "x": 80,
+     "y": 192,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      90,
+      224
+     ]
+    },
+    {
+     "name": "pet_moth_left_walk1",
+     "facing": "left",
+     "anim": "walk",
+     "i": 1,
+     "x": 100,
+     "y": 192,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      110,
+      224
+     ]
+    },
+    {
+     "name": "pet_moth_left_walk2",
+     "facing": "left",
+     "anim": "walk",
+     "i": 2,
+     "x": 120,
+     "y": 192,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      130,
+      224
+     ]
+    },
+    {
+     "name": "pet_moth_left_walk3",
+     "facing": "left",
+     "anim": "walk",
+     "i": 3,
+     "x": 140,
+     "y": 192,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      150,
+      224
+     ]
+    },
+    {
+     "name": "pet_moth_left_follow0",
+     "facing": "left",
+     "anim": "follow",
+     "i": 0,
+     "x": 160,
+     "y": 192,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      170,
+      224
+     ]
+    },
+    {
+     "name": "pet_moth_left_follow1",
+     "facing": "left",
+     "anim": "follow",
+     "i": 1,
+     "x": 180,
+     "y": 192,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      190,
+      224
+     ]
+    },
+    {
+     "name": "pet_moth_left_follow2",
+     "facing": "left",
+     "anim": "follow",
+     "i": 2,
+     "x": 200,
+     "y": 192,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      210,
+      224
+     ]
+    },
+    {
+     "name": "pet_moth_left_follow3",
+     "facing": "left",
+     "anim": "follow",
+     "i": 3,
+     "x": 220,
+     "y": 192,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      230,
+      224
+     ]
+    },
+    {
+     "name": "pet_moth_right_idle0",
+     "facing": "right",
+     "anim": "idle",
+     "i": 0,
+     "x": 0,
+     "y": 224,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      10,
+      256
+     ]
+    },
+    {
+     "name": "pet_moth_right_idle1",
+     "facing": "right",
+     "anim": "idle",
+     "i": 1,
+     "x": 20,
+     "y": 224,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      30,
+      256
+     ]
+    },
+    {
+     "name": "pet_moth_right_idle2",
+     "facing": "right",
+     "anim": "idle",
+     "i": 2,
+     "x": 40,
+     "y": 224,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      50,
+      256
+     ]
+    },
+    {
+     "name": "pet_moth_right_idle3",
+     "facing": "right",
+     "anim": "idle",
+     "i": 3,
+     "x": 60,
+     "y": 224,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      70,
+      256
+     ]
+    },
+    {
+     "name": "pet_moth_right_walk0",
+     "facing": "right",
+     "anim": "walk",
+     "i": 0,
+     "x": 80,
+     "y": 224,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      90,
+      256
+     ]
+    },
+    {
+     "name": "pet_moth_right_walk1",
+     "facing": "right",
+     "anim": "walk",
+     "i": 1,
+     "x": 100,
+     "y": 224,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      110,
+      256
+     ]
+    },
+    {
+     "name": "pet_moth_right_walk2",
+     "facing": "right",
+     "anim": "walk",
+     "i": 2,
+     "x": 120,
+     "y": 224,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      130,
+      256
+     ]
+    },
+    {
+     "name": "pet_moth_right_walk3",
+     "facing": "right",
+     "anim": "walk",
+     "i": 3,
+     "x": 140,
+     "y": 224,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      150,
+      256
+     ]
+    },
+    {
+     "name": "pet_moth_right_follow0",
+     "facing": "right",
+     "anim": "follow",
+     "i": 0,
+     "x": 160,
+     "y": 224,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      170,
+      256
+     ]
+    },
+    {
+     "name": "pet_moth_right_follow1",
+     "facing": "right",
+     "anim": "follow",
+     "i": 1,
+     "x": 180,
+     "y": 224,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      190,
+      256
+     ]
+    },
+    {
+     "name": "pet_moth_right_follow2",
+     "facing": "right",
+     "anim": "follow",
+     "i": 2,
+     "x": 200,
+     "y": 224,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      210,
+      256
+     ]
+    },
+    {
+     "name": "pet_moth_right_follow3",
+     "facing": "right",
+     "anim": "follow",
+     "i": 3,
+     "x": 220,
+     "y": 224,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      230,
+      256
+     ]
+    }
+   ],
+   "petfx": {
+    "hover": {
+     "lift": 0.75,
+     "bob": 0.08,
+     "hz": 0.6
+    },
+    "light": {
+     "color": "#a45cf0",
+     "intensity": 5.0,
+     "range": 3.8,
+     "lift": 0.95,
+     "fadeIn": 0.5,
+     "pulse": {
+      "min": 0.85,
+      "max": 1.05,
+      "hz": 0.5,
+      "shape": "sine"
+     }
+    },
+    "aura": "pet_aura_moth",
+    "pool": "pet_pool_moth",
+    "particles": "pet_moth_dust",
+    "speed": 2.4,
+    "look": "violet neon (sprite: palette lilac-blue so check-sprite passes; NEON violet in the light, pool, aura; pets_neon.png has violet wings)"
+   }
+  },
+  "pet_fox": {
+   "row": 8,
+   "kind": "creature",
+   "pet": true,
+   "name": "Lantern-fox",
+   "desc": "Lantern-fox (rift fox): a small orange fox with a cream bib and muzzle, dark socks, big ears and a bushy tail that ends in a flickering red foxfire lantern; trots on the ground (senses portals, opens small secret portals)",
+   "size_bounds": [
+    [
+     8,
+     20
+    ],
+    [
+     8,
+     28
+    ]
+   ],
+   "caster": false,
+   "anims": [
+    "idle",
+    "walk",
+    "follow"
+   ],
+   "frames": [
+    {
+     "name": "pet_fox_down_idle0",
+     "facing": "down",
+     "anim": "idle",
+     "i": 0,
+     "x": 0,
+     "y": 256,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      10,
+      288
+     ]
+    },
+    {
+     "name": "pet_fox_down_idle1",
+     "facing": "down",
+     "anim": "idle",
+     "i": 1,
+     "x": 20,
+     "y": 256,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      30,
+      288
+     ]
+    },
+    {
+     "name": "pet_fox_down_idle2",
+     "facing": "down",
+     "anim": "idle",
+     "i": 2,
+     "x": 40,
+     "y": 256,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      50,
+      288
+     ]
+    },
+    {
+     "name": "pet_fox_down_idle3",
+     "facing": "down",
+     "anim": "idle",
+     "i": 3,
+     "x": 60,
+     "y": 256,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      70,
+      288
+     ]
+    },
+    {
+     "name": "pet_fox_down_walk0",
+     "facing": "down",
+     "anim": "walk",
+     "i": 0,
+     "x": 80,
+     "y": 256,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      90,
+      288
+     ]
+    },
+    {
+     "name": "pet_fox_down_walk1",
+     "facing": "down",
+     "anim": "walk",
+     "i": 1,
+     "x": 100,
+     "y": 256,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      110,
+      288
+     ]
+    },
+    {
+     "name": "pet_fox_down_walk2",
+     "facing": "down",
+     "anim": "walk",
+     "i": 2,
+     "x": 120,
+     "y": 256,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      130,
+      288
+     ]
+    },
+    {
+     "name": "pet_fox_down_walk3",
+     "facing": "down",
+     "anim": "walk",
+     "i": 3,
+     "x": 140,
+     "y": 256,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      150,
+      288
+     ]
+    },
+    {
+     "name": "pet_fox_down_follow0",
+     "facing": "down",
+     "anim": "follow",
+     "i": 0,
+     "x": 160,
+     "y": 256,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      170,
+      288
+     ]
+    },
+    {
+     "name": "pet_fox_down_follow1",
+     "facing": "down",
+     "anim": "follow",
+     "i": 1,
+     "x": 180,
+     "y": 256,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      190,
+      288
+     ]
+    },
+    {
+     "name": "pet_fox_down_follow2",
+     "facing": "down",
+     "anim": "follow",
+     "i": 2,
+     "x": 200,
+     "y": 256,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      210,
+      288
+     ]
+    },
+    {
+     "name": "pet_fox_down_follow3",
+     "facing": "down",
+     "anim": "follow",
+     "i": 3,
+     "x": 220,
+     "y": 256,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      230,
+      288
+     ]
+    },
+    {
+     "name": "pet_fox_up_idle0",
+     "facing": "up",
+     "anim": "idle",
+     "i": 0,
+     "x": 0,
+     "y": 288,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      10,
+      320
+     ]
+    },
+    {
+     "name": "pet_fox_up_idle1",
+     "facing": "up",
+     "anim": "idle",
+     "i": 1,
+     "x": 20,
+     "y": 288,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      30,
+      320
+     ]
+    },
+    {
+     "name": "pet_fox_up_idle2",
+     "facing": "up",
+     "anim": "idle",
+     "i": 2,
+     "x": 40,
+     "y": 288,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      50,
+      320
+     ]
+    },
+    {
+     "name": "pet_fox_up_idle3",
+     "facing": "up",
+     "anim": "idle",
+     "i": 3,
+     "x": 60,
+     "y": 288,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      70,
+      320
+     ]
+    },
+    {
+     "name": "pet_fox_up_walk0",
+     "facing": "up",
+     "anim": "walk",
+     "i": 0,
+     "x": 80,
+     "y": 288,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      90,
+      320
+     ]
+    },
+    {
+     "name": "pet_fox_up_walk1",
+     "facing": "up",
+     "anim": "walk",
+     "i": 1,
+     "x": 100,
+     "y": 288,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      110,
+      320
+     ]
+    },
+    {
+     "name": "pet_fox_up_walk2",
+     "facing": "up",
+     "anim": "walk",
+     "i": 2,
+     "x": 120,
+     "y": 288,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      130,
+      320
+     ]
+    },
+    {
+     "name": "pet_fox_up_walk3",
+     "facing": "up",
+     "anim": "walk",
+     "i": 3,
+     "x": 140,
+     "y": 288,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      150,
+      320
+     ]
+    },
+    {
+     "name": "pet_fox_up_follow0",
+     "facing": "up",
+     "anim": "follow",
+     "i": 0,
+     "x": 160,
+     "y": 288,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      170,
+      320
+     ]
+    },
+    {
+     "name": "pet_fox_up_follow1",
+     "facing": "up",
+     "anim": "follow",
+     "i": 1,
+     "x": 180,
+     "y": 288,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      190,
+      320
+     ]
+    },
+    {
+     "name": "pet_fox_up_follow2",
+     "facing": "up",
+     "anim": "follow",
+     "i": 2,
+     "x": 200,
+     "y": 288,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      210,
+      320
+     ]
+    },
+    {
+     "name": "pet_fox_up_follow3",
+     "facing": "up",
+     "anim": "follow",
+     "i": 3,
+     "x": 220,
+     "y": 288,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      230,
+      320
+     ]
+    },
+    {
+     "name": "pet_fox_left_idle0",
+     "facing": "left",
+     "anim": "idle",
+     "i": 0,
+     "x": 0,
+     "y": 320,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      10,
+      352
+     ]
+    },
+    {
+     "name": "pet_fox_left_idle1",
+     "facing": "left",
+     "anim": "idle",
+     "i": 1,
+     "x": 20,
+     "y": 320,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      30,
+      352
+     ]
+    },
+    {
+     "name": "pet_fox_left_idle2",
+     "facing": "left",
+     "anim": "idle",
+     "i": 2,
+     "x": 40,
+     "y": 320,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      50,
+      352
+     ]
+    },
+    {
+     "name": "pet_fox_left_idle3",
+     "facing": "left",
+     "anim": "idle",
+     "i": 3,
+     "x": 60,
+     "y": 320,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      70,
+      352
+     ]
+    },
+    {
+     "name": "pet_fox_left_walk0",
+     "facing": "left",
+     "anim": "walk",
+     "i": 0,
+     "x": 80,
+     "y": 320,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      90,
+      352
+     ]
+    },
+    {
+     "name": "pet_fox_left_walk1",
+     "facing": "left",
+     "anim": "walk",
+     "i": 1,
+     "x": 100,
+     "y": 320,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      110,
+      352
+     ]
+    },
+    {
+     "name": "pet_fox_left_walk2",
+     "facing": "left",
+     "anim": "walk",
+     "i": 2,
+     "x": 120,
+     "y": 320,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      130,
+      352
+     ]
+    },
+    {
+     "name": "pet_fox_left_walk3",
+     "facing": "left",
+     "anim": "walk",
+     "i": 3,
+     "x": 140,
+     "y": 320,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      150,
+      352
+     ]
+    },
+    {
+     "name": "pet_fox_left_follow0",
+     "facing": "left",
+     "anim": "follow",
+     "i": 0,
+     "x": 160,
+     "y": 320,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      170,
+      352
+     ]
+    },
+    {
+     "name": "pet_fox_left_follow1",
+     "facing": "left",
+     "anim": "follow",
+     "i": 1,
+     "x": 180,
+     "y": 320,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      190,
+      352
+     ]
+    },
+    {
+     "name": "pet_fox_left_follow2",
+     "facing": "left",
+     "anim": "follow",
+     "i": 2,
+     "x": 200,
+     "y": 320,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      210,
+      352
+     ]
+    },
+    {
+     "name": "pet_fox_left_follow3",
+     "facing": "left",
+     "anim": "follow",
+     "i": 3,
+     "x": 220,
+     "y": 320,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      230,
+      352
+     ]
+    },
+    {
+     "name": "pet_fox_right_idle0",
+     "facing": "right",
+     "anim": "idle",
+     "i": 0,
+     "x": 0,
+     "y": 352,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      10,
+      384
+     ]
+    },
+    {
+     "name": "pet_fox_right_idle1",
+     "facing": "right",
+     "anim": "idle",
+     "i": 1,
+     "x": 20,
+     "y": 352,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      30,
+      384
+     ]
+    },
+    {
+     "name": "pet_fox_right_idle2",
+     "facing": "right",
+     "anim": "idle",
+     "i": 2,
+     "x": 40,
+     "y": 352,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      50,
+      384
+     ]
+    },
+    {
+     "name": "pet_fox_right_idle3",
+     "facing": "right",
+     "anim": "idle",
+     "i": 3,
+     "x": 60,
+     "y": 352,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      70,
+      384
+     ]
+    },
+    {
+     "name": "pet_fox_right_walk0",
+     "facing": "right",
+     "anim": "walk",
+     "i": 0,
+     "x": 80,
+     "y": 352,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      90,
+      384
+     ]
+    },
+    {
+     "name": "pet_fox_right_walk1",
+     "facing": "right",
+     "anim": "walk",
+     "i": 1,
+     "x": 100,
+     "y": 352,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      110,
+      384
+     ]
+    },
+    {
+     "name": "pet_fox_right_walk2",
+     "facing": "right",
+     "anim": "walk",
+     "i": 2,
+     "x": 120,
+     "y": 352,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      130,
+      384
+     ]
+    },
+    {
+     "name": "pet_fox_right_walk3",
+     "facing": "right",
+     "anim": "walk",
+     "i": 3,
+     "x": 140,
+     "y": 352,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      150,
+      384
+     ]
+    },
+    {
+     "name": "pet_fox_right_follow0",
+     "facing": "right",
+     "anim": "follow",
+     "i": 0,
+     "x": 160,
+     "y": 352,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      170,
+      384
+     ]
+    },
+    {
+     "name": "pet_fox_right_follow1",
+     "facing": "right",
+     "anim": "follow",
+     "i": 1,
+     "x": 180,
+     "y": 352,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      190,
+      384
+     ]
+    },
+    {
+     "name": "pet_fox_right_follow2",
+     "facing": "right",
+     "anim": "follow",
+     "i": 2,
+     "x": 200,
+     "y": 352,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      210,
+      384
+     ]
+    },
+    {
+     "name": "pet_fox_right_follow3",
+     "facing": "right",
+     "anim": "follow",
+     "i": 3,
+     "x": 220,
+     "y": 352,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      230,
+      384
+     ]
+    }
+   ],
+   "petfx": {
+    "hover": {
+     "lift": 0.0,
+     "bob": 0.0,
+     "hz": 0.0
+    },
+    "light": {
+     "color": "#ff4a3a",
+     "intensity": 3.5,
+     "range": 2.8,
+     "lift": 0.6,
+     "fadeIn": 0.4,
+     "pulse": {
+      "min": 0.85,
+      "max": 1.1,
+      "hz": 5.0,
+      "shape": "flicker"
+     }
+    },
+    "aura": "pet_aura_fox",
+    "pool": "pet_pool_fox",
+    "particles": "pet_fox_ember",
+    "speed": 2.4,
+    "look": "red neon foxfire (sprite: palette rose / roof / white flame; NEON red in the light, pool, aura; pets_neon.png has a neon-red flame)"
+   }
+  }
+ },
+ "neon": "pets.png = the NEON variant (Bill approved neon pets 2026-10-05)"
+}

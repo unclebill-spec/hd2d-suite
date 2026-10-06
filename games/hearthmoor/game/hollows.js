@@ -70,6 +70,12 @@ export class Hollows {
       q.flare = BRAZIER.flare;
       if (!q.lit) {
         q.lit = true; this.G.S.found[q.id] = 1;
+        if (q.den) {   // the Stray Den's yard lanterns ('Strays of the Rift'): they stay lit at every hour
+          const n = this.braziers.filter((b) => b.den && b.lit).length;
+          this.G.toast && this.G.toast(n >= 3 ? 'Three blue lanterns burn in the Den yard. Tiny eyes shine under the floor.'
+                                              : `Den lantern lit (${n}/3). Something small sneezes under the floorboards.`, 2.8);
+          this.G.refreshMarkers && this.G.refreshMarkers(); this.G.drawLog && this.G.drawLog();
+        } else
         this.G.toast && this.G.toast('The cold-fire brazier catches! It will burn through the dark hours.', 2.6);
         this.G.audio && this.G.audio.sfx('spell');
       }
@@ -125,7 +131,7 @@ export class Hollows {
     const dark = DARK(ctx.clock.t);
     for (const q of this.braziers) {
       if (q.flare > 0) q.flare -= dt;
-      const want = q.lit && (dark || q.flare > 0);
+      const want = q.lit && (dark || q.flare > 0 || q.den);
       if (want && !q.burning) this.burnOn(q); else if (!want && q.burning) this.burnOff(q);
     }
     this.bounceStep(dt);
