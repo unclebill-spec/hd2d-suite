@@ -90,7 +90,7 @@ def _poly(F, pts, colfn):
 
 def sylvaine(s, face, anim, i):
     F = _F(s)
-    W, H = s.w, s.h            # 100 x 160; feet / hem on row ~157
+    W, H = s.w, s.h            # 100 x 160; hem on the ground row (158 + outline 159)
     side, back = face == "left", face == "up"
     b = 0; sway = 0; arms = "rest"; flare = 0; sink = 0; glow = False
     if anim == "idle":
@@ -118,15 +118,15 @@ def sylvaine(s, face, anim, i):
     # ------------------------------------------------ cape (behind everything; red lining shows at the sides)
     top_c = 46 + b
     hemw = 40 + flare
-    _poly(F, [(cx - 22, top_c), (cx + 22, top_c), (cx + hemw, 156), (cx - hemw, 156)],
+    _poly(F, [(cx - 22, top_c), (cx + 22, top_c), (cx + hemw, 159), (cx - hemw, 159)],
           lambda x, y: ("roof_lo" if abs(x - cx) > 18 + (y - top_c) * 0.36 else "shadow") if not back else ("shadow" if (x + y // 6) % 9 else "ink"))
-    for y in range(int(top_c + 4), 156):
-        t = (y - top_c) / (156 - top_c)
+    for y in range(int(top_c + 4), 159):
+        t = (y - top_c) / (159 - top_c)
         for sgn in (-1, 1):
             x = cx + sgn * (22 + (hemw - 22) * t)
             F.set(x - sgn, y, "roof"); F.set(x - 2 * sgn, y, "roof_lo")
     if back:
-        _poly(F, [(cx - 20, top_c + 2), (cx + 20, top_c + 2), (cx + hemw - 4, 154), (cx - hemw + 4, 154)],
+        _poly(F, [(cx - 20, top_c + 2), (cx + 20, top_c + 2), (cx + hemw - 4, 157), (cx - hemw + 4, 157)],
               lambda x, y: "roof" if abs(x - cx) < 4 + (y - top_c) * 0.05 else "roof_lo" if (x // 5 + y // 9) % 3 == 0 else "shadow")
     # high collar wings of the cape (a vampire's standing collar), rose lining
     for sgn in ((-1, 1) if not side else (1,)):
@@ -143,7 +143,7 @@ def sylvaine(s, face, anim, i):
                 F.set(x0 + sgn * e, y, "white" if e < 2 else "stone_hi" if e < 5 else "stone")
         F.set(cx + sgn * (hw + 6), wy + 10, "stone_hi")
     # ------------------------------------------------ skirt (bottom): long, deep blue, pale hem trim, a dark side panel
-    hem = 155
+    hem = 159   # the hem sits on the ground row (outline lands on row 159)
     skw = 26 + flare // 2
     _poly(F, [(cx - 13, wy), (cx + 13, wy), (cx + skw + sway, hem), (cx - skw + sway, hem)],
           lambda x, y: ("flower_blue" if x < cx - 10 - (y - wy) * 0.15 + sway * (y - wy) / 60 else "shadow" if x > cx + 6 + (y - wy) * 0.2 else "cloth")

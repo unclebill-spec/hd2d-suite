@@ -86,7 +86,9 @@ def steps(b, url, T, size, errors, rep, stub=None, shots=None):
         T.step("keys: E talks to Warden Aelindra; her alliance choice (befriend / conquer / pass), key 1 befriends Alfheim and starts the story quest",
                bool(ch) and len(ch["options"]) == 3 and "friend" in ch["options"][0] and S["flags"]["alliance"]["alfheim"] == "befriend"
                and S["quests"].get("alfheim") == 1 and "Aelindra" in first, choice=ch, quests=S["quests"])
+        T.ev("__padPlug(true)"); pg.wait_for_timeout(700)
         presses = T.talk_pad("thalion")
+        T.ev("__padPlug(false)"); pg.wait_for_timeout(400)
         T.step("controller: A talks to Thalion the ranger and pages through to the end", presses >= 1 and not T.ev("!!window.__hm.dlg"), presses=presses)
         T.ev("window.__hm.ctx.clock.t = 0.96"); T.walk(0.6, -6.2); pg.wait_for_timeout(1500)
         lit = T.ev("window.__hm.ctx.glows.filter((g) => !g.kill).length")
