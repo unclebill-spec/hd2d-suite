@@ -138,7 +138,7 @@ Repo handoff docs (in the suite root): [`AGENTS.md`](../../AGENTS.md), [`CHANGEL
   - **migration:** an old `hearthmoor-slot-1-v1` save still loads. Continue opens the hero picker once (v1 had no class), then everything else carries over and is written to v2. The v1 key is left untouched.
 - Combat lives in `game/combat.js` (enemy AI, hitboxes, damage, guard, i-frames, defeat/respawn, spells, summons, damage numbers, HP bars). Enemy and summon sprites are drawn in code by `tools/sprite/roles_enemies.py` (same 20x32 cell, ink outline, biome palette) and baked into every area atlas; spells / hit sparks are `tools/spells` effects (glow pixels only).
 - PWA: `manifest.webmanifest`, icons, and a `sw.js` that precaches all files for offline play (cache-first, versioned name). `?nosw` skips registration.
-- QA URL: `?qa&area=plaza|lane|mossglen|hollows|rift|vanaheim|ravenhold|bifrost` boots an area with a fresh state, no title and no saving (for check-scene); enemies stay peaceful unless `&combat`, and `&hero=<id>` picks the hero (default wildcaller). `?peace` keeps enemies calm in normal play (smoke test). `?simscale=N` speeds the simulation up (smoke test). `?reset` clears the save. `?day=SECONDS` changes the day length. `?nointro` starts a new game without the Lantern Eve opening. `?rare` forces a roaming rare, `?rifts` lets rifts open on their own in QA, and `?riftnow=1|2|3` opens one on arrival.
+- QA URL: `?qa&area=plaza|lane|mossglen|hollows|rift|vanaheim|ravenhold|bifrost|temple` boots an area with a fresh state, no title and no saving (for check-scene); enemies stay peaceful unless `&combat`, and `&hero=<id>` picks the hero (default wildcaller). `?peace` keeps enemies calm in normal play (smoke test). `?simscale=N` speeds the simulation up (smoke test). `?reset` clears the save. `?day=SECONDS` changes the day length. `?nointro` starts a new game without the Lantern Eve opening. `?rare` forces a roaming rare, `?rifts` lets rifts open on their own in QA, and `?riftnow=1|2|3` opens one on arrival. `?storm=bifrost|mossglen|hollows|vanaheim|off` forces tonight's rift storm (night only); `?noveyra` skips Veyra's Old Temple cameo.
 
 ## Key files
 
@@ -151,6 +151,10 @@ Repo handoff docs (in the suite root): [`AGENTS.md`](../../AGENTS.md), [`CHANGEL
 | `game/data.js` | Items, errands, every line of dialogue (original), quest-tag rules |
 | `game/audio.js` | Procedural ambient audio + SFX, M mute |
 | `game/game.css` | Parchment / carved-wood HUD, phone portrait + short-landscape layouts |
+| `game/pets.js` | Stage 6.2: Den pets (PETS, follow + light + aura, adopt / swap / feed, rift / secret / spring sense); art in `art/pets/` (own sheet, neon allowlisted) |
+| `game/temple.js` | Stage 6.3: the Old Temple (Harbor gate on the Hearth writ, clues, altar, Rift-gate rite, Veyra cameo toggle, Midgard arch portal); area `areas/src/temple.json` with `game.swap_points` |
+| `game/storms.js` | Stage 6.5: rift storms (`stormAt(day)`, onset / dawn, storm rifts + Rift Marks +25%, sky cracks, pet barks, Storm Watch count) |
+| `tests/check_all.py` | Every area's check-scene, serial or `--jobs N` |
 | `engine/`, `vendor/` | hd2d runtime (boot/hooks, A* nav, decal depth, pad) + three r160 |
 | `areas/<id>/` | `scene.json` (+ `game` block: exits, portals, pickups, spawns) and its `public/art` |
 | `areas/src/*.json` | Area specs (source of truth for rebuilding) |
@@ -163,7 +167,7 @@ Repo handoff docs (in the suite root): [`AGENTS.md`](../../AGENTS.md), [`CHANGEL
 ## Do not regress
 
 - Locked 3/4 camera: no yaw, no orbit, no free camera. Pinch / wheel zoom only inside the limits.
-- Sprites stay sharp: integer pixel scale, nearest, 1 px outline. No bloom, no blur halos, no blurred HUD. check-scene `sprites_sharp`, `effects_sharp`, `gamefx_sharp` and `no_bloom` must pass for every area (plaza, lane, mossglen, hollows, rift, vanaheim, ravenhold, bifrost).
+- Sprites stay sharp: integer pixel scale, nearest, 1 px outline. No bloom, no blur halos, no blurred HUD. check-scene `sprites_sharp`, `effects_sharp`, `gamefx_sharp` and `no_bloom` must pass for every area (plaza, lane, mossglen, hollows, rift, vanaheim, ravenhold, bifrost, temple).
 - Real height (terraces + stairs), one key sun plus lamps, sprite shadows, warm day / blue dusk / orange-window night.
 - HUD is parchment and carved wood only. No copied UI or IP from any other game.
 - Tap-to-walk uses A* (around walls and props, up the stairs). Tapping an NPC walks there and talks. Tapping a glimmer or the swirl walks onto it.
@@ -191,7 +195,10 @@ Repo handoff docs (in the suite root): [`AGENTS.md`](../../AGENTS.md), [`CHANGEL
 - Loading gate: no input reaches the game before the first frames are drawn (check-scene `phone.loading_gate`, smoke).
 - Desktop: WASD / arrows, mouse click-to-walk and wheel zoom keep working alongside touch and the controller.
 - The decal ring sits under props and actors.
-- `tests/smoke.py` must PASS.
+- `tests/smoke.py` must PASS. Serial and `--jobs N` must give the same pass count (same steps, same thresholds; never weaken one to make a shard pass).
+- Pets: the neon pet sheet passes `check-sprite` only through the scoped `NEON_PETS_ALLOW` (Bill approved neon pets, 2026-10-05); keep every other sheet palette-locked.
+- Side quests (`side`), `ripple` and `bounty` quests never count toward "quests n/3"; bounties skip the Hearth errand payout and pay half XP on repeats.
+- Rift storms never strand the player: Sable's skiff sails in a storm. Storms never use bloom or a full-screen flash (point-light flashes only).
 - The Rift Shrine keeps a day / dusk / night grade (check-scene `grades` passes). Its `height` check is exempt by `game.qa_exempt` (one flat round isle); don't add exemptions for sharpness, bloom or phone.
 - A controller Y tap casts even through a frame hitch (hold = 350 ms and 3 drawn frames).
 - Preview binds `0.0.0.0:8080` (`startup.sh`).
@@ -203,6 +210,9 @@ Player saves live in browser `localStorage`, not in this zip.
 ```
 cd /workspace/hd2d-suite/games/hearthmoor && ./startup.sh          # http://<host>:8080/
 python3 /workspace/hd2d-suite/games/hearthmoor/tests/smoke.py       # end-to-end playthrough (~5 min headless)
+python3 /workspace/hd2d-suite/games/hearthmoor/tests/smoke.py --jobs 3   # same playthrough on 3 parallel browsers (segments A-H, needs tests/fixtures from one serial run)
+python3 /workspace/hd2d-suite/games/hearthmoor/tests/smoke.py --quick temple   # per-change subset (--list shows segments / quick keys)
+python3 /workspace/hd2d-suite/games/hearthmoor/tests/check_all.py --jobs 3     # all areas' check-scenes, 3 at a time
 python3 /workspace/hd2d-suite/games/hearthmoor/build.py             # rebuild areas + zip (needs the suite)
 /workspace/hd2d-suite/bin/hd2d check-scene games/hearthmoor --scene-dir areas/plaza --params "area=plaza&qa"
 ```

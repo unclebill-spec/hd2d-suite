@@ -98,6 +98,31 @@ Bill (GitHub `unclebill-spec`) hands this project between his bots and Cursor th
     - `WAYS.bifrost` (attuned on visit; `WAY_SAY` per area). `REALM.bifrost = 'gate'`, `SKY.bifrost = 'void'`, `POOLS` / `TOADS` / `ALWAYS.bifrost` in glow.js; `game.shimmer` for glints on the bridge and cold-fire wisps over the void.
     - Kit `tools/kit/kit_bifrost.py`: `bifrost_plaza`, `bifrost_bridge`, `bifrost_landing`, `skiff_keel`, `realm_arch`, `realm_glow_*`, `guild_kiosk`, `rift_brazier_cold / _violet / _red`. Sprite role `gatewright` (named) + item `keystaff` (roles_more.py).
     - Next: Guild keys (the sealed gates' "coming soon"), Guildmaster Aud Rainholt, the embassy quarters, Wayfarer's Market, Stray Den, Tavern of Nine Tables; a realm city per gate.
+  - **Stage 6.2 / 6.3 / 6.5 (2026-10-05, local until the 6.2-6.5 batch is green):**
+    - **Pets** (`game/pets.js`):
+      - `PETS` covers wispkit / glowmoth / lanternfox, plus mosspup with `gift: 'vanaheim'`. Each entry has `role`, `fx: {aura, pool, parts, auraLift}`, `light`, `aura.mods` / `bond3` and `names`.
+      - `Pets` attaches the follower (`addNpc` id `pet`, `followGap` 1.0), `lightOn` / `Off` (lit when `DARK(t)`, in `DIM` areas, or in the temple until `temple_lit`), `zones()` (src `pet`), `adopt` / `swap` / `feed`, `riftWarn` / `senseRift`, and secret / spring sense.
+      - Save: `S.pet = {id, name, bond}` and `S.pets[id] = {name, bond, fed, atDen}`. `petMods` folds into `progress.js mods()`.
+      - Art: its own sheet `art/pets/pets.png` (neon, Bill-approved; `pets_safe.png` is the lock-safe fallback), copied into each area by `install_pets` in build.py (`PET_ROLES`). Each pet has per-sheet anims plus the engine's `follow` gait (`a.hurry`).
+    - **The Den:** `TALK.denkeeper` (the pick / name / hub / swap / adopt / gift flows) and the `strays` side quest. `RIFT_AREAS.bifrost` is scripted (tag `den`). `errandsDone` skips `story` / `side` / `ripple` / `bounty`.
+    - **The Old Temple** (`game/temple.js`, area `temple`):
+      - Ravenhold's sealed `temple` gate becomes an exit once you hold the Hearth writ, and Novice Edda stands there.
+      - Clue spots, the altar and the Rift-gate use points (`scene.game.clues / altar / riftgate / riftAt`).
+      - The braziers have `temple: true` (they need `tm_wick`).
+      - `midgard_portal` opens after `temple_lit`. At Bifrost the Midgard seal is swapped for a portal.
+      - Quests `altar` / `gate`. `TEMPLE.veyra` (or `?noveyra`) toggles the cameo.
+      - Placeholder props: swap them via `scene.game.swap_points` once the staging `art/old_temple/` kit is approved.
+    - **Rift storms** (`game/storms.js`):
+      - The calendar is `stormAt(day)`. `Storms` runs onset / end / sky cracks / pet barks and `onSeal`. Save: `S.flags.storm`, `S.storm = {region, day, sealed, best, last}`, `S.flags.stormAfter`, `S.flags.toasted`.
+      - Rifts: `rifts.js` `pool()` / `canAuto()` / `storm()` drive the storm-only spots and timers (`RIFT_AREAS.*.storm`, `rift.stormOnly`). `factions.onRift(tier, storm)` adds +25%. `weather.js` has the `riftstorm` kind.
+      - NPC text: `data.js` `STORM_SAY` / `AFTER_SAY` / `TOASTS` via `stormTalk()` (called in game.js `onTalk`). `QUESTS.stormwatch` carries `bounty: true`, which game.js `setQuest` handles (no Hearth, not an errand, half XP on repeats via `S.bountyDone`).
+      - Storms only happen in `?peace` / `?qa` runs when asked for (`?storm=` or `G.storms.force(region)`).
+    - **6.4 groundwork:**
+      - The display name is "Glenheart" (`eldergolem`).
+      - `combat.js` `isTrial` / `yieldTo` implement trial mode, and `framePullFor(k)` sets the boss camera. The engine `framePull` clamp is 2.0.
+      - `factions.realm()` routes merit for a Vanaheim conqueror to `gate`.
+      - Sable has a heartwood sale option. There are new `MERIT` / `REALM` keys for rotwood / verdant.
+      - **Not built:** the `rotwood` / `verdant` areas, their quests, Tobble, the new foes / rares, and the Blight Regent (5.5x) and Hjortur (6x) bosses (`verdant_heart.md`).
   - **In the game (Stage 1, 2026-10-03):** the title opens a hero picker for the 6 starters and the chosen class is the player (saved in `hearthmoor-slot-1-v2`). Real-time combat lives in `game/combat.js`: 3 enemies in Mossglen (stone golem, skeleton swordsman, cold-fire wraith, plus a night wraith), HP / stamina, guard, dodge-roll i-frames, pixel damage numbers, a class spell + summon per hero, cozy defeat. Enemy + summon sprites: `tools/sprite/roles_enemies.py` (`hd2d sprite --roles combat`); combat VFX: new `tools/spells` effects.
 - **Toolset:** a Python CLI `bin/hd2d` with 13 tools, which generates original pixel art and assembles lit three.js r160 dioramas (static ES modules, no build step).
 - **Demos:** `demos/hearthmoor-plaza`, `demos/bakery-lane` (+ zips).
@@ -173,9 +198,27 @@ bin/hd2d check-scene games/hearthmoor --scene-dir areas/plaza    --params "area=
 bin/hd2d check-scene games/hearthmoor --scene-dir areas/lane     --params "area=lane&qa&spawn=qa"        --out games/hearthmoor/shots/lane
 bin/hd2d check-scene games/hearthmoor --scene-dir areas/mossglen --params "area=mossglen&qa&spawn=start" --out games/hearthmoor/shots/mossglen
 bin/hd2d check-scene games/hearthmoor --scene-dir areas/hollows  --params "area=hollows&qa&spawn=start"  --out games/hearthmoor/shots/hollows
-# same for rift, vanaheim, ravenhold, bifrost (all 8 areas must pass)
-python3 games/hearthmoor/tests/smoke.py        # ~10 min headless, writes games/hearthmoor/tests/shots/ (+ smoke.json)
+# same for rift, vanaheim, ravenhold, bifrost, temple (all 9 areas must pass)
+python3 games/hearthmoor/tests/smoke.py        # serial: the whole playthrough in one browser, writes tests/shots/ (+ smoke.json)
+# faster (2026-10-05, same steps, same thresholds; every step runs exactly once across the workers):
+python3 games/hearthmoor/tests/smoke.py --jobs 3              # segments A-I on 3 parallel browsers, longest first, one merged smoke.json
+python3 games/hearthmoor/tests/smoke.py --quick pet           # per-change check: only the segments covering an area / feature (--list shows them)
+python3 games/hearthmoor/tests/smoke.py --shard 2/3           # one shard of a --jobs 3 split (CI-style)
+python3 games/hearthmoor/tests/check_all.py --jobs 3          # every area's check-scene, 3 at a time (default serial); --areas a,b / --quick temple
 ```
+- **Smoke segments** (`smoke.py --list`):
+  - A: title through the garden (writes `tests/fixtures/smoke_cp1.json`)
+  - B: reload #1 through errand 2 (cp2)
+  - C: the Shrine, Vanaheim, Ravenhold and Bifrost (cp3)
+  - D: phone
+  - E: v1 migration
+  - F: the Stray Den and pets
+  - G: the Old Temple
+  - H: rift storms
+  - I: 6.4 groundwork
+
+  A later segment starts from the checkpoint the earlier one saved (localStorage only, the same thing reload + Continue restores). A sharded run needs the fixtures, so run serial once after changing segments A-C. Batch policy: per change, run that area's check-scene plus `--quick <area>`; before a push, run the whole batch (`--jobs 3` or serial) plus `check_all.py`.
+- **On a loaded box, run one heavy browser job at a time:** wrap headless runs in `flock /workspace/.hm-logs/browser.lock ...`. 2-3 workers is the sweet spot on 8 cores.
 - **check-scene** (~5–7 min each) checks:
   - sprite sharpness, camera lock and no bloom;
   - height and colours, and the day / dusk / night grades;

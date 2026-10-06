@@ -2,6 +2,46 @@
 
 Dates are America/New_York. Newest first. Keep this current with every change you push.
 
+## 2026-10-05: Hearthmoor Stage 6.2 (the Stray Den + glowing pets), 6.3 (the Old Temple), 6.4 groundwork, 6.5 (rift storms), faster tests (local; batch not pushed yet)
+Story: the Hearthmoor Story bot's `pets.md`, `old_temple.md`, `verdant_heart.md` and `rift_storms.md` (staging), with Bill's decisions. Art: **the Hearthmoor Art bot** drew the pet sheets (wisp-kit, glowmoth, lantern fox and the moss-pup: `art/pets/pets.png` + `pets_fx` + `pets_particles`). Screenshots: `docs/screenshots/stage6_pet_pick.png`, `stage6_pet_glow.png`, `stage6_pet_mosspup.png`.
+- **The Stray Den (6.2):** a round stone house in Bifrost Crossing's west yard, with three cold-fire lantern posts, a woodpile and Signe Larkspur (new `denkeeper` sprite). The side quest **Strays of the Rift** has stages 1-2 driven by flags; 3 = done.
+  - Light the 3 lanterns with any spell, seal the little scripted rift behind the woodpile (tier I, tagged `den`: no rare, never closes by itself), bring a glow seed or moonpetal, then come back after dusk and pick a pet. The 40 Hearth Tokens come from the automatic errand payout. Side quests never count toward "quests n/3", the toast says "Side quest done", and the log hides them until they start and labels them "Side:".
+  - **Pets** (`game/pets.js`): the wisp-kit, the glowmoth and the lantern fox can be adopted; the **moss-pup** is a gift (`S.pets.mosspup.atDen`, from the Vanaheim befriend path). Each pet has its own sheet with a `follow` gait (it hurries when more than 3 m behind). It carries its own light, pool, aura and motes in the dark and in the Rift's gloom (and in the Old Temple until the relight); the moss-pup's light is lime `#5aec3c`.
+  - Pet auras (bond 3 is stronger):
+    - wisp-kit **Cold-fire Focus**: spell cooldowns 6% shorter;
+    - glowmoth **Lamplight Dust**: secrets shimmer within 6 m, healing +10%;
+    - lantern fox **Rift-sense**: rifts are sensed 10 s early with a direction ("{name}'s tail flares red"), +10% Rift Marks, faster stamina;
+    - moss-pup **Forager's Nose**: springs shimmer within 5 m, spring-fizz +15 s, a 25% chance of +1 when foraging.
+  - The Den hub lets you feed (Den biscuits, 6 gold), swap pets, adopt more (Hearth rank 1 + 40 gold) and name them. The Gear tab has a pet strip (P / LT feeds). Pets and the Den save in `S.pet` / `S.pets`.
+  - **Neon exception:** Bill approved neon pets (2026-10-05). `check-sprite` has a scoped `NEON_PETS_ALLOW` for the `pet_*` roles only, and `docs/HD2D_COZY_STYLE_LOCK.md` records the override. The spells NEON palette gained lime.
+- **The Old Temple (6.3):** a new `temple` area up the stair behind Ravenhold Harbor's district gate. `REALM.temple = 'hearth'`. It has a nave terrace (1.2 m) and an inner court (2 m) with the Rift-gate. **Placeholder art plus swap points:** the `game.swap_points` table in `areas/src/temple.json`, and the staging `art/old_temple/` pack is ready to swap in.
+  - **The Cold Altar** (story): Warden Hilde hands over the Order's relief basket and a Hearth writ. Novice Edda lets you through the Harbor gate, which turns into an exit. Mother Ilse takes the basket (+40 Hearth, and the Temple waystone attunes). Find 3 clues with Brother Tamsin, then the clues clear the Forge Quarter (+60 Hearth, +30 gold). The Forge riot stays offscreen.
+  - **Keeper of the Gate** (story): Grandpa Alder gives Warden Aldis's lantern charm and Ida Wickmere lights it. Light the 3 stair braziers, which won't catch without the charm (the first one stirs 2 wraiths). Ilse's rite has an option to sleep on a cot until dusk. Then set the charm on the cold altar and raise it at the Rift-gate, which tears open a scripted major rift.
+  - Sealing that rift brings **Veyra's cameo**, which can be switched off (`TEMPLE.veyra` / `?noveyra`). Ilse then pays +120 Hearth, +60 gold and a frost core.
+  - **The relight alone opens Midgard's arch** at Bifrost (option A). The lit Rift-gate is a portal to the Crossing and back, and Halvard pays +40 Rift Marks for the gate repaired.
+  - Bifrost's sealed Midgard gate now points at the quest.
+  - Fix: the cot-until-dusk choice used a context call that doesn't exist (`ctx.setTime`); it now sets the clock.
+- **Rift storms (6.5, `game/storms.js`):** night-only storms seeded by the day (`stormAt(day)`). The Bifrost storm covers the Crossing and the Rift Shrine, about 1 night in 4 once you've seen the Crossing, never two nights running and never on day 0. Mossglen, the Hollows and Vanaheim get the rarer world event, about 1 in 10 of the remaining nights.
+  - In the storm region: rifts come fast (first 10-20 s, then every 40-70 s), tiers weigh `[35, 45, 20]`, and **Rift Marks +25%**.
+  - New **storm-only rift spots** at the Crossing (clear of the arches, the Den yard, the skiff, the waystone and the kiosk) and at the Shrine's dais edge.
+  - The sky: `rift_tear_minor` cracks high up, cold-fire motes, glow mist and short violet / red point-light flashes, with a soft rumble. No bloom and no screen flash.
+  - Storm banner and dawn toasts; NPC storm and morning-after lines (Halvard's keys and Ondra's "cold side" foreshadow lines are kept); pet barks; morning toast scenes (Sable's +15 Black Doubloons is kept).
+  - **Storm Watch** is a repeatable Guild bounty with the new `bounty` tag: no Hearth payout, never an errand, full XP the first time and half on repeats.
+  - **Sable's skiff keeps sailing** in a storm, with a warning line. The Ravenhold dock kid is now **Nell** (display name only; the save id `dockkid` is unchanged).
+  - QA: `?storm=bifrost|mossglen|hollows|vanaheim|off`. Smoke, `?peace` and `?qa` runs have no scheduled storms.
+- **6.4 groundwork (Vanaheim's dungeons are not built yet):**
+  - The Mossglen mini-boss is renamed **Glenheart, the Elder Golem** (display name only; the id `eldergolem` is unchanged), because "Mossheart" is now Vanaheim's legendary staff.
+  - **Trial mode** in combat: a foe with `trial` (true, or `(S) => bool`, or a spawn's `sp.trial`) **yields** at 0 HP instead of dying. There's no XP, no loot, no boss merit and no respawn timer; `S.trials[id]` counts it and `e.onYield` fires. This is for Hjortur's guardian trial.
+  - **5-6x boss camera:** the engine's `framePull` clamp goes from 1.6 to 2.0, and combat pulls about 1.8-1.9 for 5.5-6x foes. 2.5x Glenheart is unchanged.
+  - A **Vanaheim conqueror** earns Rift Marks instead of Realm Favor in Vanaheim areas (`factions.realm()`).
+  - **Sable buys the Regent's heartwood:** +60 Black Doubloons and -5 Hearth (new item `heartwood`, palette icon).
+  - New `MERIT` keys `vh_spring` / `rotwood` / `trial` / `verdant` / `heartwood`, and `REALM.rotwood` / `verdant` = `embassy`.
+  - Still to build: the Rotwood Hollow and Verdant Heart areas, the Violet Spring / Rotwood / Verdant quests, Tobble, the new foes and rares, and the Blight Regent and Hjortur (boss sheets, phases, puzzles).
+- **Faster tests (Task A):**
+  - `tests/smoke.py` is cut into segments A-I at real save points (A-E the old playthrough; F pets, G Old Temple, H rift storms, I 6.4 groundwork) (checkpoints `tests/fixtures/smoke_cp{1,2,3}.json`). New flags: `--jobs N` (N parallel browser workers, longest segments first, results merged into one `smoke.json`), `--shard i/N`, `--quick <area>` (that area's segments only, for per-change checks), `--segments` and `--list`.
+  - New `tests/check_all.py` runs every area's check-scene, serially or with `--jobs N`.
+  - The serial default is unchanged. The same steps and thresholds run exactly once across the shards.
+
 ## 2026-10-04: Hearthmoor Stage 6, part 1: Bifrost Crossing (the portal capital)
 World flow per `docs/story/STORY_SEEDS.md` and the builder handoff: Hearthmoor → Ravenhold → **Bifrost Crossing** → one city per realm. Screenshots: `docs/screenshots/stage6_bifrost_night.png` (the Crossing at night) and `docs/screenshots/stage6_bifrost_arches.png` (the realm gates).
 - **New area `bifrost`:** a floating, chamfered flagstone plaza in the Rift's gloom. A seven-band rainbow inlay runs up its middle from the **rainbow bridge** (bands of glowing light with light dripping off the underside into the void) out to a small skiff landing. Underneath hang a tapering rock root, roots and cold-fire crystals. Rift shards float in the void around it.

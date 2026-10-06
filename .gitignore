@@ -22,3 +22,7 @@ cache/
 # a small curated set lives in docs/screenshots/
 shots/
 iterations/
+
+# smoke checkpoints (written by passing segments A-C; a sharded run starts later segments from them) and check_all logs
+games/hearthmoor/tests/fixtures/
+games/hearthmoor/tests/out/
