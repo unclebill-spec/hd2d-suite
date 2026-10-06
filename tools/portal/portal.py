@@ -450,6 +450,11 @@ EFFECTS = {
     "spring_poison": dict(fn=spring_water("poison"), fps=3, loop=True, kind="decal", pivot=[24, 24], lift=0.0, glow=True),
     "spring_clean": dict(fn=spring_water("clean"), fps=4, loop=True, kind="decal", pivot=[24, 24], lift=0.0, glow=True),
 }
+# [ALFHEIM] begin: Alfheim realm effects (rift_vortex_violet, prism_swirl, prism_ring) live in portal_alfheim.py
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+import portal_alfheim as _alf  # noqa: E402
+EFFECTS.update(_alf.effects(Frame, h2, SQUASH, CELL))
+# [ALFHEIM] end
 
 
 def build(biome="cozy-village", out="public/art/gamefx", project=None, seed=1):

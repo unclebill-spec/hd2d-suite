@@ -19,7 +19,8 @@ from PIL import Image  # noqa: E402
 
 from hd2d_common import load_biome  # noqa: E402
 
-AREAS = ["plaza", "lane", "mossglen", "hollows", "rift", "vanaheim", "ravenhold", "bifrost"]
+AREAS = ["plaza", "lane", "mossglen", "hollows", "rift", "vanaheim", "ravenhold", "bifrost",
+         "alfheim", "prismvault"]   # [ALFHEIM] Lumenvale Glade + the Prism Vault
 TMP = Path("/tmp/hearthmoor_build")
 
 

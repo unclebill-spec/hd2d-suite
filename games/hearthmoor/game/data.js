@@ -347,9 +347,13 @@ export const TALK = {
   },
 };
 
+// [ALFHEIM] begin: realm modules (alfheim.js) push (id, S) => tag | undefined here
+export const MARKER_HOOKS = [];
+// [ALFHEIM] end
 // quest tags over heads: '!' = has an errand for you, star = waiting for your delivery
 export function markerFor(id, S) {
   const q = S.quests;
+  for (const h of MARKER_HOOKS) { const m = h(id, S); if (m !== undefined) return m; }   // [ALFHEIM]
   if (id === 'baker' && q.bread === 0) return 'quest_mark';
   if (id === 'innkeeper' && q.bread === 1) return 'quest_turnin';
   if (id === 'herbalist' && q.tea === 0) return 'quest_mark';

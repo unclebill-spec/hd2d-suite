@@ -1637,6 +1637,15 @@ def run(out, simscale=4, size=(960, 540)):
             except Exception as e:  # noqa: BLE001
                 rep["pass"] = False
                 rep["error"] = f"phone: {e}"[:400]
+        # [ALFHEIM] begin: the Alfheim realm (tests/smoke_alfheim.py) in its own context, so the main run's save is untouched
+        if rep["pass"]:
+            try:
+                import smoke_alfheim  # noqa: E402
+                smoke_alfheim.steps(b, url, T, size, errors, rep, STUB, out)
+            except Exception as e:  # noqa: BLE001
+                rep["pass"] = False
+                rep["error"] = f"alfheim: {e}"[:400]
+        # [ALFHEIM] end
         # ---------------------------------------------------------- v1 save migration (old saves still load)
         if rep["pass"]:
             try:

@@ -572,6 +572,10 @@ def sporemother(s, face, anim, i):
 
 
 DRAW = {"eldergolem": eldergolem, "elderwraith": elderwraith, "deathlord": deathlord, "sporemother": sporemother}
+# [ALFHEIM] begin: Alfheim bosses (prismcolossus 50x80 ~2.5x, sylvaine 100x160 5x) live in boss_alfheim.py
+import boss_alfheim as _alf  # noqa: E402
+BOSS.update(_alf.BOSS); DRAW.update(_alf.draw_table(eldergolem))
+# [ALFHEIM] end
 
 
 def frame(pal, role, facing, anim, i):

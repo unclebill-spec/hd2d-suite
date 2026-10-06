@@ -1,0 +1,1029 @@
+{
+ "tool": "hd2d boss_sheet",
+ "biome": "cozy-village",
+ "frame": [
+  50,
+  80
+ ],
+ "pivot": [
+  25,
+  80
+ ],
+ "ground_row": 79,
+ "facings": [
+  "down",
+  "up",
+  "left",
+  "right"
+ ],
+ "anims": {
+  "idle": {
+   "start": 0,
+   "count": 4,
+   "fps": 3,
+   "loop": [
+    0,
+    1,
+    2,
+    1
+   ],
+   "blink": 3
+  },
+  "walk": {
+   "start": 4,
+   "count": 4,
+   "fps": 8
+  },
+  "cast": {
+   "start": 8,
+   "count": 4,
+   "fps": 6,
+   "loop": [
+    0,
+    1,
+    2,
+    2,
+    3,
+    3
+   ],
+   "casters_only": true
+  },
+  "attack": {
+   "start": 12,
+   "count": 4,
+   "fps": 10,
+   "loop": [
+    0,
+    1,
+    2,
+    2,
+    3
+   ],
+   "heroes_only": true
+  },
+  "defend": {
+   "start": 16,
+   "count": 4,
+   "fps": 6,
+   "loop": [
+    0,
+    1
+   ],
+   "hold": [
+    2,
+    3
+   ],
+   "heroes_only": true
+  },
+  "jump": {
+   "start": 20,
+   "count": 4,
+   "fps": 8,
+   "phases": [
+    "crouch",
+    "launch",
+    "airborne",
+    "land"
+   ],
+   "heroes_only": true
+  },
+  "die": {
+   "start": 24,
+   "count": 4,
+   "fps": 6,
+   "once": true,
+   "enemies_only": true
+  }
+ },
+ "cols": 28,
+ "image": "boss.png",
+ "size": [
+  1400,
+  320
+ ],
+ "roles": {
+  "prismcolossus": {
+   "row": 0,
+   "kind": "enemy",
+   "enemy": true,
+   "boss": true,
+   "scale": 2.5,
+   "desc": "The Prism Colossus (mini-boss, ~2.5x): pale crystal block-golem, rose-crystal veins, prism-spire crown, white-hot heart",
+   "anims": [
+    "idle",
+    "walk",
+    "attack",
+    "die"
+   ],
+   "size_bounds": [
+    [
+     12,
+     48
+    ],
+    [
+     12,
+     80
+    ]
+   ],
+   "caster": false,
+   "frames": [
+    {
+     "name": "prismcolossus_down_idle0",
+     "facing": "down",
+     "anim": "idle",
+     "i": 0,
+     "x": 0,
+     "y": 0,
+     "w": 50,
+     "h": 80,
+     "pivot": [
+      25,
+      80
+     ]
+    },
+    {
+     "name": "prismcolossus_down_idle1",
+     "facing": "down",
+     "anim": "idle",
+     "i": 1,
+     "x": 50,
+     "y": 0,
+     "w": 50,
+     "h": 80,
+     "pivot": [
+      75,
+      80
+     ]
+    },
+    {
+     "name": "prismcolossus_down_idle2",
+     "facing": "down",
+     "anim": "idle",
+     "i": 2,
+     "x": 100,
+     "y": 0,
+     "w": 50,
+     "h": 80,
+     "pivot": [
+      125,
+      80
+     ]
+    },
+    {
+     "name": "prismcolossus_down_idle3",
+     "facing": "down",
+     "anim": "idle",
+     "i": 3,
+     "x": 150,
+     "y": 0,
+     "w": 50,
+     "h": 80,
+     "pivot": [
+      175,
+      80
+     ]
+    },
+    {
+     "name": "prismcolossus_down_walk0",
+     "facing": "down",
+     "anim": "walk",
+     "i": 0,
+     "x": 200,
+     "y": 0,
+     "w": 50,
+     "h": 80,
+     "pivot": [
+      225,
+      80
+     ]
+    },
+    {
+     "name": "prismcolossus_down_walk1",
+     "facing": "down",
+     "anim": "walk",
+     "i": 1,
+     "x": 250,
+     "y": 0,
+     "w": 50,
+     "h": 80,
+     "pivot": [
+      275,
+      80
+     ]
+    },
+    {
+     "name": "prismcolossus_down_walk2",
+     "facing": "down",
+     "anim": "walk",
+     "i": 2,
+     "x": 300,
+     "y": 0,
+     "w": 50,
+     "h": 80,
+     "pivot": [
+      325,
+      80
+     ]
+    },
+    {
+     "name": "prismcolossus_down_walk3",
+     "facing": "down",
+     "anim": "walk",
+     "i": 3,
+     "x": 350,
+     "y": 0,
+     "w": 50,
+     "h": 80,
+     "pivot": [
+      375,
+      80
+     ]
+    },
+    {
+     "name": "prismcolossus_down_attack0",
+     "facing": "down",
+     "anim": "attack",
+     "i": 0,
+     "x": 600,
+     "y": 0,
+     "w": 50,
+     "h": 80,
+     "pivot": [
+      625,
+      80
+     ]
+    },
+    {
+     "name": "prismcolossus_down_attack1",
+     "facing": "down",
+     "anim": "attack",
+     "i": 1,
+     "x": 650,
+     "y": 0,
+     "w": 50,
+     "h": 80,
+     "pivot": [
+      675,
+      80
+     ]
+    },
+    {
+     "name": "prismcolossus_down_attack2",
+     "facing": "down",
+     "anim": "attack",
+     "i": 2,
+     "x": 700,
+     "y": 0,
+     "w": 50,
+     "h": 80,
+     "pivot": [
+      725,
+      80
+     ]
+    },
+    {
+     "name": "prismcolossus_down_attack3",
+     "facing": "down",
+     "anim": "attack",
+     "i": 3,
+     "x": 750,
+     "y": 0,
+     "w": 50,
+     "h": 80,
+     "pivot": [
+      775,
+      80
+     ]
+    },
+    {
+     "name": "prismcolossus_down_die0",
+     "facing": "down",
+     "anim": "die",
+     "i": 0,
+     "x": 1200,
+     "y": 0,
+     "w": 50,
+     "h": 80,
+     "pivot": [
+      1225,
+      80
+     ]
+    },
+    {
+     "name": "prismcolossus_down_die1",
+     "facing": "down",
+     "anim": "die",
+     "i": 1,
+     "x": 1250,
+     "y": 0,
+     "w": 50,
+     "h": 80,
+     "pivot": [
+      1275,
+      80
+     ]
+    },
+    {
+     "name": "prismcolossus_down_die2",
+     "facing": "down",
+     "anim": "die",
+     "i": 2,
+     "x": 1300,
+     "y": 0,
+     "w": 50,
+     "h": 80,
+     "pivot": [
+      1325,
+      80
+     ]
+    },
+    {
+     "name": "prismcolossus_down_die3",
+     "facing": "down",
+     "anim": "die",
+     "i": 3,
+     "x": 1350,
+     "y": 0,
+     "w": 50,
+     "h": 80,
+     "pivot": [
+      1375,
+      80
+     ]
+    },
+    {
+     "name": "prismcolossus_up_idle0",
+     "facing": "up",
+     "anim": "idle",
+     "i": 0,
+     "x": 0,
+     "y": 80,
+     "w": 50,
+     "h": 80,
+     "pivot": [
+      25,
+      160
+     ]
+    },
+    {
+     "name": "prismcolossus_up_idle1",
+     "facing": "up",
+     "anim": "idle",
+     "i": 1,
+     "x": 50,
+     "y": 80,
+     "w": 50,
+     "h": 80,
+     "pivot": [
+      75,
+      160
+     ]
+    },
+    {
+     "name": "prismcolossus_up_idle2",
+     "facing": "up",
+     "anim": "idle",
+     "i": 2,
+     "x": 100,
+     "y": 80,
+     "w": 50,
+     "h": 80,
+     "pivot": [
+      125,
+      160
+     ]
+    },
+    {
+     "name": "prismcolossus_up_idle3",
+     "facing": "up",
+     "anim": "idle",
+     "i": 3,
+     "x": 150,
+     "y": 80,
+     "w": 50,
+     "h": 80,
+     "pivot": [
+      175,
+      160
+     ]
+    },
+    {
+     "name": "prismcolossus_up_walk0",
+     "facing": "up",
+     "anim": "walk",
+     "i": 0,
+     "x": 200,
+     "y": 80,
+     "w": 50,
+     "h": 80,
+     "pivot": [
+      225,
+      160
+     ]
+    },
+    {
+     "name": "prismcolossus_up_walk1",
+     "facing": "up",
+     "anim": "walk",
+     "i": 1,
+     "x": 250,
+     "y": 80,
+     "w": 50,
+     "h": 80,
+     "pivot": [
+      275,
+      160
+     ]
+    },
+    {
+     "name": "prismcolossus_up_walk2",
+     "facing": "up",
+     "anim": "walk",
+     "i": 2,
+     "x": 300,
+     "y": 80,
+     "w": 50,
+     "h": 80,
+     "pivot": [
+      325,
+      160
+     ]
+    },
+    {
+     "name": "prismcolossus_up_walk3",
+     "facing": "up",
+     "anim": "walk",
+     "i": 3,
+     "x": 350,
+     "y": 80,
+     "w": 50,
+     "h": 80,
+     "pivot": [
+      375,
+      160
+     ]
+    },
+    {
+     "name": "prismcolossus_up_attack0",
+     "facing": "up",
+     "anim": "attack",
+     "i": 0,
+     "x": 600,
+     "y": 80,
+     "w": 50,
+     "h": 80,
+     "pivot": [
+      625,
+      160
+     ]
+    },
+    {
+     "name": "prismcolossus_up_attack1",
+     "facing": "up",
+     "anim": "attack",
+     "i": 1,
+     "x": 650,
+     "y": 80,
+     "w": 50,
+     "h": 80,
+     "pivot": [
+      675,
+      160
+     ]
+    },
+    {
+     "name": "prismcolossus_up_attack2",
+     "facing": "up",
+     "anim": "attack",
+     "i": 2,
+     "x": 700,
+     "y": 80,
+     "w": 50,
+     "h": 80,
+     "pivot": [
+      725,
+      160
+     ]
+    },
+    {
+     "name": "prismcolossus_up_attack3",
+     "facing": "up",
+     "anim": "attack",
+     "i": 3,
+     "x": 750,
+     "y": 80,
+     "w": 50,
+     "h": 80,
+     "pivot": [
+      775,
+      160
+     ]
+    },
+    {
+     "name": "prismcolossus_up_die0",
+     "facing": "up",
+     "anim": "die",
+     "i": 0,
+     "x": 1200,
+     "y": 80,
+     "w": 50,
+     "h": 80,
+     "pivot": [
+      1225,
+      160
+     ]
+    },
+    {
+     "name": "prismcolossus_up_die1",
+     "facing": "up",
+     "anim": "die",
+     "i": 1,
+     "x": 1250,
+     "y": 80,
+     "w": 50,
+     "h": 80,
+     "pivot": [
+      1275,
+      160
+     ]
+    },
+    {
+     "name": "prismcolossus_up_die2",
+     "facing": "up",
+     "anim": "die",
+     "i": 2,
+     "x": 1300,
+     "y": 80,
+     "w": 50,
+     "h": 80,
+     "pivot": [
+      1325,
+      160
+     ]
+    },
+    {
+     "name": "prismcolossus_up_die3",
+     "facing": "up",
+     "anim": "die",
+     "i": 3,
+     "x": 1350,
+     "y": 80,
+     "w": 50,
+     "h": 80,
+     "pivot": [
+      1375,
+      160
+     ]
+    },
+    {
+     "name": "prismcolossus_left_idle0",
+     "facing": "left",
+     "anim": "idle",
+     "i": 0,
+     "x": 0,
+     "y": 160,
+     "w": 50,
+     "h": 80,
+     "pivot": [
+      25,
+      240
+     ]
+    },
+    {
+     "name": "prismcolossus_left_idle1",
+     "facing": "left",
+     "anim": "idle",
+     "i": 1,
+     "x": 50,
+     "y": 160,
+     "w": 50,
+     "h": 80,
+     "pivot": [
+      75,
+      240
+     ]
+    },
+    {
+     "name": "prismcolossus_left_idle2",
+     "facing": "left",
+     "anim": "idle",
+     "i": 2,
+     "x": 100,
+     "y": 160,
+     "w": 50,
+     "h": 80,
+     "pivot": [
+      125,
+      240
+     ]
+    },
+    {
+     "name": "prismcolossus_left_idle3",
+     "facing": "left",
+     "anim": "idle",
+     "i": 3,
+     "x": 150,
+     "y": 160,
+     "w": 50,
+     "h": 80,
+     "pivot": [
+      175,
+      240
+     ]
+    },
+    {
+     "name": "prismcolossus_left_walk0",
+     "facing": "left",
+     "anim": "walk",
+     "i": 0,
+     "x": 200,
+     "y": 160,
+     "w": 50,
+     "h": 80,
+     "pivot": [
+      225,
+      240
+     ]
+    },
+    {
+     "name": "prismcolossus_left_walk1",
+     "facing": "left",
+     "anim": "walk",
+     "i": 1,
+     "x": 250,
+     "y": 160,
+     "w": 50,
+     "h": 80,
+     "pivot": [
+      275,
+      240
+     ]
+    },
+    {
+     "name": "prismcolossus_left_walk2",
+     "facing": "left",
+     "anim": "walk",
+     "i": 2,
+     "x": 300,
+     "y": 160,
+     "w": 50,
+     "h": 80,
+     "pivot": [
+      325,
+      240
+     ]
+    },
+    {
+     "name": "prismcolossus_left_walk3",
+     "facing": "left",
+     "anim": "walk",
+     "i": 3,
+     "x": 350,
+     "y": 160,
+     "w": 50,
+     "h": 80,
+     "pivot": [
+      375,
+      240
+     ]
+    },
+    {
+     "name": "prismcolossus_left_attack0",
+     "facing": "left",
+     "anim": "attack",
+     "i": 0,
+     "x": 600,
+     "y": 160,
+     "w": 50,
+     "h": 80,
+     "pivot": [
+      625,
+      240
+     ]
+    },
+    {
+     "name": "prismcolossus_left_attack1",
+     "facing": "left",
+     "anim": "attack",
+     "i": 1,
+     "x": 650,
+     "y": 160,
+     "w": 50,
+     "h": 80,
+     "pivot": [
+      675,
+      240
+     ]
+    },
+    {
+     "name": "prismcolossus_left_attack2",
+     "facing": "left",
+     "anim": "attack",
+     "i": 2,
+     "x": 700,
+     "y": 160,
+     "w": 50,
+     "h": 80,
+     "pivot": [
+      725,
+      240
+     ]
+    },
+    {
+     "name": "prismcolossus_left_attack3",
+     "facing": "left",
+     "anim": "attack",
+     "i": 3,
+     "x": 750,
+     "y": 160,
+     "w": 50,
+     "h": 80,
+     "pivot": [
+      775,
+      240
+     ]
+    },
+    {
+     "name": "prismcolossus_left_die0",
+     "facing": "left",
+     "anim": "die",
+     "i": 0,
+     "x": 1200,
+     "y": 160,
+     "w": 50,
+     "h": 80,
+     "pivot": [
+      1225,
+      240
+     ]
+    },
+    {
+     "name": "prismcolossus_left_die1",
+     "facing": "left",
+     "anim": "die",
+     "i": 1,
+     "x": 1250,
+     "y": 160,
+     "w": 50,
+     "h": 80,
+     "pivot": [
+      1275,
+      240
+     ]
+    },
+    {
+     "name": "prismcolossus_left_die2",
+     "facing": "left",
+     "anim": "die",
+     "i": 2,
+     "x": 1300,
+     "y": 160,
+     "w": 50,
+     "h": 80,
+     "pivot": [
+      1325,
+      240
+     ]
+    },
+    {
+     "name": "prismcolossus_left_die3",
+     "facing": "left",
+     "anim": "die",
+     "i": 3,
+     "x": 1350,
+     "y": 160,
+     "w": 50,
+     "h": 80,
+     "pivot": [
+      1375,
+      240
+     ]
+    },
+    {
+     "name": "prismcolossus_right_idle0",
+     "facing": "right",
+     "anim": "idle",
+     "i": 0,
+     "x": 0,
+     "y": 240,
+     "w": 50,
+     "h": 80,
+     "pivot": [
+      25,
+      320
+     ]
+    },
+    {
+     "name": "prismcolossus_right_idle1",
+     "facing": "right",
+     "anim": "idle",
+     "i": 1,
+     "x": 50,
+     "y": 240,
+     "w": 50,
+     "h": 80,
+     "pivot": [
+      75,
+      320
+     ]
+    },
+    {
+     "name": "prismcolossus_right_idle2",
+     "facing": "right",
+     "anim": "idle",
+     "i": 2,
+     "x": 100,
+     "y": 240,
+     "w": 50,
+     "h": 80,
+     "pivot": [
+      125,
+      320
+     ]
+    },
+    {
+     "name": "prismcolossus_right_idle3",
+     "facing": "right",
+     "anim": "idle",
+     "i": 3,
+     "x": 150,
+     "y": 240,
+     "w": 50,
+     "h": 80,
+     "pivot": [
+      175,
+      320
+     ]
+    },
+    {
+     "name": "prismcolossus_right_walk0",
+     "facing": "right",
+     "anim": "walk",
+     "i": 0,
+     "x": 200,
+     "y": 240,
+     "w": 50,
+     "h": 80,
+     "pivot": [
+      225,
+      320
+     ]
+    },
+    {
+     "name": "prismcolossus_right_walk1",
+     "facing": "right",
+     "anim": "walk",
+     "i": 1,
+     "x": 250,
+     "y": 240,
+     "w": 50,
+     "h": 80,
+     "pivot": [
+      275,
+      320
+     ]
+    },
+    {
+     "name": "prismcolossus_right_walk2",
+     "facing": "right",
+     "anim": "walk",
+     "i": 2,
+     "x": 300,
+     "y": 240,
+     "w": 50,
+     "h": 80,
+     "pivot": [
+      325,
+      320
+     ]
+    },
+    {
+     "name": "prismcolossus_right_walk3",
+     "facing": "right",
+     "anim": "walk",
+     "i": 3,
+     "x": 350,
+     "y": 240,
+     "w": 50,
+     "h": 80,
+     "pivot": [
+      375,
+      320
+     ]
+    },
+    {
+     "name": "prismcolossus_right_attack0",
+     "facing": "right",
+     "anim": "attack",
+     "i": 0,
+     "x": 600,
+     "y": 240,
+     "w": 50,
+     "h": 80,
+     "pivot": [
+      625,
+      320
+     ]
+    },
+    {
+     "name": "prismcolossus_right_attack1",
+     "facing": "right",
+     "anim": "attack",
+     "i": 1,
+     "x": 650,
+     "y": 240,
+     "w": 50,
+     "h": 80,
+     "pivot": [
+      675,
+      320
+     ]
+    },
+    {
+     "name": "prismcolossus_right_attack2",
+     "facing": "right",
+     "anim": "attack",
+     "i": 2,
+     "x": 700,
+     "y": 240,
+     "w": 50,
+     "h": 80,
+     "pivot": [
+      725,
+      320
+     ]
+    },
+    {
+     "name": "prismcolossus_right_attack3",
+     "facing": "right",
+     "anim": "attack",
+     "i": 3,
+     "x": 750,
+     "y": 240,
+     "w": 50,
+     "h": 80,
+     "pivot": [
+      775,
+      320
+     ]
+    },
+    {
+     "name": "prismcolossus_right_die0",
+     "facing": "right",
+     "anim": "die",
+     "i": 0,
+     "x": 1200,
+     "y": 240,
+     "w": 50,
+     "h": 80,
+     "pivot": [
+      1225,
+      320
+     ]
+    },
+    {
+     "name": "prismcolossus_right_die1",
+     "facing": "right",
+     "anim": "die",
+     "i": 1,
+     "x": 1250,
+     "y": 240,
+     "w": 50,
+     "h": 80,
+     "pivot": [
+      1275,
+      320
+     ]
+    },
+    {
+     "name": "prismcolossus_right_die2",
+     "facing": "right",
+     "anim": "die",
+     "i": 2,
+     "x": 1300,
+     "y": 240,
+     "w": 50,
+     "h": 80,
+     "pivot": [
+      1325,
+      320
+     ]
+    },
+    {
+     "name": "prismcolossus_right_die3",
+     "facing": "right",
+     "anim": "die",
+     "i": 3,
+     "x": 1350,
+     "y": 240,
+     "w": 50,
+     "h": 80,
+     "pivot": [
+      1375,
+      320
+     ]
+    }
+   ]
+  }
+ }
+}

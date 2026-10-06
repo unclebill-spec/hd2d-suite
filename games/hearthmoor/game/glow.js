@@ -166,3 +166,6 @@ export class Glow {
   dmgMul() { return (this.lit ? LIT.dmg : 1) * (this.G.hollows ? this.G.hollows.dmgMul() : 1); }      // + spring-fizz
   regenMul() { return (this.lit ? LIT.regen : 1) * (this.G.hollows ? this.G.hollows.regenMul() : 1); }
 }
+// [ALFHEIM] begin: realm modules (alfheim.js) add their areas' pools / always-glow / lamp reach here
+export const GLOW_TABLES = { TOADS, ALWAYS, POOLS, LAMP_R };
+// [ALFHEIM] end

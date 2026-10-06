@@ -889,6 +889,8 @@ import kit_harbor as _harbor  # noqa: E402  (Ravenhold Harbor pieces: water, pie
 PROPS.update(_harbor.pieces(__import__('types').SimpleNamespace(**globals())))
 import kit_bifrost as _bifrost  # noqa: E402  (Bifrost Crossing pieces: plaza, rainbow bridge, landing, realm arches + glows, Guild kiosk, braziers)
 PROPS.update(_bifrost.pieces(__import__('types').SimpleNamespace(**globals())))
+import kit_alfheim as _alfheim  # noqa: E402  [ALFHEIM] Lumenvale + Prism Vault pieces (realm-alfheim branch)
+PROPS.update(_alfheim.pieces(__import__('types').SimpleNamespace(**globals())))
 
 
 def export_piece(cx: Ctx, pc: Piece, out: Path):

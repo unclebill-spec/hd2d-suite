@@ -1221,6 +1221,11 @@ EFFECTS = {
     "rift_ring_abyss": dict(fn=rift_ring_abyss, kind="decal", fps=6, loop=True, loop_from=0, pivot=[16, 16], lift=0.02, loops=1, glow=True, light=None, combat=True),
     "toadstools": dict(fn=toadstools, kind="billboard", fps=3, loop=True, pivot=[16, 31], lift=0.0, loops=1, glow=True, light=None, combat=True),
 }
+# [ALFHEIM] begin: Alfheim combat effects (prism_bolt, prism_pop, drain_nova) live in spells_alfheim.py
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+import spells_alfheim as _alf  # noqa: E402
+EFFECTS.update(_alf.effects(Frame, DECAL_SQUASH))
+# [ALFHEIM] end
 # what the player's spell key cycles through, and what a cast spawns (effect, where)
 CAST_SETS = {
     "sparkle_burst": [["sparkle_burst", "front"]],

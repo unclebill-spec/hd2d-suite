@@ -32,6 +32,7 @@ sys.path.insert(0, str(HERE))
 import roles_more as RM  # noqa: E402  (second batch of roles, cast pose, animals)
 import roles_heroes as RH  # noqa: E402  (six Hearthmoor hero classes: cast / attack / defend / jump sets)
 import roles_enemies as RE  # noqa: E402  (Hearthmoor combat: three enemies + six tiny hero summons)
+import roles_alfheim as RA  # noqa: E402  [ALFHEIM] Alfheim elves + enemies (realm-alfheim branch)
 
 FW, FH = 20, 32
 PIVOT = (10, 32)  # bottom-centre of the frame = the feet on the ground
@@ -149,6 +150,7 @@ ROLES = {
 ROLES.update(RM.more_roles(_r))
 ROLES.update(RH.hero_roles(_r))
 ROLES.update(RE.enemy_roles(_r))  # extra: only built when a spec names them (sprite_roles), never by "all"
+ROLES.update(RA.alfheim_roles(_r)); RE.DRAW.update(RA.DRAW)  # [ALFHEIM] named roles: only on sheets that list them
 EXTRA = {k for k, v in ROLES.items() if v.get("enemy") or v.get("summon") or v.get("named")}  # named: only when a spec names it
 
 ROLE_SIZE = {"human": ((14, 24), (24, 40)), "creature": ((10, 24), (10, 40)),
@@ -603,6 +605,8 @@ def draw_head(s, spec, L, face, bob, blink):
                     s.hspan(top + r, a, a + 5, bd)
             else:
                 s.hspan(top + h - 3, spans[-3][0], spans[-3][0] + 2, bd)
+    if spec.get("elf"):  # [ALFHEIM] pointed elf ears
+        RA.elf_ears(s, face, top, spans, skin, skin_lo)
     draw_hair_extra(s, spec, L, face, top, spans)
     if spec.get("glasses"):
         RM.draw_glasses(s, spec, L, face, top, hx, w)

@@ -1,0 +1,465 @@
+{
+ "name": "The Prism Vault (Alfheim)",
+ "seed": 118,
+ "biome": "cozy-village",
+ "about": "The Prism Vault under Lumenvale: a dark crystal hall of violet-banded pillars where the elves kept their light. Lady Sylvaine, the elf vampire queen, sits her crystal throne here, drinking the realm's magic, with her Mirror Duelists and prism shards on guard.",
+ "time": {
+  "start": "night",
+  "speed": 0.0
+ },
+ "spells": true,
+ "sprite_roles": [
+  "actors",
+  "heroes",
+  "combat",
+  "prismshard",
+  "neonwisp",
+  "mirrorduelist"
+ ],
+ "boss_roles": [
+  "sylvaine"
+ ],
+ "camera": {
+  "fov": 24,
+  "pitch": 36,
+  "distance": 33,
+  "zoom": [
+   24,
+   44
+  ],
+  "look": [
+   0,
+   0,
+   -1.0
+  ],
+  "bounds": [
+   -7.0,
+   -6.0,
+   7.0,
+   6.0
+  ]
+ },
+ "ground": {
+  "size": [
+   80,
+   70
+  ],
+  "mat": "stone",
+  "walk": [
+   -12.4,
+   -12.4,
+   12.4,
+   9.6
+  ]
+ },
+ "slabs": [
+  {
+   "name": "aisle",
+   "rect": [
+    -1.6,
+    -9.0,
+    1.6,
+    8.0
+   ],
+   "mat": "cobble",
+   "h": 0.03
+  },
+  {
+   "name": "dais",
+   "rect": [
+    -5.6,
+    -11.0,
+    5.6,
+    -4.0
+   ],
+   "mat": "cobble",
+   "h": 0.06
+  }
+ ],
+ "terraces": [
+  {
+   "name": "wall_n",
+   "rect": [
+    -30,
+    -30,
+    30,
+    -11.6
+   ],
+   "h": 3.6,
+   "top": "stone",
+   "coping": true
+  },
+  {
+   "name": "wall_w",
+   "rect": [
+    -30,
+    -11.6,
+    -11.8,
+    30
+   ],
+   "h": 3.6,
+   "top": "stone",
+   "coping": true
+  },
+  {
+   "name": "wall_e",
+   "rect": [
+    11.8,
+    -11.6,
+    30,
+    30
+   ],
+   "h": 3.6,
+   "top": "stone",
+   "coping": true
+  }
+ ],
+ "stairs": [],
+ "buildings": [],
+ "blocks": [
+  [
+   -12.4,
+   9.0,
+   -0.9,
+   9.8
+  ],
+  [
+   0.9,
+   9.0,
+   12.4,
+   9.8
+  ],
+  [
+   -0.9,
+   9.2,
+   0.9,
+   9.8
+  ]
+ ],
+ "props": [
+  {
+   "piece": "prism_crystal",
+   "pos": [
+    -1.9,
+    8.9
+   ],
+   "rot": 20
+  },
+  {
+   "piece": "prism_crystal",
+   "pos": [
+    1.9,
+    8.9
+   ],
+   "rot": 200
+  },
+  {
+   "piece": "sylvaine_throne",
+   "pos": [
+    0.0,
+    -9.6
+   ]
+  },
+  {
+   "piece": "orb_lantern",
+   "pos": [
+    -2.4,
+    6.2
+   ]
+  },
+  {
+   "piece": "orb_lantern",
+   "pos": [
+    2.4,
+    6.2
+   ],
+   "rot": 180
+  },
+  {
+   "piece": "orb_lantern",
+   "pos": [
+    -6.0,
+    -4.4
+   ]
+  },
+  {
+   "piece": "orb_lantern",
+   "pos": [
+    6.0,
+    -4.4
+   ],
+   "rot": 180
+  },
+  {
+   "piece": "vault_pillar",
+   "pos": [
+    -7.4,
+    -7.6
+   ]
+  },
+  {
+   "piece": "vault_pillar",
+   "pos": [
+    7.4,
+    -7.6
+   ]
+  },
+  {
+   "piece": "vault_pillar",
+   "pos": [
+    -7.4,
+    -2.2
+   ]
+  },
+  {
+   "piece": "vault_pillar",
+   "pos": [
+    7.4,
+    -2.2
+   ]
+  },
+  {
+   "piece": "vault_pillar",
+   "pos": [
+    -7.4,
+    3.2
+   ]
+  },
+  {
+   "piece": "vault_pillar",
+   "pos": [
+    7.4,
+    3.2
+   ]
+  },
+  {
+   "piece": "prism_crystal",
+   "pos": [
+    -10.6,
+    -10.4
+   ]
+  },
+  {
+   "piece": "prism_crystal",
+   "pos": [
+    10.4,
+    -10.6
+   ],
+   "rot": 90
+  },
+  {
+   "piece": "prism_crystal",
+   "pos": [
+    -10.8,
+    0.6
+   ],
+   "rot": 40
+  },
+  {
+   "piece": "prism_crystal",
+   "pos": [
+    10.8,
+    0.4
+   ],
+   "rot": 200
+  },
+  {
+   "piece": "prism_crystal",
+   "pos": [
+    -10.6,
+    6.8
+   ],
+   "rot": 130
+  },
+  {
+   "piece": "prism_crystal",
+   "pos": [
+    10.6,
+    7.0
+   ],
+   "rot": 300
+  },
+  {
+   "piece": "prism_crystal",
+   "pos": [
+    -4.0,
+    -13.2
+   ],
+   "y": 3.6
+  },
+  {
+   "piece": "prism_crystal",
+   "pos": [
+    4.2,
+    -13.4
+   ],
+   "y": 3.6,
+   "rot": 60
+  },
+  {
+   "piece": "prism_crystal",
+   "pos": [
+    -13.4,
+    -5.0
+   ],
+   "y": 3.6,
+   "rot": 20
+  },
+  {
+   "piece": "prism_crystal",
+   "pos": [
+    13.4,
+    -4.6
+   ],
+   "y": 3.6,
+   "rot": 220
+  }
+ ],
+ "hedges": [],
+ "trees": [],
+ "backdrop": {},
+ "emitters": [
+  {
+   "preset": "dust_motes",
+   "pos": [
+    0,
+    1.8,
+    -1.0
+   ],
+   "area": [
+    22,
+    3.0,
+    18
+   ]
+  },
+  {
+   "preset": "fireflies",
+   "pos": [
+    0.0,
+    2.0,
+    -8.0
+   ],
+   "area": [
+    10,
+    2.0,
+    3
+   ],
+   "min_gate": 0.0
+  },
+  {
+   "preset": "fireflies",
+   "pos": [
+    0.0,
+    1.4,
+    7.6
+   ],
+   "area": [
+    3,
+    1.4,
+    1.4
+   ],
+   "min_gate": 0.0
+  }
+ ],
+ "actors": [],
+ "player": {
+  "role": "traveler",
+  "pos": [
+   0.0,
+   5.6
+  ],
+  "facing": "up"
+ },
+ "fx": [
+  {
+   "id": "vault_exit",
+   "name": "prism_swirl",
+   "pos": [
+    0.0,
+    0.2,
+    8.7
+   ]
+  },
+  {
+   "id": "ring_dais",
+   "name": "prism_ring",
+   "pos": [
+    0.0,
+    0.08,
+    -6.4
+   ]
+  }
+ ],
+ "grades": {
+  "day": {
+   "fog_color": "#120c26",
+   "sky_top": "#08061a",
+   "sky_bottom": "#1c1236",
+   "hemi_sky": "#4a3a7c",
+   "saturation": 1.05,
+   "bugs": 1.0,
+   "exposure": 0.78,
+   "sun_intensity": 0.3,
+   "hemi_intensity": 0.4
+  },
+  "dusk": {
+   "fog_color": "#120c26",
+   "sky_top": "#08061a",
+   "sky_bottom": "#1c1236",
+   "bugs": 1.0,
+   "exposure": 0.76,
+   "sun_intensity": 0.28
+  },
+  "night": {
+   "fog_color": "#0c0820",
+   "sky_top": "#06041a",
+   "sky_bottom": "#1a1032",
+   "hemi_sky": "#4a3a7c",
+   "bugs": 1.0,
+   "exposure": 0.74,
+   "sun_intensity": 0.24,
+   "hemi_intensity": 0.36
+  }
+ },
+ "game": {
+  "id": "prismvault",
+  "title": "The Prism Vault",
+  "exits": [],
+  "portals": [
+   {
+    "fx": "vault_exit",
+    "to": "alfheim",
+    "spawn": "from_prismvault",
+    "rect": [
+     -0.75,
+     8.3,
+     0.75,
+     9.15
+    ],
+    "label": "the vault door back to Lumenvale Glade"
+   }
+  ],
+  "spawns": {
+   "start": [
+    0.0,
+    5.6,
+    "up"
+   ],
+   "from_alfheim": [
+    0.0,
+    5.6,
+    "up"
+   ],
+   "qa": [
+    0.0,
+    1.6,
+    "up"
+   ],
+   "dais": [
+    0.0,
+    -1.2,
+    "up"
+   ]
+  }
+ }
+}
