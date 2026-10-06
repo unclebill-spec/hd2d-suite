@@ -107,7 +107,12 @@ export class Hollows {
   onCast() { const p = this.ctx && this.ctx.player; if (p) this.spellAt(p.x, p.z); }   // casting beside a brazier lights it too
   burnOn(q) {
     const ctx = this.ctx, still = !!this.G.qaStill, [x, z] = q.pos, y = ctx.heightAt(x, z);
-    if (ctx.effects) {
+    const gx = q.temple && ctx.gamefx && ctx.gamefx.meta.effects.temple_coldfire ? ctx.gamefx : null;
+    if (gx) {   // the Old Temple's stair braziers: the pack's temple cold fire + wide pool (art/old_temple)
+      q.gfx = [gx.spawn('temple_coldfire', x, y - 0.1, z + 0.05, { duration: Infinity, ...(still ? {} : { fadeIn: 0.3 }) }),
+               gx.spawn('coldfire_pool_wide', x, y, z + 0.5, { duration: Infinity, ...(still ? {} : { fadeIn: 0.6 }) })];
+      if (ctx.effects) q.fx.push(ctx.effects.spawn('coldfire_motes', x + 0.05, y + 1.1, z + 0.06, { duration: 1e9, ...(still ? { frame: 3 } : {}) }));
+    } else if (ctx.effects) {
       q.fx.push(ctx.effects.spawn('coldfire_flame', x, y + 0.86, z + 0.04, { duration: 1e9, fadeIn: still ? 0 : 0.3, ...(still ? { frame: 1 } : {}) }));
       q.fx.push(ctx.effects.spawn('coldfire_motes', x + 0.05, y + 1.1, z + 0.06, { duration: 1e9, ...(still ? { frame: 3 } : {}) }));
       for (const [ox, oz] of [[0, 0.35], [-0.75, 0.15], [0.75, 0.2], [0, -0.45]]) {   // a wide neon-blue pool on the ground
@@ -120,6 +125,8 @@ export class Hollows {
   burnOff(q) {
     const fx = this.ctx.effects;
     for (const f of q.fx) if (f && fx) fx.remove(f);
+    for (const f of q.gfx || []) if (f && this.ctx.gamefx) this.ctx.gamefx.remove(f);
+    q.gfx = [];
     if (q.light) q.light.kill = true;
     q.fx = []; q.light = null; q.burning = false;
   }

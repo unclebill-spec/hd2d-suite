@@ -152,7 +152,7 @@ Repo handoff docs (in the suite root): [`AGENTS.md`](../../AGENTS.md), [`CHANGEL
 | `game/audio.js` | Procedural ambient audio + SFX, M mute |
 | `game/game.css` | Parchment / carved-wood HUD, phone portrait + short-landscape layouts |
 | `game/pets.js` | Stage 6.2: Den pets (PETS, follow + light + aura, adopt / swap / feed, rift / secret / spring sense); art in `art/pets/` (own sheet, neon allowlisted) |
-| `game/temple.js` | Stage 6.3: the Old Temple (Harbor gate on the Hearth writ, clues, altar, Rift-gate rite, Veyra cameo toggle, Midgard arch portal); area `areas/src/temple.json` with `game.swap_points` |
+| `game/temple.js` | Stage 6.3: the Old Temple (Harbor gate on the Hearth writ, clues, altar, Rift-gate rite, Veyra cameo toggle, Midgard arch portal); area `areas/src/temple.json` (`game.art`); art `art/old_temple/` (kit `tools/kit/kit_old_temple.py`, sheet + gamefx installed by `build.py install_old_temple`) |
 | `game/storms.js` | Stage 6.5: rift storms (`stormAt(day)`, onset / dawn, storm rifts + Rift Marks +25%, sky cracks, pet barks, Storm Watch count) |
 | `tests/check_all.py` | Every area's check-scene, serial or `--jobs N` |
 | `engine/`, `vendor/` | hd2d runtime (boot/hooks, A* nav, decal depth, pad) + three r160 |
@@ -197,6 +197,7 @@ Repo handoff docs (in the suite root): [`AGENTS.md`](../../AGENTS.md), [`CHANGEL
 - The decal ring sits under props and actors.
 - `tests/smoke.py` must PASS. Serial and `--jobs N` must give the same pass count (same steps, same thresholds; never weaken one to make a shard pass).
 - Pets: the neon pet sheet passes `check-sprite` only through the scoped `NEON_PETS_ALLOW` (Bill approved neon pets, 2026-10-05); keep every other sheet palette-locked.
+- Neon green `#3cf08a` / pink `#ff4fc8` (+ hi / lo) are for effects and orbs only: `python3 tests/check_palette.py` must stay at 0 failing.
 - Side quests (`side`), `ripple` and `bounty` quests never count toward "quests n/3"; bounties skip the Hearth errand payout and pay half XP on repeats.
 - Rift storms never strand the player: Sable's skiff sails in a storm. Storms never use bloom or a full-screen flash (point-light flashes only).
 - The Rift Shrine keeps a day / dusk / night grade (check-scene `grades` passes). Its `height` check is exempt by `game.qa_exempt` (one flat round isle); don't add exemptions for sharpness, bloom or phone.

@@ -3,8 +3,9 @@
 // This module owns the world side: the Harbor's Old Temple gate opening for the Hearth writ, the temple area's clue
 // spots / altar / Rift-gate interactions, the rite's chain-lighting, the scripted major rift + Veyra's cameo, and
 // Bifrost's Midgard arch opening once the Temple is relit (Decision 1, option A: the relight alone is the key).
-// PLACEHOLDER ART: the temple area is built from existing kit pieces until art/old_temple/ lands; every swap point is
-// listed in areas/src/temple.json game.swap_points (and below: VEYRA_FX, the fx names used for the lit gate).
+// ART: the Old Temple pack (art/old_temple/, Art bot 2026-10-05): riftgate arch + dormant glow, temple braziers, faceless
+// statues, stained windows, Ilse / Tamsin sprites and the riftgate / cold-fire gamefx (areas/src/temple.json game.art).
+// Still placeholder: VEYRA_FX (no Veyra art yet) and Edda's role; Bifrost's Midgard arch keeps the portal-kit rift_vortex.
 import { MERIT } from './factions.js';
 
 export const TEMPLE = { veyra: true };   // Veyra's cameo after the relight rift (toggle: false, or ?noveyra)
@@ -15,7 +16,7 @@ export const clues = (S) => CLUES.filter((k) => (S.found || {})[k]).length;
 export const tmBraziers = (S) => ['tm_b1', 'tm_b2', 'tm_b3'].filter((k) => (S.found || {})[k]).length;
 export const isDark = (t) => t > 0.75 || t < 0.25;
 const flags = (S) => (S.flags = S.flags || {});
-const GATE_LIT_FX = 'rift_vortex';          // swap point: riftgate_vortex_lit (art/old_temple)
+const GATE_LIT_FX = ['riftgate_vortex_lit', 'rift_vortex'];   // the Temple's own lit gate (old_temple gamefx); Bifrost's atlas only has rift_vortex
 const VEYRA_FX = ['glitter', 'sparkle_burst'];   // swap point: Veyra's sprite / frost-flower fx (no Veyra art yet)
 const HARBOR_EXIT = { rect: [-9.8, -12.4, -7.4, -10.7], to: 'temple', spawn: 'from_harbor', label: 'the Old Temple stair' };
 const EDDA = { id: 'novice', role: 'lamplighter', name: 'Novice Edda, the Old Temple gate', pos: [-7.0, -10.2], facing: 'down' };   // swap point: role novice
@@ -55,23 +56,48 @@ export class Temple {
     } else if (area === 'temple') {
       const F = flags(S);
       if (F.tm_altar || F.temple_lit) this.altarOn(true);
-      if (F.tm_gate || F.temple_lit) this.swapFx('gate_midgard', GATE_LIT_FX);
+      if (F.tm_gate || F.temple_lit) this.gateLit(true);
+      this.night = [];   // the faceless statues' night gaze + the stained windows' dusk glass-light pools
+      const art = gm.art || {};
+      if (ctx.gamefx && ctx.gamefx.meta.effects.faceless_gaze) for (const [x, z] of art.statues || []) this.night.push({ f: ctx.gamefx.spawn('faceless_gaze', x, ctx.heightAt(x, z), z + 0.05, { duration: Infinity }), dusk: false });
+      for (const id of ['tm_glass_0', 'tm_glass_1']) if (ctx.fx[id]) this.night.push({ f: ctx.fx[id], dusk: true });
+      this.nightFx();
       if (F.temple_lit && gm.midgard_portal) gm.portals = (gm.portals || []).filter((p) => p.to !== 'bifrost').concat([{ ...gm.midgard_portal }]);
       // the rift tore open and the area changed before it sealed: it is waiting again above the court
       if (F.tm_gate && !F.tm_rift) setTimeout(() => { if (this.ctx === ctx && !this.G.rifts.cur) this.G.rifts.open(1, gm.riftAt, { tag: 'temple' }); }, 400);
     }
   }
-  detach() { this.ctx = null; this.lit = []; this.chain = []; }
-  swapFx(id, name) {
-    const ctx = this.ctx, f = ctx && ctx.fx[id]; if (!f || f.name === name || !ctx.gamefx || !ctx.gamefx.meta.effects[name]) return false;
+  detach() { this.ctx = null; this.lit = []; this.chain = []; this.night = []; }
+  // swap a placed gamefx for the first name this area's atlas has (a list = preference order)
+  swapFx(id, names) {
+    const ctx = this.ctx, f = ctx && ctx.fx[id]; if (!f || !ctx.gamefx) return false;
+    const name = [].concat(names).find((n) => ctx.gamefx.meta.effects[n]); if (!name || f.name === name) return false;
     ctx.gamefx.remove(f); ctx.fx[id] = ctx.gamefx.spawn(name, f.x, f.y, f.z, { duration: Infinity });
     return true;
+  }
+  // the Temple's Rift-gate wakes: riftgate_awaken (once) -> riftgate_vortex_lit, and the rune ring on the plinth
+  gateLit(still = false) {
+    const ctx = this.ctx, f = ctx && ctx.fx.gate_midgard; if (!f) return;
+    const at = [f.x, f.y, f.z], gx = ctx.gamefx, has = (n) => gx && gx.meta.effects[n];
+    if (!still && has('riftgate_awaken')) gx.spawn('riftgate_awaken', at[0], at[1], at[2] + 0.05);
+    this.swapFx('gate_midgard', GATE_LIT_FX);
+    if (has('riftgate_ring_lit') && !ctx.fx.gate_ring) ctx.fx.gate_ring = gx.spawn('riftgate_ring_lit', at[0], at[1], at[2] + 0.5, { duration: Infinity, ...(still ? {} : { fadeIn: 0.6 }) });
+  }
+  nightFx() {
+    const ctx = this.ctx; if (!ctx || !this.night) return;
+    const t = ctx.clock.t, dark = isDark(t), dusk = dark || t > 0.62;
+    for (const n of this.night) if (n.f && n.f.mesh) n.f.mesh.visible = n.dusk ? dusk : dark;
   }
   // the sacred brazier on the altar: cold-fire flame, a wide pool, a blue light (a light zone)
   altarOn(still = false) {
     const ctx = this.ctx, A = this.gm.altar; if (!ctx || !A || this.lit.some((l) => l.id === 'altar')) return;
     const [x, z] = A.pos, y = ctx.heightAt(x, z + 0.6), fx = [];
-    if (ctx.effects) {
+    const gx = ctx.gamefx && ctx.gamefx.meta.effects.temple_coldfire ? ctx.gamefx : null;   // the pack's temple cold fire + wide pool
+    if (gx) {
+      fx.push({ gx: gx.spawn('temple_coldfire', x, y - 0.1, z + 0.05, { duration: Infinity, ...(still ? {} : { fadeIn: 0.4 }) }) });
+      fx.push({ gx: gx.spawn('coldfire_pool_wide', x, y, z + 0.6, { duration: Infinity, ...(still ? {} : { fadeIn: 0.6 }) }) });
+      if (ctx.effects) fx.push(ctx.effects.spawn('coldfire_motes', x, y + 1.2, z + 0.12, { duration: 1e9 }));
+    } else if (ctx.effects) {
       fx.push(ctx.effects.spawn('coldfire_flame', x, y + 1.0, z + 0.1, { duration: 1e9, fadeIn: still ? 0 : 0.4 }));
       fx.push(ctx.effects.spawn('coldfire_motes', x, y + 1.2, z + 0.12, { duration: 1e9 }));
       for (const [ox, oz] of [[0, 0.9], [-0.9, 0.7], [0.9, 0.7]]) fx.push(ctx.effects.spawn('coldfire_pool', x + ox, ctx.heightAt(x + ox, z + oz), z + oz + 0.03, { duration: 1e9, fadeIn: still ? 0 : 0.6 }));
@@ -121,7 +147,7 @@ export class Temple {
       'You raise the charm to the dark arch. Runes wake around the stone one by one, cold blue, then every colour at once.',
       'The arch fills with a slow rainbow swirl. Far off, you hear the bells of Bifrost Crossing.',
       'Then the sky above the court cracks open. The Rift has noticed its old door.'],
-      then: (G) => { flags(S).tm_gate = 1; this.swapFx('gate_midgard', GATE_LIT_FX); G.rifts.open(1, this.gm.riftAt, { tag: 'temple' }); G.drawLog && G.drawLog(); G.save(); } });
+      then: (G) => { flags(S).tm_gate = 1; this.gateLit(); G.rifts.open(1, this.gm.riftAt, { tag: 'temple' }); G.drawLog && G.drawLog(); G.save(); } });
     return true;
   }
   // the rite: the altar first, then every temple brazier 0.25 s apart (they burn at every hour from now on)
@@ -167,10 +193,12 @@ export class Temple {
     }
     if (this.cameo > 0 && !G.dlg && !G.busy) { this.cameo -= dt; if (this.cameo <= 0) this.veyra(); }
     for (const l of this.lit) if (l.light) l.light.scale = 0.92 + Math.sin(performance.now() / 300) * 0.06;
+    this.nightFx();
   }
   qa() {
     const c = this.ctx; if (!c) return null;
-    return { area: this.area, lit: this.lit.map((l) => l.id), gate: c.fx.gate_midgard ? c.fx.gate_midgard.name : null, near: this.near(), cameo: this.cameo,
+    return { area: this.area, lit: this.lit.map((l) => l.id), gate: c.fx.gate_midgard ? c.fx.gate_midgard.name : null, ring: c.fx.gate_ring ? c.fx.gate_ring.name : null,
+             gaze: (this.night || []).filter((n) => !n.dusk).length, glass: (this.night || []).filter((n) => n.dusk).length, near: this.near(), cameo: this.cameo,
              sealed: (c.scene.game?.sealed || []).map((g) => g.id || g.arch), exits: (c.scene.game?.exits || []).map((e) => e.to), portals: (c.scene.game?.portals || []).map((p) => p.to) };
   }
 }

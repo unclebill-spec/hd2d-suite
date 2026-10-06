@@ -111,7 +111,7 @@ Bill (GitHub `unclebill-spec`) hands this project between his bots and Cursor th
       - The braziers have `temple: true` (they need `tm_wick`).
       - `midgard_portal` opens after `temple_lit`. At Bifrost the Midgard seal is swapped for a portal.
       - Quests `altar` / `gate`. `TEMPLE.veyra` (or `?noveyra`) toggles the cameo.
-      - Placeholder props: swap them via `scene.game.swap_points` once the staging `art/old_temple/` kit is approved.
+      - Art: the Old Temple pack (`art/old_temple/`, kit `tools/kit/kit_old_temple.py`, sheet + gamefx via `build.py install_old_temple`). `scene.game.art` lists the gate fx, the statue spots and what's still placeholder (the `riftgate_glow_lit` mesh swap, Edda's role).
     - **Rift storms** (`game/storms.js`):
       - The calendar is `stormAt(day)`. `Storms` runs onset / end / sky cracks / pet barks and `onSeal`. Save: `S.flags.storm`, `S.storm = {region, day, sealed, best, last}`, `S.flags.stormAfter`, `S.flags.toasted`.
       - Rifts: `rifts.js` `pool()` / `canAuto()` / `storm()` drive the storm-only spots and timers (`RIFT_AREAS.*.storm`, `rift.stormOnly`). `factions.onRift(tier, storm)` adds +25%. `weather.js` has the `riftstorm` kind.
@@ -205,6 +205,7 @@ python3 games/hearthmoor/tests/smoke.py --jobs 3              # segments A-I on 
 python3 games/hearthmoor/tests/smoke.py --quick pet           # per-change check: only the segments covering an area / feature (--list shows them)
 python3 games/hearthmoor/tests/smoke.py --shard 2/3           # one shard of a --jobs 3 split (CI-style)
 python3 games/hearthmoor/tests/check_all.py --jobs 3          # every area's check-scene, 3 at a time (default serial); --areas a,b / --quick temple
+python3 games/hearthmoor/tests/check_palette.py               # palette lock: effects may use NEON + the orb neon (green #3cf08a / pink #ff4fc8); sprites stay biome-only (pets scoped)
 ```
 - **Smoke segments** (`smoke.py --list`):
   - A: title through the garden (writes `tests/fixtures/smoke_cp1.json`)

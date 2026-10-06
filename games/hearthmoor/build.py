@@ -106,9 +106,9 @@ def copy_areas(areas=AREAS):
 PET_ROLES = ("pet_wisp", "pet_moth", "pet_fox", "pet_mosspup")
 
 
-def _append_atlas(img_path, meta, add_img, add_meta, key, rows_key=None):
+def _append_atlas(img_path, meta, add_img, add_meta, key, rows_key=None, mark="pets_from"):
     base = Image.open(img_path).convert("RGBA")
-    h0 = meta.get("pets_from", base.size[1])
+    h0 = meta.get(mark, base.size[1])
     base = base.crop((0, 0, base.size[0], h0))
     add = Image.open(add_img).convert("RGBA")
     out = Image.new("RGBA", (max(base.size[0], add.size[0]), h0 + add.size[1]), (0, 0, 0, 0))
@@ -126,7 +126,7 @@ def _append_atlas(img_path, meta, add_img, add_meta, key, rows_key=None):
         items[k] = v
     if rows_key:
         meta[rows_key] = [r for r in meta[rows_key] if r not in add_meta[rows_key]][:row0] + list(add_meta[rows_key])
-    meta["pets_from"] = h0
+    meta[mark] = h0
     meta["size"] = [out.size[0], out.size[1]]
     return meta
 
@@ -153,6 +153,44 @@ def install_pets(areas=AREAS):
             m = _append_atlas(ip, json.loads(jp.read_text()), add_img, add_meta, key, rows)
             jp.write_text(json.dumps(m, indent=1))
     print(f"pets: sheet + {len(fxm['effects'])} effects + {len(ptm['presets'])} particle presets in {len(areas)} areas")
+
+
+OLD_TEMPLE_AREAS = ["temple"]
+OLD_TEMPLE_ROLES = ["templekeeper", "archivist"]
+
+
+def install_old_temple(areas=AREAS):
+    """The Old Temple art pack (art/old_temple/, Art bot 2026-10-05): Mother Ilse (templekeeper) and Brother Tamsin
+    (archivist) ride in their own sheet like the pets; the riftgate / cold-fire / faceless-gaze / glasslight gamefx are
+    appended to the area's gamefx atlas (48 px cells). The kit pieces build through tools/kit/kit_old_temple.py."""
+    P = GAME / "art" / "old_temple"
+    am_ot = json.loads((P / "sprite" / "old_temple_actors.json").read_text())
+    fxm = json.loads((P / "gamefx" / "old_temple_fx.json").read_text())
+    # faceless_gaze stays out for now: its eye-glint frames are under check-scene's 20 px measurable minimum (gamefx_sharp
+    # counts that as unverified). It belongs to the later 'Faceless Statues' beat; the Art bot can redraw it bigger.
+    skip = {"faceless_gaze"}
+    fxm = {**fxm, "effects": {k: v for k, v in fxm["effects"].items() if k not in skip}}
+    n = 0
+    for a in areas:
+        if a not in OLD_TEMPLE_AREAS:
+            continue
+        root = GAME / "areas" / a
+        scene = json.loads((root / "scene.json").read_text())
+        sp = root / scene["atlas"]["json"]
+        am = json.loads(sp.read_text())
+        shutil.copy2(P / "sprite" / "old_temple_actors.png", sp.parent / "old_temple.png")
+        (sp.parent / "old_temple.json").write_text(json.dumps(am_ot, indent=1))
+        am.setdefault("sheets", {})["old_temple"] = {"json": "old_temple.json", "image": "old_temple.png"}
+        for r in OLD_TEMPLE_ROLES:
+            am["roles"][r] = {"sheet": "old_temple", "row": am_ot["roles"][r]["row"], "kind": "human", "anims": ["idle", "walk"]}
+        sp.write_text(json.dumps(am, indent=1))
+        jp = root / scene["gamefx"]["json"]; ip = root / scene["gamefx"]["image"]
+        m = _append_atlas(ip, json.loads(jp.read_text()), P / "gamefx" / "old_temple_fx.png", fxm, "effects", mark="old_temple_from")
+        for v in m["effects"].values():
+            v.pop("strip", None)
+        jp.write_text(json.dumps(m, indent=1))
+        n += 1
+    print(f"old temple: sheet ({len(OLD_TEMPLE_ROLES)} roles) + {len(fxm['effects'])} gamefx in {n} areas")
 
 
 # ------------------------------------------------------------------ icons (biome palette only, 16 px, hard alpha)
@@ -394,6 +432,7 @@ if __name__ == "__main__":
         assemble(only)
     copy_areas(only)
     install_pets(only)
+    install_old_temple(only)
     draw_icons()
     draw_button_icons()
     write_pwa()

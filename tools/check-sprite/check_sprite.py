@@ -39,6 +39,9 @@ NEON_PETS_ALLOW = {
     # the moss-pup (added 2026-10-05, same approval): NEON green spores / moss dots + the NEON red toadstool cap
     "pet_mosspup": {"#24a03a", "#5aec3c", "#c4ff8a", "#a81c22", "#e0302a", "#ff5a4a"},
 }
+# Glow orbs (2026-10 art packs): roles named orb_* / glow_orb* may use neon green #3cf08a and pink #ff4fc8 (+ hi / lo).
+# Bill: effects and orbs only; characters, creatures and props never get these.
+ORB_NEON = {"#3cf08a", "#b8ffd4", "#14a85a", "#ff4fc8", "#ffb4ea", "#b82a8c"}
 
 
 def check(atlas_path, json_path=None, biome=None, max_colors=20, project=None):
@@ -80,7 +83,7 @@ def check(atlas_path, json_path=None, biome=None, max_colors=20, project=None):
                         opaque.append((x, y))
                         c = _hex(p)
                         colors.add(c)
-                        if c not in palette and c not in NEON_PETS_ALLOW.get(role, ()):
+                        if c not in palette and c not in NEON_PETS_ALLOW.get(role, ()) and not (role.startswith(("orb_", "glow_orb")) and c in ORB_NEON):
                             rr["issues"].append(f"{fr['name']}: colour {c} not in {biome}")
             if not opaque:
                 rr["issues"].append(f"{fr['name']}: empty frame")

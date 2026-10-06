@@ -80,6 +80,8 @@ The Layout One pad (stick, MAIN, potions, rail) may be used. Layout One's Starde
 
 - **Neon pets (2026-10-05):** Bill approved neon pets. The Den pets' sprite sheet (`games/hearthmoor/art/pets/pets.png`: wisp-kit, glowmoth, lantern fox, moss-pup) may use the NEON blue / violet / red / lime ramps on their glowing parts. It is a scoped exception: `check-sprite`'s `NEON_PETS_ALLOW` covers only the `pet_*` roles, and everything else stays palette-locked.
 
+- **Neon green + pink for effects and orbs (2026-10-06):** Bill allowed neon green `#3cf08a` (`#b8ffd4` / `#14a85a`) and neon pink `#ff4fc8` (`#ffb4ea` / `#b82a8c`) from the 2026-10 art packs (verdant_heart, orb_lanterns) **for effects and orbs only**: spell / particle / gamefx pixels and glow-orb pieces (`orb_*`, `glow_orb*`). Characters, creatures, props, world and HUD stay palette-locked. `games/hearthmoor/tests/check_palette.py` enforces it.
+
 Applying the rules (not a new override): Bifrost Crossing's nine realm colours keep the neon-accent rule. Only Alfheim violet, Niflheim neon blue and Muspelheim red are NEON, along with the cold fire. Asgard gold, Vanaheim green, Jotunheim ice, Svartalfheim copper, Helheim rose and Midgard's rainbow use biome-palette tones on the self-lit glow material. Their light reaches the scene through the pooled point lights (the glow-light cap) and decals, never bloom.
 
 ## How this repo enforces it

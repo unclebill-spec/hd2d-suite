@@ -69,7 +69,7 @@ export class Storms {
     const G = this.G, S = this.S, F = this.F, t = this.ctx ? this.ctx.clock.t : 0;
     if (!NIGHT(t) || this.forced === 'off') return null;
     if (G.intro && G.intro.active) return null;
-    if (!F.intro || F.intro === 'playing') return null;
+    if (F.intro === 'playing') return null;   // never during the Lantern Eve opening (older / ?nointro saves have no intro flag)
     if (this.forced) return this.forced;
     if (G.qa || G.peace) return null;   // deterministic captures + smoke: storms only on request
     const r = stormAt(this.nightDay());

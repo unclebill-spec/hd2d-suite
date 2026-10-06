@@ -53,7 +53,10 @@ DECAL_SQUASH = math.sin(math.radians(36))
 NEON = {"neon_red": "#e0302a", "neon_red_lo": "#a81c22", "neon_red_hi": "#ff5a4a",
         "neon_violet": "#a45cf0", "neon_violet_hi": "#d4a8ff", "neon_violet_lo": "#6a34b8",
         # the moss-pup's lime spores (Hearthmoor pets, Bill-approved neon 2026-10-05)
-        "neon_green": "#5aec3c", "neon_green_hi": "#c4ff8a", "neon_green_lo": "#24a03a"}
+        "neon_green": "#5aec3c", "neon_green_hi": "#c4ff8a", "neon_green_lo": "#24a03a",
+        # glow orbs / fireflies / bioluminescence (2026-10 art packs; Bill: effects and orbs only, never sprites or world)
+        "neon_jade": "#3cf08a", "neon_jade_hi": "#b8ffd4", "neon_jade_lo": "#14a85a",
+        "neon_pink": "#ff4fc8", "neon_pink_hi": "#ffb4ea", "neon_pink_lo": "#b82a8c"}
 
 
 class Frame:

@@ -293,16 +293,24 @@ G.dropDialogue = () => { G.dlg = null; $('dlg').hidden = true; $('dlgChoices').h
 G.refreshMarkers = () => refreshMarkers(); G.drawLog = () => drawLog();
 G.dlgChoice = () => (G.dlg && G.dlg.picking ? { options: G.dlg.choice.options.map((o) => o.label), ci: G.dlg.ci } : null);
 G.choicePick = (i) => choicePick(i);
+const sheetImgs = {};
+function sheetImage(src, onload) {
+  if (!sheetImgs[src]) { const im = new Image(); im.onload = onload; im.src = src; sheetImgs[src] = im; }
+  return sheetImgs[src];
+}
 function drawPortrait(npc) {
   const cv = $('dlgFace'), g = cv.getContext('2d');
   g.imageSmoothingEnabled = false; g.clearRect(0, 0, cv.width, cv.height);
   const r = npc.rect; if (!r || !portraitImg) return;
+  // a role on its own sheet (pets, the Old Temple pair, bosses) is cropped from that sheet, not the area's main atlas
+  const img = r.atlas ? sheetImage(AREAS[G.area] + r.atlas, () => { if (G.dlg && G.dlg.npc === npc) drawPortrait(npc); }) : portraitImg;
+  if (!img.complete) return;
   const fw = r.w / r.k, fh = r.h / r.k;
   // the idle-down frame of this role row (column 0), cropped to the head and shoulders
   const fy = r.frame[1];
   const sh = Math.min(fh, 22), sy = fy + Math.max(0, fh - 34);
   const s = Math.floor(Math.min(cv.width / fw, cv.height / sh));
-  g.drawImage(portraitImg, 0, sy, fw, sh, Math.round((cv.width - fw * s) / 2), cv.height - sh * s, fw * s, sh * s);
+  g.drawImage(img, 0, sy, fw, sh, Math.round((cv.width - fw * s) / 2), cv.height - sh * s, fw * s, sh * s);
 }
 
 // ------------------------------------------------------------------ area manager

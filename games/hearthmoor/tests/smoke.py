@@ -1872,7 +1872,12 @@ def run(out, simscale=4, size=(960, 540), segs=SEGS):
                 # the pet follows on its own sheet; far behind it uses the follow gait
                 ps = T.ev("window.__hm.pets.state()")
                 p0 = T.pos(); T.walk(p0[0] + 5.5, p0[1] - 1.0, 60)
-                T.ev("(() => { const G = window.__hm, a = G.pets.a, p = G.ctx.player; a.x = p.x - 5.0; a.z = p.z + 0.4; })()"); T.frames(3)
+                # drop the pet 4.5 m away on open flagstones (east of the Den yard, never inside the woodpile / house blockers)
+                T.ev("(() => { const G = window.__hm, a = G.pets.a, p = G.ctx.player; a.x = p.x + 4.5; a.z = p.z + 0.4; a.y = G.ctx.heightAt(a.x, a.z); })()"); T.frames(2)
+                try:
+                    T.wait("(() => { const s = window.__hm.pets.state().actor; return s && s.hurry && s.anim === 'follow'; })()", 4)
+                except Exception:  # noqa: BLE001
+                    pass
                 far = T.ev("window.__hm.pets.state().actor")
                 f.wait_for_timeout(2600); T.frames(6)
                 near = T.ev("(() => { const a = window.__hm.pets.a, p = window.__hm.ctx.player; return Math.hypot(a.x - p.x, a.z - p.z); })()")
@@ -2004,12 +2009,22 @@ def run(out, simscale=4, size=(960, 540), segs=SEGS):
                        "temple" not in rq["sealed"] and "market" in rq["sealed"] and "temple" in rq["exits"] and "A Hearth writ" in fe and to == "temple", temple=rq, edda=fe[:60], area=to)
                 tq = T.ev("""(() => { const G = window.__hm, c = G.ctx, sc = c.scene, glb = (n) => sc.objects.filter((o) => o.glb.endsWith('/' + n + '.glb')).length;
                   return { npcs: ['priestess', 'archivist', 'refugee1', 'refugee2'].map((n) => !!c.npc(n)), braz: G.hollows.braziers.filter((b) => b.temple).map((b) => b.lit),
-                           arch: glb('realm_arch'), altar: glb('shrine'), way: glb('waystone'), realm: G.factions.realm(), gate: c.fx.gate_midgard ? c.fx.gate_midgard.name : null,
+                           arch: glb('riftgate_arch'), dormant: glb('riftgate_glow_dormant'), altar: glb('temple_brazier_out'), statues: glb('faceless_statue'), windows: glb('stained_window'),
+                           columns: glb('temple_column'), way: glb('waystone'), realm: G.factions.realm(), gate: c.fx.gate_midgard ? c.fx.gate_midgard.name : null,
+                           roles: ['priestess', 'archivist'].map((n) => c.npc(n) && c.npc(n).role), sheet: !!(c.actors.sheetOf && c.actors.sheetOf('templekeeper')),
+                           gaze: G.temple.qa().gaze, glass: G.temple.qa().glass,
                            clues: (sc.game.clues || []).length, terrace: [c.heightAt(0, -6), c.heightAt(0, -10.2)], mark: G.markers.priestess ? G.markers.priestess.name : null }; })()""")
                 rep["shots"]["temple_dark"] = T.shot("temple_dark")
-                T.step("the Old Temple (placeholder art): Mother Ilse (turn-in tag), Brother Tamsin, 2 refugees; 3 dark stair braziers, the altar on the nave terrace (1.2 m), the dark Rift-gate on the inner court (2 m), a waystone; Hearth realm",
-                       tq["npcs"] == [True] * 4 and tq["braz"] == [False] * 3 and tq["arch"] == 1 and tq["altar"] == 1 and tq["way"] == 1 and tq["realm"] == "hearth"
-                       and tq["gate"] == "rift_seal_rainbow" and tq["clues"] == 3 and abs(tq["terrace"][0] - 1.2) < 0.05 and abs(tq["terrace"][1] - 2.0) < 0.05 and tq["mark"] == "quest_turnin", temple=tq)
+                T.step("the Old Temple (art/old_temple pack): Mother Ilse (templekeeper, turn-in tag), Brother Tamsin (archivist), 2 refugees; 3 dark stair braziers + the cold altar (temple_brazier_out x4) on the nave terrace (1.2 m), 4 faceless statues, 2 stained windows (dusk glass-light pools), 2 columns, the dormant Rift-gate (riftgate_arch + dormant glow, riftgate_seal_dormant) on the inner court (2 m), a waystone; Hearth realm",
+                       tq["npcs"] == [True] * 4 and tq["braz"] == [False] * 3 and tq["arch"] == 1 and tq["dormant"] == 1 and tq["altar"] == 4 and tq["statues"] == 4 and tq["windows"] == 2
+                       and tq["columns"] == 2 and tq["roles"] == ["templekeeper", "archivist"] and tq["sheet"] and tq["glass"] == 2
+                       and tq["way"] == 1 and tq["realm"] == "hearth"
+                       and tq["gate"] == "riftgate_seal_dormant" and tq["clues"] == 3 and abs(tq["terrace"][0] - 1.2) < 0.05 and abs(tq["terrace"][1] - 2.0) < 0.05 and tq["mark"] == "quest_turnin", temple=tq)
+                face = T.ev("""(() => { const G = window.__hm, n = G.ctx.npc('priestess'); G.openDialogue(n, { pages: ['...'] });
+                  return new Promise((res) => setTimeout(() => { const cv = document.getElementById('dlgFace'), d = cv.getContext('2d').getImageData(0, 0, cv.width, cv.height).data;
+                    let k = 0; for (let i = 3; i < d.length; i += 4) if (d[i]) k++; G.dropDialogue(); res({ sheet: n.rect && n.rect.sheet, px: k }); }, 500)); })()""")
+                T.step("Ilse's dialogue face is cropped from her own old_temple sheet (drawPortrait reads a role's own sheet, not column 0 of the main atlas)",
+                       face["sheet"] == "old_temple" and face["px"] > 40, face=face)
                 h0 = T.ev("window.__hm.S.merit.hearth || 0")
                 pi, fi = T.talk("priestess")
                 S = T.S()
@@ -2082,8 +2097,8 @@ def run(out, simscale=4, size=(960, 540), segs=SEGS):
                     if not T.ev("window.__hm.rifts.cur"): break
                     T.ev("(() => { const G = window.__hm, C = G.combat, p = G.ctx.player; G.peace = true; for (const e of G.rifts.alive()) for (let i = 0; i < 60 && e.state !== 'dead' && e.state !== 'gone'; i++) C.damageEnemy(e, 80, p); })()")
                     T.frames(8); g.wait_for_timeout(500)
-                T.step("E at the dark Rift-gate raises the charm: the arch swirls (rift_vortex), and a scripted major rift (tier II, tagged 'temple', no rare) tears open above the court; sealing it sets tm_rift",
-                       rs and rs["tag"] == "temple" and rs["id"] == "major" and gfx == "rift_vortex" and not T.ev("window.__hm.rifts.cur") and T.ev("window.__hm.S.flags.tm_rift") == 1, rift=rs, gate=gfx)
+                T.step("E at the dark Rift-gate raises the charm: the gate wakes (riftgate_vortex_lit + the riftgate_ring_lit rune ring), and a scripted major rift (tier II, tagged 'temple', no rare) tears open above the court; sealing it sets tm_rift",
+                       rs and rs["tag"] == "temple" and rs["id"] == "major" and gfx == "riftgate_vortex_lit" and T.ev("window.__hm.temple.qa().ring") == "riftgate_ring_lit" and not T.ev("window.__hm.rifts.cur") and T.ev("window.__hm.S.flags.tm_rift") == 1, rift=rs, gate=gfx)
                 T.wait("window.__hm.dlg && window.__hm.dlg.npc.id === 'veyra'", 30)
                 vn = T.ev("window.__hm.dlg.npc.name"); T.read_all(); T.frames(4)
                 T.wait("!window.__hm.dlg", 30)

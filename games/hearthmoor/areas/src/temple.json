@@ -2,7 +2,7 @@
  "name": "Ravenhold: the Old Temple",
  "seed": 107,
  "biome": "cozy-village",
- "about": "The Old Temple on the hill above Ravenhold Harbor: a refugee shelter in the lower court, a wide stair with three dark braziers, the nave terrace with the cold altar and faceless statues, and the Rift-gate in the inner court, dark since the sacred cold-fire brazier went out. Stage 6.3 PLACEHOLDER art: existing kit pieces stand in for the Old Temple pack (art/old_temple/); see game.swap_points.",
+ "about": "The Old Temple on the hill above Ravenhold Harbor: a refugee shelter in the lower court, a wide stair with three dark braziers, the nave terrace with the cold altar and faceless statues, and the Rift-gate in the inner court, dark since the sacred cold-fire brazier went out. Art: the Old Temple pack (art/old_temple/, Art bot 2026-10-05): riftgate arch + dormant glow, cold braziers, faceless statues, stained windows, columns, Mother Ilse (templekeeper) and Brother Tamsin (archivist), and the riftgate / cold-fire gamefx.",
  "time": {
   "start": "night",
   "speed": 0.0016
@@ -217,60 +217,64 @@
    ]
   },
   {
-   "piece": "brazier",
+   "piece": "temple_brazier_out",
    "pos": [
     -2.6,
     -2.2
    ]
   },
   {
-   "piece": "brazier",
+   "piece": "temple_brazier_out",
    "pos": [
     2.6,
     -2.2
    ]
   },
   {
-   "piece": "brazier",
+   "piece": "temple_brazier_out",
    "pos": [
     -3.0,
     -5.6
    ]
   },
   {
-   "piece": "shrine",
+   "piece": "temple_brazier_out",
    "pos": [
     0.0,
     -6.6
    ]
   },
   {
-   "piece": "standing_stone",
+   "piece": "faceless_statue",
    "pos": [
     -4.6,
     -7.4
-   ]
+   ],
+   "rot": 20
   },
   {
-   "piece": "standing_stone",
+   "piece": "faceless_statue",
    "pos": [
     4.6,
     -7.6
-   ]
+   ],
+   "rot": -20
   },
   {
-   "piece": "standing_stone",
+   "piece": "faceless_statue",
    "pos": [
     -8.4,
     -7.2
-   ]
+   ],
+   "rot": 20
   },
   {
-   "piece": "standing_stone",
+   "piece": "faceless_statue",
    "pos": [
     8.4,
     -7.2
-   ]
+   ],
+   "rot": -20
   },
   {
    "piece": "crate",
@@ -287,7 +291,7 @@
    ]
   },
   {
-   "piece": "realm_arch",
+   "piece": "riftgate_arch",
    "pos": [
     0.0,
     -10.8
@@ -299,7 +303,7 @@
    }
   },
   {
-   "piece": "realm_glow_blue",
+   "piece": "riftgate_glow_dormant",
    "pos": [
     0.0,
     -10.8
@@ -317,6 +321,34 @@
    "pos": [
     3.4,
     -10.0
+   ]
+  },
+  {
+   "piece": "temple_column",
+   "pos": [
+    -9.2,
+    -5.6
+   ]
+  },
+  {
+   "piece": "temple_column",
+   "pos": [
+    9.2,
+    -5.4
+   ]
+  },
+  {
+   "piece": "stained_window",
+   "pos": [
+    -6.2,
+    -11.5
+   ]
+  },
+  {
+   "piece": "stained_window",
+   "pos": [
+    6.2,
+    -11.5
    ]
   }
  ],
@@ -360,7 +392,7 @@
  "actors": [
   {
    "id": "priestess",
-   "role": "elder",
+   "role": "templekeeper",
    "name": "Mother Ilse Brightwater, the Old Temple",
    "pos": [
     -3.6,
@@ -375,7 +407,7 @@
   },
   {
    "id": "archivist",
-   "role": "musician",
+   "role": "archivist",
    "name": "Brother Tamsin, archivist of the Old Temple",
    "pos": [
     4.6,
@@ -393,8 +425,8 @@
    "role": "gardener",
    "name": "A refugee",
    "pos": [
-    -7.2,
-    1.2
+    -6.0,
+    4.2
    ],
    "facing": "right",
    "behavior": "idle",
@@ -408,8 +440,8 @@
    "role": "fisher",
    "name": "A refugee",
    "pos": [
-    -9.2,
-    2.4
+    -8.6,
+    4.4
    ],
    "facing": "down",
    "behavior": "idle",
@@ -431,11 +463,29 @@
  "fx": [
   {
    "id": "gate_midgard",
-   "name": "rift_seal_rainbow",
+   "name": "riftgate_seal_dormant",
    "pos": [
     0.0,
-    2.2,
+    2.0,
     -10.8
+   ]
+  },
+  {
+   "id": "tm_glass_0",
+   "name": "glasslight_violet",
+   "pos": [
+    -6.2,
+    2.0,
+    -9.7
+   ]
+  },
+  {
+   "id": "tm_glass_1",
+   "name": "glasslight_gold",
+   "pos": [
+    6.2,
+    2.0,
+    -9.7
    ]
   }
  ],
@@ -470,7 +520,7 @@
    "sky_bottom": "#1c2a52",
    "hemi_sky": "#3c5088",
    "hemi_intensity": 0.5,
-   "exposure": 1.08,
+   "exposure": 1.0,
    "sun_intensity": 0.3,
    "sun_color": "#8ea8e8",
    "bugs": 1.0
@@ -612,17 +662,33 @@
    ],
    "label": "the Rift-gate to Bifrost Crossing"
   },
-  "swap_points": {
-   "_note": "Stage 6.3 placeholders: when art/old_temple/ lands, swap these kit pieces / roles / effects for the pack's own",
-   "realm_arch + realm_glow_blue @ [0,-10.8]": "riftgate_arch + riftgate_glow_dormant (lit: riftgate_glow_lit)",
-   "fx gate_midgard rift_seal_rainbow / rift_vortex": "riftgate_seal_dormant / riftgate_awaken / riftgate_vortex_lit (+ riftgate_ring_lit)",
-   "brazier x3 (tm_b1..3)": "temple_brazier_out -> temple_brazier_cold (+ temple_coldfire, coldfire_pool_wide)",
-   "shrine @ altar": "the Temple altar with the sacred brazier",
-   "standing_stone x4": "faceless_statue (+ faceless_gaze at night), temple_column",
-   "role elder (priestess)": "templekeeper / priestess",
-   "role musician (archivist)": "archivist",
-   "role lamplighter (novice, Ravenhold)": "novice",
-   "(none)": "stained_window + glasslight_violet / glasslight_gold dusk pools on the nave"
+  "art": {
+   "_note": "Old Temple pack (art/old_temple/, Art bot 2026-10-05). templekeeper / archivist ride in their own sheet and the riftgate / cold-fire gamefx are appended to this area's gamefx atlas by build.py install_old_temple.",
+   "gate": {
+    "dormant": "riftgate_seal_dormant",
+    "awaken": "riftgate_awaken",
+    "lit": "riftgate_vortex_lit",
+    "ring": "riftgate_ring_lit"
+   },
+   "statues": [
+    [
+     -4.6,
+     -7.4
+    ],
+    [
+     4.6,
+     -7.6
+    ],
+    [
+     -8.4,
+     -7.2
+    ],
+    [
+     8.4,
+     -7.2
+    ]
+   ],
+   "remaining": "riftgate_glow_lit kit piece (the lit glow mesh + its 3 lamps): the dormant glow mesh stays and the lit state is the vortex + ring + light; Edda (novice) still uses the lamplighter role; faceless_gaze (the statues' night gaze, for the later 'Faceless Statues' beat) is not installed: its frames are under check-scene's 20-px measurable minimum, so gamefx_sharp can't verify it"
   }
  },
  "gamefx": true

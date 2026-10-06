@@ -889,6 +889,8 @@ import kit_harbor as _harbor  # noqa: E402  (Ravenhold Harbor pieces: water, pie
 PROPS.update(_harbor.pieces(__import__('types').SimpleNamespace(**globals())))
 import kit_bifrost as _bifrost  # noqa: E402  (Bifrost Crossing pieces: plaza, rainbow bridge, landing, realm arches + glows, Guild kiosk, braziers)
 PROPS.update(_bifrost.pieces(__import__('types').SimpleNamespace(**globals())))
+import kit_old_temple as _old_temple  # noqa: E402  (Old Temple pieces, Art bot 2026-10-05: riftgate arch + dormant/lit glows, cold braziers, faceless statues, stained window, column)
+PROPS.update(_old_temple.pieces(__import__('types').SimpleNamespace(**globals())))
 
 
 def export_piece(cx: Ctx, pc: Piece, out: Path):

@@ -6,7 +6,7 @@
  "cell": 48,
  "size": [
   384,
-  864
+  1296
  ],
  "effects": {
   "portal_vortex": {
@@ -368,8 +368,519 @@
    "travel": null,
    "then": null,
    "duration": 9999
+  },
+  "riftgate_vortex_lit": {
+   "row": 18,
+   "frames": 8,
+   "fps": 8,
+   "loop": true,
+   "loop_from": 0,
+   "loops": 1,
+   "kind": "billboard",
+   "pivot": [
+    24,
+    47
+   ],
+   "lift": 0.4,
+   "glow": true,
+   "light": {
+    "color": "#2ab4ff",
+    "intensity": 1.6,
+    "range": 7.0
+   },
+   "speed": null,
+   "travel": null,
+   "then": null,
+   "duration": 9999,
+   "frame_list": [
+    {
+     "x": 0,
+     "y": 864,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 48,
+     "y": 864,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 96,
+     "y": 864,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 144,
+     "y": 864,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 192,
+     "y": 864,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 240,
+     "y": 864,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 288,
+     "y": 864,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 336,
+     "y": 864,
+     "w": 48,
+     "h": 48
+    }
+   ],
+   "notes": "place at riftgate_arch.markers.rift (opening 1.9 x 3.1 m); with riftgate_glow_lit"
+  },
+  "riftgate_seal_dormant": {
+   "row": 19,
+   "frames": 6,
+   "fps": 3,
+   "loop": true,
+   "loop_from": 0,
+   "loops": 1,
+   "kind": "billboard",
+   "pivot": [
+    24,
+    47
+   ],
+   "lift": 0.4,
+   "glow": true,
+   "light": {
+    "color": "#1c62d8",
+    "intensity": 0.2,
+    "range": 2.5
+   },
+   "speed": null,
+   "travel": null,
+   "then": null,
+   "duration": 9999,
+   "frame_list": [
+    {
+     "x": 0,
+     "y": 912,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 48,
+     "y": 912,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 96,
+     "y": 912,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 144,
+     "y": 912,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 192,
+     "y": 912,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 240,
+     "y": 912,
+     "w": 48,
+     "h": 48
+    }
+   ],
+   "notes": "the gate before Keeper of the Gate; with riftgate_glow_dormant"
+  },
+  "riftgate_awaken": {
+   "row": 20,
+   "frames": 8,
+   "fps": 10,
+   "loop": false,
+   "loop_from": 0,
+   "loops": 1,
+   "kind": "billboard",
+   "pivot": [
+    24,
+    47
+   ],
+   "lift": 0.4,
+   "glow": true,
+   "light": {
+    "color": "#a6ecff",
+    "intensity": 2.4,
+    "range": 9.0,
+    "curve": [
+     0.2,
+     0.4,
+     1.0,
+     1.0,
+     0.9,
+     0.8,
+     0.7,
+     0.6
+    ]
+   },
+   "speed": null,
+   "travel": null,
+   "then": null,
+   "duration": 0.8,
+   "frame_list": [
+    {
+     "x": 0,
+     "y": 960,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 48,
+     "y": 960,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 96,
+     "y": 960,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 144,
+     "y": 960,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 192,
+     "y": 960,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 240,
+     "y": 960,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 288,
+     "y": 960,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 336,
+     "y": 960,
+     "w": 48,
+     "h": 48
+    }
+   ],
+   "notes": "one-shot transition dormant -> lit (Keeper of the Gate), then swap to riftgate_vortex_lit"
+  },
+  "riftgate_ring_lit": {
+   "row": 21,
+   "frames": 8,
+   "fps": 6,
+   "loop": true,
+   "loop_from": 0,
+   "loops": 1,
+   "kind": "decal",
+   "pivot": [
+    24,
+    24
+   ],
+   "lift": 0.42,
+   "glow": true,
+   "light": null,
+   "speed": null,
+   "travel": null,
+   "then": null,
+   "duration": 9999,
+   "frame_list": [
+    {
+     "x": 0,
+     "y": 1008,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 48,
+     "y": 1008,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 96,
+     "y": 1008,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 144,
+     "y": 1008,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 192,
+     "y": 1008,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 240,
+     "y": 1008,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 288,
+     "y": 1008,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 336,
+     "y": 1008,
+     "w": 48,
+     "h": 48
+    }
+   ],
+   "notes": "ground pool + rune ring in front of the lit gate (on the plinth top, y 0.40)"
+  },
+  "temple_coldfire": {
+   "row": 22,
+   "frames": 6,
+   "fps": 8,
+   "loop": true,
+   "loop_from": 0,
+   "loops": 1,
+   "kind": "billboard",
+   "pivot": [
+    24,
+    47
+   ],
+   "lift": 1.1,
+   "glow": true,
+   "light": {
+    "color": "#94c0dc",
+    "intensity": 1.1,
+    "range": 5.5
+   },
+   "speed": null,
+   "travel": null,
+   "then": null,
+   "duration": 9999,
+   "frame_list": [
+    {
+     "x": 0,
+     "y": 1056,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 48,
+     "y": 1056,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 96,
+     "y": 1056,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 144,
+     "y": 1056,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 192,
+     "y": 1056,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 240,
+     "y": 1056,
+     "w": 48,
+     "h": 48
+    }
+   ],
+   "notes": "on temple_brazier_cold (bowl top y 1.10)"
+  },
+  "coldfire_pool_wide": {
+   "row": 23,
+   "frames": 6,
+   "fps": 4,
+   "loop": true,
+   "loop_from": 0,
+   "loops": 1,
+   "kind": "decal",
+   "pivot": [
+    24,
+    24
+   ],
+   "lift": 0.02,
+   "glow": true,
+   "light": null,
+   "speed": null,
+   "travel": null,
+   "then": null,
+   "duration": 9999,
+   "frame_list": [
+    {
+     "x": 0,
+     "y": 1104,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 48,
+     "y": 1104,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 96,
+     "y": 1104,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 144,
+     "y": 1104,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 192,
+     "y": 1104,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 240,
+     "y": 1104,
+     "w": 48,
+     "h": 48
+    }
+   ],
+   "notes": "under each lit brazier / the keeper's lantern; light zone r ~2.4 m"
+  },
+  "glasslight_violet": {
+   "row": 24,
+   "frames": 4,
+   "fps": 2,
+   "loop": true,
+   "loop_from": 0,
+   "loops": 1,
+   "kind": "decal",
+   "pivot": [
+    24,
+    24
+   ],
+   "lift": 0.02,
+   "glow": true,
+   "light": null,
+   "speed": null,
+   "travel": null,
+   "then": null,
+   "duration": 9999,
+   "frame_list": [
+    {
+     "x": 0,
+     "y": 1152,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 48,
+     "y": 1152,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 96,
+     "y": 1152,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 144,
+     "y": 1152,
+     "w": 48,
+     "h": 48
+    }
+   ],
+   "notes": "dusk only, 1.8 m in front of stained_window"
+  },
+  "glasslight_gold": {
+   "row": 25,
+   "frames": 4,
+   "fps": 2,
+   "loop": true,
+   "loop_from": 0,
+   "loops": 1,
+   "kind": "decal",
+   "pivot": [
+    24,
+    24
+   ],
+   "lift": 0.02,
+   "glow": true,
+   "light": null,
+   "speed": null,
+   "travel": null,
+   "then": null,
+   "duration": 9999,
+   "frame_list": [
+    {
+     "x": 0,
+     "y": 1200,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 48,
+     "y": 1200,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 96,
+     "y": 1200,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 144,
+     "y": 1200,
+     "w": 48,
+     "h": 48
+    }
+   ],
+   "notes": "dusk only, alternate window"
   }
  },
  "cast_sets": {},
- "cycle": []
+ "cycle": [],
+ "old_temple_from": 864
 }
