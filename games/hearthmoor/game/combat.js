@@ -8,6 +8,10 @@ import { HERO, SPELLS, CHARM_DMG, CHARM_CD, SUMMONS, SUMMON_LIFE, SUMMON_CD, ENE
 // sparkles; '<role>_r' sprite) + a rune circle on arrival, IV (capstone) brighter and wider light + a sparkle burst.
 // Stats grow through the summon-branch skills (summonMul / summonLife). Gloom-and-glow: palette pixels, no bloom.
 const SUMMON_GLOW = { mushgolem: '#f2c24a', runesentinel: '#ffb24a', runewisp: '#94c0dc', stormsprite: '#94c0dc', sapling: '#b2c464', emberimp: '#ffb24a' };
+// 6.4: camera framing for big foes: 2.5x Glenheart pulls ~1.18 (unchanged); 5-6x bosses pull up to ~1.9 (engine clamp 2.0)
+export const framePullFor = (k) => (k >= 4 ? Math.min(2.0, 1 + (k - 1) * 0.18) : 1 + (k - 1) * 0.12);
+// 6.4 trial mode: ENEMIES[x].trial = true or (S) => bool (Hjortur yields on the befriend path); a spawn can set sp.trial
+export const isTrial = (e, S) => { const t = (e.sp && e.sp.trial) ?? e.D.trial; return typeof t === 'function' ? !!t(S) : !!t; };
 const ROMAN = ['', 'I', 'II', 'III', 'IV'];
 const PAL = { ink: '#2a1e1c', white: '#fff8e6', gold: '#f2c24a', rose: '#e47c8c', green: '#b2c464', sky: '#94c0dc' };
 // 3x5 pixel font: digits, + and - (drawn at an integer scale with a 1 px ink outline, never smoothed)
@@ -292,8 +296,17 @@ export class Combat {
     this.G.audio.sfx('hit');
     if (push && src) this.shove(a, a.x - src.x, a.z - src.z, push * (e.a.role === 'golem' || e.D.heavy ? (e.D.boss ? 0.15 : 0.35) : 1));
     if (!this.peace && (e.state === 'idle' || e.state === 'home')) e.state = 'chase';
-    if (e.hp <= 0) this.kill(e);
+    if (e.hp <= 0) { if (isTrial(e, this.G.S)) this.yieldTo(e); else this.kill(e); }
     return true;
+  }
+  // 6.4 trial mode (Hjortur's guardian trial): at 0 HP the foe yields instead of dying: no XP, no loot, no onBoss merit,
+  // no 'defeated' respawn timer; S.trials[id] counts it and e.onYield (the outro / rewards) fires
+  yieldTo(e) {
+    const a = e.a; e.hp = 0; e.yielded = true; e.state = 'dead'; e.t = 0; a.act = null;
+    this.G.S.trials = { ...(this.G.S.trials || {}), [e.id]: (this.G.S.trials?.[e.id] || 0) + 1 };
+    this.G.audio.sfx('quest');
+    this.G.toast && this.G.toast(`${e.D.name} yields. The trial is passed.`, 3.0);
+    if (e.onYield) e.onYield(e);
   }
   kill(e, quiet = false) {
     const ctx = this.ctx, a = e.a;
@@ -623,7 +636,7 @@ export class Combat {
     let pullF = 1;
     for (const e of this.enemies) {
       const k = e.D.scale || 1;
-      if (k > 1 && (e.state === 'chase' || e.state === 'attack') && dist(e.a, ctx.player) < (e.D.aggro || 6) + 3) pullF = Math.max(pullF, 1 + (k - 1) * 0.12);
+      if (k > 1 && (e.state === 'chase' || e.state === 'attack') && dist(e.a, ctx.player) < (e.D.aggro || 6) + 3) pullF = Math.max(pullF, framePullFor(k));
     }
     if (ctx.framePull) ctx.framePull(pullF);
     for (const e of this.enemies) {

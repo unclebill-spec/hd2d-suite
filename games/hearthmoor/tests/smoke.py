@@ -187,7 +187,7 @@ class Smoke:
 # segment before it saved (localStorage only: the same thing the serial run's reload + Continue restores from).
 # Every step still runs exactly once across the shards, with the same assertions and thresholds.
 FIX = Path(__file__).resolve().parent / "fixtures"
-SEGS = "ABCDEFGH"
+SEGS = "ABCDEFGHI"
 SEG_INFO = {
     "A": "title, loading gate, Lantern Eve, errands, controller, Mossglen, leveling, combat, loot, rares + rifts, Hollows, garden (ends: K save in Mossglen -> cp1)",
     "B": "reload #1 + Continue, save slots, Pudding home, shop, bank, riddle, night merchant, factions, glow cap, weather, sockets, errand 2 (ends: K save in the Lane -> cp2)",
@@ -197,6 +197,7 @@ SEG_INFO = {
     "F": "Stage 6+: the Stray Den + glowing pets (continues the cp3 save)",
     "G": "Stage 6.3: the Old Temple (Hilde's writ, the Harbor gate, clues, Alder's charm, Ida's wick, braziers, the rite, the rift, Veyra, Midgard's arch; continues cp3)",
     "H": "Stage 6.5: rift storms (calendar, storm rifts + Rift Marks +25%, sky cracks, Storm Watch bounty, NPC / ferry storm lines, dawn, toasts; continues cp3)",
+    "I": "Stage 6.4 groundwork: Glenheart rename, trial-mode yield, 5-6x boss camera pull, Vanaheim conquer merit -> Rift Marks, heartwood sale to Sable (continues cp3)",
 }
 # --quick <area>: the segments that cover an area / feature (a per-change check; the batch still runs everything)
 QUICK = {
@@ -207,10 +208,11 @@ QUICK = {
     "phone": "D", "touch": "D", "migration": "E", "save": "BE",
     "pet": "F", "pets": "F", "stray": "F",
     "temple": "G", "oldtemple": "G", "midgard": "G",
+    "vanaheim4": "I", "trial": "I", "glenheart": "I", "heartwood": "I",
     "storm": "H", "storms": "H", "riftstorm": "H", "bounty": "H",
 }
 TIMING = FIX / "smoke_timing.json"   # seconds per segment from the last passing runs (shard balancing only)
-DEFAULT_SECONDS = {"A": 560, "B": 260, "C": 230, "D": 140, "E": 25, "F": 150, "G": 200, "H": 170}
+DEFAULT_SECONDS = {"A": 560, "B": 260, "C": 230, "D": 140, "E": 25, "F": 150, "G": 200, "H": 170, "I": 90}
 
 
 def seg_seconds():
@@ -696,7 +698,7 @@ def run(out, simscale=4, size=(960, 540), segs=SEGS):
                 T.step("pathfinding: a foe below the terrace wall routes via the stairs", sk["y"] > 0.3 or sk["x"] < 4.0, skeleton=sk)
                 # ---------------------------------------------------------- stage 3: new foes, the Mossheart mini-boss, the Legendary aura
                 roles3 = sorted({e["role"] for e in T.ev("window.__hm.combat.qa()")["enemies"]})
-                T.step("Mossglen also has a frost golem, a skeleton mage and Mossheart (mini-boss)", {"icegolem", "skelmage", "eldergolem"} <= set(roles3), roles=roles3)
+                T.step("Mossglen also has a frost golem, a skeleton mage and Glenheart (mini-boss)", {"icegolem", "skelmage", "eldergolem"} <= set(roles3), roles=roles3)
                 chill = T.ev("(() => { const c = window.__hm.ctx, C = window.__hm.combat, p = c.player, e = C.enemies.find((x) => x.id === 'icegolem_0');"
                              " p.iframes = 0; C.godT = 0; C.st = C.maxSt(); p.act = null; p.x = e.a.x + 1.0; p.z = e.a.z; p.y = c.heightAt(p.x, p.z); c.stopWalk(); e.a.facing = 'right';"
                              " const h0 = window.__hm.S.hp, s0 = C.st; C.enemyStrike(e); return [h0 - window.__hm.S.hp, Math.round(s0 - C.st)]; })()")
@@ -710,17 +712,17 @@ def run(out, simscale=4, size=(960, 540), segs=SEGS):
                 boss = T.ev("(() => { const C = window.__hm.combat, e = C.enemies.find((x) => x.id === 'mossheart'), b = document.getElementById('bossbar');"
                             " return { state: e.state, light: !!e.light, bar: !!(b && !b.hidden), label: b ? b.firstChild.textContent : '', w: b ? b.querySelector('i').style.width : '' }; })()")
                 rep["shots"]["boss_fight"] = T.shot("boss_fight")
-                T.step("Mossheart: carries a rune light, a named boss bar shows when it fights", boss["light"] and boss["bar"] and "Mossheart" in boss["label"] and boss["w"] not in ("", "100%"), boss=boss)
+                T.step("Glenheart (renamed from Mossheart): carries a rune light, a named boss bar shows when it fights", boss["light"] and boss["bar"] and "Glenheart" in boss["label"] and boss["w"] not in ("", "100%"), boss=boss)
                 big = T.ev("(() => { const R = window.__hd2d.actorRects(), m = R.find((r) => r.id === 'mossheart'), p = R.find((r) => r.id === 'player'), C = window.__hm.combat, e = C.enemies.find((x) => x.id === 'mossheart');"
                            " return { sheet: m && m.sheet, mh: m && m.h / m.k, ph: p && p.h / p.k, r: e.a.r, scale: e.D.scale, pull: window.__hm.ctx.pull() }; })()")
-                T.step("Mossheart is ~2.5x the hero, drawn natively on its own boss sheet; hitbox and camera framing scale with it",
+                T.step("Glenheart is ~2.5x the hero, drawn natively on its own boss sheet; hitbox and camera framing scale with it",
                        big["sheet"] == "boss" and big["mh"] == 80 and big["ph"] == 32 and big["scale"] == 2.5 and big["r"] >= 0.7 and big["pull"] > 1.01, **big)
                 T.ev("(() => { const C = window.__hm.combat, e = C.enemies.find((x) => x.id === 'mossheart'); window.__hm.peace = true; C.damageEnemy(e, 9999, window.__hm.ctx.player); })()")
                 pg.wait_for_timeout(900)
                 legs = [d for d in T.ev("window.__hm.loot.qa()") if d["rar"] == 4]
-                T.step("Mossheart always drops a Legendary (and the boss bar goes away)", len(legs) >= 1 and T.ev("!document.getElementById('bossbar') || document.getElementById('bossbar').hidden"), drops=legs)
+                T.step("Glenheart always drops a Legendary (and the boss bar goes away)", len(legs) >= 1 and T.ev("!document.getElementById('bossbar') || document.getElementById('bossbar').hidden"), drops=legs)
                 cores = [d for d in T.ev("window.__hm.loot.qa()") if d.get("gem") == "golem_core"]
-                T.step("Mossheart also drops a golem core (socket gem)", len(cores) >= 1, drops=cores)
+                T.step("Glenheart also drops a golem core (socket gem)", len(cores) >= 1, drops=cores)
                 for d in cores:
                     T.ev(f"(() => {{ const c = window.__hm.ctx, p = c.player; p.x = {d['x']}; p.z = {d['z']}; p.y = c.heightAt(p.x, p.z); c.stopWalk(); }})()"); pg.wait_for_timeout(500)
                 T.step("walking over the core puts it in the gem pouch", (T.S().get("gems") or {}).get("golem_core", 0) >= 1, gems=T.S().get("gems"))
@@ -2240,6 +2242,68 @@ def run(out, simscale=4, size=(960, 540), segs=SEGS):
                 rep["error"] = f"storms: {type(e).__name__}: {e}"[:400]
                 try:
                     rep["shots"]["failure_H"] = T.shot("failure_H"); rep["state"] = T.S()
+                except Exception:  # noqa: BLE001
+                    pass
+        # ---------------------------------------------------------- I: Stage 6.4 groundwork (continues cp3)
+        if rep["pass"] and "I" in segs:
+            seg_mark("I")
+            try:
+                saved = cp_load(None, T, url, "cp3")["hearthmoor-slot-1-v2"]
+                ic = b.new_context(viewport={"width": size[0], "height": size[1]})
+                ic.add_init_script(f"if (!sessionStorage.getItem('seeded')) {{ localStorage.clear(); localStorage.setItem('hearthmoor-slot-1-v2', {json.dumps(saved)}); sessionStorage.setItem('seeded', '1'); }}")
+                ic.add_init_script(STUB)
+                ip = ic.new_page()
+                ip.on("pageerror", lambda e: errors.append(f"PAGEERROR {e}"))
+                ip.on("console", lambda m: errors.append(f"console.error {m.text}") if m.type == "error" else None)
+                T.pg = ip
+                ip.goto(url)
+                T.wait("window.__hm && window.__hm.ready && window.__hd2d && window.__hd2d.ready && !window.__hd2dGate.loading", 120)
+                ip.click("#btnCont"); T.idle(); ip.wait_for_timeout(400)
+
+                def iarea(a, spawn="start"):
+                    T.ev(f"window.__hm.loadArea('{a}', '{spawn}')"); T.wait(f"window.__hm.area === '{a}' && window.__hm.ctx && !window.__hm.busy", 120); T.idle(); ip.wait_for_timeout(300)
+                iarea("mossglen")
+                T.ev("(() => { const C = window.__hm.combat; delete C.defeated['mossglen:eldergolem']; if (!C.enemies.find((e) => e.id === 'eldergolem' && e.state !== 'dead')) C.spawnEnemy({ id: 'eldergolem', role: 'eldergolem', pos: [window.__hm.ctx.player.x + 3, window.__hm.ctx.player.z] }); })()")
+                T.frames(4)
+                gn = T.ev("(() => { const e = window.__hm.combat.enemies.find((x) => x.id === 'eldergolem' && x.state !== 'dead'); return e ? e.D.name : null; })()")
+                pulls = T.ev("[2.5, 5.5, 6].map((k) => +window.__hm.framePullFor(k).toFixed(3))")
+                T.step("the Mossglen golem is now 'Glenheart, the Elder Golem' (display name only, id eldergolem); boss camera pull: 2.5x unchanged (1.18), 5.5x / 6x bosses ~1.8-1.9 (engine clamp 2.0)",
+                       gn == "Glenheart, the Elder Golem" and pulls[0] == 1.18 and 1.75 <= pulls[1] <= 1.9 and 1.85 <= pulls[2] <= 2.0, name=gn, pulls=pulls)
+                S0 = T.S(); xp0 = T.ev("window.__hm.S.xp || 0"); d0 = T.ev("window.__hm.loot.drops ? window.__hm.loot.drops.length : -1")
+                yv = T.ev("""(() => { const G = window.__hm, C = G.combat, e = C.enemies.find((x) => x.id === 'eldergolem' && x.state !== 'dead'); G.peace = true;
+                  let fired = 0; e.sp = { ...e.sp, trial: true }; e.onYield = () => { fired++; }; C.damageEnemy(e, 99999, G.ctx.player);
+                  return { yielded: !!e.yielded, state: e.state, fired, trials: (G.S.trials || {}).eldergolem || 0, def: C.defeated['mossglen:eldergolem'] || 0 }; })()""")
+                T.frames(4); S1 = T.S()
+                T.step("trial mode (Hjortur's guardian trial): a trial foe at 0 HP yields instead of dying: onYield fires, S.trials counts it; no XP, no Legendary / loot, no boss merit, no respawn timer",
+                       yv["yielded"] and yv["fired"] == 1 and yv["trials"] == 1 and yv["def"] == 0 and T.ev("window.__hm.S.xp || 0") == xp0
+                       and (S1.get("bosses") or {}).get("eldergolem", 0) == (S0.get("bosses") or {}).get("eldergolem", 0) and S1["merit"] == S0["merit"]
+                       and T.ev("window.__hm.loot.drops ? window.__hm.loot.drops.length : -1") == d0, trial=yv)
+                iarea("vanaheim")
+                cv = T.ev("""(() => { const G = window.__hm, F = (G.S.flags = G.S.flags || {}), was = (F.alliance || {}).vanaheim;
+                  F.alliance = { ...(F.alliance || {}), vanaheim: 'conquer' }; const g0 = G.S.merit.gate || 0, e0 = G.S.merit.embassy || 0, rc = G.factions.realm(); G.factions.onBoss();
+                  const out = { rc, dg: (G.S.merit.gate || 0) - g0, de: (G.S.merit.embassy || 0) - e0 };
+                  F.alliance.vanaheim = 'befriend'; out.rb = G.factions.realm(); F.alliance.vanaheim = was; if (was === undefined) delete F.alliance.vanaheim; return out; })()""")
+                T.step("Vanaheim conqueror: realm merit there routes to Rift Marks (a boss kill pays +80 gate, 0 Realm Favor); befriended it stays Realm Favor (embassy)",
+                       cv["rc"] == "gate" and cv["dg"] == 80 and cv["de"] == 0 and cv["rb"] == "embassy", conquer=cv)
+                iarea("ravenhold")
+                T.ev("window.__hm.give('heartwood', 1)")
+                c0 = T.ev("window.__hm.S.merit.corsair || 0"); h0 = T.ev("window.__hm.S.merit.hearth || 0")
+                hfloor = T.ev("window.__hm.FA.FAC_NEED[(window.__hm.S.ranks || {}).hearth || 0] || 0")   # merit never drops below the current rank's floor
+                T.talk("quartermaster", keep_open=True); chq = T.to_choice()
+                labs = chq["options"] if chq else []
+                k = next((i for i, l in enumerate(labs) if "heartwood" in l), -1)
+                if k >= 0: ip.keyboard.press(str(k + 1)); ip.wait_for_timeout(300)
+                T.read_all()
+                T.step("conquer sale: Sable buys the Regent's heartwood: +60 Black Doubloons, -5 Hearth standing (never below the rank floor), the slab leaves the bag",
+                       k >= 0 and T.ev("window.__hm.S.merit.corsair || 0") == c0 + 60 and T.ev("window.__hm.S.merit.hearth || 0") == max(hfloor, h0 - 5) and not T.ev("window.__hm.S.inv.heartwood"), options=labs)
+                T.step("no JS errors (6.4 groundwork)", not errors and not T.ev("window.__hd2d.errors.length"), errors=errors[:5])
+                ic.close()
+                seg_done("I")
+            except Exception as e:  # noqa: BLE001
+                rep["pass"] = False
+                rep["error"] = f"vanaheim4: {type(e).__name__}: {e}"[:400]
+                try:
+                    rep["shots"]["failure_I"] = T.shot("failure_I"); rep["state"] = T.S()
                 except Exception:  # noqa: BLE001
                     pass
         # every shard checks its own pages for JS errors even when the counted 'no JS errors' steps live in another shard

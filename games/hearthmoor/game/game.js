@@ -10,7 +10,7 @@ import { Temple } from './temple.js';
 import { Ambient } from './audio.js';
 import * as PR from './progress.js';
 import { HEROES, HERO, SPELLS, SUMMONS, CHARM_DMG, CHARM_CD } from './heroes.js';
-import { Combat } from './combat.js';
+import { Combat, framePullFor, isTrial } from './combat.js';
 import { Glow } from './glow.js';
 import { Hollows } from './hollows.js';
 import { Garden } from './garden.js';
@@ -62,6 +62,7 @@ G.crossing = new Crossing(G);   // Bifrost Crossing: the realm gates' looks (all
 G.garden = new Garden(G);
 G.weather = new Weather(G);
 G.intro = new Intro(G);
+G.framePullFor = framePullFor; G.isTrial = isTrial;   // 6.4 boss camera + trial mode (smoke)
 G.storms = new Storms(G); G.stormAt = stormAt; G.STORM_REGIONS = STORM_REGIONS;   // 6.5 rift storms
 G.rares = new Rares(G); G.rifts = new Rifts(G); G.factions = new Factions(G); G.FA = { FACTIONS, FAC_IDS, FAC_RANKS, FAC_NEED, migrate: facMigrate };
 G.onRareKill = (R) => G.factions.onRare(R);   // Stage 5 part 3: merit

@@ -29,12 +29,16 @@ export const FACTIONS = {
 };
 export const IDS = Object.keys(FACTIONS);
 // the realm faction of each area: rifts, rares and mini-bosses there earn its merit
-export const REALM = { plaza: 'hearth', lane: 'hearth', mossglen: 'hearth', hollows: 'hearth', vanaheim: 'embassy', rift: 'gate', ravenhold: 'corsair', bifrost: 'gate', temple: 'hearth' };
+export const REALM = { plaza: 'hearth', lane: 'hearth', mossglen: 'hearth', hollows: 'hearth', vanaheim: 'embassy', rift: 'gate', ravenhold: 'corsair', bifrost: 'gate', temple: 'hearth',
+                        rotwood: 'embassy', verdant: 'embassy' };   // 6.4 Vanaheim dungeons (areas not built yet)
+export const VANAHEIM_AREAS = { vanaheim: 1, rotwood: 1, verdant: 1 };
 export const MERIT = { errand: 40, rift: [30, 60, 120], rare: 50, rareTrait: 40, boss: 80, riddle: 60, secret: 40, smuggle: 15, rival: 5, warden: 20,
                         sable: 20, dues: 15, harbor: 40,     // Ravenhold: meeting Sable, paying harbor dues, the harbor story quest (all Corsair)
                         halvard: 20, road: 60,               // Bifrost: meeting Gatewright Halvard, finishing 'The Road to the Rift' there (Guild)
                         refuge: 40, altar: 60, relight: 120, arch: 40,   // 6.3 Old Temple: basket, The Cold Altar, Keeper of the Gate (Hearth); Midgard's arch repaired (Guild)
-                        stormwatch: 60 };   // 6.5: the Storm Watch bounty (Guild)
+                        stormwatch: 60,   // 6.5: the Storm Watch bounty (Guild)
+                        vh_spring: 60, rotwood: 120, trial: 80, verdant: 120,   // 6.4 Vanaheim (Realm Favor, embassy)
+                        heartwood: 60 };   // 6.4: selling the Regent's heartwood to Sable (Corsair; costs MERIT.rival Hearth)
 export const rankOf = (m) => { let r = 0; for (let k = 1; k < NEED.length; k++) if (m >= NEED[k]) r = k; return r; };
 
 // save migration: older saves get the merit their finished work would have earned (errands, rifts sealed, rares felled)
@@ -94,7 +98,8 @@ export class Factions {
     G.save && G.save();
   }
   // activity hooks
-  realm() { return REALM[this.G.area] || 'hearth'; }
+  // 6.4 (lead decision 3): a Vanaheim conqueror earns no Realm Favor there; that merit goes to the Guild's Rift Marks instead
+  realm() { const a = this.G.area; if (VANAHEIM_AREAS[a] && ((this.G.S.flags || {}).alliance || {}).vanaheim === 'conquer') return 'gate'; return REALM[a] || 'hearth'; }
   onErrand() { this.add('hearth', MERIT.errand, 'errand'); }
   onRift(tier, storm = false) {
     const g = MERIT.rift[tier] || 0;

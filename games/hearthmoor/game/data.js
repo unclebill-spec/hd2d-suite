@@ -16,6 +16,7 @@ export const ITEMS = {
   // Stage 6.3 (the Old Temple): key items, never sold
   reliefbasket: { name: 'Order relief basket', px: 'reliefbasket', about: 'Hearthloaves, wool blankets and a tin of Wren\'s tea, packed by the Order of the Hearth for the Old Temple.' },
   hearthwrit: { name: 'Hearth writ', px: 'hearthwrit', about: 'A folded writ with the Order\'s wax seal. The Old Temple\'s gate opens for whoever carries it.' },
+  heartwood: { name: 'Regent\'s heartwood', px: 'heartwood', about: 'A slab of the Blight Regent\'s heart, rot-black and cold. A rare forging material. Sable would pay.' },   // 6.4 (conquer)
   alder_charm: { name: 'Warden Aldis\'s lantern charm', px: 'alder_charm', key: true, about: 'A thumb-sized brass lantern on a chain. Grandpa Alder\'s grandmother carried it on the Rift.',
                  aboutLit: 'A thumb-sized brass lantern. A small cold-fire flame burns inside and never gutters.' },
   denbiscuit: { name: 'Den biscuit', px: 'denbiscuit', about: "Signe's oat-and-moonpetal biscuit. Feed your pet once a day (hero screen, Gear tab): bond grows, and its glow doubles for 60 s." },
@@ -163,6 +164,11 @@ export const TALK = {
         if ((G.S.gold || 0) < 25) return { pages: ['Twenty-five gold, friend. Come back when your purse has caught up with your manners.'] };
         G.S.gold -= 25; G.S.flags = G.S.flags || {}; G.S.flags.rh_dues = 1; G.factions.add('corsair', 15, 'dues');
         return { pages: ['Paid in full. The Corsairs will remember that you paid without being asked.'] }; } }]),
+      // 6.4 (lead decision 4): the conqueror's heartwood sells to the Corsairs (+60 Black Doubloons, a little Hearth standing lost)
+      ...((S.inv || {}).heartwood ? [{ label: 'Sell the Regent\'s heartwood.', pick: (G) => {
+        G.take('heartwood', 1); G.factions.add('corsair', MERIT.heartwood, 'heartwood'); G.factions.add('hearth', -MERIT.rival, 'rival');
+        return { pages: ['Vanaheim heartwood. Cold as a debt and twice as heavy. The Corsairs will find a buyer who doesn\'t ask.',
+                         'Sixty doubloons in the ledger. Don\'t tell the Order where it came from. I certainly won\'t.'] }; } }] : []),
       { label: 'Just passing through.', cancel: true, pick: () => ({ pages: ['Then pass carefully. The quay is slippery.'] }) },
     ] };
     const meet = (G) => { const was = G.S.met?.sable; G.S.met = { ...(G.S.met || {}), sable: 1 }; if (!was) G.factions.add('corsair', 20, 'sable'); };
