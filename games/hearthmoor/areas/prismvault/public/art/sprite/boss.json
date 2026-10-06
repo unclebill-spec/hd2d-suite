@@ -2,14 +2,14 @@
  "tool": "hd2d boss_sheet",
  "biome": "cozy-village",
  "frame": [
-  100,
-  160
+  56,
+  90
  ],
  "pivot": [
-  50,
-  160
+  28,
+  90
  ],
- "ground_row": 159,
+ "ground_row": 89,
  "facings": [
   "down",
   "up",
@@ -98,17 +98,17 @@
  "cols": 28,
  "image": "boss.png",
  "size": [
-  2800,
-  640
+  1568,
+  360
  ],
  "roles": {
-  "sylvaine": {
+  "lenswarden": {
    "row": 0,
    "kind": "enemy",
    "enemy": true,
    "boss": true,
-   "scale": 5.0,
-   "desc": "Lady Sylvaine, elf vampire queen (boss, 5x): silver hair, crystal crown, red eyes, dark bodice + rose collar, gold waist cinch, long deep-blue skirt, red-lined cape, crystal scepter",
+   "scale": 2.8,
+   "desc": "The Lens Warden (mini-boss, 2.8x): crystal golem of violet glass and black stone, a great round chest-lens, frost-cracks across one shoulder",
    "anims": [
     "idle",
     "walk",
@@ -118,909 +118,909 @@
    "size_bounds": [
     [
      12,
-     98
+     54
     ],
     [
      12,
-     160
+     90
     ]
    ],
    "caster": false,
    "frames": [
     {
-     "name": "sylvaine_down_idle0",
+     "name": "lenswarden_down_idle0",
      "facing": "down",
      "anim": "idle",
      "i": 0,
      "x": 0,
      "y": 0,
-     "w": 100,
-     "h": 160,
+     "w": 56,
+     "h": 90,
      "pivot": [
-      50,
-      160
+      28,
+      90
      ]
     },
     {
-     "name": "sylvaine_down_idle1",
+     "name": "lenswarden_down_idle1",
      "facing": "down",
      "anim": "idle",
      "i": 1,
-     "x": 100,
+     "x": 56,
      "y": 0,
-     "w": 100,
-     "h": 160,
+     "w": 56,
+     "h": 90,
      "pivot": [
-      150,
-      160
+      84,
+      90
      ]
     },
     {
-     "name": "sylvaine_down_idle2",
+     "name": "lenswarden_down_idle2",
      "facing": "down",
      "anim": "idle",
      "i": 2,
-     "x": 200,
+     "x": 112,
      "y": 0,
-     "w": 100,
-     "h": 160,
+     "w": 56,
+     "h": 90,
      "pivot": [
-      250,
-      160
+      140,
+      90
      ]
     },
     {
-     "name": "sylvaine_down_idle3",
+     "name": "lenswarden_down_idle3",
      "facing": "down",
      "anim": "idle",
      "i": 3,
-     "x": 300,
+     "x": 168,
      "y": 0,
-     "w": 100,
-     "h": 160,
+     "w": 56,
+     "h": 90,
      "pivot": [
-      350,
-      160
+      196,
+      90
      ]
     },
     {
-     "name": "sylvaine_down_walk0",
+     "name": "lenswarden_down_walk0",
      "facing": "down",
      "anim": "walk",
      "i": 0,
-     "x": 400,
+     "x": 224,
      "y": 0,
-     "w": 100,
-     "h": 160,
+     "w": 56,
+     "h": 90,
      "pivot": [
-      450,
-      160
+      252,
+      90
      ]
     },
     {
-     "name": "sylvaine_down_walk1",
+     "name": "lenswarden_down_walk1",
      "facing": "down",
      "anim": "walk",
      "i": 1,
-     "x": 500,
+     "x": 280,
      "y": 0,
-     "w": 100,
-     "h": 160,
+     "w": 56,
+     "h": 90,
      "pivot": [
-      550,
-      160
+      308,
+      90
      ]
     },
     {
-     "name": "sylvaine_down_walk2",
+     "name": "lenswarden_down_walk2",
      "facing": "down",
      "anim": "walk",
      "i": 2,
-     "x": 600,
+     "x": 336,
      "y": 0,
-     "w": 100,
-     "h": 160,
+     "w": 56,
+     "h": 90,
      "pivot": [
-      650,
-      160
+      364,
+      90
      ]
     },
     {
-     "name": "sylvaine_down_walk3",
+     "name": "lenswarden_down_walk3",
      "facing": "down",
      "anim": "walk",
      "i": 3,
-     "x": 700,
+     "x": 392,
      "y": 0,
-     "w": 100,
-     "h": 160,
+     "w": 56,
+     "h": 90,
      "pivot": [
-      750,
-      160
+      420,
+      90
      ]
     },
     {
-     "name": "sylvaine_down_attack0",
+     "name": "lenswarden_down_attack0",
      "facing": "down",
      "anim": "attack",
      "i": 0,
-     "x": 1200,
+     "x": 672,
      "y": 0,
-     "w": 100,
-     "h": 160,
+     "w": 56,
+     "h": 90,
      "pivot": [
-      1250,
-      160
+      700,
+      90
      ]
     },
     {
-     "name": "sylvaine_down_attack1",
+     "name": "lenswarden_down_attack1",
      "facing": "down",
      "anim": "attack",
      "i": 1,
-     "x": 1300,
+     "x": 728,
      "y": 0,
-     "w": 100,
-     "h": 160,
+     "w": 56,
+     "h": 90,
      "pivot": [
-      1350,
-      160
+      756,
+      90
      ]
     },
     {
-     "name": "sylvaine_down_attack2",
+     "name": "lenswarden_down_attack2",
      "facing": "down",
      "anim": "attack",
      "i": 2,
+     "x": 784,
+     "y": 0,
+     "w": 56,
+     "h": 90,
+     "pivot": [
+      812,
+      90
+     ]
+    },
+    {
+     "name": "lenswarden_down_attack3",
+     "facing": "down",
+     "anim": "attack",
+     "i": 3,
+     "x": 840,
+     "y": 0,
+     "w": 56,
+     "h": 90,
+     "pivot": [
+      868,
+      90
+     ]
+    },
+    {
+     "name": "lenswarden_down_die0",
+     "facing": "down",
+     "anim": "die",
+     "i": 0,
+     "x": 1344,
+     "y": 0,
+     "w": 56,
+     "h": 90,
+     "pivot": [
+      1372,
+      90
+     ]
+    },
+    {
+     "name": "lenswarden_down_die1",
+     "facing": "down",
+     "anim": "die",
+     "i": 1,
      "x": 1400,
      "y": 0,
-     "w": 100,
-     "h": 160,
+     "w": 56,
+     "h": 90,
      "pivot": [
-      1450,
-      160
+      1428,
+      90
      ]
     },
     {
-     "name": "sylvaine_down_attack3",
-     "facing": "down",
-     "anim": "attack",
-     "i": 3,
-     "x": 1500,
-     "y": 0,
-     "w": 100,
-     "h": 160,
-     "pivot": [
-      1550,
-      160
-     ]
-    },
-    {
-     "name": "sylvaine_down_die0",
-     "facing": "down",
-     "anim": "die",
-     "i": 0,
-     "x": 2400,
-     "y": 0,
-     "w": 100,
-     "h": 160,
-     "pivot": [
-      2450,
-      160
-     ]
-    },
-    {
-     "name": "sylvaine_down_die1",
-     "facing": "down",
-     "anim": "die",
-     "i": 1,
-     "x": 2500,
-     "y": 0,
-     "w": 100,
-     "h": 160,
-     "pivot": [
-      2550,
-      160
-     ]
-    },
-    {
-     "name": "sylvaine_down_die2",
+     "name": "lenswarden_down_die2",
      "facing": "down",
      "anim": "die",
      "i": 2,
-     "x": 2600,
+     "x": 1456,
      "y": 0,
-     "w": 100,
-     "h": 160,
+     "w": 56,
+     "h": 90,
      "pivot": [
-      2650,
-      160
+      1484,
+      90
      ]
     },
     {
-     "name": "sylvaine_down_die3",
+     "name": "lenswarden_down_die3",
      "facing": "down",
      "anim": "die",
      "i": 3,
-     "x": 2700,
+     "x": 1512,
      "y": 0,
-     "w": 100,
-     "h": 160,
+     "w": 56,
+     "h": 90,
      "pivot": [
-      2750,
-      160
+      1540,
+      90
      ]
     },
     {
-     "name": "sylvaine_up_idle0",
+     "name": "lenswarden_up_idle0",
      "facing": "up",
      "anim": "idle",
      "i": 0,
      "x": 0,
-     "y": 160,
-     "w": 100,
-     "h": 160,
+     "y": 90,
+     "w": 56,
+     "h": 90,
      "pivot": [
-      50,
-      320
+      28,
+      180
      ]
     },
     {
-     "name": "sylvaine_up_idle1",
+     "name": "lenswarden_up_idle1",
      "facing": "up",
      "anim": "idle",
      "i": 1,
-     "x": 100,
-     "y": 160,
-     "w": 100,
-     "h": 160,
+     "x": 56,
+     "y": 90,
+     "w": 56,
+     "h": 90,
      "pivot": [
-      150,
-      320
+      84,
+      180
      ]
     },
     {
-     "name": "sylvaine_up_idle2",
+     "name": "lenswarden_up_idle2",
      "facing": "up",
      "anim": "idle",
      "i": 2,
-     "x": 200,
-     "y": 160,
-     "w": 100,
-     "h": 160,
+     "x": 112,
+     "y": 90,
+     "w": 56,
+     "h": 90,
      "pivot": [
-      250,
-      320
+      140,
+      180
      ]
     },
     {
-     "name": "sylvaine_up_idle3",
+     "name": "lenswarden_up_idle3",
      "facing": "up",
      "anim": "idle",
      "i": 3,
-     "x": 300,
-     "y": 160,
-     "w": 100,
-     "h": 160,
+     "x": 168,
+     "y": 90,
+     "w": 56,
+     "h": 90,
      "pivot": [
-      350,
-      320
+      196,
+      180
      ]
     },
     {
-     "name": "sylvaine_up_walk0",
+     "name": "lenswarden_up_walk0",
      "facing": "up",
      "anim": "walk",
      "i": 0,
-     "x": 400,
-     "y": 160,
-     "w": 100,
-     "h": 160,
+     "x": 224,
+     "y": 90,
+     "w": 56,
+     "h": 90,
      "pivot": [
-      450,
-      320
+      252,
+      180
      ]
     },
     {
-     "name": "sylvaine_up_walk1",
+     "name": "lenswarden_up_walk1",
      "facing": "up",
      "anim": "walk",
      "i": 1,
-     "x": 500,
-     "y": 160,
-     "w": 100,
-     "h": 160,
+     "x": 280,
+     "y": 90,
+     "w": 56,
+     "h": 90,
      "pivot": [
-      550,
-      320
+      308,
+      180
      ]
     },
     {
-     "name": "sylvaine_up_walk2",
+     "name": "lenswarden_up_walk2",
      "facing": "up",
      "anim": "walk",
      "i": 2,
-     "x": 600,
-     "y": 160,
-     "w": 100,
-     "h": 160,
+     "x": 336,
+     "y": 90,
+     "w": 56,
+     "h": 90,
      "pivot": [
-      650,
-      320
+      364,
+      180
      ]
     },
     {
-     "name": "sylvaine_up_walk3",
+     "name": "lenswarden_up_walk3",
      "facing": "up",
      "anim": "walk",
      "i": 3,
-     "x": 700,
-     "y": 160,
-     "w": 100,
-     "h": 160,
+     "x": 392,
+     "y": 90,
+     "w": 56,
+     "h": 90,
      "pivot": [
-      750,
-      320
+      420,
+      180
      ]
     },
     {
-     "name": "sylvaine_up_attack0",
+     "name": "lenswarden_up_attack0",
      "facing": "up",
      "anim": "attack",
      "i": 0,
-     "x": 1200,
-     "y": 160,
-     "w": 100,
-     "h": 160,
+     "x": 672,
+     "y": 90,
+     "w": 56,
+     "h": 90,
      "pivot": [
-      1250,
-      320
+      700,
+      180
      ]
     },
     {
-     "name": "sylvaine_up_attack1",
+     "name": "lenswarden_up_attack1",
      "facing": "up",
      "anim": "attack",
      "i": 1,
-     "x": 1300,
-     "y": 160,
-     "w": 100,
-     "h": 160,
+     "x": 728,
+     "y": 90,
+     "w": 56,
+     "h": 90,
      "pivot": [
-      1350,
-      320
+      756,
+      180
      ]
     },
     {
-     "name": "sylvaine_up_attack2",
+     "name": "lenswarden_up_attack2",
      "facing": "up",
      "anim": "attack",
      "i": 2,
+     "x": 784,
+     "y": 90,
+     "w": 56,
+     "h": 90,
+     "pivot": [
+      812,
+      180
+     ]
+    },
+    {
+     "name": "lenswarden_up_attack3",
+     "facing": "up",
+     "anim": "attack",
+     "i": 3,
+     "x": 840,
+     "y": 90,
+     "w": 56,
+     "h": 90,
+     "pivot": [
+      868,
+      180
+     ]
+    },
+    {
+     "name": "lenswarden_up_die0",
+     "facing": "up",
+     "anim": "die",
+     "i": 0,
+     "x": 1344,
+     "y": 90,
+     "w": 56,
+     "h": 90,
+     "pivot": [
+      1372,
+      180
+     ]
+    },
+    {
+     "name": "lenswarden_up_die1",
+     "facing": "up",
+     "anim": "die",
+     "i": 1,
      "x": 1400,
-     "y": 160,
-     "w": 100,
-     "h": 160,
+     "y": 90,
+     "w": 56,
+     "h": 90,
      "pivot": [
-      1450,
-      320
+      1428,
+      180
      ]
     },
     {
-     "name": "sylvaine_up_attack3",
-     "facing": "up",
-     "anim": "attack",
-     "i": 3,
-     "x": 1500,
-     "y": 160,
-     "w": 100,
-     "h": 160,
-     "pivot": [
-      1550,
-      320
-     ]
-    },
-    {
-     "name": "sylvaine_up_die0",
-     "facing": "up",
-     "anim": "die",
-     "i": 0,
-     "x": 2400,
-     "y": 160,
-     "w": 100,
-     "h": 160,
-     "pivot": [
-      2450,
-      320
-     ]
-    },
-    {
-     "name": "sylvaine_up_die1",
-     "facing": "up",
-     "anim": "die",
-     "i": 1,
-     "x": 2500,
-     "y": 160,
-     "w": 100,
-     "h": 160,
-     "pivot": [
-      2550,
-      320
-     ]
-    },
-    {
-     "name": "sylvaine_up_die2",
+     "name": "lenswarden_up_die2",
      "facing": "up",
      "anim": "die",
      "i": 2,
-     "x": 2600,
-     "y": 160,
-     "w": 100,
-     "h": 160,
+     "x": 1456,
+     "y": 90,
+     "w": 56,
+     "h": 90,
      "pivot": [
-      2650,
-      320
+      1484,
+      180
      ]
     },
     {
-     "name": "sylvaine_up_die3",
+     "name": "lenswarden_up_die3",
      "facing": "up",
      "anim": "die",
      "i": 3,
-     "x": 2700,
-     "y": 160,
-     "w": 100,
-     "h": 160,
+     "x": 1512,
+     "y": 90,
+     "w": 56,
+     "h": 90,
      "pivot": [
-      2750,
-      320
+      1540,
+      180
      ]
     },
     {
-     "name": "sylvaine_left_idle0",
+     "name": "lenswarden_left_idle0",
      "facing": "left",
      "anim": "idle",
      "i": 0,
      "x": 0,
-     "y": 320,
-     "w": 100,
-     "h": 160,
+     "y": 180,
+     "w": 56,
+     "h": 90,
      "pivot": [
-      50,
-      480
+      28,
+      270
      ]
     },
     {
-     "name": "sylvaine_left_idle1",
+     "name": "lenswarden_left_idle1",
      "facing": "left",
      "anim": "idle",
      "i": 1,
-     "x": 100,
-     "y": 320,
-     "w": 100,
-     "h": 160,
+     "x": 56,
+     "y": 180,
+     "w": 56,
+     "h": 90,
      "pivot": [
-      150,
-      480
+      84,
+      270
      ]
     },
     {
-     "name": "sylvaine_left_idle2",
+     "name": "lenswarden_left_idle2",
      "facing": "left",
      "anim": "idle",
      "i": 2,
-     "x": 200,
-     "y": 320,
-     "w": 100,
-     "h": 160,
+     "x": 112,
+     "y": 180,
+     "w": 56,
+     "h": 90,
      "pivot": [
-      250,
-      480
+      140,
+      270
      ]
     },
     {
-     "name": "sylvaine_left_idle3",
+     "name": "lenswarden_left_idle3",
      "facing": "left",
      "anim": "idle",
      "i": 3,
-     "x": 300,
-     "y": 320,
-     "w": 100,
-     "h": 160,
+     "x": 168,
+     "y": 180,
+     "w": 56,
+     "h": 90,
      "pivot": [
-      350,
-      480
+      196,
+      270
      ]
     },
     {
-     "name": "sylvaine_left_walk0",
+     "name": "lenswarden_left_walk0",
      "facing": "left",
      "anim": "walk",
      "i": 0,
-     "x": 400,
-     "y": 320,
-     "w": 100,
-     "h": 160,
+     "x": 224,
+     "y": 180,
+     "w": 56,
+     "h": 90,
      "pivot": [
-      450,
-      480
+      252,
+      270
      ]
     },
     {
-     "name": "sylvaine_left_walk1",
+     "name": "lenswarden_left_walk1",
      "facing": "left",
      "anim": "walk",
      "i": 1,
-     "x": 500,
-     "y": 320,
-     "w": 100,
-     "h": 160,
+     "x": 280,
+     "y": 180,
+     "w": 56,
+     "h": 90,
      "pivot": [
-      550,
-      480
+      308,
+      270
      ]
     },
     {
-     "name": "sylvaine_left_walk2",
+     "name": "lenswarden_left_walk2",
      "facing": "left",
      "anim": "walk",
      "i": 2,
-     "x": 600,
-     "y": 320,
-     "w": 100,
-     "h": 160,
+     "x": 336,
+     "y": 180,
+     "w": 56,
+     "h": 90,
      "pivot": [
-      650,
-      480
+      364,
+      270
      ]
     },
     {
-     "name": "sylvaine_left_walk3",
+     "name": "lenswarden_left_walk3",
      "facing": "left",
      "anim": "walk",
      "i": 3,
-     "x": 700,
-     "y": 320,
-     "w": 100,
-     "h": 160,
+     "x": 392,
+     "y": 180,
+     "w": 56,
+     "h": 90,
      "pivot": [
-      750,
-      480
+      420,
+      270
      ]
     },
     {
-     "name": "sylvaine_left_attack0",
+     "name": "lenswarden_left_attack0",
      "facing": "left",
      "anim": "attack",
      "i": 0,
-     "x": 1200,
-     "y": 320,
-     "w": 100,
-     "h": 160,
+     "x": 672,
+     "y": 180,
+     "w": 56,
+     "h": 90,
      "pivot": [
-      1250,
-      480
+      700,
+      270
      ]
     },
     {
-     "name": "sylvaine_left_attack1",
+     "name": "lenswarden_left_attack1",
      "facing": "left",
      "anim": "attack",
      "i": 1,
-     "x": 1300,
-     "y": 320,
-     "w": 100,
-     "h": 160,
+     "x": 728,
+     "y": 180,
+     "w": 56,
+     "h": 90,
      "pivot": [
-      1350,
-      480
+      756,
+      270
      ]
     },
     {
-     "name": "sylvaine_left_attack2",
+     "name": "lenswarden_left_attack2",
      "facing": "left",
      "anim": "attack",
      "i": 2,
+     "x": 784,
+     "y": 180,
+     "w": 56,
+     "h": 90,
+     "pivot": [
+      812,
+      270
+     ]
+    },
+    {
+     "name": "lenswarden_left_attack3",
+     "facing": "left",
+     "anim": "attack",
+     "i": 3,
+     "x": 840,
+     "y": 180,
+     "w": 56,
+     "h": 90,
+     "pivot": [
+      868,
+      270
+     ]
+    },
+    {
+     "name": "lenswarden_left_die0",
+     "facing": "left",
+     "anim": "die",
+     "i": 0,
+     "x": 1344,
+     "y": 180,
+     "w": 56,
+     "h": 90,
+     "pivot": [
+      1372,
+      270
+     ]
+    },
+    {
+     "name": "lenswarden_left_die1",
+     "facing": "left",
+     "anim": "die",
+     "i": 1,
      "x": 1400,
-     "y": 320,
-     "w": 100,
-     "h": 160,
+     "y": 180,
+     "w": 56,
+     "h": 90,
      "pivot": [
-      1450,
-      480
+      1428,
+      270
      ]
     },
     {
-     "name": "sylvaine_left_attack3",
-     "facing": "left",
-     "anim": "attack",
-     "i": 3,
-     "x": 1500,
-     "y": 320,
-     "w": 100,
-     "h": 160,
-     "pivot": [
-      1550,
-      480
-     ]
-    },
-    {
-     "name": "sylvaine_left_die0",
-     "facing": "left",
-     "anim": "die",
-     "i": 0,
-     "x": 2400,
-     "y": 320,
-     "w": 100,
-     "h": 160,
-     "pivot": [
-      2450,
-      480
-     ]
-    },
-    {
-     "name": "sylvaine_left_die1",
-     "facing": "left",
-     "anim": "die",
-     "i": 1,
-     "x": 2500,
-     "y": 320,
-     "w": 100,
-     "h": 160,
-     "pivot": [
-      2550,
-      480
-     ]
-    },
-    {
-     "name": "sylvaine_left_die2",
+     "name": "lenswarden_left_die2",
      "facing": "left",
      "anim": "die",
      "i": 2,
-     "x": 2600,
-     "y": 320,
-     "w": 100,
-     "h": 160,
+     "x": 1456,
+     "y": 180,
+     "w": 56,
+     "h": 90,
      "pivot": [
-      2650,
-      480
+      1484,
+      270
      ]
     },
     {
-     "name": "sylvaine_left_die3",
+     "name": "lenswarden_left_die3",
      "facing": "left",
      "anim": "die",
      "i": 3,
-     "x": 2700,
-     "y": 320,
-     "w": 100,
-     "h": 160,
+     "x": 1512,
+     "y": 180,
+     "w": 56,
+     "h": 90,
      "pivot": [
-      2750,
-      480
+      1540,
+      270
      ]
     },
     {
-     "name": "sylvaine_right_idle0",
+     "name": "lenswarden_right_idle0",
      "facing": "right",
      "anim": "idle",
      "i": 0,
      "x": 0,
-     "y": 480,
-     "w": 100,
-     "h": 160,
+     "y": 270,
+     "w": 56,
+     "h": 90,
      "pivot": [
-      50,
-      640
+      28,
+      360
      ]
     },
     {
-     "name": "sylvaine_right_idle1",
+     "name": "lenswarden_right_idle1",
      "facing": "right",
      "anim": "idle",
      "i": 1,
-     "x": 100,
-     "y": 480,
-     "w": 100,
-     "h": 160,
+     "x": 56,
+     "y": 270,
+     "w": 56,
+     "h": 90,
      "pivot": [
-      150,
-      640
+      84,
+      360
      ]
     },
     {
-     "name": "sylvaine_right_idle2",
+     "name": "lenswarden_right_idle2",
      "facing": "right",
      "anim": "idle",
      "i": 2,
-     "x": 200,
-     "y": 480,
-     "w": 100,
-     "h": 160,
+     "x": 112,
+     "y": 270,
+     "w": 56,
+     "h": 90,
      "pivot": [
-      250,
-      640
+      140,
+      360
      ]
     },
     {
-     "name": "sylvaine_right_idle3",
+     "name": "lenswarden_right_idle3",
      "facing": "right",
      "anim": "idle",
      "i": 3,
-     "x": 300,
-     "y": 480,
-     "w": 100,
-     "h": 160,
+     "x": 168,
+     "y": 270,
+     "w": 56,
+     "h": 90,
      "pivot": [
-      350,
-      640
+      196,
+      360
      ]
     },
     {
-     "name": "sylvaine_right_walk0",
+     "name": "lenswarden_right_walk0",
      "facing": "right",
      "anim": "walk",
      "i": 0,
-     "x": 400,
-     "y": 480,
-     "w": 100,
-     "h": 160,
+     "x": 224,
+     "y": 270,
+     "w": 56,
+     "h": 90,
      "pivot": [
-      450,
-      640
+      252,
+      360
      ]
     },
     {
-     "name": "sylvaine_right_walk1",
+     "name": "lenswarden_right_walk1",
      "facing": "right",
      "anim": "walk",
      "i": 1,
-     "x": 500,
-     "y": 480,
-     "w": 100,
-     "h": 160,
+     "x": 280,
+     "y": 270,
+     "w": 56,
+     "h": 90,
      "pivot": [
-      550,
-      640
+      308,
+      360
      ]
     },
     {
-     "name": "sylvaine_right_walk2",
+     "name": "lenswarden_right_walk2",
      "facing": "right",
      "anim": "walk",
      "i": 2,
-     "x": 600,
-     "y": 480,
-     "w": 100,
-     "h": 160,
+     "x": 336,
+     "y": 270,
+     "w": 56,
+     "h": 90,
      "pivot": [
-      650,
-      640
+      364,
+      360
      ]
     },
     {
-     "name": "sylvaine_right_walk3",
+     "name": "lenswarden_right_walk3",
      "facing": "right",
      "anim": "walk",
      "i": 3,
-     "x": 700,
-     "y": 480,
-     "w": 100,
-     "h": 160,
+     "x": 392,
+     "y": 270,
+     "w": 56,
+     "h": 90,
      "pivot": [
-      750,
-      640
+      420,
+      360
      ]
     },
     {
-     "name": "sylvaine_right_attack0",
+     "name": "lenswarden_right_attack0",
      "facing": "right",
      "anim": "attack",
      "i": 0,
-     "x": 1200,
-     "y": 480,
-     "w": 100,
-     "h": 160,
+     "x": 672,
+     "y": 270,
+     "w": 56,
+     "h": 90,
      "pivot": [
-      1250,
-      640
+      700,
+      360
      ]
     },
     {
-     "name": "sylvaine_right_attack1",
+     "name": "lenswarden_right_attack1",
      "facing": "right",
      "anim": "attack",
      "i": 1,
-     "x": 1300,
-     "y": 480,
-     "w": 100,
-     "h": 160,
+     "x": 728,
+     "y": 270,
+     "w": 56,
+     "h": 90,
      "pivot": [
-      1350,
-      640
+      756,
+      360
      ]
     },
     {
-     "name": "sylvaine_right_attack2",
+     "name": "lenswarden_right_attack2",
      "facing": "right",
      "anim": "attack",
      "i": 2,
+     "x": 784,
+     "y": 270,
+     "w": 56,
+     "h": 90,
+     "pivot": [
+      812,
+      360
+     ]
+    },
+    {
+     "name": "lenswarden_right_attack3",
+     "facing": "right",
+     "anim": "attack",
+     "i": 3,
+     "x": 840,
+     "y": 270,
+     "w": 56,
+     "h": 90,
+     "pivot": [
+      868,
+      360
+     ]
+    },
+    {
+     "name": "lenswarden_right_die0",
+     "facing": "right",
+     "anim": "die",
+     "i": 0,
+     "x": 1344,
+     "y": 270,
+     "w": 56,
+     "h": 90,
+     "pivot": [
+      1372,
+      360
+     ]
+    },
+    {
+     "name": "lenswarden_right_die1",
+     "facing": "right",
+     "anim": "die",
+     "i": 1,
      "x": 1400,
-     "y": 480,
-     "w": 100,
-     "h": 160,
+     "y": 270,
+     "w": 56,
+     "h": 90,
      "pivot": [
-      1450,
-      640
+      1428,
+      360
      ]
     },
     {
-     "name": "sylvaine_right_attack3",
-     "facing": "right",
-     "anim": "attack",
-     "i": 3,
-     "x": 1500,
-     "y": 480,
-     "w": 100,
-     "h": 160,
-     "pivot": [
-      1550,
-      640
-     ]
-    },
-    {
-     "name": "sylvaine_right_die0",
-     "facing": "right",
-     "anim": "die",
-     "i": 0,
-     "x": 2400,
-     "y": 480,
-     "w": 100,
-     "h": 160,
-     "pivot": [
-      2450,
-      640
-     ]
-    },
-    {
-     "name": "sylvaine_right_die1",
-     "facing": "right",
-     "anim": "die",
-     "i": 1,
-     "x": 2500,
-     "y": 480,
-     "w": 100,
-     "h": 160,
-     "pivot": [
-      2550,
-      640
-     ]
-    },
-    {
-     "name": "sylvaine_right_die2",
+     "name": "lenswarden_right_die2",
      "facing": "right",
      "anim": "die",
      "i": 2,
-     "x": 2600,
-     "y": 480,
-     "w": 100,
-     "h": 160,
+     "x": 1456,
+     "y": 270,
+     "w": 56,
+     "h": 90,
      "pivot": [
-      2650,
-      640
+      1484,
+      360
      ]
     },
     {
-     "name": "sylvaine_right_die3",
+     "name": "lenswarden_right_die3",
      "facing": "right",
      "anim": "die",
      "i": 3,
-     "x": 2700,
-     "y": 480,
-     "w": 100,
-     "h": 160,
+     "x": 1512,
+     "y": 270,
+     "w": 56,
+     "h": 90,
      "pivot": [
-      2750,
-      640
+      1540,
+      360
      ]
     }
    ]

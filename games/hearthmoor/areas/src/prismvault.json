@@ -1,8 +1,8 @@
 {
- "name": "The Prism Vault (Alfheim)",
+ "name": "The Prism Vault",
  "seed": 118,
  "biome": "cozy-village",
- "about": "The Prism Vault under Lumenvale: a dark crystal hall of violet-banded pillars where the elves kept their light. Lady Sylvaine, the elf vampire queen, sits her crystal throne here, drinking the realm's magic, with her Mirror Duelists and prism shards on guard.",
+ "about": "A vertical dungeon down the inside of the Prism Spire's root: glass stairs, black stone, great prisms cracked with white frost and violet light leaking from every crack. Nine rooms from the Spire Stair to the Heart Prism: the Hall of Shards, the Mirror Gallery, the Glowfrog Grotto, the Splitter Hall, the Reliquary Walk, the Hall of Reflections, the Cracked Stair and, at the bottom, Lady Sylvaine asleep in the Heart Prism.",
  "time": {
   "start": "night",
   "speed": 0.0
@@ -13,11 +13,16 @@
   "heroes",
   "combat",
   "prismshard",
-  "neonwisp",
-  "mirrorduelist"
+  "willwisp",
+  "crystalgolem",
+  "mirrorduelist",
+  "lightranger"
  ],
  "boss_roles": [
-  "sylvaine"
+  "lenswarden",
+  "sylvaine",
+  "shardmother",
+  "glassstalker"
  ],
  "camera": {
   "fov": 24,
@@ -30,72 +35,119 @@
   "look": [
    0,
    0,
-   -1.6
+   -2.0
   ],
   "bounds": [
-   -7.0,
-   -6.5,
-   7.0,
-   6.0
+   -4.0,
+   -50.0,
+   6.0,
+   38.0
   ]
  },
  "ground": {
   "size": [
-   80,
-   70
+   70,
+   130
   ],
   "mat": "stone",
   "walk": [
-   -12.4,
-   -12.4,
-   12.4,
-   9.6
+   -8.4,
+   -55.4,
+   15.4,
+   42.4
   ]
  },
  "slabs": [
   {
-   "name": "aisle",
+   "name": "stairglass",
    "rect": [
-    -1.6,
-    -9.0,
-    1.6,
-    8.0
+    -1.4,
+    34.4,
+    1.4,
+    41.6
+   ],
+   "mat": "plaster",
+   "h": 0.03
+  },
+  {
+   "name": "p8floor",
+   "rect": [
+    -6.5,
+    -53.5,
+    6.5,
+    -40.5
    ],
    "mat": "cobble",
    "h": 0.03
   },
   {
-   "name": "dais",
+   "name": "p5aisle",
    "rect": [
-    -5.6,
-    -11.0,
-    5.6,
-    -4.0
+    -1.4,
+    -14,
+    1.4,
+    -5
    ],
-   "mat": "cobble",
-   "h": 0.06
+   "mat": "plaster",
+   "h": 0.03
   }
  ],
  "terraces": [
   {
-   "name": "wall_n",
+   "name": "wall_w",
    "rect": [
     -30,
-    -30,
-    30,
-    -11.6
+    -38,
+    -6,
+    34
    ],
    "h": 3.6,
    "top": "stone",
    "coping": true
   },
   {
-   "name": "wall_w",
+   "name": "wall_w0",
    "rect": [
     -30,
-    -11.6,
-    -11.8,
-    30
+    34,
+    -4,
+    60
+   ],
+   "h": 3.6,
+   "top": "stone",
+   "coping": true
+  },
+  {
+   "name": "wall_w8",
+   "rect": [
+    -30,
+    -80,
+    -8,
+    -38
+   ],
+   "h": 3.6,
+   "top": "stone",
+   "coping": true
+  },
+  {
+   "name": "wall_n",
+   "rect": [
+    -8,
+    -80,
+    30,
+    -55
+   ],
+   "h": 3.6,
+   "top": "stone",
+   "coping": true
+  },
+  {
+   "name": "wall_e0",
+   "rect": [
+    4,
+    34,
+    30,
+    60
    ],
    "h": 3.6,
    "top": "stone",
@@ -104,215 +156,954 @@
   {
    "name": "wall_e",
    "rect": [
-    11.8,
-    -11.6,
+    6,
+    6,
     30,
-    30
+    34
    ],
    "h": 3.6,
+   "top": "stone",
+   "coping": true
+  },
+  {
+   "name": "wall_e3",
+   "rect": [
+    15,
+    -4,
+    30,
+    6
+   ],
+   "h": 3.6,
+   "top": "stone",
+   "coping": true
+  },
+  {
+   "name": "wall_e4a",
+   "rect": [
+    6,
+    -4,
+    7,
+    0.2
+   ],
+   "h": 3.6,
+   "top": "stone",
+   "coping": true
+  },
+  {
+   "name": "wall_e4b",
+   "rect": [
+    6,
+    1.8,
+    7,
+    6
+   ],
+   "h": 3.6,
+   "top": "stone",
+   "coping": true
+  },
+  {
+   "name": "wall_e5",
+   "rect": [
+    6,
+    -38,
+    30,
+    -4
+   ],
+   "h": 3.6,
+   "top": "stone",
+   "coping": true
+  },
+  {
+   "name": "wall_e8",
+   "rect": [
+    8,
+    -55,
+    30,
+    -38
+   ],
+   "h": 3.6,
+   "top": "stone",
+   "coping": true
+  },
+  {
+   "name": "cross0w",
+   "rect": [
+    -6,
+    33,
+    -1.2,
+    34
+   ],
+   "h": 1.2,
+   "top": "stone",
+   "coping": true
+  },
+  {
+   "name": "cross0e",
+   "rect": [
+    1.2,
+    33,
+    6,
+    34
+   ],
+   "h": 1.2,
+   "top": "stone",
+   "coping": true
+  },
+  {
+   "name": "cross1w",
+   "rect": [
+    -6,
+    21,
+    -1.2,
+    22
+   ],
+   "h": 1.2,
+   "top": "stone",
+   "coping": true
+  },
+  {
+   "name": "cross1e",
+   "rect": [
+    1.2,
+    21,
+    6,
+    22
+   ],
+   "h": 1.2,
+   "top": "stone",
+   "coping": true
+  },
+  {
+   "name": "cross2w",
+   "rect": [
+    -6,
+    9,
+    -1.2,
+    10
+   ],
+   "h": 1.2,
+   "top": "stone",
+   "coping": true
+  },
+  {
+   "name": "cross2e",
+   "rect": [
+    1.2,
+    9,
+    6,
+    10
+   ],
+   "h": 1.2,
+   "top": "stone",
+   "coping": true
+  },
+  {
+   "name": "cross3w",
+   "rect": [
+    -6,
+    -5,
+    -1.2,
+    -4
+   ],
+   "h": 1.2,
+   "top": "stone",
+   "coping": true
+  },
+  {
+   "name": "cross3e",
+   "rect": [
+    1.2,
+    -5,
+    6,
+    -4
+   ],
+   "h": 1.2,
+   "top": "stone",
+   "coping": true
+  },
+  {
+   "name": "cross4w",
+   "rect": [
+    -6,
+    -15,
+    -1.2,
+    -14
+   ],
+   "h": 1.2,
+   "top": "stone",
+   "coping": true
+  },
+  {
+   "name": "cross4e",
+   "rect": [
+    1.2,
+    -15,
+    6,
+    -14
+   ],
+   "h": 1.2,
+   "top": "stone",
+   "coping": true
+  },
+  {
+   "name": "cross5w",
+   "rect": [
+    -6,
+    -28,
+    -1.2,
+    -27
+   ],
+   "h": 1.2,
+   "top": "stone",
+   "coping": true
+  },
+  {
+   "name": "cross5e",
+   "rect": [
+    1.2,
+    -28,
+    6,
+    -27
+   ],
+   "h": 1.2,
+   "top": "stone",
+   "coping": true
+  },
+  {
+   "name": "cross6w",
+   "rect": [
+    -8,
+    -39,
+    -1.2,
+    -38
+   ],
+   "h": 1.2,
+   "top": "stone",
+   "coping": true
+  },
+  {
+   "name": "cross6e",
+   "rect": [
+    1.2,
+    -39,
+    8,
+    -38
+   ],
+   "h": 1.2,
+   "top": "stone",
+   "coping": true
+  },
+  {
+   "name": "cross3n",
+   "rect": [
+    7,
+    6,
+    15,
+    7
+   ],
+   "h": 1.2,
    "top": "stone",
    "coping": true
   }
  ],
  "stairs": [],
- "buildings": [],
+ "decks": [],
  "blocks": [
   [
-   -12.4,
-   9.0,
-   -0.9,
-   9.8
+   -6,
+   -37.4,
+   -1.1,
+   -28.6
   ],
   [
-   0.9,
-   9.0,
-   12.4,
-   9.8
+   1.1,
+   -37.4,
+   6,
+   -28.6
   ],
   [
-   -0.9,
-   9.2,
-   0.9,
-   9.8
+   -8,
+   -55.0,
+   -4.4,
+   -54.25
+  ],
+  [
+   4.4,
+   -55.0,
+   8,
+   -54.25
+  ],
+  [
+   -8,
+   -39.75,
+   -4.4,
+   -39.0
+  ],
+  [
+   4.4,
+   -39.75,
+   8,
+   -39.0
+  ],
+  [
+   -8,
+   -54.25,
+   -5.6,
+   -53.5
+  ],
+  [
+   5.6,
+   -54.25,
+   8,
+   -53.5
+  ],
+  [
+   -8,
+   -40.5,
+   -5.6,
+   -39.75
+  ],
+  [
+   5.6,
+   -40.5,
+   8,
+   -39.75
+  ],
+  [
+   -8,
+   -53.5,
+   -6.4,
+   -52.75
+  ],
+  [
+   6.4,
+   -53.5,
+   8,
+   -52.75
+  ],
+  [
+   -8,
+   -41.25,
+   -6.4,
+   -40.5
+  ],
+  [
+   6.4,
+   -41.25,
+   8,
+   -40.5
+  ],
+  [
+   -8,
+   -52.75,
+   -7.0,
+   -52.0
+  ],
+  [
+   7.0,
+   -52.75,
+   8,
+   -52.0
+  ],
+  [
+   -8,
+   -42.0,
+   -7.0,
+   -41.25
+  ],
+  [
+   7.0,
+   -42.0,
+   8,
+   -41.25
+  ],
+  [
+   -8,
+   -52.0,
+   -7.4,
+   -51.25
+  ],
+  [
+   7.4,
+   -52.0,
+   8,
+   -51.25
+  ],
+  [
+   -8,
+   -42.75,
+   -7.4,
+   -42.0
+  ],
+  [
+   7.4,
+   -42.75,
+   8,
+   -42.0
+  ],
+  [
+   -8,
+   -51.25,
+   -7.7,
+   -50.5
+  ],
+  [
+   7.7,
+   -51.25,
+   8,
+   -50.5
+  ],
+  [
+   -8,
+   -43.5,
+   -7.7,
+   -42.75
+  ],
+  [
+   7.7,
+   -43.5,
+   8,
+   -42.75
+  ],
+  [
+   -8,
+   -50.5,
+   -7.9,
+   -49.75
+  ],
+  [
+   7.9,
+   -50.5,
+   8,
+   -49.75
+  ],
+  [
+   -8,
+   -44.25,
+   -7.9,
+   -43.5
+  ],
+  [
+   7.9,
+   -44.25,
+   8,
+   -43.5
+  ],
+  [
+   -8,
+   -49.75,
+   -8.0,
+   -49.0
+  ],
+  [
+   8.0,
+   -49.75,
+   8,
+   -49.0
+  ],
+  [
+   -8,
+   -45.0,
+   -8.0,
+   -44.25
+  ],
+  [
+   8.0,
+   -45.0,
+   8,
+   -44.25
   ]
  ],
+ "buildings": [],
  "props": [
   {
-   "piece": "prism_crystal",
+   "piece": "rift_brazier_violet",
    "pos": [
-    -1.9,
-    8.9
-   ],
-   "rot": 20
+    2.4,
+    36.4
+   ]
+  },
+  {
+   "piece": "vault_pillar",
+   "pos": [
+    -3.0,
+    39.4
+   ]
+  },
+  {
+   "piece": "vault_pillar",
+   "pos": [
+    3.0,
+    39.4
+   ]
   },
   {
    "piece": "prism_crystal",
    "pos": [
-    1.9,
-    8.9
+    -3.0,
+    35.2
+   ],
+   "rot": 30
+  },
+  {
+   "piece": "cracked_prism",
+   "pos": [
+    -4.2,
+    30.0
+   ]
+  },
+  {
+   "piece": "cracked_prism",
+   "pos": [
+    4.0,
+    29.4
+   ]
+  },
+  {
+   "piece": "cracked_prism",
+   "pos": [
+    -3.6,
+    24.6
+   ]
+  },
+  {
+   "piece": "cracked_prism",
+   "pos": [
+    4.4,
+    25.0
+   ]
+  },
+  {
+   "piece": "vault_pillar",
+   "pos": [
+    -5.2,
+    27.4
+   ]
+  },
+  {
+   "piece": "vault_pillar",
+   "pos": [
+    5.2,
+    27.4
+   ]
+  },
+  {
+   "piece": "beam_source",
+   "pos": [
+    -5.2,
+    18.0
+   ]
+  },
+  {
+   "piece": "lens_dais",
+   "pos": [
+    3.6,
+    11.4
+   ]
+  },
+  {
+   "piece": "mirror_stand",
+   "pos": [
+    -2.0,
+    18.0
+   ]
+  },
+  {
+   "piece": "mirror_stand",
+   "pos": [
+    -2.0,
+    13.0
+   ]
+  },
+  {
+   "piece": "mirror_stand",
+   "pos": [
+    3.5,
+    13.0
+   ]
+  },
+  {
+   "piece": "prism_crystal",
+   "pos": [
+    4.8,
+    19.6
    ],
    "rot": 200
   },
   {
-   "piece": "sylvaine_throne",
+   "piece": "orb_lantern",
+   "pos": [
+    -5.2,
+    11.6
+   ]
+  },
+  {
+   "piece": "frog_pond",
+   "pos": [
+    11.0,
+    1.4
+   ]
+  },
+  {
+   "piece": "spring_basin",
+   "pos": [
+    13.4,
+    -2.6
+   ]
+  },
+  {
+   "piece": "toadstool_cluster",
+   "pos": [
+    8.4,
+    4.8
+   ]
+  },
+  {
+   "piece": "toadstool_big",
+   "pos": [
+    14.0,
+    4.6
+   ]
+  },
+  {
+   "piece": "prism_crystal",
+   "pos": [
+    8.6,
+    -2.6
+   ],
+   "rot": 60
+  },
+  {
+   "piece": "beam_source",
+   "pos": [
+    -5.2,
+    3.0
+   ]
+  },
+  {
+   "piece": "prism_splitter",
    "pos": [
     0.0,
-    -9.6
+    3.0
    ]
   },
   {
-   "piece": "orb_lantern",
+   "piece": "mirror_stand",
    "pos": [
-    -2.4,
-    6.2
+    0.0,
+    7.0
    ]
   },
   {
-   "piece": "orb_lantern",
+   "piece": "mirror_stand",
    "pos": [
-    2.4,
-    6.2
-   ],
-   "rot": 180
-  },
-  {
-   "piece": "orb_lantern",
-   "pos": [
-    -6.0,
-    -4.4
+    4.5,
+    3.0
    ]
   },
   {
-   "piece": "orb_lantern",
+   "piece": "mirror_stand",
    "pos": [
-    6.0,
-    -4.4
-   ],
-   "rot": 180
-  },
-  {
-   "piece": "vault_pillar",
-   "pos": [
-    -7.4,
-    -7.6
+    0.0,
+    -1.0
    ]
   },
   {
-   "piece": "vault_pillar",
+   "piece": "mirror_stand",
    "pos": [
-    7.4,
-    -7.6
+    -4.0,
+    -1.0
    ]
   },
   {
-   "piece": "vault_pillar",
+   "piece": "lens_dais",
    "pos": [
-    -7.4,
-    -2.2
+    -4.5,
+    7.0
    ]
   },
   {
-   "piece": "vault_pillar",
+   "piece": "lens_dais",
    "pos": [
-    7.4,
-    -2.2
+    4.5,
+    7.5
    ]
   },
   {
-   "piece": "vault_pillar",
+   "piece": "lens_dais",
    "pos": [
-    -7.4,
-    3.2
+    -4.0,
+    -3.0
    ]
   },
   {
-   "piece": "vault_pillar",
+   "piece": "tall_mirror",
    "pos": [
-    7.4,
-    3.2
-   ]
-  },
-  {
-   "piece": "prism_crystal",
-   "pos": [
-    -10.6,
-    -10.4
-   ]
-  },
-  {
-   "piece": "prism_crystal",
-   "pos": [
-    10.4,
-    -10.6
+    6.6,
+    1.0
    ],
    "rot": 90
   },
   {
-   "piece": "prism_crystal",
+   "piece": "mural_wall",
    "pos": [
-    -10.8,
-    0.6
+    -5.4,
+    -11.0
    ],
-   "rot": 40
+   "rot": 90
   },
   {
-   "piece": "prism_crystal",
+   "piece": "mural_wall",
    "pos": [
-    10.8,
-    0.4
+    -5.4,
+    -7.6
    ],
-   "rot": 200
+   "rot": 90
   },
   {
-   "piece": "prism_crystal",
+   "piece": "mural_wall",
    "pos": [
-    -10.6,
-    6.8
+    5.4,
+    -9.4
    ],
-   "rot": 130
+   "rot": -90
   },
   {
-   "piece": "prism_crystal",
+   "piece": "rift_brazier_violet",
    "pos": [
-    10.6,
-    7.0
-   ],
-   "rot": 300
+    2.6,
+    -6.2
+   ]
   },
   {
-   "piece": "prism_crystal",
+   "piece": "reliquary",
    "pos": [
-    -4.0,
-    -13.2
-   ],
-   "y": 3.6
+    4.4,
+    -12.6
+   ]
   },
   {
-   "piece": "prism_crystal",
+   "piece": "orb_lantern",
    "pos": [
-    4.2,
-    -13.4
-   ],
-   "y": 3.6,
-   "rot": 60
+    -3.0,
+    -13.0
+   ]
   },
   {
-   "piece": "prism_crystal",
+   "piece": "beam_source",
    "pos": [
-    -13.4,
-    -5.0
-   ],
-   "y": 3.6,
-   "rot": 20
+    -5.2,
+    -16.4
+   ]
   },
   {
-   "piece": "prism_crystal",
+   "piece": "tall_mirror",
    "pos": [
-    13.4,
-    -4.6
+    -3.0,
+    -19.4
+   ]
+  },
+  {
+   "piece": "tall_mirror",
+   "pos": [
+    0.6,
+    -19.4
+   ]
+  },
+  {
+   "piece": "tall_mirror",
+   "pos": [
+    3.4,
+    -22.6
+   ]
+  },
+  {
+   "piece": "tall_mirror",
+   "pos": [
+    -1.6,
+    -23.6
+   ]
+  },
+  {
+   "piece": "mirror_stand",
+   "pos": [
+    1.5,
+    -16.5
+   ]
+  },
+  {
+   "piece": "mirror_stand",
+   "pos": [
+    1.5,
+    -21.0
+   ]
+  },
+  {
+   "piece": "mirror_stand",
+   "pos": [
+    -4.5,
+    -21.0
+   ]
+  },
+  {
+   "piece": "mirror_stand",
+   "pos": [
+    -4.5,
+    -25.5
+   ]
+  },
+  {
+   "piece": "lens_dais",
+   "pos": [
+    3.6,
+    -25.8
+   ]
+  },
+  {
+   "piece": "tall_mirror",
+   "pos": [
+    -5.6,
+    -18.0
    ],
-   "y": 3.6,
-   "rot": 220
+   "rot": 90
+  },
+  {
+   "piece": "tall_mirror",
+   "pos": [
+    5.6,
+    -18.0
+   ],
+   "rot": -90
+  },
+  {
+   "piece": "chasm",
+   "pos": [
+    -3.55,
+    -33.0
+   ],
+   "cast": false
+  },
+  {
+   "piece": "chasm",
+   "pos": [
+    3.55,
+    -33.0
+   ],
+   "cast": false
+  },
+  {
+   "piece": "light_bridge",
+   "pos": [
+    0.0,
+    -33.0
+   ],
+   "walkable": true,
+   "cast": false
+  },
+  {
+   "piece": "cracked_prism",
+   "pos": [
+    -4.6,
+    -29.4
+   ]
+  },
+  {
+   "piece": "cracked_prism",
+   "pos": [
+    4.6,
+    -37.0
+   ]
+  },
+  {
+   "piece": "vault_pillar",
+   "pos": [
+    4.8,
+    -29.2
+   ]
+  },
+  {
+   "piece": "heart_prism",
+   "pos": [
+    0.0,
+    -47.0
+   ]
+  },
+  {
+   "piece": "beam_source",
+   "pos": [
+    0.0,
+    -53.8
+   ]
+  },
+  {
+   "piece": "mirror_stand",
+   "pos": [
+    -4.5,
+    -51.0
+   ]
+  },
+  {
+   "piece": "mirror_stand",
+   "pos": [
+    4.5,
+    -51.0
+   ]
+  },
+  {
+   "piece": "mirror_stand",
+   "pos": [
+    -4.5,
+    -43.0
+   ]
+  },
+  {
+   "piece": "mirror_stand",
+   "pos": [
+    4.5,
+    -43.0
+   ]
+  },
+  {
+   "piece": "rift_brazier_violet",
+   "pos": [
+    -6.4,
+    -42.4
+   ]
+  },
+  {
+   "piece": "rift_brazier_violet",
+   "pos": [
+    6.4,
+    -42.4
+   ]
+  },
+  {
+   "piece": "rift_brazier_violet",
+   "pos": [
+    -6.4,
+    -51.6
+   ]
+  },
+  {
+   "piece": "rift_brazier_violet",
+   "pos": [
+    6.4,
+    -51.6
+   ]
+  },
+  {
+   "piece": "vault_pillar",
+   "pos": [
+    -6.8,
+    -47.0
+   ]
+  },
+  {
+   "piece": "vault_pillar",
+   "pos": [
+    6.8,
+    -47.0
+   ]
   }
  ],
  "hedges": [],
@@ -324,39 +1115,105 @@
    "pos": [
     0,
     1.8,
-    -1.0
+    36
    ],
    "area": [
-    22,
+    12,
     3.0,
+    12
+   ]
+  },
+  {
+   "preset": "dust_motes",
+   "pos": [
+    0,
+    1.8,
     18
+   ],
+   "area": [
+    12,
+    3.0,
+    12
+   ]
+  },
+  {
+   "preset": "dust_motes",
+   "pos": [
+    0,
+    1.8,
+    0
+   ],
+   "area": [
+    12,
+    3.0,
+    12
+   ]
+  },
+  {
+   "preset": "dust_motes",
+   "pos": [
+    0,
+    1.8,
+    -20
+   ],
+   "area": [
+    12,
+    3.0,
+    12
+   ]
+  },
+  {
+   "preset": "dust_motes",
+   "pos": [
+    0,
+    1.8,
+    -47
+   ],
+   "area": [
+    12,
+    3.0,
+    12
    ]
   },
   {
    "preset": "fireflies",
    "pos": [
-    0.0,
-    2.0,
-    -8.0
+    11.0,
+    0.8,
+    1.0
    ],
    "area": [
-    10,
-    2.0,
-    3
+    6,
+    1.0,
+    6
    ],
    "min_gate": 0.0
   },
   {
    "preset": "fireflies",
    "pos": [
-    0.0,
-    1.4,
-    7.6
+    0,
+    2.4,
+    -47
    ],
    "area": [
-    3,
+    12,
+    2.0,
+    12
+   ],
+   "min_gate": 0.0
+  },
+  {
+   "preset": "fireflies",
+   "pos": [
+    0,
+    1.2,
+    -9.6
+   ],
+   "area": [
+    10,
     1.4,
-    1.4
+    8
    ],
    "min_gate": 0.0
   }
@@ -366,7 +1223,7 @@
   "role": "traveler",
   "pos": [
    0.0,
-   5.6
+   39.6
   ],
   "facing": "up"
  },
@@ -377,48 +1234,55 @@
    "pos": [
     0.0,
     0.2,
-    8.7
+    41.6
    ]
   },
   {
-   "id": "ring_dais",
+   "id": "ring_heart",
    "name": "prism_ring",
    "pos": [
     0.0,
-    0.08,
-    -6.4
+    0.05,
+    -44.0
    ]
   }
  ],
  "grades": {
   "day": {
-   "fog_color": "#120c26",
-   "sky_top": "#08061a",
-   "sky_bottom": "#1c1236",
+   "fog_color": "#100a24",
+   "sky_top": "#06041a",
+   "sky_bottom": "#1a1034",
    "hemi_sky": "#4a3a7c",
    "saturation": 1.05,
    "bugs": 1.0,
-   "exposure": 0.78,
-   "sun_intensity": 0.3,
-   "hemi_intensity": 0.4
+   "exposure": 0.86,
+   "sun_intensity": 0.28,
+   "hemi_intensity": 0.42,
+   "sun_color": "#9a8ae8"
   },
   "dusk": {
-   "fog_color": "#120c26",
-   "sky_top": "#08061a",
-   "sky_bottom": "#1c1236",
+   "fog_color": "#100a24",
+   "sky_top": "#06041a",
+   "sky_bottom": "#1a1034",
+   "hemi_sky": "#4a3a7c",
+   "saturation": 1.05,
    "bugs": 1.0,
-   "exposure": 0.76,
-   "sun_intensity": 0.28
+   "exposure": 0.86,
+   "sun_intensity": 0.28,
+   "hemi_intensity": 0.42,
+   "sun_color": "#9a8ae8"
   },
   "night": {
-   "fog_color": "#0c0820",
+   "fog_color": "#100a24",
    "sky_top": "#06041a",
-   "sky_bottom": "#1a1032",
+   "sky_bottom": "#1a1034",
    "hemi_sky": "#4a3a7c",
+   "saturation": 1.05,
    "bugs": 1.0,
-   "exposure": 0.74,
-   "sun_intensity": 0.24,
-   "hemi_intensity": 0.36
+   "exposure": 0.86,
+   "sun_intensity": 0.28,
+   "hemi_intensity": 0.42,
+   "sun_color": "#9a8ae8"
   }
  },
  "game": {
@@ -428,38 +1292,535 @@
   "portals": [
    {
     "fx": "vault_exit",
-    "to": "alfheim",
-    "spawn": "from_prismvault",
+    "to": "lumen_court",
+    "spawn": "from_vault",
     "rect": [
      -0.75,
-     8.3,
+     41.3,
      0.75,
-     9.15
+     42.4
     ],
-    "label": "the vault door back to Lumenvale Glade"
+    "label": "the Spire Stair back up to the Moonlit Court"
    }
   ],
   "spawns": {
    "start": [
     0.0,
-    5.6,
-    "up"
-   ],
-   "from_alfheim": [
-    0.0,
-    5.6,
+    39.4,
     "up"
    ],
    "qa": [
     0.0,
-    1.6,
+    38.0,
     "up"
    ],
-   "dais": [
+   "p1": [
     0.0,
-    -1.2,
+    31.6,
+    "up"
+   ],
+   "p2": [
+    0.0,
+    19.8,
+    "up"
+   ],
+   "p3": [
+    8.4,
+    1.0,
+    "right"
+   ],
+   "p4": [
+    0.0,
+    7.6,
+    "up"
+   ],
+   "p5": [
+    0.0,
+    -6.0,
+    "up"
+   ],
+   "p6": [
+    0.0,
+    -16.0,
+    "up"
+   ],
+   "p7": [
+    0.0,
+    -28.6,
+    "up"
+   ],
+   "p8": [
+    0.0,
+    -40.4,
+    "up"
+   ],
+   "boss": [
+    0.0,
+    -42.0,
     "up"
    ]
+  },
+  "braziers": [
+   {
+    "id": "pv_brazier0",
+    "pos": [
+     2.4,
+     36.4
+    ]
+   },
+   {
+    "id": "pv_brazier5",
+    "pos": [
+     2.6,
+     -6.2
+    ]
+   }
+  ],
+  "spring": {
+   "pos": [
+    13.4,
+    -2.6
+   ],
+   "r": 1.6,
+   "secret": "pv_spring"
+  },
+  "beams": {
+   "grid": 0.5,
+   "sources": [
+    {
+     "id": "p2_src",
+     "pos": [
+      -5.2,
+      18.0
+     ],
+     "dir": 0,
+     "col": "white",
+     "dark": true
+    },
+    {
+     "id": "p4_src",
+     "pos": [
+      -5.2,
+      3.0
+     ],
+     "dir": 0,
+     "col": "white",
+     "dark": true
+    },
+    {
+     "id": "p6_src",
+     "pos": [
+      -5.2,
+      -16.5
+     ],
+     "dir": 0,
+     "col": "white",
+     "dark": true
+    },
+    {
+     "id": "p8_sun",
+     "pos": [
+      0.0,
+      -53.5
+     ],
+     "dir": 2,
+     "col": "white",
+     "dark": false,
+     "boss": true
+    }
+   ],
+   "mirrors": [
+    {
+     "id": "p2_m1",
+     "pos": [
+      -2.0,
+      18.0
+     ],
+     "rot": 0
+    },
+    {
+     "id": "p2_m2",
+     "pos": [
+      -2.0,
+      13.0
+     ],
+     "rot": 0
+    },
+    {
+     "id": "p2_m3",
+     "pos": [
+      3.5,
+      13.0
+     ],
+     "rot": 0
+    },
+    {
+     "id": "p4_m1",
+     "pos": [
+      0.0,
+      7.0
+     ],
+     "rot": 0
+    },
+    {
+     "id": "p4_m2",
+     "pos": [
+      4.5,
+      3.0
+     ],
+     "rot": 0
+    },
+    {
+     "id": "p4_m3",
+     "pos": [
+      0.0,
+      -1.0
+     ],
+     "rot": 0
+    },
+    {
+     "id": "p4_m4",
+     "pos": [
+      -4.0,
+      -1.0
+     ],
+     "rot": 2
+    },
+    {
+     "id": "p6_m1",
+     "pos": [
+      1.5,
+      -16.5
+     ],
+     "rot": 0
+    },
+    {
+     "id": "p6_m2",
+     "pos": [
+      1.5,
+      -21.0
+     ],
+     "rot": 0,
+     "spin": 6
+    },
+    {
+     "id": "p6_m3",
+     "pos": [
+      -4.5,
+      -21.0
+     ],
+     "rot": 0
+    },
+    {
+     "id": "p6_m4",
+     "pos": [
+      -4.5,
+      -25.5
+     ],
+     "rot": 2,
+     "spin": 6
+    },
+    {
+     "id": "p8_m1",
+     "pos": [
+      0.0,
+      -51.0
+     ],
+     "rot": 2,
+     "boss": true
+    },
+    {
+     "id": "p8_m2",
+     "pos": [
+      -4.5,
+      -51.0
+     ],
+     "rot": 0,
+     "boss": true
+    },
+    {
+     "id": "p8_m3",
+     "pos": [
+      4.5,
+      -51.0
+     ],
+     "rot": 0,
+     "boss": true
+    },
+    {
+     "id": "p8_m4",
+     "pos": [
+      -4.5,
+      -43.0
+     ],
+     "rot": 0,
+     "boss": true
+    },
+    {
+     "id": "p8_m5",
+     "pos": [
+      4.5,
+      -43.0
+     ],
+     "rot": 0,
+     "boss": true
+    }
+   ],
+   "splitters": [
+    {
+     "id": "p4_split",
+     "pos": [
+      0.0,
+      3.0
+     ]
+    }
+   ],
+   "receivers": [
+    {
+     "id": "pv_lens1",
+     "pos": [
+      3.5,
+      11.5
+     ],
+     "col": "white",
+     "opens": "p2_door"
+    },
+    {
+     "id": "pv_lens2v",
+     "pos": [
+      -4.5,
+      7.0
+     ],
+     "col": "violet",
+     "part": "pv_lens2",
+     "opens": "p4_door"
+    },
+    {
+     "id": "pv_lens2b",
+     "pos": [
+      4.5,
+      7.5
+     ],
+     "col": "blue",
+     "part": "pv_lens2",
+     "opens": "p4_door"
+    },
+    {
+     "id": "pv_lens2r",
+     "pos": [
+      -4.0,
+      -3.0
+     ],
+     "col": "red",
+     "part": "pv_lens2",
+     "opens": "p4_door"
+    },
+    {
+     "id": "pv_lens3",
+     "pos": [
+      3.5,
+      -25.5
+     ],
+     "col": "white",
+     "opens": "p6_door"
+    }
+   ],
+   "rooms": {
+    "P2": [
+     -6,
+     10,
+     6,
+     21
+    ],
+    "P4": [
+     -6,
+     -4,
+     6,
+     9
+    ],
+    "P6": [
+     -6,
+     -27,
+     6,
+     -15
+    ],
+    "P8": [
+     -8,
+     -55,
+     8,
+     -39
+    ]
+   }
+  },
+  "doors": [],
+  "alf": {
+   "rooms": {
+    "P0": [
+     -4,
+     34,
+     4,
+     42
+    ],
+    "P1": [
+     -6,
+     22,
+     6,
+     33
+    ],
+    "P2": [
+     -6,
+     10,
+     6,
+     21
+    ],
+    "P4": [
+     -6,
+     -4,
+     6,
+     9
+    ],
+    "P3": [
+     7,
+     -4,
+     15,
+     6
+    ],
+    "P5": [
+     -6,
+     -14,
+     6,
+     -5
+    ],
+    "P6": [
+     -6,
+     -27,
+     6,
+     -15
+    ],
+    "P7": [
+     -6,
+     -38,
+     6,
+     -28
+    ],
+    "P8": [
+     -8,
+     -55,
+     8,
+     -39
+    ]
+   },
+   "gates": {
+    "p2_door": [
+     -1.2,
+     9.0,
+     1.2,
+     10.0
+    ],
+    "p4_door": [
+     -1.2,
+     -5.0,
+     1.2,
+     -4.0
+    ],
+    "p6_door": [
+     -1.2,
+     -28.0,
+     1.2,
+     -27.0
+    ],
+    "p7_bridge": [
+     -1.1,
+     -37.4,
+     1.1,
+     -28.6
+    ]
+   },
+   "illusory": [
+    6.0,
+    0.2,
+    7.0,
+    1.8
+   ],
+   "murals": [
+    [
+     "mural_1",
+     -4.6,
+     -11.0
+    ],
+    [
+     "mural_2",
+     -4.6,
+     -7.6
+    ],
+    [
+     "mural_3",
+     4.6,
+     -9.4
+    ]
+   ],
+   "leaks": [
+    [
+     -4.2,
+     30.0
+    ],
+    [
+     4.0,
+     29.4
+    ],
+    [
+     -3.6,
+     24.6
+    ],
+    [
+     4.4,
+     25.0
+    ]
+   ],
+   "frost": [
+    -4.2,
+    30.0
+   ],
+   "reliquary": [
+    4.4,
+    -12.6
+   ],
+   "heart": [
+    0.0,
+    -47.0
+   ],
+   "veyra": [
+    -3.0,
+    -19.0
+   ],
+   "rims": [
+    [
+     -6.4,
+     -42.4
+    ],
+    [
+     6.4,
+     -42.4
+    ],
+    [
+     -6.4,
+     -51.6
+    ],
+    [
+     6.4,
+     -51.6
+    ]
+   ],
+   "bridge": {
+    "from": [
+     0.0,
+     -28.4
+    ],
+    "to": [
+     0.0,
+     -37.6
+    ]
+   }
   }
  }
 }

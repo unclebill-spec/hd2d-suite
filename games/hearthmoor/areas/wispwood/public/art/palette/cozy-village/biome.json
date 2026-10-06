@@ -1,0 +1,293 @@
+{
+ "biome": "cozy-village",
+ "desc": "Warm market village: cream plaster, oak timber, terracotta roofs, mossy cobble, window boxes.",
+ "count": 27,
+ "colors": {
+  "ink": "#2a1e1c",
+  "shadow": "#4c3a3e",
+  "plaster_hi": "#f6ecd2",
+  "plaster": "#e6d2ac",
+  "plaster_lo": "#c4a984",
+  "timber_hi": "#b07a44",
+  "timber": "#7a4e2e",
+  "timber_lo": "#4a2e20",
+  "stone_hi": "#cfc2a6",
+  "stone": "#9c8e7a",
+  "stone_lo": "#6a5e56",
+  "roof_hi": "#d0704a",
+  "roof": "#9a4630",
+  "roof_lo": "#622c24",
+  "grass_hi": "#b2c464",
+  "grass": "#72a046",
+  "moss": "#4a7234",
+  "leaf_deep": "#2c4c30",
+  "flower_rose": "#e47c8c",
+  "flower_gold": "#f2c24a",
+  "flower_blue": "#6c8cd4",
+  "skin": "#f2c4a0",
+  "skin_lo": "#cc8c6c",
+  "cloth": "#3e5a8c",
+  "sky": "#94c0dc",
+  "lamp": "#ffb24a",
+  "white": "#fff8e6"
+ },
+ "order": [
+  "ink",
+  "shadow",
+  "plaster_hi",
+  "plaster",
+  "plaster_lo",
+  "timber_hi",
+  "timber",
+  "timber_lo",
+  "stone_hi",
+  "stone",
+  "stone_lo",
+  "roof_hi",
+  "roof",
+  "roof_lo",
+  "grass_hi",
+  "grass",
+  "moss",
+  "leaf_deep",
+  "flower_rose",
+  "flower_gold",
+  "flower_blue",
+  "skin",
+  "skin_lo",
+  "cloth",
+  "sky",
+  "lamp",
+  "white"
+ ],
+ "ramps": {
+  "plaster": [
+   "white",
+   "plaster_hi",
+   "plaster",
+   "plaster_lo",
+   "timber_lo",
+   "ink"
+  ],
+  "timber": [
+   "plaster_lo",
+   "timber_hi",
+   "timber",
+   "timber_lo",
+   "ink"
+  ],
+  "stone": [
+   "plaster_hi",
+   "stone_hi",
+   "stone",
+   "stone_lo",
+   "shadow",
+   "ink"
+  ],
+  "roof": [
+   "flower_gold",
+   "roof_hi",
+   "roof",
+   "roof_lo",
+   "ink"
+  ],
+  "grass": [
+   "flower_gold",
+   "grass_hi",
+   "grass",
+   "moss",
+   "leaf_deep",
+   "ink"
+  ],
+  "rose": [
+   "white",
+   "flower_rose",
+   "roof_hi",
+   "roof",
+   "roof_lo",
+   "ink"
+  ],
+  "gold": [
+   "white",
+   "lamp",
+   "flower_gold",
+   "timber_hi",
+   "timber",
+   "timber_lo",
+   "ink"
+  ],
+  "blue": [
+   "sky",
+   "flower_blue",
+   "cloth",
+   "shadow",
+   "ink"
+  ],
+  "skin": [
+   "plaster_hi",
+   "skin",
+   "skin_lo",
+   "timber",
+   "timber_lo",
+   "ink"
+  ],
+  "sky": [
+   "white",
+   "sky",
+   "flower_blue",
+   "cloth",
+   "ink"
+  ],
+  "dark": [
+   "stone_lo",
+   "shadow",
+   "ink"
+  ]
+ },
+ "roles": {
+  "plaster": [
+   "plaster_hi",
+   "plaster",
+   "plaster_lo"
+  ],
+  "timber": [
+   "timber_hi",
+   "timber",
+   "timber_lo"
+  ],
+  "moss": [
+   "grass",
+   "moss",
+   "leaf_deep"
+  ],
+  "flowers": [
+   "flower_rose",
+   "flower_gold",
+   "flower_blue"
+  ],
+  "outline": [
+   "ink"
+  ],
+  "skin": [
+   "skin",
+   "skin_lo"
+  ]
+ },
+ "grades": {
+  "day": {
+   "sun_color": "#ffd49a",
+   "sun_intensity": 3.1,
+   "sun_azimuth": -40,
+   "sun_elevation": 31,
+   "hemi_sky": "#a8c4ec",
+   "hemi_ground": "#7a6048",
+   "hemi_intensity": 0.75,
+   "fog_color": "#e8d8bc",
+   "fog_near": 26,
+   "fog_far": 70,
+   "haze": 0.38,
+   "valley_haze": 0.12,
+   "sky_top": "#86b4e0",
+   "sky_bottom": "#f4e0b8",
+   "lamp_intensity": 0.0,
+   "window_emissive": "#3a3c48",
+   "window_intensity": 0.2,
+   "sprite_tint": "#fff4e2",
+   "exposure": 1.0,
+   "saturation": 1.06,
+   "shadow_tint": "#5a4a70",
+   "warmth": 0.06,
+   "bugs": 0.0,
+   "motes": 1.0,
+   "lamp_color": "#ffb24a"
+  },
+  "dusk": {
+   "sun_color": "#ff9c70",
+   "sun_intensity": 1.05,
+   "sun_azimuth": -70,
+   "sun_elevation": 12,
+   "hemi_sky": "#6a7ec8",
+   "hemi_ground": "#4a3a50",
+   "hemi_intensity": 0.95,
+   "fog_color": "#7a84b8",
+   "fog_near": 20,
+   "fog_far": 60,
+   "haze": 0.42,
+   "valley_haze": 0.22,
+   "sky_top": "#3a4c94",
+   "sky_bottom": "#e89a84",
+   "lamp_intensity": 1.0,
+   "window_emissive": "#ffa040",
+   "window_intensity": 1.4,
+   "sprite_tint": "#c4ccf0",
+   "exposure": 1.05,
+   "saturation": 0.98,
+   "shadow_tint": "#2a3270",
+   "warmth": -0.05,
+   "bugs": 0.6,
+   "motes": 0.3,
+   "lamp_color": "#ffb24a"
+  },
+  "night": {
+   "sun_color": "#8ea4e0",
+   "sun_intensity": 0.36,
+   "sun_azimuth": 30,
+   "sun_elevation": 48,
+   "hemi_sky": "#34407a",
+   "hemi_ground": "#1c1a2a",
+   "hemi_intensity": 0.6,
+   "fog_color": "#1e2848",
+   "fog_near": 16,
+   "fog_far": 52,
+   "haze": 0.42,
+   "valley_haze": 0.26,
+   "sky_top": "#0e1430",
+   "sky_bottom": "#2c3866",
+   "lamp_intensity": 1.6,
+   "window_emissive": "#ff9a38",
+   "window_intensity": 2.3,
+   "sprite_tint": "#8a98cc",
+   "exposure": 1.12,
+   "saturation": 0.92,
+   "shadow_tint": "#101838",
+   "warmth": -0.08,
+   "bugs": 1.0,
+   "motes": 0.0,
+   "lamp_color": "#ffb24a"
+  }
+ },
+ "clock": [
+  {
+   "t": 0.0,
+   "grade": "night"
+  },
+  {
+   "t": 0.2,
+   "grade": "night"
+  },
+  {
+   "t": 0.27,
+   "grade": "dusk"
+  },
+  {
+   "t": 0.36,
+   "grade": "day"
+  },
+  {
+   "t": 0.66,
+   "grade": "day"
+  },
+  {
+   "t": 0.76,
+   "grade": "dusk"
+  },
+  {
+   "t": 0.86,
+   "grade": "night"
+  },
+  {
+   "t": 1.0,
+   "grade": "night"
+  }
+ ]
+}

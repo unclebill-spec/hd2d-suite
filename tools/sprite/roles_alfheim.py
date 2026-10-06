@@ -44,6 +44,36 @@ def alfheim_roles(_r):
         "elfchild": _r(desc="a Lumenvale child: white hair, pointed ears, sky top, dark belt, navy shorts, brown shoes",
                        layout="kid", hair="white", hairstyle="cowlick", shirt="sky", belt="shadow", pants="cloth",
                        shoes="timber", elf=True, named=True),
+        # ---- session 2: the script's cast (alfheim.md section 5). Clothing rule: top / bottom / waist band / shoes.
+        "regent": _r(desc="Regent Aerin Vael: silver hair in a low braid, slim silver circlet, violet high-collared blouse, silver sash, "
+                          "charcoal wrap skirt, soft grey boots", hair="white", hairstyle="long", shirt="flower_blue", collar="plaster_hi",
+                     sash="white", skirt="shadow", shoes="stone", hat=None, elf=True, named=True),
+        "librarian": _r(desc="Mirelle Glasswing: round spectacles, messy bun, cream shirt, violet vest, belt of lens pouches, brown pleated "
+                             "skirt, brown shoes, a glass book", hair="roof_hi", hairstyle="bun", glasses=True, shirt="plaster_hi",
+                        vest="flower_blue", belt="timber_lo", skirt="timber", shoes="timber_lo", item="book", elf=True, named=True),
+        "ranger": _r(desc="Captain Faelan Thorne: cropped silver hair, dark-green leather vest over a grey linen shirt, belted trousers, "
+                          "knee boots, a long ranger's spear (placeholder for the longbow)", hair="white", hairstyle="short",
+                     shirt="stone_hi", vest="leaf_deep", belt="timber_lo", pants="stone_lo", boots=True, shoes="shadow",
+                     item="spear", elf=True, named=True),
+        "wispcatcher": _r(desc="Nim the wisp-catcher: an elf kid in an oversized violet jumper with rolled sleeves, rope belt, short brown "
+                               "trousers, a wisp net on a pole", layout="kid", hair="timber", hairstyle="cowlick", shirt="flower_blue",
+                          tunic=1, belt="plaster_lo", pants="timber", shoes="shadow", item="rod", elf=True, named=True),
+        "poolkeeper": _r(desc="Ferrin the pool-tender: long white ponytail, moss-green waistcoat over a collarless shirt, braces, wide "
+                              "trousers rolled at the ankle, straw hat", hair="white", hairstyle="long", hat="straw", shirt="plaster_hi",
+                         vest="moss", suspenders="timber_lo", belt="timber_lo", pants="stone", shoes="timber_lo", elf=True, named=True),
+        "lanternseller": _r(desc="Saelis the lantern seller: sleeveless violet top, wide leather belt, long dark skirt, a cold-fire lantern",
+                            hair="shadow", hairstyle="long", shirt="flower_blue", belt="timber_lo", belt_w=2, skirt="cloth",
+                            shoes="timber_lo", item="bluelantern", elf=True, named=True),
+        "dwarftrader": _r(desc="Brokk Emberlode of Anvildeep: a dwarf, half your height, rust wool shirt, leather apron belted over "
+                               "trousers, soot-black beard, a hammer", layout="kid", hair="shadow", hairstyle="short", beard="shadow",
+                          shirt="roof", apron="timber", belt="timber_lo", pants="stone_lo", shoes="shadow", item="hammer", named=True),
+        "elffolk": _r(desc="Lumenvale folk: a cream blouse, a violet sash, a navy skirt, a glowfrog jar", hair="flower_gold",
+                      hairstyle="long", shirt="plaster_hi", sash="flower_blue", skirt="cloth", shoes="timber_lo", elf=True, named=True),
+        "elffolk2": _r(desc="Lumenvale folk: a sky tunic to the hip, dark belt, grey trousers, brown boots", hair="roof_hi",
+                       hairstyle="messy", shirt="sky", tunic=1, belt="shadow", pants="stone", boots=True, shoes="timber_lo",
+                       elf=True, named=True),
+        "lightranger": _r(**E, draw="lightranger", named=True, desc="Light-elf ranger (conquer path): leather vest, shirt, trousers, ranger blade"),
+        "willwisp": _r(**E, draw="neonwisp", named=True, desc="Will-o'-wisp: a hostile neon wisp, flame tail, dot eyes, orbiting sparks"),
         "prismshard": _r(**E, draw="prismshard", named=True, desc="Alfheim prism shard: a floating cluster of prism crystals, white heart, fires prism bolts"),
         "neonwisp": _r(**E, draw="neonwisp", named=True, desc="Alfheim neon will-o-wisp: a bright orb with a flame tail, dot eyes, orbiting sparks"),
         "crystalgolem": _r(**E, draw="crystalgolem", named=True, desc="Alfheim crystal golem: the golem in pale crystal, rose-crystal veins, shoulder spires"),
@@ -275,4 +305,13 @@ def mirrorduelist(s, face, anim, i):
                 s.set(x0, 19 + b + k if 19 + b + k < 31 else 30, "white" if k % 3 == 0 else "sky")
 
 
-DRAW = {"prismshard": prismshard, "neonwisp": neonwisp, "crystalgolem": crystalgolem, "mirrorduelist": mirrorduelist}
+RANGER = {"stone_hi": "skin", "stone": "skin_lo", "cloth": "leaf_deep", "flower_blue": "moss", "flower_gold": "timber_lo", "shadow": "stone_lo"}
+
+
+def lightranger(s, face, anim, i):
+    """a light-elf ranger (conquer path): the duelist's body re-dressed: skin, a dark-green leather vest, a moss collar,
+    a brown belt, grey trousers, brown boots, a ranger's blade"""
+    mirrorduelist(_Remap(s, RANGER), face, anim, i)
+
+
+DRAW = {"prismshard": prismshard, "neonwisp": neonwisp, "crystalgolem": crystalgolem, "mirrorduelist": mirrorduelist, "lightranger": lightranger}

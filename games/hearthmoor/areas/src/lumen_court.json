@@ -1,0 +1,680 @@
+{
+ "name": "Lumenvale: the Moonlit Court",
+ "seed": 119,
+ "biome": "cozy-village",
+ "about": "The crown of the great silverbark, open to the sky: moon-white stone grown into the wood. The Empty Throne of violet glass stands under a dust sheet; Regent Aerin keeps beside it, never on it. The Prism Library (west) holds Mirelle's glass books and lens table; the rangers keep their post; the Prism Spire's glass door (east) is sealed by the Regent's key.",
+ "time": {
+  "start": "night",
+  "speed": 0.0016
+ },
+ "spells": true,
+ "sprite_roles": [
+  "actors",
+  "heroes",
+  "combat",
+  "regent",
+  "librarian",
+  "ranger",
+  "elfranger",
+  "elffolk2"
+ ],
+ "boss_roles": [],
+ "camera": {
+  "fov": 24,
+  "pitch": 36,
+  "distance": 33,
+  "zoom": [
+   24,
+   44
+  ],
+  "look": [
+   0,
+   0,
+   -2.4
+  ],
+  "bounds": [
+   -10.0,
+   -7.6,
+   10.0,
+   8.0
+  ]
+ },
+ "ground": {
+  "size": [
+   80,
+   70
+  ],
+  "mat": "cobble",
+  "walk": [
+   -12.4,
+   -10.6,
+   12.4,
+   11.0
+  ]
+ },
+ "slabs": [
+  {
+   "name": "aisle",
+   "rect": [
+    -1.6,
+    -5.0,
+    1.6,
+    10.6
+   ],
+   "mat": "plaster",
+   "h": 0.03
+  },
+  {
+   "name": "east_walk",
+   "rect": [
+    1.6,
+    -5.4,
+    10.4,
+    -3.4
+   ],
+   "mat": "plaster",
+   "h": 0.03
+  }
+ ],
+ "terraces": [
+  {
+   "name": "crown_wall",
+   "rect": [
+    -30,
+    -30,
+    30,
+    -10.6
+   ],
+   "h": 3.2,
+   "top": "moss",
+   "coping": true
+  },
+  {
+   "name": "library_floor",
+   "rect": [
+    -12.4,
+    -3.0,
+    -5.6,
+    4.6
+   ],
+   "h": 0.3,
+   "top": "timber",
+   "coping": false
+  }
+ ],
+ "stairs": [],
+ "decks": [],
+ "blocks": [],
+ "buildings": [],
+ "props": [
+  {
+   "piece": "empty_throne",
+   "pos": [
+    0.0,
+    -6.0
+   ]
+  },
+  {
+   "piece": "spire_door",
+   "pos": [
+    9.4,
+    -7.4
+   ]
+  },
+  {
+   "piece": "moon_well",
+   "pos": [
+    -2.0,
+    4.0
+   ]
+  },
+  {
+   "piece": "rift_brazier_violet",
+   "pos": [
+    -4.4,
+    5.6
+   ]
+  },
+  {
+   "piece": "lumen_tree",
+   "pos": [
+    5.4,
+    3.0
+   ],
+   "rot": 30
+  },
+  {
+   "piece": "float_lantern_violet",
+   "pos": [
+    4.4,
+    2.0
+   ]
+  },
+  {
+   "piece": "float_lantern_violet",
+   "pos": [
+    6.4,
+    2.4
+   ]
+  },
+  {
+   "piece": "float_lantern_violet",
+   "pos": [
+    5.4,
+    4.2
+   ]
+  },
+  {
+   "piece": "glass_shelf",
+   "pos": [
+    -9.0,
+    -2.6
+   ]
+  },
+  {
+   "piece": "glass_shelf",
+   "pos": [
+    -11.8,
+    0.2
+   ],
+   "rot": 90
+  },
+  {
+   "piece": "glass_shelf",
+   "pos": [
+    -11.8,
+    3.0
+   ],
+   "rot": 90
+  },
+  {
+   "piece": "lens_table",
+   "pos": [
+    -8.2,
+    1.6
+   ]
+  },
+  {
+   "piece": "orb_lantern",
+   "pos": [
+    -6.0,
+    4.8
+   ]
+  },
+  {
+   "piece": "elf_banner",
+   "pos": [
+    -6.4,
+    -3.4
+   ]
+  },
+  {
+   "piece": "elf_banner",
+   "pos": [
+    6.0,
+    -8.4
+   ]
+  },
+  {
+   "piece": "prism_lantern",
+   "pos": [
+    -2.4,
+    -3.6
+   ]
+  },
+  {
+   "piece": "prism_lantern",
+   "pos": [
+    2.4,
+    -3.6
+   ]
+  },
+  {
+   "piece": "prism_lantern",
+   "pos": [
+    7.6,
+    -4.8
+   ]
+  },
+  {
+   "piece": "vine_curtain",
+   "pos": [
+    -6.0,
+    -8.6
+   ]
+  },
+  {
+   "piece": "vine_curtain",
+   "pos": [
+    3.2,
+    -9.4
+   ]
+  },
+  {
+   "piece": "silverbark",
+   "pos": [
+    -14.6,
+    -6.0
+   ],
+   "rot": 30
+  },
+  {
+   "piece": "silverbark",
+   "pos": [
+    15.0,
+    2.0
+   ],
+   "rot": 160
+  },
+  {
+   "piece": "vine_arch",
+   "pos": [
+    0.0,
+    10.2
+   ]
+  },
+  {
+   "piece": "toadstool_cluster",
+   "pos": [
+    -11.2,
+    8.6
+   ]
+  },
+  {
+   "piece": "toadstool_cluster",
+   "pos": [
+    11.0,
+    8.8
+   ]
+  },
+  {
+   "piece": "toadstool_big",
+   "pos": [
+    11.6,
+    8.2
+   ],
+   "rot": 30
+  },
+  {
+   "piece": "fern_bush",
+   "pos": [
+    10.8,
+    5.2
+   ]
+  },
+  {
+   "piece": "orb_lantern",
+   "pos": [
+    9.0,
+    6.6
+   ],
+   "rot": 180
+  },
+  {
+   "piece": "orb_lantern",
+   "pos": [
+    -9.6,
+    7.4
+   ]
+  }
+ ],
+ "hedges": [],
+ "trees": [],
+ "backdrop": {},
+ "emitters": [
+  {
+   "preset": "fireflies",
+   "pos": [
+    0,
+    3.0,
+    0
+   ],
+   "area": [
+    22,
+    2.4,
+    16
+   ],
+   "min_gate": 0.0
+  },
+  {
+   "preset": "fireflies",
+   "pos": [
+    5.4,
+    3.6,
+    3.0
+   ],
+   "area": [
+    3.0,
+    1.6,
+    3.0
+   ],
+   "min_gate": 0.0
+  },
+  {
+   "preset": "dust_motes",
+   "pos": [
+    -8.0,
+    1.6,
+    1.0
+   ],
+   "area": [
+    6,
+    2.0,
+    7
+   ]
+  },
+  {
+   "preset": "fireflies",
+   "pos": [
+    0,
+    4.4,
+    -7.0
+   ],
+   "area": [
+    8,
+    1.6,
+    2
+   ],
+   "min_gate": 0.0
+  }
+ ],
+ "actors": [
+  {
+   "id": "regent",
+   "role": "regent",
+   "name": "Regent Aerin Vael of Lumenvale",
+   "pos": [
+    1.6,
+    -5.0
+   ],
+   "facing": "down",
+   "behavior": "idle",
+   "talkable": true,
+   "say": [
+    "The throne stays empty. A regent keeps the chair warm."
+   ]
+  },
+  {
+   "id": "librarian",
+   "role": "librarian",
+   "name": "Mirelle Glasswing, Prism Library",
+   "pos": [
+    -7.0,
+    2.8
+   ],
+   "facing": "down",
+   "behavior": "idle",
+   "talkable": true,
+   "say": [
+    "Mind the shelves, the books are glass."
+   ]
+  },
+  {
+   "id": "ranger",
+   "role": "ranger",
+   "name": "Captain Faelan Thorne, light-elf rangers",
+   "pos": [
+    -4.4,
+    -2.0
+   ],
+   "facing": "down",
+   "behavior": "idle",
+   "talkable": true,
+   "say": [
+    "I don't like Midgard. Nothing personal."
+   ]
+  },
+  {
+   "id": "ranger_a",
+   "role": "elfranger",
+   "name": "A light-elf ranger",
+   "pos": [
+    -5.4,
+    -0.8
+   ],
+   "facing": "down",
+   "behavior": "idle",
+   "talkable": true,
+   "say": [
+    "The canopy's quiet. Too quiet."
+   ]
+  },
+  {
+   "id": "ranger_b",
+   "role": "elfranger",
+   "name": "A light-elf ranger",
+   "pos": [
+    -3.2,
+    -0.6
+   ],
+   "facing": "left",
+   "behavior": "idle",
+   "talkable": true,
+   "say": [
+    "Captain says watch the Midgarder."
+   ]
+  },
+  {
+   "id": "elf4",
+   "role": "elffolk2",
+   "name": "A Lumenvale courtier",
+   "pos": [
+    4.2,
+    6.4
+   ],
+   "facing": "down",
+   "behavior": "wander",
+   "talkable": true,
+   "say": [
+    "The aurora's coming in green tonight. It's usually rain."
+   ]
+  }
+ ],
+ "player": {
+  "role": "traveler",
+  "pos": [
+   0.0,
+   8.6
+  ],
+  "facing": "up"
+ },
+ "fx": [
+  {
+   "id": "spire_door",
+   "name": "prism_swirl",
+   "pos": [
+    9.4,
+    0.2,
+    -7.05
+   ]
+  }
+ ],
+ "grades": {
+  "day": {
+   "fog_color": "#3a2c64",
+   "sky_top": "#241a48",
+   "sky_bottom": "#7a64b0",
+   "hemi_sky": "#8a78c0",
+   "saturation": 1.04,
+   "bugs": 1.0,
+   "warmth": -0.08,
+   "exposure": 0.9,
+   "sun_intensity": 0.9,
+   "hemi_intensity": 0.62,
+   "sun_color": "#c8b8f0",
+   "lamp_intensity": 0.8
+  },
+  "dusk": {
+   "fog_color": "#241a50",
+   "sky_top": "#140e30",
+   "sky_bottom": "#4c3896",
+   "bugs": 1.0,
+   "exposure": 0.84,
+   "sun_intensity": 0.55,
+   "warmth": -0.14,
+   "sun_color": "#9c88f0"
+  },
+  "night": {
+   "fog_color": "#0e0a24",
+   "sky_top": "#07051a",
+   "sky_bottom": "#2a1a54",
+   "hemi_sky": "#4a3a80",
+   "bugs": 1.0,
+   "exposure": 0.86,
+   "sun_intensity": 0.3,
+   "hemi_intensity": 0.4,
+   "sun_color": "#8a7ae0"
+  }
+ },
+ "game": {
+  "id": "lumen_court",
+  "title": "Lumenvale: the Moonlit Court",
+  "exits": [
+   {
+    "rect": [
+     -1.4,
+     10.0,
+     1.4,
+     12.4
+    ],
+    "to": "alfheim",
+    "spawn": "from_court",
+    "label": "the spiral stair down to the Glimmer Steps"
+   }
+  ],
+  "portals": [
+   {
+    "fx": "spire_door",
+    "to": "prismvault",
+    "spawn": "start",
+    "rect": [
+     8.65,
+     -7.2,
+     10.15,
+     -6.35
+    ],
+    "label": "the Prism Spire door",
+    "key": "spirekey"
+   }
+  ],
+  "spawns": {
+   "start": [
+    0.0,
+    8.6,
+    "up"
+   ],
+   "from_steps": [
+    0.0,
+    8.6,
+    "up"
+   ],
+   "from_vault": [
+    9.4,
+    -5.4,
+    "down"
+   ],
+   "qa": [
+    0.0,
+    2.0,
+    "up"
+   ],
+   "throne": [
+    0.0,
+    -3.4,
+    "up"
+   ],
+   "library": [
+    -6.0,
+    1.2,
+    "left"
+   ],
+   "spire": [
+    7.6,
+    -3.6,
+    "right"
+   ]
+  },
+  "braziers": [
+   {
+    "id": "brazier_court",
+    "pos": [
+     -4.4,
+     5.6
+    ]
+   }
+  ],
+  "shimmer": {
+   "glints": [
+    [
+     -2.0,
+     4.0
+    ],
+    [
+     0.0,
+     -2.0
+    ],
+    [
+     -8.2,
+     1.6
+    ]
+   ],
+   "wisps": [
+    [
+     5.4,
+     2.0
+    ],
+    [
+     -4.0,
+     -6.0
+    ],
+    [
+     4.0,
+     -6.4
+    ],
+    [
+     -9.0,
+     6.0
+    ]
+   ]
+  },
+  "alf": {
+   "lens": {
+    "pos": [
+     -8.2,
+     1.6
+    ],
+    "r": 1.6
+   },
+   "door": {
+    "pos": [
+     9.4,
+     -7.0
+    ]
+   },
+   "pool": {
+    "pos": [
+     -2.0,
+     4.0
+    ]
+   },
+   "posts": [
+    [
+     5.0,
+     -1.4
+    ],
+    [
+     7.2,
+     -2.6
+    ],
+    [
+     8.6,
+     -4.2
+    ]
+   ],
+   "throne": [
+    0.0,
+    -4.6
+   ]
+  }
+ }
+}

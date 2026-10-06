@@ -127,14 +127,22 @@ def assemble(spec_path, out, do_zip=True):
     if boss_roles:
         sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "sprite"))
         import boss_sheet as BS  # noqa: E402
-        bs = BS.build(biome, tuple(boss_roles), art_dir(out, "sprite"), out, "boss")
-        mp = Path(sp["json"]); m = json.loads(mp.read_text())
-        bm = json.loads(Path(bs["json"]).read_text())
-        m["sheets"] = {"boss": {"json": "boss.json", "image": "boss.png"}}
+        # [ALFHEIM] begin: one sheet per frame size ("boss" = the first size, then "boss2", "boss3": a 6x boss + 2.8x minis share an area)
+        groups = {}
         for r in boss_roles:
-            br = bm["roles"][r]
-            m["roles"][r] = {"sheet": "boss", "row": br["row"], "kind": br["kind"], "enemy": True, "boss": True,
-                             "scale": br["scale"], "frame": bm["frame"], "anims": br["anims"], "desc": br["desc"]}
+            groups.setdefault(tuple(BS.BOSS[r]["frame"]), []).append(r)
+        mp = Path(sp["json"]); m = json.loads(mp.read_text())
+        m["sheets"] = {}
+        for gi, grp in enumerate(groups.values()):
+            nm = "boss" if gi == 0 else f"boss{gi + 1}"
+            bs = BS.build(biome, tuple(grp), art_dir(out, "sprite"), out, nm)
+            bm = json.loads(Path(bs["json"]).read_text())
+            m["sheets"][nm] = {"json": f"{nm}.json", "image": f"{nm}.png"}
+            for r in grp:
+                br = bm["roles"][r]
+                m["roles"][r] = {"sheet": nm, "row": br["row"], "kind": br["kind"], "enemy": True, "boss": True,
+                                 "scale": br["scale"], "frame": bm["frame"], "anims": br["anims"], "desc": br["desc"]}
+        # [ALFHEIM] end
         mp.write_text(json.dumps(m, indent=1))
     load_tool("texel").build(biome, (32, 64), None, art_dir(out, "texel"), out, seed)
     # scene-specific kit pieces

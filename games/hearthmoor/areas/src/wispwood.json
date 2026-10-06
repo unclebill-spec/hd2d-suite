@@ -1,0 +1,679 @@
+{
+ "name": "The Wispwood",
+ "seed": 121,
+ "biome": "cozy-village",
+ "about": "The dark forest floor between the silverbark roots under Lumenvale: glow moss, red white-spotted toadstools, glowfrog ponds in red, blue and violet, wisp nests in hollow stumps, and the frost scar where someone cut runes in the cold. Will-o'-wisps, prism shards and crystal golems roam; rifts and rares come out of the dark.",
+ "time": {
+  "start": "night",
+  "speed": 0.0016
+ },
+ "spells": true,
+ "sprite_roles": [
+  "actors",
+  "heroes",
+  "combat",
+  "willwisp",
+  "prismshard",
+  "crystalgolem",
+  "mirrorduelist"
+ ],
+ "boss_roles": [
+  "shardmother",
+  "glassstalker"
+ ],
+ "camera": {
+  "fov": 24,
+  "pitch": 36,
+  "distance": 33,
+  "zoom": [
+   24,
+   44
+  ],
+  "look": [
+   0,
+   0,
+   -2.0
+  ],
+  "bounds": [
+   -10.0,
+   -6.4,
+   10.0,
+   7.6
+  ]
+ },
+ "ground": {
+  "size": [
+   80,
+   70
+  ],
+  "mat": "moss",
+  "walk": [
+   -12.4,
+   -8.8,
+   12.4,
+   10.0
+  ]
+ },
+ "slabs": [
+  {
+   "name": "trail",
+   "rect": [
+    -8.0,
+    -2.6,
+    12.4,
+    -1.0
+   ],
+   "mat": "dirt",
+   "h": 0.02
+  },
+  {
+   "name": "trail2",
+   "rect": [
+    -2.0,
+    -1.0,
+    -0.2,
+    8.0
+   ],
+   "mat": "dirt",
+   "h": 0.02
+  }
+ ],
+ "terraces": [
+  {
+   "name": "root_wall",
+   "rect": [
+    -30,
+    -30,
+    30,
+    -8.8
+   ],
+   "h": 2.8,
+   "top": "moss",
+   "coping": false
+  },
+  {
+   "name": "root_ledge",
+   "rect": [
+    9.0,
+    -8.8,
+    30,
+    -4.2
+   ],
+   "h": 1.4,
+   "top": "moss",
+   "coping": false
+  }
+ ],
+ "stairs": [],
+ "decks": [],
+ "blocks": [],
+ "buildings": [],
+ "props": [
+  {
+   "piece": "wisp_nest",
+   "pos": [
+    6.0,
+    4.0
+   ]
+  },
+  {
+   "piece": "wisp_nest",
+   "pos": [
+    2.4,
+    -5.2
+   ]
+  },
+  {
+   "piece": "wisp_nest",
+   "pos": [
+    -3.0,
+    6.4
+   ]
+  },
+  {
+   "piece": "wisp_nest",
+   "pos": [
+    -7.6,
+    -2.0
+   ]
+  },
+  {
+   "piece": "wisp_nest",
+   "pos": [
+    -1.0,
+    0.8
+   ]
+  },
+  {
+   "piece": "frog_pond",
+   "pos": [
+    4.4,
+    7.6
+   ]
+  },
+  {
+   "piece": "frog_pond",
+   "pos": [
+    -5.6,
+    3.6
+   ]
+  },
+  {
+   "piece": "frog_pond",
+   "pos": [
+    -9.0,
+    -6.4
+   ]
+  },
+  {
+   "piece": "frost_scar",
+   "pos": [
+    -8.4,
+    6.8
+   ]
+  },
+  {
+   "piece": "stone_lantern",
+   "pos": [
+    0.2,
+    1.6
+   ]
+  },
+  {
+   "piece": "silverbark",
+   "pos": [
+    -4.0,
+    -12.4
+   ],
+   "rot": 20
+  },
+  {
+   "piece": "silverbark",
+   "pos": [
+    7.0,
+    -12.0
+   ],
+   "rot": 110
+  },
+  {
+   "piece": "silverbark",
+   "pos": [
+    -15.4,
+    2.0
+   ],
+   "rot": 70
+  },
+  {
+   "piece": "silverbark",
+   "pos": [
+    15.6,
+    6.0
+   ],
+   "rot": 150
+  },
+  {
+   "piece": "lumen_tree",
+   "pos": [
+    -11.2,
+    -4.6
+   ]
+  },
+  {
+   "piece": "lumen_tree",
+   "pos": [
+    11.0,
+    2.0
+   ],
+   "rot": 80
+  },
+  {
+   "piece": "lumen_tree",
+   "pos": [
+    1.0,
+    9.6
+   ],
+   "rot": 200
+  },
+  {
+   "piece": "lumen_tree",
+   "pos": [
+    -11.6,
+    9.2
+   ],
+   "rot": 300
+  },
+  {
+   "piece": "toadstool_cluster",
+   "pos": [
+    3.6,
+    -2.8
+   ]
+  },
+  {
+   "piece": "toadstool_big",
+   "pos": [
+    -4.4,
+    -6.2
+   ],
+   "rot": 20
+  },
+  {
+   "piece": "toadstool_cluster",
+   "pos": [
+    8.8,
+    6.6
+   ]
+  },
+  {
+   "piece": "toadstool_cluster",
+   "pos": [
+    -10.4,
+    4.6
+   ]
+  },
+  {
+   "piece": "toadstool_big",
+   "pos": [
+    9.6,
+    -6.4
+   ]
+  },
+  {
+   "piece": "mushroom_ring",
+   "pos": [
+    -3.4,
+    -3.8
+   ]
+  },
+  {
+   "piece": "fern_bush",
+   "pos": [
+    7.6,
+    -3.6
+   ]
+  },
+  {
+   "piece": "fern_bush",
+   "pos": [
+    -6.4,
+    8.8
+   ]
+  },
+  {
+   "piece": "fern_bush",
+   "pos": [
+    5.4,
+    9.4
+   ]
+  },
+  {
+   "piece": "fern_bush",
+   "pos": [
+    -11.6,
+    -1.6
+   ]
+  },
+  {
+   "piece": "vine_curtain",
+   "pos": [
+    -9.4,
+    1.0
+   ],
+   "rot": 90
+  },
+  {
+   "piece": "spring_basin",
+   "pos": [
+    -11.0,
+    1.0
+   ]
+  },
+  {
+   "piece": "vine_curtain",
+   "pos": [
+    3.4,
+    -7.6
+   ]
+  },
+  {
+   "piece": "vine_curtain",
+   "pos": [
+    -6.4,
+    -7.8
+   ]
+  },
+  {
+   "piece": "prism_crystal",
+   "pos": [
+    6.6,
+    -0.2
+   ],
+   "rot": 40
+  },
+  {
+   "piece": "prism_crystal",
+   "pos": [
+    -2.6,
+    3.0
+   ],
+   "rot": 120
+  },
+  {
+   "piece": "float_lantern_violet",
+   "pos": [
+    10.6,
+    -2.6
+   ]
+  },
+  {
+   "piece": "stone_lantern",
+   "pos": [
+    10.2,
+    0.4
+   ]
+  }
+ ],
+ "hedges": [],
+ "trees": [],
+ "backdrop": {},
+ "emitters": [
+  {
+   "preset": "fireflies",
+   "pos": [
+    0,
+    1.2,
+    1.0
+   ],
+   "area": [
+    24,
+    1.6,
+    18
+   ],
+   "min_gate": 0.0
+  },
+  {
+   "preset": "fireflies",
+   "pos": [
+    0,
+    2.6,
+    -4.0
+   ],
+   "area": [
+    22,
+    2.0,
+    8
+   ],
+   "min_gate": 0.0
+  },
+  {
+   "preset": "dust_motes",
+   "pos": [
+    -8.4,
+    0.8,
+    6.8
+   ],
+   "area": [
+    3.0,
+    0.8,
+    3.0
+   ],
+   "min_gate": 0.0
+  },
+  {
+   "preset": "fireflies",
+   "pos": [
+    4.4,
+    0.6,
+    7.6
+   ],
+   "area": [
+    3.0,
+    0.8,
+    2.4
+   ],
+   "min_gate": 0.0
+  },
+  {
+   "preset": "fireflies",
+   "pos": [
+    -5.6,
+    0.6,
+    3.6
+   ],
+   "area": [
+    3.0,
+    0.8,
+    2.4
+   ],
+   "min_gate": 0.0
+  },
+  {
+   "preset": "fireflies",
+   "pos": [
+    -9.0,
+    0.6,
+    -6.4
+   ],
+   "area": [
+    3.0,
+    0.8,
+    2.4
+   ],
+   "min_gate": 0.0
+  }
+ ],
+ "actors": [],
+ "player": {
+  "role": "traveler",
+  "pos": [
+   10.0,
+   -1.8
+  ],
+  "facing": "left"
+ },
+ "fx": [],
+ "grades": {
+  "day": {
+   "fog_color": "#3a2c64",
+   "sky_top": "#241a48",
+   "sky_bottom": "#7a64b0",
+   "hemi_sky": "#8a78c0",
+   "saturation": 1.04,
+   "bugs": 1.0,
+   "warmth": -0.08,
+   "exposure": 0.9,
+   "sun_intensity": 0.9,
+   "hemi_intensity": 0.62,
+   "sun_color": "#c8b8f0",
+   "lamp_intensity": 0.8
+  },
+  "dusk": {
+   "fog_color": "#241a50",
+   "sky_top": "#140e30",
+   "sky_bottom": "#4c3896",
+   "bugs": 1.0,
+   "exposure": 0.84,
+   "sun_intensity": 0.55,
+   "warmth": -0.14,
+   "sun_color": "#9c88f0"
+  },
+  "night": {
+   "fog_color": "#0e0a24",
+   "sky_top": "#07051a",
+   "sky_bottom": "#2a1a54",
+   "hemi_sky": "#4a3a80",
+   "bugs": 1.0,
+   "exposure": 0.86,
+   "sun_intensity": 0.3,
+   "hemi_intensity": 0.4,
+   "sun_color": "#8a7ae0"
+  }
+ },
+ "game": {
+  "id": "wispwood",
+  "title": "The Wispwood",
+  "exits": [
+   {
+    "rect": [
+     11.75,
+     -3.4,
+     14.0,
+     -0.4
+    ],
+    "to": "alfheim",
+    "spawn": "from_wispwood",
+    "label": "the root stair up to the glass bridge"
+   }
+  ],
+  "portals": [],
+  "spawns": {
+   "start": [
+    10.0,
+    -1.8,
+    "left"
+   ],
+   "from_steps": [
+    10.0,
+    -1.8,
+    "left"
+   ],
+   "qa": [
+    2.0,
+    2.0,
+    "up"
+   ],
+   "lumi": [
+    0.6,
+    2.6,
+    "up"
+   ],
+   "scar": [
+    -6.4,
+    5.6,
+    "left"
+   ]
+  },
+  "gardens": [
+   {
+    "id": "wispwood_garden",
+    "pos": [
+     8.2,
+     3.0
+    ],
+    "kinds": [
+     "violet",
+     "coldfire",
+     "toadcap"
+    ]
+   }
+  ],
+  "spring": {
+   "pos": [
+    -11.0,
+    1.0
+   ],
+   "r": 1.6,
+   "secret": "ww_spring"
+  },
+  "shimmer": {
+   "glints": [
+    [
+     4.4,
+     7.6
+    ],
+    [
+     -5.6,
+     3.6
+    ],
+    [
+     -9.0,
+     -6.4
+    ]
+   ],
+   "wisps": [
+    [
+     6.0,
+     4.6
+    ],
+    [
+     2.4,
+     -4.6
+    ],
+    [
+     -3.0,
+     7.0
+    ],
+    [
+     -7.6,
+     -1.4
+    ],
+    [
+     -1.0,
+     1.4
+    ],
+    [
+     9.0,
+     8.0
+    ],
+    [
+     -10.0,
+     7.6
+    ]
+   ]
+  },
+  "alf": {
+   "nests": [
+    [
+     "dw_1",
+     6.0,
+     4.0
+    ],
+    [
+     "dw_2",
+     2.4,
+     -5.2
+    ],
+    [
+     "dw_3",
+     -3.0,
+     6.4
+    ],
+    [
+     "dw_4",
+     -7.6,
+     -2.0
+    ],
+    [
+     "dw_5",
+     -1.0,
+     0.8
+    ]
+   ],
+   "ponds": [
+    [
+     "red",
+     4.4,
+     7.6
+    ],
+    [
+     "blue",
+     -5.6,
+     3.6
+    ],
+    [
+     "violet",
+     -9.0,
+     -6.4
+    ]
+   ],
+   "scar": [
+    -8.4,
+    6.8
+   ],
+   "lumi": [
+    -0.4,
+    1.6
+   ]
+  }
+ }
+}

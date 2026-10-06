@@ -1,8 +1,8 @@
 {
- "name": "Lumenvale Glade (Alfheim)",
+ "name": "Lumenvale: the Glimmer Steps",
  "seed": 117,
  "biome": "cozy-village",
- "about": "Alfheim, the realm of the light elves: Lumenvale, a tree town of pod houses and violet lumen trees on a terrace above a glade of prism crystals. Veyra's frost sealed the gate and Lady Sylvaine, the elf vampire queen, has woken in the Prism Vault, drinking the realm's light: prism shards, neon wisps, crystal golems and her Mirror Duelists roam the glade, and the Prism Colossus guards the vault door.",
+ "about": "Alfheim, realm of the light elves. Lumenvale is built in the crowns of giant silverbark trees: the Glimmer Steps curve round the greatest trunk in three terraces (the Wisp Market and Ferrin's glow-pool below, the Lantern Walk in the middle, the spiral stair up to the Moonlit Court on top), hung with violet vine curtains and glow orbs. The Gatelight arch leads back to Bifrost Crossing; the glass bridge west goes down to the Wispwood.",
  "time": {
   "start": "night",
   "speed": 0.0016
@@ -12,129 +12,157 @@
   "actors",
   "heroes",
   "combat",
-  "prismshard",
-  "neonwisp",
-  "crystalgolem",
-  "mirrorduelist"
+  "lanternseller",
+  "dwarftrader",
+  "poolkeeper",
+  "wispcatcher",
+  "elffolk",
+  "elffolk2"
  ],
- "boss_roles": [
-  "prismcolossus"
- ],
+ "boss_roles": [],
  "camera": {
   "fov": 24,
   "pitch": 36,
-  "distance": 32,
+  "distance": 33,
   "zoom": [
-   23,
-   42
+   24,
+   44
   ],
   "look": [
    0,
    0,
-   -2.0
+   -2.4
   ],
   "bounds": [
-   -10.0,
-   -9.0,
-   10.0,
-   8.0
+   -11.0,
+   -9.6,
+   11.0,
+   12.0
   ]
  },
  "ground": {
   "size": [
-   90,
-   80
+   80,
+   70
   ],
-  "mat": "moss",
+  "mat": "timber",
   "walk": [
-   -14.0,
-   -13.0,
-   14.0,
-   10.5
+   -12.4,
+   -12.0,
+   12.4,
+   12.4
   ]
  },
  "slabs": [
   {
-   "name": "arrival_path",
+   "name": "arrival",
    "rect": [
-    -12.6,
-    1.2,
-    -6.0,
-    3.4
+    -1.8,
+    4.2,
+    1.8,
+    11.6
    ],
    "mat": "cobble",
-   "h": 0.04
-  },
-  {
-   "name": "glade_path",
-   "rect": [
-    -1.4,
-    -4.9,
-    1.4,
-    4.2
-   ],
-   "mat": "cobble",
-   "h": 0.04
-  },
-  {
-   "name": "vault_path",
-   "rect": [
-    1.4,
-    1.6,
-    10.8,
-    3.4
-   ],
-   "mat": "dirt",
    "h": 0.03
   },
   {
-   "name": "glade",
+   "name": "market",
    "rect": [
-    -6.0,
-    -4.9,
-    8.0,
-    7.5
+    -9.6,
+    2.4,
+    -2.2,
+    8.6
    ],
-   "mat": "grass",
-   "h": 0.02
+   "mat": "cobble",
+   "h": 0.03
   }
  ],
  "terraces": [
   {
-   "name": "lumenvale",
+   "name": "lantern_walk",
    "rect": [
-    -30,
-    -30,
-    30,
-    -5.0
+    -12.4,
+    -4.4,
+    12.4,
+    0.4
    ],
-   "h": 1.8,
-   "top": "moss",
+   "h": 1.2,
+   "top": "cobble",
    "gaps": [
     [
-     -1.6,
-     1.6
+     -1.5,
+     1.5
     ]
    ]
+  },
+  {
+   "name": "upper_steps",
+   "rect": [
+    -12.4,
+    -30,
+    8.6,
+    -4.4
+   ],
+   "h": 2.4,
+   "top": "timber",
+   "gaps": [
+    [
+     -1.5,
+     1.5
+    ]
+   ]
+  },
+  {
+   "name": "upper_back_e",
+   "rect": [
+    8.6,
+    -30,
+    30,
+    -8.4
+   ],
+   "h": 2.4,
+   "top": "timber",
+   "coping": false
+  },
+  {
+   "name": "spring_ledge",
+   "rect": [
+    8.6,
+    -8.4,
+    12.4,
+    -4.4
+   ],
+   "h": 3.8,
+   "top": "moss"
   }
  ],
  "stairs": [
   {
-   "name": "stair_lumenvale",
+   "name": "stair_walk",
    "x": 0.0,
-   "z_top": -5.0,
+   "z_top": 0.4,
    "width": 3.0,
-   "rise": 1.8,
+   "rise": 1.2,
    "base": 0.0
+  },
+  {
+   "name": "stair_upper",
+   "x": 0.0,
+   "z_top": -4.4,
+   "width": 3.0,
+   "rise": 1.2,
+   "base": 1.2
   }
  ],
+ "decks": [],
+ "blocks": [],
  "buildings": [],
  "props": [
   {
    "piece": "realm_arch",
    "pos": [
-    -11.0,
-    1.6
+    0.0,
+    10.6
    ],
    "glow": {
     "color": "#a45cf0",
@@ -143,216 +171,316 @@
    }
   },
   {
-   "piece": "prism_door",
+   "piece": "realm_glow_violet",
+   "pos": [
+    0.0,
+    10.6
+   ]
+  },
+  {
+   "piece": "glow_pool",
+   "pos": [
+    6.4,
+    4.6
+   ]
+  },
+  {
+   "piece": "elf_stall",
+   "pos": [
+    -7.6,
+    4.2
+   ]
+  },
+  {
+   "piece": "dwarf_stall",
+   "pos": [
+    -4.4,
+    4.0
+   ]
+  },
+  {
+   "piece": "elf_stall",
+   "pos": [
+    -7.8,
+    7.6
+   ],
+   "rot": 180
+  },
+  {
+   "piece": "prism_lantern",
+   "pos": [
+    -2.6,
+    -0.4
+   ]
+  },
+  {
+   "piece": "prism_lantern",
+   "pos": [
+    2.6,
+    -0.4
+   ]
+  },
+  {
+   "piece": "prism_lantern",
+   "pos": [
+    -6.4,
+    -3.8
+   ]
+  },
+  {
+   "piece": "prism_lantern",
+   "pos": [
+    6.4,
+    -3.8
+   ]
+  },
+  {
+   "piece": "waystone",
+   "pos": [
+    3.2,
+    8.4
+   ]
+  },
+  {
+   "piece": "elf_banner",
+   "pos": [
+    -3.6,
+    9.0
+   ]
+  },
+  {
+   "piece": "bounce_toadstool",
+   "pos": [
+    8.0,
+    -5.0
+   ]
+  },
+  {
+   "piece": "bounce_toadstool",
+   "pos": [
+    9.2,
+    -4.8
+   ]
+  },
+  {
+   "piece": "spring_basin",
+   "pos": [
+    10.8,
+    -7.0
+   ]
+  },
+  {
+   "piece": "vine_curtain",
    "pos": [
     10.4,
-    1.0
+    -5.0
+   ]
+  },
+  {
+   "piece": "vine_curtain",
+   "pos": [
+    -11.4,
+    5.6
    ],
-   "glow": {
-    "color": "#a45cf0",
-    "range": 6.0,
-    "fixed": 0.8
-   }
+   "rot": 90
+  },
+  {
+   "piece": "vine_curtain",
+   "pos": [
+    11.4,
+    7.6
+   ],
+   "rot": 90
+  },
+  {
+   "piece": "vine_curtain",
+   "pos": [
+    -5.8,
+    2.2
+   ]
+  },
+  {
+   "piece": "vine_curtain",
+   "pos": [
+    -9.6,
+    -6.4
+   ]
+  },
+  {
+   "piece": "lumen_tree",
+   "pos": [
+    10.8,
+    1.2
+   ],
+   "rot": 40
+  },
+  {
+   "piece": "silverbark",
+   "pos": [
+    0.0,
+    -15.6
+   ]
+  },
+  {
+   "piece": "silverbark",
+   "pos": [
+    -16.0,
+    4.0
+   ],
+   "rot": 60
+  },
+  {
+   "piece": "silverbark",
+   "pos": [
+    16.2,
+    9.0
+   ],
+   "rot": 140
+  },
+  {
+   "piece": "silverbark",
+   "pos": [
+    -15.0,
+    -9.0
+   ],
+   "rot": 200
+  },
+  {
+   "piece": "vine_arch",
+   "pos": [
+    0.0,
+    -9.9
+   ]
   },
   {
    "piece": "orb_lantern",
    "pos": [
     -2.2,
-    -5.6
+    -8.0
    ]
   },
   {
    "piece": "orb_lantern",
    "pos": [
     2.2,
-    -5.6
-   ],
-   "rot": 180
-  },
-  {
-   "piece": "orb_lantern",
-   "pos": [
-    -8.6,
-    3.6
-   ]
-  },
-  {
-   "piece": "orb_lantern",
-   "pos": [
-    7.8,
-    3.8
+    -8.0
    ],
    "rot": 180
   },
   {
    "piece": "elf_treehouse",
    "pos": [
-    -7.4,
+    -7.6,
     -9.6
    ]
   },
   {
    "piece": "elf_treehouse",
    "pos": [
-    7.0,
-    -10.0
+    5.0,
+    -10.6
    ],
    "rot": 30
   },
   {
-   "piece": "moon_well",
+   "piece": "toadstool_cluster",
    "pos": [
-    0.0,
-    -9.0
+    -10.6,
+    10.0
    ]
   },
   {
-   "piece": "orb_lantern",
+   "piece": "toadstool_big",
+   "pos": [
+    -11.2,
+    9.4
+   ],
+   "rot": 20
+  },
+  {
+   "piece": "toadstool_cluster",
+   "pos": [
+    10.8,
+    10.4
+   ]
+  },
+  {
+   "piece": "toadstool_cluster",
+   "pos": [
+    -11.0,
+    -3.0
+   ]
+  },
+  {
+   "piece": "float_lantern_violet",
+   "pos": [
+    -3.6,
+    6.0
+   ]
+  },
+  {
+   "piece": "float_lantern_violet",
+   "pos": [
+    4.0,
+    1.8
+   ]
+  },
+  {
+   "piece": "fern_bush",
+   "pos": [
+    9.8,
+    6.0
+   ]
+  },
+  {
+   "piece": "fern_bush",
    "pos": [
     -11.6,
-    -6.4
+    1.2
    ]
   },
   {
-   "piece": "orb_lantern",
+   "piece": "light_bridge",
    "pos": [
-    11.6,
-    -6.4
+    -15.6,
+    -2.0
    ],
-   "rot": 180
+   "rot": 90,
+   "walkable": true,
+   "cast": false
   },
   {
-   "piece": "lumen_tree",
+   "piece": "mushroom_ring",
    "pos": [
-    -12.0,
-    -9.2
+    8.2,
+    9.6
    ]
-  },
-  {
-   "piece": "lumen_tree",
-   "pos": [
-    12.4,
-    -8.8
-   ],
-   "rot": 60
-  },
-  {
-   "piece": "lumen_tree",
-   "pos": [
-    -3.2,
-    -12.0
-   ],
-   "rot": 120
-  },
-  {
-   "piece": "lumen_tree",
-   "pos": [
-    3.4,
-    -12.4
-   ],
-   "rot": 200
-  },
-  {
-   "piece": "lumen_tree",
-   "pos": [
-    -14.2,
-    -3.4
-   ],
-   "rot": 80
-  },
-  {
-   "piece": "lumen_tree",
-   "pos": [
-    12.8,
-    7.0
-   ],
-   "rot": 160
-  },
-  {
-   "piece": "elf_banner",
-   "pos": [
-    -3.2,
-    -6.4
-   ]
-  },
-  {
-   "piece": "elf_banner",
-   "pos": [
-    3.2,
-    -6.4
-   ]
-  },
-  {
-   "piece": "prism_crystal",
-   "pos": [
-    -5.2,
-    -1.6
-   ]
-  },
-  {
-   "piece": "prism_crystal",
-   "pos": [
-    4.6,
-    -3.4
-   ],
-   "rot": 70
-  },
-  {
-   "piece": "prism_crystal",
-   "pos": [
-    -3.0,
-    5.2
-   ],
-   "rot": 140
-  },
-  {
-   "piece": "prism_crystal",
-   "pos": [
-    9.4,
-    -3.6
-   ],
-   "rot": 30
-  },
-  {
-   "piece": "prism_crystal",
-   "pos": [
-    5.2,
-    6.6
-   ],
-   "rot": 200
-  },
-  {
-   "piece": "prism_crystal",
-   "pos": [
-    -9.2,
-    -2.6
-   ],
-   "rot": 260
-  },
-  {
-   "piece": "prism_crystal",
-   "pos": [
-    13.0,
-    1.6
-   ],
-   "rot": 100
   }
  ],
  "hedges": [],
  "trees": [],
- "backdrop": {
-  "hills": [
-   0,
-   -36
-  ]
- },
+ "backdrop": {},
  "emitters": [
   {
    "preset": "fireflies",
    "pos": [
-    0.0,
-    3.0,
-    -9.0
+    0,
+    2.4,
+    4.0
+   ],
+   "area": [
+    22,
+    2.0,
+    12
+   ],
+   "min_gate": 0.0
+  },
+  {
+   "preset": "fireflies",
+   "pos": [
+    0,
+    3.8,
+    -2.0
    ],
    "area": [
     22,
@@ -364,14 +492,28 @@
   {
    "preset": "fireflies",
    "pos": [
-    0.0,
-    1.2,
-    1.0
+    0,
+    5.0,
+    -8.0
    ],
    "area": [
-    20,
-    1.4,
-    9
+    22,
+    2.0,
+    5
+   ],
+   "min_gate": 0.0
+  },
+  {
+   "preset": "fireflies",
+   "pos": [
+    6.4,
+    0.8,
+    4.6
+   ],
+   "area": [
+    3.6,
+    1.0,
+    3.6
    ],
    "min_gate": 0.0
   },
@@ -379,251 +521,380 @@
    "preset": "dust_motes",
    "pos": [
     0,
-    1.8,
-    -1.0
+    2.0,
+    0.0
    ],
    "area": [
     24,
     3.0,
-    16
+    24
    ]
   },
   {
    "preset": "fireflies",
    "pos": [
-    -11.0,
-    1.6,
-    2.2
+    10.6,
+    4.4,
+    -6.6
    ],
    "area": [
-    3,
-    1.6,
-    1.6
+    2.4,
+    1.2,
+    2.4
    ],
    "min_gate": 0.0
-  },
-  {
-   "preset": "fireflies",
-   "pos": [
-    10.4,
-    1.6,
-    1.8
-   ],
-   "area": [
-    3,
-    1.6,
-    1.6
-   ],
-   "min_gate": 0.0
-  },
-  {
-   "preset": "lamp_bugs",
-   "pos": [
-    0.0,
-    2.6,
-    -8.4
-   ],
-   "area": [
-    2.6,
-    1.0,
-    2.0
-   ]
   }
  ],
  "actors": [
   {
-   "id": "aelindra",
-   "role": "elfwarden",
-   "name": "Warden Aelindra Starwell of Lumenvale",
+   "id": "lanternseller",
+   "role": "lanternseller",
+   "name": "Saelis, lantern seller",
    "pos": [
-    -1.6,
-    -7.4
+    -7.6,
+    5.4
    ],
    "facing": "down",
    "behavior": "idle",
    "talkable": true,
    "say": [
-    "The light is thin tonight. Mind the glade, traveller."
+    "Lanterns! Neon ones, prism ones, and those funny Midgard fish ones."
    ]
   },
   {
-   "id": "thalion",
-   "role": "elfranger",
-   "name": "Thalion Duskbough, Lumenvale ranger",
+   "id": "dwarftrader",
+   "role": "dwarftrader",
+   "name": "Brokk Emberlode of Anvildeep",
    "pos": [
-    4.2,
-    -6.4
+    -4.4,
+    5.2
    ],
    "facing": "down",
    "behavior": "idle",
    "talkable": true,
    "say": [
-    "Shards in the glade, wisps by the crystals. Stay on the path."
+    "A dwarf in Alfheim. The elves glare. I glare back."
    ]
   },
   {
-   "id": "nyssa",
-   "role": "wispkeeper",
-   "name": "Nyssa Glimmerfold, wisp-keeper",
+   "id": "poolkeeper",
+   "role": "poolkeeper",
+   "name": "Ferrin the pool-tender",
    "pos": [
-    -4.6,
-    -6.6
+    4.0,
+    4.0
+   ],
+   "facing": "right",
+   "behavior": "idle",
+   "talkable": true,
+   "say": [
+    "Mind the frogs. That's Duchess, the blue one."
+   ]
+  },
+  {
+   "id": "wispcatcher",
+   "role": "wispcatcher",
+   "name": "Nim, wisp-catcher",
+   "pos": [
+    8.8,
+    2.0
    ],
    "facing": "down",
    "behavior": "idle",
    "talkable": true,
    "say": [
-    "Every orb lantern holds a little light-fish. They sulk when the realm goes dim."
+    "Shh! There's a wisp right... it's gone."
    ]
   },
   {
-   "id": "elfkid",
-   "role": "elfchild",
-   "name": "Pip Lumenleaf",
+   "id": "elf1",
+   "role": "elffolk",
+   "name": "A Lumenvale elf",
    "pos": [
-    2.0,
-    -8.6
+    -3.6,
+    -2.0
+   ],
+   "facing": "down",
+   "behavior": "idle",
+   "talkable": true,
+   "say": [
+    "A Midgarder. Through the gate. Somebody fetch the Regent."
+   ]
+  },
+  {
+   "id": "elf2",
+   "role": "elffolk2",
+   "name": "A Lumenvale elf",
+   "pos": [
+    4.8,
+    -1.8
+   ],
+   "facing": "down",
+   "behavior": "idle",
+   "talkable": true,
+   "say": [
+    "Mossbrook called us poisoners. Us! We apologise to the slugs."
+   ]
+  },
+  {
+   "id": "elf3",
+   "role": "elffolk",
+   "name": "A Lumenvale elf with a glowfrog jar",
+   "pos": [
+    -6.2,
+    9.6
    ],
    "facing": "down",
    "behavior": "wander",
    "talkable": true,
    "say": [
-    "Are you from Midgard? Is it true your lanterns use FIRE?"
+    "Another wisp went grey last night. I keep my lantern lit."
    ]
   }
  ],
  "player": {
   "role": "traveler",
   "pos": [
-   -11.0,
-   3.0
+   0.0,
+   9.2
   ],
-  "facing": "down"
+  "facing": "up"
  },
  "fx": [
   {
    "id": "gate_bifrost",
    "name": "rift_vortex_violet",
    "pos": [
-    -11.0,
-    0.2,
-    1.6
-   ]
-  },
-  {
-   "id": "vault_door",
-   "name": "prism_swirl",
-   "pos": [
-    10.4,
-    0.2,
-    1.35
-   ]
-  },
-  {
-   "id": "ring_glade",
-   "name": "prism_ring",
-   "pos": [
     0.0,
-    0.05,
-    1.0
+    0.2,
+    10.6
    ]
   }
  ],
  "grades": {
   "day": {
-   "fog_color": "#241a44",
-   "sky_top": "#140e2c",
-   "sky_bottom": "#5a3c96",
-   "hemi_sky": "#6a5aa0",
-   "saturation": 1.06,
+   "fog_color": "#3a2c64",
+   "sky_top": "#241a48",
+   "sky_bottom": "#7a64b0",
+   "hemi_sky": "#8a78c0",
+   "saturation": 1.04,
    "bugs": 1.0,
-   "warmth": -0.04,
-   "exposure": 1.04,
-   "sun_intensity": 1.3,
-   "hemi_intensity": 0.72,
-   "sun_color": "#e0d0ff"
+   "warmth": -0.08,
+   "exposure": 0.9,
+   "sun_intensity": 0.9,
+   "hemi_intensity": 0.62,
+   "sun_color": "#c8b8f0",
+   "lamp_intensity": 0.8
   },
   "dusk": {
-   "fog_color": "#1e1846",
-   "sky_top": "#100c26",
-   "sky_bottom": "#44348c",
+   "fog_color": "#241a50",
+   "sky_top": "#140e30",
+   "sky_bottom": "#4c3896",
    "bugs": 1.0,
-   "exposure": 0.86,
-   "sun_intensity": 0.6,
+   "exposure": 0.84,
+   "sun_intensity": 0.55,
    "warmth": -0.14,
-   "sun_color": "#a48cff"
+   "sun_color": "#9c88f0"
   },
   "night": {
-   "fog_color": "#0e0a22",
-   "sky_top": "#08061a",
-   "sky_bottom": "#2c1a50",
-   "hemi_sky": "#4a3a7c",
+   "fog_color": "#0e0a24",
+   "sky_top": "#07051a",
+   "sky_bottom": "#2a1a54",
+   "hemi_sky": "#4a3a80",
    "bugs": 1.0,
-   "exposure": 0.72,
-   "sun_intensity": 0.26,
-   "hemi_intensity": 0.34
+   "exposure": 0.86,
+   "sun_intensity": 0.3,
+   "hemi_intensity": 0.4,
+   "sun_color": "#8a7ae0"
   }
  },
  "game": {
   "id": "alfheim",
-  "title": "Lumenvale Glade",
-  "exits": [],
+  "title": "Lumenvale: the Glimmer Steps",
+  "exits": [
+   {
+    "rect": [
+     -1.2,
+     -11.2,
+     1.2,
+     -9.4
+    ],
+    "to": "lumen_court",
+    "spawn": "from_steps",
+    "label": "the spiral stair up to the Moonlit Court"
+   },
+   {
+    "rect": [
+     -14.0,
+     -3.6,
+     -11.75,
+     -0.6
+    ],
+    "to": "wispwood",
+    "spawn": "from_steps",
+    "label": "the glass bridge down to the Wispwood"
+   }
+  ],
   "portals": [
    {
     "fx": "gate_bifrost",
     "to": "bifrost",
     "spawn": "from_alfheim",
     "rect": [
-     -11.75,
-     1.2,
-     -10.25,
-     2.05
+     -0.75,
+     10.2,
+     0.75,
+     11.05
     ],
-    "label": "the violet gate back to Bifrost Crossing"
-   },
-   {
-    "fx": "vault_door",
-    "to": "prismvault",
-    "spawn": "from_alfheim",
-    "rect": [
-     9.65,
-     0.9,
-     11.15,
-     1.75
-    ],
-    "label": "the Prism Vault"
+    "label": "the Gatelight arch back to Bifrost Crossing"
    }
   ],
   "spawns": {
    "start": [
-    -11.0,
-    3.0,
-    "down"
+    0.0,
+    9.2,
+    "up"
    ],
    "from_bifrost": [
-    -11.0,
-    3.0,
+    0.0,
+    9.2,
+    "up"
+   ],
+   "from_court": [
+    0.0,
+    -8.4,
     "down"
    ],
-   "from_prismvault": [
-    10.4,
-    3.0,
-    "down"
+   "from_wispwood": [
+    -10.4,
+    -2.0,
+    "right"
+   ],
+   "from_waystone": [
+    3.2,
+    9.8,
+    "up"
    ],
    "qa": [
-    -1.0,
-    -0.6,
-    "up"
-   ],
-   "settlement": [
     0.0,
-    -6.2,
+    6.0,
     "up"
    ],
-   "vault": [
-    8.6,
-    3.6,
-    "right"
+   "market": [
+    -5.8,
+    6.8,
+    "up"
+   ],
+   "walk": [
+    0.0,
+    -2.0,
+    "up"
+   ],
+   "pool": [
+    5.6,
+    7.4,
+    "up"
+   ]
+  },
+  "waystone": {
+   "pos": [
+    3.2,
+    8.4
+   ]
+  },
+  "spring": {
+   "pos": [
+    10.8,
+    -7.0
+   ],
+   "r": 1.6,
+   "secret": "alf_spring"
+  },
+  "bounces": [
+   {
+    "id": "alf_up",
+    "pos": [
+     8.0,
+     -5.0
+    ],
+    "to": [
+     10.0,
+     -6.2
+    ],
+    "h": 3.8,
+    "dur": 1.0,
+    "secret": "Boing! Behind the vines: a hidden mossy ledge."
+   },
+   {
+    "id": "alf_down",
+    "pos": [
+     9.2,
+     -4.8
+    ],
+    "to": [
+     7.0,
+     -6.4
+    ],
+    "h": 2.4,
+    "dur": 0.8
+   }
+  ],
+  "shimmer": {
+   "glints": [
+    [
+     6.4,
+     4.6
+    ],
+    [
+     -2.6,
+     -0.4
+    ],
+    [
+     2.6,
+     -0.4
+    ],
+    [
+     0.0,
+     10.0
+    ]
+   ],
+   "wisps": [
+    [
+     -6.0,
+     6.0
+    ],
+    [
+     3.0,
+     -6.0
+    ],
+    [
+     -8.0,
+     -6.0
+    ],
+    [
+     9.0,
+     8.0
+    ],
+    [
+     0.0,
+     3.0
+    ]
+   ]
+  },
+  "alf": {
+   "pond": {
+    "id": "ferrin_pool",
+    "pos": [
+     6.4,
+     4.6
+    ],
+    "r": 2.6
+   },
+   "nets": [
+    [
+     8.8,
+     1.2
+    ]
    ]
   }
  }

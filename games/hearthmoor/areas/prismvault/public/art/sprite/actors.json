@@ -100,7 +100,7 @@
  "image": "actors.png",
  "size": [
   560,
-  3584
+  3840
  ],
  "roles": {
   "traveler": {
@@ -23616,10 +23616,10 @@
    ],
    "enemy": true
   },
-  "neonwisp": {
+  "willwisp": {
    "row": 104,
    "kind": "enemy",
-   "desc": "Alfheim neon will-o-wisp: a bright orb with a flame tail, dot eyes, orbiting sparks",
+   "desc": "Will-o'-wisp: a hostile neon wisp, flame tail, dot eyes, orbiting sparks",
    "size_bounds": [
     [
      6,
@@ -23639,7 +23639,7 @@
    ],
    "frames": [
     {
-     "name": "neonwisp_down_idle0",
+     "name": "willwisp_down_idle0",
      "facing": "down",
      "anim": "idle",
      "i": 0,
@@ -23653,7 +23653,7 @@
      ]
     },
     {
-     "name": "neonwisp_down_idle1",
+     "name": "willwisp_down_idle1",
      "facing": "down",
      "anim": "idle",
      "i": 1,
@@ -23667,7 +23667,7 @@
      ]
     },
     {
-     "name": "neonwisp_down_idle2",
+     "name": "willwisp_down_idle2",
      "facing": "down",
      "anim": "idle",
      "i": 2,
@@ -23681,7 +23681,7 @@
      ]
     },
     {
-     "name": "neonwisp_down_idle3",
+     "name": "willwisp_down_idle3",
      "facing": "down",
      "anim": "idle",
      "i": 3,
@@ -23695,7 +23695,7 @@
      ]
     },
     {
-     "name": "neonwisp_down_walk0",
+     "name": "willwisp_down_walk0",
      "facing": "down",
      "anim": "walk",
      "i": 0,
@@ -23709,7 +23709,7 @@
      ]
     },
     {
-     "name": "neonwisp_down_walk1",
+     "name": "willwisp_down_walk1",
      "facing": "down",
      "anim": "walk",
      "i": 1,
@@ -23723,7 +23723,7 @@
      ]
     },
     {
-     "name": "neonwisp_down_walk2",
+     "name": "willwisp_down_walk2",
      "facing": "down",
      "anim": "walk",
      "i": 2,
@@ -23737,7 +23737,7 @@
      ]
     },
     {
-     "name": "neonwisp_down_walk3",
+     "name": "willwisp_down_walk3",
      "facing": "down",
      "anim": "walk",
      "i": 3,
@@ -23751,7 +23751,7 @@
      ]
     },
     {
-     "name": "neonwisp_down_attack0",
+     "name": "willwisp_down_attack0",
      "facing": "down",
      "anim": "attack",
      "i": 0,
@@ -23765,7 +23765,7 @@
      ]
     },
     {
-     "name": "neonwisp_down_attack1",
+     "name": "willwisp_down_attack1",
      "facing": "down",
      "anim": "attack",
      "i": 1,
@@ -23779,7 +23779,7 @@
      ]
     },
     {
-     "name": "neonwisp_down_attack2",
+     "name": "willwisp_down_attack2",
      "facing": "down",
      "anim": "attack",
      "i": 2,
@@ -23793,7 +23793,7 @@
      ]
     },
     {
-     "name": "neonwisp_down_attack3",
+     "name": "willwisp_down_attack3",
      "facing": "down",
      "anim": "attack",
      "i": 3,
@@ -23807,7 +23807,7 @@
      ]
     },
     {
-     "name": "neonwisp_down_die0",
+     "name": "willwisp_down_die0",
      "facing": "down",
      "anim": "die",
      "i": 0,
@@ -23821,7 +23821,7 @@
      ]
     },
     {
-     "name": "neonwisp_down_die1",
+     "name": "willwisp_down_die1",
      "facing": "down",
      "anim": "die",
      "i": 1,
@@ -23835,7 +23835,7 @@
      ]
     },
     {
-     "name": "neonwisp_down_die2",
+     "name": "willwisp_down_die2",
      "facing": "down",
      "anim": "die",
      "i": 2,
@@ -23849,7 +23849,7 @@
      ]
     },
     {
-     "name": "neonwisp_down_die3",
+     "name": "willwisp_down_die3",
      "facing": "down",
      "anim": "die",
      "i": 3,
@@ -23863,7 +23863,7 @@
      ]
     },
     {
-     "name": "neonwisp_up_idle0",
+     "name": "willwisp_up_idle0",
      "facing": "up",
      "anim": "idle",
      "i": 0,
@@ -23877,7 +23877,7 @@
      ]
     },
     {
-     "name": "neonwisp_up_idle1",
+     "name": "willwisp_up_idle1",
      "facing": "up",
      "anim": "idle",
      "i": 1,
@@ -23891,7 +23891,7 @@
      ]
     },
     {
-     "name": "neonwisp_up_idle2",
+     "name": "willwisp_up_idle2",
      "facing": "up",
      "anim": "idle",
      "i": 2,
@@ -23905,7 +23905,7 @@
      ]
     },
     {
-     "name": "neonwisp_up_idle3",
+     "name": "willwisp_up_idle3",
      "facing": "up",
      "anim": "idle",
      "i": 3,
@@ -23919,7 +23919,7 @@
      ]
     },
     {
-     "name": "neonwisp_up_walk0",
+     "name": "willwisp_up_walk0",
      "facing": "up",
      "anim": "walk",
      "i": 0,
@@ -23933,7 +23933,7 @@
      ]
     },
     {
-     "name": "neonwisp_up_walk1",
+     "name": "willwisp_up_walk1",
      "facing": "up",
      "anim": "walk",
      "i": 1,
@@ -23947,7 +23947,7 @@
      ]
     },
     {
-     "name": "neonwisp_up_walk2",
+     "name": "willwisp_up_walk2",
      "facing": "up",
      "anim": "walk",
      "i": 2,
@@ -23961,7 +23961,7 @@
      ]
     },
     {
-     "name": "neonwisp_up_walk3",
+     "name": "willwisp_up_walk3",
      "facing": "up",
      "anim": "walk",
      "i": 3,
@@ -23975,7 +23975,7 @@
      ]
     },
     {
-     "name": "neonwisp_up_attack0",
+     "name": "willwisp_up_attack0",
      "facing": "up",
      "anim": "attack",
      "i": 0,
@@ -23989,7 +23989,7 @@
      ]
     },
     {
-     "name": "neonwisp_up_attack1",
+     "name": "willwisp_up_attack1",
      "facing": "up",
      "anim": "attack",
      "i": 1,
@@ -24003,7 +24003,7 @@
      ]
     },
     {
-     "name": "neonwisp_up_attack2",
+     "name": "willwisp_up_attack2",
      "facing": "up",
      "anim": "attack",
      "i": 2,
@@ -24017,7 +24017,7 @@
      ]
     },
     {
-     "name": "neonwisp_up_attack3",
+     "name": "willwisp_up_attack3",
      "facing": "up",
      "anim": "attack",
      "i": 3,
@@ -24031,7 +24031,7 @@
      ]
     },
     {
-     "name": "neonwisp_up_die0",
+     "name": "willwisp_up_die0",
      "facing": "up",
      "anim": "die",
      "i": 0,
@@ -24045,7 +24045,7 @@
      ]
     },
     {
-     "name": "neonwisp_up_die1",
+     "name": "willwisp_up_die1",
      "facing": "up",
      "anim": "die",
      "i": 1,
@@ -24059,7 +24059,7 @@
      ]
     },
     {
-     "name": "neonwisp_up_die2",
+     "name": "willwisp_up_die2",
      "facing": "up",
      "anim": "die",
      "i": 2,
@@ -24073,7 +24073,7 @@
      ]
     },
     {
-     "name": "neonwisp_up_die3",
+     "name": "willwisp_up_die3",
      "facing": "up",
      "anim": "die",
      "i": 3,
@@ -24087,7 +24087,7 @@
      ]
     },
     {
-     "name": "neonwisp_left_idle0",
+     "name": "willwisp_left_idle0",
      "facing": "left",
      "anim": "idle",
      "i": 0,
@@ -24101,7 +24101,7 @@
      ]
     },
     {
-     "name": "neonwisp_left_idle1",
+     "name": "willwisp_left_idle1",
      "facing": "left",
      "anim": "idle",
      "i": 1,
@@ -24115,7 +24115,7 @@
      ]
     },
     {
-     "name": "neonwisp_left_idle2",
+     "name": "willwisp_left_idle2",
      "facing": "left",
      "anim": "idle",
      "i": 2,
@@ -24129,7 +24129,7 @@
      ]
     },
     {
-     "name": "neonwisp_left_idle3",
+     "name": "willwisp_left_idle3",
      "facing": "left",
      "anim": "idle",
      "i": 3,
@@ -24143,7 +24143,7 @@
      ]
     },
     {
-     "name": "neonwisp_left_walk0",
+     "name": "willwisp_left_walk0",
      "facing": "left",
      "anim": "walk",
      "i": 0,
@@ -24157,7 +24157,7 @@
      ]
     },
     {
-     "name": "neonwisp_left_walk1",
+     "name": "willwisp_left_walk1",
      "facing": "left",
      "anim": "walk",
      "i": 1,
@@ -24171,7 +24171,7 @@
      ]
     },
     {
-     "name": "neonwisp_left_walk2",
+     "name": "willwisp_left_walk2",
      "facing": "left",
      "anim": "walk",
      "i": 2,
@@ -24185,7 +24185,7 @@
      ]
     },
     {
-     "name": "neonwisp_left_walk3",
+     "name": "willwisp_left_walk3",
      "facing": "left",
      "anim": "walk",
      "i": 3,
@@ -24199,7 +24199,7 @@
      ]
     },
     {
-     "name": "neonwisp_left_attack0",
+     "name": "willwisp_left_attack0",
      "facing": "left",
      "anim": "attack",
      "i": 0,
@@ -24213,7 +24213,7 @@
      ]
     },
     {
-     "name": "neonwisp_left_attack1",
+     "name": "willwisp_left_attack1",
      "facing": "left",
      "anim": "attack",
      "i": 1,
@@ -24227,7 +24227,7 @@
      ]
     },
     {
-     "name": "neonwisp_left_attack2",
+     "name": "willwisp_left_attack2",
      "facing": "left",
      "anim": "attack",
      "i": 2,
@@ -24241,7 +24241,7 @@
      ]
     },
     {
-     "name": "neonwisp_left_attack3",
+     "name": "willwisp_left_attack3",
      "facing": "left",
      "anim": "attack",
      "i": 3,
@@ -24255,7 +24255,7 @@
      ]
     },
     {
-     "name": "neonwisp_left_die0",
+     "name": "willwisp_left_die0",
      "facing": "left",
      "anim": "die",
      "i": 0,
@@ -24269,7 +24269,7 @@
      ]
     },
     {
-     "name": "neonwisp_left_die1",
+     "name": "willwisp_left_die1",
      "facing": "left",
      "anim": "die",
      "i": 1,
@@ -24283,7 +24283,7 @@
      ]
     },
     {
-     "name": "neonwisp_left_die2",
+     "name": "willwisp_left_die2",
      "facing": "left",
      "anim": "die",
      "i": 2,
@@ -24297,7 +24297,7 @@
      ]
     },
     {
-     "name": "neonwisp_left_die3",
+     "name": "willwisp_left_die3",
      "facing": "left",
      "anim": "die",
      "i": 3,
@@ -24311,7 +24311,7 @@
      ]
     },
     {
-     "name": "neonwisp_right_idle0",
+     "name": "willwisp_right_idle0",
      "facing": "right",
      "anim": "idle",
      "i": 0,
@@ -24325,7 +24325,7 @@
      ]
     },
     {
-     "name": "neonwisp_right_idle1",
+     "name": "willwisp_right_idle1",
      "facing": "right",
      "anim": "idle",
      "i": 1,
@@ -24339,7 +24339,7 @@
      ]
     },
     {
-     "name": "neonwisp_right_idle2",
+     "name": "willwisp_right_idle2",
      "facing": "right",
      "anim": "idle",
      "i": 2,
@@ -24353,7 +24353,7 @@
      ]
     },
     {
-     "name": "neonwisp_right_idle3",
+     "name": "willwisp_right_idle3",
      "facing": "right",
      "anim": "idle",
      "i": 3,
@@ -24367,7 +24367,7 @@
      ]
     },
     {
-     "name": "neonwisp_right_walk0",
+     "name": "willwisp_right_walk0",
      "facing": "right",
      "anim": "walk",
      "i": 0,
@@ -24381,7 +24381,7 @@
      ]
     },
     {
-     "name": "neonwisp_right_walk1",
+     "name": "willwisp_right_walk1",
      "facing": "right",
      "anim": "walk",
      "i": 1,
@@ -24395,7 +24395,7 @@
      ]
     },
     {
-     "name": "neonwisp_right_walk2",
+     "name": "willwisp_right_walk2",
      "facing": "right",
      "anim": "walk",
      "i": 2,
@@ -24409,7 +24409,7 @@
      ]
     },
     {
-     "name": "neonwisp_right_walk3",
+     "name": "willwisp_right_walk3",
      "facing": "right",
      "anim": "walk",
      "i": 3,
@@ -24423,7 +24423,7 @@
      ]
     },
     {
-     "name": "neonwisp_right_attack0",
+     "name": "willwisp_right_attack0",
      "facing": "right",
      "anim": "attack",
      "i": 0,
@@ -24437,7 +24437,7 @@
      ]
     },
     {
-     "name": "neonwisp_right_attack1",
+     "name": "willwisp_right_attack1",
      "facing": "right",
      "anim": "attack",
      "i": 1,
@@ -24451,7 +24451,7 @@
      ]
     },
     {
-     "name": "neonwisp_right_attack2",
+     "name": "willwisp_right_attack2",
      "facing": "right",
      "anim": "attack",
      "i": 2,
@@ -24465,7 +24465,7 @@
      ]
     },
     {
-     "name": "neonwisp_right_attack3",
+     "name": "willwisp_right_attack3",
      "facing": "right",
      "anim": "attack",
      "i": 3,
@@ -24479,7 +24479,7 @@
      ]
     },
     {
-     "name": "neonwisp_right_die0",
+     "name": "willwisp_right_die0",
      "facing": "right",
      "anim": "die",
      "i": 0,
@@ -24493,7 +24493,7 @@
      ]
     },
     {
-     "name": "neonwisp_right_die1",
+     "name": "willwisp_right_die1",
      "facing": "right",
      "anim": "die",
      "i": 1,
@@ -24507,7 +24507,7 @@
      ]
     },
     {
-     "name": "neonwisp_right_die2",
+     "name": "willwisp_right_die2",
      "facing": "right",
      "anim": "die",
      "i": 2,
@@ -24521,7 +24521,7 @@
      ]
     },
     {
-     "name": "neonwisp_right_die3",
+     "name": "willwisp_right_die3",
      "facing": "right",
      "anim": "die",
      "i": 3,
@@ -24537,8 +24537,929 @@
    ],
    "enemy": true
   },
-  "mirrorduelist": {
+  "crystalgolem": {
    "row": 108,
+   "kind": "enemy",
+   "desc": "Alfheim crystal golem: the golem in pale crystal, rose-crystal veins, shoulder spires",
+   "size_bounds": [
+    [
+     6,
+     20
+    ],
+    [
+     6,
+     32
+    ]
+   ],
+   "caster": false,
+   "anims": [
+    "idle",
+    "walk",
+    "attack",
+    "die"
+   ],
+   "frames": [
+    {
+     "name": "crystalgolem_down_idle0",
+     "facing": "down",
+     "anim": "idle",
+     "i": 0,
+     "x": 0,
+     "y": 3456,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      10,
+      3488
+     ]
+    },
+    {
+     "name": "crystalgolem_down_idle1",
+     "facing": "down",
+     "anim": "idle",
+     "i": 1,
+     "x": 20,
+     "y": 3456,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      30,
+      3488
+     ]
+    },
+    {
+     "name": "crystalgolem_down_idle2",
+     "facing": "down",
+     "anim": "idle",
+     "i": 2,
+     "x": 40,
+     "y": 3456,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      50,
+      3488
+     ]
+    },
+    {
+     "name": "crystalgolem_down_idle3",
+     "facing": "down",
+     "anim": "idle",
+     "i": 3,
+     "x": 60,
+     "y": 3456,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      70,
+      3488
+     ]
+    },
+    {
+     "name": "crystalgolem_down_walk0",
+     "facing": "down",
+     "anim": "walk",
+     "i": 0,
+     "x": 80,
+     "y": 3456,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      90,
+      3488
+     ]
+    },
+    {
+     "name": "crystalgolem_down_walk1",
+     "facing": "down",
+     "anim": "walk",
+     "i": 1,
+     "x": 100,
+     "y": 3456,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      110,
+      3488
+     ]
+    },
+    {
+     "name": "crystalgolem_down_walk2",
+     "facing": "down",
+     "anim": "walk",
+     "i": 2,
+     "x": 120,
+     "y": 3456,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      130,
+      3488
+     ]
+    },
+    {
+     "name": "crystalgolem_down_walk3",
+     "facing": "down",
+     "anim": "walk",
+     "i": 3,
+     "x": 140,
+     "y": 3456,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      150,
+      3488
+     ]
+    },
+    {
+     "name": "crystalgolem_down_attack0",
+     "facing": "down",
+     "anim": "attack",
+     "i": 0,
+     "x": 240,
+     "y": 3456,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      250,
+      3488
+     ]
+    },
+    {
+     "name": "crystalgolem_down_attack1",
+     "facing": "down",
+     "anim": "attack",
+     "i": 1,
+     "x": 260,
+     "y": 3456,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      270,
+      3488
+     ]
+    },
+    {
+     "name": "crystalgolem_down_attack2",
+     "facing": "down",
+     "anim": "attack",
+     "i": 2,
+     "x": 280,
+     "y": 3456,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      290,
+      3488
+     ]
+    },
+    {
+     "name": "crystalgolem_down_attack3",
+     "facing": "down",
+     "anim": "attack",
+     "i": 3,
+     "x": 300,
+     "y": 3456,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      310,
+      3488
+     ]
+    },
+    {
+     "name": "crystalgolem_down_die0",
+     "facing": "down",
+     "anim": "die",
+     "i": 0,
+     "x": 480,
+     "y": 3456,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      490,
+      3488
+     ]
+    },
+    {
+     "name": "crystalgolem_down_die1",
+     "facing": "down",
+     "anim": "die",
+     "i": 1,
+     "x": 500,
+     "y": 3456,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      510,
+      3488
+     ]
+    },
+    {
+     "name": "crystalgolem_down_die2",
+     "facing": "down",
+     "anim": "die",
+     "i": 2,
+     "x": 520,
+     "y": 3456,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      530,
+      3488
+     ]
+    },
+    {
+     "name": "crystalgolem_down_die3",
+     "facing": "down",
+     "anim": "die",
+     "i": 3,
+     "x": 540,
+     "y": 3456,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      550,
+      3488
+     ]
+    },
+    {
+     "name": "crystalgolem_up_idle0",
+     "facing": "up",
+     "anim": "idle",
+     "i": 0,
+     "x": 0,
+     "y": 3488,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      10,
+      3520
+     ]
+    },
+    {
+     "name": "crystalgolem_up_idle1",
+     "facing": "up",
+     "anim": "idle",
+     "i": 1,
+     "x": 20,
+     "y": 3488,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      30,
+      3520
+     ]
+    },
+    {
+     "name": "crystalgolem_up_idle2",
+     "facing": "up",
+     "anim": "idle",
+     "i": 2,
+     "x": 40,
+     "y": 3488,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      50,
+      3520
+     ]
+    },
+    {
+     "name": "crystalgolem_up_idle3",
+     "facing": "up",
+     "anim": "idle",
+     "i": 3,
+     "x": 60,
+     "y": 3488,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      70,
+      3520
+     ]
+    },
+    {
+     "name": "crystalgolem_up_walk0",
+     "facing": "up",
+     "anim": "walk",
+     "i": 0,
+     "x": 80,
+     "y": 3488,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      90,
+      3520
+     ]
+    },
+    {
+     "name": "crystalgolem_up_walk1",
+     "facing": "up",
+     "anim": "walk",
+     "i": 1,
+     "x": 100,
+     "y": 3488,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      110,
+      3520
+     ]
+    },
+    {
+     "name": "crystalgolem_up_walk2",
+     "facing": "up",
+     "anim": "walk",
+     "i": 2,
+     "x": 120,
+     "y": 3488,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      130,
+      3520
+     ]
+    },
+    {
+     "name": "crystalgolem_up_walk3",
+     "facing": "up",
+     "anim": "walk",
+     "i": 3,
+     "x": 140,
+     "y": 3488,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      150,
+      3520
+     ]
+    },
+    {
+     "name": "crystalgolem_up_attack0",
+     "facing": "up",
+     "anim": "attack",
+     "i": 0,
+     "x": 240,
+     "y": 3488,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      250,
+      3520
+     ]
+    },
+    {
+     "name": "crystalgolem_up_attack1",
+     "facing": "up",
+     "anim": "attack",
+     "i": 1,
+     "x": 260,
+     "y": 3488,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      270,
+      3520
+     ]
+    },
+    {
+     "name": "crystalgolem_up_attack2",
+     "facing": "up",
+     "anim": "attack",
+     "i": 2,
+     "x": 280,
+     "y": 3488,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      290,
+      3520
+     ]
+    },
+    {
+     "name": "crystalgolem_up_attack3",
+     "facing": "up",
+     "anim": "attack",
+     "i": 3,
+     "x": 300,
+     "y": 3488,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      310,
+      3520
+     ]
+    },
+    {
+     "name": "crystalgolem_up_die0",
+     "facing": "up",
+     "anim": "die",
+     "i": 0,
+     "x": 480,
+     "y": 3488,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      490,
+      3520
+     ]
+    },
+    {
+     "name": "crystalgolem_up_die1",
+     "facing": "up",
+     "anim": "die",
+     "i": 1,
+     "x": 500,
+     "y": 3488,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      510,
+      3520
+     ]
+    },
+    {
+     "name": "crystalgolem_up_die2",
+     "facing": "up",
+     "anim": "die",
+     "i": 2,
+     "x": 520,
+     "y": 3488,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      530,
+      3520
+     ]
+    },
+    {
+     "name": "crystalgolem_up_die3",
+     "facing": "up",
+     "anim": "die",
+     "i": 3,
+     "x": 540,
+     "y": 3488,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      550,
+      3520
+     ]
+    },
+    {
+     "name": "crystalgolem_left_idle0",
+     "facing": "left",
+     "anim": "idle",
+     "i": 0,
+     "x": 0,
+     "y": 3520,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      10,
+      3552
+     ]
+    },
+    {
+     "name": "crystalgolem_left_idle1",
+     "facing": "left",
+     "anim": "idle",
+     "i": 1,
+     "x": 20,
+     "y": 3520,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      30,
+      3552
+     ]
+    },
+    {
+     "name": "crystalgolem_left_idle2",
+     "facing": "left",
+     "anim": "idle",
+     "i": 2,
+     "x": 40,
+     "y": 3520,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      50,
+      3552
+     ]
+    },
+    {
+     "name": "crystalgolem_left_idle3",
+     "facing": "left",
+     "anim": "idle",
+     "i": 3,
+     "x": 60,
+     "y": 3520,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      70,
+      3552
+     ]
+    },
+    {
+     "name": "crystalgolem_left_walk0",
+     "facing": "left",
+     "anim": "walk",
+     "i": 0,
+     "x": 80,
+     "y": 3520,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      90,
+      3552
+     ]
+    },
+    {
+     "name": "crystalgolem_left_walk1",
+     "facing": "left",
+     "anim": "walk",
+     "i": 1,
+     "x": 100,
+     "y": 3520,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      110,
+      3552
+     ]
+    },
+    {
+     "name": "crystalgolem_left_walk2",
+     "facing": "left",
+     "anim": "walk",
+     "i": 2,
+     "x": 120,
+     "y": 3520,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      130,
+      3552
+     ]
+    },
+    {
+     "name": "crystalgolem_left_walk3",
+     "facing": "left",
+     "anim": "walk",
+     "i": 3,
+     "x": 140,
+     "y": 3520,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      150,
+      3552
+     ]
+    },
+    {
+     "name": "crystalgolem_left_attack0",
+     "facing": "left",
+     "anim": "attack",
+     "i": 0,
+     "x": 240,
+     "y": 3520,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      250,
+      3552
+     ]
+    },
+    {
+     "name": "crystalgolem_left_attack1",
+     "facing": "left",
+     "anim": "attack",
+     "i": 1,
+     "x": 260,
+     "y": 3520,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      270,
+      3552
+     ]
+    },
+    {
+     "name": "crystalgolem_left_attack2",
+     "facing": "left",
+     "anim": "attack",
+     "i": 2,
+     "x": 280,
+     "y": 3520,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      290,
+      3552
+     ]
+    },
+    {
+     "name": "crystalgolem_left_attack3",
+     "facing": "left",
+     "anim": "attack",
+     "i": 3,
+     "x": 300,
+     "y": 3520,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      310,
+      3552
+     ]
+    },
+    {
+     "name": "crystalgolem_left_die0",
+     "facing": "left",
+     "anim": "die",
+     "i": 0,
+     "x": 480,
+     "y": 3520,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      490,
+      3552
+     ]
+    },
+    {
+     "name": "crystalgolem_left_die1",
+     "facing": "left",
+     "anim": "die",
+     "i": 1,
+     "x": 500,
+     "y": 3520,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      510,
+      3552
+     ]
+    },
+    {
+     "name": "crystalgolem_left_die2",
+     "facing": "left",
+     "anim": "die",
+     "i": 2,
+     "x": 520,
+     "y": 3520,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      530,
+      3552
+     ]
+    },
+    {
+     "name": "crystalgolem_left_die3",
+     "facing": "left",
+     "anim": "die",
+     "i": 3,
+     "x": 540,
+     "y": 3520,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      550,
+      3552
+     ]
+    },
+    {
+     "name": "crystalgolem_right_idle0",
+     "facing": "right",
+     "anim": "idle",
+     "i": 0,
+     "x": 0,
+     "y": 3552,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      10,
+      3584
+     ]
+    },
+    {
+     "name": "crystalgolem_right_idle1",
+     "facing": "right",
+     "anim": "idle",
+     "i": 1,
+     "x": 20,
+     "y": 3552,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      30,
+      3584
+     ]
+    },
+    {
+     "name": "crystalgolem_right_idle2",
+     "facing": "right",
+     "anim": "idle",
+     "i": 2,
+     "x": 40,
+     "y": 3552,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      50,
+      3584
+     ]
+    },
+    {
+     "name": "crystalgolem_right_idle3",
+     "facing": "right",
+     "anim": "idle",
+     "i": 3,
+     "x": 60,
+     "y": 3552,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      70,
+      3584
+     ]
+    },
+    {
+     "name": "crystalgolem_right_walk0",
+     "facing": "right",
+     "anim": "walk",
+     "i": 0,
+     "x": 80,
+     "y": 3552,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      90,
+      3584
+     ]
+    },
+    {
+     "name": "crystalgolem_right_walk1",
+     "facing": "right",
+     "anim": "walk",
+     "i": 1,
+     "x": 100,
+     "y": 3552,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      110,
+      3584
+     ]
+    },
+    {
+     "name": "crystalgolem_right_walk2",
+     "facing": "right",
+     "anim": "walk",
+     "i": 2,
+     "x": 120,
+     "y": 3552,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      130,
+      3584
+     ]
+    },
+    {
+     "name": "crystalgolem_right_walk3",
+     "facing": "right",
+     "anim": "walk",
+     "i": 3,
+     "x": 140,
+     "y": 3552,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      150,
+      3584
+     ]
+    },
+    {
+     "name": "crystalgolem_right_attack0",
+     "facing": "right",
+     "anim": "attack",
+     "i": 0,
+     "x": 240,
+     "y": 3552,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      250,
+      3584
+     ]
+    },
+    {
+     "name": "crystalgolem_right_attack1",
+     "facing": "right",
+     "anim": "attack",
+     "i": 1,
+     "x": 260,
+     "y": 3552,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      270,
+      3584
+     ]
+    },
+    {
+     "name": "crystalgolem_right_attack2",
+     "facing": "right",
+     "anim": "attack",
+     "i": 2,
+     "x": 280,
+     "y": 3552,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      290,
+      3584
+     ]
+    },
+    {
+     "name": "crystalgolem_right_attack3",
+     "facing": "right",
+     "anim": "attack",
+     "i": 3,
+     "x": 300,
+     "y": 3552,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      310,
+      3584
+     ]
+    },
+    {
+     "name": "crystalgolem_right_die0",
+     "facing": "right",
+     "anim": "die",
+     "i": 0,
+     "x": 480,
+     "y": 3552,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      490,
+      3584
+     ]
+    },
+    {
+     "name": "crystalgolem_right_die1",
+     "facing": "right",
+     "anim": "die",
+     "i": 1,
+     "x": 500,
+     "y": 3552,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      510,
+      3584
+     ]
+    },
+    {
+     "name": "crystalgolem_right_die2",
+     "facing": "right",
+     "anim": "die",
+     "i": 2,
+     "x": 520,
+     "y": 3552,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      530,
+      3584
+     ]
+    },
+    {
+     "name": "crystalgolem_right_die3",
+     "facing": "right",
+     "anim": "die",
+     "i": 3,
+     "x": 540,
+     "y": 3552,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      550,
+      3584
+     ]
+    }
+   ],
+   "enemy": true
+  },
+  "mirrorduelist": {
+   "row": 112,
    "kind": "enemy",
    "desc": "Mirror Duelist (elite): light-elf duelist, mirror-glass skin, dark coat, gold belt, dark trousers, brown boots, mirror rapier",
    "size_bounds": [
@@ -24565,12 +25486,12 @@
      "anim": "idle",
      "i": 0,
      "x": 0,
-     "y": 3456,
+     "y": 3584,
      "w": 20,
      "h": 32,
      "pivot": [
       10,
-      3488
+      3616
      ]
     },
     {
@@ -24579,12 +25500,12 @@
      "anim": "idle",
      "i": 1,
      "x": 20,
-     "y": 3456,
+     "y": 3584,
      "w": 20,
      "h": 32,
      "pivot": [
       30,
-      3488
+      3616
      ]
     },
     {
@@ -24593,12 +25514,12 @@
      "anim": "idle",
      "i": 2,
      "x": 40,
-     "y": 3456,
+     "y": 3584,
      "w": 20,
      "h": 32,
      "pivot": [
       50,
-      3488
+      3616
      ]
     },
     {
@@ -24607,12 +25528,12 @@
      "anim": "idle",
      "i": 3,
      "x": 60,
-     "y": 3456,
+     "y": 3584,
      "w": 20,
      "h": 32,
      "pivot": [
       70,
-      3488
+      3616
      ]
     },
     {
@@ -24621,12 +25542,12 @@
      "anim": "walk",
      "i": 0,
      "x": 80,
-     "y": 3456,
+     "y": 3584,
      "w": 20,
      "h": 32,
      "pivot": [
       90,
-      3488
+      3616
      ]
     },
     {
@@ -24635,12 +25556,12 @@
      "anim": "walk",
      "i": 1,
      "x": 100,
-     "y": 3456,
+     "y": 3584,
      "w": 20,
      "h": 32,
      "pivot": [
       110,
-      3488
+      3616
      ]
     },
     {
@@ -24649,12 +25570,12 @@
      "anim": "walk",
      "i": 2,
      "x": 120,
-     "y": 3456,
+     "y": 3584,
      "w": 20,
      "h": 32,
      "pivot": [
       130,
-      3488
+      3616
      ]
     },
     {
@@ -24663,12 +25584,12 @@
      "anim": "walk",
      "i": 3,
      "x": 140,
-     "y": 3456,
+     "y": 3584,
      "w": 20,
      "h": 32,
      "pivot": [
       150,
-      3488
+      3616
      ]
     },
     {
@@ -24677,12 +25598,12 @@
      "anim": "attack",
      "i": 0,
      "x": 240,
-     "y": 3456,
+     "y": 3584,
      "w": 20,
      "h": 32,
      "pivot": [
       250,
-      3488
+      3616
      ]
     },
     {
@@ -24691,12 +25612,12 @@
      "anim": "attack",
      "i": 1,
      "x": 260,
-     "y": 3456,
+     "y": 3584,
      "w": 20,
      "h": 32,
      "pivot": [
       270,
-      3488
+      3616
      ]
     },
     {
@@ -24705,12 +25626,12 @@
      "anim": "attack",
      "i": 2,
      "x": 280,
-     "y": 3456,
+     "y": 3584,
      "w": 20,
      "h": 32,
      "pivot": [
       290,
-      3488
+      3616
      ]
     },
     {
@@ -24719,12 +25640,12 @@
      "anim": "attack",
      "i": 3,
      "x": 300,
-     "y": 3456,
+     "y": 3584,
      "w": 20,
      "h": 32,
      "pivot": [
       310,
-      3488
+      3616
      ]
     },
     {
@@ -24733,12 +25654,12 @@
      "anim": "die",
      "i": 0,
      "x": 480,
-     "y": 3456,
+     "y": 3584,
      "w": 20,
      "h": 32,
      "pivot": [
       490,
-      3488
+      3616
      ]
     },
     {
@@ -24747,12 +25668,12 @@
      "anim": "die",
      "i": 1,
      "x": 500,
-     "y": 3456,
+     "y": 3584,
      "w": 20,
      "h": 32,
      "pivot": [
       510,
-      3488
+      3616
      ]
     },
     {
@@ -24761,12 +25682,12 @@
      "anim": "die",
      "i": 2,
      "x": 520,
-     "y": 3456,
+     "y": 3584,
      "w": 20,
      "h": 32,
      "pivot": [
       530,
-      3488
+      3616
      ]
     },
     {
@@ -24775,12 +25696,12 @@
      "anim": "die",
      "i": 3,
      "x": 540,
-     "y": 3456,
+     "y": 3584,
      "w": 20,
      "h": 32,
      "pivot": [
       550,
-      3488
+      3616
      ]
     },
     {
@@ -24789,12 +25710,12 @@
      "anim": "idle",
      "i": 0,
      "x": 0,
-     "y": 3488,
+     "y": 3616,
      "w": 20,
      "h": 32,
      "pivot": [
       10,
-      3520
+      3648
      ]
     },
     {
@@ -24803,12 +25724,12 @@
      "anim": "idle",
      "i": 1,
      "x": 20,
-     "y": 3488,
+     "y": 3616,
      "w": 20,
      "h": 32,
      "pivot": [
       30,
-      3520
+      3648
      ]
     },
     {
@@ -24817,12 +25738,12 @@
      "anim": "idle",
      "i": 2,
      "x": 40,
-     "y": 3488,
+     "y": 3616,
      "w": 20,
      "h": 32,
      "pivot": [
       50,
-      3520
+      3648
      ]
     },
     {
@@ -24831,12 +25752,12 @@
      "anim": "idle",
      "i": 3,
      "x": 60,
-     "y": 3488,
+     "y": 3616,
      "w": 20,
      "h": 32,
      "pivot": [
       70,
-      3520
+      3648
      ]
     },
     {
@@ -24845,12 +25766,12 @@
      "anim": "walk",
      "i": 0,
      "x": 80,
-     "y": 3488,
+     "y": 3616,
      "w": 20,
      "h": 32,
      "pivot": [
       90,
-      3520
+      3648
      ]
     },
     {
@@ -24859,12 +25780,12 @@
      "anim": "walk",
      "i": 1,
      "x": 100,
-     "y": 3488,
+     "y": 3616,
      "w": 20,
      "h": 32,
      "pivot": [
       110,
-      3520
+      3648
      ]
     },
     {
@@ -24873,12 +25794,12 @@
      "anim": "walk",
      "i": 2,
      "x": 120,
-     "y": 3488,
+     "y": 3616,
      "w": 20,
      "h": 32,
      "pivot": [
       130,
-      3520
+      3648
      ]
     },
     {
@@ -24887,12 +25808,12 @@
      "anim": "walk",
      "i": 3,
      "x": 140,
-     "y": 3488,
+     "y": 3616,
      "w": 20,
      "h": 32,
      "pivot": [
       150,
-      3520
+      3648
      ]
     },
     {
@@ -24901,12 +25822,12 @@
      "anim": "attack",
      "i": 0,
      "x": 240,
-     "y": 3488,
+     "y": 3616,
      "w": 20,
      "h": 32,
      "pivot": [
       250,
-      3520
+      3648
      ]
     },
     {
@@ -24915,12 +25836,12 @@
      "anim": "attack",
      "i": 1,
      "x": 260,
-     "y": 3488,
+     "y": 3616,
      "w": 20,
      "h": 32,
      "pivot": [
       270,
-      3520
+      3648
      ]
     },
     {
@@ -24929,12 +25850,12 @@
      "anim": "attack",
      "i": 2,
      "x": 280,
-     "y": 3488,
+     "y": 3616,
      "w": 20,
      "h": 32,
      "pivot": [
       290,
-      3520
+      3648
      ]
     },
     {
@@ -24943,12 +25864,12 @@
      "anim": "attack",
      "i": 3,
      "x": 300,
-     "y": 3488,
+     "y": 3616,
      "w": 20,
      "h": 32,
      "pivot": [
       310,
-      3520
+      3648
      ]
     },
     {
@@ -24957,12 +25878,12 @@
      "anim": "die",
      "i": 0,
      "x": 480,
-     "y": 3488,
+     "y": 3616,
      "w": 20,
      "h": 32,
      "pivot": [
       490,
-      3520
+      3648
      ]
     },
     {
@@ -24971,12 +25892,12 @@
      "anim": "die",
      "i": 1,
      "x": 500,
-     "y": 3488,
+     "y": 3616,
      "w": 20,
      "h": 32,
      "pivot": [
       510,
-      3520
+      3648
      ]
     },
     {
@@ -24985,12 +25906,12 @@
      "anim": "die",
      "i": 2,
      "x": 520,
-     "y": 3488,
+     "y": 3616,
      "w": 20,
      "h": 32,
      "pivot": [
       530,
-      3520
+      3648
      ]
     },
     {
@@ -24999,12 +25920,12 @@
      "anim": "die",
      "i": 3,
      "x": 540,
-     "y": 3488,
+     "y": 3616,
      "w": 20,
      "h": 32,
      "pivot": [
       550,
-      3520
+      3648
      ]
     },
     {
@@ -25013,12 +25934,12 @@
      "anim": "idle",
      "i": 0,
      "x": 0,
-     "y": 3520,
+     "y": 3648,
      "w": 20,
      "h": 32,
      "pivot": [
       10,
-      3552
+      3680
      ]
     },
     {
@@ -25027,12 +25948,12 @@
      "anim": "idle",
      "i": 1,
      "x": 20,
-     "y": 3520,
+     "y": 3648,
      "w": 20,
      "h": 32,
      "pivot": [
       30,
-      3552
+      3680
      ]
     },
     {
@@ -25041,12 +25962,12 @@
      "anim": "idle",
      "i": 2,
      "x": 40,
-     "y": 3520,
+     "y": 3648,
      "w": 20,
      "h": 32,
      "pivot": [
       50,
-      3552
+      3680
      ]
     },
     {
@@ -25055,12 +25976,12 @@
      "anim": "idle",
      "i": 3,
      "x": 60,
-     "y": 3520,
+     "y": 3648,
      "w": 20,
      "h": 32,
      "pivot": [
       70,
-      3552
+      3680
      ]
     },
     {
@@ -25069,12 +25990,12 @@
      "anim": "walk",
      "i": 0,
      "x": 80,
-     "y": 3520,
+     "y": 3648,
      "w": 20,
      "h": 32,
      "pivot": [
       90,
-      3552
+      3680
      ]
     },
     {
@@ -25083,12 +26004,12 @@
      "anim": "walk",
      "i": 1,
      "x": 100,
-     "y": 3520,
+     "y": 3648,
      "w": 20,
      "h": 32,
      "pivot": [
       110,
-      3552
+      3680
      ]
     },
     {
@@ -25097,12 +26018,12 @@
      "anim": "walk",
      "i": 2,
      "x": 120,
-     "y": 3520,
+     "y": 3648,
      "w": 20,
      "h": 32,
      "pivot": [
       130,
-      3552
+      3680
      ]
     },
     {
@@ -25111,12 +26032,12 @@
      "anim": "walk",
      "i": 3,
      "x": 140,
-     "y": 3520,
+     "y": 3648,
      "w": 20,
      "h": 32,
      "pivot": [
       150,
-      3552
+      3680
      ]
     },
     {
@@ -25125,12 +26046,12 @@
      "anim": "attack",
      "i": 0,
      "x": 240,
-     "y": 3520,
+     "y": 3648,
      "w": 20,
      "h": 32,
      "pivot": [
       250,
-      3552
+      3680
      ]
     },
     {
@@ -25139,12 +26060,12 @@
      "anim": "attack",
      "i": 1,
      "x": 260,
-     "y": 3520,
+     "y": 3648,
      "w": 20,
      "h": 32,
      "pivot": [
       270,
-      3552
+      3680
      ]
     },
     {
@@ -25153,12 +26074,12 @@
      "anim": "attack",
      "i": 2,
      "x": 280,
-     "y": 3520,
+     "y": 3648,
      "w": 20,
      "h": 32,
      "pivot": [
       290,
-      3552
+      3680
      ]
     },
     {
@@ -25167,12 +26088,12 @@
      "anim": "attack",
      "i": 3,
      "x": 300,
-     "y": 3520,
+     "y": 3648,
      "w": 20,
      "h": 32,
      "pivot": [
       310,
-      3552
+      3680
      ]
     },
     {
@@ -25181,12 +26102,12 @@
      "anim": "die",
      "i": 0,
      "x": 480,
-     "y": 3520,
+     "y": 3648,
      "w": 20,
      "h": 32,
      "pivot": [
       490,
-      3552
+      3680
      ]
     },
     {
@@ -25195,12 +26116,12 @@
      "anim": "die",
      "i": 1,
      "x": 500,
-     "y": 3520,
+     "y": 3648,
      "w": 20,
      "h": 32,
      "pivot": [
       510,
-      3552
+      3680
      ]
     },
     {
@@ -25209,12 +26130,12 @@
      "anim": "die",
      "i": 2,
      "x": 520,
-     "y": 3520,
+     "y": 3648,
      "w": 20,
      "h": 32,
      "pivot": [
       530,
-      3552
+      3680
      ]
     },
     {
@@ -25223,12 +26144,12 @@
      "anim": "die",
      "i": 3,
      "x": 540,
-     "y": 3520,
+     "y": 3648,
      "w": 20,
      "h": 32,
      "pivot": [
       550,
-      3552
+      3680
      ]
     },
     {
@@ -25237,12 +26158,12 @@
      "anim": "idle",
      "i": 0,
      "x": 0,
-     "y": 3552,
+     "y": 3680,
      "w": 20,
      "h": 32,
      "pivot": [
       10,
-      3584
+      3712
      ]
     },
     {
@@ -25251,12 +26172,12 @@
      "anim": "idle",
      "i": 1,
      "x": 20,
-     "y": 3552,
+     "y": 3680,
      "w": 20,
      "h": 32,
      "pivot": [
       30,
-      3584
+      3712
      ]
     },
     {
@@ -25265,12 +26186,12 @@
      "anim": "idle",
      "i": 2,
      "x": 40,
-     "y": 3552,
+     "y": 3680,
      "w": 20,
      "h": 32,
      "pivot": [
       50,
-      3584
+      3712
      ]
     },
     {
@@ -25279,12 +26200,12 @@
      "anim": "idle",
      "i": 3,
      "x": 60,
-     "y": 3552,
+     "y": 3680,
      "w": 20,
      "h": 32,
      "pivot": [
       70,
-      3584
+      3712
      ]
     },
     {
@@ -25293,12 +26214,12 @@
      "anim": "walk",
      "i": 0,
      "x": 80,
-     "y": 3552,
+     "y": 3680,
      "w": 20,
      "h": 32,
      "pivot": [
       90,
-      3584
+      3712
      ]
     },
     {
@@ -25307,12 +26228,12 @@
      "anim": "walk",
      "i": 1,
      "x": 100,
-     "y": 3552,
+     "y": 3680,
      "w": 20,
      "h": 32,
      "pivot": [
       110,
-      3584
+      3712
      ]
     },
     {
@@ -25321,12 +26242,12 @@
      "anim": "walk",
      "i": 2,
      "x": 120,
-     "y": 3552,
+     "y": 3680,
      "w": 20,
      "h": 32,
      "pivot": [
       130,
-      3584
+      3712
      ]
     },
     {
@@ -25335,12 +26256,12 @@
      "anim": "walk",
      "i": 3,
      "x": 140,
-     "y": 3552,
+     "y": 3680,
      "w": 20,
      "h": 32,
      "pivot": [
       150,
-      3584
+      3712
      ]
     },
     {
@@ -25349,12 +26270,12 @@
      "anim": "attack",
      "i": 0,
      "x": 240,
-     "y": 3552,
+     "y": 3680,
      "w": 20,
      "h": 32,
      "pivot": [
       250,
-      3584
+      3712
      ]
     },
     {
@@ -25363,12 +26284,12 @@
      "anim": "attack",
      "i": 1,
      "x": 260,
-     "y": 3552,
+     "y": 3680,
      "w": 20,
      "h": 32,
      "pivot": [
       270,
-      3584
+      3712
      ]
     },
     {
@@ -25377,12 +26298,12 @@
      "anim": "attack",
      "i": 2,
      "x": 280,
-     "y": 3552,
+     "y": 3680,
      "w": 20,
      "h": 32,
      "pivot": [
       290,
-      3584
+      3712
      ]
     },
     {
@@ -25391,12 +26312,12 @@
      "anim": "attack",
      "i": 3,
      "x": 300,
-     "y": 3552,
+     "y": 3680,
      "w": 20,
      "h": 32,
      "pivot": [
       310,
-      3584
+      3712
      ]
     },
     {
@@ -25405,12 +26326,12 @@
      "anim": "die",
      "i": 0,
      "x": 480,
-     "y": 3552,
+     "y": 3680,
      "w": 20,
      "h": 32,
      "pivot": [
       490,
-      3584
+      3712
      ]
     },
     {
@@ -25419,12 +26340,12 @@
      "anim": "die",
      "i": 1,
      "x": 500,
-     "y": 3552,
+     "y": 3680,
      "w": 20,
      "h": 32,
      "pivot": [
       510,
-      3584
+      3712
      ]
     },
     {
@@ -25433,12 +26354,12 @@
      "anim": "die",
      "i": 2,
      "x": 520,
-     "y": 3552,
+     "y": 3680,
      "w": 20,
      "h": 32,
      "pivot": [
       530,
-      3584
+      3712
      ]
     },
     {
@@ -25447,27 +26368,948 @@
      "anim": "die",
      "i": 3,
      "x": 540,
-     "y": 3552,
+     "y": 3680,
      "w": 20,
      "h": 32,
      "pivot": [
       550,
-      3584
+      3712
      ]
     }
    ],
    "enemy": true
   },
-  "sylvaine": {
+  "lightranger": {
+   "row": 116,
+   "kind": "enemy",
+   "desc": "Light-elf ranger (conquer path): leather vest, shirt, trousers, ranger blade",
+   "size_bounds": [
+    [
+     6,
+     20
+    ],
+    [
+     6,
+     32
+    ]
+   ],
+   "caster": false,
+   "anims": [
+    "idle",
+    "walk",
+    "attack",
+    "die"
+   ],
+   "frames": [
+    {
+     "name": "lightranger_down_idle0",
+     "facing": "down",
+     "anim": "idle",
+     "i": 0,
+     "x": 0,
+     "y": 3712,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      10,
+      3744
+     ]
+    },
+    {
+     "name": "lightranger_down_idle1",
+     "facing": "down",
+     "anim": "idle",
+     "i": 1,
+     "x": 20,
+     "y": 3712,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      30,
+      3744
+     ]
+    },
+    {
+     "name": "lightranger_down_idle2",
+     "facing": "down",
+     "anim": "idle",
+     "i": 2,
+     "x": 40,
+     "y": 3712,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      50,
+      3744
+     ]
+    },
+    {
+     "name": "lightranger_down_idle3",
+     "facing": "down",
+     "anim": "idle",
+     "i": 3,
+     "x": 60,
+     "y": 3712,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      70,
+      3744
+     ]
+    },
+    {
+     "name": "lightranger_down_walk0",
+     "facing": "down",
+     "anim": "walk",
+     "i": 0,
+     "x": 80,
+     "y": 3712,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      90,
+      3744
+     ]
+    },
+    {
+     "name": "lightranger_down_walk1",
+     "facing": "down",
+     "anim": "walk",
+     "i": 1,
+     "x": 100,
+     "y": 3712,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      110,
+      3744
+     ]
+    },
+    {
+     "name": "lightranger_down_walk2",
+     "facing": "down",
+     "anim": "walk",
+     "i": 2,
+     "x": 120,
+     "y": 3712,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      130,
+      3744
+     ]
+    },
+    {
+     "name": "lightranger_down_walk3",
+     "facing": "down",
+     "anim": "walk",
+     "i": 3,
+     "x": 140,
+     "y": 3712,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      150,
+      3744
+     ]
+    },
+    {
+     "name": "lightranger_down_attack0",
+     "facing": "down",
+     "anim": "attack",
+     "i": 0,
+     "x": 240,
+     "y": 3712,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      250,
+      3744
+     ]
+    },
+    {
+     "name": "lightranger_down_attack1",
+     "facing": "down",
+     "anim": "attack",
+     "i": 1,
+     "x": 260,
+     "y": 3712,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      270,
+      3744
+     ]
+    },
+    {
+     "name": "lightranger_down_attack2",
+     "facing": "down",
+     "anim": "attack",
+     "i": 2,
+     "x": 280,
+     "y": 3712,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      290,
+      3744
+     ]
+    },
+    {
+     "name": "lightranger_down_attack3",
+     "facing": "down",
+     "anim": "attack",
+     "i": 3,
+     "x": 300,
+     "y": 3712,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      310,
+      3744
+     ]
+    },
+    {
+     "name": "lightranger_down_die0",
+     "facing": "down",
+     "anim": "die",
+     "i": 0,
+     "x": 480,
+     "y": 3712,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      490,
+      3744
+     ]
+    },
+    {
+     "name": "lightranger_down_die1",
+     "facing": "down",
+     "anim": "die",
+     "i": 1,
+     "x": 500,
+     "y": 3712,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      510,
+      3744
+     ]
+    },
+    {
+     "name": "lightranger_down_die2",
+     "facing": "down",
+     "anim": "die",
+     "i": 2,
+     "x": 520,
+     "y": 3712,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      530,
+      3744
+     ]
+    },
+    {
+     "name": "lightranger_down_die3",
+     "facing": "down",
+     "anim": "die",
+     "i": 3,
+     "x": 540,
+     "y": 3712,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      550,
+      3744
+     ]
+    },
+    {
+     "name": "lightranger_up_idle0",
+     "facing": "up",
+     "anim": "idle",
+     "i": 0,
+     "x": 0,
+     "y": 3744,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      10,
+      3776
+     ]
+    },
+    {
+     "name": "lightranger_up_idle1",
+     "facing": "up",
+     "anim": "idle",
+     "i": 1,
+     "x": 20,
+     "y": 3744,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      30,
+      3776
+     ]
+    },
+    {
+     "name": "lightranger_up_idle2",
+     "facing": "up",
+     "anim": "idle",
+     "i": 2,
+     "x": 40,
+     "y": 3744,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      50,
+      3776
+     ]
+    },
+    {
+     "name": "lightranger_up_idle3",
+     "facing": "up",
+     "anim": "idle",
+     "i": 3,
+     "x": 60,
+     "y": 3744,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      70,
+      3776
+     ]
+    },
+    {
+     "name": "lightranger_up_walk0",
+     "facing": "up",
+     "anim": "walk",
+     "i": 0,
+     "x": 80,
+     "y": 3744,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      90,
+      3776
+     ]
+    },
+    {
+     "name": "lightranger_up_walk1",
+     "facing": "up",
+     "anim": "walk",
+     "i": 1,
+     "x": 100,
+     "y": 3744,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      110,
+      3776
+     ]
+    },
+    {
+     "name": "lightranger_up_walk2",
+     "facing": "up",
+     "anim": "walk",
+     "i": 2,
+     "x": 120,
+     "y": 3744,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      130,
+      3776
+     ]
+    },
+    {
+     "name": "lightranger_up_walk3",
+     "facing": "up",
+     "anim": "walk",
+     "i": 3,
+     "x": 140,
+     "y": 3744,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      150,
+      3776
+     ]
+    },
+    {
+     "name": "lightranger_up_attack0",
+     "facing": "up",
+     "anim": "attack",
+     "i": 0,
+     "x": 240,
+     "y": 3744,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      250,
+      3776
+     ]
+    },
+    {
+     "name": "lightranger_up_attack1",
+     "facing": "up",
+     "anim": "attack",
+     "i": 1,
+     "x": 260,
+     "y": 3744,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      270,
+      3776
+     ]
+    },
+    {
+     "name": "lightranger_up_attack2",
+     "facing": "up",
+     "anim": "attack",
+     "i": 2,
+     "x": 280,
+     "y": 3744,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      290,
+      3776
+     ]
+    },
+    {
+     "name": "lightranger_up_attack3",
+     "facing": "up",
+     "anim": "attack",
+     "i": 3,
+     "x": 300,
+     "y": 3744,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      310,
+      3776
+     ]
+    },
+    {
+     "name": "lightranger_up_die0",
+     "facing": "up",
+     "anim": "die",
+     "i": 0,
+     "x": 480,
+     "y": 3744,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      490,
+      3776
+     ]
+    },
+    {
+     "name": "lightranger_up_die1",
+     "facing": "up",
+     "anim": "die",
+     "i": 1,
+     "x": 500,
+     "y": 3744,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      510,
+      3776
+     ]
+    },
+    {
+     "name": "lightranger_up_die2",
+     "facing": "up",
+     "anim": "die",
+     "i": 2,
+     "x": 520,
+     "y": 3744,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      530,
+      3776
+     ]
+    },
+    {
+     "name": "lightranger_up_die3",
+     "facing": "up",
+     "anim": "die",
+     "i": 3,
+     "x": 540,
+     "y": 3744,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      550,
+      3776
+     ]
+    },
+    {
+     "name": "lightranger_left_idle0",
+     "facing": "left",
+     "anim": "idle",
+     "i": 0,
+     "x": 0,
+     "y": 3776,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      10,
+      3808
+     ]
+    },
+    {
+     "name": "lightranger_left_idle1",
+     "facing": "left",
+     "anim": "idle",
+     "i": 1,
+     "x": 20,
+     "y": 3776,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      30,
+      3808
+     ]
+    },
+    {
+     "name": "lightranger_left_idle2",
+     "facing": "left",
+     "anim": "idle",
+     "i": 2,
+     "x": 40,
+     "y": 3776,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      50,
+      3808
+     ]
+    },
+    {
+     "name": "lightranger_left_idle3",
+     "facing": "left",
+     "anim": "idle",
+     "i": 3,
+     "x": 60,
+     "y": 3776,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      70,
+      3808
+     ]
+    },
+    {
+     "name": "lightranger_left_walk0",
+     "facing": "left",
+     "anim": "walk",
+     "i": 0,
+     "x": 80,
+     "y": 3776,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      90,
+      3808
+     ]
+    },
+    {
+     "name": "lightranger_left_walk1",
+     "facing": "left",
+     "anim": "walk",
+     "i": 1,
+     "x": 100,
+     "y": 3776,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      110,
+      3808
+     ]
+    },
+    {
+     "name": "lightranger_left_walk2",
+     "facing": "left",
+     "anim": "walk",
+     "i": 2,
+     "x": 120,
+     "y": 3776,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      130,
+      3808
+     ]
+    },
+    {
+     "name": "lightranger_left_walk3",
+     "facing": "left",
+     "anim": "walk",
+     "i": 3,
+     "x": 140,
+     "y": 3776,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      150,
+      3808
+     ]
+    },
+    {
+     "name": "lightranger_left_attack0",
+     "facing": "left",
+     "anim": "attack",
+     "i": 0,
+     "x": 240,
+     "y": 3776,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      250,
+      3808
+     ]
+    },
+    {
+     "name": "lightranger_left_attack1",
+     "facing": "left",
+     "anim": "attack",
+     "i": 1,
+     "x": 260,
+     "y": 3776,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      270,
+      3808
+     ]
+    },
+    {
+     "name": "lightranger_left_attack2",
+     "facing": "left",
+     "anim": "attack",
+     "i": 2,
+     "x": 280,
+     "y": 3776,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      290,
+      3808
+     ]
+    },
+    {
+     "name": "lightranger_left_attack3",
+     "facing": "left",
+     "anim": "attack",
+     "i": 3,
+     "x": 300,
+     "y": 3776,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      310,
+      3808
+     ]
+    },
+    {
+     "name": "lightranger_left_die0",
+     "facing": "left",
+     "anim": "die",
+     "i": 0,
+     "x": 480,
+     "y": 3776,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      490,
+      3808
+     ]
+    },
+    {
+     "name": "lightranger_left_die1",
+     "facing": "left",
+     "anim": "die",
+     "i": 1,
+     "x": 500,
+     "y": 3776,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      510,
+      3808
+     ]
+    },
+    {
+     "name": "lightranger_left_die2",
+     "facing": "left",
+     "anim": "die",
+     "i": 2,
+     "x": 520,
+     "y": 3776,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      530,
+      3808
+     ]
+    },
+    {
+     "name": "lightranger_left_die3",
+     "facing": "left",
+     "anim": "die",
+     "i": 3,
+     "x": 540,
+     "y": 3776,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      550,
+      3808
+     ]
+    },
+    {
+     "name": "lightranger_right_idle0",
+     "facing": "right",
+     "anim": "idle",
+     "i": 0,
+     "x": 0,
+     "y": 3808,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      10,
+      3840
+     ]
+    },
+    {
+     "name": "lightranger_right_idle1",
+     "facing": "right",
+     "anim": "idle",
+     "i": 1,
+     "x": 20,
+     "y": 3808,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      30,
+      3840
+     ]
+    },
+    {
+     "name": "lightranger_right_idle2",
+     "facing": "right",
+     "anim": "idle",
+     "i": 2,
+     "x": 40,
+     "y": 3808,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      50,
+      3840
+     ]
+    },
+    {
+     "name": "lightranger_right_idle3",
+     "facing": "right",
+     "anim": "idle",
+     "i": 3,
+     "x": 60,
+     "y": 3808,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      70,
+      3840
+     ]
+    },
+    {
+     "name": "lightranger_right_walk0",
+     "facing": "right",
+     "anim": "walk",
+     "i": 0,
+     "x": 80,
+     "y": 3808,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      90,
+      3840
+     ]
+    },
+    {
+     "name": "lightranger_right_walk1",
+     "facing": "right",
+     "anim": "walk",
+     "i": 1,
+     "x": 100,
+     "y": 3808,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      110,
+      3840
+     ]
+    },
+    {
+     "name": "lightranger_right_walk2",
+     "facing": "right",
+     "anim": "walk",
+     "i": 2,
+     "x": 120,
+     "y": 3808,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      130,
+      3840
+     ]
+    },
+    {
+     "name": "lightranger_right_walk3",
+     "facing": "right",
+     "anim": "walk",
+     "i": 3,
+     "x": 140,
+     "y": 3808,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      150,
+      3840
+     ]
+    },
+    {
+     "name": "lightranger_right_attack0",
+     "facing": "right",
+     "anim": "attack",
+     "i": 0,
+     "x": 240,
+     "y": 3808,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      250,
+      3840
+     ]
+    },
+    {
+     "name": "lightranger_right_attack1",
+     "facing": "right",
+     "anim": "attack",
+     "i": 1,
+     "x": 260,
+     "y": 3808,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      270,
+      3840
+     ]
+    },
+    {
+     "name": "lightranger_right_attack2",
+     "facing": "right",
+     "anim": "attack",
+     "i": 2,
+     "x": 280,
+     "y": 3808,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      290,
+      3840
+     ]
+    },
+    {
+     "name": "lightranger_right_attack3",
+     "facing": "right",
+     "anim": "attack",
+     "i": 3,
+     "x": 300,
+     "y": 3808,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      310,
+      3840
+     ]
+    },
+    {
+     "name": "lightranger_right_die0",
+     "facing": "right",
+     "anim": "die",
+     "i": 0,
+     "x": 480,
+     "y": 3808,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      490,
+      3840
+     ]
+    },
+    {
+     "name": "lightranger_right_die1",
+     "facing": "right",
+     "anim": "die",
+     "i": 1,
+     "x": 500,
+     "y": 3808,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      510,
+      3840
+     ]
+    },
+    {
+     "name": "lightranger_right_die2",
+     "facing": "right",
+     "anim": "die",
+     "i": 2,
+     "x": 520,
+     "y": 3808,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      530,
+      3840
+     ]
+    },
+    {
+     "name": "lightranger_right_die3",
+     "facing": "right",
+     "anim": "die",
+     "i": 3,
+     "x": 540,
+     "y": 3808,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      550,
+      3840
+     ]
+    }
+   ],
+   "enemy": true
+  },
+  "lenswarden": {
    "sheet": "boss",
    "row": 0,
    "kind": "enemy",
    "enemy": true,
    "boss": true,
-   "scale": 5.0,
+   "scale": 2.8,
    "frame": [
-    100,
-    160
+    56,
+    90
    ],
    "anims": [
     "idle",
@@ -25475,13 +27317,78 @@
     "attack",
     "die"
    ],
-   "desc": "Lady Sylvaine, elf vampire queen (boss, 5x): silver hair, crystal crown, red eyes, dark bodice + rose collar, gold waist cinch, long deep-blue skirt, red-lined cape, crystal scepter"
+   "desc": "The Lens Warden (mini-boss, 2.8x): crystal golem of violet glass and black stone, a great round chest-lens, frost-cracks across one shoulder"
+  },
+  "sylvaine": {
+   "sheet": "boss2",
+   "row": 0,
+   "kind": "enemy",
+   "enemy": true,
+   "boss": true,
+   "scale": 6.0,
+   "frame": [
+    128,
+    192
+   ],
+   "anims": [
+    "idle",
+    "walk",
+    "attack",
+    "die"
+   ],
+   "desc": "Lady Sylvaine, elf vampire queen (boss, 6x; Art seat drawing): silver hair, crystal tiara, deep-blue blouse + lace jabot, dark belt with gold clasp, long dark bell skirt with rose panel, red-lined cape"
+  },
+  "shardmother": {
+   "sheet": "boss3",
+   "row": 0,
+   "kind": "enemy",
+   "enemy": true,
+   "boss": true,
+   "scale": 2.4,
+   "frame": [
+    52,
+    84
+   ],
+   "anims": [
+    "idle",
+    "walk",
+    "attack",
+    "die"
+   ],
+   "desc": "Shardmother (rare, 2.4x): a crystal queen-shape of floating shards around a glowing core, a skirt of hanging glass"
+  },
+  "glassstalker": {
+   "sheet": "boss3",
+   "row": 4,
+   "kind": "enemy",
+   "enemy": true,
+   "boss": true,
+   "scale": 2.6,
+   "frame": [
+    52,
+    84
+   ],
+   "anims": [
+    "idle",
+    "walk",
+    "attack",
+    "die"
+   ],
+   "desc": "Glass Stalker (rare, 2.6x): a tall, thin mirror-creature, a moving silhouette of reflections with bright eyes"
   }
  },
  "sheets": {
   "boss": {
    "json": "boss.json",
    "image": "boss.png"
+  },
+  "boss2": {
+   "json": "boss2.json",
+   "image": "boss2.png"
+  },
+  "boss3": {
+   "json": "boss3.json",
+   "image": "boss3.png"
   }
  }
 }

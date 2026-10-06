@@ -3,12 +3,11 @@
 Style lock BOSS SCALE OVERRIDE: drawn NATIVELY at their size (never an upscaled small sprite), biome palette, hard
 alpha, 1 px ink outline added by boss_sheet.frame. Their violet is their light + ground aura (game/alfheim.js).
 
-  prismcolossus  The Prism Colossus (Lumenvale mini-boss, ~2.5x, 50x80): Mossheart's block-golem body re-cut in pale
-                 crystal with rose-crystal veins, a crown of prism spires and a white-hot heart
-  sylvaine       Lady Sylvaine, the elf vampire queen (Prism Vault boss, 5x, 100x160): silver hair to the knee, a
-                 crown of jagged crystal, pale skin and red eyes; clothing rule: a fitted dark bodice with a high rose
-                 collar (top), a broad gold waist cinch with a rose jewel (waist), a long deep-blue skirt with a pale
-                 hem (bottom), a red-lined cape behind; a crystal scepter that drains magic
+  lenswarden     The Lens Warden (P4 mini-boss, 2.8x, 56x90): crystal golem of black stone + glass, a great chest-lens
+  frostsentinel  Frost sentinel (Bifrost, 2x, 40x64): the same golem in ice, cold-fire seams
+  shardmother    Shardmother (rare, 2.4x, 52x84 frame): floating shards round a core, a glass skirt
+  glassstalker   Glass Stalker (rare, 2.6x, 52x84 frame): tall thin mirror-creature with glass blades
+  sylvaine       Lady Sylvaine (boss, 6x, 128x192): the Art seat's drawing (boss_sylvaine6.py), real art
 """
 from __future__ import annotations
 
@@ -17,10 +16,17 @@ import math
 from roles_enemies import ell, rect
 
 BOSS = {
-    "prismcolossus": {"frame": (50, 80), "scale": 2.5, "anims": ("idle", "walk", "attack", "die"),
-                      "desc": "The Prism Colossus (mini-boss, ~2.5x): pale crystal block-golem, rose-crystal veins, prism-spire crown, white-hot heart"},
-    "sylvaine": {"frame": (100, 160), "scale": 5.0, "anims": ("idle", "walk", "attack", "die"),
-                 "desc": "Lady Sylvaine, elf vampire queen (boss, 5x): silver hair, crystal crown, red eyes, dark bodice + rose collar, gold waist cinch, long deep-blue skirt, red-lined cape, crystal scepter"},
+    # script section 8.4 (alfheim.md): natively drawn at their size; one sheet per frame size (assemble [ALFHEIM] hook)
+    "lenswarden": {"frame": (56, 90), "scale": 2.8, "anims": ("idle", "walk", "attack", "die"),
+                   "desc": "The Lens Warden (mini-boss, 2.8x): crystal golem of violet glass and black stone, a great round chest-lens, frost-cracks across one shoulder"},
+    "shardmother": {"frame": (52, 84), "scale": 2.4, "anims": ("idle", "walk", "attack", "die"),
+                    "desc": "Shardmother (rare, 2.4x): a crystal queen-shape of floating shards around a glowing core, a skirt of hanging glass"},
+    "glassstalker": {"frame": (52, 84), "scale": 2.6, "anims": ("idle", "walk", "attack", "die"),
+                     "desc": "Glass Stalker (rare, 2.6x): a tall, thin mirror-creature, a moving silhouette of reflections with bright eyes"},
+    "frostsentinel": {"frame": (40, 64), "scale": 2.0, "anims": ("idle", "walk", "attack", "die"),
+                      "desc": "Frost sentinel (2x): an ice golem knight-shape of Veyra's frost, cold-fire in its seams"},
+    "sylvaine": {"frame": (128, 192), "scale": 6.0, "anims": ("idle", "walk", "attack", "die"),
+                 "desc": "Lady Sylvaine, elf vampire queen (boss, 6x; Art seat drawing): silver hair, crystal tiara, deep-blue blouse + lace jabot, dark belt with gold clasp, long dark bell skirt with rose panel, red-lined cape"},
 }
 
 CRYSTAL = {"stone": "sky", "stone_lo": "flower_blue", "shadow": "cloth", "stone_hi": "white", "lamp": "flower_rose",
@@ -48,28 +54,6 @@ class _F:
             self.s.set(x, y, c)
 
 
-def make_colossus(eldergolem):
-    def prismcolossus(s, face, anim, i):
-        eldergolem(_Remap(s, CRYSTAL), face, anim, i)
-        if anim == "die" and i >= 2:
-            for (x, y) in ((12, 70), (25, 66), (36, 71), (20, 74)):
-                s.set(x, y, "white"); s.set(x + 1, y, "flower_rose")
-            return
-        b = [0, 0, 1, 1][i] if anim == "idle" else [0, 1, 0, 1][i] if anim == "walk" else [0, -2, 2, 1][i] if anim == "attack" else [1, 4, 0, 0][i]
-        side = face == "left"
-        F = _F(s)
-        spires = ((14, 16, 9), (20, 12, 12), (27, 11, 14), (33, 13, 11), (38, 17, 8)) if not side else ((18, 13, 12), (24, 11, 14), (30, 14, 10))
-        for k, (x, y, h) in enumerate(spires):   # a crown of prism spires: tapered crystals, lit left, white tips
-            for d in range(h):
-                w = max(0, int(2.2 * (1 - d / h)))
-                for e in range(-w, w + 1):
-                    F.set(x + e, y + b - d, "white" if e < 0 else "sky" if e == 0 else "flower_blue")
-            F.set(x, y + b - h, "white"); F.set(x, y + b - h + 2, "flower_rose" if k % 2 else "white")
-        if face == "down":   # the white-hot heart
-            ell(F, 25, 40 + b, 3.2, 3.6, "flower_rose"); ell(F, 25, 40 + b, 1.8, 2.0, "white")
-    return prismcolossus
-
-
 def _poly(F, pts, colfn):
     """scanline fill of a polygon; colfn(x, y) -> colour"""
     ys = [p[1] for p in pts]
@@ -88,191 +72,207 @@ def _poly(F, pts, colfn):
                     F.set(x, y, col)
 
 
-def sylvaine(s, face, anim, i):
+def _golem(s, face, anim, i, pal, lens=False, frost=False):
+    """a parametric crystal / ice golem drawn natively for any frame (lenswarden 56x90, frostsentinel 40x64):
+    blocky stone legs + belt band (the waist), a broad glass chest, shoulder crystals, small head; attack = both fists
+    up then a slam; die = it cracks and collapses into shards"""
     F = _F(s)
-    W, H = s.w, s.h            # 100 x 160; hem on the ground row (158 + outline 159)
+    W, H = s.w, s.h
+    k = H / 90.0
+    cx = W / 2 - (2 if face == "left" else 0)
     side, back = face == "left", face == "up"
-    b = 0; sway = 0; arms = "rest"; flare = 0; sink = 0; glow = False
+    b = 0; lift = 0; slam = 0
     if anim == "idle":
-        b = [0, 1, 2, 1][i]; sway = [0, 1, 0, -1][i]
+        b = [0, 0, 1, 1][i]
     elif anim == "walk":
-        b = [0, 2, 0, 2][i]; sway = [2, 0, -2, 0][i]
+        b = [0, 1, 0, 1][i]
     elif anim == "attack":
-        arms = ["raise", "high", "drain", "drain"][i]; b = [0, -2, 1, 0][i]; flare = [0, 2, 4, 2][i]; glow = i in (1, 2)
+        lift = [0, 1, 0, 0][i]; slam = [0, 0, 1, 0][i]; b = [0, -1, 2, 1][i]
     elif anim == "die":
-        sink = [4, 18, 0, 0][i]; b = sink
-    cx = 48 if side else 50
-    wy = 92 + b
-    # ------------------------------------------------ the heap (die 2-3): skirt pooled on the floor, crown and shards
-    if anim == "die" and i >= 2:
-        ell(F, 50, 150, 34, 8, "cloth"); ell(F, 50, 148, 26, 5, "shadow"); ell(F, 46, 146, 14, 3, "roof_lo")
-        ell(F, 58, 141, 9, 6, "white"); ell(F, 58, 141, 6, 4, "stone_hi")    # silver hair spilled over the cloth
-        for k, x in enumerate((30, 38, 44, 62, 70)):
-            F.set(x, 152 - k % 2, "white"); F.set(x + 1, 152 - k % 2, "sky"); F.set(x, 151 - k % 2, "flower_rose")
-        for k in range(5):   # the crown, toppled
-            F.set(70 + k * 2, 144, "flower_gold"); F.set(70 + k * 2, 143 - (k % 2) * 2, "white" if k % 2 else "sky")
-        if i == 2:
-            for (x, y) in ((40, 138), (55, 134), (64, 137)):
-                F.set(x, y, "flower_rose"); F.set(x, y - 1, "white")
+        b = [1, 4, 0, 0][i]
+    G = H - 2
+    body, body_lo, body_hi, glass, glass_hi, glass_lo, crack = pal
+    if anim == "die" and i >= 2:                      # a heap of stone blocks and glass shards
+        for (dx, dy, rx, ry, c) in ((-10, -5, 9, 5, body_lo), (6, -6, 8, 6, body), (-2, -11, 7, 5, body_hi), (12, -3, 5, 3, body_lo)):
+            ell(F, cx + dx * k, G + dy * k, rx * k, ry * k, c)
+        for kk in range(7):
+            x = cx + (kk - 3) * 6 * k; y = G - (3 + (kk * 5) % 9) * k
+            for d in range(int(5 * k)):
+                F.set(x + (d % 2), y - d, glass_hi if d < 2 else glass)
+        if lens:
+            ell(F, cx + 3 * k, G - 14 * k, 5 * k, 4 * k, glass_lo); ell(F, cx + 3 * k, G - 14 * k, 3 * k, 2.4 * k, glass_hi)
         return
-    # ------------------------------------------------ cape (behind everything; red lining shows at the sides)
-    top_c = 46 + b
-    hemw = 40 + flare
-    _poly(F, [(cx - 22, top_c), (cx + 22, top_c), (cx + hemw, 159), (cx - hemw, 159)],
-          lambda x, y: ("roof_lo" if abs(x - cx) > 18 + (y - top_c) * 0.36 else "shadow") if not back else ("shadow" if (x + y // 6) % 9 else "ink"))
-    for y in range(int(top_c + 4), 159):
-        t = (y - top_c) / (159 - top_c)
-        for sgn in (-1, 1):
-            x = cx + sgn * (22 + (hemw - 22) * t)
-            F.set(x - sgn, y, "roof"); F.set(x - 2 * sgn, y, "roof_lo")
-    if back:
-        _poly(F, [(cx - 20, top_c + 2), (cx + 20, top_c + 2), (cx + hemw - 4, 157), (cx - hemw + 4, 157)],
-              lambda x, y: "roof" if abs(x - cx) < 4 + (y - top_c) * 0.05 else "roof_lo" if (x // 5 + y // 9) % 3 == 0 else "shadow")
-    # high collar wings of the cape (a vampire's standing collar), rose lining
-    for sgn in ((-1, 1) if not side else (1,)):
-        _poly(F, [(cx + sgn * 10, 50 + b), (cx + sgn * 26, 30 + b), (cx + sgn * 24, 52 + b)],
-              lambda x, y: "flower_rose" if not back and abs(x - cx) < 20 else "roof_lo")
-    # long silver locks falling behind the shoulders to the hip (drawn before the body, so it covers their inner part)
-    hy = 22 + b
-    hw = 12 if not side else 11
-    for sgn in ((-1, 1) if not side else (1,)):
-        for y in range(int(hy + 6), int(wy + 10)):
-            t = (y - hy) / (wy + 10 - hy)
-            x0 = cx + sgn * (hw - 3 + t * 9) + sway * t
-            for e in range(7 if not side else 10):
-                F.set(x0 + sgn * e, y, "white" if e < 2 else "stone_hi" if e < 5 else "stone")
-        F.set(cx + sgn * (hw + 6), wy + 10, "stone_hi")
-    # ------------------------------------------------ skirt (bottom): long, deep blue, pale hem trim, a dark side panel
-    hem = 159   # the hem sits on the ground row (outline lands on row 159)
-    skw = 26 + flare // 2
-    _poly(F, [(cx - 13, wy), (cx + 13, wy), (cx + skw + sway, hem), (cx - skw + sway, hem)],
-          lambda x, y: ("flower_blue" if x < cx - 10 - (y - wy) * 0.15 + sway * (y - wy) / 60 else "shadow" if x > cx + 6 + (y - wy) * 0.2 else "cloth")
-          if not back else ("cloth" if (x // 4) % 3 else "shadow"))
-    for x in range(int(cx - skw + sway) + 1, int(cx + skw + sway)):   # pale hem trim + a row of rose stitches
-        F.set(x, hem - 1, "stone_hi"); F.set(x, hem - 2, "plaster_lo" if x % 2 else "stone_hi")
-        if x % 5 == 0:
-            F.set(x, hem - 4, "flower_rose")
-    if not back:   # the skirt's front slit seam (silver)
-        for y in range(wy + 4, hem - 3, 2):
-            F.set(cx + 2 + sway * (y - wy) / 63, y, "stone")
-    # ------------------------------------------------ bodice (top): fitted dark bodice, rose lacing, puffed shoulders
-    sy0 = 50 + b
-    bw0, bw1 = (16, 12) if not side else (11, 9)
-    _poly(F, [(cx - bw0, sy0), (cx + bw0, sy0), (cx + bw1, wy - 6), (cx - bw1, wy - 6)],
-          lambda x, y: "shadow" if x < cx - bw0 * 0.45 else "ink" if x > cx + bw0 * 0.5 else "cloth" if back else "shadow")
-    if not back and not side:
-        for y in range(sy0 + 6, wy - 7, 3):          # rose lacing down the front
-            F.set(cx - 2, y, "flower_rose"); F.set(cx + 1, y, "flower_rose"); F.set(cx - 1, y + 1, "roof"); F.set(cx, y + 1, "roof")
-        ell(F, cx, sy0 + 3, 6, 3, "plaster_hi")      # the pale neckline
-        F.set(cx, sy0 + 6, "flower_rose"); F.set(cx, sy0 + 7, "roof_hi")   # a rose pendant
-    for sgn in ((-1, 1) if not side else (-1,)):     # puffed shoulders
-        ell(F, cx + sgn * (bw0 + 1), sy0 + 4, 6, 5, "shadow" if sgn < 0 else "ink")
-        ell(F, cx + sgn * (bw0 + 1) - 1, sy0 + 2, 3, 2, "cloth")
-    # ------------------------------------------------ the waist: a broad gold cinch with a rose jewel
-    rect(F, int(cx - bw1 - 1), wy - 6, int(cx + bw1 + 1), wy - 1, "flower_gold")
-    rect(F, int(cx - bw1 - 1), wy - 1, int(cx + bw1 + 1), wy, "timber_hi")
-    if not back:
-        ell(F, cx, wy - 3, 2.6, 2.4, "flower_rose"); F.set(cx - 1, wy - 4, "white")
-    # ------------------------------------------------ arms + the crystal scepter
-    def arm(x0, y0, x1, y1, w=3.2, col="shadow"):
-        n = int(max(abs(x1 - x0), abs(y1 - y0))) + 1
-        for k in range(n):
-            t = k / max(1, n - 1)
-            ell(F, x0 + (x1 - x0) * t, y0 + (y1 - y0) * t, w, w, col)
-        ell(F, x1, y1 + 1, 2.4, 2.6, "plaster_hi")   # pale hand
-        F.set(x1 - 1, y1 + 4, "stone"); F.set(x1 + 1, y1 + 4, "stone")   # claw tips
-    def scepter(x, y, up=True, hot=False):
-        L = 34
-        for k in range(L):
-            yy = y - k if up else y + k
-            F.set(x, yy, "stone_hi" if k % 4 else "flower_gold"); F.set(x + 1, yy, "stone")
-        ty = y - L if up else y + L
-        for d in range(9):   # the crystal head: a long faceted diamond
-            w = int(4 * (1 - abs(d - 4) / 4.5))
-            for e in range(-w, w + 1):
-                F.set(x + e, ty - d + 4, "white" if e < 0 else "sky" if e == 0 else "flower_blue")
-        F.set(x, ty, "white" if hot else "flower_rose")
-        if hot:
-            for k in range(8):
-                a = k / 8 * math.tau + i
-                F.set(x + math.cos(a) * 7, ty + math.sin(a) * 6, "white" if k % 2 else "flower_rose")
-    shL, shR = (cx - bw0 - 1, sy0 + 6), (cx + bw0 + 1, sy0 + 6)
+    hip = G - 30 * k + b
+    # legs (separate, stone blocks)
+    stride = [0, 3, 0, -3][i] * k if anim == "walk" else 0
+    for sd in ((-1, 1) if not side else (0,)):
+        lx = cx + sd * 9 * k + (stride * sd if not side else 0)
+        rect(F, int(lx - 6 * k), int(hip), int(lx + 6 * k), int(G - 4 * k), body)
+        rect(F, int(lx - 6 * k), int(hip), int(lx - 4 * k), int(G - 4 * k), body_hi)
+        rect(F, int(lx - 7 * k), int(G - 5 * k), int(lx + 7 * k), int(G), body_lo)   # foot block
     if side:
-        if arms == "rest":
-            arm(cx - 4, sy0 + 6, cx - 9, wy + 2); scepter(cx - 9, wy + 30)
+        rect(F, int(cx - 7 * k + stride), int(G - 5 * k), int(cx + 7 * k + stride), int(G), body_lo)
+    # belt band = the waist (stone girdle with glass studs)
+    rect(F, int(cx - 17 * k), int(hip - 5 * k), int(cx + 17 * k), int(hip), body_lo)
+    for x in range(int(cx - 15 * k), int(cx + 16 * k), max(2, int(6 * k))):
+        F.set(x, hip - 2.5 * k, glass_hi); F.set(x + 1, hip - 2.5 * k, glass)
+    # chest: broad trapezoid of glass in a stone frame
+    top = hip - 34 * k
+    _poly(F, [(cx - 22 * k, top), (cx + 22 * k, top), (cx + 15 * k, hip - 5 * k), (cx - 15 * k, hip - 5 * k)],
+          lambda x, y: body if back else (glass_lo if (x + y) % 7 == 0 else glass) if abs(x - cx) < 13 * k else body if x > cx else body_hi)
+    if not back:   # facets
+        for d in range(int(20 * k)):
+            F.set(cx - 9 * k + d * 0.3, top + 3 * k + d, glass_hi)
+    # arms: stone columns, fists raised in the attack wind-up
+    for sd in ((-1, 1) if not side else (-1,)):
+        ax = cx + sd * 25 * k
+        if lift:
+            rect(F, int(ax - 5 * k), int(top - 20 * k), int(ax + 5 * k), int(top + 4 * k), body)
+            ell(F, ax, top - 22 * k, 7 * k, 6 * k, body_hi)
         else:
-            reach = {"raise": (cx - 16, sy0 - 2), "high": (cx - 14, sy0 - 14), "drain": (cx - 26, sy0 + 6)}[arms]
-            arm(cx - 4, sy0 + 6, reach[0], reach[1]); scepter(reach[0], reach[1] + 2, True, glow)
-    elif back:
-        arm(*shL, cx - 22, wy - 2, col="ink"); arm(*shR, cx + 22, wy - 2, col="ink")
-        if arms != "rest":
-            scepter(cx + 24, sy0 - 4, True, glow)
-    else:
-        if arms == "rest":
-            arm(*shL, cx - 23, wy); arm(*shR, cx + 23, wy, col="ink"); scepter(cx + 23, wy + 32)
-        else:
-            if arms == "raise":
-                tl, tr = (cx - 26, sy0 - 4), (cx + 26, sy0 - 6)
-            elif arms == "high":
-                tl, tr = (cx - 22, sy0 - 18), (cx + 24, sy0 - 20)
-            else:
-                tl, tr = (cx - 32, sy0 + 2), (cx + 32, sy0)
-            arm(*shL, *tl); arm(*shR, *tr, col="ink"); scepter(tr[0], tr[1] + 2, True, glow)
-            if arms == "drain":   # stolen magic drawn into the open left hand
-                for k in range(6):
-                    F.set(tl[0] - 6 + k, tl[1] + 2 + (k % 2), "sky" if k % 2 else "white")
-    # ------------------------------------------------ head: pale face, red eyes, silver hair, crystal crown
-    hy = 22 + b
-    hw = 12 if not side else 11
-    ell(F, cx, hy + 13, hw, 15, "plaster_hi")
-    if not back:
-        for y in range(int(hy + 6), int(hy + 28)):   # a soft shade down the right of the face
-            F.set(cx + hw - 2 - (1 if y > hy + 20 else 0), y, "stone_hi")
-    # hair: a cap of silver over the brow, long locks falling past the waist behind the shoulders
-    for y in range(int(hy - 3), int(hy + 9)):
-        for x in range(int(cx - hw - 2), int(cx + hw + 3)):
-            if ((x - cx) / (hw + 2)) ** 2 + ((y - hy - 8) / 12) ** 2 <= 1:
-                if side and y > hy + 4 and x < cx - 1:
-                    continue   # profile: the face shows, the hair sweeps back
-                F.set(x, y, "white" if x < cx + 2 else "stone_hi")
-    if back:
-        for y in range(int(hy), int(wy + 30)):
-            for x in range(int(cx - hw * 1.3), int(cx + hw * 1.3 + 1)):
-                t = (y - hy) / (wy + 30 - hy)
-                if abs(x - cx) <= hw * (0.9 + t * 0.35):
-                    F.set(x + sway * t, y, "stone" if (x * 7 + y // 5) % 11 == 0 else "white" if x < cx - 2 else "stone_hi")
-    else:
-        if side:
-            ex, ey = cx - hw + 4, hy + 15
-            F.set(ex, ey, "roof_hi"); F.set(ex + 1, ey, "roof_hi"); F.set(ex, ey + 1, "roof")
-            F.set(cx - hw - 1, hy + 18, "plaster_hi")      # nose
-            F.set(cx - hw + 2, hy + 23, "roof")             # dark lips
-            F.set(cx + 2, hy + 13, "plaster_hi"); F.set(cx + 4, hy + 10, "plaster_hi"); F.set(cx + 6, hy + 7, "stone_hi")   # pointed ear
-        else:
-            for ex in (cx - 5, cx + 4):   # red eyes, 2 px tall, a glint
-                F.set(ex, hy + 15, "roof_hi"); F.set(ex + 1, hy + 15, "roof_hi"); F.set(ex, hy + 16, "roof"); F.set(ex + 1, hy + 16, "roof")
-                F.set(ex, hy + 14, "ink"); F.set(ex + 1, hy + 14, "ink")
-            F.set(cx, hy + 22, "roof"); F.set(cx + 1, hy + 22, "roof"); F.set(cx - 1, hy + 21, "roof_lo")   # dark lips
-            F.set(cx - 7, hy + 19, "flower_rose"); F.set(cx + 7, hy + 19, "flower_rose")
-            for sgn in (-1, 1):   # pointed ears out of the hair
-                F.set(cx + sgn * (hw + 1), hy + 14, "plaster_hi"); F.set(cx + sgn * (hw + 3), hy + 12, "plaster_hi"); F.set(cx + sgn * (hw + 4), hy + 10, "stone_hi")
-    # the crown: a gold band and jagged crystal spikes, tallest in the middle
-    crown_y = hy - 1
-    rect(F, int(cx - hw + 1), int(crown_y), int(cx + hw - 1), int(crown_y + 1), "flower_gold")
-    n = 7 if not side else 5
-    for k in range(n):
-        x = cx - hw + 2 + k * (2 * hw - 4) / (n - 1)
-        h = 6 + (8 if k == n // 2 else 4 if abs(k - n // 2) == 1 else 0)
-        for d in range(h):
-            w = 1 if d < h * 0.5 else 0
+            y1 = hip + (8 if slam else 2) * k
+            rect(F, int(ax - 5 * k), int(top + 2 * k), int(ax + 5 * k), int(y1), body)
+            rect(F, int(ax - 5 * k), int(top + 2 * k), int(ax - 3 * k), int(y1), body_hi)
+            ell(F, ax, y1 + 3 * k, 7 * k, 6 * k, body_hi if not slam else glass_hi)
+    # shoulder crystals (frost-cracked on the right shoulder)
+    for sd, h in ((-1, 14), (1, 11)):
+        x0 = cx + sd * 20 * k
+        for d in range(int(h * k)):
+            w = max(0, int(3 * k * (1 - d / (h * k))))
             for e in range(-w, w + 1):
-                F.set(x + e, crown_y - d, "white" if e < 0 else "sky" if e == 0 else "flower_blue")
-        F.set(x, crown_y - h, "white" if (k + i) % 2 else "flower_rose")
-    if glow:   # the drain: rose sparks around the crown
-        for k in range(6):
-            a = k / 6 * math.tau + i * 0.5
-            F.set(cx + math.cos(a) * 18, crown_y - 6 + math.sin(a) * 6, "flower_rose" if k % 2 else "white")
+                F.set(x0 + e + sd * d * 0.25, top - d, glass_hi if e < 0 else glass if e == 0 else glass_lo)
+    for d in range(int(12 * k)):                       # frost crack across one shoulder
+        F.set(cx + 12 * k + d * 0.6, top + 1 * k + (d % 3), crack)
+    # head: a small block with a crystal brow
+    hy = top - 9 * k
+    rect(F, int(cx - 7 * k), int(hy), int(cx + 7 * k), int(top + 1), body)
+    if not back:
+        eye = "white" if anim == "attack" else glass_hi
+        F.set(cx - 3 * k, hy + 4 * k, eye); F.set(cx + 3 * k - (2 * k if side else 0), hy + 4 * k, eye)
+        F.set(cx - 3 * k + 1, hy + 4 * k, eye); F.set(cx + 3 * k + 1 - (2 * k if side else 0), hy + 4 * k, eye)
+    for d in range(int(6 * k)):
+        F.set(cx - 2 * k + d * 0.7, hy - d * 0.6, glass_hi); F.set(cx + 2 * k - d * 0.2, hy - d, glass)
+    if lens and not back:                              # the great chest lens
+        ly = top + 15 * k
+        r = 9 * k if not side else 6 * k
+        ell(F, cx - (3 * k if side else 0), ly, r + 1.5 * k, r + 1.5 * k, body_lo)
+        ell(F, cx - (3 * k if side else 0), ly, r, r, glass_lo)
+        ell(F, cx - (3 * k if side else 0), ly, r * 0.7, r * 0.7, "white" if anim == "attack" and i == 2 else glass)
+        ell(F, cx - (3 * k if side else 0) - r * 0.3, ly - r * 0.3, r * 0.28, r * 0.28, "white")
+    if frost:                                          # cold-fire in the seams
+        for x in range(int(cx - 14 * k), int(cx + 14 * k), 3):
+            F.set(x, hip - 5 * k - 1, "white")
+        for sd in (-1, 1):
+            F.set(cx + sd * 9 * k, hip + 6 * k, "white"); F.set(cx + sd * 9 * k, hip + 12 * k, "sky")
+
+
+LENS_PAL = ("stone_lo", "shadow", "stone", "flower_blue", "sky", "cloth", "white")      # black stone + violet-lit glass
+FROST_PAL = ("sky", "flower_blue", "white", "sky", "white", "flower_blue", "cloth")     # ice
+
+
+def lenswarden(s, face, anim, i):
+    _golem(s, face, anim, i, LENS_PAL, lens=True)
+
+
+def frostsentinel(s, face, anim, i):
+    _golem(s, face, anim, i, FROST_PAL, frost=True)
+
+
+def shardmother(s, face, anim, i):
+    """a floating queen-shape of shards around a glowing core (~78 px of the 84 px frame), a skirt of hanging glass;
+    attack = the shards flare outward (a volley); die = the shards fall and the core gutters"""
+    F = _F(s)
+    W, H = s.w, s.h
+    cx = W / 2 - (2 if face == "left" else 0)
+    bob = [0, -1, -2, -1][i] if anim in ("idle", "walk") else [0, -2, 1, 0][i] if anim == "attack" else [2, 6, 0, 0][i]
+    spread = [0, 2, 5, 2][i] if anim == "attack" else 0
+    G = H - 2
+    if anim == "die" and i >= 2:
+        for kk in range(11):
+            x = cx - 20 + (kk * 37) % 41; y = G - (kk % 3)
+            F.set(x, y, "white"); F.set(x + 1, y, "sky"); F.set(x, y - 1, "flower_blue")
+        ell(F, cx, G - 3, 4, 2, "flower_rose" if i == 2 else "shadow")
+        return
+    core_y = G - 46 + bob
+    # skirt of hanging glass (bottom) under a stone-dark girdle (waist)
+    for kk in range(9):
+        x = cx - 16 + kk * 4
+        L = 20 + (kk * 7) % 9 - abs(kk - 4)
+        for d in range(L):
+            w = 1 if d < L * 0.6 else 0
+            for e in range(-w, w + 1):
+                F.set(x + e + (spread * (kk - 4) / 4 if d > 4 else 0), core_y + 12 + d, "white" if e < 0 else "sky" if e == 0 else "flower_blue")
+    rect(F, int(cx - 13), int(core_y + 9), int(cx + 13), int(core_y + 12), "shadow")
+    for x in range(int(cx - 11), int(cx + 12), 4):
+        F.set(x, core_y + 10, "flower_rose")
+    # bodice of fitted shards (top)
+    _poly(F, [(cx - 11, core_y - 14), (cx + 11, core_y - 14), (cx + 9, core_y + 9), (cx - 9, core_y + 9)],
+          lambda x, y: "cloth" if (x + 2 * y) % 5 else "flower_blue")
+    ell(F, cx, core_y, 5.5, 6, "flower_rose"); ell(F, cx, core_y, 3, 3.4, "white")            # the core
+    # head + shard crown
+    hy = core_y - 22
+    ell(F, cx, hy, 6, 7, "stone_hi"); ell(F, cx - 1, hy - 1, 4, 5, "white")
+    if face != "up":
+        F.set(cx - 2 - (2 if face == "left" else 0), hy + 1, "cloth"); F.set(cx + 2 - (2 if face == "left" else 0), hy + 1, "cloth")
+    for kk, (dx, h) in enumerate(((-6, 7), (-3, 10), (0, 13), (3, 10), (6, 7))):
+        for d in range(h):
+            F.set(cx + dx, hy - 6 - d, "white" if d > h - 3 else "sky" if kk % 2 else "flower_blue")
+    # orbiting shards (arms of the shape)
+    n = 8
+    for kk in range(n):
+        a = kk / n * math.tau + i * 0.5
+        R = 19 + spread * 2
+        x, y = cx + R * math.cos(a), core_y - 4 + R * 0.55 * math.sin(a)
+        for d in range(5):
+            F.set(x, y - d, "white" if d < 2 else "sky"); F.set(x + 1, y - d + 1, "flower_blue")
+
+
+def glassstalker(s, face, anim, i):
+    """a tall, thin mirror-creature (~80 px): long jointed legs, a narrow mirror torso with a cinched girdle, long arms
+    ending in glass blades, a shard head with two bright eyes; walk = a stalking lope, attack = a blade lunge"""
+    F = _F(s)
+    W, H = s.w, s.h
+    cx = W / 2 - (2 if face == "left" else 0)
+    side = face == "left"
+    G = H - 2
+    b = [0, 1, 0, 1][i] if anim in ("idle", "walk") else [0, 2, -1, 0][i] if anim == "attack" else [2, 10, 0, 0][i]
+    if anim == "die" and i >= 2:
+        for kk in range(14):
+            x = cx - 22 + (kk * 29) % 45; y = G - (kk % 4)
+            F.set(x, y, "white" if kk % 2 else "sky"); F.set(x + 1, y, "flower_blue")
+        if i == 2:
+            F.set(cx - 2, G - 6, "flower_rose"); F.set(cx + 2, G - 6, "flower_rose")
+        return
+    hip = G - 38 + b
+    st = [0, 4, 0, -4][i] if anim == "walk" else 0
+    mirror = lambda x, y: "white" if (x - y) % 9 == 0 else "sky" if (x + y) % 4 else "flower_blue"
+    for sd in ((-1, 1) if not side else (-1, 1)):
+        kx = cx + sd * 6 + (st * sd)
+        _poly(F, [(cx + sd * 3 - 2, hip), (cx + sd * 3 + 2, hip), (kx + 2, hip + 18), (kx - 2, hip + 18)], mirror)   # thigh
+        _poly(F, [(kx - 2, hip + 18), (kx + 2, hip + 18), (kx + sd * 2 + 1, G), (kx + sd * 2 - 2, G)], mirror)      # shin
+        F.set(kx, hip + 18, "white")
+    rect(F, int(cx - 7), int(hip - 3), int(cx + 7), int(hip), "shadow")                 # girdle (the waist)
+    F.set(cx, hip - 2, "flower_rose")
+    top = hip - 26
+    _poly(F, [(cx - 9, top), (cx + 9, top), (cx + 6, hip - 3), (cx - 6, hip - 3)], mirror)   # narrow mirror torso (top)
+    for d in range(20):
+        F.set(cx - 4 + d * 0.2, top + 3 + d, "white")
+    lunge = anim == "attack" and i == 2
+    for sd in ((-1, 1) if not side else (-1,)):
+        ex = cx + sd * (24 if lunge else 13)
+        ey = top + (6 if lunge else 22)
+        _poly(F, [(cx + sd * 8, top + 1), (cx + sd * 10, top + 3), (ex + 1, ey), (ex - 1, ey)], mirror)
+        for d in range(12):                                                               # glass blade
+            F.set(ex + sd * (d * (0.9 if lunge else 0.15)), ey + (0 if lunge else d) + (d * 0.1 if lunge else 0), "white" if d % 3 else "sky")
+    hy = top - 8
+    _poly(F, [(cx - 5, hy + 7), (cx + 5, hy + 7), (cx + 3, hy - 7), (cx, hy - 12), (cx - 3, hy - 7)], mirror)
+    if face != "up":
+        o = -2 if side else 0
+        for ex in ((cx - 2 + o, cx + 2 + o) if not side else (cx - 2,)):
+            F.set(ex, hy, "flower_rose"); F.set(ex, hy + 1, "white")
 
 
 def draw_table(eldergolem):
-    return {"prismcolossus": make_colossus(eldergolem), "sylvaine": sylvaine}
+    import boss_sylvaine6 as _syl   # the Art seat's real Sylvaine, at 6x
+    return {"lenswarden": lenswarden, "shardmother": shardmother, "glassstalker": glassstalker,
+            "frostsentinel": frostsentinel, "sylvaine": _syl.sylvaine}
