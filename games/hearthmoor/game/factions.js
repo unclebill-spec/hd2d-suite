@@ -33,7 +33,8 @@ export const REALM = { plaza: 'hearth', lane: 'hearth', mossglen: 'hearth', holl
 export const MERIT = { errand: 40, rift: [30, 60, 120], rare: 50, rareTrait: 40, boss: 80, riddle: 60, secret: 40, smuggle: 15, rival: 5, warden: 20,
                         sable: 20, dues: 15, harbor: 40,     // Ravenhold: meeting Sable, paying harbor dues, the harbor story quest (all Corsair)
                         halvard: 20, road: 60,               // Bifrost: meeting Gatewright Halvard, finishing 'The Road to the Rift' there (Guild)
-                        refuge: 40, altar: 60, relight: 120, arch: 40 };   // 6.3 Old Temple: basket, The Cold Altar, Keeper of the Gate (Hearth); Midgard's arch repaired (Guild)
+                        refuge: 40, altar: 60, relight: 120, arch: 40,   // 6.3 Old Temple: basket, The Cold Altar, Keeper of the Gate (Hearth); Midgard's arch repaired (Guild)
+                        stormwatch: 60 };   // 6.5: the Storm Watch bounty (Guild)
 export const rankOf = (m) => { let r = 0; for (let k = 1; k < NEED.length; k++) if (m >= NEED[k]) r = k; return r; };
 
 // save migration: older saves get the merit their finished work would have earned (errands, rifts sealed, rares felled)
@@ -95,9 +96,10 @@ export class Factions {
   // activity hooks
   realm() { return REALM[this.G.area] || 'hearth'; }
   onErrand() { this.add('hearth', MERIT.errand, 'errand'); }
-  onRift(tier) {
+  onRift(tier, storm = false) {
     const g = MERIT.rift[tier] || 0;
-    const mul = 1 + ((this.G.combat && this.G.combat.M.riftMarkMul) || 0);   // the lantern-fox's aura: more Rift Marks (gate merit only)
+    // the lantern-fox's aura: more Rift Marks (gate merit only); a rift storm adds +25% on top (6.5)
+    const mul = 1 + ((this.G.combat && this.G.combat.M.riftMarkMul) || 0) + (storm ? 0.25 : 0);
     this.add('gate', Math.round(g * mul), 'rift');
     const r = this.realm(); if (r !== 'gate') this.add(r, Math.round(g / 2), 'rift');
   }

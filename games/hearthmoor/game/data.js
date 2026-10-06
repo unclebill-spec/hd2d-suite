@@ -3,6 +3,7 @@
 import { PETS, PET_IDS, DEN, petNames, isNight } from './pets.js';
 import { clues, tmBraziers, TAMSIN_CLUE } from './temple.js';
 import { MERIT } from './factions.js';
+import { stormName, stormHere } from './storms.js';
 
 export const ITEMS = {
   loaf:      { name: 'Hearthloaf', icon: 0, about: 'A round loaf, still warm. Smells like Tuesday mornings.' },
@@ -93,9 +94,19 @@ export const QUESTS = {
                : 'Bring Signe a glow seed (Odo\'s Wares or Wickmere\'s Chandlery) or a moonpetal.'),
              3: (S) => `${(S.pet && S.pet.name) || 'Your pet'} has a home with you now. The other strays wait at the Den.` },
   },
+  // 6.5: the Gatekeepers' Guild's repeatable rift-storm bounty (offered again at the next storm's onset once done)
+  stormwatch: {
+    title: 'Storm Watch',
+    giver: 'Gatewright Halvard Ness',
+    side: true, bounty: true,   // bounty: no Hearth payout, never an errand; full XP once, half on repeats (game.js setQuest)
+    steps: { 1: (S) => { const n = Math.min(3, (S.storm || {}).sealed || 0);
+               return n < 3 ? `Seal 3 rifts during the rift storm (${stormName(S)}). ${n}/3` : 'Report to Gatewright Halvard at Bifrost Crossing.'; },
+             2: 'Report to Gatewright Halvard at Bifrost Crossing.',
+             3: 'Storm Watch done. The Guild will post another when the next storm breaks.' },
+  },
 };
 // the three Lantern Eve errands (story and side quests do not count toward "quests n/3" or the Rift's opening)
-export const errandsDone = (S) => Object.entries(S.quests || {}).filter(([k, v]) => v === 3 && !(QUESTS[k] && (QUESTS[k].story || QUESTS[k].side || QUESTS[k].ripple))).length;   // ripple: 6.4 Vanaheim follow-ups
+export const errandsDone = (S) => Object.entries(S.quests || {}).filter(([k, v]) => v === 3 && !(QUESTS[k] && (QUESTS[k].story || QUESTS[k].side || QUESTS[k].ripple || QUESTS[k].bounty))).length;   // ripple: 6.4 Vanaheim follow-ups; bounty: 6.5
 
 export const SPELL_NAMES = { sparkle_burst: 'sparkle burst', hearth_flame: 'hearth flame', light_orb: 'light orb', leaf_gust: 'leaf gust', healing_petals: 'healing petals' };
 
@@ -730,9 +741,137 @@ OT.quartermaster = (S) => {
 };
 Object.assign(TALK, OT);
 
+// ---------------------------------------------------------------- 6.5 rift storms: NPC storm lines, morning-after lines, toast scenes
+// While S.flags.storm is set, an NPC's first page becomes its storm line ('here' when the storm covers this area, else
+// 'afar'), unless they're mid-quest with you (a quest tag over their head: quest pages win). The day after a storm in
+// which you sealed a rift (S.flags.stormAfter === S.day) they use AFTER_SAY, and the hosts below raise a toast once.
+const STORM_SAY = {
+  baker: 'Storm over the Rift again. I\'ve put an extra loaf in. Storms make heroes hungry.',
+  kid: 'The sky\'s doing the purple crackle! Grandpa says count between flashes. I got to forty and lost track.',
+  elder: 'My grandmother called these bridge-storms. She said the Rift was stretching its legs. Stay warm.',
+  hilde: 'Rift storm. The Order\'s lamps stay lit till dawn, every one. If you\'re going out, go armed.',
+  merchant: 'Storm night! Tonics are flying off the shelf. Well. Being bought. Nothing\'s flying. Hopefully.',
+  banker: 'Storm insurance? No such thing. Bank your gold before you go. Fainting in a storm is expensive.',
+  nightmerchant: 'Storm nights are good for trade. The lantern likes the crackle. So do rift shards.',
+  cat: 'Pudding is under the bread crate, glaring at the sky.',
+  herbalist: 'Moonpetal tea calms storms. Not the sky kind. The tummy kind. Take a sip before you go.',
+  innkeeper: 'Storm\'s up! Fire\'s high, stew\'s hot, and the door stays open for anyone running from the sky.',
+  musician: 'I\'m writing a storm song. It\'s about bread. Bread in a storm. It\'s very dramatic.',
+  gardener: 'The geraniums don\'t like the crackle. Neither do I. We\'re staying in.',
+  dog: 'Biscuit howls at the purple sky, then hides behind your legs.',
+  chicken: 'Mrs. Cluck has gone indoors. Mrs. Cluck has opinions about storms.',
+  keeper: { here: 'The moss is shivering. Rifts are opening in the glade. Walk kindly, and walk fast.', afar: 'The moss feels the storm from here. It hums lower. Listen.' },
+  owl: '(Hoot\'s feathers stand on end. He stares at the sky like it owes him mice.)',
+  gnome: { here: 'Big-folk! Rifts between the caps! Light the braziers, cold fire keeps the worst off!', afar: 'Storm on the bridge. Down here we bolt the gnome doors and eat cake.' },
+  // Ondra keeps the 'cold side' foreshadow (lead decision 7)
+  riftkeeper: 'The Rift isn\'t angry, hearth-walker. It\'s straining. Something pulls at it from the cold side.',
+  warden: { here: 'Rifts over the springs! Keep them off the water. We just got it clean.', afar: 'Bridge-storm. The spores get twitchy. So do I.' },
+  tobble: '*tweet tweet!* Two means run. But we\'re not running, are we? No. Fine. Brave tweet.',
+  harbormaster: 'Rift storm up top. No boats under the bridge tonight, Corsair or otherwise. Not on my watch.',
+  quartermaster: 'Storm nights pay double up there, if you\'ve the nerve. The Guild pays marks. I pay in coin.',
+  chandler: 'Cold-fire doesn\'t mind a rift storm. Buy a lantern. Or three. I\'m only half joking.',
+  dockkid: 'The lantern-eels are going crazy! They bite more in storms. Or they\'re scared. Hard to tell.',
+  // Halvard: the storm line + his quiet keys foreshadow (lead decision 7); the bounty is a hub option (OT.gatewright)
+  gatewright: ['Storm on the bridge. The Guild pays a quarter extra for every rift sealed tonight. The board\'s up.',
+               'Storms make the gates restless. I\'ll be up all night with the keys. Someone has to be.'],
+  // denkeeper: Signe's storm line is already in her rotating hub line (denHubLine)
+};
+const AFTER_SAY = {
+  baker: 'Rift-storm rolls! Same dough, more cinnamon. I name my bakes after weather now.',
+  kid: 'Did you fight the storm? Did you win? Can I see your sword? Is it scorched?',
+  elder: 'Quiet morning. The Rift\'s done stretching. Sit a while, you\'ve earned the bench.',
+  hilde: 'Lamps held all night. So did you, I hear. The Order remembers that.',
+  merchant: 'Bring me whatever the storm spat out. Storm-scorched finds fetch a storm-scorched price!',
+  banker: 'Busy night for the vault. Everyone banks before a storm. Nobody banks after. Funny, that.',
+  cat: 'Pudding emerges, dignified, as if nothing happened.',
+  herbalist: 'The moonpetals hummed all night. They like a storm. Strange little flowers.',
+  musician: 'Last night\'s song is finished. It\'s called \'Crust, Struck by Lightning\'. It\'s about bread.',
+  gardener: 'Not a petal lost. The mint tried to escape in the confusion, though.',
+  dog: 'Biscuit wags at you like you personally fixed the sky.',
+  chicken: 'Bawk. (An egg, laid in protest, sits on the step.)',
+  keeper: 'The moss is humming again. It remembers who walked through the storm for it.',
+  owl: 'Hoo. (Hoot looks at you with something close to respect.)',
+  gnome: 'We saved you a slice of storm cake. It\'s mostly crumbs. Gnomes get nervous-hungry.',
+  riftkeeper: 'It\'s settled. For now. Every storm leaves the bridge a little thinner. I count the cracks.',
+  warden: (S) => (((S.flags || {}).alliance || {}).vanaheim === 'conquer' ? 'Storm\'s gone. You\'re still here. Pity about one of those.'
+                                                                          : 'Springs held. You held. Mossbrook toasts you, and gnome toasts are loud.'),
+  tobble: 'I counted every rift you sealed. I ran out of fingers. I used toes. Gnome toes count double.',
+  harbormaster: 'All boats home, all ropes counted. Twice. You can see the Rift\'s scorch marks from the pier.',
+  quartermaster: 'Heard you were up on the bridge in that. Either brave or broke. Corsairs respect both.',
+  chandler: 'Sold out of wicks by midnight! Storms are good for chandlers and bad for sleep.',
+  dockkid: 'I caught a lantern-eel in the storm! It got away. But I caught it first. That counts.',
+  gatewright: 'The ledger\'s thick this morning. Storms are bad for gates and good for Gate Runners.',
+  denkeeper: 'Every stray accounted for. Pockets slept through it, the lump. Biscuit for your pet, for bravery.',
+};
+// the morning-after toast scenes: once per storm per host, when you sealed at least one rift; a gift at 3+
+const TOASTS = {
+  innkeeper: { pages: ['Cups up, Lane! To the hero who walked into the storm while the rest of us hid under the stew.', 'May the Rift stay stitched and the bread stay warm!'],
+               gift: { pages: ['On the house. Storms are thirsty work.'], give: (G) => G.give('tonic', 1) }, town: 'Hearthmoor raised a cup to you.' },
+  baker: { pages: ['To full ovens and empty skies! And to you, dear, for keeping one of them that way.'], gift: { give: (G) => G.give('loaf', 1) }, town: 'Hearthmoor raised a cup to you.' },
+  harbormaster: { pages: ['Raise your mugs, you sorry sea-dogs! To the one who sealed the sky so the boats could sleep!'], town: 'Ravenhold raised a mug to you.' },
+  // Sable's +15 Black Doubloons kept (lead decision 6; the MERIT.dues scale)
+  quartermaster: { pages: ['To the Rift that didn\'t eat us. And to the fool who stood in front of it. Drink up.'], gift: { give: (G) => G.factions.add('corsair', MERIT.dues, 'stormtoast') }, town: 'Ravenhold raised a mug to you.' },
+  gatewright: { pages: ['To the ledger, and every mark in it! And to keys that stay where they\'re put.'], town: 'The Crossing raised a glass to you.' },
+  denkeeper: { pages: ['To brave pets and braver idiots. That\'s you. Cheers.'], gift: { give: (G) => G.give('denbiscuit', 1) }, town: 'The Crossing raised a glass to you.' },
+  warden: { pages: ['Mushroom ale for everyone! To the big-folk who kept the rifts off our springs!'], town: 'Mossbrook raised a mushroom ale to you.',
+            only: (S) => (((S.flags || {}).alliance || {}).vanaheim === 'befriend') },
+  gnome: { pages: ['To the storm-walker! Hip hip... (the gnomes cheer from behind every door.)'], town: 'Mossbrook raised a mushroom ale to you.' },
+};
+const pick = (v, S, here) => (typeof v === 'function' ? v(S) : v && typeof v === 'object' && !Array.isArray(v) ? (here ? v.here : v.afar) : v);
+// game.js onTalk runs every NPC's entry through this (TALK entries and plain `say` NPCs alike)
+export function stormTalk(id, S, entry, area) {
+  const F = S.flags || {}; if (!entry || !entry.pages || !entry.pages.length) return entry;
+  const mk = markerFor(id, S); if (mk === 'quest_turnin' || (mk && !entry.choice)) return entry;   // mid-quest: quest pages win (a hub with a fresh offer still talks storm)
+  const after = F.stormAfter != null && !F.storm && F.stormAfter === (S.day || 0);
+  const T = TOASTS[id];
+  if (after && T && (!T.only || T.only(S)) && ((F.toasted || {})[id] !== F.stormAfter)) {
+    const big = ((S.storm || {}).last || 0) >= 3;
+    return { pages: [...T.pages, ...(big && T.gift && T.gift.pages ? T.gift.pages : [])],
+             then: (G) => { const Fx = flags(G.S); Fx.toasted = { ...(Fx.toasted || {}), [id]: Fx.stormAfter }; if (big && T.gift) T.gift.give(G); G.toast(T.town, 2.6); G.save && G.save(); } };
+  }
+  let line = null;
+  if (F.storm) line = pick(STORM_SAY[id], S, stormHere(S, area));
+  else if (after) line = pick(AFTER_SAY[id], S, false);
+  if (!line) return entry;
+  const lead = Array.isArray(line) ? line : [line];
+  return { ...entry, pages: [...lead, ...entry.pages.slice(1)], storm: true };
+}
+// Halvard's Storm Watch: a hub option + the offer / reminder / turn-in (the turn-in comes first, quest pages win)
+const OT2 = {};
+OT2.gatewright = (S) => {
+  const F = S.flags || {}, q = S.quests.stormwatch || 0, n = (S.storm || {}).sealed || 0;
+  if (F.bf_done && (q === 2 || (q === 1 && n >= 3))) return {
+    pages: [...(n >= 5 ? ['Five? Six? I stopped writing and started staring. Have an extra twenty.'] : []),
+            'Three sealed in one storm. The ledger likes you. I like the ledger. So.',
+            'Bounty paid: marks, gold and a rift shard. Come back next storm. There\'s always a next storm.'],
+    then: (G) => { if (G.S.quests.stormwatch === 1) G.S.quests.stormwatch = 2;
+                   G.setQuest('stormwatch', 3); G.factions.add('gate', MERIT.stormwatch, 'stormwatch'); gold(G, 40 + (n >= 5 ? 20 : 0)); gem(G, 'rift_shard');
+                   G.toast('+1 Rift shard (a socket gem)', 2.2); },
+  };
+  const e = OT.gatewright(S);
+  if (!e.choice || !F.bf_done) return e;
+  const opt = { label: 'Any storm work?', pick: (G) => {
+    const S2 = G.S, F2 = S2.flags || {}, q2 = S2.quests.stormwatch || 0;
+    if (q2 === 1) return { pages: ['Three rifts, any tier. The board doesn\'t care how big, only how many. Neither do I. Much.'] };
+    if (!F2.storm) return { pages: ['No storm, no Storm Watch. Enjoy the quiet. It never lasts.'] };
+    if (q2 === 0) return { pages: ['Storm Watch, posted fresh. Seal three rifts before the storm blows out, anywhere it\'s raging.',
+                                   'The Guild pays a quarter extra on every mark tonight, and a bounty on top. Go on, the keys can wait.'],
+                           then: (G2) => { G2.setQuest('stormwatch', 1); if (((G2.S.storm || {}).sealed || 0) >= 3) G2.setQuest('stormwatch', 2); } };
+    return { pages: ['The board\'s clear till the next storm. The ledger thanks you. I thank the ledger.'] };
+  } };
+  const opts = e.choice.options.slice(); opts.splice(opts.length - 1, 0, opt);
+  return { ...e, choice: { ...e.choice, options: opts } };
+};
+Object.assign(TALK, OT2);
+
 // quest tags over heads: '!' = has an errand for you, star = waiting for your delivery
 export function markerFor(id, S) {
   const q = S.quests;
+  if (id === 'gatewright') {   // 6.5 Storm Watch (the Guild posts it for any storm, wherever it rages)
+    const F = S.flags || {};
+    if (q.stormwatch === 2 || (q.stormwatch === 1 && ((S.storm || {}).sealed || 0) >= 3)) return 'quest_turnin';
+    if (F.storm && !q.stormwatch && F.bf_done) return 'quest_mark';
+  }
   if (id === 'baker' && q.bread === 0) return 'quest_mark';
   if (id === 'innkeeper' && q.bread === 1) return 'quest_turnin';
   if (id === 'herbalist' && q.tea === 0) return 'quest_mark';

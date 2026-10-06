@@ -313,3 +313,4 @@ body.tv #dlg { width: min(900px, 80vw); } body.tv #dlg p { font-size: 20px; }
 #heroBody .row.fac.r0 .fsw { box-shadow: none; }
 #heroHead .tag.ttl { background: #2a1c10; color: #f2c24a; border-color: #f2c24a; }
 @keyframes facglow { 0% { box-shadow: 0 0 0 2px var(--fc); } 50% { box-shadow: 0 0 0 3px var(--fc); } }
+.toast b.storm { display: block; font-size: 19px; letter-spacing: 3px; color: #8a3c9a; margin-bottom: 2px; }   /* 6.5 rift storm onset / dawn banner */

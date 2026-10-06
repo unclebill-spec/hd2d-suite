@@ -6,6 +6,7 @@
 // Rain wets the ground over ~20 s and dries over ~60 s; while wet, lamps, glow pools, braziers, garden blooms and
 // lanterns throw short 1-3 px vertical reflection glints (palette pixels, self-lit, no bloom) on the ground around
 // them, so every light pool shimmers in the wet. Options: weather on / light (phones by default) / off.
+import { stormHere } from './storms.js';
 const STORE = 'hearthmoor-weather';
 const MODES = ['on', 'light', 'off'];
 const SKY = { plaza: 'town', lane: 'town', mossglen: 'glen', hollows: 'hollow', rift: 'void', vanaheim: 'glen', bifrost: 'void', temple: 'town' };
@@ -18,6 +19,8 @@ const KINDS = {
   mist: [{ preset: 'mist', rate: 1 }],
   glowmist: [{ preset: 'glow_mist', rate: 1 }],
   snow: [{ preset: 'snowfall', rate: 0.6 }],
+  // 6.5 rift storm: self-lit glow mist + drifting motes; the sky cracks / cold-fire motes / flashes are storms.js effects
+  riftstorm: [{ preset: 'glow_mist', rate: 0.7 }, { preset: 'dust_motes', rate: 1.4 }],
 };
 const WET = { drizzle: 0.6, rain: 1 };            // how wet each kind gets the ground
 const GLINT_RATE = 90;                            // glints / s at full wet near the lights in view
@@ -62,7 +65,7 @@ export class Weather {
   }
   detach() { this.ctx = null; this.ems = []; }
   force(kind) { this.forced = kind && KINDS[kind] ? kind : null; this.apply(true); return this.kind; }
-  scheduled() { const c = this.ctx; return c ? weatherAt(this.area, this.G.S.day || 0, c.clock.t) : 'clear'; }
+  scheduled() { const c = this.ctx; if (c && stormHere(this.G.S, this.area)) return 'riftstorm'; return c ? weatherAt(this.area, this.G.S.day || 0, c.clock.t) : 'clear'; }
   apply(rebuild) {
     const c = this.ctx; if (!c || !c.particles) return;
     const kind = this.mode === 'off' ? 'clear' : (this.forced || this.scheduled());

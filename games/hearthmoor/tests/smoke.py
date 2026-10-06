@@ -187,7 +187,7 @@ class Smoke:
 # segment before it saved (localStorage only: the same thing the serial run's reload + Continue restores from).
 # Every step still runs exactly once across the shards, with the same assertions and thresholds.
 FIX = Path(__file__).resolve().parent / "fixtures"
-SEGS = "ABCDEFG"
+SEGS = "ABCDEFGH"
 SEG_INFO = {
     "A": "title, loading gate, Lantern Eve, errands, controller, Mossglen, leveling, combat, loot, rares + rifts, Hollows, garden (ends: K save in Mossglen -> cp1)",
     "B": "reload #1 + Continue, save slots, Pudding home, shop, bank, riddle, night merchant, factions, glow cap, weather, sockets, errand 2 (ends: K save in the Lane -> cp2)",
@@ -196,6 +196,7 @@ SEG_INFO = {
     "E": "v1 save migration",
     "F": "Stage 6+: the Stray Den + glowing pets (continues the cp3 save)",
     "G": "Stage 6.3: the Old Temple (Hilde's writ, the Harbor gate, clues, Alder's charm, Ida's wick, braziers, the rite, the rift, Veyra, Midgard's arch; continues cp3)",
+    "H": "Stage 6.5: rift storms (calendar, storm rifts + Rift Marks +25%, sky cracks, Storm Watch bounty, NPC / ferry storm lines, dawn, toasts; continues cp3)",
 }
 # --quick <area>: the segments that cover an area / feature (a per-change check; the batch still runs everything)
 QUICK = {
@@ -206,9 +207,10 @@ QUICK = {
     "phone": "D", "touch": "D", "migration": "E", "save": "BE",
     "pet": "F", "pets": "F", "stray": "F",
     "temple": "G", "oldtemple": "G", "midgard": "G",
+    "storm": "H", "storms": "H", "riftstorm": "H", "bounty": "H",
 }
 TIMING = FIX / "smoke_timing.json"   # seconds per segment from the last passing runs (shard balancing only)
-DEFAULT_SECONDS = {"A": 560, "B": 260, "C": 230, "D": 140, "E": 25, "F": 150, "G": 200}
+DEFAULT_SECONDS = {"A": 560, "B": 260, "C": 230, "D": 140, "E": 25, "F": 150, "G": 200, "H": 170}
 
 
 def seg_seconds():
@@ -2111,6 +2113,133 @@ def run(out, simscale=4, size=(960, 540), segs=SEGS):
                 rep["error"] = f"temple: {type(e).__name__}: {e}"[:400]
                 try:
                     rep["shots"]["failure_G"] = T.shot("failure_G"); rep["state"] = T.S()
+                except Exception:  # noqa: BLE001
+                    pass
+        # ---------------------------------------------------------- H: rift storms (Stage 6.5, continues cp3)
+        if rep["pass"] and "H" in segs:
+            seg_mark("H")
+            try:
+                saved = cp_load(None, T, url, "cp3")["hearthmoor-slot-1-v2"]
+                hc = b.new_context(viewport={"width": size[0], "height": size[1]})
+                hc.add_init_script(f"if (!sessionStorage.getItem('seeded')) {{ localStorage.clear(); localStorage.setItem('hearthmoor-slot-1-v2', {json.dumps(saved)}); sessionStorage.setItem('seeded', '1'); }}")
+                hc.add_init_script(STUB)
+                h = hc.new_page()
+                h.on("pageerror", lambda e: errors.append(f"PAGEERROR {e}"))
+                h.on("console", lambda m: errors.append(f"console.error {m.text}") if m.type == "error" else None)
+                T.pg = h
+                h.goto(url + "&rifts")   # random rifts on (this context only): the storm's own timers are under test
+                T.wait("window.__hm && window.__hm.ready && window.__hd2d && window.__hd2d.ready && !window.__hd2dGate.loading", 120)
+                h.click("#btnCont"); T.idle(); h.wait_for_timeout(400)
+
+                def harea(a, spawn="start"):
+                    T.ev(f"window.__hm.loadArea('{a}', '{spawn}')"); T.wait(f"window.__hm.area === '{a}' && window.__hm.ctx && !window.__hm.busy", 120); T.idle(); h.wait_for_timeout(300)
+                KILL_H = ("(() => { const G = window.__hm, C = G.combat, p = G.ctx.player; G.peace = true;"
+                          " for (const e of G.rifts.alive()) for (let i = 0; i < 60 && e.state !== 'dead' && e.state !== 'gone'; i++) C.damageEnemy(e, 80, p); })()")
+
+                def seal_cur():
+                    T.ev("(() => { const G = window.__hm, c = G.ctx, p = c.player, R = G.rifts.cur; p.x = R.pos[0] - 1.4; p.z = R.pos[1] + 0.6; p.y = c.heightAt(p.x, p.z); c.stopWalk(); })()")
+                    T.frames(6); h.wait_for_timeout(300)
+                    for _ in range(4):
+                        if not T.ev("window.__hm.rifts.cur"): break
+                        T.ev(KILL_H); T.frames(8); h.wait_for_timeout(400)
+                    return not T.ev("window.__hm.rifts.cur")
+                cal = T.ev("""(() => { const G = window.__hm; let b = 0, w = 0, two = 0, prev = null; const N = 800;
+                  for (let d = 1; d <= N; d++) { const r = G.stormAt(d); if (r === 'bifrost') { b++; if (prev === 'bifrost') two++; } else if (r) w++; prev = r; }
+                  return { b: b / N, w: w / N, two, d0: G.stormAt(0), same: G.stormAt(17) === G.stormAt(17) }; })()""")
+                T.step("storm calendar stormAt(day) (pure, seeded by the day): Bifrost ~1 night in 4, never two nights running, never day 0; Midgard / Vanaheim world event ~1 in 10 of the rest",
+                       0.2 <= cal["b"] <= 0.3 and cal["two"] == 0 and cal["d0"] is None and 0.05 <= cal["w"] <= 0.11 and cal["same"], cal=cal)
+                harea("bifrost")
+                T.ev("(() => { const G = window.__hm; G.peace = true; G.ctx.clock.set(0.5); G.S.t = 0.5; G.storms.force(undefined); })()"); T.frames(4)
+                day_ok = T.ev("({ storm: window.__hm.storms.state().storm, wx: window.__hm.weather.kind, auto: window.__hm.rifts.canAuto() })")
+                T.ev("(() => { const G = window.__hm; G.ctx.clock.set(0.86); G.S.t = 0.86; G.rifts.close(false, true); G.storms.force('bifrost'); })()"); T.frames(6)
+                st = T.ev("window.__hm.storms.state()"); toastq = T.ev("document.getElementById('toast').innerText + ' | ' + window.__hm.toastQueue().join(' | ')")
+                T.frames(4)
+                sp = T.ev("""(() => { const G = window.__hm, sc = G.ctx.scene.game, R = G.rifts, pool = R.pool();
+                  const keep = [...sc.sealed.map((g) => g.pos), ...sc.portals.map((p) => [(p.rect[0] + p.rect[2]) / 2, (p.rect[1] + p.rect[3]) / 2]), sc.ferry.pos, sc.waystone.pos,
+                                ...G.hollows.braziers.filter((b) => b.den).map((b) => b.pos), [-5.6, 3.9], [G.ctx.npc('denkeeper').x, G.ctx.npc('denkeeper').z], [G.ctx.npc('gatewright').x, G.ctx.npc('gatewright').z]];
+                  const md = Math.min(...pool.spots.map((s) => Math.min(...keep.map((k) => Math.hypot(s[0] - k[0], s[1] - k[1])))));
+                  return { n: pool.spots.length, md: +md.toFixed(2), timer: R.state().timer, storm: R.storm(), auto: R.canAuto(), wx: G.weather.kind }; })()""")
+                T.step("Bifrost by day: no storm, no rifts by themselves; at night a forced Bifrost rift storm breaks: the RIFT STORM banner, the riftstorm weather, the rift timer drops to 10-20 s",
+                       day_ok["storm"] is None and not day_ok["auto"] and st["storm"] == "bifrost" and st["here"] and st["run"]["sealed"] == 0 and "RIFT STORM" in toastq
+                       and sp["wx"] == "riftstorm" and sp["auto"] and sp["timer"] <= 20.5, day=day_ok, storm=st, toast=toastq[:160], spots=sp)
+                T.step("storm-only rift spots at the Crossing (5) sit clear of the nine arches, the Vanaheim swirl, the Den yard, the skiff landing, the waystone and Halvard's kiosk (>= 2.5 m)",
+                       sp["n"] == 5 and sp["md"] >= 2.5, spots=sp)
+                T.wait("!!window.__hm.rifts.cur", 40)
+                rs = T.ev("window.__hm.rifts.state().rift"); ot = T.ev("document.getElementById('toast').innerText")
+                g0 = T.ev("window.__hm.S.merit.gate || 0"); mul = T.ev("window.__hm.combat.M.riftMarkMul || 0")
+                tier = rs["tier"]; ok1 = seal_cur()
+                g1 = T.ev("window.__hm.S.merit.gate || 0"); st1 = T.ev("window.__hm.storms.state()")
+                want = round([30, 60, 120][tier] * (1 + mul + 0.25))
+                T.step("a storm rift opens by itself within ~20 s at a storm spot ('The storm tears a rift open nearby!' family); sealing it pays Rift Marks x1.25 (on top of the fox) and counts 1 for the storm",
+                       rs and rs["inStorm"] and any(abs(rs["pos"][0] - x) < 1.5 and abs(rs["pos"][1] - z) < 1.5 for x, z in T.ev("window.__hm.rifts.pool().spots"))
+                       and ok1 and g1 - g0 == want and st1["run"]["sealed"] == 1, rift=rs, toast=ot[:80], marks=[g0, g1, want], storm=st1["run"])
+                T.wait("window.__hm.storms.state().cracks >= 1", 40)
+                ck = T.ev("window.__hm.storms.state()")
+                T.step("storm sky: rift_tear_minor cracks high above, cold-fire motes and short violet / red point-light flashes every 6-10 s (no bloom, no screen flash)", ck["cracks"] >= 1, storm=ck)
+                pg_, fh = T.talk("gatewright", keep_open=True)
+                pages_h = T.ev("window.__hm.dlg.pages.slice(0, 2)")
+                ch = T.to_choice()
+                labels = ch["options"] if ch else []
+                k = next((i for i, l in enumerate(labels) if "storm work" in l), -1)
+                if k >= 0: h.keyboard.press(str(k + 1)); h.wait_for_timeout(300)
+                T.read_all()
+                logt = T.ev("document.getElementById('logList').innerText")
+                T.step("Halvard in the storm: his storm line, then the quiet keys foreshadow; 'Any storm work?' posts the Storm Watch bounty (log: 'Seal 3 rifts during the rift storm (over Bifrost Crossing). 1/3')",
+                       "quarter extra" in pages_h[0] and "up all night with the keys" in pages_h[1] and k >= 0 and T.ev("window.__hm.S.quests.stormwatch") == 1
+                       and "over Bifrost Crossing). 1/3" in logt, pages=pages_h, options=labels)
+                for _ in range(2):
+                    T.ev("window.__hm.rifts.open(0)"); T.frames(4); seal_cur()
+                st3 = T.ev("window.__hm.storms.state()"); mk = T.ev("window.__hm.markers.gatewright ? window.__hm.markers.gatewright.name : null")
+                T.step("two more storm rifts sealed: 3 tonight ('Three rifts sealed tonight...'), Storm Watch moves to 'Report to Gatewright Halvard', Halvard shows a turn-in tag",
+                       st3["run"]["sealed"] == 3 and T.ev("window.__hm.S.quests.stormwatch") == 2 and mk == "quest_turnin", storm=st3["run"], mark=mk)
+                S0 = T.S(); xp0 = T.ev("window.__hm.S.xp || 0"); lv0 = T.ev("window.__hm.S.lv || 1"); e0 = T.ev("document.getElementById('btnLog').textContent")
+                T.talk("gatewright"); S1 = T.S()
+                T.step("Storm Watch turn-in: +60 Rift Marks, +40 gold, a rift shard, 'Bounty done'; no Hearth Tokens, not an errand (quests n/3 unchanged), S.bountyDone.stormwatch = 1",
+                       S1["quests"]["stormwatch"] == 3 and S1["merit"]["gate"] == S0["merit"]["gate"] + 60 and S1["gold"] >= S0["gold"] + 40
+                       and S1["gems"].get("rift_shard", 0) == S0["gems"].get("rift_shard", 0) + 1 and S1["merit"].get("hearth", 0) == S0["merit"].get("hearth", 0)
+                       and S1["bountyDone"]["stormwatch"] == 1 and T.ev("document.getElementById('btnLog').textContent") == e0, gate=[S0["merit"]["gate"], S1["merit"]["gate"]])
+                fl = T.ev("(() => { const G = window.__hm; G.harbor.openFerry(); const p = G.dlg ? G.dlg.pages[0] : null; return p; })()")
+                T.to_choice(); h.keyboard.press("Escape"); h.wait_for_timeout(200)
+                while T.ev("!!window.__hm.dlg"): h.keyboard.press("Escape"); h.wait_for_timeout(120)
+                T.step("the skiff still sails in the storm (never strands you), with the storm warning line at the landing", fl and "Storm's pushing the current" in fl, line=fl)
+                harea("rift")
+                ro = T.ev("({ here: window.__hm.storms.state().here, auto: window.__hm.rifts.canAuto(), n: window.__hm.rifts.pool().spots.length, wx: window.__hm.weather.kind })")
+                po, fo = T.talk("riftkeeper")
+                T.step("the Rift Shrine is in the Bifrost storm region too: storm-only rift spots at the dais edge, the riftstorm weather; Ondra: 'Something pulls at it from the cold side.'",
+                       ro["here"] and ro["auto"] and ro["n"] == 3 and ro["wx"] == "riftstorm" and "cold side" in fo, shrine=ro, ondra=fo[:80])
+                harea("ravenhold")
+                rv = T.ev("({ here: window.__hm.storms.state().here, auto: window.__hm.rifts.canAuto(), wx: window.__hm.weather.kind, nell: window.__hm.ctx.npc('dockkid') && window.__hm.ctx.npc('dockkid').name })")
+                pn, fn_ = T.talk("dockkid")
+                T.step("Ravenhold sees the storm from afar (no rifts, normal weather); the dock kid is now Nell (display name only) and talks about the lantern-eels in the storm",
+                       not rv["here"] and not rv["auto"] and rv["wx"] != "riftstorm" and rv["nell"] == "Nell" and "lantern-eels are going crazy" in fn_, harbor=rv, nell=fn_[:80])
+                T.ev("(() => { const G = window.__hm; G.ctx.clock.set(0.3); G.S.t = 0.3; })()"); T.frames(6)
+                dq = T.ev("window.__hm.toastQueue().join(' | ') + ' | ' + document.getElementById('toast').innerText"); sd = T.ev("window.__hm.storms.state()")
+                T.step("dawn ends the storm: S.flags.storm cleared, stormAfter = today, 'Storm weathered: 3 rifts sealed...' (outside the region: 'Dawn. The Rift above Ravenhold goes quiet again.')",
+                       sd["storm"] is None and sd["after"] == T.ev("window.__hm.S.day || 0") and "quiet again" in dq and "3 rifts sealed" in dq, storm=sd, toasts=dq[:200])
+                c0 = T.ev("window.__hm.S.merit.corsair || 0")
+                pb, fb = T.talk("harbormaster")
+                pq, fq = T.talk("quartermaster"); c1 = T.ev("window.__hm.S.merit.corsair || 0")
+                pb2, fb2 = T.talk("harbormaster")
+                T.step("the morning after: Brannoc raises a mug (once per storm), Sable toasts too and pays +15 Black Doubloons (3+ sealed); Brannoc's next talk is his morning-after line",
+                       "Raise your mugs" in fb and "Rift that didn't eat us" in fq and c1 == c0 + 15 and "All boats home" in fb2
+                       and T.ev("window.__hm.S.flags.toasted.harbormaster") == T.ev("window.__hm.S.flags.stormAfter"), lines=[fb[:40], fq[:40], fb2[:40]], corsair=[c0, c1])
+                harea("bifrost")
+                T.ev("(() => { const G = window.__hm; G.ctx.clock.set(0.86); G.S.t = 0.86; G.rifts.close(false, true); })()"); T.frames(6)
+                rp = T.ev("({ storm: window.__hm.storms.state().storm, q: window.__hm.S.quests.stormwatch, sealed: window.__hm.S.storm.sealed })")
+                T.ev("(() => { const G = window.__hm; G.S.quests.stormwatch = 2; G.S.storm.sealed = 3; G.refreshMarkers && G.refreshMarkers(); })()")
+                x0 = T.ev("window.__hm.S.xpTotal || 0"); T.ev("window.__hm.__xp = []; const g = window.__hm.gainXP; window.__hm.gainXP = (n, o) => { window.__hm.__xp.push(n); return g(n, o); }")
+                T.talk("gatewright"); xps = T.ev("window.__hm.__xp"); full = T.ev("window.__hm.PR.XP.errand")
+                T.step("the next storm night: Storm Watch is posted fresh (back to 0, the storm count reset); a repeat turn-in pays half XP (bountyDone 2)",
+                       rp["storm"] == "bifrost" and rp["q"] == 0 and rp["sealed"] == 0 and full / 2 in xps and T.ev("window.__hm.S.bountyDone.stormwatch") == 2, repeat=rp, xp=xps, full=full)
+                T.ev("(() => { const G = window.__hm; G.storms.force(undefined); })()")
+                T.step("no JS errors (rift storms)", not errors and not T.ev("window.__hd2d.errors.length"), errors=errors[:5])
+                hc.close()
+                seg_done("H")
+            except Exception as e:  # noqa: BLE001
+                rep["pass"] = False
+                rep["error"] = f"storms: {type(e).__name__}: {e}"[:400]
+                try:
+                    rep["shots"]["failure_H"] = T.shot("failure_H"); rep["state"] = T.S()
                 except Exception:  # noqa: BLE001
                     pass
         # every shard checks its own pages for JS errors even when the counted 'no JS errors' steps live in another shard

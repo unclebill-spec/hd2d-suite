@@ -3,7 +3,7 @@
 // 3 errands + quest log, bag, persistent clock, 4 spell slots, save/load (localStorage hearthmoor-slot-1-v2, migrates
 // v1), ambient audio, PWA install + fullscreen + display presets.
 import { boot, DISPLAY_PRESETS, getDisplay, setDisplay } from '../engine/main.js';
-import { ITEMS, QUESTS, TALK, SPELL_NAMES, markerFor, errandsDone } from './data.js';
+import { ITEMS, QUESTS, TALK, SPELL_NAMES, markerFor, errandsDone, stormTalk } from './data.js';
 import { Harbor } from './ravenhold.js';
 import { Crossing } from './bifrost.js';
 import { Temple } from './temple.js';
@@ -18,6 +18,7 @@ import { Weather, weatherAt } from './weather.js';
 import { Intro } from './intro.js';
 import { Rares, ELEMENTS as RARE_EL } from './rares.js';
 import { Rifts } from './rifts.js';
+import { Storms, stormAt, STORM_REGIONS } from './storms.js';
 import { Factions, FACTIONS, IDS as FAC_IDS, RANKS as FAC_RANKS, NEED as FAC_NEED, migrate as facMigrate } from './factions.js';
 import * as LO from './loot.js';
 import { Shop, drinkTonic, goodIconURL } from './shop.js';
@@ -61,6 +62,7 @@ G.crossing = new Crossing(G);   // Bifrost Crossing: the realm gates' looks (all
 G.garden = new Garden(G);
 G.weather = new Weather(G);
 G.intro = new Intro(G);
+G.storms = new Storms(G); G.stormAt = stormAt; G.STORM_REGIONS = STORM_REGIONS;   // 6.5 rift storms
 G.rares = new Rares(G); G.rifts = new Rifts(G); G.factions = new Factions(G); G.FA = { FACTIONS, FAC_IDS, FAC_RANKS, FAC_NEED, migrate: facMigrate };
 G.onRareKill = (R) => G.factions.onRare(R);   // Stage 5 part 3: merit
  G.qs = Q; G.qa = QA;   // Stage 5 part 2: procedural rares + random rifts
@@ -125,8 +127,14 @@ G.take = (id, n = 1) => { G.S.inv[id] = Math.max(0, (G.S.inv[id] || 0) - n); if 
 G.setQuest = (id, stage) => {
   const was = G.S.quests[id]; G.S.quests[id] = stage; drawLog();
   const story = !!QUESTS[id].story;   // story quests (Ravenhold) pay their own merit in data.js; errands pay Hearth merit
-  const kind = story ? 'Story quest' : QUESTS[id].side ? 'Side quest' : 'Errand';   // side quests (the Stray Den) still pay the errand merit
-  if (stage === 3 && was !== 3) { toast(`${kind} done: ${QUESTS[id].title}`, 2.6); G.audio.sfx('quest'); G.gainXP(PR.XP.errand); if (!story) G.factions.onErrand(); }
+  // bounties (6.5 Storm Watch) repeat: no Hearth payout, never an errand, full XP the first time and half on repeats
+  const B = !!QUESTS[id].bounty, kind = story ? 'Story quest' : B ? 'Bounty' : QUESTS[id].side ? 'Side quest' : 'Errand';   // side quests (the Stray Den) still pay the errand merit
+  if (stage === 3 && was !== 3) {
+    toast(`${kind} done: ${QUESTS[id].title}`, 2.6); G.audio.sfx('quest');
+    const done = B ? (G.S.bountyDone = G.S.bountyDone || {}) : null, rep = B && done[id];
+    G.gainXP(PR.XP.errand * (rep ? 0.5 : 1)); if (B) done[id] = (done[id] || 0) + 1;
+    if (!story && !B) G.factions.onErrand();
+  }
   else if (!was && stage > 0) { toast(`New ${kind.toLowerCase()}: ${QUESTS[id].title}`, 2.6); G.audio.sfx('pickup'); flashLog(); }
   refreshMarkers(); save();
 };
@@ -312,12 +320,12 @@ async function loadArea(id, spawnKey, pos) {
   const old = $('view'); if (old) old.remove();
   const canvas = document.createElement('canvas'); canvas.id = 'view'; document.body.prepend(canvas);
   G.area = id; G.S.area = id; G.armed = false;
-  G.rifts.detach(); G.rares.detach(); G.combat.detach(); G.glow.detach(); G.hollows.detach(); G.harbor.detach(); G.crossing.detach(); G.garden.detach(); G.weather.detach(); G.loot.detach(); G.shopUI.detach(); G.pets.detach(); G.temple.detach();
+  G.rifts.detach(); G.storms.detach(); G.rares.detach(); G.combat.detach(); G.glow.detach(); G.hollows.detach(); G.harbor.detach(); G.crossing.detach(); G.garden.detach(); G.weather.detach(); G.loot.detach(); G.shopUI.detach(); G.pets.detach(); G.temple.detach();
   G.game = await boot({ base: AREAS[id], canvas, spawn: sp, startT: G.S.t, glowLights: glowCap(), clockSpeed: 1 / DAY_SECONDS, spellCycle: slots(),
                         player: { role: G.S.cls || G.preview || 'wildcaller' }, castAdvance: false,
                         keepTitle: true, padHandled: true, hooks, toast: (m, t) => toast(m, t) });
   const ctx = G.ctx = G.game.ctx;
-  G.combat.attach(ctx, id); G.rares.attach(ctx, id); G.rifts.attach(ctx, id); G.factions.attach(ctx, id); G.glow.attach(ctx, id); G.hollows.attach(ctx); G.harbor.attach(ctx, id); G.crossing.attach(ctx, id); G.temple.attach(ctx, id); G.garden.attach(ctx); G.weather.attach(ctx, id); G.loot.attach(ctx); G.shopUI.attach(ctx, id); PR.ensure(G.S); G.loot.restorePurse(id);
+  G.storms.attach(ctx, id); G.combat.attach(ctx, id); G.rares.attach(ctx, id); G.rifts.attach(ctx, id); G.factions.attach(ctx, id); G.glow.attach(ctx, id); G.hollows.attach(ctx); G.harbor.attach(ctx, id); G.crossing.attach(ctx, id); G.temple.attach(ctx, id); G.garden.attach(ctx); G.weather.attach(ctx, id); G.loot.attach(ctx); G.shopUI.attach(ctx, id); PR.ensure(G.S); G.loot.restorePurse(id);
   // portrait source: this area's actor atlas
   portraitImg = new Image(); portraitImg.src = AREAS[id] + ctx.scene.atlas.image;
   // pickups already taken stay gone
@@ -440,7 +448,7 @@ function onFrame(dt, ctx) {
   syncMarkers();
   padWheel();
   G.hollows.update(dt); G.garden.update(dt); G.glow.update(dt); G.weather.update(dt); G.intro.update(dt);
-  G.loot.update(dt); G.shopUI.update(dt); G.rares.update(dt); G.rifts.update(dt); G.pets.update(dt); G.temple.update(dt);
+  G.loot.update(dt); G.shopUI.update(dt); G.rares.update(dt); G.storms.update(dt); G.rifts.update(dt); G.pets.update(dt); G.temple.update(dt);
   G.combat.update(dt, ctx);
   drawVitals(ctx);
   if (G.title || G.busy) return;
@@ -517,7 +525,7 @@ const hooks = {
   onTalk: (npc, ctx) => {
     const fn = TALK[npc.id];
     const entry = fn ? fn(G.S) : { pages: (Array.isArray(npc.say) ? npc.say : [npc.say || '…']) };
-    openDialogue(npc, entry);
+    openDialogue(npc, stormTalk(npc.id, G.S, entry, G.area));   // 6.5: storm / morning-after lines + toast scenes
     return true;
   },
   onTap: (hit, ctx) => {

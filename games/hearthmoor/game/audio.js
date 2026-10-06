@@ -83,6 +83,7 @@ export class Ambient {
     if (kind === 'spell') [12, 16, 19].forEach((s2, i) => this.pluck(s2 + 7, 0.04, i * 0.05));
     if (kind === 'summon') [0, 7, 12, 19].forEach((s2, i) => this.pluck(s2 + 5, 0.05, i * 0.07));
     if (kind === 'defeat') [12, 7, 3].forEach((s2, i) => this.pluck(s2, 0.05, i * 0.08));
+    if (kind === 'rumble') this.noise(1.1, 90, 50, 0.07);   // rift storm: a low, soft roll of thunder (6.5)
     if (kind === 'down') [7, 3, 0, -5].forEach((s2, i) => this.pluck(s2, 0.06, i * 0.14));
     if (kind === 'portal') {
       const c = this.ctx, t = c.currentTime, n = c.createBufferSource(), b = c.createBuffer(1, c.sampleRate * 0.9, c.sampleRate), d = b.getChannelData(0);
