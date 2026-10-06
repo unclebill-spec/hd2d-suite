@@ -45,9 +45,22 @@
  "cols": 12,
  "image": "pets.png",
  "image_neon": "pets_neon.png",
+ "image_lock_safe": "pets.png",
+ "primary": "pets_neon.png",
+ "neon_accents": {
+  "neon_red": "#e0302a",
+  "neon_red_lo": "#a81c22",
+  "neon_red_hi": "#ff5a4a",
+  "neon_violet": "#a45cf0",
+  "neon_violet_hi": "#d4a8ff",
+  "neon_violet_lo": "#6a34b8",
+  "neon_green": "#5aec3c",
+  "neon_green_hi": "#c4ff8a",
+  "neon_green_lo": "#24a03a"
+ },
  "size": [
   240,
-  384
+  512
  ],
  "fx": "pets_fx.json",
  "particles": "pets_particles.json",
@@ -2216,6 +2229,728 @@
     "particles": "pet_fox_ember",
     "speed": 2.4,
     "look": "red neon foxfire (sprite: palette rose / roof / white flame; NEON red in the light, pool, aura; pets_neon.png has a neon-red flame)"
+   }
+  },
+  "pet_mosspup": {
+   "row": 12,
+   "kind": "creature",
+   "pet": true,
+   "name": "Moss-pup",
+   "desc": "Moss-pup (Mossbrook / Stray Den): a round little pup of living moss with floppy leaf ears, a cream muzzle, brown paws, a glowing red toadstool cap with white spots on its head, a tiny toadstool and glowing moss dots on its back and a glowing moss-tuft tail; trots on the ground (sniffs out herbs, mushrooms and hidden springs)",
+   "size_bounds": [
+    [
+     8,
+     20
+    ],
+    [
+     8,
+     28
+    ]
+   ],
+   "caster": false,
+   "anims": [
+    "idle",
+    "walk",
+    "follow"
+   ],
+   "frames": [
+    {
+     "name": "pet_mosspup_down_idle0",
+     "facing": "down",
+     "anim": "idle",
+     "i": 0,
+     "x": 0,
+     "y": 384,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      10,
+      416
+     ]
+    },
+    {
+     "name": "pet_mosspup_down_idle1",
+     "facing": "down",
+     "anim": "idle",
+     "i": 1,
+     "x": 20,
+     "y": 384,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      30,
+      416
+     ]
+    },
+    {
+     "name": "pet_mosspup_down_idle2",
+     "facing": "down",
+     "anim": "idle",
+     "i": 2,
+     "x": 40,
+     "y": 384,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      50,
+      416
+     ]
+    },
+    {
+     "name": "pet_mosspup_down_idle3",
+     "facing": "down",
+     "anim": "idle",
+     "i": 3,
+     "x": 60,
+     "y": 384,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      70,
+      416
+     ]
+    },
+    {
+     "name": "pet_mosspup_down_walk0",
+     "facing": "down",
+     "anim": "walk",
+     "i": 0,
+     "x": 80,
+     "y": 384,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      90,
+      416
+     ]
+    },
+    {
+     "name": "pet_mosspup_down_walk1",
+     "facing": "down",
+     "anim": "walk",
+     "i": 1,
+     "x": 100,
+     "y": 384,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      110,
+      416
+     ]
+    },
+    {
+     "name": "pet_mosspup_down_walk2",
+     "facing": "down",
+     "anim": "walk",
+     "i": 2,
+     "x": 120,
+     "y": 384,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      130,
+      416
+     ]
+    },
+    {
+     "name": "pet_mosspup_down_walk3",
+     "facing": "down",
+     "anim": "walk",
+     "i": 3,
+     "x": 140,
+     "y": 384,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      150,
+      416
+     ]
+    },
+    {
+     "name": "pet_mosspup_down_follow0",
+     "facing": "down",
+     "anim": "follow",
+     "i": 0,
+     "x": 160,
+     "y": 384,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      170,
+      416
+     ]
+    },
+    {
+     "name": "pet_mosspup_down_follow1",
+     "facing": "down",
+     "anim": "follow",
+     "i": 1,
+     "x": 180,
+     "y": 384,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      190,
+      416
+     ]
+    },
+    {
+     "name": "pet_mosspup_down_follow2",
+     "facing": "down",
+     "anim": "follow",
+     "i": 2,
+     "x": 200,
+     "y": 384,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      210,
+      416
+     ]
+    },
+    {
+     "name": "pet_mosspup_down_follow3",
+     "facing": "down",
+     "anim": "follow",
+     "i": 3,
+     "x": 220,
+     "y": 384,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      230,
+      416
+     ]
+    },
+    {
+     "name": "pet_mosspup_up_idle0",
+     "facing": "up",
+     "anim": "idle",
+     "i": 0,
+     "x": 0,
+     "y": 416,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      10,
+      448
+     ]
+    },
+    {
+     "name": "pet_mosspup_up_idle1",
+     "facing": "up",
+     "anim": "idle",
+     "i": 1,
+     "x": 20,
+     "y": 416,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      30,
+      448
+     ]
+    },
+    {
+     "name": "pet_mosspup_up_idle2",
+     "facing": "up",
+     "anim": "idle",
+     "i": 2,
+     "x": 40,
+     "y": 416,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      50,
+      448
+     ]
+    },
+    {
+     "name": "pet_mosspup_up_idle3",
+     "facing": "up",
+     "anim": "idle",
+     "i": 3,
+     "x": 60,
+     "y": 416,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      70,
+      448
+     ]
+    },
+    {
+     "name": "pet_mosspup_up_walk0",
+     "facing": "up",
+     "anim": "walk",
+     "i": 0,
+     "x": 80,
+     "y": 416,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      90,
+      448
+     ]
+    },
+    {
+     "name": "pet_mosspup_up_walk1",
+     "facing": "up",
+     "anim": "walk",
+     "i": 1,
+     "x": 100,
+     "y": 416,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      110,
+      448
+     ]
+    },
+    {
+     "name": "pet_mosspup_up_walk2",
+     "facing": "up",
+     "anim": "walk",
+     "i": 2,
+     "x": 120,
+     "y": 416,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      130,
+      448
+     ]
+    },
+    {
+     "name": "pet_mosspup_up_walk3",
+     "facing": "up",
+     "anim": "walk",
+     "i": 3,
+     "x": 140,
+     "y": 416,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      150,
+      448
+     ]
+    },
+    {
+     "name": "pet_mosspup_up_follow0",
+     "facing": "up",
+     "anim": "follow",
+     "i": 0,
+     "x": 160,
+     "y": 416,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      170,
+      448
+     ]
+    },
+    {
+     "name": "pet_mosspup_up_follow1",
+     "facing": "up",
+     "anim": "follow",
+     "i": 1,
+     "x": 180,
+     "y": 416,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      190,
+      448
+     ]
+    },
+    {
+     "name": "pet_mosspup_up_follow2",
+     "facing": "up",
+     "anim": "follow",
+     "i": 2,
+     "x": 200,
+     "y": 416,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      210,
+      448
+     ]
+    },
+    {
+     "name": "pet_mosspup_up_follow3",
+     "facing": "up",
+     "anim": "follow",
+     "i": 3,
+     "x": 220,
+     "y": 416,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      230,
+      448
+     ]
+    },
+    {
+     "name": "pet_mosspup_left_idle0",
+     "facing": "left",
+     "anim": "idle",
+     "i": 0,
+     "x": 0,
+     "y": 448,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      10,
+      480
+     ]
+    },
+    {
+     "name": "pet_mosspup_left_idle1",
+     "facing": "left",
+     "anim": "idle",
+     "i": 1,
+     "x": 20,
+     "y": 448,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      30,
+      480
+     ]
+    },
+    {
+     "name": "pet_mosspup_left_idle2",
+     "facing": "left",
+     "anim": "idle",
+     "i": 2,
+     "x": 40,
+     "y": 448,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      50,
+      480
+     ]
+    },
+    {
+     "name": "pet_mosspup_left_idle3",
+     "facing": "left",
+     "anim": "idle",
+     "i": 3,
+     "x": 60,
+     "y": 448,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      70,
+      480
+     ]
+    },
+    {
+     "name": "pet_mosspup_left_walk0",
+     "facing": "left",
+     "anim": "walk",
+     "i": 0,
+     "x": 80,
+     "y": 448,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      90,
+      480
+     ]
+    },
+    {
+     "name": "pet_mosspup_left_walk1",
+     "facing": "left",
+     "anim": "walk",
+     "i": 1,
+     "x": 100,
+     "y": 448,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      110,
+      480
+     ]
+    },
+    {
+     "name": "pet_mosspup_left_walk2",
+     "facing": "left",
+     "anim": "walk",
+     "i": 2,
+     "x": 120,
+     "y": 448,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      130,
+      480
+     ]
+    },
+    {
+     "name": "pet_mosspup_left_walk3",
+     "facing": "left",
+     "anim": "walk",
+     "i": 3,
+     "x": 140,
+     "y": 448,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      150,
+      480
+     ]
+    },
+    {
+     "name": "pet_mosspup_left_follow0",
+     "facing": "left",
+     "anim": "follow",
+     "i": 0,
+     "x": 160,
+     "y": 448,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      170,
+      480
+     ]
+    },
+    {
+     "name": "pet_mosspup_left_follow1",
+     "facing": "left",
+     "anim": "follow",
+     "i": 1,
+     "x": 180,
+     "y": 448,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      190,
+      480
+     ]
+    },
+    {
+     "name": "pet_mosspup_left_follow2",
+     "facing": "left",
+     "anim": "follow",
+     "i": 2,
+     "x": 200,
+     "y": 448,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      210,
+      480
+     ]
+    },
+    {
+     "name": "pet_mosspup_left_follow3",
+     "facing": "left",
+     "anim": "follow",
+     "i": 3,
+     "x": 220,
+     "y": 448,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      230,
+      480
+     ]
+    },
+    {
+     "name": "pet_mosspup_right_idle0",
+     "facing": "right",
+     "anim": "idle",
+     "i": 0,
+     "x": 0,
+     "y": 480,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      10,
+      512
+     ]
+    },
+    {
+     "name": "pet_mosspup_right_idle1",
+     "facing": "right",
+     "anim": "idle",
+     "i": 1,
+     "x": 20,
+     "y": 480,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      30,
+      512
+     ]
+    },
+    {
+     "name": "pet_mosspup_right_idle2",
+     "facing": "right",
+     "anim": "idle",
+     "i": 2,
+     "x": 40,
+     "y": 480,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      50,
+      512
+     ]
+    },
+    {
+     "name": "pet_mosspup_right_idle3",
+     "facing": "right",
+     "anim": "idle",
+     "i": 3,
+     "x": 60,
+     "y": 480,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      70,
+      512
+     ]
+    },
+    {
+     "name": "pet_mosspup_right_walk0",
+     "facing": "right",
+     "anim": "walk",
+     "i": 0,
+     "x": 80,
+     "y": 480,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      90,
+      512
+     ]
+    },
+    {
+     "name": "pet_mosspup_right_walk1",
+     "facing": "right",
+     "anim": "walk",
+     "i": 1,
+     "x": 100,
+     "y": 480,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      110,
+      512
+     ]
+    },
+    {
+     "name": "pet_mosspup_right_walk2",
+     "facing": "right",
+     "anim": "walk",
+     "i": 2,
+     "x": 120,
+     "y": 480,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      130,
+      512
+     ]
+    },
+    {
+     "name": "pet_mosspup_right_walk3",
+     "facing": "right",
+     "anim": "walk",
+     "i": 3,
+     "x": 140,
+     "y": 480,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      150,
+      512
+     ]
+    },
+    {
+     "name": "pet_mosspup_right_follow0",
+     "facing": "right",
+     "anim": "follow",
+     "i": 0,
+     "x": 160,
+     "y": 480,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      170,
+      512
+     ]
+    },
+    {
+     "name": "pet_mosspup_right_follow1",
+     "facing": "right",
+     "anim": "follow",
+     "i": 1,
+     "x": 180,
+     "y": 480,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      190,
+      512
+     ]
+    },
+    {
+     "name": "pet_mosspup_right_follow2",
+     "facing": "right",
+     "anim": "follow",
+     "i": 2,
+     "x": 200,
+     "y": 480,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      210,
+      512
+     ]
+    },
+    {
+     "name": "pet_mosspup_right_follow3",
+     "facing": "right",
+     "anim": "follow",
+     "i": 3,
+     "x": 220,
+     "y": 480,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      230,
+      512
+     ]
+    }
+   ],
+   "petfx": {
+    "hover": {
+     "lift": 0.0,
+     "bob": 0.0,
+     "hz": 0.0
+    },
+    "light": {
+     "color": "#5aec3c",
+     "intensity": 3.5,
+     "range": 3.0,
+     "lift": 0.55,
+     "fadeIn": 0.5,
+     "pulse": {
+      "min": 0.8,
+      "max": 1.1,
+      "hz": 0.7,
+      "shape": "sine"
+     }
+    },
+    "aura": "pet_aura_mosspup",
+    "pool": "pet_pool_mosspup",
+    "particles": "pet_mosspup_spore",
+    "speed": 2.4,
+    "look": "toxic-lime neon green spores + neon-red toadstool cap with white spots (pets_neon.png); pets.png keeps them in grass / roof / white"
    }
   }
  },

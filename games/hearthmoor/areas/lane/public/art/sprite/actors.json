@@ -20941,6 +20941,17 @@
     "walk",
     "follow"
    ]
+  },
+  "pet_mosspup": {
+   "sheet": "pets",
+   "row": 12,
+   "kind": "creature",
+   "pet": true,
+   "anims": [
+    "idle",
+    "walk",
+    "follow"
+   ]
   }
  },
  "sheets": {

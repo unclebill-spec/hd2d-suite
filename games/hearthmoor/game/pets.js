@@ -33,12 +33,24 @@ export const PETS = {
     about: 'A rust-red fox kit with white socks. Its tail ends in a round glowing tuft, and a tiny light-fish swims inside.',
     names: ['Ember', 'Rusk', 'Tinder', 'Cinnabar', 'Pepper', 'Saffron', 'Tally', 'Hob', 'Marigold', 'Rowan'],
   },
+  // the 4th Den pet (pets doc 6.6): a gift from Mossbrook on the Vanaheim befriend path (6.4 sets S.pets.mosspup.atDen),
+  // never in the adopt list. Light per the Art bot's README (lime neon); the doc's draft cold-blue light was superseded.
+  mosspup: {
+    name: 'Moss-pup', species: 'moss-pup', role: 'pet_mosspup', glow: '#5aec3c', gift: 'vanaheim',
+    hover: { lift: 0, bob: 0, hz: 0 },
+    light: { color: '#5aec3c', intensity: 3.5, range: 3.0, lift: 0.55, pulse: [0.8, 1.1, 0.7], r: 1.5 },
+    fx: { aura: 'pet_aura_mosspup', pool: 'pet_pool_mosspup', parts: 'pet_mosspup_spore', auraLift: 0.35 },
+    aura: { id: 'foragers_nose', name: "Forager's Nose", desc: 'Hidden springs shimmer within 5 m. Spring-fizz +15 s. Forage +1 (25%). Bond 3: 7 m, +20 s, 35%.',
+            mods: { springSense: 5, springBuff: 15, forage: 0.25 }, bond3: { springSense: 7, springBuff: 20, forage: 0.35 } },
+    about: 'A puppy of soft green moss with root legs and a red toadstool on its head. Smells water through stone.',
+    names: ['Sprout', 'Clover', 'Bramble', 'Truffle', 'Fernly', 'Burdock', 'Tuft', 'Pebble', 'Chanterelle', 'Mossy'],
+  },
 };
 export const PET_IDS = Object.keys(PETS);
 export const DEN = { biscuit: 6, adopt: 40, fedBond2: 3, fedBond3: 7, glowBoost: 60 };
 const DARK = (t) => t > 0.75 || t < 0.25;   // dusk into night to dawn (the Hollows brazier window)
 const DIM = { hollows: true, rift: true, ravenhold: true, bifrost: true };   // the Rift's gloom: pet light at every hour
-const SECRET_SAY = { glowmoth: ['({name} beats its wings at a blank wall. A hidden door?)', '({name} dusts the ground. Something fizzes below.)', '({name} hovers at a mushroom stem. Tiny door, tiny knock?)'] };
+const SECRET_SAY = { mosspup: ['({name} digs at the ground, ears up. Water down there?)', '({name} sits and stares at a wall. It hears fizzing.)'], glowmoth: ['({name} beats its wings at a blank wall. A hidden door?)', '({name} dusts the ground. Something fizzes below.)', '({name} hovers at a mushroom stem. Tiny door, tiny knock?)'] };
 
 // the active pet's aura mods (bond 3 uses the bigger numbers); folded into progress.mods() like gear
 export function petAura(S) {
@@ -61,6 +73,8 @@ export function petNames(S, id) {
   return out;
 }
 export const isNight = (t) => t > 0.75 || t < 0.25;
+// Forager's Nose: a chance of one more moonpetal / red cap / garden harvest (returns the extra count, 0 or 1)
+export function forageExtra(S, rnd = Math.random) { const f = petAura(S).forage || 0; return f && rnd() < f ? 1 : 0; }
 export function ensurePets(S) { S.pets = S.pets || {}; if (S.pet === undefined) S.pet = null; return S; }
 
 export class Pets {
@@ -69,7 +83,7 @@ export class Pets {
   def() { const p = this.S.pet; return p ? PETS[p.id] : null; }
   attach(ctx, area) { this.ctx = ctx; this.area = area; this.sensed = {}; this.a = null; if (this.def()) this.spawn(); }
   detach() { this.despawn(); this.ctx = null; }
-  dark() { const c = this.ctx; return !!c && (!!DIM[this.area] || DARK(c.clock.t)); }
+  dark() { const c = this.ctx; return !!c && (!!DIM[this.area] || (this.area === 'temple' && !(this.G.S.flags || {}).temple_lit) || DARK(c.clock.t)); }   // the Old Temple is dim until the relight (6.3)
   spawn() {
     const ctx = this.ctx, P = this.def(); if (!ctx || !P || this.a) return null;
     if (!ctx.actors.sheetOf(P.role)) return null;   // an area built without the pet sheet (old build): no pet, no crash
@@ -178,12 +192,13 @@ export class Pets {
       if (this.emitter) { this.emitter.pos[0] = a.x; this.emitter.pos[1] = a.y + (a.lift || 0) + 0.2; this.emitter.pos[2] = a.z; }
     }
     // the glow-moth's Lamplight Dust: unfound secrets within range shimmer (a glitter + a soft chime, once per visit)
-    const sr = petAura(this.S).secretSense || 0;
-    if (sr) for (const q of this.secrets()) {
-      if (this.sensed[q.id] || Math.hypot(ctx.player.x - q.pos[0], ctx.player.z - q.pos[1]) > sr) continue;
+    const au = petAura(this.S), sr = au.secretSense || 0, wr = au.springSense || 0;   // the moss-pup's Forager's Nose: springs only
+    if (sr || wr) for (const q of this.secrets()) {
+      const r = q.kind === 'spring' ? Math.max(sr, wr) : sr;
+      if (!r || this.sensed[q.id] || Math.hypot(ctx.player.x - q.pos[0], ctx.player.z - q.pos[1]) > r) continue;
       this.sensed[q.id] = true; this.lastSense = { ...q };
       if (ctx.effects) ctx.effects.spawn('glitter', q.pos[0], ctx.heightAt(q.pos[0], q.pos[1]) + 0.2, q.pos[1] + 0.05, { duration: 2.4 });
-      const lines = SECRET_SAY.glowmoth; this.G.toast && this.G.toast(lines[Object.keys(this.sensed).length % lines.length].replace('{name}', this.S.pet.name), 2.6);
+      const lines = SECRET_SAY[this.S.pet.id] || SECRET_SAY.glowmoth; this.G.toast && this.G.toast(lines[Object.keys(this.sensed).length % lines.length].replace('{name}', this.S.pet.name), 2.6);
       this.G.audio && this.G.audio.sfx('blip');
     }
   }

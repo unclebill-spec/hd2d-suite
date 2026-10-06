@@ -6,7 +6,8 @@
  "rows": [
   "pet_wisp_spark",
   "pet_moth_dust",
-  "pet_fox_ember"
+  "pet_fox_ember",
+  "pet_mosspup_spore"
  ],
  "presets": {
   "pet_wisp_spark": {
@@ -111,6 +112,41 @@
     0.15,
     0.1,
     0.15
+   ],
+   "follow_pet": true
+  },
+  "pet_mosspup_spore": {
+   "row": 3,
+   "frames": 4,
+   "fps": 4,
+   "mode": "life",
+   "rate": 2.8,
+   "life": [
+    1.2,
+    2.2
+   ],
+   "grade": null,
+   "vel": [
+    [
+     -0.1,
+     0.1
+    ],
+    [
+     0.15,
+     0.35
+    ],
+    [
+     -0.1,
+     0.1
+    ]
+   ],
+   "gravity": 0,
+   "sway": 0.7,
+   "glow": true,
+   "area": [
+    0.35,
+    0.15,
+    0.25
    ],
    "follow_pet": true
   }

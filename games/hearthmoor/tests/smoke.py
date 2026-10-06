@@ -187,7 +187,7 @@ class Smoke:
 # segment before it saved (localStorage only: the same thing the serial run's reload + Continue restores from).
 # Every step still runs exactly once across the shards, with the same assertions and thresholds.
 FIX = Path(__file__).resolve().parent / "fixtures"
-SEGS = "ABCDEF"
+SEGS = "ABCDEFG"
 SEG_INFO = {
     "A": "title, loading gate, Lantern Eve, errands, controller, Mossglen, leveling, combat, loot, rares + rifts, Hollows, garden (ends: K save in Mossglen -> cp1)",
     "B": "reload #1 + Continue, save slots, Pudding home, shop, bank, riddle, night merchant, factions, glow cap, weather, sockets, errand 2 (ends: K save in the Lane -> cp2)",
@@ -195,6 +195,7 @@ SEG_INFO = {
     "D": "phone portrait + landscape on touch (continues the cp3 save)",
     "E": "v1 save migration",
     "F": "Stage 6+: the Stray Den + glowing pets (continues the cp3 save)",
+    "G": "Stage 6.3: the Old Temple (Hilde's writ, the Harbor gate, clues, Alder's charm, Ida's wick, braziers, the rite, the rift, Veyra, Midgard's arch; continues cp3)",
 }
 # --quick <area>: the segments that cover an area / feature (a per-change check; the batch still runs everything)
 QUICK = {
@@ -204,9 +205,10 @@ QUICK = {
     "rift": "C", "vanaheim": "C", "ravenhold": "C", "bifrost": "C",
     "phone": "D", "touch": "D", "migration": "E", "save": "BE",
     "pet": "F", "pets": "F", "stray": "F",
+    "temple": "G", "oldtemple": "G", "midgard": "G",
 }
 TIMING = FIX / "smoke_timing.json"   # seconds per segment from the last passing runs (shard balancing only)
-DEFAULT_SECONDS = {"A": 560, "B": 260, "C": 230, "D": 140, "E": 25, "F": 150}
+DEFAULT_SECONDS = {"A": 560, "B": 260, "C": 230, "D": 140, "E": 25, "F": 150, "G": 200}
 
 
 def seg_seconds():
@@ -1921,7 +1923,7 @@ def run(out, simscale=4, size=(960, 540), segs=SEGS):
                 sw = T.to_choice(); f.keyboard.press("1"); f.wait_for_timeout(300); T.read_all(); T.frames(6)
                 B = T.S()
                 T.step("the Den hub (swap / biscuits / adopt / auras / visiting): adopting needs Hearth Friend, then a 40-gold donation brings the wisp kit home (named, active, spellCd +0.06); 'Swap my pet' brings the fox back",
-                       bool(hub) and len(hub["options"]) == 5 and "Swap" in hub["options"][0] and "Hearth" in lock and "Friend" in lock and bool(ac) and "wisp kit" in ac["options"][0]
+                       bool(hub) and len(hub["options"]) == 5 and "Swap" in hub["options"][0] and "Hearth" in lock and "Friend" in lock and bool(ac) and "wisp kit" in ac["options"][0] and len(ac["options"]) == 3
                        and A["pet"]["id"] == "wispkit" and A["pets"]["wispkit"]["name"] == an["options"][1] and A["gold"] == gd1 - 40 and Mw >= 0.06
                        and bool(sw) and B["pet"]["id"] == "lanternfox" and B["pet"]["name"] == nm and T.ev("window.__hm.pets.state().role") == "pet_fox", hub=hub, adopt=ac, swap=sw)
                 # save + reload: the pet comes back at your side
@@ -1931,6 +1933,18 @@ def run(out, simscale=4, size=(960, 540), segs=SEGS):
                 R = T.S(); ra = T.ev("(() => { const a = window.__hm.pets.a, p = window.__hm.ctx.player; return { d: Math.hypot(a.x - p.x, a.z - p.z), role: a.role || window.__hm.pets.state().role }; })()")
                 T.step("save + reload + Continue: S.pet and S.pets round-trip (both pets, names, the fed day), and the active pet spawns beside the hero",
                        R["pet"] == B["pet"] and set(R["pets"]) == {"lanternfox", "wispkit"} and R["pets"]["lanternfox"]["fed"] == 1 and ra["d"] < 2.5, pet=R["pet"], at=ra)
+                # the moss-pup (a gift from Mossbrook on the 6.4 befriend path): Signe hands it over, you name it, Forager's Nose applies
+                T.ev("(() => { const S = window.__hm.S; S.pets.mosspup = { name: 'Moss-pup', bond: 1, atDen: 1 }; })()")   # QA: what 6.4's befriend ending will set
+                T.ev("window.__hm.loadArea('bifrost', 'start')"); T.wait("window.__hm.area === 'bifrost' && window.__hm.pets.a", 120); T.idle(); f.wait_for_timeout(300)
+                mp1, mpf = T.talk("denkeeper", keep_open=True)
+                to_den(); mn = T.to_choice(); f.keyboard.press("1"); f.wait_for_timeout(300); T.read_all(); T.frames(8); f.wait_for_timeout(500)
+                MP = T.S(); mst = T.ev("window.__hm.pets.state()")
+                Mm = T.ev("(() => { const M = window.__hm.combat.M; return { springSense: M.springSense, springBuff: M.springBuff, forage: M.forage }; })()")
+                T.step("the moss-pup gift: Signe's arrival lines, name it (4 seeded names + 'Just \"Moss-pup\"'): it is active on the pets sheet (row 12), a lime light pool, Forager's Nose mods (springs 5 m, spring-fizz +15 s, forage 25%)",
+                       mp1 == 2 and "toadstool hat" in mpf and bool(mn) and len(mn["options"]) == 5 and MP["pet"]["id"] == "mosspup" and MP["pets"]["mosspup"]["atDen"] == 0
+                       and MP["pet"]["name"] == mn["options"][0] and mst["role"] == "pet_mosspup" and mst["lit"] and mst["light"]["color"] == "#5aec3c"
+                       and mst["fx"] == ["pet_pool_mosspup", "pet_aura_mosspup"] and Mm == {"springSense": 5, "springBuff": 15, "forage": 0.25}, pet=MP["pet"], state=mst, mods=Mm)
+                rep["shots"]["stage6_pet_mosspup"] = T.shot("stage6_pet_mosspup")
                 T.step("no JS errors (pets)", not errors and not T.ev("window.__hd2d.errors.length"), errors=errors[:5])
                 pc.close()
                 seg_done("F")
@@ -1939,6 +1953,164 @@ def run(out, simscale=4, size=(960, 540), segs=SEGS):
                 rep["error"] = f"pets: {type(e).__name__}: {e}"[:400]
                 try:
                     rep["shots"]["failure_F"] = T.shot("failure_F"); rep["state"] = T.S()
+                except Exception:  # noqa: BLE001
+                    pass
+        # ---------------------------------------------------------- G: the Old Temple (Stage 6.3, continues cp3)
+        if rep["pass"] and "G" in segs:
+            seg_mark("G")
+            try:
+                saved = cp_load(None, T, url, "cp3")["hearthmoor-slot-1-v2"]
+                tc = b.new_context(viewport={"width": size[0], "height": size[1]})
+                tc.add_init_script(f"if (!sessionStorage.getItem('seeded')) {{ localStorage.clear(); localStorage.setItem('hearthmoor-slot-1-v2', {json.dumps(saved)}); sessionStorage.setItem('seeded', '1'); }}")
+                tc.add_init_script(STUB)
+                g = tc.new_page()
+                g.on("pageerror", lambda e: errors.append(f"PAGEERROR {e}"))
+                g.on("console", lambda m: errors.append(f"console.error {m.text}") if m.type == "error" else None)
+                T.pg = g
+                g.goto(url)
+                T.wait("window.__hm && window.__hm.ready && window.__hd2d && window.__hd2d.ready && !window.__hd2dGate.loading", 120)
+                g.click("#btnCont"); T.idle(); g.wait_for_timeout(400)
+
+                def area(a, spawn="start"):
+                    T.ev(f"window.__hm.loadArea('{a}', '{spawn}')"); T.wait(f"window.__hm.area === '{a}' && window.__hm.ctx && !window.__hm.busy", 120); T.idle(); g.wait_for_timeout(300)
+
+                def mark(npc):
+                    return T.ev(f"window.__hm.markers['{npc}'] ? window.__hm.markers['{npc}'].name : null")
+
+                def at(x, z):
+                    T.ev(f"(() => {{ const c = window.__hm.ctx, p = c.player; p.x = {x}; p.z = {z}; p.y = c.heightAt(p.x, p.z); c.stopWalk(); }})()"); T.frames(3)
+
+                def cast():
+                    T.ev("window.__hm.combat.cd = {}"); g.keyboard.press("f"); g.wait_for_timeout(700)
+                # Warden Hilde (Plaza) hands over the relief basket + the Hearth writ: 'The Cold Altar' starts
+                area("plaza")
+                mh = mark("hilde")
+                T.talk("hilde")
+                S = T.S()
+                T.step("Plaza: Warden Hilde (quest tag once Bifrost is done) gives the Order's relief basket + a Hearth writ: story quest 'The Cold Altar'",
+                       mh == "quest_mark" and S["quests"].get("altar") == 1 and S["inv"].get("reliefbasket") == 1 and S["inv"].get("hearthwrit") == 1
+                       and "Story: The Cold Altar" in T.ev("document.getElementById('logList').innerText"), mark=mh)
+                # Ravenhold: Novice Edda at the Old Temple gate; the writ turns the sealed district gate into an exit up the stair
+                area("ravenhold")
+                rq = T.ev("window.__hm.temple.qa()")
+                pe, fe = T.talk("novice")
+                ex = T.ev("window.__hm.ctx.scene.game.exits.findIndex((e) => e.to === 'temple')")
+                to = T.go_rect("exits", ex) if ex >= 0 else None
+                T.step("Ravenhold: Novice Edda by the Old Temple gate greets the writ; the gate is no longer sealed but an exit, and walking into it climbs to the Old Temple",
+                       "temple" not in rq["sealed"] and "market" in rq["sealed"] and "temple" in rq["exits"] and "A Hearth writ" in fe and to == "temple", temple=rq, edda=fe[:60], area=to)
+                tq = T.ev("""(() => { const G = window.__hm, c = G.ctx, sc = c.scene, glb = (n) => sc.objects.filter((o) => o.glb.endsWith('/' + n + '.glb')).length;
+                  return { npcs: ['priestess', 'archivist', 'refugee1', 'refugee2'].map((n) => !!c.npc(n)), braz: G.hollows.braziers.filter((b) => b.temple).map((b) => b.lit),
+                           arch: glb('realm_arch'), altar: glb('shrine'), way: glb('waystone'), realm: G.factions.realm(), gate: c.fx.gate_midgard ? c.fx.gate_midgard.name : null,
+                           clues: (sc.game.clues || []).length, terrace: [c.heightAt(0, -6), c.heightAt(0, -10.2)], mark: G.markers.priestess ? G.markers.priestess.name : null }; })()""")
+                rep["shots"]["temple_dark"] = T.shot("temple_dark")
+                T.step("the Old Temple (placeholder art): Mother Ilse (turn-in tag), Brother Tamsin, 2 refugees; 3 dark stair braziers, the altar on the nave terrace (1.2 m), the dark Rift-gate on the inner court (2 m), a waystone; Hearth realm",
+                       tq["npcs"] == [True] * 4 and tq["braz"] == [False] * 3 and tq["arch"] == 1 and tq["altar"] == 1 and tq["way"] == 1 and tq["realm"] == "hearth"
+                       and tq["gate"] == "rift_seal_rainbow" and tq["clues"] == 3 and abs(tq["terrace"][0] - 1.2) < 0.05 and abs(tq["terrace"][1] - 2.0) < 0.05 and tq["mark"] == "quest_turnin", temple=tq)
+                h0 = T.ev("window.__hm.S.merit.hearth || 0")
+                pi, fi = T.talk("priestess")
+                S = T.S()
+                T.step("Mother Ilse takes the basket (5 pages): +40 Hearth Tokens (refuge), the Temple waystone attunes, 'The Cold Altar' moves on to the clues",
+                       pi == 5 and S["quests"]["altar"] == 2 and not S["inv"].get("reliefbasket") and S["merit"]["hearth"] == h0 + 40 and S["flags"]["ways"].get("temple") == 1, first=fi[:60])
+                T.talk("archivist")
+                got = []
+                for c in T.ev("window.__hm.ctx.scene.game.clues"):
+                    T.walk(c["pos"][0], c["pos"][1] + 0.4)
+                    if not T.ev("window.__hm.temple.near()"): at(c["pos"][0], c["pos"][1] + 0.4)   # a prop in the way: stand on the spot
+                    pr = T.ev("document.getElementById('prompt').textContent")
+                    g.keyboard.press("e"); g.wait_for_timeout(300)
+                    who = T.ev("window.__hm.dlg ? window.__hm.dlg.npc.id : null"); T.read_all()
+                    got.append([c["id"], who, "look" in pr, T.ev(f"!!window.__hm.S.found.{c['id']}")])
+                tl = T.talk("archivist")[1]
+                mi = mark("priestess")
+                T.step("Brother Tamsin's first talk; the 3 clue spots in the nave (E: 'The nave' narration) are noted 3/3; Tamsin comments on the last one; Ilse shows a turn-in tag",
+                       all(x[1] == "clue" and x[2] and x[3] for x in got) and len(got) == 3 and mi == "quest_turnin"
+                       and "Tell Mother Ilse what the clues say" in T.ev("document.getElementById('logList').innerText"), clues=got, tamsin=tl[:60])
+                h1 = T.ev("window.__hm.S.merit.hearth"); gd = T.ev("window.__hm.S.gold || 0")
+                T.talk("priestess"); S = T.S()
+                b1 = T.ev("window.__hm.hollows.braziers.find((b) => b.id === 'tm_b1').pos")
+                T.walk(b1[0] + 0.6, b1[1] + 0.7); cast()
+                nag = T.ev("({ lit: window.__hm.hollows.braziers.find((b) => b.id === 'tm_b1').lit, toast: document.getElementById('toast').innerText })")
+                T.step("Ilse: 'The Cold Altar' done (+60 Hearth Tokens, +30 gold), 'Keeper of the Gate' starts; a spell at a stair brazier won't catch without a warden's flame",
+                       S["quests"]["altar"] == 3 and S["quests"].get("gate") == 1 and S["merit"]["hearth"] >= h1 + 60 and S["gold"] >= gd + 30 and not nag["lit"] and "warden" in nag["toast"], nag=nag)
+                # Grandpa Alder gives Warden Aldis's lantern charm; Ida Wickmere lights it with a cold-fire wick
+                area("plaza"); me = mark("elder"); T.talk("elder")
+                area("ravenhold"); mc = mark("chandler"); T.talk("chandler")
+                for _ in range(4):
+                    if not T.ev("!!window.__hm.shop"): break
+                    g.keyboard.press("Escape"); g.wait_for_timeout(200)
+                S = T.S()
+                T.step("Grandpa Alder (quest tag) gives Warden Aldis's lantern charm; Ida Wickmere (turn-in tag) lights it with a cold-fire wick (then her shop opens)",
+                       me == "quest_mark" and mc == "quest_turnin" and S["inv"].get("alder_charm") == 1 and S["flags"].get("tm_wick") == 1, marks=[me, mc])
+                # the three stair braziers take the charm's flame; the first one stirs two wraiths out of the inner court
+                area("temple", "from_waystone")
+                lit = []
+                for bid in ("tm_b1", "tm_b2", "tm_b3"):
+                    bp = T.ev(f"window.__hm.hollows.braziers.find((b) => b.id === '{bid}').pos")
+                    T.walk(bp[0] + 0.6, bp[1] + 0.7)
+                    for _ in range(3):
+                        cast()
+                        if T.ev(f"!!window.__hm.S.found.{bid}"): break
+                    lit.append(T.ev(f"!!window.__hm.S.found.{bid}"))
+                wr = T.ev("window.__hm.combat.enemies.filter((e) => /^tm_wraith_/.test(e.id)).length")
+                T.ev("(() => { const G = window.__hm, C = G.combat, p = G.ctx.player; for (const e of C.enemies) if (/^tm_wraith_/.test(e.id)) for (let i = 0; i < 60 && e.state !== 'dead' && e.state !== 'gone'; i++) C.damageEnemy(e, 80, p); })()")
+                T.step("cast at each of the 3 stair braziers: the charm's flame lights them (toasts n/3); the first stirs 2 wraiths out of the inner court; Ilse shows a turn-in tag",
+                       lit == [True] * 3 and wr == 2 and mark("priestess") == "quest_turnin" and "Bring it to Mother Ilse" in T.ev("document.getElementById('logList').innerText"), lit=lit, wraiths=wr)
+                # the rite: Ilse offers a cot until dusk (it is day), then the altar, the Rift-gate, the scripted major rift
+                T.ev("(() => { const G = window.__hm; G.ctx.clock.set(0.6); G.S.t = G.ctx.clock.t; })()"); T.frames(4)
+                T.talk("priestess", keep_open=True); rc = T.to_choice()
+                g.keyboard.press("1"); g.wait_for_timeout(300); T.read_all()
+                tday = T.ev("window.__hm.ctx.clock.t")
+                al = T.ev("window.__hm.ctx.scene.game.altar.use"); T.walk(al[0], al[1])
+                if T.ev("(window.__hm.temple.near() || {}).kind") != "altar": at(al[0], al[1])
+                g.keyboard.press("e"); g.wait_for_timeout(300); T.read_all(); T.frames(10); g.wait_for_timeout(600)
+                av = T.ev("({ altar: window.__hm.S.flags.tm_altar, lit: window.__hm.temple.qa().lit, zone: window.__hm.glow.zones().some((z) => z.src === 'temple'), burning: window.__hm.hollows.braziers.filter((b) => b.temple && b.burning).length })")
+                T.step("Ilse (day): 'Rest on a refugee cot until dusk' skips to dusk; E at the cold altar sets the charm: the sacred brazier roars awake (a light zone), the stair braziers burn",
+                       bool(rc) and len(rc["options"]) == 2 and "cot" in rc["options"][0] and T.ev("window.__hm.S.quests.gate") == 2 and tday >= 0.74
+                       and av["altar"] == 1 and av["lit"] == ["altar"] and av["zone"] and av["burning"] == 3, choice=rc, t=tday, altar=av)
+                gu = T.ev("window.__hm.ctx.scene.game.riftgate.use"); T.walk(gu[0], gu[1])
+                if T.ev("(window.__hm.temple.near() || {}).kind") != "gate": at(gu[0], gu[1])
+                g.keyboard.press("e"); g.wait_for_timeout(300); T.read_all(); T.frames(8)
+                rs = T.ev("window.__hm.rifts.state().rift"); gfx = T.ev("window.__hm.ctx.fx.gate_midgard.name")
+                rep["shots"]["temple_rift"] = T.shot("temple_rift")
+                T.ev("(() => { const G = window.__hm, c = G.ctx, p = c.player, R = G.rifts.cur; p.x = R.pos[0] - 1.4; p.z = R.pos[1] + 0.6; p.y = c.heightAt(p.x, p.z); c.stopWalk(); })()")
+                T.frames(6); g.wait_for_timeout(400)
+                for _ in range(3):
+                    if not T.ev("window.__hm.rifts.cur"): break
+                    T.ev("(() => { const G = window.__hm, C = G.combat, p = G.ctx.player; G.peace = true; for (const e of G.rifts.alive()) for (let i = 0; i < 60 && e.state !== 'dead' && e.state !== 'gone'; i++) C.damageEnemy(e, 80, p); })()")
+                    T.frames(8); g.wait_for_timeout(500)
+                T.step("E at the dark Rift-gate raises the charm: the arch swirls (rift_vortex), and a scripted major rift (tier II, tagged 'temple', no rare) tears open above the court; sealing it sets tm_rift",
+                       rs and rs["tag"] == "temple" and rs["id"] == "major" and gfx == "rift_vortex" and not T.ev("window.__hm.rifts.cur") and T.ev("window.__hm.S.flags.tm_rift") == 1, rift=rs, gate=gfx)
+                T.wait("window.__hm.dlg && window.__hm.dlg.npc.id === 'veyra'", 30)
+                vn = T.ev("window.__hm.dlg.npc.name"); T.read_all(); T.frames(4)
+                T.wait("!window.__hm.dlg", 30)
+                T.step("Veyra's cameo (toggleable: TEMPLE.veyra / ?noveyra): a frost-witch in grey-blue seals the last crack, names herself, hands you the Plaguewell hook; met_veyra set",
+                       vn == "A frost-witch in grey-blue" and T.ev("window.__hm.S.flags.met_veyra") == 1, name=vn)
+                h2 = T.ev("window.__hm.S.merit.hearth"); gm0 = T.ev("(window.__hm.S.gems || {}).frost_core || 0")
+                pi2, fi2 = T.talk("priestess"); T.frames(6); g.wait_for_timeout(400)
+                S = T.S(); tq2 = T.ev("window.__hm.temple.qa()")
+                rep["shots"]["temple_lit"] = T.shot("temple_lit")
+                T.step("Ilse: 'Keeper of the Gate' done (+120 Hearth Tokens, +60 gold, a frost core); temple_lit: the Rift-gate is a portal to Bifrost Crossing",
+                       pi2 == 4 and "Rift-Warden" in fi2 and S["quests"]["gate"] == 3 and S["flags"].get("temple_lit") == 1 and S["merit"]["hearth"] == h2 + 120
+                       and S["gems"].get("frost_core", 0) == gm0 + 1 and "bifrost" in tq2["portals"], temple=tq2)
+                # through the Rift-gate to the Crossing: Midgard's arch is open; Halvard pays 40 Rift Marks for a gate repaired
+                pidx = T.ev("window.__hm.ctx.scene.game.portals.findIndex((p) => p.to === 'bifrost')")
+                to = T.go_rect("portals", pidx)
+                bq = T.ev("window.__hm.temple.qa()"); mk = mark("gatewright"); g0 = T.ev("window.__hm.S.merit.gate")
+                ph, fh = T.talk("gatewright")
+                T.step("the lit Rift-gate steps out at Bifrost's Midgard arch: no longer sealed but a swirl (portal back to the Temple); Halvard (turn-in tag) pays +40 Rift Marks and eyes your charm",
+                       to == "bifrost" and abs(T.pos()[0] - 11.0) < 1.5 and "midgard" not in bq["sealed"] and "temple" in bq["portals"] and bq["gate"] == "rift_vortex"
+                       and mk == "quest_turnin" and ph == 3 and "Midgard's arch is lit" in fh and T.ev("window.__hm.S.merit.gate") == g0 + 40, bifrost=bq, mark=mk)
+                pidx = T.ev("window.__hm.ctx.scene.game.portals.findIndex((p) => p.to === 'temple')")
+                to = T.go_rect("portals", pidx)
+                T.step("Midgard's arch leads back into the Old Temple, in front of its Rift-gate", to == "temple" and T.pos()[1] < -8.5, pos=T.pos())
+                T.step("no JS errors (Old Temple)", not errors and not T.ev("window.__hd2d.errors.length"), errors=errors[:5])
+                tc.close()
+                seg_done("G")
+            except Exception as e:  # noqa: BLE001
+                rep["pass"] = False
+                rep["error"] = f"temple: {type(e).__name__}: {e}"[:400]
+                try:
+                    rep["shots"]["failure_G"] = T.shot("failure_G"); rep["state"] = T.S()
                 except Exception:  # noqa: BLE001
                     pass
         # every shard checks its own pages for JS errors even when the counted 'no JS errors' steps live in another shard

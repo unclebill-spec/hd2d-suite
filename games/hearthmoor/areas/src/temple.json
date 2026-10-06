@@ -1,0 +1,629 @@
+{
+ "name": "Ravenhold: the Old Temple",
+ "seed": 107,
+ "biome": "cozy-village",
+ "about": "The Old Temple on the hill above Ravenhold Harbor: a refugee shelter in the lower court, a wide stair with three dark braziers, the nave terrace with the cold altar and faceless statues, and the Rift-gate in the inner court, dark since the sacred cold-fire brazier went out. Stage 6.3 PLACEHOLDER art: existing kit pieces stand in for the Old Temple pack (art/old_temple/); see game.swap_points.",
+ "time": {
+  "start": "night",
+  "speed": 0.0016
+ },
+ "spells": true,
+ "sprite_roles": [
+  "actors",
+  "heroes",
+  "combat"
+ ],
+ "boss_roles": [],
+ "camera": {
+  "fov": 24,
+  "pitch": 36,
+  "distance": 31,
+  "zoom": [
+   23,
+   40
+  ],
+  "look": [
+   0,
+   0,
+   -2.6
+  ],
+  "bounds": [
+   -10.5,
+   -9.8,
+   10.5,
+   4.2
+  ]
+ },
+ "ground": {
+  "size": [
+   80,
+   70
+  ],
+  "mat": "dirt",
+  "walk": [
+   -12.0,
+   -12.6,
+   12.0,
+   5.6
+  ]
+ },
+ "slabs": [],
+ "terraces": [
+  {
+   "name": "nave",
+   "rect": [
+    -40,
+    -40,
+    40,
+    -4.6
+   ],
+   "h": 1.2,
+   "top": "cobble",
+   "gaps": [
+    [
+     -1.6,
+     1.6
+    ]
+   ]
+  },
+  {
+   "name": "court",
+   "rect": [
+    -40,
+    -40,
+    40,
+    -8.8
+   ],
+   "h": 2.0,
+   "top": "cobble",
+   "gaps": [
+    [
+     -1.4,
+     1.4
+    ]
+   ]
+  }
+ ],
+ "stairs": [
+  {
+   "name": "stair_nave",
+   "x": 0.0,
+   "z_top": -4.6,
+   "width": 3.0,
+   "rise": 1.2,
+   "base": 0.0
+  },
+  {
+   "name": "stair_court",
+   "x": 0.0,
+   "z_top": -8.8,
+   "width": 2.6,
+   "rise": 0.8,
+   "base": 1.2
+  }
+ ],
+ "decks": [],
+ "blocks": [
+  [
+   -12.0,
+   -12.6,
+   12.0,
+   -11.9
+  ],
+  [
+   -12.0,
+   -12.6,
+   -11.3,
+   5.6
+  ],
+  [
+   11.3,
+   -12.6,
+   12.0,
+   5.6
+  ]
+ ],
+ "buildings": [],
+ "props": [
+  {
+   "piece": "market_stall",
+   "pos": [
+    -8.2,
+    1.8
+   ]
+  },
+  {
+   "piece": "bench",
+   "pos": [
+    -6.4,
+    2.8
+   ]
+  },
+  {
+   "piece": "bench",
+   "pos": [
+    -8.8,
+    3.6
+   ]
+  },
+  {
+   "piece": "barrel",
+   "pos": [
+    -9.6,
+    0.2
+   ]
+  },
+  {
+   "piece": "crate",
+   "pos": [
+    -9.0,
+    -0.6
+   ]
+  },
+  {
+   "piece": "crate",
+   "pos": [
+    -10.2,
+    -0.4
+   ]
+  },
+  {
+   "piece": "well",
+   "pos": [
+    -5.0,
+    0.0
+   ]
+  },
+  {
+   "piece": "lamp_post",
+   "pos": [
+    -5.6,
+    2.4
+   ]
+  },
+  {
+   "piece": "lamp_post",
+   "pos": [
+    -10.4,
+    2.6
+   ]
+  },
+  {
+   "piece": "stone_lantern",
+   "pos": [
+    -2.4,
+    3.8
+   ]
+  },
+  {
+   "piece": "stone_lantern",
+   "pos": [
+    2.4,
+    3.8
+   ]
+  },
+  {
+   "piece": "waystone",
+   "pos": [
+    6.0,
+    2.2
+   ]
+  },
+  {
+   "piece": "barrel",
+   "pos": [
+    8.6,
+    0.4
+   ]
+  },
+  {
+   "piece": "brazier",
+   "pos": [
+    -2.6,
+    -2.2
+   ]
+  },
+  {
+   "piece": "brazier",
+   "pos": [
+    2.6,
+    -2.2
+   ]
+  },
+  {
+   "piece": "brazier",
+   "pos": [
+    -3.0,
+    -5.6
+   ]
+  },
+  {
+   "piece": "shrine",
+   "pos": [
+    0.0,
+    -6.6
+   ]
+  },
+  {
+   "piece": "standing_stone",
+   "pos": [
+    -4.6,
+    -7.4
+   ]
+  },
+  {
+   "piece": "standing_stone",
+   "pos": [
+    4.6,
+    -7.6
+   ]
+  },
+  {
+   "piece": "standing_stone",
+   "pos": [
+    -8.4,
+    -7.2
+   ]
+  },
+  {
+   "piece": "standing_stone",
+   "pos": [
+    8.4,
+    -7.2
+   ]
+  },
+  {
+   "piece": "crate",
+   "pos": [
+    5.6,
+    -5.4
+   ]
+  },
+  {
+   "piece": "barrel",
+   "pos": [
+    6.4,
+    -5.9
+   ]
+  },
+  {
+   "piece": "realm_arch",
+   "pos": [
+    0.0,
+    -10.8
+   ],
+   "glow": {
+    "color": "#2a6cb0",
+    "range": 2.5,
+    "fixed": 0.12
+   }
+  },
+  {
+   "piece": "realm_glow_blue",
+   "pos": [
+    0.0,
+    -10.8
+   ]
+  },
+  {
+   "piece": "stone_lantern",
+   "pos": [
+    -3.4,
+    -10.0
+   ]
+  },
+  {
+   "piece": "stone_lantern",
+   "pos": [
+    3.4,
+    -10.0
+   ]
+  }
+ ],
+ "hedges": [],
+ "trees": [],
+ "backdrop": {
+  "hills": [
+   0,
+   -40
+  ]
+ },
+ "emitters": [
+  {
+   "preset": "dust_motes",
+   "pos": [
+    0,
+    1.8,
+    -3.0
+   ],
+   "area": [
+    22,
+    3.0,
+    12
+   ]
+  },
+  {
+   "preset": "fireflies",
+   "pos": [
+    -8.0,
+    1.2,
+    1.6
+   ],
+   "area": [
+    5,
+    1.2,
+    3
+   ],
+   "min_gate": 0.0
+  }
+ ],
+ "actors": [
+  {
+   "id": "priestess",
+   "role": "elder",
+   "name": "Mother Ilse Brightwater, the Old Temple",
+   "pos": [
+    -3.6,
+    0.6
+   ],
+   "facing": "down",
+   "behavior": "idle",
+   "talkable": true,
+   "say": [
+    "Soup's hot, flame's out. One of those is my fault. Not the flame."
+   ]
+  },
+  {
+   "id": "archivist",
+   "role": "musician",
+   "name": "Brother Tamsin, archivist of the Old Temple",
+   "pos": [
+    4.6,
+    -5.0
+   ],
+   "facing": "left",
+   "behavior": "idle",
+   "talkable": true,
+   "say": [
+    "Mind the ledgers. They don't bite. They do fall over."
+   ]
+  },
+  {
+   "id": "refugee1",
+   "role": "gardener",
+   "name": "A refugee",
+   "pos": [
+    -7.2,
+    1.2
+   ],
+   "facing": "right",
+   "behavior": "idle",
+   "talkable": true,
+   "say": [
+    "Our road is ice now. We walked out over the hill with the goats."
+   ]
+  },
+  {
+   "id": "refugee2",
+   "role": "fisher",
+   "name": "A refugee",
+   "pos": [
+    -9.2,
+    2.4
+   ],
+   "facing": "down",
+   "behavior": "idle",
+   "talkable": true,
+   "say": [
+    "The soup's thin, but Mother Ilse makes it hot. Hot counts for a lot.",
+    "Is it true you've been to the Crossing? Is it as bright as they say?"
+   ]
+  }
+ ],
+ "player": {
+  "role": "traveler",
+  "pos": [
+   0.0,
+   3.2
+  ],
+  "facing": "up"
+ },
+ "fx": [
+  {
+   "id": "gate_midgard",
+   "name": "rift_seal_rainbow",
+   "pos": [
+    0.0,
+    2.2,
+    -10.8
+   ]
+  }
+ ],
+ "grades": {
+  "day": {
+   "fog_color": "#5c6c84",
+   "sky_top": "#46587c",
+   "sky_bottom": "#8c9cb4",
+   "hemi_sky": "#7a8cb0",
+   "sun_intensity": 1.5,
+   "sun_color": "#d8dcf0",
+   "saturation": 0.92,
+   "exposure": 0.96,
+   "warmth": -0.06,
+   "window_emissive": "#ffa040",
+   "window_intensity": 0.9,
+   "lamp_intensity": 0.6,
+   "bugs": 0.3
+  },
+  "dusk": {
+   "fog_color": "#2c3a60",
+   "sky_bottom": "#7c6c9c",
+   "sky_top": "#1c2650",
+   "exposure": 0.98,
+   "sun_intensity": 0.7,
+   "bugs": 0.8,
+   "warmth": -0.1
+  },
+  "night": {
+   "fog_color": "#101c38",
+   "sky_top": "#080c20",
+   "sky_bottom": "#1c2a52",
+   "hemi_sky": "#3c5088",
+   "hemi_intensity": 0.5,
+   "exposure": 1.08,
+   "sun_intensity": 0.3,
+   "sun_color": "#8ea8e8",
+   "bugs": 1.0
+  }
+ },
+ "game": {
+  "id": "temple",
+  "title": "The Old Temple",
+  "exits": [
+   {
+    "rect": [
+     -1.8,
+     4.6,
+     1.8,
+     5.6
+    ],
+    "to": "ravenhold",
+    "spawn": "from_temple",
+    "label": "the stair down to Ravenhold Harbor"
+   }
+  ],
+  "portals": [],
+  "spawns": {
+   "start": [
+    0.0,
+    3.2,
+    "up"
+   ],
+   "from_harbor": [
+    0.0,
+    3.2,
+    "up"
+   ],
+   "from_waystone": [
+    4.8,
+    2.8,
+    "left"
+   ],
+   "from_bifrost": [
+    0.0,
+    -9.4,
+    "down"
+   ],
+   "qa": [
+    0.0,
+    1.0,
+    "up"
+   ]
+  },
+  "waystone": {
+   "pos": [
+    6.0,
+    2.2
+   ]
+  },
+  "braziers": [
+   {
+    "id": "tm_b1",
+    "pos": [
+     -2.6,
+     -2.2
+    ],
+    "temple": true
+   },
+   {
+    "id": "tm_b2",
+    "pos": [
+     2.6,
+     -2.2
+    ],
+    "temple": true
+   },
+   {
+    "id": "tm_b3",
+    "pos": [
+     -3.0,
+     -5.6
+    ],
+    "temple": true
+   }
+  ],
+  "clues": [
+   {
+    "id": "clue_tongs",
+    "pos": [
+     0.8,
+     -5.6
+    ]
+   },
+   {
+    "id": "clue_prints",
+    "pos": [
+     -1.8,
+     -7.0
+    ]
+   },
+   {
+    "id": "clue_snuffer",
+    "pos": [
+     -4.6,
+     -6.4
+    ]
+   }
+  ],
+  "altar": {
+   "pos": [
+    0.0,
+    -6.6
+   ],
+   "use": [
+    0.0,
+    -5.5
+   ]
+  },
+  "riftgate": {
+   "pos": [
+    0.0,
+    -10.8
+   ],
+   "use": [
+    0.0,
+    -9.4
+   ],
+   "arch": "midgard"
+  },
+  "riftAt": [
+   0.0,
+   -8.0
+  ],
+  "midgard_portal": {
+   "fx": "gate_midgard",
+   "to": "bifrost",
+   "spawn": "from_midgard",
+   "rect": [
+    -0.8,
+    -11.4,
+    0.8,
+    -10.4
+   ],
+   "label": "the Rift-gate to Bifrost Crossing"
+  },
+  "swap_points": {
+   "_note": "Stage 6.3 placeholders: when art/old_temple/ lands, swap these kit pieces / roles / effects for the pack's own",
+   "realm_arch + realm_glow_blue @ [0,-10.8]": "riftgate_arch + riftgate_glow_dormant (lit: riftgate_glow_lit)",
+   "fx gate_midgard rift_seal_rainbow / rift_vortex": "riftgate_seal_dormant / riftgate_awaken / riftgate_vortex_lit (+ riftgate_ring_lit)",
+   "brazier x3 (tm_b1..3)": "temple_brazier_out -> temple_brazier_cold (+ temple_coldfire, coldfire_pool_wide)",
+   "shrine @ altar": "the Temple altar with the sacred brazier",
+   "standing_stone x4": "faceless_statue (+ faceless_gaze at night), temple_column",
+   "role elder (priestess)": "templekeeper / priestess",
+   "role musician (archivist)": "archivist",
+   "role lamplighter (novice, Ravenhold)": "novice",
+   "(none)": "stained_window + glasslight_violet / glasslight_gold dusk pools on the nave"
+  }
+ },
+ "gamefx": true
+}

@@ -17,6 +17,8 @@ export const RIFT_AREAS = {
   vanaheim: { foes: ['sporeling', 'mossgolem', 'sporeling'], spots: [[6.2, 0.4], [3.6, 2.8], [8.6, -2.2]] },
   // Bifrost Crossing (Stage 6 part 2): scripted only (the Stray Den's little rift behind the woodpile); never opens by itself
   bifrost: { foes: ['wraith', 'wraith', 'skeleton'], spots: [[-5.6, 3.9]], scripted: true },
+  // the Old Temple (6.3): scripted only (the tear above the court when the Rift-gate wakes; 'Keeper of the Gate')
+  temple: { foes: ['wraith', 'skeleton', 'skelmage', 'wraith'], spots: [[0.0, -8.0]], scripted: true },
 };
 export const FIRST = [45, 80], EVERY = [120, 200], LIFE = 90, NEAR = 3.4;
 
@@ -137,6 +139,7 @@ export class Rifts {
     G.toast && G.toast(`${T.name} sealed! +${T.xp} XP and the rift's spoils.`, 2.8);
     G.drawHunt && G.drawHunt();
     G.factions && G.factions.onRift(R.tier);   // Rift Marks + the realm's faction
+    if (R.tag === 'temple' && G.temple) G.temple.afterRift();   // tm_rift + the toast + Veyra's cameo
     if (R.tag === 'den') {   // 'Strays of the Rift': the little rift behind the woodpile is sealed
       S.flags = S.flags || {}; S.flags.den_rift = 1;
       G.toast && G.toast('The little rift seals. A fox kit peeks out, then thinks better of it.', 3);

@@ -31,11 +31,13 @@ def _hex(px):
 
 
 # Scoped palette exception. Bill approved neon pets 2026-10-05: on the Hearthmoor pet sheet only, the glow-moth may use
-# the NEON violet accents and the lantern-fox the NEON red accents (the spells.py NEON hexes). Nothing else is exempt:
+# the NEON violet accents, the lantern-fox the NEON red accents, the moss-pup NEON green + red (the spells.py NEON hexes). Nothing else is exempt:
 # any other role, or any other off-palette colour on these roles, still fails.
 NEON_PETS_ALLOW = {
     "pet_moth": {"#6a34b8", "#a45cf0", "#d4a8ff"},   # neon violet lo / mid / hi
     "pet_fox": {"#a81c22", "#e0302a", "#ff5a4a"},    # neon red lo / mid / hi
+    # the moss-pup (added 2026-10-05, same approval): NEON green spores / moss dots + the NEON red toadstool cap
+    "pet_mosspup": {"#24a03a", "#5aec3c", "#c4ff8a", "#a81c22", "#e0302a", "#ff5a4a"},
 }
 
 

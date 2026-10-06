@@ -19,7 +19,7 @@ from PIL import Image  # noqa: E402
 
 from hd2d_common import load_biome  # noqa: E402
 
-AREAS = ["plaza", "lane", "mossglen", "hollows", "rift", "vanaheim", "ravenhold", "bifrost"]
+AREAS = ["plaza", "lane", "mossglen", "hollows", "rift", "vanaheim", "ravenhold", "bifrost", "temple"]
 TMP = Path("/tmp/hearthmoor_build")
 
 
@@ -103,7 +103,7 @@ def copy_areas(areas=AREAS):
 # the hero everywhere, so every area gets: the pet sheet next to its actor atlas (meta.sheets.pets + stub roles, the
 # boss-sheet mechanism), the pet aura / pool effects appended under its spells atlas, and the pet particles appended
 # under its particles atlas. Idempotent: a re-run strips the previous pet rows first (`pets_from` remembers the cut).
-PET_ROLES = ("pet_wisp", "pet_moth", "pet_fox")
+PET_ROLES = ("pet_wisp", "pet_moth", "pet_fox", "pet_mosspup")
 
 
 def _append_atlas(img_path, meta, add_img, add_meta, key, rows_key=None):

@@ -1,6 +1,8 @@
 // Hearthmoor: items, quests and every line of dialogue (all original text).
 // A talk() entry returns { pages: [...], then?: (G) => void } for the current save state S.
 import { PETS, PET_IDS, DEN, petNames, isNight } from './pets.js';
+import { clues, tmBraziers, TAMSIN_CLUE } from './temple.js';
+import { MERIT } from './factions.js';
 
 export const ITEMS = {
   loaf:      { name: 'Hearthloaf', icon: 0, about: 'A round loaf, still warm. Smells like Tuesday mornings.' },
@@ -10,6 +12,11 @@ export const ITEMS = {
   tea:       { name: 'Moonpetal tea', icon: 4, about: 'A tin of Wren\'s tea. Calms storms, and also grandparents.' },
   tonic:     { name: 'Hearth tonic', px: 'tonic', about: 'Heals 60 HP. Drink: U, right-stick click, or tap it here.' },
   glowseed:  { name: 'Glow seed', px: 'glowseed', about: 'Hums in the dark. Plant it in a garden plot: it blooms in two days.' },
+  // Stage 6.3 (the Old Temple): key items, never sold
+  reliefbasket: { name: 'Order relief basket', px: 'reliefbasket', about: 'Hearthloaves, wool blankets and a tin of Wren\'s tea, packed by the Order of the Hearth for the Old Temple.' },
+  hearthwrit: { name: 'Hearth writ', px: 'hearthwrit', about: 'A folded writ with the Order\'s wax seal. The Old Temple\'s gate opens for whoever carries it.' },
+  alder_charm: { name: 'Warden Aldis\'s lantern charm', px: 'alder_charm', key: true, about: 'A thumb-sized brass lantern on a chain. Grandpa Alder\'s grandmother carried it on the Rift.',
+                 aboutLit: 'A thumb-sized brass lantern. A small cold-fire flame burns inside and never gutters.' },
   denbiscuit: { name: 'Den biscuit', px: 'denbiscuit', about: "Signe's oat-and-moonpetal biscuit. Feed your pet once a day (hero screen, Gear tab): bond grows, and its glow doubles for 60 s." },
 };
 // the Stray Den's three yard lanterns (Hollows brazier rule: S.found.den_l1..3)
@@ -47,6 +54,31 @@ export const QUESTS = {
   },
   // Stage 6 part 2: the Stray Den's side quest (Story bot's pets doc). Stage 3 is hard-wired as done (toast, XP, the
   // errand's 40 Hearth Tokens through onErrand), so the four objectives ride stages 1-2 with flags, like 'harbor'.
+  // Stage 6.3: the Old Temple (story quests; sub-progress on flags, stage 3 = done). Story bot's old_temple.md.
+  altar: {
+    title: 'The Cold Altar',
+    giver: 'Warden Hilde of the Hearth',
+    story: true,
+    steps: { 1: 'Carry the Order\'s relief basket to Mother Ilse at the Old Temple. Show the Hearth writ at the Temple gate in Ravenhold Harbor.',
+             2: (S) => (clues(S) < 3 ? `Find out who snuffed the sacred brazier. Look around the altar with Brother Tamsin. Clues: ${clues(S)}/3` : 'Tell Mother Ilse what the clues say.'),
+             3: 'The dwarven tools were planted. Someone wanted the Forge Quarter blamed and the Temple dark.' },
+  },
+  gate: {
+    title: 'Keeper of the Gate',
+    giver: 'Mother Ilse Brightwater',
+    story: true,
+    steps: { 1: (S) => { const F = S.flags || {}, inv = S.inv || {};
+               if (!inv.alder_charm) return 'Ask Grandpa Alder in Hearthmoor about Warden Aldis. Brother Tamsin\'s ledger says she was a Rift-warden.';
+               if (!F.tm_wick) return 'Ask Ida Wickmere, the cold-fire chandler on Ravenhold\'s piers, to light the lantern charm.';
+               if (tmBraziers(S) < 3) return `Feed the charm's flame at the 3 dark braziers on the Temple stair (cast a spell at each). ${tmBraziers(S)}/3`;
+               return 'The charm burns bright blue. Bring it to Mother Ilse.'; },
+             2: (S) => { const F = S.flags || {};
+               if (!F.tm_altar) return 'At dusk or after dark, set the lantern charm on the cold altar (E / A).';
+               if (!F.tm_gate) return 'Hold the charm up to the dark Rift-gate in the inner court (E / A).';
+               if (!F.tm_rift) return 'Seal the rift tearing open above the Rift-gate!';
+               return 'Tell Mother Ilse the gate is lit.'; },
+             3: 'The Rift-gate burns blue again. Midgard\'s arch at Bifrost Crossing stands open, and the skiff can rest.' },
+  },
   strays: {
     title: 'Strays of the Rift',
     giver: 'Signe Larkspur',
@@ -414,7 +446,7 @@ function denNight(G) {
   });
 }
 function denSwap(G) {
-  const S = G.S, cur = S.pet && S.pet.id, others = PET_IDS.filter((k) => (S.pets || {})[k] && k !== cur);
+  const S = G.S, cur = S.pet && S.pet.id, others = PET_IDS.filter((k) => (S.pets || {})[k] && !S.pets[k].atDen && k !== cur);
   if (!others.length) return { pages: ['Swap? You\'ve only the one. Adopt another stray first, then we\'ll talk baskets.'] };
   return { pages: ['Who\'s coming with you?'], choice: { id: 'den_swap', options: [
     ...others.map((k) => ({ label: `${S.pets[k].name} the ${PETS[k].species}. (${PETS[k].aura.name})`, pick: (G) => {
@@ -430,7 +462,7 @@ function buyBiscuit(G) {
   return { pages: ['Oat and moonpetal. Don\'t eat them yourself. Everyone tries it once.'] };
 }
 function denAdopt(G) {
-  const S = G.S, left = PET_IDS.filter((k) => !(S.pets || {})[k]);
+  const S = G.S, left = PET_IDS.filter((k) => !(S.pets || {})[k] && !PETS[k].gift);   // gift pets (the moss-pup) arrive on their own
   if (!left.length) return { pages: ['Every stray in the Den has a name now. The Rift will send more. It always does.'] };
   if (!G.factions.has('hearth', 1)) return { pages: ['I don\'t hand out strays to just anyone. Get the Hearth to call you Friend, then we\'ll talk.'] };
   return { pages: ['Which one?'], choice: { id: 'den_adopt', options: [
@@ -448,6 +480,13 @@ function adoptName(G, id) {
   return { pages: ['Now it\'ll need a name. Something short, so it comes when you call.'],
            choice: { id: 'pet_name', options: [...petNames(G.S, id).map((n) => ({ label: n, pick: () => done(n) })), { label: `Just "${PETS[id].name}".`, pick: () => done(PETS[id].name) }] } };
 }
+// a gift pet (the moss-pup): name it, then it falls in beside you (the old pet goes to the warm basket)
+function giftName(G, id) {
+  const done = (n) => ({ pages: [`${n} it is. Mind the carrots, ${n}.`], then: (G) => { const own = G.S.pets[id]; own.name = n; own.bond = own.bond || 1; own.fed = own.fed || 0;
+    G.pets.swap(id); G.toast(`✦ ${n} the ${PETS[id].species} joined you. Aura: ${PETS[id].aura.name}. (Swap at the Stray Den.)`, 3); } });
+  return { pages: ['Now it\'ll need a name. Something short, so it comes when you call.'],
+           choice: { id: 'pet_name', options: [...petNames(G.S, id).map((n) => ({ label: n, pick: () => done(n) })), { label: `Just "${PETS[id].name}".`, pick: () => done(PETS[id].name) }] } };
+}
 function denHubLine(S) {
   const F = S.flags || {}, A = F.alliance || {}, nm = petName(S);
   if (F.storm === 'bifrost') return 'Storm\'s up. The strays are under the floor again. Bring a light if you\'re staying.';
@@ -457,6 +496,8 @@ function denHubLine(S) {
   if (A.vanaheim === 'befriend') return 'The moss-pups heard you\'re a friend of Mossbrook. They\'ve been wagging since breakfast.';
   if (A.vanaheim === 'conquer') return 'A stray came in from Mossbrook, singed and shaking. I don\'t ask whose side you\'re on. I just ask.';
   if (isNight(S.t || 0)) return 'Shh. The moths are reading. Well, sitting on books. Same thing.';
+  if ((S.pets || {}).mosspup && !S.pets.mosspup.atDen) return 'Your moss-pup found a spring under my floor. I have a pond in my kitchen now. Thank you.';
+  if (A.vanaheim === 'conquer' && !F.den_nopups) { F.den_nopups = 1; return 'Mossbrook\'s sent no pups this season. Can\'t think why.'; }
   if (Object.keys(A).length && !F.halvard_betrayal) return 'Funny thing. Not one stray will go near the Gatewright. Animals can be wrong. Not often.';
   return 'Strays fed, hearth lit, roof mostly on. What can the Den do for you?';
 }
@@ -510,6 +551,11 @@ const DEN_TALK = {
                  { label: 'Can we make it dark now?', pick: (G) => { flags(G.S).den_dark = 1; return { pages: ['Ha. I\'ll draw the shutters. Sit, sit.'], then: denNight }; } },
                ] } };
     }
+    if ((S.pets || {}).mosspup && S.pets.mosspup.atDen) return {   // the moss-pup arrives from Mossbrook (6.4 befriend path)
+      pages: ['A gnome in a toadstool hat dropped this one off. Said it\'s from Mossbrook, with love and mud. Mostly mud.',
+              'It\'s yours. Gifts aren\'t mine to keep, more\'s the pity. It\'s already dug up my carrots.'],
+      then: (G) => { G.S.pets.mosspup.atDen = 0; G.openDialogue(DEN_NPC, giftName(G, 'mosspup')); },
+    };
     return {
       pages: [denHubLine(S)],
       choice: { id: 'den', options: [
@@ -529,6 +575,161 @@ const DEN_TALK = {
 const takeHum = (G) => { if ((G.S.inv.glowseed || 0) > 0) G.take('glowseed', 1); else if ((G.S.inv.moonpetal || 0) > 0) G.take('moonpetal', 1); };
 Object.assign(TALK, DEN_TALK);
 
+// ---------------------------------------------------------------- the Old Temple (Stage 6.3): Ilse, Tamsin, Edda, refugees + hooks
+const dark = (S) => isNight(S.t || 0);
+const OT = {
+  priestess(S) {
+    const qa = S.quests.altar || 0, qg = S.quests.gate || 0, F = S.flags || {}, inv = S.inv || {};
+    if (qa === 1 && inv.reliefbasket) return {
+      pages: ['Bread, blankets and Wren\'s tea. The Order remembered us. Bless you, and bless your aching arms.',
+              'Mother Ilse Brightwater. I keep this Temple, and its flame. Kept. Three nights ago the sacred brazier went out.',
+              'It has burned since the Rift was young. Cold fire doesn\'t go out on its own. Someone put it out.',
+              'The watch found dwarven forge tongs at the altar and blamed the Forge Quarter. I\'d like better proof than tongs.',
+              'Brother Tamsin is up in the nave with his ledgers. Look around with him. Tell me what the Temple tells you.'],
+      then: (G) => { G.take('reliefbasket', 1); G.S.met = { ...(G.S.met || {}), ilse: 1 }; flags(G.S).ways = { ...(flags(G.S).ways || {}), temple: 1 };
+                     G.factions.add('hearth', MERIT.refuge, 'refuge'); G.setQuest('altar', 2); },
+    };
+    if (qa === 2 && clues(S) < 3) return { pages: ['Look at the altar with Tamsin\'s eyes. He sees ink. You see the rest.'] };
+    if (qa === 2) return {
+      pages: ['Cold tongs. Footprints walking the wrong way. A snuffer with no name on it.',
+              'Nobody from the Forge Quarter did this. Someone wanted Ravenhold fighting itself, and the Temple dark while it did.',
+              'I\'ll send word to the watch before anyone burns a forge. Thank you. Now for the harder thing.',
+              'A brazier lit by the Rift can only be relit by cold fire carried in a warden\'s lantern. The wardens are long gone.',
+              ...(inv.alder_charm ? ['...Is that a warden\'s charm on your belt? Grandpa Alder\'s? Well. The Temple provides.']
+                                  : ['Tamsin: "But! The ledger lists a Hearthmoor warden, three lifetimes back. Warden Aldis. Ring any bells?"',
+                                     'Go home and ask, then. Hearthmoor folk keep everything. Especially lanterns.'])],
+      then: (G) => { G.setQuest('altar', 3); G.factions.add('hearth', MERIT.altar, 'altar'); gold(G, 30); G.setQuest('gate', 1); },
+    };
+    if (qg === 1 && !(inv.alder_charm && F.tm_wick && tmBraziers(S) >= 3)) return { pages: [!inv.alder_charm ? 'Grandpa Alder, in Hearthmoor. Ask him about Warden Aldis.'
+      : !F.tm_wick ? 'Ida Wickmere on the piers has the best cold-fire wick in Midgard. Ask her to light the charm.' : 'Feed the flame at the stair braziers. All three. It\'s hungry.'] };
+    if (qg === 1) {
+      const go = (G) => { G.setQuest('gate', 2); };
+      return {
+        pages: ['That blue. Oh, that\'s the right blue. I\'d almost forgotten it.',
+                'Cold fire burns truest in the dark. Set the charm on the altar at dusk or after. I\'ll ring the old bell.'],
+        choice: { id: 'tm_rite', options: [
+          ...(dark(S) ? [{ label: 'It\'s dark. I\'m ready.', pick: (G) => { go(G); return { pages: ['Then go. I\'ll be right behind you.'] }; } }] : []),
+          { label: 'Rest on a refugee cot until dusk.', pick: (G) => { go(G); if (G.ctx) G.ctx.clock.set(0.76); G.S.t = G.ctx ? G.ctx.clock.t : 0.76;
+              return { pages: ['The cot is lumpy, the blanket smells of goats, and you sleep like a stone. Dusk comes blue.'] }; } },
+          { label: 'Not yet.', cancel: true, pick: () => ({ pages: ['The altar will wait. It\'s had practice.'] }) },
+        ] },
+      };
+    }
+    if (qg === 2 && !F.tm_rift) return { pages: [!F.tm_altar ? 'The altar, at dusk or after. I\'ll be right behind you.' : !F.tm_gate ? 'Now the gate. Hold the charm up to it.' : 'The sky! Seal it, before it widens!'] };
+    if (qg === 2) return {
+      pages: [...(F.met_veyra ? ['The Rift-Warden. I thought the wardens were a bedtime story. She looked so tired.'] : []),
+              'The flame\'s lit, the gate\'s lit, and my refugees are cheering at a hole in the sky. What a week.',
+              'The Rift-gate opens onto Bifrost Crossing, and Midgard\'s arch there opens back to us. Go where you\'re needed.',
+              'Keep the charm. It\'s yours now. A warden\'s lantern shouldn\'t sit on a shelf.'],
+      then: (G) => { const Fx = flags(G.S); Fx.temple_lit = 1; G.setQuest('gate', 3);
+                     G.factions.add('hearth', MERIT.relight, 'relight'); gold(G, 60); gem(G, 'frost_core'); G.toast('+1 Frost core (a socket gem)', 2.2);
+                     G.toast('The Rift-gate to Bifrost Crossing is open. Midgard\'s arch is lit.', 3.0);
+                     if (G.temple && G.area === 'temple') G.temple.attach(G.ctx, 'temple'); },
+    };
+    if (qg === 3) {
+      const A = F.alliance || {};
+      const line = dark(S) ? 'Listen. You can hear the brazier hum at night. It sounds pleased with itself.'
+        : A.vanaheim === 'befriend' ? 'A gnome from Mossbrook came to pray. Or to steal candles. Either way, he left a bun.'
+        : A.vanaheim === 'conquer' ? 'Mossbrook folk came through the gate today. They didn\'t look at you kindly. I gave them soup anyway.'
+        : (F.met_veyra && !F.ilse_veyra) ? 'I keep thinking of the Warden. Someone that tired shouldn\'t be holding the Rift alone.'
+        : 'Flame\'s lit. Soup\'s on. Sit if you like. The Temple has room again.';
+      return { pages: [line], then: (G) => { if (line.includes('Warden')) flags(G.S).ilse_veyra = 1; } };
+    }
+    return { pages: ['Soup\'s hot, flame\'s out. One of those is my fault. Not the flame.'] };
+  },
+  archivist(S) {
+    const F = S.flags || {}, qa = S.quests.altar || 0, first = !S.met?.tamsin;
+    if (first) return {
+      pages: ['Oh! A visitor who isn\'t a refugee or a watchman. Tamsin, archivist. Mind the ledgers. They don\'t bite. They fall over.',
+              'Mother Ilse wants proof. I have opinions, which isn\'t the same. Look around the altar. I\'ll write down what you find.',
+              'And don\'t mind the statues. They turn their masks toward the Rift at night. Probably the wind. Probably.'],
+      then: (G) => { G.S.met = { ...(G.S.met || {}), tamsin: 1 }; },
+    };
+    if (qa === 2 && F.tm_lastclue && TAMSIN_CLUE[F.tm_lastclue]) return { pages: [TAMSIN_CLUE[F.tm_lastclue]], then: (G) => { delete flags(G.S).tm_lastclue; } };
+    if (qa === 2) return { pages: ['Look by the altar\'s foot, behind the statues, and along the floor. Floors are honest.'] };
+    if (dark(S)) return { pages: ['The statues turned toward the gate again last night. I wrote it down. Twice. In capitals.'] };
+    if (F.met_veyra && !F.tamsin_veyra) return { pages: ['She sealed it with two fingers. Two! The ledger says the old order needed a whole choir.'], then: (G) => { flags(G.S).tamsin_veyra = 1; } };
+    if (F.temple_lit && !F.tamsin_lit) return { pages: ['The ledger says the old order didn\'t build the Rift-gate. They found it. Nobody wrote down who built it.'], then: (G) => { flags(G.S).tamsin_lit = 1; } };
+    return { pages: ['Ask me anything. Except about the statues. Actually, do ask about the statues.'] };
+  },
+  novice(S) {
+    const F = S.flags || {};
+    if (F.temple_lit) return { pages: ['Look at the stair now! Blue all the way up. I don\'t even need my lamp.'] };
+    if ((S.quests.altar || 0) >= 1) return { pages: ['A Hearth writ! Mind the stair, it\'s dark since the brazier went out. Mother Ilse is in the lower court.'] };
+    return { pages: ['Temple\'s shut, friend. Refugees only, and Order folk with a writ.'] };
+  },
+  refugee1(S) { return { pages: [(S.flags || {}).temple_lit ? 'Blue light on the stair again. My boy says it\'s the prettiest thing he\'s seen. He\'s seen a lot of snow.'
+                                                           : 'Our road is ice now. We walked out over the hill with the goats.'] }; },
+  refugee2(S) { return { pages: [(S.flags || {}).temple_lit ? 'Two families went home through the gate today. Mother Ilse cried. She says it was the soup steam.'
+                                                           : ((S.played || 0) % 2 < 1 ? 'The soup\'s thin, but Mother Ilse makes it hot. Hot counts for a lot.' : 'Is it true you\'ve been to the Crossing? Is it as bright as they say?')] }; },
+};
+// existing NPCs: new branches first, then their old talk
+const BASE = { hilde: TALK.hilde, elder: TALK.elder, chandler: TALK.chandler, gatewright: TALK.gatewright, harbormaster: TALK.harbormaster, quartermaster: TALK.quartermaster };
+OT.hilde = (S) => {
+  const F = S.flags || {}, qa = S.quests.altar || 0, qg = S.quests.gate || 0;
+  if (F.bf_done && !qa && S.met?.hilde) return {
+    pages: [...(F.tm_hint ? ['Midgard\'s arch, is it? Then you want the Temple anyway. Its Rift-gate is the arch\'s far side.'] : []),
+            'The Old Temple\'s full of folk from cut-off villages, and the Order owes them bread.',
+            'Carry this basket up to Mother Ilse. The Temple gate is shut, but it opens for a Hearth writ. Here\'s yours.'],
+    then: (G) => { G.give('reliefbasket', 1); G.give('hearthwrit', 1); G.setQuest('altar', 1); },
+  };
+  if (qa === 1) return { pages: ['Up the Harbor\'s west stair to the Temple gate. Show Edda the writ. Mind the basket, the tea\'s loose.'] };
+  if (qg === 3) return { pages: ['Mother Ilse writes that you\'ve a steady hand. From her, that\'s a medal.'] };
+  return BASE.hilde(S);
+};
+OT.elder = (S) => {
+  const F = S.flags || {}, inv = S.inv || {};
+  if (S.quests.gate === 1 && !inv.alder_charm) return {
+    pages: ['A Rift-warden? Aldis? ...Ah. Tamsin\'s ledger found my grandmother, did it.',
+            'She walked the bridge once, when it still sang. She left me this, and a lot of stories nobody believed.',
+            'It\'s a lantern charm. It held cold fire once. Take it. I think it\'s been waiting for you.'],
+    then: (G) => { G.give('alder_charm', 1); G.toast('Warden Aldis\'s lantern charm. Cold, and waiting for a flame.', 2.6); },
+  };
+  if (F.temple_lit) return { pages: ['The Temple\'s lit, and by a Hearthmoor hand. Aldis would have been insufferable about it. Proudly.'] };
+  if (F.tm_wick) return { pages: ['Is it lit? Show me. ...There it is. The same blue she used to talk about.'] };
+  return BASE.elder(S);
+};
+OT.chandler = (S) => {
+  const F = S.flags || {}, inv = S.inv || {};
+  if (S.quests.gate === 1 && inv.alder_charm && !F.tm_wick) return {
+    pages: ['A warden\'s charm! I\'ve only ever seen one in a book. Hold it still.',
+            'Cold-fire wick, my very best. It\'ll catch, but it\'s a seedling flame. Feed it at the Temple\'s old braziers.'],
+    then: (G) => { G.S.met = { ...(G.S.met || {}), chandler: 1 }; flags(G.S).tm_wick = 1; G.toast('The charm glows a small, stubborn blue.', 2.4); G.refreshMarkers(); G.drawLog && G.drawLog(); G.shopUI.show('harbor'); },
+  };
+  if (F.tm_wick && !F.temple_lit && S.met?.chandler) { const e = BASE.chandler(S); return { ...e, pages: ['How\'s my wick? Burning blue, I hope. Blue means it likes you.'] }; }
+  return BASE.chandler(S);
+};
+OT.gatewright = (S) => {
+  const F = S.flags || {}, q = S.quests.harbor || 0;
+  if (F.temple_lit && !S.met?.arch && !(q === 2 && F.rh_road && !F.bf_done)) return {
+    pages: ['Midgard\'s arch is lit! The whole ledger shook when it caught. Mother Ilse\'s flame, from the Temple itself?',
+            'Then the city has a front door again, and Sable\'s skiff a quieter season. Forty marks for a gate repaired.',
+            'That charm of yours. A warden\'s lantern, if I\'m any judge. Keep it close. Keys go missing at the Crossing.'],
+    then: (G) => { G.S.met = { ...(G.S.met || {}), arch: 1, halvard: 1 }; G.factions.add('gate', MERIT.arch, 'arch'); },
+  };
+  const e = BASE.gatewright(S);
+  if (!e.choice) return e;
+  const meet = (G) => { const was = G.S.met?.halvard; G.S.met = { ...(G.S.met || {}), halvard: 1 }; if (!was) G.factions.add('gate', 20, 'halvard'); };
+  let opts = e.choice.options.slice();
+  if (F.temple_lit) opts = opts.map((o) => (o.label === 'Which way is home?' ? { ...o, pick: (G) => { meet(G); return { pages: ['Midgard\'s arch, now that the Temple is lit. Or Sable\'s skiff, if you like getting wet.'] }; } } : o));
+  const extra = [];
+  if (!F.temple_lit) extra.push({ label: 'What about Midgard\'s arch?', pick: (G) => { meet(G); flags(G.S).tm_hint = 1; return { pages: [
+    'Midgard\'s arch is the far side of the Old Temple\'s Rift-gate. The Temple\'s flame went out, and the gate went dark.',
+    'The Order of the Hearth tends the Temple\'s refugees. Ask Warden Hilde in Hearthmoor. Doors open for Hearth folk.'] }; } });
+  if (F.met_veyra) extra.push({ label: 'I met the Rift-Warden.', pick: (G) => { meet(G); return { pages: [
+    'Veyra? Here? ...The Guild hasn\'t seen a warden in years. If she\'s holding the Rift, we should all be grateful.',
+    'Did she say where she was going? No? No matter. The ledger will find her, if she wants finding.'] }; } });
+  opts.splice(opts.length - 1, 0, ...extra);   // before 'Just looking.' (the cancel row stays last)
+  return { ...e, choice: { ...e.choice, options: opts } };
+};
+OT.harbormaster = (S) => ((S.flags || {}).temple_lit && (S.quests.harbor || 0) === 3
+  ? { pages: ['See that blue at the top of the hill? The Temple\'s lit. I\'ve watched that light forty years. I missed it.'] } : BASE.harbormaster(S));
+OT.quartermaster = (S) => {
+  const e = BASE.quartermaster(S);
+  return (S.flags || {}).temple_lit && S.met?.sable && e.choice ? { ...e, pages: ['A gate that doesn\'t need my skiff. Bad for business, good for the city. I\'ll sulk quietly.'] } : e;
+};
+Object.assign(TALK, OT);
+
 // quest tags over heads: '!' = has an errand for you, star = waiting for your delivery
 export function markerFor(id, S) {
   const q = S.quests;
@@ -542,7 +743,17 @@ export function markerFor(id, S) {
   if (id === 'quartermaster' && q.harbor === 1) return 'quest_turnin';
   if (id === 'harbormaster' && q.harbor === 2 && (S.flags || {}).rh_gate && !(S.flags || {}).rh_road) return 'quest_turnin';
   if (id === 'gatewright' && q.harbor === 2 && (S.flags || {}).rh_road && !(S.flags || {}).bf_done) return 'quest_turnin';
-  const F = S.flags || {};   // the Stray Den (pets doc 4.4)
+  const F = S.flags || {}, inv = S.inv || {};
+  // the Old Temple (6.3, old_temple.md section 9)
+  if (id === 'hilde' && F.bf_done && !q.altar && S.met?.hilde) return 'quest_mark';
+  if (id === 'priestess' && q.altar === 1 && inv.reliefbasket) return 'quest_turnin';
+  if (id === 'priestess' && q.altar === 2 && clues(S) >= 3) return 'quest_turnin';
+  if (id === 'elder' && q.gate === 1 && !inv.alder_charm) return 'quest_mark';
+  if (id === 'chandler' && q.gate === 1 && inv.alder_charm && !F.tm_wick) return 'quest_turnin';
+  if (id === 'priestess' && q.gate === 1 && F.tm_wick && tmBraziers(S) >= 3 && inv.alder_charm) return 'quest_turnin';
+  if (id === 'priestess' && q.gate === 2 && F.tm_rift) return 'quest_turnin';
+  if (id === 'gatewright' && F.temple_lit && !(S.met || {}).arch) return 'quest_turnin';
+  // the Stray Den (pets doc 4.4)
   if (id === 'denkeeper' && F.bf_done && !q.strays) return 'quest_mark';
   if (id === 'denkeeper' && q.strays === 1 && denLit(S) >= 3 && !F.den_riftOpen) return 'quest_turnin';
   if (id === 'denkeeper' && q.strays === 1 && F.den_rift) return 'quest_turnin';

@@ -9,10 +9,12 @@ export const WAYS = {   // where each attuned waystone sends you (area -> [label
   lane: ['Bakery Lane, Hearthmoor', 'lane', 'from_ravenhold'],
   ravenhold: ['Ravenhold Harbor', 'ravenhold', 'from_waystone'],
   bifrost: ['Bifrost Crossing', 'bifrost', 'from_waystone'],
+  temple: ['the Old Temple, Ravenhold', 'temple', 'from_waystone'],   // Stage 6.3
 };
 const WAY_SAY = {
   ravenhold: 'Cold-fire runes glow along the waystone. Its twin stands at the west end of Bakery Lane.',
   lane: 'Cold-fire runes glow along the waystone. The west road runs from here to Ravenhold, at the foot of the Rainbow Rift.',
+  temple: 'Cold-fire runes glow along the waystone. The Temple\'s old stones remember every pilgrim.',
   bifrost: 'Cold-fire runes glow along the Guild\'s waystone. Its stones link the Crossing to Midgard\'s roads, no skiff needed.',
 };
 // the ferry may sail once Brannoc has pointed you at it (or the harbor quest was finished before the Crossing existed)

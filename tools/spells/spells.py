@@ -51,7 +51,9 @@ DECAL_SQUASH = math.sin(math.radians(36))
 # emissive glow plants use these few named accents (same hexes as the Hollows kit's self-lit toadstools). Only for
 # glowing pixels: never for world, sprites or HUD.
 NEON = {"neon_red": "#e0302a", "neon_red_lo": "#a81c22", "neon_red_hi": "#ff5a4a",
-        "neon_violet": "#a45cf0", "neon_violet_hi": "#d4a8ff", "neon_violet_lo": "#6a34b8"}
+        "neon_violet": "#a45cf0", "neon_violet_hi": "#d4a8ff", "neon_violet_lo": "#6a34b8",
+        # the moss-pup's lime spores (Hearthmoor pets, Bill-approved neon 2026-10-05)
+        "neon_green": "#5aec3c", "neon_green_hi": "#c4ff8a", "neon_green_lo": "#24a03a"}
 
 
 class Frame:

@@ -6,7 +6,7 @@
  "cell": 32,
  "size": [
   256,
-  1600
+  1664
  ],
  "effects": {
   "sparkle_burst": {
@@ -3397,6 +3397,138 @@
    "combat": true,
    "duration": 0.857,
    "desc": "soft red foxfire ground pool under the fox's tail (NEON red)"
+  },
+  "pet_aura_mosspup": {
+   "row": 50,
+   "frames": 8,
+   "fps": 8,
+   "loop": true,
+   "loop_from": 0,
+   "loops": 1,
+   "kind": "billboard",
+   "pivot": [
+    16,
+    31
+   ],
+   "lift": 0.0,
+   "glow": true,
+   "light": null,
+   "speed": null,
+   "travel": null,
+   "then": null,
+   "frame_list": [
+    {
+     "x": 0,
+     "y": 1600,
+     "w": 32,
+     "h": 32
+    },
+    {
+     "x": 32,
+     "y": 1600,
+     "w": 32,
+     "h": 32
+    },
+    {
+     "x": 64,
+     "y": 1600,
+     "w": 32,
+     "h": 32
+    },
+    {
+     "x": 96,
+     "y": 1600,
+     "w": 32,
+     "h": 32
+    },
+    {
+     "x": 128,
+     "y": 1600,
+     "w": 32,
+     "h": 32
+    },
+    {
+     "x": 160,
+     "y": 1600,
+     "w": 32,
+     "h": 32
+    },
+    {
+     "x": 192,
+     "y": 1600,
+     "w": 32,
+     "h": 32
+    },
+    {
+     "x": 224,
+     "y": 1600,
+     "w": 32,
+     "h": 32
+    }
+   ],
+   "combat": true,
+   "duration": 1.0,
+   "desc": "neon-green glowing spores puffing up off the moss-pup's toadstools (NEON green, a red fleck now and then)"
+  },
+  "pet_pool_mosspup": {
+   "row": 51,
+   "frames": 6,
+   "fps": 5,
+   "loop": true,
+   "loop_from": 0,
+   "loops": 1,
+   "kind": "decal",
+   "pivot": [
+    16,
+    16
+   ],
+   "lift": 0.02,
+   "glow": true,
+   "light": null,
+   "speed": null,
+   "travel": null,
+   "then": null,
+   "frame_list": [
+    {
+     "x": 0,
+     "y": 1632,
+     "w": 32,
+     "h": 32
+    },
+    {
+     "x": 32,
+     "y": 1632,
+     "w": 32,
+     "h": 32
+    },
+    {
+     "x": 64,
+     "y": 1632,
+     "w": 32,
+     "h": 32
+    },
+    {
+     "x": 96,
+     "y": 1632,
+     "w": 32,
+     "h": 32
+    },
+    {
+     "x": 128,
+     "y": 1632,
+     "w": 32,
+     "h": 32
+    },
+    {
+     "x": 160,
+     "y": 1632,
+     "w": 32,
+     "h": 32
+    }
+   ],
+   "combat": true,
+   "duration": 1.2,
+   "desc": "soft toxic-green ground pool under the moss-pup (NEON green)"
   }
  },
  "cast_sets": {

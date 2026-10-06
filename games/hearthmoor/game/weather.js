@@ -8,7 +8,7 @@
 // them, so every light pool shimmers in the wet. Options: weather on / light (phones by default) / off.
 const STORE = 'hearthmoor-weather';
 const MODES = ['on', 'light', 'off'];
-const SKY = { plaza: 'town', lane: 'town', mossglen: 'glen', hollows: 'hollow', rift: 'void', vanaheim: 'glen', bifrost: 'void' };
+const SKY = { plaza: 'town', lane: 'town', mossglen: 'glen', hollows: 'hollow', rift: 'void', vanaheim: 'glen', bifrost: 'void', temple: 'town' };
 const NIGHT = (t) => t > 0.8 || t < 0.25;
 // kind -> particle emitters ({preset, rate}); rate scales the preset's own rate
 const KINDS = {
