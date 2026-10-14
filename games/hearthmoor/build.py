@@ -481,6 +481,24 @@ def make_zip():
     return z
 
 
+ORB_AREAS = ["plaza", "lane"]
+
+
+def install_orb_lanterns(areas=AREAS):
+    """6.6 orb lanterns (art/orb_lanterns/, Art seat 2026-10-05): the 32 px orb billboards (orb_large_blue / violet / red,
+    orb_grand_mix) appended under the spells atlas of the areas with lantern spots (cell 32 matches). Runs after
+    install_pets (which crops at pets_from); a re-run crops at orbs_from first."""
+    P = GAME / "art" / "orb_lanterns"
+    fxm = json.loads((P / "orb_fx_32.json").read_text())
+    for a in [x for x in areas if x in ORB_AREAS]:
+        root = GAME / "areas" / a
+        scene = json.loads((root / "scene.json").read_text())
+        jp = root / scene["spells"]["json"]; ip = root / scene["spells"]["image"]
+        m = _append_atlas(ip, json.loads(jp.read_text()), P / "orb_fx_32.png", fxm, "effects", None, mark="orbs_from")
+        jp.write_text(json.dumps(m, indent=1))
+    print(f"orb lanterns: {len(fxm['effects'])} orb effects in {', '.join(x for x in areas if x in ORB_AREAS)}")
+
+
 if __name__ == "__main__":
     ap = argparse.ArgumentParser()
     ap.add_argument("--no-zip", action="store_true")
@@ -494,6 +512,7 @@ if __name__ == "__main__":
     install_pets(only)
     install_old_temple(only)
     install_verdant_heart(only)
+    install_orb_lanterns(only)
     draw_icons()
     draw_button_icons()
     write_pwa()

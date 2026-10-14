@@ -195,7 +195,7 @@ class Smoke:
 # segment before it saved (localStorage only: the same thing the serial run's reload + Continue restores from).
 # Every step still runs exactly once across the shards, with the same assertions and thresholds.
 FIX = Path(__file__).resolve().parent / "fixtures"
-SEGS = "ABCDEFGHIJ"
+SEGS = "ABCDEFGHIJK"
 SEG_INFO = {
     "A": "title, loading gate, Lantern Eve, errands, controller, Mossglen, leveling, combat, loot, rares + rifts, Hollows, garden (ends: K save in Mossglen -> cp1)",
     "B": "reload #1 + Continue, save slots, Pudding home, shop, bank, riddle, night merchant, factions, glow cap, weather, sockets, errand 2 (ends: K save in the Lane -> cp2)",
@@ -206,6 +206,7 @@ SEG_INFO = {
     "G": "Stage 6.3: the Old Temple (Hilde's writ, the Harbor gate, clues, Alder's charm, Ida's wick, braziers, the rite, the rift, Veyra, Midgard's arch; continues cp3)",
     "H": "Stage 6.5: rift storms (calendar, storm rifts + Rift Marks +25%, sky cracks, Storm Watch bounty, NPC / ferry storm lines, dawn, toasts; continues cp3)",
     "J": "Stage 6.4: the Violet Spring, the Rotwood Hollow (8 rooms, root-door brazier order, the Blight Regent 5.5x: phases + frost-iron spike weak point), the Verdant Heart (6 rooms, Thornmother 2.4x, Hjortur 6x trial / corrupted) (continues cp3)",
+    "K": "Stage 6.6: glow-fish orb lanterns (buy, night catch, place at home + garden, night pools + light zones, day off, take back; continues cp3)",
     "I": "Stage 6.4 groundwork: Glenheart rename, trial-mode yield, 5-6x boss camera pull, Vanaheim conquer merit -> Rift Marks, heartwood sale to Sable (continues cp3)",
 }
 # --quick <area>: the segments that cover an area / feature (a per-change check; the batch still runs everything)
@@ -218,10 +219,11 @@ QUICK = {
     "pet": "F", "pets": "F", "stray": "F",
     "temple": "G", "oldtemple": "G", "midgard": "G",
     "vanaheim4": "I", "verdant": "J", "rotwood": "J", "regent": "J", "hjortur": "J", "vhspring": "J", "trial": "I", "glenheart": "I", "heartwood": "I",
+    "lantern": "K", "lanterns": "K", "orb": "K", "glowfish": "K",
     "storm": "H", "storms": "H", "riftstorm": "H", "bounty": "H",
 }
 TIMING = FIX / "smoke_timing.json"   # seconds per segment from the last passing runs (shard balancing only)
-DEFAULT_SECONDS = {"A": 560, "B": 260, "C": 230, "D": 140, "E": 25, "F": 150, "G": 200, "H": 170, "I": 90, "J": 120}
+DEFAULT_SECONDS = {"A": 560, "B": 260, "C": 230, "D": 140, "E": 25, "F": 150, "G": 200, "H": 170, "I": 90, "J": 120, "K": 60}
 
 
 def seg_seconds():
@@ -2434,6 +2436,67 @@ def run(out, simscale=4, size=(960, 540), segs=SEGS):
                 rep["error"] = f"verdant: {type(e).__name__}: {e}"[:400]
                 try:
                     rep["shots"]["failure_J"] = T.shot("failure_J"); rep["state"] = T.S()
+                except Exception:  # noqa: BLE001
+                    pass
+        # ---------------------------------------------------------- K: Stage 6.6 glow-fish orb lanterns (continues cp3)
+        if rep["pass"] and "K" in segs:
+            seg_mark("K")
+            try:
+                saved = cp_load(None, T, url, "cp3")["hearthmoor-slot-1-v2"]
+                kc = b.new_context(viewport={"width": size[0], "height": size[1]})
+                kc.add_init_script(f"if (!sessionStorage.getItem('seeded')) {{ localStorage.clear(); localStorage.setItem('hearthmoor-slot-1-v2', {json.dumps(saved)}); sessionStorage.setItem('seeded', '1'); }}")
+                kc.add_init_script(STUB)
+                kp = kc.new_page()
+                kp.on("pageerror", lambda e: errors.append(f"PAGEERROR {e}"))
+                kp.on("console", lambda m: errors.append(f"console.error {m.text}") if m.type == "error" else None)
+                T.pg = kp
+                kp.goto(url)
+                T.wait("window.__hm && window.__hm.ready && window.__hd2d && window.__hd2d.ready && !window.__hd2dGate.loading", 120)
+                kp.click("#btnCont"); T.idle(); kp.wait_for_timeout(400)
+
+                def karea(a, spawn="start"):
+                    T.ev(f"window.__hm.loadArea('{a}', '{spawn}')"); T.wait(f"window.__hm.area === '{a}' && window.__hm.ctx && !window.__hm.busy", 120); T.idle(); kp.wait_for_timeout(300)
+
+                def ktp(x, z):
+                    T.ev(f"(() => {{ const p = window.__hm.ctx.player; p.x = {x}; p.z = {z}; }})()"); T.frames(3)
+
+                def kclock(t):
+                    T.ev(f"(() => {{ const G = window.__hm; G.ctx.clock.set({t}); G.S.t = G.ctx.clock.t; }})()"); T.frames(4)
+                T.ev("(() => { const G = window.__hm; G.peace = true; G.S.inv.glowfish = 0; G.S.inv.orblamp = 0; G.S.orbs = {}; G.S.fishDay = {}; })()")
+                gw = T.ev("(async () => { const m = await import('./game/shop.js'); return { odo: m.SHOPS.hearthmoor.goods, ida: m.SHOPS.harbor.goods, fish: m.GOODS.glowfish.price, orb: m.GOODS.orblamp.price }; })()")
+                T.step("6.6 shops: Odo sells empty orbs + glow-fish, Ida sells glow-fish", "orblamp" in gw["odo"] and "glowfish" in gw["odo"] and "glowfish" in gw["ida"] and gw["fish"] > 0 and gw["orb"] > 0, shop=gw)
+                karea("hollows"); kclock(0.5); ktp(10.0, -6.2); T.ev("window.__hm.lanterns.interact()")
+                f_day = T.ev("window.__hm.S.inv.glowfish || 0")
+                kclock(0.9); T.ev("window.__hm.lanterns.interact()"); f1 = T.ev("window.__hm.S.inv.glowfish || 0")
+                T.ev("window.__hm.lanterns.interact()"); f2 = T.ev("window.__hm.S.inv.glowfish || 0")
+                T.step("glow-fish: none by day, one caught at night, the spot is spent till tomorrow", f_day == 0 and f1 == 1 and f2 == 1, day=f_day, night=[f1, f2])
+                T.ev("(() => { const S = window.__hm.S; S.inv.glowfish = 4; S.inv.orblamp = 4; })()")
+                for a, xs in (("plaza", [(3.9, 2.8), (5.7, 2.8)]), ("lane", [(2.0, 4.0), (5.2, 4.0)])):
+                    karea(a); kclock(0.5)
+                    for x, z in xs:
+                        ktp(x, z); T.ev("window.__hm.lanterns.interact()")
+                    q = T.ev("window.__hm.lanterns.qa()")["spots"]
+                    T.step(f"{a}: both orb lanterns placed, orbs shown, dark by day", len(q) == 2 and all(s["on"] and s["orb"] and not s["lit"] for s in q), spots=q)
+                inv = T.ev("({ f: window.__hm.S.inv.glowfish || 0, o: window.__hm.S.inv.orblamp || 0 })")
+                T.step("placing used one orb + one glow-fish each", inv == {"f": 0, "o": 0}, inv=inv)
+                kclock(0.92); T.frames(8)
+                q = T.ev("window.__hm.lanterns.qa()")["spots"]; z = T.ev("window.__hm.glow.zones().filter((z) => z.src === 'orb').length")
+                T.step("night: each orb lights a pool of radiance (light + light zone)", all(s["lit"] for s in q) and z == 2, spots=q, zones=z)
+                ktp(3.6, 6.2); T.ev("window.__hm.qaStill = true"); kp.wait_for_timeout(900)
+                rep["shots"]["stage6_lanterns"] = T.shot("stage6_lanterns"); T.ev("window.__hm.qaStill = false")
+                karea("plaza"); kclock(0.92); T.frames(8)
+                T.step("the home lanterns survive an area change and glow at night", all(s["on"] and s["lit"] for s in T.ev("window.__hm.lanterns.qa()")["spots"]))
+                ktp(3.9, 2.8); T.ev("window.__hm.lanterns.interact()")
+                tb = T.ev("({ on: window.__hm.lanterns.qa().spots[0].on, f: window.__hm.S.inv.glowfish || 0, o: window.__hm.S.inv.orblamp || 0 })")
+                T.step("taking a lantern back returns the orb and the fish", not tb["on"] and tb["f"] == 1 and tb["o"] == 1, back=tb)
+                T.step("no JS errors (6.6 orb lanterns)", not errors and not T.ev("window.__hd2d.errors.length"), errors=errors[:5])
+                kc.close()
+                seg_done("K")
+            except Exception as e:  # noqa: BLE001
+                rep["pass"] = False
+                rep["error"] = f"lanterns: {type(e).__name__}: {e}"[:400]
+                try:
+                    rep["shots"]["failure_K"] = T.shot("failure_K"); rep["state"] = T.S()
                 except Exception:  # noqa: BLE001
                     pass
         # every shard checks its own pages for JS errors even when the counted 'no JS errors' steps live in another shard

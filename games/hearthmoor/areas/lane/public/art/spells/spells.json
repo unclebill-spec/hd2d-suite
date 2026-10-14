@@ -6,7 +6,7 @@
  "cell": 32,
  "size": [
   256,
-  1664
+  1792
  ],
  "effects": {
   "sparkle_burst": {
@@ -3529,6 +3529,310 @@
    "combat": true,
    "duration": 1.2,
    "desc": "soft toxic-green ground pool under the moss-pup (NEON green)"
+  },
+  "orb_large_blue": {
+   "row": 52,
+   "frames": 8,
+   "fps": 6,
+   "loop": true,
+   "loop_from": 0,
+   "loops": 1,
+   "kind": "billboard",
+   "pivot": [
+    16,
+    16
+   ],
+   "lift": 0.0,
+   "glow": true,
+   "light": {
+    "color": "#2ab4ff",
+    "intensity": 0.8,
+    "range": 5.0
+   },
+   "speed": null,
+   "travel": null,
+   "then": null,
+   "duration": 9999,
+   "strip": "strips/orb_large_blue.png",
+   "frame_list": [
+    {
+     "x": 0,
+     "y": 1664,
+     "w": 32,
+     "h": 32
+    },
+    {
+     "x": 32,
+     "y": 1664,
+     "w": 32,
+     "h": 32
+    },
+    {
+     "x": 64,
+     "y": 1664,
+     "w": 32,
+     "h": 32
+    },
+    {
+     "x": 96,
+     "y": 1664,
+     "w": 32,
+     "h": 32
+    },
+    {
+     "x": 128,
+     "y": 1664,
+     "w": 32,
+     "h": 32
+    },
+    {
+     "x": 160,
+     "y": 1664,
+     "w": 32,
+     "h": 32
+    },
+    {
+     "x": 192,
+     "y": 1664,
+     "w": 32,
+     "h": 32
+    },
+    {
+     "x": 224,
+     "y": 1664,
+     "w": 32,
+     "h": 32
+    }
+   ],
+   "notes": "orb_garden_* (orb centre = lamp marker)"
+  },
+  "orb_large_violet": {
+   "row": 53,
+   "frames": 8,
+   "fps": 6,
+   "loop": true,
+   "loop_from": 0,
+   "loops": 1,
+   "kind": "billboard",
+   "pivot": [
+    16,
+    16
+   ],
+   "lift": 0.0,
+   "glow": true,
+   "light": {
+    "color": "#a45cf0",
+    "intensity": 0.8,
+    "range": 5.0
+   },
+   "speed": null,
+   "travel": null,
+   "then": null,
+   "duration": 9999,
+   "strip": "strips/orb_large_violet.png",
+   "frame_list": [
+    {
+     "x": 0,
+     "y": 1696,
+     "w": 32,
+     "h": 32
+    },
+    {
+     "x": 32,
+     "y": 1696,
+     "w": 32,
+     "h": 32
+    },
+    {
+     "x": 64,
+     "y": 1696,
+     "w": 32,
+     "h": 32
+    },
+    {
+     "x": 96,
+     "y": 1696,
+     "w": 32,
+     "h": 32
+    },
+    {
+     "x": 128,
+     "y": 1696,
+     "w": 32,
+     "h": 32
+    },
+    {
+     "x": 160,
+     "y": 1696,
+     "w": 32,
+     "h": 32
+    },
+    {
+     "x": 192,
+     "y": 1696,
+     "w": 32,
+     "h": 32
+    },
+    {
+     "x": 224,
+     "y": 1696,
+     "w": 32,
+     "h": 32
+    }
+   ],
+   "notes": "orb_garden_* (orb centre = lamp marker)"
+  },
+  "orb_large_red": {
+   "row": 54,
+   "frames": 8,
+   "fps": 6,
+   "loop": true,
+   "loop_from": 0,
+   "loops": 1,
+   "kind": "billboard",
+   "pivot": [
+    16,
+    16
+   ],
+   "lift": 0.0,
+   "glow": true,
+   "light": {
+    "color": "#e0302a",
+    "intensity": 0.8,
+    "range": 5.0
+   },
+   "speed": null,
+   "travel": null,
+   "then": null,
+   "duration": 9999,
+   "strip": "strips/orb_large_red.png",
+   "frame_list": [
+    {
+     "x": 0,
+     "y": 1728,
+     "w": 32,
+     "h": 32
+    },
+    {
+     "x": 32,
+     "y": 1728,
+     "w": 32,
+     "h": 32
+    },
+    {
+     "x": 64,
+     "y": 1728,
+     "w": 32,
+     "h": 32
+    },
+    {
+     "x": 96,
+     "y": 1728,
+     "w": 32,
+     "h": 32
+    },
+    {
+     "x": 128,
+     "y": 1728,
+     "w": 32,
+     "h": 32
+    },
+    {
+     "x": 160,
+     "y": 1728,
+     "w": 32,
+     "h": 32
+    },
+    {
+     "x": 192,
+     "y": 1728,
+     "w": 32,
+     "h": 32
+    },
+    {
+     "x": 224,
+     "y": 1728,
+     "w": 32,
+     "h": 32
+    }
+   ],
+   "notes": "orb_garden_* (orb centre = lamp marker)"
+  },
+  "orb_grand_mix": {
+   "row": 55,
+   "frames": 8,
+   "fps": 6,
+   "loop": true,
+   "loop_from": 0,
+   "loops": 1,
+   "kind": "billboard",
+   "pivot": [
+    16,
+    16
+   ],
+   "lift": 0.0,
+   "glow": true,
+   "light": {
+    "color": "#7a8cff",
+    "intensity": 1.0,
+    "range": 7.0
+   },
+   "speed": null,
+   "travel": null,
+   "then": null,
+   "duration": 9999,
+   "strip": "strips/orb_grand_mix.png",
+   "frame_list": [
+    {
+     "x": 0,
+     "y": 1760,
+     "w": 32,
+     "h": 32
+    },
+    {
+     "x": 32,
+     "y": 1760,
+     "w": 32,
+     "h": 32
+    },
+    {
+     "x": 64,
+     "y": 1760,
+     "w": 32,
+     "h": 32
+    },
+    {
+     "x": 96,
+     "y": 1760,
+     "w": 32,
+     "h": 32
+    },
+    {
+     "x": 128,
+     "y": 1760,
+     "w": 32,
+     "h": 32
+    },
+    {
+     "x": 160,
+     "y": 1760,
+     "w": 32,
+     "h": 32
+    },
+    {
+     "x": 192,
+     "y": 1760,
+     "w": 32,
+     "h": 32
+    },
+    {
+     "x": 224,
+     "y": 1760,
+     "w": 32,
+     "h": 32
+    }
+   ],
+   "notes": "orb_grand (1.1 m orb = 20 px; this 30 px billboard is a touch larger: scale 0.66 or use as UI / close-up)"
   }
  },
  "cast_sets": {
@@ -3643,5 +3947,6 @@
   "rune_circle",
   "bolt"
  ],
- "pets_from": 1408
+ "pets_from": 1408,
+ "orbs_from": 1664
 }

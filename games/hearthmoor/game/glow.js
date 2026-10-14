@@ -120,7 +120,8 @@ export class Glow {
     for (const p of this.pools) out.push({ x: p.x, z: p.z, r: p.r, src: 'spell' });
     for (const p of this.fixed) out.push({ x: p.x, z: p.z, r: p.r, src: 'pool' });
     if (this.G.hollows) out.push(...this.G.hollows.zones());   // lit braziers + the spring
-    if (this.G.garden) out.push(...this.G.garden.zones());     // glow-garden blooms at night
+    if (this.G.garden) out.push(...this.G.garden.zones());
+    if (this.G.lanterns) out.push(...this.G.lanterns.zones());   // placed orb lanterns at night     // glow-garden blooms at night
     if (this.G.pets) out.push(...this.G.pets.zones());
     if (this.G.temple) out.push(...this.G.temple.zones());     // the Old Temple's relit sacred brazier (6.3)         // the active pet's glow (Stage 6 part 2)
     const nm = this.G && this.G.shopUI && this.G.shopUI.nm;   // the night merchant's neon-blue lantern is a light zone too

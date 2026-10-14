@@ -2,6 +2,10 @@
 
 Dates are America/New_York. Newest first. Keep this current with every change you push.
 
+## 2026-10-14: Stage 6.6 glow-fish orb lanterns (batch 2 WIP, branch `hearthmoor-batch2-wip`)
+- `game/lanterns.js`: buy glow-fish (Odo, Ida) and empty orbs (Odo), or catch glow-fish at night (Hollows spring, Ravenhold pier ends; one per spot per day). Place orb lanterns on 2 home spots (Plaza cottage) and 2 Lane garden spots (blue / violet / red / grand mix); at night each casts a pool decal + point light + light zone. E again takes it back.
+- Art: `art/orb_lanterns/orb_fx_32` (Art seat pack) appended to plaza + lane spells atlases by `build.py install_orb_lanterns`. Kit posts (glb) not placed yet: orbs hover. Smoke segment **K** (`--quick lantern`). Screenshot: `docs/screenshots/stage6_lanterns.png`.
+
 ## 2026-10-14: Batch 1 (6.2-6.5) LIVE: merged `hearthmoor-batch1-wip` to main and published
 - Green before merge: check_all --lowres 11/11 areas, smoke --quick controller 114/114, smoke --quick vanaheim 29/29, smoke C 29/29 (full smoke 103/105 earlier; both fails fixed in d025afd/b42a14c).
 

@@ -12,6 +12,8 @@ export const ITEMS = {
   acorn:     { name: "Tib's lucky acorn", icon: 3, about: 'Polished smooth by a very small thumb.' },
   tea:       { name: 'Moonpetal tea', icon: 4, about: 'A tin of Wren\'s tea. Calms storms, and also grandparents.' },
   tonic:     { name: 'Hearth tonic', px: 'tonic', about: 'Heals 60 HP. Drink: U, right-stick click, or tap it here.' },
+  glowfish:  { name: 'Glow-fish', px: 'glowseed', about: 'A finger-long fish that glows blue, violet or red. Set it in an empty orb to make an orb lantern.' },
+  orblamp:   { name: 'Empty orb', px: 'tonic', about: 'A water orb on a little stand. Add a glow-fish and set it at home or in the Lane garden.' },
   glowseed:  { name: 'Glow seed', px: 'glowseed', about: 'Hums in the dark. Plant it in a garden plot: it blooms in two days.' },
   // Stage 6.3 (the Old Temple): key items, never sold
   reliefbasket: { name: 'Order relief basket', px: 'reliefbasket', about: 'Hearthloaves, wool blankets and a tin of Wren\'s tea, packed by the Order of the Hearth for the Old Temple.' },
