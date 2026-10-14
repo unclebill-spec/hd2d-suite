@@ -31,9 +31,9 @@ def areas_built():
     return sorted(p.parent.name for p in (GAME / "areas").glob("*/scene.json"))
 
 
-def run_area(a, tries, logdir, lock):
+def run_area(a, tries, logdir, lock, lowres=False):
     params = PARAMS.get(a, f"area={a}&qa&spawn=start")
-    cmd = [str(SUITE / "bin" / "hd2d"), "check-scene", "games/hearthmoor", "--scene-dir", f"areas/{a}", "--params", params, "--out", f"games/hearthmoor/shots/{a}"]
+    cmd = [str(SUITE / "bin" / "hd2d"), "check-scene", "games/hearthmoor", "--scene-dir", f"areas/{a}", "--params", params, "--out", f"games/hearthmoor/shots/{a}"] + (["--quick"] if lowres else [])
     res = {"area": a, "pass": False, "tries": 0}
     for t in range(1, tries + 1):
         t0 = time.time(); log = logdir / f"cs_{a}_{t}.log"
@@ -54,11 +54,20 @@ def main():
     ap = argparse.ArgumentParser(description=__doc__.splitlines()[0])
     ap.add_argument("--areas", default="", help="comma list (default: every built area)")
     ap.add_argument("--quick", default="", help="same as --areas (the per-change check)")
+    ap.add_argument("--lowres", action="store_true", help="check-scene --quick (960x540, same checks / pass rules): per-change runs; full size before publish")
+    ap.add_argument("--changed", nargs="?", const="main", default="", help="only areas changed vs this git ref (default main): areas/src/<a>.json or areas/<a>/ in git diff")
     ap.add_argument("--jobs", type=int, default=1, help="check-scenes at once (default 1 = serial)")
     ap.add_argument("--tries", type=int, default=1, help="tries per area (a retry re-runs the identical check)")
     ap.add_argument("--logdir", default=str(GAME / "tests" / "out" / "check_all"))
     a = ap.parse_args()
-    want = [x.strip() for x in (a.areas or a.quick).split(",") if x.strip()] or areas_built()
+    want = [x.strip() for x in (a.areas or a.quick).split(",") if x.strip()]
+    if a.changed:
+        names = subprocess.run(["git", "diff", "--name-only", a.changed, "--", "games/hearthmoor/areas"], cwd=SUITE, capture_output=True, text=True, check=True).stdout.split()
+        ch = {Path(n).stem if "/areas/src/" in n else n.split("/areas/")[1].split("/")[0] for n in names if "/areas/" in n}
+        want = sorted(x for x in ch & set(areas_built()) if x not in want) + want
+        if not want:
+            print(f"check_all: no area changed vs {a.changed}"); return
+    want = want or areas_built()
     missing = [x for x in want if x not in areas_built()]
     if missing:
         sys.exit(f"not built: {missing} (built: {areas_built()})")
@@ -69,7 +78,7 @@ def main():
     with ThreadPoolExecutor(max_workers=max(1, a.jobs)) as ex:
         futs = []
         for k, x in enumerate(order):
-            futs.append(ex.submit(run_area, x, a.tries, logdir, lock))
+            futs.append(ex.submit(run_area, x, a.tries, logdir, lock, a.lowres))
             if a.jobs > 1 and k < a.jobs:
                 time.sleep(3)   # stagger the browser launches a little on a loaded box
         out = [f.result() for f in futs]

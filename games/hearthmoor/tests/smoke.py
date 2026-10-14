@@ -2124,11 +2124,11 @@ def run(out, simscale=4, size=(960, 540), segs=SEGS):
                 # through the Rift-gate to the Crossing: Midgard's arch is open; Halvard pays 40 Rift Marks for a gate repaired
                 pidx = T.ev("window.__hm.ctx.scene.game.portals.findIndex((p) => p.to === 'bifrost')")
                 to = T.go_rect("portals", pidx)
-                bq = T.ev("window.__hm.temple.qa()"); mk = mark("gatewright"); g0 = T.ev("window.__hm.S.merit.gate")
+                bq = T.ev("window.__hm.temple.qa()"); mk = mark("gatewright"); g0 = T.ev("window.__hm.S.merit.gate"); arrive = T.pos()   # where the portal set us down (before walking to Halvard)
                 ph, fh = T.talk("gatewright")
                 T.step("the lit Rift-gate steps out at Bifrost's Midgard arch: no longer sealed but a swirl (portal back to the Temple); Halvard (turn-in tag) pays +40 Rift Marks and eyes your charm",
-                       to == "bifrost" and abs(T.pos()[0] - 11.0) < 1.5 and "midgard" not in bq["sealed"] and "temple" in bq["portals"] and bq["gate"] == "rift_vortex"
-                       and mk == "quest_turnin" and ph == 3 and "Midgard's arch is lit" in fh and T.ev("window.__hm.S.merit.gate") == g0 + 40, bifrost=bq, mark=mk)
+                       to == "bifrost" and abs(arrive[0] - 11.0) < 1.5 and "midgard" not in bq["sealed"] and "temple" in bq["portals"] and bq["gate"] == "rift_vortex"
+                       and mk == "quest_turnin" and ph == 3 and "Midgard's arch is lit" in fh and T.ev("window.__hm.S.merit.gate") == g0 + 40, why={"to": to, "pos": arrive[:2], "midSealed": "midgard" in bq["sealed"], "portals": bq["portals"], "mark": mk, "ph": ph, "fh": (fh or "")[:80], "dg": T.ev("window.__hm.S.merit.gate") - g0}, bifrost=bq)
                 pidx = T.ev("window.__hm.ctx.scene.game.portals.findIndex((p) => p.to === 'temple')")
                 to = T.go_rect("portals", pidx)
                 T.step("Midgard's arch leads back into the Old Temple, in front of its Rift-gate", to == "temple" and T.pos()[1] < -8.5, pos=T.pos())

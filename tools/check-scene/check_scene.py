@@ -748,7 +748,10 @@ def main(argv=None):
     ap.add_argument("--scene-dir", default="", help="sub-folder holding scene.json (games: areas/<id>); paths in it are relative to it")
     ap.add_argument("--params", default="", help="extra query string for index.html (games: area=<id>&qa)")
     ap.add_argument("--no-phone", action="store_true", help="skip the phone portrait/landscape touch check")
+    ap.add_argument("--quick", action="store_true", help="per-change mode: 960x540 viewport (same checks, same pass rules); use the full 1280x720 before publishing")
     a = ap.parse_args(argv)
+    if a.quick and a.size == "1280x720":
+        a.size = "960x540"
     w, h = (int(v) for v in a.size.split("x"))
     rep = run(a.root, a.out or Path(a.root) / "shots", (w, h), scene_dir=a.scene_dir, params=a.params, phone=not a.no_phone)
     for name, c in rep["checks"].items():
