@@ -6,10 +6,8 @@ Bill (GitHub `unclebill-spec`) hands this project between his bots and Cursor th
 
 **New design (2026-10-03, Bill approved):** [`docs/story/DESIGN_EXPANSION_2026-10-03.md`](docs/story/DESIGN_EXPANSION_2026-10-03.md) (also appended to `STORY_SEEDS.md`): opening hour, main quest beats, leveling and skill trees, death / difficulty / New Game+, day-night and weather, Ravenhold's Forge Quarter / Old Temple / Market Terraces, music and sound. Not yet merged into the handoff; read it alongside it.
 
-## PAUSED (2026-10-06, Bill)
-Hearthmoor is paused. Don't start new work until Bill picks it back up.
-- 2026-10-14: Stage 6.4 (Violet Spring, Rotwood Hollow, Verdant Heart) is built on the WIP branch; see the CHANGELOG top entry.
-- Live: main 56f9b2f (Bifrost Crossing). The batch 1 work in progress is on branch `hearthmoor-batch1-wip` (pets, Old Temple, 6.4 groundwork, rift storms, sharded tests). It is not green yet; see the top CHANGELOG entry for the open failures and next steps.
+## Current state (2026-10-14)
+Hearthmoor batch 1 (6.2 pets + Stray Den, 6.3 Old Temple, 6.4 Violet Spring / Rotwood Hollow / Verdant Heart, 6.5 rift storms, sharded tests) is merged to main and live. Remaining 6.4 items: V3 firefly maze guidance, Tobble follower, cutscene dialogue, Veyra's beat. Next: batch 2 (6.6-6.8).
 - Staging material (backed up in this branch under staging/hearthmoor/; the live working copy is /workspace/hearthmoor-staging) is ready: story (pets, old_temple, verdant_heart, rift_storms, forge_alchemy, alfheim, svartalfheim) and art (pets, old_temple, verdant_heart, orb_lanterns, forge, alchemy, alfheim + lumi).
 - Master Builder's Alfheim realm is paused at WIP 47a5b82 on `realm-alfheim` (worktree /workspace/hd2d-alfheim; read ALFHEIM_PROGRESS.md, "RESUME HERE").
 - Testing policy: batch 3-4 additions with quick checks per change, then a full smoke + check_all before publishing. Secret scan before every push.
