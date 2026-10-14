@@ -23898,6 +23898,50 @@
    ],
    "desc": "Death Lord (rare, ~2.4x): skeleton knight in dark rune plate, horned helm over a bone skull, spiked pauldrons, deep-red cape, rune greatsword"
   },
+  "pet_wisp": {
+   "sheet": "pets",
+   "row": 0,
+   "kind": "creature",
+   "pet": true,
+   "anims": [
+    "idle",
+    "walk",
+    "follow"
+   ]
+  },
+  "pet_moth": {
+   "sheet": "pets",
+   "row": 4,
+   "kind": "creature",
+   "pet": true,
+   "anims": [
+    "idle",
+    "walk",
+    "follow"
+   ]
+  },
+  "pet_fox": {
+   "sheet": "pets",
+   "row": 8,
+   "kind": "creature",
+   "pet": true,
+   "anims": [
+    "idle",
+    "walk",
+    "follow"
+   ]
+  },
+  "pet_mosspup": {
+   "sheet": "pets",
+   "row": 12,
+   "kind": "creature",
+   "pet": true,
+   "anims": [
+    "idle",
+    "walk",
+    "follow"
+   ]
+  },
   "lumi": {
    "sheet": "lumi",
    "row": 0,
@@ -23918,6 +23962,10 @@
   "boss": {
    "json": "boss.json",
    "image": "boss.png"
+  },
+  "pets": {
+   "json": "pets.json",
+   "image": "pets.png"
   },
   "lumi": {
    "json": "lumi.json",

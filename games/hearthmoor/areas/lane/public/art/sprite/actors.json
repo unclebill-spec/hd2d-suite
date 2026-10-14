@@ -20909,6 +20909,50 @@
    ],
    "summon": true
   },
+  "pet_wisp": {
+   "sheet": "pets",
+   "row": 0,
+   "kind": "creature",
+   "pet": true,
+   "anims": [
+    "idle",
+    "walk",
+    "follow"
+   ]
+  },
+  "pet_moth": {
+   "sheet": "pets",
+   "row": 4,
+   "kind": "creature",
+   "pet": true,
+   "anims": [
+    "idle",
+    "walk",
+    "follow"
+   ]
+  },
+  "pet_fox": {
+   "sheet": "pets",
+   "row": 8,
+   "kind": "creature",
+   "pet": true,
+   "anims": [
+    "idle",
+    "walk",
+    "follow"
+   ]
+  },
+  "pet_mosspup": {
+   "sheet": "pets",
+   "row": 12,
+   "kind": "creature",
+   "pet": true,
+   "anims": [
+    "idle",
+    "walk",
+    "follow"
+   ]
+  },
   "lumi": {
    "sheet": "lumi",
    "row": 0,
@@ -20926,6 +20970,10 @@
   }
  },
  "sheets": {
+  "pets": {
+   "json": "pets.json",
+   "image": "pets.png"
+  },
   "lumi": {
    "json": "lumi.json",
    "image": "lumi.png"

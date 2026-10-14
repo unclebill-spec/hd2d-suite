@@ -62,6 +62,10 @@ def more_roles(_r):
                               "a rune-key staff tipped with a cold-fire crystal", hair="stone_hi", hairstyle="short",
                          beard="stone_hi", shirt="sky", collar="plaster_hi", tunic=1, belt="shadow", pants="stone_lo",
                          boots=True, shoes="timber_hi", item="keystaff", named=True),
+        "denkeeper": _r(desc="Signe Larkspur, keeper of the Stray Den (Bifrost Crossing): auburn bun with grey streaks, round "
+                             "spectacles, moss-green knit jumper, broad leather belt with gold bells, rust-brown trousers, scuffed boots",
+                        hair="roof", hairstyle="bun", glasses=True, shirt="moss", belt="timber_lo", belt_w=2,
+                        pants="roof_lo", boots=True, shoes="shadow", named=True),
         "dog": _r(kind="creature", animal="dog", desc="scruffy cream terrier with floppy brown ears", fur="plaster",
                   spot="timber_hi", belly="plaster_hi"),
         "goat": _r(kind="creature", animal="goat", desc="small white goat with curled horns and a bell",

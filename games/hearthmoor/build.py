@@ -19,7 +19,7 @@ from PIL import Image  # noqa: E402
 
 from hd2d_common import load_biome  # noqa: E402
 
-AREAS = ["plaza", "lane", "mossglen", "hollows", "rift", "vanaheim", "ravenhold", "bifrost",
+AREAS = ["plaza", "lane", "mossglen", "hollows", "rift", "vanaheim", "ravenhold", "bifrost", "temple", "rotwood", "verdant",
          "alfheim", "lumen_court", "wispwood", "prismvault"]   # [ALFHEIM] Lumenvale (Glimmer Steps, Lumen Court, Wispwood) + the Prism Vault
 TMP = Path("/tmp/hearthmoor_build")
 
@@ -28,8 +28,8 @@ def sh(*a):
     subprocess.run([str(x) for x in a], check=True)
 
 
-def assemble():
-    for a in AREAS:
+def assemble(areas=AREAS):
+    for a in areas:
         out = TMP / a
         if out.exists():
             shutil.rmtree(out)
@@ -73,13 +73,13 @@ def used_files(scene, root):
     return keep
 
 
-def copy_areas():
+def copy_areas(areas=AREAS):
     for d in ("engine", "vendor"):
         if (GAME / d).exists():
             shutil.rmtree(GAME / d)
         # always the suite's current runtime (not the assemble output, which is stale with --skip-assemble)
         shutil.copytree(SUITE / "tools/runtime/web" / d, GAME / d, ignore=shutil.ignore_patterns("__pycache__"))
-    for a in AREAS:
+    for a in areas:
         src, dst = TMP / a, GAME / "areas" / a
         if dst.exists():
             shutil.rmtree(dst)
@@ -97,6 +97,101 @@ def copy_areas():
             shutil.copytree(src / "public/art/trees", dst / "public/art/trees", dirs_exist_ok=True)
         size = sum(f.stat().st_size for f in dst.rglob("*") if f.is_file())
         print(f"area {a}: {len(keep)} files, {size / 1e6:.1f} MB" + (f", missing {missing}" if missing else ""))
+
+
+# ------------------------------------------------------------------ pets (Stage 6 part 2): one shared pet sheet in every area
+# The pet art (art/pets/, from the Hearthmoor Art bot; pets.png is the NEON variant Bill approved 2026-10-05) follows
+# the hero everywhere, so every area gets: the pet sheet next to its actor atlas (meta.sheets.pets + stub roles, the
+# boss-sheet mechanism), the pet aura / pool effects appended under its spells atlas, and the pet particles appended
+# under its particles atlas. Idempotent: a re-run strips the previous pet rows first (`pets_from` remembers the cut).
+PET_ROLES = ("pet_wisp", "pet_moth", "pet_fox", "pet_mosspup")
+
+
+def _append_atlas(img_path, meta, add_img, add_meta, key, rows_key=None, mark="pets_from"):
+    base = Image.open(img_path).convert("RGBA")
+    h0 = meta.get(mark, base.size[1])
+    base = base.crop((0, 0, base.size[0], h0))
+    add = Image.open(add_img).convert("RGBA")
+    out = Image.new("RGBA", (max(base.size[0], add.size[0]), h0 + add.size[1]), (0, 0, 0, 0))
+    out.paste(base, (0, 0)); out.paste(add, (0, h0))
+    out.save(img_path)
+    cell = meta["cell"]; row0 = h0 // cell
+    items = meta[key]
+    for k in list(items):
+        if k in add_meta[key]:
+            del items[k]
+    for k, v in add_meta[key].items():
+        v = json.loads(json.dumps(v)); v["row"] = v["row"] + row0
+        for f in v.get("frame_list", []):
+            f["y"] += h0
+        items[k] = v
+    if rows_key:
+        meta[rows_key] = [r for r in meta[rows_key] if r not in add_meta[rows_key]][:row0] + list(add_meta[rows_key])
+    meta[mark] = h0
+    meta["size"] = [out.size[0], out.size[1]]
+    return meta
+
+
+def install_pets(areas=AREAS):
+    P = GAME / "art" / "pets"
+    pm = json.loads((P / "pets.json").read_text())
+    fxm = json.loads((P / "pets_fx.json").read_text())
+    ptm = json.loads((P / "pets_particles.json").read_text())
+    for a in areas:
+        root = GAME / "areas" / a
+        scene = json.loads((root / "scene.json").read_text())
+        sp = root / scene["atlas"]["json"]
+        am = json.loads(sp.read_text())
+        shutil.copy2(P / "pets.png", sp.parent / "pets.png")
+        (sp.parent / "pets.json").write_text(json.dumps(pm, indent=1))
+        am.setdefault("sheets", {})["pets"] = {"json": "pets.json", "image": "pets.png"}
+        for r in PET_ROLES:
+            am["roles"][r] = {"sheet": "pets", "row": pm["roles"][r]["row"], "kind": "creature", "pet": True, "anims": ["idle", "walk", "follow"]}
+        sp.write_text(json.dumps(am, indent=1))
+        for k, add_img, add_meta, key, rows in (("spells", P / "pets_fx.png", fxm, "effects", None),
+                                                 ("particles", P / "pets_particles.png", ptm, "presets", "rows")):
+            jp = root / scene[k]["json"]; ip = root / scene[k]["image"]
+            m = _append_atlas(ip, json.loads(jp.read_text()), add_img, add_meta, key, rows)
+            jp.write_text(json.dumps(m, indent=1))
+    print(f"pets: sheet + {len(fxm['effects'])} effects + {len(ptm['presets'])} particle presets in {len(areas)} areas")
+
+
+OLD_TEMPLE_AREAS = ["temple"]
+OLD_TEMPLE_ROLES = ["templekeeper", "archivist"]
+
+
+def install_old_temple(areas=AREAS):
+    """The Old Temple art pack (art/old_temple/, Art bot 2026-10-05): Mother Ilse (templekeeper) and Brother Tamsin
+    (archivist) ride in their own sheet like the pets; the riftgate / cold-fire / faceless-gaze / glasslight gamefx are
+    appended to the area's gamefx atlas (48 px cells). The kit pieces build through tools/kit/kit_old_temple.py."""
+    P = GAME / "art" / "old_temple"
+    am_ot = json.loads((P / "sprite" / "old_temple_actors.json").read_text())
+    fxm = json.loads((P / "gamefx" / "old_temple_fx.json").read_text())
+    # faceless_gaze stays out for now: its eye-glint frames are under check-scene's 20 px measurable minimum (gamefx_sharp
+    # counts that as unverified). It belongs to the later 'Faceless Statues' beat; the Art bot can redraw it bigger.
+    skip = {"faceless_gaze"}
+    fxm = {**fxm, "effects": {k: v for k, v in fxm["effects"].items() if k not in skip}}
+    n = 0
+    for a in areas:
+        if a not in OLD_TEMPLE_AREAS:
+            continue
+        root = GAME / "areas" / a
+        scene = json.loads((root / "scene.json").read_text())
+        sp = root / scene["atlas"]["json"]
+        am = json.loads(sp.read_text())
+        shutil.copy2(P / "sprite" / "old_temple_actors.png", sp.parent / "old_temple.png")
+        (sp.parent / "old_temple.json").write_text(json.dumps(am_ot, indent=1))
+        am.setdefault("sheets", {})["old_temple"] = {"json": "old_temple.json", "image": "old_temple.png"}
+        for r in OLD_TEMPLE_ROLES:
+            am["roles"][r] = {"sheet": "old_temple", "row": am_ot["roles"][r]["row"], "kind": "human", "anims": ["idle", "walk"]}
+        sp.write_text(json.dumps(am, indent=1))
+        jp = root / scene["gamefx"]["json"]; ip = root / scene["gamefx"]["image"]
+        m = _append_atlas(ip, json.loads(jp.read_text()), P / "gamefx" / "old_temple_fx.png", fxm, "effects", mark="old_temple_from")
+        for v in m["effects"].values():
+            v.pop("strip", None)
+        jp.write_text(json.dumps(m, indent=1))
+        n += 1
+    print(f"old temple: sheet ({len(OLD_TEMPLE_ROLES)} roles) + {len(fxm['effects'])} gamefx in {n} areas")
 
 
 # ------------------------------------------------------------------ icons (biome palette only, 16 px, hard alpha)
@@ -310,6 +405,66 @@ self.addEventListener('fetch', (e) => {{
     print(f"pwa: {len(files)} files precached, cache hearthmoor-v1-{ver}")
 
 
+VERDANT_AREAS = ["rotwood", "verdant"]
+VERDANT_SHEETS = {"verdant_actors": ["rottreant", "sporeelemental"], "boss_blight_regent": ["blightregent"],
+                  "boss_thornmother": ["thornmother"], "boss_hjortur": ["hjortur", "hjortur_corrupted"]}
+
+
+def _critters48(P, root):
+    cm = json.loads((P / "gamefx" / "verdant_critters.json").read_text())
+    src = Image.open(P / "gamefx" / "verdant_critters.png").convert("RGBA")
+    c = cm["cell"]; nrows = len(cm["effects"]); ncol = max(v["frames"] for v in cm["effects"].values())
+    out = Image.new("RGBA", (ncol * 48, nrows * 48), (0, 0, 0, 0))
+    for i, (k, v) in enumerate(sorted(cm["effects"].items(), key=lambda kv: kv[1]["row"])):
+        fl = []
+        for j, f in enumerate(v["frame_list"]):
+            out.paste(src.crop((f["x"], f["y"], f["x"] + f["w"], f["y"] + f["h"])), (j * 48 + 24 - c // 2, i * 48 + 48 - c))
+            fl.append({"x": j * 48, "y": i * 48, "w": 48, "h": 48})
+        v.update(row=i, frame_list=fl, pivot=[24, 47])
+    tmp = root / "_critters48.png"; out.save(tmp)
+    return tmp, {**cm, "cell": 48, "size": [out.size[0], out.size[1]]}
+
+
+def install_verdant_heart(areas=AREAS):
+    """Stage 6.4: the Verdant Heart art pack (art/verdant_heart/, Art bot 2026-10-06) for the Rotwood Hollow and the
+    Verdant Heart: rot treant / spore elemental + the three big foes (Regent 5.5x, Thornmother 2.4x, Hjortur 6x) ride
+    in their own sheets (drop-in boss_sheet output); verdant_fx + the glow-frog critters join the area's gamefx atlas.
+    The kit pieces build through tools/kit/kit_verdant_heart.py."""
+    P = GAME / "art" / "verdant_heart"
+    n = 0
+    for a in areas:
+        if a not in VERDANT_AREAS:
+            continue
+        root = GAME / "areas" / a
+        scene = json.loads((root / "scene.json").read_text())
+        sp = root / scene["atlas"]["json"]
+        am = json.loads(sp.read_text())
+        for sheet, roles in VERDANT_SHEETS.items():
+            sj = json.loads((P / "sprite" / f"{sheet}.json").read_text())
+            shutil.copy2(P / "sprite" / f"{sheet}.png", sp.parent / f"{sheet}.png")
+            (sp.parent / f"{sheet}.json").write_text(json.dumps(sj, indent=1))
+            am.setdefault("sheets", {})[sheet] = {"json": f"{sheet}.json", "image": f"{sheet}.png"}
+            for r in roles:
+                rd = sj["roles"][r]
+                am["roles"][r] = {"sheet": sheet, "row": rd["row"], "kind": "enemy", "enemy": True, "anims": rd.get("anims", ["idle", "walk", "attack", "die"]),
+                                  **({"boss": True, "scale": rd["scale"], "frame": sj["frame"]} if rd.get("boss") else {})}
+        sp.write_text(json.dumps(am, indent=1))
+        jp = root / scene["gamefx"]["json"]; ip = root / scene["gamefx"]["image"]
+        m = json.loads(jp.read_text())
+        vfx = json.loads((P / "gamefx" / "verdant_fx.json").read_text())
+        # spore_motes stays out: its motes are too sparse for check-scene's gamefx_sharp to measure (unverified = fail);
+        # nothing places it yet (the Regent's spore fog uses glow_mist_violet). Same call as old_temple's faceless_gaze.
+        vfx = {**vfx, "effects": {k: v for k, v in vfx["effects"].items() if k != "spore_motes"}}
+        m = _append_atlas(ip, m, P / "gamefx" / "verdant_fx.png", vfx, "effects", mark="verdant_fx_from")
+        cp, cm = _critters48(P, root)   # the glow frogs come in 24 px cells: re-seat them in 48 px cells (same pixels, frog at the bottom centre)
+        m = _append_atlas(ip, m, cp, cm, "effects", mark="verdant_critters_from")
+        for v in m["effects"].values():
+            v.pop("strip", None)
+        jp.write_text(json.dumps(m, indent=1)); (root / "_critters48.png").unlink()
+        n += 1
+    print(f"verdant heart: {len(VERDANT_SHEETS)} sheets + verdant fx / critters in {n} areas")
+
+
 ZIP_SKIP = ("areas/src", "tests/shots", "shots", "__pycache__")
 
 
@@ -331,10 +486,15 @@ if __name__ == "__main__":
     ap = argparse.ArgumentParser()
     ap.add_argument("--no-zip", action="store_true")
     ap.add_argument("--skip-assemble", action="store_true")
+    ap.add_argument("--areas", default=None, help="comma list: rebuild only these areas (the others stay as built)")
     a = ap.parse_args()
+    only = a.areas.split(",") if a.areas else AREAS
     if not a.skip_assemble:
-        assemble()
-    copy_areas()
+        assemble(only)
+    copy_areas(only)
+    install_pets(only)
+    install_old_temple(only)
+    install_verdant_heart(only)
     draw_icons()
     draw_button_icons()
     write_pwa()

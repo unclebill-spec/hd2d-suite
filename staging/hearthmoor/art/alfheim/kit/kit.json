@@ -1,0 +1,572 @@
+{
+ "tool": "hd2d kit",
+ "biome": "cozy-village",
+ "seed": 1,
+ "sprite_height_m": 1.8,
+ "pieces": {
+  "lumen_tree": {
+   "file": "lumen_tree.glb",
+   "kind": "prop",
+   "tris": 3156,
+   "size": [
+    3.2,
+    5.0,
+    2.4
+   ],
+   "markers": {
+    "lamps": [
+     [
+      0,
+      3.0,
+      0.6
+     ]
+    ],
+    "chimneys": [],
+    "windows": [],
+    "doors": [],
+    "lamp_color": "#a45cf0",
+    "lamp_range": 7.0,
+    "lamp_fixed": 0.55
+   },
+   "blockers": [
+    [
+     -0.35,
+     -0.35,
+     0.35,
+     0.35
+    ]
+   ],
+   "fx": [
+    "pool_violet",
+    "light_motes",
+    "glow_orb_violet",
+    "glow_orb_pink"
+   ],
+   "placement": "plaza corners, treetop walks; 4-6 m apart"
+  },
+  "lumen_tree_small": {
+   "file": "lumen_tree_small.glb",
+   "kind": "prop",
+   "tris": 3012,
+   "size": [
+    1.76,
+    2.75,
+    1.32
+   ],
+   "markers": {
+    "lamps": [
+     [
+      0,
+      1.6500000000000001,
+      0.33
+     ]
+    ],
+    "chimneys": [],
+    "windows": [],
+    "doors": [],
+    "lamp_color": "#a45cf0",
+    "lamp_range": 3.8500000000000005,
+    "lamp_fixed": 0.55
+   },
+   "blockers": [
+    [
+     -0.1925,
+     -0.1925,
+     0.1925,
+     0.1925
+    ]
+   ],
+   "fx": [
+    "pool_violet_small"
+   ],
+   "placement": "street + garden filler"
+  },
+  "lumen_lamp": {
+   "file": "lumen_lamp.glb",
+   "kind": "prop",
+   "tris": 216,
+   "size": [
+    0.7,
+    2.6,
+    0.5
+   ],
+   "markers": {
+    "lamps": [
+     [
+      0.44,
+      1.86,
+      0
+     ]
+    ],
+    "chimneys": [],
+    "windows": [],
+    "doors": [],
+    "lamp_color": "#a45cf0",
+    "lamp_range": 5.0,
+    "lamp_fixed": 0.5
+   },
+   "blockers": [
+    [
+     -0.2,
+     -0.2,
+     0.2,
+     0.2
+    ]
+   ],
+   "fx": [
+    "pool_violet_small"
+   ],
+   "placement": "every 5-6 m along streets and bridges"
+  },
+  "crystal_spire": {
+   "file": "crystal_spire.glb",
+   "kind": "prop",
+   "tris": 546,
+   "size": [
+    1.6,
+    3.2,
+    1.4
+   ],
+   "markers": {
+    "lamps": [
+     [
+      0,
+      1.6,
+      0.4
+     ]
+    ],
+    "chimneys": [],
+    "windows": [],
+    "doors": [],
+    "lamp_color": "#a45cf0",
+    "lamp_range": 5.5,
+    "lamp_fixed": 0.5
+   },
+   "blockers": [
+    [
+     -0.7,
+     -0.6,
+     0.7,
+     0.6
+    ]
+   ],
+   "fx": [
+    "pool_violet",
+    "prism_sparkle"
+   ],
+   "placement": "plaza waymarker / Prism Vault entrance"
+  },
+  "prism_fountain": {
+   "file": "prism_fountain.glb",
+   "kind": "prop",
+   "tris": 616,
+   "size": [
+    2.7,
+    2.6,
+    2.7
+   ],
+   "markers": {
+    "lamps": [
+     [
+      0,
+      1.0,
+      0.8
+     ]
+    ],
+    "chimneys": [],
+    "windows": [],
+    "doors": [],
+    "lamp_color": "#a45cf0",
+    "lamp_range": 6.0,
+    "lamp_fixed": 0.5
+   },
+   "blockers": [
+    [
+     -1.3,
+     -1.3,
+     1.3,
+     1.3
+    ]
+   ],
+   "fx": [
+    "pool_violet",
+    "fountain_sparkle",
+    "prism_sparkle"
+   ],
+   "placement": "plaza centre"
+  },
+  "elf_archway": {
+   "file": "elf_archway.glb",
+   "kind": "prop",
+   "tris": 1044,
+   "size": [
+    3.3,
+    3.8,
+    0.5
+   ],
+   "markers": {
+    "lamps": [
+     [
+      0,
+      3.0,
+      0.4
+     ]
+    ],
+    "chimneys": [],
+    "windows": [],
+    "doors": [],
+    "lamp_color": "#a45cf0",
+    "lamp_range": 5.0,
+    "lamp_fixed": 0.5
+   },
+   "blockers": [
+    [
+     -1.65,
+     -0.25,
+     -1.15,
+     0.25
+    ],
+    [
+     1.15,
+     -0.25,
+     1.65,
+     0.25
+    ]
+   ],
+   "fx": [
+    "pool_violet",
+    "prism_sparkle"
+   ],
+   "placement": "district gates, the Prism Vault door"
+  },
+  "wisp_lantern_post": {
+   "file": "wisp_lantern_post.glb",
+   "kind": "prop",
+   "tris": 276,
+   "size": [
+    0.8,
+    2.5,
+    0.4
+   ],
+   "markers": {
+    "lamps": [
+     [
+      0.5,
+      1.78,
+      0
+     ]
+    ],
+    "chimneys": [],
+    "windows": [],
+    "doors": [],
+    "lamp_color": "#2ab4ff",
+    "lamp_range": 4.5,
+    "lamp_fixed": 0.5
+   },
+   "blockers": [
+    [
+     -0.18,
+     -0.18,
+     0.18,
+     0.18
+    ]
+   ],
+   "fx": [
+    "pool_blue_small",
+    "wisp_blue"
+   ],
+   "placement": "wisp-catching meadow edges"
+  },
+  "light_bridge": {
+   "file": "light_bridge.glb",
+   "kind": "prop",
+   "tris": 632,
+   "size": [
+    4.0,
+    1.6,
+    1.7
+   ],
+   "markers": {
+    "lamps": [
+     [
+      0,
+      1.3,
+      0.8
+     ]
+    ],
+    "chimneys": [],
+    "windows": [],
+    "doors": [],
+    "lamp_color": "#a45cf0",
+    "lamp_range": 4.0,
+    "lamp_fixed": 0.5,
+    "walk_height_center": 0.6
+   },
+   "blockers": [],
+   "fx": [
+    "glow_mist_violet"
+   ],
+   "placement": "over glowing streams / between treetop platforms (deck ~0.6 m)"
+  },
+  "elf_rail": {
+   "file": "elf_rail.glb",
+   "kind": "prop",
+   "tris": 84,
+   "size": [
+    2.0,
+    1.0,
+    0.15
+   ],
+   "markers": {
+    "lamps": [],
+    "chimneys": [],
+    "windows": [],
+    "doors": []
+   },
+   "blockers": [
+    [
+     -1.0,
+     -0.08,
+     1.0,
+     0.08
+    ]
+   ],
+   "placement": "edges of terraces, bridges, treetop walks"
+  },
+  "lumen_pavilion": {
+   "file": "lumen_pavilion.glb",
+   "kind": "prop",
+   "tris": 692,
+   "size": [
+    3.3,
+    4.2,
+    3.3
+   ],
+   "markers": {
+    "lamps": [
+     [
+      0,
+      2.18,
+      0
+     ]
+    ],
+    "chimneys": [],
+    "windows": [],
+    "doors": [],
+    "lamp_color": "#a45cf0",
+    "lamp_range": 5.5,
+    "lamp_fixed": 0.5
+   },
+   "blockers": [
+    [
+     1.0491342951089924,
+     0.5549999999999999,
+     1.2891342951089921,
+     0.7949999999999999
+    ],
+    [
+     -0.11999999999999991,
+     1.23,
+     0.12000000000000008,
+     1.4700000000000002
+    ],
+    [
+     -1.2891342951089921,
+     0.5550000000000005,
+     -1.049134295108992,
+     0.7950000000000005
+    ],
+    [
+     -1.2891342951089926,
+     -0.7949999999999997,
+     -1.0491342951089924,
+     -0.5549999999999997
+    ],
+    [
+     -0.12000000000000025,
+     -1.4700000000000002,
+     0.11999999999999975,
+     -1.23
+    ],
+    [
+     1.0491342951089924,
+     -0.7949999999999996,
+     1.2891342951089926,
+     -0.5549999999999996
+    ]
+   ],
+   "fx": [
+    "pool_violet",
+    "glow_orb_violet"
+   ],
+   "placement": "gardens; the Wisp Night lantern fair"
+  },
+  "wisp_jar": {
+   "file": "wisp_jar.glb",
+   "kind": "prop",
+   "tris": 132,
+   "size": [
+    0.26,
+    0.36,
+    0.26
+   ],
+   "markers": {
+    "lamps": [
+     [
+      0,
+      0.13,
+      0.1
+     ]
+    ],
+    "chimneys": [],
+    "windows": [],
+    "doors": [],
+    "lamp_color": "#2ab4ff",
+    "lamp_range": 1.5,
+    "lamp_fixed": 0.5
+   },
+   "blockers": [],
+   "fx": [
+    "pool_blue_small"
+   ],
+   "placeable": true,
+   "placement": "shop counters, wisp-catching reward"
+  },
+  "vault_floor": {
+   "file": "vault_floor.glb",
+   "kind": "prop",
+   "tris": 116,
+   "size": [
+    2.0,
+    0.01,
+    2.0
+   ],
+   "markers": {
+    "lamps": [],
+    "chimneys": [],
+    "windows": [],
+    "doors": []
+   },
+   "blockers": [],
+   "placement": "Prism Vault floor grid (2 m)"
+  },
+  "vault_wall": {
+   "file": "vault_wall.glb",
+   "kind": "prop",
+   "tris": 636,
+   "size": [
+    2.0,
+    3.32,
+    0.56
+   ],
+   "markers": {
+    "lamps": [
+     [
+      0.4,
+      0.6,
+      0.6
+     ]
+    ],
+    "chimneys": [],
+    "windows": [],
+    "doors": [],
+    "lamp_color": "#a45cf0",
+    "lamp_range": 3.0,
+    "lamp_fixed": 0.4
+   },
+   "blockers": [
+    [
+     -1,
+     -0.25,
+     1,
+     0.25
+    ]
+   ],
+   "fx": [
+    "pool_violet_small"
+   ],
+   "placement": "Prism Vault walls (2 m modules)"
+  },
+  "vault_pillar": {
+   "file": "vault_pillar.glb",
+   "kind": "prop",
+   "tris": 308,
+   "size": [
+    0.8,
+    3.5,
+    0.8
+   ],
+   "markers": {
+    "lamps": [
+     [
+      0,
+      3.2,
+      0.3
+     ]
+    ],
+    "chimneys": [],
+    "windows": [],
+    "doors": [],
+    "lamp_color": "#a45cf0",
+    "lamp_range": 3.5,
+    "lamp_fixed": 0.5
+   },
+   "blockers": [
+    [
+     -0.4,
+     -0.4,
+     0.4,
+     0.4
+    ]
+   ],
+   "fx": [
+    "pool_violet_small",
+    "prism_sparkle"
+   ],
+   "placement": "Prism Vault halls, 4 m apart"
+  },
+  "sylvaine_throne": {
+   "file": "sylvaine_throne.glb",
+   "kind": "prop",
+   "tris": 408,
+   "size": [
+    3.4,
+    4.1,
+    2.4
+   ],
+   "markers": {
+    "lamps": [
+     [
+      0,
+      2.0,
+      -0.2
+     ]
+    ],
+    "chimneys": [],
+    "windows": [],
+    "doors": [],
+    "lamp_color": "#a45cf0",
+    "lamp_range": 6.5,
+    "lamp_fixed": 0.5,
+    "boss_stand": [
+     0,
+     0.6,
+     0.6
+    ]
+   },
+   "blockers": [
+    [
+     -1.7,
+     -1.3,
+     1.7,
+     1.1
+    ]
+   ],
+   "fx": [
+    "glow_mist_violet",
+    "pool_violet"
+   ],
+   "placement": "Prism Vault boss room, back wall centre; boss stands at boss_stand"
+  }
+ }
+}

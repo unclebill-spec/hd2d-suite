@@ -1,0 +1,120 @@
+{
+ "tool": "hmart icons (build.py draw_icons format)",
+ "biome": "cozy-village",
+ "cell": 16,
+ "image": "orb_lantern_icons.png",
+ "size": [
+  192,
+  16
+ ],
+ "icons": {
+  "orb_table_blue": {
+   "index": 0,
+   "x": 0,
+   "y": 0,
+   "w": 16,
+   "h": 16,
+   "piece": "orb_table_blue",
+   "name": "Blue Fish Orb (table)"
+  },
+  "orb_hanging_blue": {
+   "index": 1,
+   "x": 16,
+   "y": 0,
+   "w": 16,
+   "h": 16,
+   "piece": "orb_hanging_blue",
+   "name": "Blue Fish Orb (hanging)"
+  },
+  "orb_standing_blue": {
+   "index": 2,
+   "x": 32,
+   "y": 0,
+   "w": 16,
+   "h": 16,
+   "piece": "orb_standing_blue",
+   "name": "Blue Fish Orb (standing)"
+  },
+  "orb_garden_blue": {
+   "index": 3,
+   "x": 48,
+   "y": 0,
+   "w": 16,
+   "h": 16,
+   "piece": "orb_garden_blue",
+   "name": "Blue Fish Orb (garden)"
+  },
+  "orb_table_violet": {
+   "index": 4,
+   "x": 64,
+   "y": 0,
+   "w": 16,
+   "h": 16,
+   "piece": "orb_table_violet",
+   "name": "Violet Fish Orb (table)"
+  },
+  "orb_hanging_violet": {
+   "index": 5,
+   "x": 80,
+   "y": 0,
+   "w": 16,
+   "h": 16,
+   "piece": "orb_hanging_violet",
+   "name": "Violet Fish Orb (hanging)"
+  },
+  "orb_standing_violet": {
+   "index": 6,
+   "x": 96,
+   "y": 0,
+   "w": 16,
+   "h": 16,
+   "piece": "orb_standing_violet",
+   "name": "Violet Fish Orb (standing)"
+  },
+  "orb_garden_violet": {
+   "index": 7,
+   "x": 112,
+   "y": 0,
+   "w": 16,
+   "h": 16,
+   "piece": "orb_garden_violet",
+   "name": "Violet Fish Orb (garden)"
+  },
+  "orb_table_red": {
+   "index": 8,
+   "x": 128,
+   "y": 0,
+   "w": 16,
+   "h": 16,
+   "piece": "orb_table_red",
+   "name": "Red Fish Orb (table)"
+  },
+  "orb_hanging_red": {
+   "index": 9,
+   "x": 144,
+   "y": 0,
+   "w": 16,
+   "h": 16,
+   "piece": "orb_hanging_red",
+   "name": "Red Fish Orb (hanging)"
+  },
+  "orb_standing_red": {
+   "index": 10,
+   "x": 160,
+   "y": 0,
+   "w": 16,
+   "h": 16,
+   "piece": "orb_standing_red",
+   "name": "Red Fish Orb (standing)"
+  },
+  "orb_garden_red": {
+   "index": 11,
+   "x": 176,
+   "y": 0,
+   "w": 16,
+   "h": 16,
+   "piece": "orb_garden_red",
+   "name": "Red Fish Orb (garden)"
+  }
+ }
+}

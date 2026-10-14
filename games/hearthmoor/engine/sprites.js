@@ -94,12 +94,12 @@ export class Actors {
     this.aw = atlasImage.width; this.ah = atlasImage.height;
     this.fw = meta.frame[0]; this.fh = meta.frame[1];
     this.heightM = 1.8;
-    this.main = { name: 'main', tex, aw: this.aw, ah: this.ah, fw: this.fw, fh: this.fh, pivot: meta.pivot, meta };
+    this.main = { name: 'main', tex, aw: this.aw, ah: this.ah, fw: this.fw, fh: this.fh, pivot: meta.pivot, meta, anims: meta.anims };
     this.sheets = { main: this.main };
     for (const [n, sh] of Object.entries(sheets || {})) {
       const m = sh.meta;
       this.sheets[n] = { name: n, tex: mk(sh.image), aw: sh.image.width, ah: sh.image.height, fw: m.frame[0], fh: m.frame[1],
-        pivot: m.pivot, meta: m, path: sh.path };
+        pivot: m.pivot, meta: m, path: sh.path, anims: { ...meta.anims, ...(m.anims || {}) } };   // a sheet may add anims (pets: follow)
     }
     this.k = 3;
     this._v = new THREE.Vector3(); this._w = new THREE.Vector3();
@@ -162,7 +162,7 @@ export class Actors {
     const a = {
       id: spec.id || spec.role, role: spec.role, roleRow: role.row, kind: role.kind,
       x: spec.pos[0], z: spec.pos[1], y: 0, facing: spec.facing || 'down', anim: 'idle', t: Math.random() * 3,
-      frame: 0, mat, quad, caster, ctex, speed: spec.speed || (isCreature ? 1.7 : 2.2), say: spec.say || null,
+      frame: 0, mat, quad, caster, ctex, speed: spec.speed || (isCreature ? 1.7 : 2.2), say: spec.say || null, talkable: !!spec.talkable,
       behavior: spec.behavior || 'idle', home: [spec.pos[0], spec.pos[1]], radius: spec.radius || 2.5,
       target: null, wait: 1 + Math.random() * 2, shade: 0, shadeTarget: 0, tint: new THREE.Color(1, 1, 1),
       blinkAt: 2 + Math.random() * 4, idleTurn: spec.turn !== false, r: isCreature ? 0.22 : 0.28, rect: null,
@@ -195,7 +195,7 @@ export class Actors {
 
   frameOrigin(a) {
     const fi = FACINGS.indexOf(a.facing);
-    const anims = this.meta.anims;
+    const anims = (a.S || this.main).anims || this.meta.anims;
     const has = a.anims ? a.anims.includes(a.anim) : true;   // roles without the anim fall back to idle columns
     const col = ((has && anims[a.anim]) || anims.idle).start + (has ? a.frame : Math.min(a.frame, 3));
     const S = a.S || this.main;
@@ -260,7 +260,7 @@ export class Actors {
   }
 
   animate(a, dt, moving) {
-    const anims = this.meta.anims;
+    const anims = (a.S || this.main).anims || this.meta.anims;
     const prev = a.anim;
     if (a.act && this._actStep(a, dt)) return;
     if (a.castT > 0) {
@@ -273,10 +273,13 @@ export class Actors {
         return;
       }
     }
-    a.anim = moving ? 'walk' : 'idle';
+    // a follower that has fallen behind (a.hurry, set by behavior 'follow') uses its catch-up gait if its sheet has one
+    a.anim = moving ? (a.hurry && anims.follow && a.anims.includes('follow') ? 'follow' : 'walk') : 'idle';
     if (prev !== a.anim) a.t = 0;
     a.t += dt;
-    if (a.anim === 'walk') {
+    if (a.anim === 'follow') {
+      a.frame = Math.floor(a.t * (anims.follow.fps || 10)) % (anims.follow.count || 4);
+    } else if (a.anim === 'walk') {
       a.frame = Math.floor(a.t * anims.walk.fps * (a.running ? 1.4 : 1)) % 4;
     } else {
       const loop = anims.idle.loop || [0, 1, 2, 1];

@@ -30,12 +30,13 @@ export class Hollows {
   }
   drink() {
     const G = this.G, C = G.combat, S = G.S, ctx = this.ctx;
-    S.hp = C.maxHp(); C.st = C.maxSt(); this.buffT = SPRING.buff; this.springCd = SPRING.cd;
+    const extra = (C.M && C.M.springBuff) || 0;   // the moss-pup's Forager's Nose: a longer spring-fizz
+    S.hp = C.maxHp(); C.st = C.maxSt(); this.buffT = SPRING.buff + extra; this.springCd = SPRING.cd;
     S.found.spring = 1;
     const sec = this.spring && this.spring.secret;   // Ravenhold's hidden spring: a first find is a secret (Gnome Council merit)
     if (sec && !S.found[sec]) { S.found[sec] = 1; G.factions && G.factions.onSecret(); }
     if (ctx.effects) ctx.effects.spawn('healing_petals', ctx.player.x, ctx.player.y, ctx.player.z + 0.05);
-    G.toast && G.toast(`The spring fizzes through you: healed, and spring-fizz for ${SPRING.buff} s (+15% damage, faster stamina)`, 3.2);
+    G.toast && G.toast(`The spring fizzes through you: healed, and spring-fizz for ${SPRING.buff + extra} s (+15% damage, faster stamina)`, 3.2);
     G.audio && G.audio.sfx('quest');
   }
   buffOn() { return this.buffT > 0; }
@@ -68,17 +69,50 @@ export class Hollows {
     for (const q of this.braziers) {
       if (Math.hypot(x - q.pos[0], z - q.pos[1]) > BRAZIER.reach) continue;
       q.flare = BRAZIER.flare;
+      if (!q.lit && q.temple && !(this.G.S.flags || {}).tm_wick) {   // the Old Temple's stair braziers want a warden's flame (6.3)
+        q.flare = 0;
+        if (!this.nagT || this.nagT < performance.now()) { this.nagT = performance.now() + 4000; this.G.toast && this.G.toast('The brazier won\'t catch. It wants a warden\'s flame.', 2.4); }
+        continue;
+      }
       if (!q.lit) {
         q.lit = true; this.G.S.found[q.id] = 1;
+        if (q.temple) {   // 'Keeper of the Gate': feed the charm's seedling flame at three stair braziers
+          const n = this.braziers.filter((b) => b.temple && b.lit).length;
+          this.G.toast && this.G.toast(n >= 3 ? 'Three blue braziers burn on the stair. The charm is bright enough to read by.'
+                                              : `Stair brazier lit (${n}/3). The charm's flame leans toward it, then grows.`, 2.8);
+          if (n === 1) this.templeWraiths();
+          this.G.refreshMarkers && this.G.refreshMarkers(); this.G.drawLog && this.G.drawLog();
+          this.G.audio && this.G.audio.sfx('spell');
+          continue;
+        }
+        if (q.den) {   // the Stray Den's yard lanterns ('Strays of the Rift'): they stay lit at every hour
+          const n = this.braziers.filter((b) => b.den && b.lit).length;
+          this.G.toast && this.G.toast(n >= 3 ? 'Three blue lanterns burn in the Den yard. Tiny eyes shine under the floor.'
+                                              : `Den lantern lit (${n}/3). Something small sneezes under the floorboards.`, 2.8);
+          this.G.refreshMarkers && this.G.refreshMarkers(); this.G.drawLog && this.G.drawLog();
+        } else
         this.G.toast && this.G.toast('The cold-fire brazier catches! It will burn through the dark hours.', 2.6);
         this.G.audio && this.G.audio.sfx('spell');
       }
     }
   }
+  // two wraiths slip out of the dark inner court when the first stair brazier catches (a normal spawn; it cannot fail)
+  templeWraiths() {
+    const G = this.G; if (!G.combat || !this.ctx) return;
+    for (const [k, pos] of [[0, [-1.2, -7.6]], [1, [1.4, -7.4]]]) {
+      const e = G.combat.spawnEnemy({ id: `tm_wraith_${k}`, role: 'wraith', pos, once: true }, true);
+      if (e && !G.peace) e.state = 'chase';
+    }
+  }
   onCast() { const p = this.ctx && this.ctx.player; if (p) this.spellAt(p.x, p.z); }   // casting beside a brazier lights it too
   burnOn(q) {
     const ctx = this.ctx, still = !!this.G.qaStill, [x, z] = q.pos, y = ctx.heightAt(x, z);
-    if (ctx.effects) {
+    const gx = q.temple && ctx.gamefx && ctx.gamefx.meta.effects.temple_coldfire ? ctx.gamefx : null;
+    if (gx) {   // the Old Temple's stair braziers: the pack's temple cold fire + wide pool (art/old_temple)
+      q.gfx = [gx.spawn('temple_coldfire', x, y - 0.1, z + 0.05, { duration: Infinity, ...(still ? {} : { fadeIn: 0.3 }) }),
+               gx.spawn('coldfire_pool_wide', x, y, z + 0.5, { duration: Infinity, ...(still ? {} : { fadeIn: 0.6 }) })];
+      if (ctx.effects) q.fx.push(ctx.effects.spawn('coldfire_motes', x + 0.05, y + 1.1, z + 0.06, { duration: 1e9, ...(still ? { frame: 3 } : {}) }));
+    } else if (ctx.effects) {
       q.fx.push(ctx.effects.spawn('coldfire_flame', x, y + 0.86, z + 0.04, { duration: 1e9, fadeIn: still ? 0 : 0.3, ...(still ? { frame: 1 } : {}) }));
       q.fx.push(ctx.effects.spawn('coldfire_motes', x + 0.05, y + 1.1, z + 0.06, { duration: 1e9, ...(still ? { frame: 3 } : {}) }));
       for (const [ox, oz] of [[0, 0.35], [-0.75, 0.15], [0.75, 0.2], [0, -0.45]]) {   // a wide neon-blue pool on the ground
@@ -91,6 +125,8 @@ export class Hollows {
   burnOff(q) {
     const fx = this.ctx.effects;
     for (const f of q.fx) if (f && fx) fx.remove(f);
+    for (const f of q.gfx || []) if (f && this.ctx.gamefx) this.ctx.gamefx.remove(f);
+    q.gfx = [];
     if (q.light) q.light.kill = true;
     q.fx = []; q.light = null; q.burning = false;
   }
@@ -125,7 +161,7 @@ export class Hollows {
     const dark = DARK(ctx.clock.t);
     for (const q of this.braziers) {
       if (q.flare > 0) q.flare -= dt;
-      const want = q.lit && (dark || q.flare > 0);
+      const want = q.lit && (dark || q.flare > 0 || q.den || (q.temple && (this.G.S.flags || {}).tm_altar));
       if (want && !q.burning) this.burnOn(q); else if (!want && q.burning) this.burnOff(q);
     }
     this.bounceStep(dt);

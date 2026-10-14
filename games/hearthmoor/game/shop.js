@@ -5,6 +5,7 @@ import * as LO from './loot.js';
 
 export const GOODS = {
   tonic: { name: 'Hearth tonic', about: 'Drink (U, right-stick click, or tap it in the bag): heals 60 HP.', price: 12 },
+  denbiscuit: { name: 'Den biscuit', about: "Signe's oat-and-moonpetal biscuit. Feed your pet once a day (hero screen, Gear tab, pet row): bond grows, and its glow doubles for 60 s.", price: 6 },
   glowseed: { name: 'Glow seed', about: 'A seed that hums in the dark. Plant it in a garden plot (on the lower street of Bakery Lane by the lamp post, or in the Hollows): it blooms in two days.', price: 8 },
 };
 // buy price of a piece of gear by rarity (sell-back is a quarter of it, always more than scrapping)
@@ -17,6 +18,8 @@ export const SHOPS = {
   night: { name: 'The Lantern Pack', keeper: 'Sefa, the night merchant', goods: ['tonic'], gems: ['rift_shard', 'golem_core', 'frost_core', 'moon_opal'],
            gear: { n: 2, rar: [2, 3], sockets: 1 }, sellMul: 1.2 },
   // Ravenhold Harbor: Ida Wickmere's chandlery on the quay (cold-fire, rope, tonics; a rift shard when the boats bring one)
+  // Bifrost Crossing: Signe Larkspur's Stray Den (biscuits only; unlocked by 'Strays of the Rift')
+  den: { name: 'The Stray Den', keeper: 'Signe Larkspur, keeper of the Stray Den', goods: ['denbiscuit'], gear: { n: 0, rar: [] }, sellMul: 1 },
   harbor: { name: "Wickmere's Chandlery", keeper: 'Ida Wickmere, cold-fire chandler', goods: ['tonic', 'glowseed'], gems: ['rift_shard'],
             gear: { n: 3, rar: [0, 1, 1] }, sellMul: 1.1 },
 };
@@ -243,7 +246,17 @@ const GOOD_PX = {
   glowseed: ['................', '.......5........', '......66.5......', '.....6..6.......', '.......66.......', '.......6........', '......777.......', '.....77887......',
              '....7788887.....', '....7888887.....', '....7888877..5..', '.....78877......', '......777.......', '..5.............', '................', '................'],
 };
-const GOOD_COL = { 1: '#c4d8e4', 2: '#fff8e6', 3: '#9a6a3c', 4: '#e47c8c', 5: '#f2c24a', 6: '#b2c464', 7: '#6a4428', 8: '#a8743e' };
+GOOD_PX.denbiscuit = ['................', '................', '.....222222.....', '....28888882....', '...2885888582...', '...2888888882...', '...2858888882...',
+  '...2888885882...', '...2888888882...', '...2885888582...', '....28888882....', '.....222222.....', '................', '.......5........', '................', '................'];
+// Stage 6.3 key items: the relief basket (blue cloth, a loaf), the Hearth writ (cream paper, red seal), the lantern charm (brass, blue flame)
+GOOD_PX.reliefbasket = ['................', '................', '......3333......', '.....3....3.....', '....3......3....', '...33333333333..', '..3cccccccccc3..', '..3ccc22cccccc3.',
+  '..33333333333...', '..3a3a3a3a3a3...', '..33333333333...', '..3a3a3a3a3a3...', '...333333333....', '................', '................', '................'];
+GOOD_PX.hearthwrit = ['................', '................', '...2222222222...', '...2bbbbbbbb2...', '...2b222222b2...', '...2bbbbbbbb2...', '...2b2222bbb2...', '...2bbbbbbbb2...',
+  '...2bbb44bbb2...', '...2bb4444bb2...', '...2bbb44bbb2...', '...2222222222...', '.......44.......', '......4..4......', '................', '................'];
+GOOD_PX.heartwood = ['................', '................', '....77777777....', '...7333333337...', '..733777733337..', '..737333337337..', '..733377733337..', '..7333333c3337..', '..73377733c337..', '..733333333337..', '..737777733337..', '...7333333337...', '....77777777....', '................', '................', '................'];   // 6.4: the Regent's heartwood slab (rot-dark rings, a frost-blue fleck)
+GOOD_PX.alder_charm = ['.......3........', '......3.3.......', '.......3........', '.....33333......', '....3cccc3......', '....3c99c3......', '....3c99c3......', '....3cccc3......',
+  '.....33333......', '......333.......', '................', '................', '................', '................', '................', '................'];
+const GOOD_COL = { 9: '#94c0dc', a: '#f2c24a', b: '#f6ecd2', c: '#3e5a8c', 1: '#c4d8e4', 2: '#fff8e6', 3: '#9a6a3c', 4: '#e47c8c', 5: '#f2c24a', 6: '#b2c464', 7: '#6a4428', 8: '#a8743e' };
 export function goodIcon(id, scale = 2) {
   const rows = GOOD_PX[id] || GOOD_PX.tonic;
   const cv = document.createElement('canvas'); cv.width = 16 * scale; cv.height = 16 * scale;

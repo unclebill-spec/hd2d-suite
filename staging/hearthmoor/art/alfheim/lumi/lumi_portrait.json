@@ -1,0 +1,84 @@
+{
+ "tool": "hearthmoor-art lumi_gen (portrait)",
+ "image": "lumi_portrait.png",
+ "image_2x": "lumi_portrait_2x.png",
+ "image_lock_safe": "lumi_portrait_safe.png",
+ "cell": [
+  33,
+  33
+ ],
+ "canvas": "#dlgFace 66x66, draw a cell at integer 2x",
+ "expressions": [
+  {
+   "name": "neutral",
+   "x": 0,
+   "y": 0,
+   "w": 33,
+   "h": 33
+  },
+  {
+   "name": "talk_a",
+   "x": 33,
+   "y": 0,
+   "w": 33,
+   "h": 33
+  },
+  {
+   "name": "talk_b",
+   "x": 66,
+   "y": 0,
+   "w": 33,
+   "h": 33
+  },
+  {
+   "name": "blink",
+   "x": 99,
+   "y": 0,
+   "w": 33,
+   "h": 33
+  },
+  {
+   "name": "happy",
+   "x": 132,
+   "y": 0,
+   "w": 33,
+   "h": 33
+  },
+  {
+   "name": "worried",
+   "x": 165,
+   "y": 0,
+   "w": 33,
+   "h": 33
+  },
+  {
+   "name": "surprised",
+   "x": 198,
+   "y": 0,
+   "w": 33,
+   "h": 33
+  }
+ ],
+ "talk_loop": {
+  "frames": [
+   "talk_a",
+   "talk_b",
+   "talk_a",
+   "neutral"
+  ],
+  "fps": 8
+ },
+ "blink": {
+  "frame": "blink",
+  "every_s": [
+   2.5,
+   5.0
+  ]
+ },
+ "mood_map": {
+  "neutral": "neutral",
+  "happy": "happy",
+  "worried": "worried",
+  "surprised": "surprised"
+ }
+}

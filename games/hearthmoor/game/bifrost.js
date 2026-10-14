@@ -13,7 +13,8 @@ export const GATES = {
   muspelheim: ['A red glow beats behind the seal like embers under ash. Muspelheim is no friend to mortals: the Guild sends only proven Gate Runners through, and they go armed.', ['gate', 2]],
   svartalfheim: ['Copper light glows behind the seal like a forge through a keyhole. The dwarves forge this key under the mountain, and only for those the Gnome Council vouches for.', ['gnome', 2]],
   niflheim: ['Cold-fire flickers blue under a skin of ice. Niflheim is Veyra\'s home, and she has frozen this gate from the inside. No key opens it yet.', null],
-  midgard: ['Rainbow light runs round the seal. This is Midgard\'s own gate: its far side is the Old Temple\'s Rift-gate in Ravenhold, dark and sealed. Until the Temple is relit, mortals cross by Corsair skiff.', ['hearth', 2]],
+  // 6.3: the relight alone opens it (Decision 1, option A); temple.js moves it into the portals once S.flags.temple_lit
+  midgard: ['Rainbow light runs round the seal. Its far side is the Old Temple\'s Rift-gate in Ravenhold, dark and cold. Until the Temple is relit, mortals cross by Corsair skiff.', 'temple'],
 };
 
 export class Crossing {
@@ -28,6 +29,7 @@ export class Crossing {
   pages(g) {
     const G = this.G, row = GATES[g.arch]; if (!row) return ['The gate is sealed.'];
     const [why, need] = row, out = [why];
+    if (need === 'temple') { out.push('Key: relight the Old Temple\'s flame (Order of the Hearth). Ask Warden Hilde in Hearthmoor.'); return out; }
     if (!need) { out.push('The Guild has no key for this one. Coming soon.'); return out; }
     const [fid, r] = need, Fc = FACTIONS[fid], have = G.factions.rank(fid), m = (G.S.merit || {})[fid] || 0;
     out.push(`Key: ${Fc.name} at ${RANKS[r]} ("${Fc.titles[r]}", ${NEED[r]} ${Fc.cur}). You: ${RANKS[have]}, ${m} ${Fc.cur}.`);

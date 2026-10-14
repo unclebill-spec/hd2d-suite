@@ -1,0 +1,200 @@
+{
+ "tool": "hd2d texel",
+ "biome": "cozy-village",
+ "seed": 1,
+ "sizes": [
+  32,
+  64
+ ],
+ "metres": {
+  "cobble": 1.6,
+  "brick": 1.6,
+  "timber": 1.6,
+  "thatch": 2.0,
+  "plaster": 2.0,
+  "moss": 2.0,
+  "roof": 1.6,
+  "dirt": 2.4,
+  "grass": 2.4,
+  "stone": 2.4,
+  "awning": 1.0
+ },
+ "textures": {
+  "cobble_32": {
+   "file": "cobble_32.png",
+   "kind": "cobble",
+   "size": 32,
+   "colors": 5,
+   "metres": 1.6,
+   "seam": 1.03
+  },
+  "brick_32": {
+   "file": "brick_32.png",
+   "kind": "brick",
+   "size": 32,
+   "colors": 4,
+   "metres": 1.6,
+   "seam": 1.66
+  },
+  "timber_32": {
+   "file": "timber_32.png",
+   "kind": "timber",
+   "size": 32,
+   "colors": 4,
+   "metres": 1.6,
+   "seam": 2.14
+  },
+  "thatch_32": {
+   "file": "thatch_32.png",
+   "kind": "thatch",
+   "size": 32,
+   "colors": 4,
+   "metres": 2.0,
+   "seam": 1.17
+  },
+  "plaster_32": {
+   "file": "plaster_32.png",
+   "kind": "plaster",
+   "size": 32,
+   "colors": 3,
+   "metres": 2.0,
+   "seam": 1.7
+  },
+  "moss_32": {
+   "file": "moss_32.png",
+   "kind": "moss",
+   "size": 32,
+   "colors": 4,
+   "metres": 2.0,
+   "seam": 1.1
+  },
+  "roof_32": {
+   "file": "roof_32.png",
+   "kind": "roof",
+   "size": 32,
+   "colors": 5,
+   "metres": 1.6,
+   "seam": 0.93
+  },
+  "dirt_32": {
+   "file": "dirt_32.png",
+   "kind": "dirt",
+   "size": 32,
+   "colors": 5,
+   "metres": 2.4,
+   "seam": 0.77
+  },
+  "grass_32": {
+   "file": "grass_32.png",
+   "kind": "grass",
+   "size": 32,
+   "colors": 5,
+   "metres": 2.4,
+   "seam": 1.04
+  },
+  "stone_32": {
+   "file": "stone_32.png",
+   "kind": "stone",
+   "size": 32,
+   "colors": 5,
+   "metres": 2.4,
+   "seam": 2.77
+  },
+  "awning_32": {
+   "file": "awning_32.png",
+   "kind": "awning",
+   "size": 32,
+   "colors": 5,
+   "metres": 1.0,
+   "seam": 10.33
+  },
+  "cobble_64": {
+   "file": "cobble_64.png",
+   "kind": "cobble",
+   "size": 64,
+   "colors": 5,
+   "metres": 1.6,
+   "seam": 1.07
+  },
+  "brick_64": {
+   "file": "brick_64.png",
+   "kind": "brick",
+   "size": 64,
+   "colors": 4,
+   "metres": 1.6,
+   "seam": 3.19
+  },
+  "timber_64": {
+   "file": "timber_64.png",
+   "kind": "timber",
+   "size": 64,
+   "colors": 4,
+   "metres": 1.6,
+   "seam": 2.41
+  },
+  "thatch_64": {
+   "file": "thatch_64.png",
+   "kind": "thatch",
+   "size": 64,
+   "colors": 4,
+   "metres": 2.0,
+   "seam": 0.97
+  },
+  "plaster_64": {
+   "file": "plaster_64.png",
+   "kind": "plaster",
+   "size": 64,
+   "colors": 3,
+   "metres": 2.0,
+   "seam": 0.46
+  },
+  "moss_64": {
+   "file": "moss_64.png",
+   "kind": "moss",
+   "size": 64,
+   "colors": 4,
+   "metres": 2.0,
+   "seam": 0.06
+  },
+  "roof_64": {
+   "file": "roof_64.png",
+   "kind": "roof",
+   "size": 64,
+   "colors": 5,
+   "metres": 1.6,
+   "seam": 3.09
+  },
+  "dirt_64": {
+   "file": "dirt_64.png",
+   "kind": "dirt",
+   "size": 64,
+   "colors": 5,
+   "metres": 2.4,
+   "seam": 0.45
+  },
+  "grass_64": {
+   "file": "grass_64.png",
+   "kind": "grass",
+   "size": 64,
+   "colors": 5,
+   "metres": 2.4,
+   "seam": 0.64
+  },
+  "stone_64": {
+   "file": "stone_64.png",
+   "kind": "stone",
+   "size": 64,
+   "colors": 5,
+   "metres": 2.4,
+   "seam": 5.79
+  },
+  "awning_64": {
+   "file": "awning_64.png",
+   "kind": "awning",
+   "size": 64,
+   "colors": 5,
+   "metres": 1.0,
+   "seam": 21.0
+  }
+ }
+}

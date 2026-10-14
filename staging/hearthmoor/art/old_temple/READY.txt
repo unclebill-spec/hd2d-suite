@@ -1,0 +1,2 @@
+old_temple: READY (2026-10-05, Hearthmoor Art seat)
+See README.md + contact_sheet.png. NPC atlas passes check-sprite; kit .glb + kit.json; gamefx old_temple_fx (48 px).

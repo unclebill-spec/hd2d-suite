@@ -52,7 +52,7 @@ export const ENEMIES = {
   // Lantern Eve's wraith (the opening fight, Plaza): the wraith sprite, not light-shy (it fights under the lanterns), gentler
   evewraith: { name: 'Rift wraith', hp: 30, dmg: 5, speed: 1.5, reach: 5.0, keep: 2.6, windup: 0.7, cd: 2.8, aggro: 14, r: 0.26, push: 0.5, ranged: true, float: true },
   // stage 3: a frost golem (its slam chills: drains stamina), a skeleton mage (arcane bolts from range), and
-  // Mossheart, the Mossglen mini-boss (every third slam is a rune shockwave; always drops a Legendary)
+  // Glenheart (was Mossheart), the Mossglen mini-boss (every third slam is a rune shockwave; always drops a Legendary)
   icegolem: { name: 'Frost golem', hp: 140, dmg: 15, speed: 1.0, reach: 1.6, windup: 0.66, cd: 2.0, aggro: 5.5, r: 0.36, push: 0.2, heavy: true, slam: true, chill: 18 },
   skelmage: { name: 'Skeleton mage', hp: 52, dmg: 11, speed: 1.7, reach: 6.5, keep: 3.8, windup: 0.6, cd: 2.5, aggro: 7.0, r: 0.28, push: 0.5, ranged: true, bolt: 'bolt' },
   // stage 4 (Vanaheim, Mossbrook Springs): spore elementals lob spore pods from range and drift over the moss; moss
@@ -63,8 +63,22 @@ export const ENEMIES = {
   // scale: figure height in hero heights (style lock: mini-boss / rare ~2.5x, boss 5x+). The art is drawn natively on its
   // own boss sheet (tools/sprite/boss_sheet.py, area spec boss_roles); hitbox r, reach, wave ring, light and nav
   // clearance below are authored for that size, and combat.js scales the slam dust / telegraph / light by `scale`
-  eldergolem: { name: 'Mossheart, the Elder Golem', scale: 2.5, hp: 460, dmg: 22, speed: 1.0, reach: 3.0, windup: 0.78, cd: 2.0, aggro: 7.5, r: 0.8, push: 0.15, heavy: true, slam: true,
+  eldergolem: { name: 'Glenheart, the Elder Golem',   // renamed (6.4: 'Mossheart' is Vanaheim's legendary staff); id unchanged for saves
+                scale: 2.5, hp: 460, dmg: 22, speed: 1.0, reach: 3.0, windup: 0.78, cd: 2.0, aggro: 7.5, r: 0.8, push: 0.15, heavy: true, slam: true,
                 boss: true, wave: { every: 3, r: 4.2, dmg: 16 }, respawn: 600, legendary: true, glow: '#f2a63a' },
+  // Stage 6.4 (verdant_heart.md 7.x; Art bot's verdant_heart pack). Dungeon regulars + the three big foes (own sheets)
+  rottreant: { name: 'Rot treant', hp: 120, dmg: 14, speed: 1.0, reach: 1.5, windup: 0.62, cd: 1.9, aggro: 5.5, r: 0.34, push: 0.25, heavy: true, slam: true },
+  sporeelemental: { name: 'Spore elemental (Rotwood)', hp: 55, dmg: 10, speed: 1.4, reach: 6.0, keep: 3.4, windup: 0.55, cd: 2.3, aggro: 6.5, r: 0.28, push: 0.6, ranged: true, float: true, bolt: 'seed_bomb' },
+  blightregent: { name: 'The Blight Regent', scale: 5.5, hp: 1400, dmg: 26, speed: 0.8, reach: 4.5, windup: 0.85, cd: 2.2, aggro: 9, r: 1.6,
+                  push: 0.1, heavy: true, slam: true, boss: true, wave: { every: 3, r: 6.0, dmg: 20 }, minion: 'sporeling',
+                  phases: [0.6, 0.25], weak: 'spike', glow: '#a45cf0', legendary: true, respawn: 1e9 },
+  thornmother: { name: 'The Thornmother', scale: 2.4, hp: 520, dmg: 20, speed: 1.1, reach: 2.8, windup: 0.7, cd: 2.0, aggro: 7.5, r: 0.7, push: 0.2,
+                 heavy: true, boss: true, rare: true, glow: '#a45cf0', respawn: 1e9 },
+  hjortur: { name: 'Hjortur the Greenheart', scale: 6.0, hp: 1600, dmg: 24, speed: 1.1, reach: 4.8, windup: 0.9, cd: 2.3, aggro: 10, r: 1.7, push: 0.1,
+             heavy: true, slam: true, boss: true, wave: { every: 3, r: 6.0, dmg: 18 }, glow: '#5aec3c', respawn: 1e9,
+             trial: (S) => (((S.flags || {}).alliance || {}).vanaheim !== 'conquer') },   // befriend: the guardian trial (yields)
+  hjortur_corrupted: { name: 'Hjortur, corrupted', scale: 6.0, hp: 1700, dmg: 28, speed: 1.15, reach: 4.8, windup: 0.85, cd: 2.2, aggro: 10, r: 1.7, push: 0.1,
+                       heavy: true, slam: true, boss: true, wave: { every: 3, r: 6.0, dmg: 22 }, glow: '#a45cf0', legendary: true, respawn: 1e9 },
 };
 export const RESPAWN = 60;      // seconds before a defeated enemy wanders back
 export const LEASH = 12;        // metres from home before an enemy gives up and goes home
@@ -90,6 +104,17 @@ export const SPAWNS = {
     { id: 'sporeling_v1', role: 'sporeling', pos: [8.6, -2.2] },
     { id: 'sporeling_vnight', role: 'sporeling', pos: [3.6, 2.8], night: true },
     { id: 'mossgolem_v0', role: 'mossgolem', pos: [7.4, -5.0] },
+  ],  // 6.4 the Rotwood Hollow (R1 Leaf-Litter, R2 Toadstool Bridge, R3 root door, R4 Mire Gallery, R5 Larder guards)
+  rotwood: [
+    { id: 'rw_spore_1', role: 'sporeelemental', pos: [-21.5, 0.4] }, { id: 'rw_treant_1', role: 'rottreant', pos: [-19.5, 1.6] },
+    { id: 'rw_spore_2', role: 'sporeling', pos: [-10.9, -1.0] },
+    { id: 'rw_treant_3', role: 'rottreant', pos: [-3.5, 2.6] },
+    { id: 'rw_spore_4', role: 'sporeelemental', pos: [4.5, 0.6] }, { id: 'rw_golem_4', role: 'mossgolem', pos: [6.9, 2.2] },
+    { id: 'rw_treant_5', role: 'rottreant', pos: [12.5, 2.4] },
+  ],
+  // 6.4 the Verdant Heart (V3 Firefly Maze golem; the Thornmother and Hjortur rise by script in verdant.js)
+  verdant: [
+    { id: 'vh_golem_3', role: 'mossgolem', pos: [3.5, 1.0] },
   ],
 };
 

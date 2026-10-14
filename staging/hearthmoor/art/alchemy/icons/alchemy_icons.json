@@ -1,0 +1,121 @@
+{
+ "tool": "hmart icons (build.py draw_icons format)",
+ "biome": "cozy-village",
+ "cell": 16,
+ "image": "alchemy_icons.png",
+ "size": [
+  192,
+  16
+ ],
+ "icons": {
+  "potion_health": {
+   "index": 0,
+   "x": 0,
+   "y": 0,
+   "w": 16,
+   "h": 16,
+   "name": "Heartroot Tonic (health)",
+   "kind": "potion"
+  },
+  "potion_mana": {
+   "index": 1,
+   "x": 16,
+   "y": 0,
+   "w": 16,
+   "h": 16,
+   "name": "Moonwell Draught (mana)",
+   "kind": "potion"
+  },
+  "potion_stamina": {
+   "index": 2,
+   "x": 32,
+   "y": 0,
+   "w": 16,
+   "h": 16,
+   "name": "Hearthfire Brew (stamina)",
+   "kind": "potion"
+  },
+  "potion_nightsight": {
+   "index": 3,
+   "x": 48,
+   "y": 0,
+   "w": 16,
+   "h": 16,
+   "name": "Owl-Eye Elixir (night sight)",
+   "kind": "potion"
+  },
+  "potion_antidote": {
+   "index": 4,
+   "x": 64,
+   "y": 0,
+   "w": 16,
+   "h": 16,
+   "name": "Mossbalm (antidote)",
+   "kind": "potion"
+  },
+  "potion_coldfire": {
+   "index": 5,
+   "x": 80,
+   "y": 0,
+   "w": 16,
+   "h": 16,
+   "name": "Cold-Fire Phial (frost ward)",
+   "kind": "potion"
+  },
+  "bottle_empty": {
+   "index": 6,
+   "x": 96,
+   "y": 0,
+   "w": 16,
+   "h": 16,
+   "name": "Empty Bottle",
+   "kind": "container"
+  },
+  "ing_moonpetal": {
+   "index": 7,
+   "x": 112,
+   "y": 0,
+   "w": 16,
+   "h": 16,
+   "name": "Moonpetal",
+   "kind": "ingredient",
+   "note": "matches the game's moonpetal item icon"
+  },
+  "ing_red_toadstool": {
+   "index": 8,
+   "x": 128,
+   "y": 0,
+   "w": 16,
+   "h": 16,
+   "name": "Red Toadstool",
+   "kind": "ingredient"
+  },
+  "ing_herb_bundle": {
+   "index": 9,
+   "x": 144,
+   "y": 0,
+   "w": 16,
+   "h": 16,
+   "name": "Garden Herb Bundle",
+   "kind": "ingredient"
+  },
+  "ing_mint": {
+   "index": 10,
+   "x": 160,
+   "y": 0,
+   "w": 16,
+   "h": 16,
+   "name": "Garden Mint",
+   "kind": "ingredient"
+  },
+  "ing_sage": {
+   "index": 11,
+   "x": 176,
+   "y": 0,
+   "w": 16,
+   "h": 16,
+   "name": "Garden Sage",
+   "kind": "ingredient"
+  }
+ }
+}

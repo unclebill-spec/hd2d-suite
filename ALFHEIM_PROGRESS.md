@@ -33,6 +33,15 @@ Chunk 4 result (Oct 14, ~4:50 PM ET):
 - alf_art.py placement: props must sit inside a phone view box round the start spawn (+-6 m, 16 m deep) and never in a 2 m band in front of an actor/spawn. elf_archway moved to the Glimmer Steps. Checked by eye: /workspace/alf_qa/chunk4_after.png.
 - Lumi's sheet is now in every non-Alfheim area (alf_art.py lumi_only; run with no args). Wispwood now has a gamefx atlas (staging alfheim_fx) wired in scene.json.
 
+Merge with main (Oct 14, ~7:05 PM ET): origin/main 6ba785f (batch 1: pets, temple, rotwood, verdant, storms) merged into realm-alfheim with a merge commit (no rebase, no force-push).
+- Conflicts: 11 actors.json + sw.js took main's, then alf_art.py re-added the Lumi sheet everywhere and write_pwa() refreshed sw.js (1523 files).
+  CHANGELOG / check_sprite.py (NEON_PETS_ALLOW + ORB_NEON + LUMI_NEON_ALLOW) / kit.py (old_temple + verdant_heart + alfheim imports) are unions.
+  build.py AREAS = main's list + the 4 Alfheim areas. data.js = main's file + MARKER_HOOKS. game.js = main's lines + the alfheim import, AREAS_ALF, detach/attach/update hooks, and OWN_FACES next to main's sheetImage.
+- Checks: phone loads of the 4 Alfheim areas + plaza + verdant had no errors. verdant warns "no effect glow_mist_pink"; that comes from main's own verdant scene, not from this branch. smoke_alfheim PASS 8/8.
+  The prismvault check-scene (/workspace/alf_qa/cs5/) FAILS 2 of 10 checks: sprites_sharp, because the qa player at spawn (0,38) is partly covered (corr 0.69, cause not found yet), and grades, because the vault is dark by design (night 20.2 vs day 27.7 luma, no warm windows), so it needs a vault grade or a justified exception.
+  The other 8 checks pass, including gamefx_sharp and no_errors.
+- QA browser: /workspace/alf_qa/load.py now uses its own Chromium profile (/workspace/alf_qa/chrome-profile) under /workspace/.hm-logs/browser-mb.lock.
+
 NEXT (start here):
 - Fix the known layout issues above in the area specs (needs an assemble run into a private /tmp dir, then alf_art.py).
 - Run check-scene on prismvault (one area at a time, under flock).

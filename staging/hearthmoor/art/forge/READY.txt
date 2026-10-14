@@ -1,0 +1,2 @@
+forge: READY (2026-10-05, Hearthmoor Art seat)
+See README.md + contact_sheet.png. NPC atlas passes check-sprite; 7 kit pieces; gamefx forge_fx (48 px).

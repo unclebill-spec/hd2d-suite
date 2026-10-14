@@ -676,10 +676,16 @@ export async function boot(opts = {}) {
         }
       }
     } else if (a.behavior === 'follow') {
-      // a pet or friend tagging along: keep ~1.3 m behind the player, hop over when left far behind
-      const ex = player.x - a.x, ez = player.z - a.z, d = Math.hypot(ex, ez);
-      if (d > 7) { a.x = player.x - 0.8; a.z = player.z + 0.4; a.y = player.y; }
-      else if (d > 1.3) moving = moveActor(a, ex, ez, dt * (d > 3 ? 1.5 : 1));
+      // a pet or friend tagging along: keep ~followGap (1.3 m) behind the player. More than 3 m behind it hurries (the
+      // catch-up gait) and its speed scales with the gap (1.5x at 3 m up to 2.6x at 5.4 m), so it closes in even behind a
+      // running hero; past 7 m, or stuck on a blocker for 1.2 s while behind, it hops over to the hero's heel.
+      const ex = player.x - a.x, ez = player.z - a.z, d = Math.hypot(ex, ez), gap = a.followGap || 1.3;
+      a.hurry = d > 3;
+      if (d > 7 || (a.stuckT || 0) > 1.2) { a.x = player.x - 0.8; a.z = player.z + 0.4; a.y = player.y; a.stuckT = 0; }
+      else if (d > gap) {
+        moving = moveActor(a, ex, ez, dt * (d > 3 ? Math.min(2.6, 1.5 + (d - 3) * 0.45) : 1));
+        a.stuckT = moving ? 0 : (a.stuckT || 0) + dt;
+      } else a.stuckT = 0;
     } else if (a.behavior === 'caster' && a.spell) {
       a.castClock -= dt;
       if (a.castClock <= 0) { a.castClock = a.every; a.facing = a.castFacing || 'down'; castSpell(a, a.spell); }
@@ -848,7 +854,7 @@ export async function boot(opts = {}) {
     burst: (name, x, y, z, n) => particles && particles.burst(name, x, y, z, n),
     heightAt: (x, z) => (collide ? (collide.height(x, z) ?? 0) : 0),
     zoom: () => dist,
-    framePull: (f) => { pullTo = THREE.MathUtils.clamp(f || 1, 1, 1.6); }, pull: () => pull,
+    framePull: (f) => { pullTo = THREE.MathUtils.clamp(f || 1, 1, 2.0); }, pull: () => pull,   // pull up to 2x for 5-6x bosses (style lock boss scale)
     moveActor, act: (name, a, o) => actorAct(name, a || player, o || {}), release: (name, a) => actors.release(a || player, name),
     dodge, summon, playerCast, cycleSpell, selectSpell, spellIndex: () => spellIdx,
     setTimeScale: (s) => { timeScale = Math.max(0, Math.min(1, s)); }, timeScale: () => timeScale,

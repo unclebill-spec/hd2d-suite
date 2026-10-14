@@ -1,0 +1,685 @@
+{
+ "tool": "hd2d portal",
+ "biome": "cozy-village",
+ "seed": 104,
+ "image": "alchemy_fx.png",
+ "cell": 48,
+ "size": [
+  384,
+  480
+ ],
+ "cast_sets": {},
+ "cycle": [],
+ "effects": {
+  "cauldron_brew_blue": {
+   "row": 0,
+   "frames": 8,
+   "fps": 8,
+   "loop": true,
+   "loop_from": 0,
+   "loops": 1,
+   "kind": "billboard",
+   "pivot": [
+    24,
+    36
+   ],
+   "lift": 0.98,
+   "glow": true,
+   "light": {
+    "color": "#2ab4ff",
+    "intensity": 0.9,
+    "range": 4.5
+   },
+   "speed": null,
+   "travel": null,
+   "then": null,
+   "duration": 9999,
+   "strip": "strips/cauldron_brew_blue.png",
+   "frame_list": [
+    {
+     "x": 0,
+     "y": 0,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 48,
+     "y": 0,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 96,
+     "y": 0,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 144,
+     "y": 0,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 192,
+     "y": 0,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 240,
+     "y": 0,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 288,
+     "y": 0,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 336,
+     "y": 0,
+     "w": 48,
+     "h": 48
+    }
+   ],
+   "notes": "on cauldron_blue: pivot = centre of the brew surface (local [0, 0.98, 0])"
+  },
+  "cauldron_brew_violet": {
+   "row": 1,
+   "frames": 8,
+   "fps": 8,
+   "loop": true,
+   "loop_from": 0,
+   "loops": 1,
+   "kind": "billboard",
+   "pivot": [
+    24,
+    36
+   ],
+   "lift": 0.98,
+   "glow": true,
+   "light": {
+    "color": "#a45cf0",
+    "intensity": 0.9,
+    "range": 4.5
+   },
+   "speed": null,
+   "travel": null,
+   "then": null,
+   "duration": 9999,
+   "strip": "strips/cauldron_brew_violet.png",
+   "frame_list": [
+    {
+     "x": 0,
+     "y": 48,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 48,
+     "y": 48,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 96,
+     "y": 48,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 144,
+     "y": 48,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 192,
+     "y": 48,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 240,
+     "y": 48,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 288,
+     "y": 48,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 336,
+     "y": 48,
+     "w": 48,
+     "h": 48
+    }
+   ],
+   "notes": "on cauldron_violet: pivot = centre of the brew surface (local [0, 0.98, 0])"
+  },
+  "cauldron_brew_green": {
+   "row": 2,
+   "frames": 8,
+   "fps": 8,
+   "loop": true,
+   "loop_from": 0,
+   "loops": 1,
+   "kind": "billboard",
+   "pivot": [
+    24,
+    36
+   ],
+   "lift": 0.98,
+   "glow": true,
+   "light": {
+    "color": "#3cf08a",
+    "intensity": 0.9,
+    "range": 4.5
+   },
+   "speed": null,
+   "travel": null,
+   "then": null,
+   "duration": 9999,
+   "strip": "strips/cauldron_brew_green.png",
+   "frame_list": [
+    {
+     "x": 0,
+     "y": 96,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 48,
+     "y": 96,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 96,
+     "y": 96,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 144,
+     "y": 96,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 192,
+     "y": 96,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 240,
+     "y": 96,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 288,
+     "y": 96,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 336,
+     "y": 96,
+     "w": 48,
+     "h": 48
+    }
+   ],
+   "notes": "on cauldron_green: pivot = centre of the brew surface (local [0, 0.98, 0])"
+  },
+  "cauldron_fire": {
+   "row": 3,
+   "frames": 6,
+   "fps": 10,
+   "loop": true,
+   "loop_from": 0,
+   "loops": 1,
+   "kind": "billboard",
+   "pivot": [
+    24,
+    47
+   ],
+   "lift": 0.04,
+   "glow": true,
+   "light": {
+    "color": "#ff5a4a",
+    "intensity": 0.5,
+    "range": 2.0
+   },
+   "speed": null,
+   "travel": null,
+   "then": null,
+   "duration": 9999,
+   "strip": "strips/cauldron_fire.png",
+   "frame_list": [
+    {
+     "x": 0,
+     "y": 144,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 48,
+     "y": 144,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 96,
+     "y": 144,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 144,
+     "y": 144,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 192,
+     "y": 144,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 240,
+     "y": 144,
+     "w": 48,
+     "h": 48
+    }
+   ],
+   "notes": "under any cauldron (local [0, 0.04, 0.32]): peeks out below the belly"
+  },
+  "cauldron_pool_blue": {
+   "row": 4,
+   "frames": 6,
+   "fps": 4,
+   "loop": true,
+   "loop_from": 0,
+   "loops": 1,
+   "kind": "decal",
+   "pivot": [
+    24,
+    24
+   ],
+   "lift": 0.02,
+   "glow": true,
+   "light": null,
+   "speed": null,
+   "travel": null,
+   "then": null,
+   "duration": 9999,
+   "strip": "strips/cauldron_pool_blue.png",
+   "frame_list": [
+    {
+     "x": 0,
+     "y": 192,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 48,
+     "y": 192,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 96,
+     "y": 192,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 144,
+     "y": 192,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 192,
+     "y": 192,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 240,
+     "y": 192,
+     "w": 48,
+     "h": 48
+    }
+   ],
+   "notes": "floor pool round cauldron_blue (r ~2 m)"
+  },
+  "cauldron_pool_violet": {
+   "row": 5,
+   "frames": 6,
+   "fps": 4,
+   "loop": true,
+   "loop_from": 0,
+   "loops": 1,
+   "kind": "decal",
+   "pivot": [
+    24,
+    24
+   ],
+   "lift": 0.02,
+   "glow": true,
+   "light": null,
+   "speed": null,
+   "travel": null,
+   "then": null,
+   "duration": 9999,
+   "strip": "strips/cauldron_pool_violet.png",
+   "frame_list": [
+    {
+     "x": 0,
+     "y": 240,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 48,
+     "y": 240,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 96,
+     "y": 240,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 144,
+     "y": 240,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 192,
+     "y": 240,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 240,
+     "y": 240,
+     "w": 48,
+     "h": 48
+    }
+   ],
+   "notes": "floor pool round cauldron_violet (r ~2 m)"
+  },
+  "cauldron_pool_green": {
+   "row": 6,
+   "frames": 6,
+   "fps": 4,
+   "loop": true,
+   "loop_from": 0,
+   "loops": 1,
+   "kind": "decal",
+   "pivot": [
+    24,
+    24
+   ],
+   "lift": 0.02,
+   "glow": true,
+   "light": null,
+   "speed": null,
+   "travel": null,
+   "then": null,
+   "duration": 9999,
+   "strip": "strips/cauldron_pool_green.png",
+   "frame_list": [
+    {
+     "x": 0,
+     "y": 288,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 48,
+     "y": 288,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 96,
+     "y": 288,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 144,
+     "y": 288,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 192,
+     "y": 288,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 240,
+     "y": 288,
+     "w": 48,
+     "h": 48
+    }
+   ],
+   "notes": "floor pool round cauldron_green (r ~2 m)"
+  },
+  "brew_puff_blue": {
+   "row": 7,
+   "frames": 7,
+   "fps": 12,
+   "loop": false,
+   "loop_from": 0,
+   "loops": 1,
+   "kind": "billboard",
+   "pivot": [
+    24,
+    47
+   ],
+   "lift": 1.0,
+   "glow": true,
+   "light": null,
+   "speed": null,
+   "travel": null,
+   "then": null,
+   "duration": 0.583,
+   "strip": "strips/brew_puff_blue.png",
+   "frame_list": [
+    {
+     "x": 0,
+     "y": 336,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 48,
+     "y": 336,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 96,
+     "y": 336,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 144,
+     "y": 336,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 192,
+     "y": 336,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 240,
+     "y": 336,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 288,
+     "y": 336,
+     "w": 48,
+     "h": 48
+    }
+   ],
+   "notes": "crafting success over the cauldron"
+  },
+  "brew_puff_violet": {
+   "row": 8,
+   "frames": 7,
+   "fps": 12,
+   "loop": false,
+   "loop_from": 0,
+   "loops": 1,
+   "kind": "billboard",
+   "pivot": [
+    24,
+    47
+   ],
+   "lift": 1.0,
+   "glow": true,
+   "light": null,
+   "speed": null,
+   "travel": null,
+   "then": null,
+   "duration": 0.583,
+   "strip": "strips/brew_puff_violet.png",
+   "frame_list": [
+    {
+     "x": 0,
+     "y": 384,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 48,
+     "y": 384,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 96,
+     "y": 384,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 144,
+     "y": 384,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 192,
+     "y": 384,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 240,
+     "y": 384,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 288,
+     "y": 384,
+     "w": 48,
+     "h": 48
+    }
+   ],
+   "notes": "crafting success over the cauldron"
+  },
+  "brew_puff_green": {
+   "row": 9,
+   "frames": 7,
+   "fps": 12,
+   "loop": false,
+   "loop_from": 0,
+   "loops": 1,
+   "kind": "billboard",
+   "pivot": [
+    24,
+    47
+   ],
+   "lift": 1.0,
+   "glow": true,
+   "light": null,
+   "speed": null,
+   "travel": null,
+   "then": null,
+   "duration": 0.583,
+   "strip": "strips/brew_puff_green.png",
+   "frame_list": [
+    {
+     "x": 0,
+     "y": 432,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 48,
+     "y": 432,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 96,
+     "y": 432,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 144,
+     "y": 432,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 192,
+     "y": 432,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 240,
+     "y": 432,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 288,
+     "y": 432,
+     "w": 48,
+     "h": 48
+    }
+   ],
+   "notes": "crafting success over the cauldron"
+  }
+ }
+}

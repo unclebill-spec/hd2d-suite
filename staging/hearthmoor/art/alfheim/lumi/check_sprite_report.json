@@ -1,0 +1,18 @@
+{
+ "atlas": "/workspace/hearthmoor-staging/art/alfheim/lumi/lumi_safe.png",
+ "biome": "cozy-village",
+ "roles": {
+  "lumi": {
+   "frames": 88,
+   "colors": 9,
+   "issues": []
+  }
+ },
+ "summary": {
+  "roles": 1,
+  "failures": 0,
+  "semi_transparent": 0,
+  "pass": true
+ },
+ "failures": []
+}

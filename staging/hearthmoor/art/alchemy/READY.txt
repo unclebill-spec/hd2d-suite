@@ -1,0 +1,2 @@
+alchemy: READY (2026-10-05, Hearthmoor Art seat)
+See README.md + contact_sheet.png. 6 kit pieces, gamefx alchemy_fx (48 px), 12 icons (16 px).

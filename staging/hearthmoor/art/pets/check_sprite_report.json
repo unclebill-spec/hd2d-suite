@@ -1,0 +1,33 @@
+{
+ "atlas": "/workspace/hearthmoor-staging/art/pets/pets.png",
+ "biome": "cozy-village",
+ "roles": {
+  "pet_wisp": {
+   "frames": 48,
+   "colors": 5,
+   "issues": []
+  },
+  "pet_moth": {
+   "frames": 48,
+   "colors": 12,
+   "issues": []
+  },
+  "pet_fox": {
+   "frames": 48,
+   "colors": 9,
+   "issues": []
+  },
+  "pet_mosspup": {
+   "frames": 48,
+   "colors": 13,
+   "issues": []
+  }
+ },
+ "summary": {
+  "roles": 4,
+  "failures": 0,
+  "semi_transparent": 0,
+  "pass": true
+ },
+ "failures": []
+}

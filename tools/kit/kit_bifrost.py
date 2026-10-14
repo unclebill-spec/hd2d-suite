@@ -4,7 +4,9 @@ roots and cold-fire crystals), bifrost_bridge (the rainbow bridge of light out t
 (a small floating jetty with mooring posts), skiff_keel (the cold-fire wake a rift-skiff floats on), realm_arch (a
 tall gloom-stone gate with a jagged crown) + realm_glow_<hue> (its rune rim, keystone crystal, crown shards and realm
 sigil in that realm's colour), guild_kiosk (the Gatekeepers' Guild post: counter, ledger, key banner, cold-fire lamp)
-and rift_brazier_<cold|violet|red> (a stone bowl of jagged neon flame).
+and rift_brazier_<cold|violet|red> (a stone bowl of jagged neon flame). Stage 6 part 2 adds the Stray Den:
+stray_den (round stone house, rainbow-glass roof tiles, fish-orb eaves, neon windows), den_post (a yard lantern the
+game lights) and den_woodpile.
 Style references (Bill's rift refs: stone arches with coloured glowing swirls, jagged neon rims) were looked at for
 ideas only; nothing is traced. Imported by kit.py; biome palette + the shared mesh helpers. Off-palette colours are
 only the NEON accents on glow pixels (the self-lit 'glow' material, no bloom)."""
@@ -351,7 +353,91 @@ def pieces(K):
         pc.size = [0.9, 1.9, 0.9]
         return pc
 
-    out = {"bifrost_plaza": bifrost_plaza, "bifrost_bridge": bifrost_bridge, "bifrost_landing": bifrost_landing,
+    # ------------------------------------------------------------------ the Stray Den (Stage 6 part 2)
+    def stray_den(cx):
+        """Signe Larkspur's Stray Den: a squat round gloom-stone house under a crooked cone roof of patchy rainbow-glass
+        tiles (glow pixels), fish-orb lanterns along the eaves, three neon windows (blue wisps, violet moths, red
+        fox-tails glowing through), a round plank door and a hanging sign (a paw + a key, no text)"""
+        pc = Piece("stray_den"); r = K.rng(cx.seed, "stray_den"); m = Mesh()
+        st = mix(gloom(cx), cx.c("stone_hi"), 0.18)
+        R, H = 1.25, 1.55
+        m.add(cylinder(R + 0.12, R + 0.18, 0.16, 12, mix(st, cx.c("stone_lo"), 0.3), "stone", y0=0))       # plinth
+        m.add(cylinder(R, R + 0.05, H, 12, st, "stone", y0=0.16))                                           # round wall
+        for k in range(12):   # stone courses: darker bands for a hand-laid look
+            a = 2 * PI * k / 12 + r.uniform(-0.1, 0.1)
+            m.add(box(0.36, 0.1, 0.05, mix(st, cx.c("ink"), 0.25), "stone", y0=0.55 + (k % 3) * 0.38).xf((math.sin(a) * (R + 0.02), 0, math.cos(a) * (R + 0.02)), rot=(0, a, 0)))
+        # crooked cone roof: a dark slate cone, then patchy rainbow-glass tiles on its front half (glow)
+        roof = mix(cx.c("shadow"), cx.c("cloth"), 0.35)
+        m.add(cylinder(R + 0.38, 0.12, 1.2, 12, roof, "stone", y0=0.16 + H).xf((0.06, 0, 0), rot=(0.0, 0, 0.06)))
+        bands = rainbow(cx)
+        for k in range(16):
+            a = -PI * 0.55 + PI * 1.1 * k / 15 + r.uniform(-0.06, 0.06)
+            t = r.uniform(0.15, 0.7)
+            rr = (R + 0.38) * (1 - t) + 0.12 * t
+            y = 0.16 + H + 1.2 * t
+            m.add(box(0.2, 0.12, 0.04, bands[(k * 3) % 7], "glow", y0=y).xf((math.sin(a) * rr + 0.06, 0, math.cos(a) * rr), rot=(0.75 * (1 - t), a, 0)))
+        m.add(sphere(0.1, 5, 3, COLD_HI, "glow").xf((0.14, 0.16 + H + 1.25, 0)))                         # a cold-fire finial
+        # round plank door (front, +z) with an iron ring
+        m.add(box(0.7, 1.05, 0.06, cx.c("timber"), "timber", y0=0.16).xf((0, 0, R + 0.02)))
+        m.add(cylinder(0.35, 0.35, 0.06, 10, cx.c("timber"), "timber", y0=0).xf((0, 1.21, R + 0.02), rot=(PI / 2, 0, 0)))
+        for k in (-1, 1):
+            m.add(box(0.03, 1.1, 0.07, cx.c("timber_lo"), "timber", y0=0.16).xf((k * 0.18, 0, R + 0.04)))
+        m.add(box(0.08, 0.08, 0.05, cx.c("flower_gold"), "paint", y0=0.7).xf((0.22, 0, R + 0.07)))
+        # three neon windows: blue (wisps), violet (moths), red (fox-tails)
+        for a, (lo, mid, hi) in ((-0.85, (COLD_LO, COLD, COLD_HI)), (0.85, (VIOLET_LO, VIOLET, VIOLET_HI)), (1.75, (RED_LO, RED, RED_HI))):
+            x, z = math.sin(a) * (R + 0.03), math.cos(a) * (R + 0.03)
+            m.add(box(0.38, 0.38, 0.05, cx.c("shadow"), "paint", y0=0.78).xf((x, 0, z), rot=(0, a, 0)))
+            m.add(box(0.28, 0.28, 0.06, mid, "glow", y0=0.83).xf((x, 0, z), rot=(0, a, 0)))
+            m.add(box(0.1, 0.1, 0.07, hi, "glow", y0=0.92).xf((x, 0, z), rot=(0, a, 0)))
+        # fish-orb lanterns hung along the eaves (glowing water, one little fish each)
+        for a, fish in ((-1.3, "#f2c24a"), (-0.45, "#e47c8c"), (0.45, "#ff9c70"), (1.3, "#f2c24a")):
+            x, z = math.sin(a) * (R + 0.42), math.cos(a) * (R + 0.42)
+            m.add(cylinder(0.015, 0.015, 0.22, 4, cx.c("shadow"), "paint", y0=0.16 + H - 0.24).xf((x, 0, z)))
+            m.add(sphere(0.12, 6, 4, "#7cc8d8", "glow").xf((x, 0.16 + H - 0.34, z)))
+            m.add(box(0.07, 0.04, 0.03, fish, "glow", y0=0.16 + H - 0.36).xf((x, 0, z + 0.1)))
+        # the hanging sign on a bracket by the door: a paw and a key (no text)
+        m.add(K.beam((0.62, 1.55, R + 0.0), (0.62, 1.55, R + 0.45), 0.04, cx.c("shadow"), "paint"))
+        m.add(box(0.42, 0.3, 0.04, cx.c("timber_hi"), "timber", y0=1.15).xf((0.62, 0, R + 0.45)))
+        for dx, dy in ((0, 0), (-0.07, 0.08), (0.07, 0.08), (-0.11, 0.0), (0.11, 0.0)):
+            m.add(box(0.05 if (dx or dy) else 0.09, 0.05 if (dx or dy) else 0.07, 0.02, cx.c("ink"), "paint", y0=1.22 + dy).xf((0.62 + dx, 0, R + 0.48)))
+        pc.blockers.append([-R - 0.2, -R - 0.2, R + 0.2, R + 0.2])
+        pc.mesh = m.ao(0, 3.0, 0.2)
+        pc.size = [2.9, 3.0, 2.9]
+        return pc
+
+    def den_post(cx):
+        """a Den yard lantern: an oak post with an empty iron cage on top (the cold-fire flame is the game's effect,
+        so the cage reads dark until a spell lights it)"""
+        pc = Piece("den_post"); m = Mesh()
+        m.add(box(0.3, 0.1, 0.3, mix(gloom(cx), cx.c("stone_hi"), 0.2), "stone", y0=0))
+        m.add(cylinder(0.06, 0.05, 0.62, 6, cx.c("timber_lo"), "timber", y0=0.1))
+        m.add(box(0.26, 0.04, 0.26, cx.c("shadow"), "paint", y0=0.72))
+        for sx, sz in ((-1, -1), (1, -1), (-1, 1), (1, 1)):
+            m.add(box(0.025, 0.3, 0.025, cx.c("shadow"), "paint", y0=0.76).xf((sx * 0.11, 0, sz * 0.11)))
+        m.add(cylinder(0.17, 0.04, 0.12, 4, cx.c("shadow"), "paint", y0=1.06).xf((0, 0, 0), rot=(0, PI / 4, 0)))
+        m.add(cylinder(0.08, 0.08, 0.03, 6, mix(cx.c("ink"), COLD_LO, 0.3), "paint", y0=0.76))   # cold wick bowl
+        pc.blockers.append([-0.15, -0.15, 0.15, 0.15])
+        pc.mesh = m.ao(0, 1.2, 0.1)
+        pc.size = [0.35, 1.2, 0.35]
+        return pc
+
+    def den_woodpile(cx):
+        """a stacked woodpile with straw baskets beside it (the little rift opens behind it)"""
+        pc = Piece("den_woodpile"); r = K.rng(cx.seed, "den_woodpile"); m = Mesh()
+        for row in range(3):
+            for k in range(5 - row):
+                x = -0.5 + k * 0.24 + row * 0.12
+                m.add(cylinder(0.11, 0.11, 0.7, 6, mix(cx.c("timber"), cx.c("timber_hi"), r.uniform(0, 0.5)), "timber", y0=0, cap_mat="paint")
+                      .xf((x, 0.11 + row * 0.2, 0), rot=(PI / 2, 0, 0)))
+        for bx in (0.75, 1.1):
+            m.add(cylinder(0.2, 0.16, 0.26, 8, cx.c("plaster_lo"), "paint", y0=0).xf((bx, 0, 0.1 * (bx > 1))))
+            m.add(cylinder(0.18, 0.18, 0.03, 8, cx.c("flower_gold"), "paint", y0=0.26).xf((bx, 0, 0.1 * (bx > 1))))
+        pc.blockers.append([-0.65, -0.4, 1.35, 0.4])
+        pc.mesh = m.ao(0, 0.8, 0.1)
+        pc.size = [2.0, 0.8, 0.8]
+        return pc
+
+    out = {"stray_den": stray_den, "den_post": den_post, "den_woodpile": den_woodpile, "bifrost_plaza": bifrost_plaza, "bifrost_bridge": bifrost_bridge, "bifrost_landing": bifrost_landing,
            "skiff_keel": skiff_keel, "realm_arch": realm_arch, "guild_kiosk": guild_kiosk,
            "rift_brazier_cold": lambda cx: rift_brazier(cx, "rift_brazier_cold", (COLD_HI, COLD, COLD_LO)),
            "rift_brazier_violet": lambda cx: rift_brazier(cx, "rift_brazier_violet", (VIOLET_HI, VIOLET, VIOLET_LO)),

@@ -191,7 +191,7 @@ export class Loot {
     const gold = 2 + Math.floor(Math.random() * 5) + (o.gold || 0);
     this.drop(a.x + 0.35, a.z + 0.2, { gold });
     const luck = this.G.S.mode === 'hero' ? 1 : 0;
-    if (o.legendary) {   // a boss: always a Legendary, and Mossheart's golem core
+    if (o.legendary) {   // a boss: always a Legendary, and Glenheart's golem core
       this.drop(a.x - 0.3, a.z + 0.35, { item: makeItem(lv + 1, 4, null, Math.random, luck) });
       this.drop(a.x + 0.1, a.z - 0.35, { gem: 'golem_core' });
       return;

@@ -9,10 +9,12 @@ export const WAYS = {   // where each attuned waystone sends you (area -> [label
   lane: ['Bakery Lane, Hearthmoor', 'lane', 'from_ravenhold'],
   ravenhold: ['Ravenhold Harbor', 'ravenhold', 'from_waystone'],
   bifrost: ['Bifrost Crossing', 'bifrost', 'from_waystone'],
+  temple: ['the Old Temple, Ravenhold', 'temple', 'from_waystone'],   // Stage 6.3
 };
 const WAY_SAY = {
   ravenhold: 'Cold-fire runes glow along the waystone. Its twin stands at the west end of Bakery Lane.',
   lane: 'Cold-fire runes glow along the waystone. The west road runs from here to Ravenhold, at the foot of the Rainbow Rift.',
+  temple: 'Cold-fire runes glow along the waystone. The Temple\'s old stones remember every pilgrim.',
   bifrost: 'Cold-fire runes glow along the Guild\'s waystone. Its stones link the Crossing to Midgard\'s roads, no skiff needed.',
 };
 // the ferry may sail once Brannoc has pointed you at it (or the harbor quest was finished before the Crossing existed)
@@ -66,10 +68,15 @@ export class Harbor {
       return;
     }
     const there = this.area === 'ravenhold' ? 'Bifrost Crossing' : 'Ravenhold Harbor';
+    // 6.5: the skiff still sails in a Bifrost rift storm (never strand the player), with a warning line on each side
+    const storm = (G.S.flags || {}).storm === 'bifrost';
+    const sailLine = storm ? (this.area === 'ravenhold' ? 'The deckhand grins through the spray: \'Under-current\'s wild tonight. Hold the rail and don\'t look up.\''
+                                                        : 'The skiff bucks on its cold-fire wake. \'Storm\'s pushing the current. Quick trip, rough trip. Sit low.\'')
+      : this.area === 'ravenhold' ? 'Sable\'s rift-skiff, keel lamp burning blue. A Corsair deckhand nods you aboard: the under-current runs up to Bifrost Crossing tonight.'
+        : 'The rift-skiff waits at the landing, rocking on its cold-fire wake. The current runs back down to Ravenhold.';
     G.openDialogue(npc, {
-      pages: [this.area === 'ravenhold' ? 'Sable\'s rift-skiff, keel lamp burning blue. A Corsair deckhand nods you aboard: the under-current runs up to Bifrost Crossing tonight.'
-                                        : 'The rift-skiff waits at the landing, rocking on its cold-fire wake. The current runs back down to Ravenhold.'],
-      choice: { id: 'ferry', options: [{ label: `Sail to ${there}.`, pick: () => { G.go(f.to, f.spawn, 'sail'); return null; } },
+      pages: [sailLine],
+      choice: { id: 'ferry', options: [{ label: `Sail to ${there}.`, pick: () => { G.go(f.to, f.spawn, 'sail').then(() => { if (storm) setTimeout(() => G.toast('A rough crossing. Your boots are wet, but you\'re in one piece.', 2.6), 1700); }); return null; } },
                                        { label: 'Stay here.', cancel: true, pick: () => null }] } });
   }
   onTap(hit) {

@@ -1,0 +1,2166 @@
+{
+ "name": "Vanaheim: the Rotwood Hollow",
+ "seed": 211,
+ "biome": "cozy-village",
+ "about": "Vanaheim's main dungeon (story/verdant_heart.md section 4): eight root caverns under the Old Bough running down to the Regent's Bower. Glowing stream, hanging vines, violet blight fog, glow frogs and red toadstools. Art: the Verdant Heart pack (art/verdant_heart/), blight_bloom + violet mist for the rot.",
+ "time": {
+  "start": "night",
+  "speed": 0.0
+ },
+ "spells": true,
+ "sprite_roles": [
+  "actors",
+  "heroes",
+  "combat",
+  "sporeling",
+  "mossgolem"
+ ],
+ "boss_roles": [],
+ "camera": {
+  "fov": 24,
+  "pitch": 38,
+  "distance": 30,
+  "zoom": [
+   22,
+   40
+  ],
+  "look": [
+   0,
+   0,
+   -1.0
+  ],
+  "bounds": [
+   -32.0,
+   -2.0,
+   32.0,
+   1.5
+  ]
+ },
+ "ground": {
+  "size": [
+   112.0,
+   50
+  ],
+  "mat": "moss",
+  "walk": [
+   -36.0,
+   -5.0,
+   36.0,
+   4.6
+  ]
+ },
+ "slabs": [],
+ "terraces": [
+  {
+   "name": "root_ledge",
+   "rect": [
+    -38.0,
+    -40,
+    38.0,
+    -2.4
+   ],
+   "h": 1.2,
+   "top": "moss",
+   "gaps": [
+    [
+     -31.3,
+     -29.3
+    ],
+    [
+     -22.3,
+     -20.3
+    ],
+    [
+     -13.3,
+     -11.3
+    ],
+    [
+     -4.3,
+     -2.3
+    ],
+    [
+     4.7,
+     6.7
+    ],
+    [
+     13.7,
+     15.7
+    ],
+    [
+     22.7,
+     24.7
+    ],
+    [
+     31.7,
+     33.7
+    ]
+   ]
+  }
+ ],
+ "stairs": [
+  {
+   "name": "stair_0",
+   "x": -30.3,
+   "z_top": -2.4,
+   "width": 2.0,
+   "rise": 1.2,
+   "base": 0.0
+  },
+  {
+   "name": "stair_1",
+   "x": -21.3,
+   "z_top": -2.4,
+   "width": 2.0,
+   "rise": 1.2,
+   "base": 0.0
+  },
+  {
+   "name": "stair_2",
+   "x": -12.3,
+   "z_top": -2.4,
+   "width": 2.0,
+   "rise": 1.2,
+   "base": 0.0
+  },
+  {
+   "name": "stair_3",
+   "x": -3.3,
+   "z_top": -2.4,
+   "width": 2.0,
+   "rise": 1.2,
+   "base": 0.0
+  },
+  {
+   "name": "stair_4",
+   "x": 5.7,
+   "z_top": -2.4,
+   "width": 2.0,
+   "rise": 1.2,
+   "base": 0.0
+  },
+  {
+   "name": "stair_5",
+   "x": 14.7,
+   "z_top": -2.4,
+   "width": 2.0,
+   "rise": 1.2,
+   "base": 0.0
+  },
+  {
+   "name": "stair_6",
+   "x": 23.7,
+   "z_top": -2.4,
+   "width": 2.0,
+   "rise": 1.2,
+   "base": 0.0
+  },
+  {
+   "name": "stair_7",
+   "x": 32.7,
+   "z_top": -2.4,
+   "width": 2.0,
+   "rise": 1.2,
+   "base": 0.0
+  }
+ ],
+ "decks": [],
+ "buildings": [],
+ "hedges": [],
+ "trees": [],
+ "blocks": [
+  [
+   -37.0,
+   -5.6,
+   37.0,
+   -5.0
+  ],
+  [
+   -37.0,
+   4.6,
+   37.0,
+   5.2
+  ],
+  [
+   -36.7,
+   -5.6,
+   -36.0,
+   5.2
+  ],
+  [
+   36.0,
+   -5.6,
+   36.7,
+   5.2
+  ],
+  [
+   -34.7,
+   -3.9,
+   -28.3,
+   -2.5
+  ],
+  [
+   -28.6,
+   -2.1,
+   -27.6,
+   -1.1
+  ],
+  [
+   -27.3,
+   -5.0,
+   -26.7,
+   0.4
+  ],
+  [
+   -25.7,
+   -3.9,
+   -19.3,
+   -2.5
+  ],
+  [
+   -19.6,
+   -2.1,
+   -18.6,
+   -1.1
+  ],
+  [
+   -18.3,
+   -5.0,
+   -17.7,
+   0.4
+  ],
+  [
+   -16.7,
+   -3.9,
+   -10.3,
+   -2.5
+  ],
+  [
+   -10.6,
+   -2.1,
+   -9.6,
+   -1.1
+  ],
+  [
+   -9.3,
+   -5.0,
+   -8.7,
+   0.4
+  ],
+  [
+   -7.7,
+   -3.9,
+   -1.2999999999999998,
+   -2.5
+  ],
+  [
+   -1.6,
+   -2.1,
+   -0.6000000000000001,
+   -1.1
+  ],
+  [
+   -0.3,
+   -5.0,
+   0.3,
+   0.4
+  ],
+  [
+   1.2999999999999998,
+   -3.9,
+   7.7,
+   -2.5
+  ],
+  [
+   7.4,
+   -2.1,
+   8.4,
+   -1.1
+  ],
+  [
+   8.7,
+   -5.0,
+   9.3,
+   0.4
+  ],
+  [
+   10.3,
+   -3.9,
+   16.7,
+   -2.5
+  ],
+  [
+   16.4,
+   -2.1,
+   17.4,
+   -1.1
+  ],
+  [
+   17.7,
+   -5.0,
+   18.3,
+   0.4
+  ],
+  [
+   19.3,
+   -3.9,
+   25.7,
+   -2.5
+  ],
+  [
+   25.4,
+   -2.1,
+   26.4,
+   -1.1
+  ],
+  [
+   26.7,
+   -5.0,
+   27.3,
+   0.4
+  ],
+  [
+   28.3,
+   -3.9,
+   34.7,
+   -2.5
+  ],
+  [
+   34.4,
+   -2.1,
+   35.4,
+   -1.1
+  ]
+ ],
+ "props": [
+  {
+   "piece": "vh_wall",
+   "pos": [
+    -34.0,
+    -5.3
+   ]
+  },
+  {
+   "piece": "vh_ceiling_lip",
+   "pos": [
+    -34.0,
+    -4.6
+   ]
+  },
+  {
+   "piece": "vh_wall",
+   "pos": [
+    -30.0,
+    -5.3
+   ]
+  },
+  {
+   "piece": "vh_ceiling_lip",
+   "pos": [
+    -30.0,
+    -4.6
+   ]
+  },
+  {
+   "piece": "vh_wall",
+   "pos": [
+    -26.0,
+    -5.3
+   ]
+  },
+  {
+   "piece": "vh_ceiling_lip",
+   "pos": [
+    -26.0,
+    -4.6
+   ]
+  },
+  {
+   "piece": "vh_wall",
+   "pos": [
+    -22.0,
+    -5.3
+   ]
+  },
+  {
+   "piece": "vh_ceiling_lip",
+   "pos": [
+    -22.0,
+    -4.6
+   ]
+  },
+  {
+   "piece": "vh_wall",
+   "pos": [
+    -18.0,
+    -5.3
+   ]
+  },
+  {
+   "piece": "vh_ceiling_lip",
+   "pos": [
+    -18.0,
+    -4.6
+   ]
+  },
+  {
+   "piece": "vh_wall",
+   "pos": [
+    -14.0,
+    -5.3
+   ]
+  },
+  {
+   "piece": "vh_ceiling_lip",
+   "pos": [
+    -14.0,
+    -4.6
+   ]
+  },
+  {
+   "piece": "vh_wall",
+   "pos": [
+    -10.0,
+    -5.3
+   ]
+  },
+  {
+   "piece": "vh_ceiling_lip",
+   "pos": [
+    -10.0,
+    -4.6
+   ]
+  },
+  {
+   "piece": "vh_wall",
+   "pos": [
+    -6.0,
+    -5.3
+   ]
+  },
+  {
+   "piece": "vh_ceiling_lip",
+   "pos": [
+    -6.0,
+    -4.6
+   ]
+  },
+  {
+   "piece": "vh_wall",
+   "pos": [
+    -2.0,
+    -5.3
+   ]
+  },
+  {
+   "piece": "vh_ceiling_lip",
+   "pos": [
+    -2.0,
+    -4.6
+   ]
+  },
+  {
+   "piece": "vh_wall",
+   "pos": [
+    2.0,
+    -5.3
+   ]
+  },
+  {
+   "piece": "vh_ceiling_lip",
+   "pos": [
+    2.0,
+    -4.6
+   ]
+  },
+  {
+   "piece": "vh_wall",
+   "pos": [
+    6.0,
+    -5.3
+   ]
+  },
+  {
+   "piece": "vh_ceiling_lip",
+   "pos": [
+    6.0,
+    -4.6
+   ]
+  },
+  {
+   "piece": "vh_wall",
+   "pos": [
+    10.0,
+    -5.3
+   ]
+  },
+  {
+   "piece": "vh_ceiling_lip",
+   "pos": [
+    10.0,
+    -4.6
+   ]
+  },
+  {
+   "piece": "vh_wall",
+   "pos": [
+    14.0,
+    -5.3
+   ]
+  },
+  {
+   "piece": "vh_ceiling_lip",
+   "pos": [
+    14.0,
+    -4.6
+   ]
+  },
+  {
+   "piece": "vh_wall",
+   "pos": [
+    18.0,
+    -5.3
+   ]
+  },
+  {
+   "piece": "vh_ceiling_lip",
+   "pos": [
+    18.0,
+    -4.6
+   ]
+  },
+  {
+   "piece": "vh_wall",
+   "pos": [
+    22.0,
+    -5.3
+   ]
+  },
+  {
+   "piece": "vh_ceiling_lip",
+   "pos": [
+    22.0,
+    -4.6
+   ]
+  },
+  {
+   "piece": "vh_wall",
+   "pos": [
+    26.0,
+    -5.3
+   ]
+  },
+  {
+   "piece": "vh_ceiling_lip",
+   "pos": [
+    26.0,
+    -4.6
+   ]
+  },
+  {
+   "piece": "vh_wall",
+   "pos": [
+    30.0,
+    -5.3
+   ]
+  },
+  {
+   "piece": "vh_ceiling_lip",
+   "pos": [
+    30.0,
+    -4.6
+   ]
+  },
+  {
+   "piece": "vh_wall",
+   "pos": [
+    34.0,
+    -5.3
+   ]
+  },
+  {
+   "piece": "vh_ceiling_lip",
+   "pos": [
+    34.0,
+    -4.6
+   ]
+  },
+  {
+   "piece": "hanging_vines",
+   "pos": [
+    -33.1,
+    -4.4
+   ]
+  },
+  {
+   "piece": "stream_straight",
+   "pos": [
+    -33.5,
+    -3.2
+   ],
+   "rot": 90
+  },
+  {
+   "piece": "stream_straight",
+   "pos": [
+    -31.5,
+    -3.2
+   ],
+   "rot": 90
+  },
+  {
+   "piece": "stream_straight",
+   "pos": [
+    -29.5,
+    -3.2
+   ],
+   "rot": 90
+  },
+  {
+   "piece": "toadstool_giant",
+   "pos": [
+    -28.1,
+    -1.6
+   ]
+  },
+  {
+   "piece": "neon_mushrooms_blue",
+   "pos": [
+    -34.9,
+    -1.8
+   ]
+  },
+  {
+   "piece": "glowfern",
+   "pos": [
+    -28.9,
+    4.1
+   ]
+  },
+  {
+   "piece": "toadstool_shelf",
+   "pos": [
+    -30.1,
+    -4.6
+   ]
+  },
+  {
+   "piece": "blight_bloom",
+   "pos": [
+    -32.5,
+    -3.0
+   ]
+  },
+  {
+   "piece": "glowroot_arch",
+   "pos": [
+    -27.0,
+    1.9
+   ],
+   "rot": 90
+  },
+  {
+   "piece": "hanging_vines",
+   "pos": [
+    -24.1,
+    -4.4
+   ]
+  },
+  {
+   "piece": "stream_straight",
+   "pos": [
+    -24.5,
+    -3.2
+   ],
+   "rot": 90
+  },
+  {
+   "piece": "stream_straight",
+   "pos": [
+    -22.5,
+    -3.2
+   ],
+   "rot": 90
+  },
+  {
+   "piece": "stream_straight",
+   "pos": [
+    -20.5,
+    -3.2
+   ],
+   "rot": 90
+  },
+  {
+   "piece": "toadstool_giant",
+   "pos": [
+    -19.1,
+    -1.6
+   ]
+  },
+  {
+   "piece": "neon_mushrooms_violet",
+   "pos": [
+    -25.9,
+    -1.8
+   ]
+  },
+  {
+   "piece": "glowfern_blue",
+   "pos": [
+    -19.9,
+    4.1
+   ]
+  },
+  {
+   "piece": "toadstool_shelf",
+   "pos": [
+    -21.1,
+    -4.6
+   ]
+  },
+  {
+   "piece": "blight_bloom",
+   "pos": [
+    -23.5,
+    -3.0
+   ]
+  },
+  {
+   "piece": "glowroot_arch",
+   "pos": [
+    -18.0,
+    1.9
+   ],
+   "rot": 90
+  },
+  {
+   "piece": "hanging_vines",
+   "pos": [
+    -15.1,
+    -4.4
+   ]
+  },
+  {
+   "piece": "stream_straight",
+   "pos": [
+    -15.5,
+    -3.2
+   ],
+   "rot": 90
+  },
+  {
+   "piece": "stream_straight",
+   "pos": [
+    -13.5,
+    -3.2
+   ],
+   "rot": 90
+  },
+  {
+   "piece": "stream_straight",
+   "pos": [
+    -11.5,
+    -3.2
+   ],
+   "rot": 90
+  },
+  {
+   "piece": "toadstool_giant",
+   "pos": [
+    -10.1,
+    -1.6
+   ]
+  },
+  {
+   "piece": "neon_mushrooms_pink",
+   "pos": [
+    -16.9,
+    -1.8
+   ]
+  },
+  {
+   "piece": "glowfern",
+   "pos": [
+    -10.9,
+    4.1
+   ]
+  },
+  {
+   "piece": "toadstool_shelf",
+   "pos": [
+    -12.1,
+    -4.6
+   ]
+  },
+  {
+   "piece": "blight_bloom",
+   "pos": [
+    -14.5,
+    -3.0
+   ]
+  },
+  {
+   "piece": "glowroot_arch",
+   "pos": [
+    -9.0,
+    1.9
+   ],
+   "rot": 90
+  },
+  {
+   "piece": "hanging_vines",
+   "pos": [
+    -6.1,
+    -4.4
+   ]
+  },
+  {
+   "piece": "stream_straight",
+   "pos": [
+    -6.5,
+    -3.2
+   ],
+   "rot": 90
+  },
+  {
+   "piece": "stream_straight",
+   "pos": [
+    -4.5,
+    -3.2
+   ],
+   "rot": 90
+  },
+  {
+   "piece": "stream_straight",
+   "pos": [
+    -2.5,
+    -3.2
+   ],
+   "rot": 90
+  },
+  {
+   "piece": "toadstool_giant",
+   "pos": [
+    -1.1,
+    -1.6
+   ]
+  },
+  {
+   "piece": "neon_mushrooms_blue",
+   "pos": [
+    -7.9,
+    -1.8
+   ]
+  },
+  {
+   "piece": "glowfern_blue",
+   "pos": [
+    -1.9,
+    4.1
+   ]
+  },
+  {
+   "piece": "toadstool_shelf",
+   "pos": [
+    -3.1,
+    -4.6
+   ]
+  },
+  {
+   "piece": "blight_bloom",
+   "pos": [
+    -5.5,
+    -3.0
+   ]
+  },
+  {
+   "piece": "glowroot_arch",
+   "pos": [
+    0.0,
+    1.9
+   ],
+   "rot": 90
+  },
+  {
+   "piece": "hanging_vines",
+   "pos": [
+    2.9,
+    -4.4
+   ]
+  },
+  {
+   "piece": "stream_straight",
+   "pos": [
+    2.5,
+    -3.2
+   ],
+   "rot": 90
+  },
+  {
+   "piece": "stream_straight",
+   "pos": [
+    4.5,
+    -3.2
+   ],
+   "rot": 90
+  },
+  {
+   "piece": "stream_straight",
+   "pos": [
+    6.5,
+    -3.2
+   ],
+   "rot": 90
+  },
+  {
+   "piece": "toadstool_giant",
+   "pos": [
+    7.9,
+    -1.6
+   ]
+  },
+  {
+   "piece": "neon_mushrooms_violet",
+   "pos": [
+    1.1,
+    -1.8
+   ]
+  },
+  {
+   "piece": "glowfern",
+   "pos": [
+    7.1,
+    4.1
+   ]
+  },
+  {
+   "piece": "toadstool_shelf",
+   "pos": [
+    5.9,
+    -4.6
+   ]
+  },
+  {
+   "piece": "blight_bloom",
+   "pos": [
+    3.5,
+    -3.0
+   ]
+  },
+  {
+   "piece": "glowroot_arch",
+   "pos": [
+    9.0,
+    1.9
+   ],
+   "rot": 90
+  },
+  {
+   "piece": "hanging_vines",
+   "pos": [
+    11.9,
+    -4.4
+   ]
+  },
+  {
+   "piece": "stream_straight",
+   "pos": [
+    11.5,
+    -3.2
+   ],
+   "rot": 90
+  },
+  {
+   "piece": "stream_straight",
+   "pos": [
+    13.5,
+    -3.2
+   ],
+   "rot": 90
+  },
+  {
+   "piece": "stream_straight",
+   "pos": [
+    15.5,
+    -3.2
+   ],
+   "rot": 90
+  },
+  {
+   "piece": "toadstool_giant",
+   "pos": [
+    16.9,
+    -1.6
+   ]
+  },
+  {
+   "piece": "neon_mushrooms_pink",
+   "pos": [
+    10.1,
+    -1.8
+   ]
+  },
+  {
+   "piece": "glowfern_blue",
+   "pos": [
+    16.1,
+    4.1
+   ]
+  },
+  {
+   "piece": "toadstool_shelf",
+   "pos": [
+    14.9,
+    -4.6
+   ]
+  },
+  {
+   "piece": "blight_bloom",
+   "pos": [
+    12.5,
+    -3.0
+   ]
+  },
+  {
+   "piece": "glowroot_arch",
+   "pos": [
+    18.0,
+    1.9
+   ],
+   "rot": 90
+  },
+  {
+   "piece": "hanging_vines",
+   "pos": [
+    20.9,
+    -4.4
+   ]
+  },
+  {
+   "piece": "stream_straight",
+   "pos": [
+    20.5,
+    -3.2
+   ],
+   "rot": 90
+  },
+  {
+   "piece": "stream_straight",
+   "pos": [
+    22.5,
+    -3.2
+   ],
+   "rot": 90
+  },
+  {
+   "piece": "stream_straight",
+   "pos": [
+    24.5,
+    -3.2
+   ],
+   "rot": 90
+  },
+  {
+   "piece": "toadstool_giant",
+   "pos": [
+    25.9,
+    -1.6
+   ]
+  },
+  {
+   "piece": "neon_mushrooms_blue",
+   "pos": [
+    19.1,
+    -1.8
+   ]
+  },
+  {
+   "piece": "glowfern",
+   "pos": [
+    25.1,
+    4.1
+   ]
+  },
+  {
+   "piece": "toadstool_shelf",
+   "pos": [
+    23.9,
+    -4.6
+   ]
+  },
+  {
+   "piece": "blight_bloom",
+   "pos": [
+    21.5,
+    -3.0
+   ]
+  },
+  {
+   "piece": "glowroot_arch",
+   "pos": [
+    27.0,
+    1.9
+   ],
+   "rot": 90
+  },
+  {
+   "piece": "hanging_vines",
+   "pos": [
+    29.9,
+    -4.4
+   ]
+  },
+  {
+   "piece": "stream_straight",
+   "pos": [
+    29.5,
+    -3.2
+   ],
+   "rot": 90
+  },
+  {
+   "piece": "stream_straight",
+   "pos": [
+    31.5,
+    -3.2
+   ],
+   "rot": 90
+  },
+  {
+   "piece": "stream_straight",
+   "pos": [
+    33.5,
+    -3.2
+   ],
+   "rot": 90
+  },
+  {
+   "piece": "toadstool_giant",
+   "pos": [
+    34.9,
+    -1.6
+   ]
+  },
+  {
+   "piece": "neon_mushrooms_violet",
+   "pos": [
+    28.1,
+    -1.8
+   ]
+  },
+  {
+   "piece": "glowfern_blue",
+   "pos": [
+    34.1,
+    4.1
+   ]
+  },
+  {
+   "piece": "toadstool_shelf",
+   "pos": [
+    32.9,
+    -4.6
+   ]
+  },
+  {
+   "piece": "blight_bloom",
+   "pos": [
+    30.5,
+    -3.0
+   ]
+  },
+  {
+   "piece": "waterfall",
+   "pos": [
+    22.5,
+    -4.6
+   ]
+  },
+  {
+   "piece": "toadstool_shelf",
+   "pos": [
+    -16.5,
+    2.9
+   ]
+  },
+  {
+   "piece": "toadstool_shelf",
+   "pos": [
+    -14.5,
+    1.9
+   ]
+  },
+  {
+   "piece": "toadstool_shelf",
+   "pos": [
+    -12.5,
+    3.1
+   ]
+  },
+  {
+   "piece": "toadstool_shelf",
+   "pos": [
+    -17.4,
+    -1.9
+   ]
+  },
+  {
+   "piece": "heart_spring",
+   "pos": [
+    -17.4,
+    -4.3
+   ]
+  },
+  {
+   "piece": "blight_bloom",
+   "pos": [
+    3.0,
+    0.2
+   ]
+  },
+  {
+   "piece": "blight_bloom",
+   "pos": [
+    3.0,
+    1.2
+   ]
+  },
+  {
+   "piece": "blight_bloom",
+   "pos": [
+    3.0,
+    2.2
+   ]
+  },
+  {
+   "piece": "blight_bloom",
+   "pos": [
+    3.0,
+    3.2
+   ]
+  },
+  {
+   "piece": "blight_bloom",
+   "pos": [
+    3.0,
+    4.2
+   ]
+  },
+  {
+   "piece": "heartseed_cradle",
+   "pos": [
+    31.5,
+    -0.6
+   ]
+  }
+ ],
+ "emitters": [
+  {
+   "preset": "fireflies",
+   "pos": [
+    -31.5,
+    2.4,
+    -4.0
+   ],
+   "area": [
+    6,
+    0.8,
+    1.2
+   ],
+   "min_gate": 0.0
+  },
+  {
+   "preset": "fireflies",
+   "pos": [
+    -22.5,
+    2.4,
+    -4.0
+   ],
+   "area": [
+    6,
+    0.8,
+    1.2
+   ],
+   "min_gate": 0.0
+  },
+  {
+   "preset": "fireflies",
+   "pos": [
+    -13.5,
+    2.4,
+    -4.0
+   ],
+   "area": [
+    6,
+    0.8,
+    1.2
+   ],
+   "min_gate": 0.0
+  },
+  {
+   "preset": "fireflies",
+   "pos": [
+    -4.5,
+    2.4,
+    -4.0
+   ],
+   "area": [
+    6,
+    0.8,
+    1.2
+   ],
+   "min_gate": 0.0
+  },
+  {
+   "preset": "fireflies",
+   "pos": [
+    4.5,
+    2.4,
+    -4.0
+   ],
+   "area": [
+    6,
+    0.8,
+    1.2
+   ],
+   "min_gate": 0.0
+  },
+  {
+   "preset": "fireflies",
+   "pos": [
+    13.5,
+    2.4,
+    -4.0
+   ],
+   "area": [
+    6,
+    0.8,
+    1.2
+   ],
+   "min_gate": 0.0
+  },
+  {
+   "preset": "fireflies",
+   "pos": [
+    22.5,
+    2.4,
+    -4.0
+   ],
+   "area": [
+    6,
+    0.8,
+    1.2
+   ],
+   "min_gate": 0.0
+  },
+  {
+   "preset": "fireflies",
+   "pos": [
+    31.5,
+    2.4,
+    -4.0
+   ],
+   "area": [
+    6,
+    0.8,
+    1.2
+   ],
+   "min_gate": 0.0
+  }
+ ],
+ "actors": [
+  {
+   "id": "tobble",
+   "role": "gnome",
+   "name": "Tobble Capwhistle, gnome scout",
+   "pos": [
+    -31.1,
+    2.6
+   ],
+   "facing": "right",
+   "behavior": "idle",
+   "talkable": true,
+   "say": [
+    "Pocket lantern's lit. Stay close, big-folk, and don't step in anything purple."
+   ]
+  }
+ ],
+ "fx": [
+  {
+   "name": "stream_flow",
+   "pos": [
+    -31.5,
+    1.25,
+    -3.2
+   ]
+  },
+  {
+   "name": "glow_mist_violet",
+   "pos": [
+    -33.0,
+    1.6,
+    -3.4
+   ]
+  },
+  {
+   "name": "fireflies_blue",
+   "pos": [
+    -32.5,
+    2.4,
+    -4.2
+   ]
+  },
+  {
+   "name": "glowfrog_violet_idle",
+   "pos": [
+    -34.1,
+    1.2,
+    -2.7
+   ]
+  },
+  {
+   "name": "toadstool_glow_pool",
+   "pos": [
+    -28.1,
+    0.02,
+    -1.6
+   ]
+  },
+  {
+   "name": "stream_flow",
+   "pos": [
+    -22.5,
+    1.25,
+    -3.2
+   ]
+  },
+  {
+   "name": "glow_mist_violet",
+   "pos": [
+    -24.0,
+    1.6,
+    -3.4
+   ]
+  },
+  {
+   "name": "fireflies_neon",
+   "pos": [
+    -23.5,
+    2.4,
+    -4.2
+   ]
+  },
+  {
+   "name": "glowfrog_pink_idle",
+   "pos": [
+    -25.1,
+    1.2,
+    -2.7
+   ]
+  },
+  {
+   "name": "toadstool_glow_pool",
+   "pos": [
+    -19.1,
+    0.02,
+    -1.6
+   ]
+  },
+  {
+   "name": "stream_flow",
+   "pos": [
+    -13.5,
+    1.25,
+    -3.2
+   ]
+  },
+  {
+   "name": "glow_mist_violet",
+   "pos": [
+    -15.0,
+    1.6,
+    -3.4
+   ]
+  },
+  {
+   "name": "fireflies_violet",
+   "pos": [
+    -14.5,
+    2.4,
+    -4.2
+   ]
+  },
+  {
+   "name": "glowfrog_green_idle",
+   "pos": [
+    -16.1,
+    1.2,
+    -2.7
+   ]
+  },
+  {
+   "name": "toadstool_glow_pool",
+   "pos": [
+    -10.1,
+    0.02,
+    -1.6
+   ]
+  },
+  {
+   "name": "stream_flow",
+   "pos": [
+    -4.5,
+    1.25,
+    -3.2
+   ]
+  },
+  {
+   "name": "glow_mist_violet",
+   "pos": [
+    -6.0,
+    1.6,
+    -3.4
+   ]
+  },
+  {
+   "name": "fireflies_green",
+   "pos": [
+    -5.5,
+    2.4,
+    -4.2
+   ]
+  },
+  {
+   "name": "glowfrog_blue_idle",
+   "pos": [
+    -7.1,
+    1.2,
+    -2.7
+   ]
+  },
+  {
+   "name": "toadstool_glow_pool",
+   "pos": [
+    -1.1,
+    0.02,
+    -1.6
+   ]
+  },
+  {
+   "name": "stream_flow",
+   "pos": [
+    4.5,
+    1.25,
+    -3.2
+   ]
+  },
+  {
+   "name": "glow_mist_violet",
+   "pos": [
+    3.0,
+    1.6,
+    -3.4
+   ]
+  },
+  {
+   "name": "fireflies_pink",
+   "pos": [
+    3.5,
+    2.4,
+    -4.2
+   ]
+  },
+  {
+   "name": "glowfrog_violet_idle",
+   "pos": [
+    1.9,
+    1.2,
+    -2.7
+   ]
+  },
+  {
+   "name": "toadstool_glow_pool",
+   "pos": [
+    7.9,
+    0.02,
+    -1.6
+   ]
+  },
+  {
+   "name": "stream_flow",
+   "pos": [
+    13.5,
+    1.25,
+    -3.2
+   ]
+  },
+  {
+   "name": "glow_mist_violet",
+   "pos": [
+    12.0,
+    1.6,
+    -3.4
+   ]
+  },
+  {
+   "name": "fireflies_blue",
+   "pos": [
+    12.5,
+    2.4,
+    -4.2
+   ]
+  },
+  {
+   "name": "glowfrog_pink_idle",
+   "pos": [
+    10.9,
+    1.2,
+    -2.7
+   ]
+  },
+  {
+   "name": "toadstool_glow_pool",
+   "pos": [
+    16.9,
+    0.02,
+    -1.6
+   ]
+  },
+  {
+   "name": "stream_flow",
+   "pos": [
+    22.5,
+    1.25,
+    -3.2
+   ]
+  },
+  {
+   "name": "glow_mist_violet",
+   "pos": [
+    21.0,
+    1.6,
+    -3.4
+   ]
+  },
+  {
+   "name": "fireflies_neon",
+   "pos": [
+    21.5,
+    2.4,
+    -4.2
+   ]
+  },
+  {
+   "name": "glowfrog_green_idle",
+   "pos": [
+    19.9,
+    1.2,
+    -2.7
+   ]
+  },
+  {
+   "name": "toadstool_glow_pool",
+   "pos": [
+    25.9,
+    0.02,
+    -1.6
+   ]
+  },
+  {
+   "name": "stream_flow",
+   "pos": [
+    31.5,
+    1.25,
+    -3.2
+   ]
+  },
+  {
+   "name": "glow_mist_violet",
+   "pos": [
+    30.0,
+    1.6,
+    -3.4
+   ]
+  },
+  {
+   "name": "fireflies_violet",
+   "pos": [
+    30.5,
+    2.4,
+    -4.2
+   ]
+  },
+  {
+   "name": "glowfrog_blue_idle",
+   "pos": [
+    28.9,
+    1.2,
+    -2.7
+   ]
+  },
+  {
+   "name": "toadstool_glow_pool",
+   "pos": [
+    34.9,
+    0.02,
+    -1.6
+   ]
+  },
+  {
+   "name": "waterfall_sheet",
+   "pos": [
+    22.5,
+    2.8,
+    -4.4
+   ]
+  },
+  {
+   "name": "waterfall_splash",
+   "pos": [
+    22.5,
+    1.3,
+    -3.6
+   ]
+  },
+  {
+   "name": "pool_green",
+   "pos": [
+    -25.9,
+    0.02,
+    2.4
+   ]
+  },
+  {
+   "name": "pool_green",
+   "pos": [
+    -24.7,
+    0.02,
+    1.2
+   ]
+  },
+  {
+   "name": "pool_green",
+   "pos": [
+    -23.5,
+    0.02,
+    2.6
+   ]
+  },
+  {
+   "name": "pool_green",
+   "pos": [
+    -22.1,
+    0.02,
+    1.4
+   ]
+  },
+  {
+   "name": "pool_green",
+   "pos": [
+    -20.7,
+    0.02,
+    2.8
+   ]
+  },
+  {
+   "name": "pool_green",
+   "pos": [
+    -19.3,
+    0.02,
+    1.6
+   ]
+  },
+  {
+   "id": "rw_bower_blight",
+   "name": "blight_aura",
+   "pos": [
+    31.5,
+    0.03,
+    -0.6
+   ]
+  }
+ ],
+ "backdrop": {
+  "hills": [
+   0,
+   -40
+  ]
+ },
+ "grades": {
+  "day": {
+   "fog_color": "#3c4a3c",
+   "sky_top": "#1c2a24",
+   "sky_bottom": "#4c5c4c",
+   "hemi_sky": "#8c9c7c",
+   "hemi_intensity": 0.95,
+   "sun_intensity": 1.2,
+   "sun_color": "#e8e0c0",
+   "exposure": 1.05,
+   "saturation": 1.0,
+   "warmth": 0.04,
+   "bugs": 0.6
+  },
+  "dusk": {
+   "fog_color": "#1c2448",
+   "sky_top": "#0c1230",
+   "sky_bottom": "#3c3c6c",
+   "hemi_sky": "#4c5c94",
+   "hemi_intensity": 0.7,
+   "sun_intensity": 0.6,
+   "exposure": 1.0,
+   "warmth": -0.08,
+   "bugs": 0.9
+  },
+  "night": {
+   "fog_color": "#0a1022",
+   "sky_top": "#03050c",
+   "sky_bottom": "#0c1428",
+   "hemi_sky": "#1c2a52",
+   "hemi_intensity": 0.42,
+   "exposure": 1.0,
+   "sun_intensity": 0.18,
+   "sun_color": "#6c8ad0",
+   "bugs": 1.0
+  }
+ },
+ "game": {
+  "id": "rotwood",
+  "title": "The Rotwood Hollow",
+  "rooms": [
+   {
+    "id": "R0",
+    "name": "Root Gate",
+    "x": -31.5
+   },
+   {
+    "id": "R1",
+    "name": "Leaf-Litter Hall",
+    "x": -22.5
+   },
+   {
+    "id": "R2",
+    "name": "Toadstool Bridge",
+    "x": -13.5
+   },
+   {
+    "id": "R3",
+    "name": "Rune-Sealed Root Door",
+    "x": -4.5
+   },
+   {
+    "id": "R4",
+    "name": "Mire Gallery",
+    "x": 4.5
+   },
+   {
+    "id": "R5",
+    "name": "Gnome Larder",
+    "x": 13.5
+   },
+   {
+    "id": "R6",
+    "name": "The Weeping Root",
+    "x": 22.5
+   },
+   {
+    "id": "R7",
+    "name": "The Regent's Bower",
+    "x": 31.5
+   }
+  ],
+  "exits": [
+   {
+    "rect": [
+     -36.0,
+     0.6,
+     -35.2,
+     3.4
+    ],
+    "to": "vanaheim",
+    "spawn": "from_rotwood",
+    "label": "the root-cave up to Mossbrook Springs"
+   }
+  ],
+  "portals": [],
+  "doors": [],
+  "spawns": {
+   "start": [
+    -33.9,
+    3.6,
+    "right"
+   ],
+   "from_mossbrook": [
+    -33.9,
+    2.0,
+    "right"
+   ],
+   "from_verdant": [
+    34.1,
+    2.6,
+    "left"
+   ],
+   "qa": [
+    -31.5,
+    2.0,
+    "right"
+   ]
+  },
+  "braziers": [
+   {
+    "id": "rw_cp0",
+    "pos": [
+     -30.3,
+     0.6
+    ],
+    "checkpoint": true
+   },
+   {
+    "id": "rw_lock_1",
+    "pos": [
+     -6.9,
+     0.2
+    ]
+   },
+   {
+    "id": "rw_lock_2",
+    "pos": [
+     -4.5,
+     -0.6
+    ]
+   },
+   {
+    "id": "rw_lock_3",
+    "pos": [
+     -2.1,
+     0.2
+    ]
+   },
+   {
+    "id": "rw_thorn",
+    "pos": [
+     1.5,
+     0.6
+    ]
+   },
+   {
+    "id": "rw_cp6",
+    "pos": [
+     20.9,
+     0.6
+    ],
+    "checkpoint": true
+   },
+   {
+    "id": "rw_rim_0",
+    "pos": [
+     28.3,
+     -2.0
+    ]
+   },
+   {
+    "id": "rw_rim_1",
+    "pos": [
+     34.7,
+     -2.0
+    ]
+   },
+   {
+    "id": "rw_rim_2",
+    "pos": [
+     28.3,
+     2.6
+    ]
+   },
+   {
+    "id": "rw_rim_3",
+    "pos": [
+     34.7,
+     2.6
+    ]
+   }
+  ],
+  "rootdoor": {
+   "x": 0.0,
+   "block": [
+    -0.4,
+    0.4,
+    0.4,
+    4.6
+   ],
+   "order": [
+    "rw_lock_2",
+    "rw_lock_1",
+    "rw_lock_3"
+   ]
+  },
+  "spring": {
+   "pos": [
+    -17.4,
+    -4.3
+   ],
+   "secret": "rw_spring"
+  },
+  "mire": {
+   "rect": [
+    -26.8,
+    -2.3,
+    -18.2,
+    4.5
+   ],
+   "path": [
+    [
+     -25.9,
+     2.4
+    ],
+    [
+     -24.7,
+     1.2
+    ],
+    [
+     -23.5,
+     2.6
+    ],
+    [
+     -22.1,
+     1.4
+    ],
+    [
+     -20.7,
+     2.8
+    ],
+    [
+     -19.3,
+     1.6
+    ]
+   ],
+   "r": 0.75
+  },
+  "bounces": [
+   {
+    "id": "rw_hop_0",
+    "pos": [
+     -16.5,
+     2.4
+    ],
+    "to": [
+     -14.5,
+     1.4
+    ],
+    "h": 1.6,
+    "dur": 0.8
+   },
+   {
+    "id": "rw_hop_1",
+    "pos": [
+     -14.5,
+     1.4
+    ],
+    "to": [
+     -12.5,
+     2.6
+    ],
+    "h": 1.6,
+    "dur": 0.8
+   },
+   {
+    "id": "rw_hop_2",
+    "pos": [
+     -12.5,
+     2.6
+    ],
+    "to": [
+     -10.5,
+     1.6
+    ],
+    "h": 1.6,
+    "dur": 0.8
+   },
+   {
+    "id": "rw_hop_secret",
+    "pos": [
+     -17.4,
+     -1.4
+    ],
+    "to": [
+     -17.4,
+     -3.4
+    ],
+    "h": 3.0,
+    "dur": 1.0,
+    "secret": "Boing! Up onto the root ledge."
+   }
+  ],
+  "thorns": {
+   "x": 3.0,
+   "brazier": "rw_thorn"
+  },
+  "cages": [
+   {
+    "id": "rw_cage_0",
+    "pos": [
+     11.5,
+     -1.4
+    ]
+   },
+   {
+    "id": "rw_cage_1",
+    "pos": [
+     13.5,
+     -1.4
+    ]
+   },
+   {
+    "id": "rw_cage_2",
+    "pos": [
+     15.5,
+     -1.4
+    ]
+   }
+  ],
+  "riddle": {
+   "pos": [
+    16.5,
+    1.8
+   ]
+  },
+  "taproot": {
+   "pos": [
+    24.1,
+    -2.0
+   ]
+  },
+  "bower": {
+   "pos": [
+    31.5,
+    0.0
+   ],
+   "r": 4.2,
+   "enter_x": 28.0
+  },
+  "sapling": {
+   "pos": [
+    32.5,
+    -1.6
+   ],
+   "rect": [
+    31.8,
+    -2.4,
+    33.2,
+    -1.0
+   ],
+   "to": "verdant",
+   "spawn": "from_rotwood",
+   "label": "the sapling's root-stair down to the Verdant Heart"
+  },
+  "art": {
+   "_note": "Verdant Heart pack (art/verdant_heart/): rottreant / sporeelemental + boss sheets ride in their own sheets, verdant_fx + critters are appended to the gamefx atlas by build.py install_verdant_heart."
+  }
+ },
+ "player": {
+  "role": "traveler",
+  "pos": [
+   -33.9,
+   3.6
+  ],
+  "facing": "right"
+ }
+}

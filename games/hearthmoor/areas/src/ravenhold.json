@@ -692,7 +692,7 @@
   {
    "id": "dockkid",
    "role": "fisherkid",
-   "name": "Pip",
+   "name": "Nell",
    "pos": [
     -6.0,
     6.2
@@ -859,6 +859,11 @@
    "from_bifrost": [
     6.0,
     4.4,
+    "down"
+   ],
+   "from_temple": [
+    -8.6,
+    -9.9,
     "down"
    ]
   },

@@ -30,6 +30,18 @@ def _hex(px):
     return "#%02x%02x%02x" % px[:3]
 
 
+# Scoped palette exception. Bill approved neon pets 2026-10-05: on the Hearthmoor pet sheet only, the glow-moth may use
+# the NEON violet accents, the lantern-fox the NEON red accents, the moss-pup NEON green + red (the spells.py NEON hexes). Nothing else is exempt:
+# any other role, or any other off-palette colour on these roles, still fails.
+NEON_PETS_ALLOW = {
+    "pet_moth": {"#6a34b8", "#a45cf0", "#d4a8ff"},   # neon violet lo / mid / hi
+    "pet_fox": {"#a81c22", "#e0302a", "#ff5a4a"},    # neon red lo / mid / hi
+    # the moss-pup (added 2026-10-05, same approval): NEON green spores / moss dots + the NEON red toadstool cap
+    "pet_mosspup": {"#24a03a", "#5aec3c", "#c4ff8a", "#a81c22", "#e0302a", "#ff5a4a"},
+}
+# Glow orbs (2026-10 art packs): roles named orb_* / glow_orb* may use neon green #3cf08a and pink #ff4fc8 (+ hi / lo).
+# Bill: effects and orbs only; characters, creatures and props never get these.
+ORB_NEON = {"#3cf08a", "#b8ffd4", "#14a85a", "#ff4fc8", "#ffb4ea", "#b82a8c"}
 # [ALFHEIM] Scoped palette exception: the Lumi companion sheet only (role "lumi") may use the NEON blue core and NEON violet
 # halo (spells.py NEON hexes; Bill's Lumi look, alfheim.md 5.5). Any other role, or any other off-palette colour, still fails.
 LUMI_NEON_ALLOW = {"lumi": {"#2ab4ff", "#a6ecff", "#1c62d8", "#a45cf0", "#d4a8ff", "#6a34b8"}}
@@ -74,7 +86,7 @@ def check(atlas_path, json_path=None, biome=None, max_colors=20, project=None):
                         opaque.append((x, y))
                         c = _hex(p)
                         colors.add(c)
-                        if c not in palette and c not in LUMI_NEON_ALLOW.get(role, ()):  # [ALFHEIM]
+                        if c not in palette and c not in LUMI_NEON_ALLOW.get(role, ()) and c not in NEON_PETS_ALLOW.get(role, ()) and not (role.startswith(("orb_", "glow_orb")) and c in ORB_NEON):  # [ALFHEIM] + LUMI_NEON_ALLOW
                             rr["issues"].append(f"{fr['name']}: colour {c} not in {biome}")
             if not opaque:
                 rr["issues"].append(f"{fr['name']}: empty frame")

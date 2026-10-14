@@ -80,7 +80,7 @@ export class Garden {
     } else {
       delete S.garden[p.id];
       if (P.gives.gem) { S.gems = S.gems || {}; S.gems[P.gives.gem] = (S.gems[P.gives.gem] || 0) + 1; G.toast && G.toast(`Harvested the ${P.name}: +1 ${P.gives.gem.replace('_', ' ')}`, 2.4); }
-      else { G.give(P.gives.item, P.gives.n); }
+      else { G.give(P.gives.item, P.gives.n + (G.forage ? G.forage() : 0)); }
       if (this.ctx.effects) this.ctx.effects.spawn('sparkle_burst', p.x, this.ctx.heightAt(p.x, p.z), p.z + 0.1);
       G.audio && G.audio.sfx('quest');
       this.clear(p, true);
