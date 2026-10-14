@@ -1314,7 +1314,8 @@ def run(out, simscale=4, size=(960, 540), segs=SEGS):
                        bool(ch) and len(ch["options"]) == 3 and "friend" in ch["options"][0].lower() and "bow" in ch["options"][1].lower()
                        and T.ev("window.__hm.S.flags.alliance.vanaheim") == "befriend" and "welcome in Mossbrook" in reply, choice=ch, reply=reply[:60])
                 pages, first = T.talk("warden")
-                T.step("afterwards the warden greets a friend of Mossbrook (no second ask)", "Friend of Mossbrook" in first and pages == 1, line=first[:60])
+                T.step("afterwards the warden greets a friend of Mossbrook (no second ask) and, since 6.4, offers The Violet Spring", "Friend of Mossbrook" in first and pages == 2
+                       and T.ev("window.__hm.S.quests.vh_spring") == 1 and not T.ev("!!(window.__hm.dlg && window.__hm.dlg.choice)"), line=first[:60])
                 area = T.go_rect("portals", 0)
                 a2 = T.go_rect("portals", 0)
                 T.step("way back: the vine gate returns to the Rift Shrine, its moss gate home to the Plaza", area == "rift" and a2 == "plaza" and T.ev("window.__hm.S.flags.alliance.vanaheim") == "befriend")
