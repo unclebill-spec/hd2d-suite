@@ -1,0 +1,77 @@
+{
+ "lumi": {
+  "color": "#5ab4f0",
+  "intensity": 7.0,
+  "range": 5.0,
+  "lift": 1.45,
+  "fadeIn": 0.5,
+  "r": 3.0,
+  "pulse": [
+   0.85,
+   1.12,
+   0.7
+  ],
+  "talk_pulse": {
+   "by_frame": [
+    1.0,
+    1.12,
+    1.3,
+    1.15
+   ],
+   "note": "multiply base by this per talk column 12-15"
+  },
+  "emote": {
+   "happy": 1.25,
+   "worried": 0.7,
+   "surprised": 1.45
+  },
+  "halo": {
+   "color": "#a45cf0",
+   "hi": "#d4a8ff",
+   "mode": "tint_pulse",
+   "mix": [
+    0.0,
+    0.35
+   ],
+   "hz": 0.7,
+   "sync": "pulse",
+   "note": "lerp the core light toward violet by mix[0]..mix[1] in step with the intensity pulse (peak = most violet); talk col 14 / happy / surprised = mix[1]",
+   "second_light": {
+    "optional": true,
+    "color": "#a45cf0",
+    "intensity": 2.5,
+    "range": 6.5,
+    "lift": 1.45,
+    "pulse": [
+     0.4,
+     1.0,
+     0.7
+    ],
+    "note": "only where the 2-3 light cap allows (cutscenes, Wisp Night): a wide faint violet halo light"
+   }
+  },
+  "prism_shift": {
+   "optional": true,
+   "colors": [
+    "#5ab4f0",
+    "#a6ecff",
+    "#d4a8ff",
+    "#ffd27a"
+   ],
+   "period_s": 6.0,
+   "mix": 0.25,
+   "note": "Wisp Night / Prism Vault only: lerp the light colour 25% toward each in turn"
+  },
+  "hover": {
+   "lift": 0.3,
+   "bob": 0.08,
+   "hz": 0.7
+  }
+ },
+ "compare_pet_wisp": {
+  "color": "#5ab4f0",
+  "intensity": 4.0,
+  "range": 3.2,
+  "lift": 0.75
+ }
+}

@@ -281,9 +281,14 @@ G.dropDialogue = () => { G.dlg = null; $('dlg').hidden = true; $('dlgChoices').h
 G.refreshMarkers = () => refreshMarkers();
 G.dlgChoice = () => (G.dlg && G.dlg.picking ? { options: G.dlg.choice.options.map((o) => o.label), ci: G.dlg.ci } : null);
 G.choicePick = (i) => choicePick(i);
+const OWN_FACES = {};   // [ALFHEIM] own portrait sheets by url
 function drawPortrait(npc) {
   const cv = $('dlgFace'), g = cv.getContext('2d');
   g.imageSmoothingEnabled = false; g.clearRect(0, 0, cv.width, cv.height);
+  // [ALFHEIM] a role with its own portrait sheet (npc.portrait = { src, cell:[w,h] }) draws its neutral cell at integer scale
+  if (npc.portrait) { const P = npc.portrait, im = OWN_FACES[P.src] || (OWN_FACES[P.src] = Object.assign(new Image(), { src: P.src }));
+    const draw = () => { const [w, h] = P.cell, k = Math.floor(Math.min(cv.width / w, cv.height / h)); g.clearRect(0, 0, cv.width, cv.height); g.drawImage(im, 0, 0, w, h, Math.round((cv.width - w * k) / 2), cv.height - h * k, w * k, h * k); };
+    if (im.complete && im.naturalWidth) draw(); else im.addEventListener('load', draw, { once: true }); return; }
   const r = npc.rect; if (!r || !portraitImg) return;
   const fw = r.w / r.k, fh = r.h / r.k;
   // the idle-down frame of this role row (column 0), cropped to the head and shoulders

@@ -1,0 +1,84 @@
+{
+ "tool": "hearthmoor-art lumi_gen (particles format)",
+ "biome": "cozy-village",
+ "image": "lumi_particles.png",
+ "cell": 16,
+ "rows": [
+  "lumi_starlight",
+  "lumi_prism_glint"
+ ],
+ "presets": {
+  "lumi_starlight": {
+   "row": 0,
+   "frames": 4,
+   "fps": 6,
+   "mode": "life",
+   "rate": 5.0,
+   "life": [
+    0.8,
+    1.5
+   ],
+   "grade": null,
+   "vel": [
+    [
+     -0.12,
+     0.12
+    ],
+    [
+     -0.05,
+     0.3
+    ],
+    [
+     -0.12,
+     0.12
+    ]
+   ],
+   "gravity": 0,
+   "sway": 0.5,
+   "glow": true,
+   "area": [
+    0.3,
+    0.5,
+    0.3
+   ],
+   "follow_companion": true,
+   "note": "spawn along the tail (lift 0.3-1.1 m)"
+  },
+  "lumi_prism_glint": {
+   "row": 1,
+   "frames": 4,
+   "fps": 5,
+   "mode": "life",
+   "rate": 2.5,
+   "life": [
+    0.6,
+    1.0
+   ],
+   "grade": null,
+   "vel": [
+    [
+     -0.2,
+     0.2
+    ],
+    [
+     0.3,
+     0.6
+    ],
+    [
+     -0.2,
+     0.2
+    ]
+   ],
+   "gravity": 0,
+   "sway": 0.3,
+   "glow": true,
+   "area": [
+    0.45,
+    0.15,
+    0.35
+   ],
+   "follow_companion": true,
+   "note": "spawn at the crown (lift ~1.9 m); double the rate while she talks"
+  }
+ }
+}

@@ -1,0 +1,2 @@
+alfheim: READY (2026-10-05, Hearthmoor Art seat)
+See README.md + contact_sheet.png. 4 elf NPCs + 2 Prism Vault enemies (20x32) + Lady Sylvaine boss (128x176, 5.5x) all pass check-sprite; 15 kit pieces; gamefx alfheim_fx (48 px) incl. glow orbs in 5 neon colours with matching light pools.

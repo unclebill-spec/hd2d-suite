@@ -1,4 +1,17 @@
-# RESUME HERE (paused 01:05 ET Tue Oct 6 by Bill, to save tokens while Gravewake builds)
+# RESUME HERE (updated 3:45 PM ET Wed Oct 14 2026, chunk 1 done; branch realm-alfheim pushed)
+
+Chunk 1 result (Oct 14):
+- Step 1 quick-load DONE: alfheim, lumen_court(befriend, lumi), wispwood(dim), prismvault(vault, boss), bifrost:from_vanaheim all load with 0 page/console/HTTP errors (phone 390x844, ?qa&nosw). /tmp/alfheim_build is GONE (quick.py, specs.py, build_alf.sh, parts/): use /workspace/alf_qa/load.py (area:spawn:extraquery) under flock instead.
+- Staging art copied to games/hearthmoor/art/alfheim/ (from hearthmoor-batch1-wip:staging/hearthmoor/art/alfheim). Lumi recoloured to neon blue core (#2ab4ff/#a6ecff/#1c62d8) + neon violet halo by tools/sprite/lumi_recolor.py (re-run after any re-copy).
+- drawPortrait reads npc.portrait {src, cell} (own sheet) [ALFHEIM]; COMPANIONS.lumi has sheet + portrait paths. sw.js regenerated via build.write_pwa() only.
+- WARNING: do NOT run `build.py --skip-assemble` here: copy_areas() wipes areas/*/public when /tmp/hearthmoor_build is absent (restored from git once).
+
+NEXT (start here):
+- 3a finish: Lumi's in-world body still uses fx (lumi_wisp); switch it to her own 32x40 sheet billboard (anims per lumi.json) + light pool.
+- Art swap into areas (needs an assemble run): elf townsfolk x4 + prismshard/mirrorduelist sheets into actors.json via the sprite tool; staging kit glbs (lumen_tree, light_bridge, vault_pillar overlap mine) + alfheim_fx gamefx. Recreate a build_alf.sh (assemble 4 areas to a private /tmp dir, pruned copy).
+- 3c check-sprite `lumi` neon allow-list; then step 2 (game.js line 59 comment, smoke_alfheim rewrite, check-scene) and 3d/3e, 4.
+
+## Earlier pause note (Oct 6)
 
 Branch realm-alfheim, base origin/main 56f9b2f, upstream unset, NOT pushed. The WIP commit made at the pause holds everything below.
 It is UNTESTED: the first headless quick-load was interrupted before it ran. Expect JS errors on first load.

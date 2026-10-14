@@ -1,0 +1,362 @@
+{
+ "tool": "hearthmoor-art lumi_gen (spells format)",
+ "biome": "cozy-village",
+ "image": "lumi_fx.png",
+ "cell": 32,
+ "size": [
+  256,
+  192
+ ],
+ "neon": {
+  "cold": "#5ab4f0",
+  "cold_hi": "#d8f4ff",
+  "cold_lo": "#2a6cb0",
+  "neon_violet_lo": "#6a34b8",
+  "neon_blue_hi": "#a6ecff",
+  "neon_violet_hi": "#d4a8ff",
+  "neon_violet": "#a45cf0"
+ },
+ "effects": {
+  "lumi_aura": {
+   "row": 0,
+   "frames": 8,
+   "fps": 8,
+   "loop": true,
+   "loop_from": 0,
+   "loops": 1,
+   "kind": "billboard",
+   "pivot": [
+    16,
+    31
+   ],
+   "lift": 0.0,
+   "glow": true,
+   "light": null,
+   "speed": null,
+   "travel": null,
+   "then": null,
+   "frame_list": [
+    {
+     "x": 0,
+     "y": 0,
+     "w": 32,
+     "h": 32
+    },
+    {
+     "x": 32,
+     "y": 0,
+     "w": 32,
+     "h": 32
+    },
+    {
+     "x": 64,
+     "y": 0,
+     "w": 32,
+     "h": 32
+    },
+    {
+     "x": 96,
+     "y": 0,
+     "w": 32,
+     "h": 32
+    },
+    {
+     "x": 128,
+     "y": 0,
+     "w": 32,
+     "h": 32
+    },
+    {
+     "x": 160,
+     "y": 0,
+     "w": 32,
+     "h": 32
+    },
+    {
+     "x": 192,
+     "y": 0,
+     "w": 32,
+     "h": 32
+    },
+    {
+     "x": 224,
+     "y": 0,
+     "w": 32,
+     "h": 32
+    }
+   ],
+   "combat": false,
+   "duration": 1.0,
+   "desc": "prism starlight orbiting Lumi on two tilted rings + rising star motes (NEON violet halo + blue / prism flecks)",
+   "follow_lift": "hover"
+  },
+  "lumi_pool": {
+   "row": 1,
+   "frames": 6,
+   "fps": 5,
+   "loop": true,
+   "loop_from": 0,
+   "loops": 1,
+   "kind": "decal",
+   "pivot": [
+    16,
+    16
+   ],
+   "lift": 0.02,
+   "glow": true,
+   "light": null,
+   "speed": null,
+   "travel": null,
+   "then": null,
+   "frame_list": [
+    {
+     "x": 0,
+     "y": 32,
+     "w": 32,
+     "h": 32
+    },
+    {
+     "x": 32,
+     "y": 32,
+     "w": 32,
+     "h": 32
+    },
+    {
+     "x": 64,
+     "y": 32,
+     "w": 32,
+     "h": 32
+    },
+    {
+     "x": 96,
+     "y": 32,
+     "w": 32,
+     "h": 32
+    },
+    {
+     "x": 128,
+     "y": 32,
+     "w": 32,
+     "h": 32
+    },
+    {
+     "x": 160,
+     "y": 32,
+     "w": 32,
+     "h": 32
+    }
+   ],
+   "combat": false,
+   "duration": 1.2,
+   "desc": "Lumi's ground pool: wider and denser than pet_wisp's, white-hot heart, turning rim with prism flecks"
+  },
+  "lumi_talk_pulse": {
+   "row": 2,
+   "frames": 6,
+   "fps": 8,
+   "loop": true,
+   "loop_from": 0,
+   "loops": 1,
+   "kind": "billboard",
+   "pivot": [
+    16,
+    16
+   ],
+   "lift": 1.15,
+   "glow": true,
+   "light": null,
+   "speed": null,
+   "travel": null,
+   "then": null,
+   "frame_list": [
+    {
+     "x": 0,
+     "y": 64,
+     "w": 32,
+     "h": 32
+    },
+    {
+     "x": 32,
+     "y": 64,
+     "w": 32,
+     "h": 32
+    },
+    {
+     "x": 64,
+     "y": 64,
+     "w": 32,
+     "h": 32
+    },
+    {
+     "x": 96,
+     "y": 64,
+     "w": 32,
+     "h": 32
+    },
+    {
+     "x": 128,
+     "y": 64,
+     "w": 32,
+     "h": 32
+    },
+    {
+     "x": 160,
+     "y": 64,
+     "w": 32,
+     "h": 32
+    }
+   ],
+   "combat": false,
+   "duration": 0.75,
+   "desc": "talk pulse: a ring of violet halo flecks breathing out from her orb while she speaks (loop with talk)",
+   "follow_lift": "hover"
+  },
+  "lumi_emote_happy": {
+   "row": 3,
+   "frames": 4,
+   "fps": 6,
+   "loop": false,
+   "loop_from": 0,
+   "loops": 1,
+   "kind": "billboard",
+   "pivot": [
+    16,
+    31
+   ],
+   "lift": 1.75,
+   "glow": true,
+   "light": null,
+   "speed": null,
+   "travel": null,
+   "then": null,
+   "frame_list": [
+    {
+     "x": 0,
+     "y": 96,
+     "w": 32,
+     "h": 32
+    },
+    {
+     "x": 32,
+     "y": 96,
+     "w": 32,
+     "h": 32
+    },
+    {
+     "x": 64,
+     "y": 96,
+     "w": 32,
+     "h": 32
+    },
+    {
+     "x": 96,
+     "y": 96,
+     "w": 32,
+     "h": 32
+    }
+   ],
+   "combat": false,
+   "duration": 0.667,
+   "desc": "happy pop over her crown: a violet heart + prism flecks",
+   "follow_lift": "hover"
+  },
+  "lumi_emote_worried": {
+   "row": 4,
+   "frames": 4,
+   "fps": 5,
+   "loop": false,
+   "loop_from": 0,
+   "loops": 1,
+   "kind": "billboard",
+   "pivot": [
+    16,
+    31
+   ],
+   "lift": 1.75,
+   "glow": true,
+   "light": null,
+   "speed": null,
+   "travel": null,
+   "then": null,
+   "frame_list": [
+    {
+     "x": 0,
+     "y": 128,
+     "w": 32,
+     "h": 32
+    },
+    {
+     "x": 32,
+     "y": 128,
+     "w": 32,
+     "h": 32
+    },
+    {
+     "x": 64,
+     "y": 128,
+     "w": 32,
+     "h": 32
+    },
+    {
+     "x": 96,
+     "y": 128,
+     "w": 32,
+     "h": 32
+    }
+   ],
+   "combat": false,
+   "duration": 0.8,
+   "desc": "worried pop: a starlight sweat drop + a nervous scribble",
+   "follow_lift": "hover"
+  },
+  "lumi_emote_surprised": {
+   "row": 5,
+   "frames": 4,
+   "fps": 8,
+   "loop": false,
+   "loop_from": 0,
+   "loops": 1,
+   "kind": "billboard",
+   "pivot": [
+    16,
+    31
+   ],
+   "lift": 1.75,
+   "glow": true,
+   "light": null,
+   "speed": null,
+   "travel": null,
+   "then": null,
+   "frame_list": [
+    {
+     "x": 0,
+     "y": 160,
+     "w": 32,
+     "h": 32
+    },
+    {
+     "x": 32,
+     "y": 160,
+     "w": 32,
+     "h": 32
+    },
+    {
+     "x": 64,
+     "y": 160,
+     "w": 32,
+     "h": 32
+    },
+    {
+     "x": 96,
+     "y": 160,
+     "w": 32,
+     "h": 32
+    }
+   ],
+   "combat": false,
+   "duration": 0.5,
+   "desc": "surprised pop: a white '!' with a burst",
+   "follow_lift": "hover"
+  }
+ }
+}

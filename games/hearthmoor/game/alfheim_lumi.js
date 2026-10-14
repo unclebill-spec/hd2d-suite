@@ -9,6 +9,7 @@
 // coldfire_pool, lumi_spark, lumi_zap, lumi_mark); areas built before this branch fall back to light_orb / glitter.
 export const COMPANIONS = {
   lumi: { name: 'Lumi', kind: 'wisp', talks: true, role: 'companion_lumi', realm: 'alfheim', scale: 2.0,
+          sheet: 'art/alfheim/lumi/lumi.png', portrait: { src: 'art/alfheim/lumi/lumi_portrait.png', cell: [33, 33] },   // staging art, recoloured neon blue + violet
           hover: { lift: 1.1, bob: 0.08, hz: 0.7 },
           glow: '#5ac8ff', halo: '#a45cf0',
           light: { color: '#5ac8ff', intensity: 5.5, range: 4.2, lift: 1.1, pulse: [0.85, 1.15, 0.8], r: 2.6 },
