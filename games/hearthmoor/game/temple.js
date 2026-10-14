@@ -18,7 +18,7 @@ export const isDark = (t) => t > 0.75 || t < 0.25;
 const flags = (S) => (S.flags = S.flags || {});
 const GATE_LIT_FX = ['riftgate_vortex_lit', 'rift_vortex'];   // the Temple's own lit gate (old_temple gamefx); Bifrost's atlas only has rift_vortex
 const VEYRA_FX = ['glitter', 'sparkle_burst'];   // swap point: Veyra's sprite / frost-flower fx (no Veyra art yet)
-const HARBOR_EXIT = { rect: [-9.8, -12.4, -7.4, -10.7], to: 'temple', spawn: 'from_harbor', label: 'the Old Temple stair' };
+const HARBOR_EXIT = { rect: [-9.8, -12.4, -7.4, -10.2], to: 'temple', spawn: 'from_harbor', label: 'the Old Temple stair' };   // front edge at z -10.2: the stair foot's last walkable row is ~-10.5 (nav stops there), so -10.7 was unreachable
 const EDDA = { id: 'novice', role: 'lamplighter', name: 'Novice Edda, the Old Temple gate', pos: [-7.0, -10.2], facing: 'down' };   // swap point: role novice
 const MIDGARD_PORTAL = { fx: 'gate_midgard', to: 'temple', spawn: 'from_bifrost', rect: [10.25, -5.45, 11.75, -4.6], label: "Midgard's gate (the Old Temple)" };
 

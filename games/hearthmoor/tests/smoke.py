@@ -177,8 +177,14 @@ class Smoke:
         """walk into an exit / portal trigger and wait for the next area to finish loading"""
         area0 = self.ev("window.__hm.area")
         r = self.ev(f"window.__hm.ctx.scene.game.{kind}[{idx}].rect")
-        self.ev(f"window.__hm.ctx.walkTo({(r[0] + r[2]) / 2}, {(r[1] + r[3]) / 2})")
-        self.wait(f"window.__hm.area !== '{area0}' || window.__hm.busy", timeout)
+        cx, cz = (r[0] + r[2]) / 2, (r[1] + r[3]) / 2
+        p0 = self.ev("[window.__hm.ctx.player.x, window.__hm.ctx.player.z].map((v) => +v.toFixed(2))")
+        ok = self.ev(f"window.__hm.ctx.walkTo({cx}, {cz})")
+        try:
+            self.wait(f"window.__hm.area !== '{area0}' || window.__hm.busy", timeout)
+        except Exception as e:  # noqa: BLE001
+            st = self.ev("(() => { const c = window.__hm.ctx, p = c.player; return { p: [p.x, p.z, p.y].map((v) => +v.toFixed(2)), walking: c.walking(), busy: !!window.__hm.busy, dlg: !!window.__hm.dlg, prompt: (document.getElementById('prompt') || {}).textContent }; })()")
+            raise AssertionError(f"go_rect {kind}[{idx}] rect={r} centre=({cx:.2f},{cz:.2f}) from={p0} walkTo={ok} now={st}") from e
         self.idle(timeout)
         self.pg.wait_for_timeout(400)
         return self.ev("window.__hm.area")
@@ -2017,7 +2023,7 @@ def run(out, simscale=4, size=(960, 540), segs=SEGS):
                            columns: glb('temple_column'), way: glb('waystone'), realm: G.factions.realm(), gate: c.fx.gate_midgard ? c.fx.gate_midgard.name : null,
                            roles: ['priestess', 'archivist'].map((n) => c.npc(n) && c.npc(n).role), sheet: !!(c.actors.sheetOf && c.actors.sheetOf('templekeeper')),
                            gaze: G.temple.qa().gaze, glass: G.temple.qa().glass,
-                           clues: (sc.game.clues || []).length, terrace: [c.heightAt(0, -6), c.heightAt(0, -10.2)], mark: G.markers.priestess ? G.markers.priestess.name : null }; })()""")
+                           clues: (sc.game.clues || []).length, terrace: [c.heightAt(-2.0, -6), c.heightAt(0, -10.2)], mark: G.markers.priestess ? G.markers.priestess.name : null }; })()""")
                 rep["shots"]["temple_dark"] = T.shot("temple_dark")
                 T.step("the Old Temple (art/old_temple pack): Mother Ilse (templekeeper, turn-in tag), Brother Tamsin (archivist), 2 refugees; 3 dark stair braziers + the cold altar (temple_brazier_out x4) on the nave terrace (1.2 m), 4 faceless statues, 2 stained windows (dusk glass-light pools), 2 columns, the dormant Rift-gate (riftgate_arch + dormant glow, riftgate_seal_dormant) on the inner court (2 m), a waystone; Hearth realm",
                        tq["npcs"] == [True] * 4 and tq["braz"] == [False] * 3 and tq["arch"] == 1 and tq["dormant"] == 1 and tq["altar"] == 4 and tq["statues"] == 4 and tq["windows"] == 2
@@ -2095,7 +2101,7 @@ def run(out, simscale=4, size=(960, 540), segs=SEGS):
                 g.keyboard.press("e"); g.wait_for_timeout(300); T.read_all(); T.frames(8)
                 rs = T.ev("window.__hm.rifts.state().rift"); gfx = T.ev("window.__hm.ctx.fx.gate_midgard.name")
                 rep["shots"]["temple_rift"] = T.shot("temple_rift")
-                T.ev("(() => { const G = window.__hm, c = G.ctx, p = c.player, R = G.rifts.cur; p.x = R.pos[0] - 1.4; p.z = R.pos[1] + 0.6; p.y = c.heightAt(p.x, p.z); c.stopWalk(); })()")
+                T.ev("(() => { const G = window.__hm, c = G.ctx, p = c.player, R = G.rifts.cur, col = c.collide; const ok = (x, z) => !col || !col.blocked(x, z); const o = [[-1.4, 0.6], [-2.2, 0.6], [2.2, 0.6], [0, 1.6]].find(([dx, dz]) => ok(R.pos[0] + dx, R.pos[1] + dz)) || [0, 1.6]; p.x = R.pos[0] + o[0]; p.z = R.pos[1] + o[1]; p.y = c.heightAt(p.x, p.z); c.stopWalk(); })()")   # free spot beside the rift: the Temple rift sits on the court stair, and x-1.4 is the stair side wall (a blocked cell)
                 T.frames(6); g.wait_for_timeout(400)
                 for _ in range(3):
                     if not T.ev("window.__hm.rifts.cur"): break
@@ -2107,7 +2113,7 @@ def run(out, simscale=4, size=(960, 540), segs=SEGS):
                 vn = T.ev("window.__hm.dlg.npc.name"); T.read_all(); T.frames(4)
                 T.wait("!window.__hm.dlg", 30)
                 T.step("Veyra's cameo (toggleable: TEMPLE.veyra / ?noveyra): a frost-witch in grey-blue seals the last crack, names herself, hands you the Plaguewell hook; met_veyra set",
-                       vn == "A frost-witch in grey-blue" and T.ev("window.__hm.S.flags.met_veyra") == 1, name=vn)
+                       vn == "A frost-witch in grey-blue" and T.ev("window.__hm.S.flags.met_veyra") == 1, veyra=vn)
                 h2 = T.ev("window.__hm.S.merit.hearth"); gm0 = T.ev("(window.__hm.S.gems || {}).frost_core || 0")
                 pi2, fi2 = T.talk("priestess"); T.frames(6); g.wait_for_timeout(400)
                 S = T.S(); tq2 = T.ev("window.__hm.temple.qa()")

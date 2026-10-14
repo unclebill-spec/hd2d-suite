@@ -241,7 +241,7 @@
    "piece": "temple_brazier_out",
    "pos": [
     0.0,
-    -6.6
+    -5.9
    ]
   },
   {
@@ -628,12 +628,13 @@
   "altar": {
    "pos": [
     0.0,
-    -6.6
+    -5.9
    ],
    "use": [
     0.0,
-    -5.5
-   ]
+    -4.9
+   ],
+   "_note": "z -5.9 (was -6.6): at -6.6 its blocker + the nav radius sealed the court stair foot, so the inner court (Rift-gate, Midgard portal) was unreachable on foot"
   },
   "riftgate": {
    "pos": [
