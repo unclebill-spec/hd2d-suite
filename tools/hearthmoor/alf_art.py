@@ -55,8 +55,15 @@ def kit(area):
 
 def gamefx(area):
     d = GAME / "areas" / area / "public" / "art" / "gamefx"
-    if not (d / "gamefx.json").exists():
-        return False
+    if not (d / "gamefx.json").exists() and not (d / "gamefx.base.json").exists():
+        # no atlas yet (wispwood): start from an empty base so the staging rows are the whole atlas, and point the scene at it
+        d.mkdir(parents=True, exist_ok=True)
+        sj = json.loads((ST / "gamefx" / "alfheim_fx.json").read_text())
+        (d / "gamefx.base.json").write_text(json.dumps({k: sj[k] for k in ("tool", "biome", "seed", "cell", "cast_sets", "cycle")} | {"image": "gamefx.png", "size": [0, 0], "effects": {}}))
+        Image.new("RGBA", (sj["cell"], sj["cell"]), (0, 0, 0, 0)).save(d / "gamefx.base.png")   # one blank row
+        sp = GAME / "areas" / area / "scene.json"; sc = json.loads(sp.read_text())
+        sc["gamefx"] = {"image": "public/art/gamefx/gamefx.png", "json": "public/art/gamefx/gamefx.json"}
+        sp.write_text(json.dumps(sc, separators=(",", ":")))
     bj, bp = d / "gamefx.base.json", d / "gamefx.base.png"
     if not bj.exists():
         shutil.copy2(d / "gamefx.json", bj); shutil.copy2(d / "gamefx.png", bp)
@@ -80,8 +87,8 @@ def gamefx(area):
 PLACE = {
     "alfheim": [("prism_fountain", [3.0, 1.0]), ("lumen_tree_small", [7.0, -4.0]),
                 ("lumen_lamp", [-2.4, 6.0]), ("lumen_lamp", [2.4, 6.0]), ("wisp_lantern_post", [-4.0, 1.0]),
-                ("elf_rail", [0.0, -3.0]), ("wisp_jar", [-6.5, 6.0])],
-    "lumen_court": [("lumen_pavilion", [6.0, 4.5]), ("elf_archway", [-6.0, 1.0]), ("crystal_spire", [6.5, -2.0]), ("lumen_lamp", [-2.5, 2.0])],
+                ("elf_rail", [0.0, -3.0]), ("wisp_jar", [-6.5, 6.0]), ("elf_archway", [4.0, -2.0])],
+    "lumen_court": [("lumen_pavilion", [6.0, 4.5]), ("crystal_spire", [6.5, -2.0]), ("lumen_lamp", [-2.5, 2.0])],
     "wispwood": [("wisp_lantern_post", [6.0, -2.0]), ("wisp_jar", [0.0, 3.0]), ("lumen_tree_small", [-5.0, 3.0])],
     "prismvault": [("sylvaine_throne", [0.0, -52.0]), ("vault_wall", [-5.0, 36.0]), ("crystal_spire", [4.5, 34.0]),
                    ("vault_floor", [0.0, 34.5])],
@@ -107,13 +114,25 @@ def place(area):
         if r: keep.append(((r[0] + r[2]) / 2, (r[1] + r[3]) / 2, 2.4 + max(r[2] - r[0], r[3] - r[1]) / 2))
     keep += [(o["pos"][0], o["pos"][2], 1.4) for o in sc["objects"] if not o.get("walkable") and "scene_" not in o["glb"]]
     cam = sc["camera"].get("bounds")
+    # phone-portrait view box around the start spawn (about +-6 m wide, 14 m deep at the default zoom): props go where
+    # the arrival view shows them. The vault keeps its own room-by-room preferences (no box).
+    st = g.get("spawns", {}).get("start")
+    vbox = None if area == "prismvault" or not st else (st[0] - 6.0, st[1] - 16.0, st[0] + 6.0, st[1] + 1.0)
+    # never hide a character: no tall prop in a band in front of (camera side, +z) an actor or spawn
+    front = [(a["pos"][0], a["pos"][1]) for a in sc.get("actors", []) if "pos" in a] + [(v[0], v[1]) for v in g.get("spawns", {}).values()]
 
     def cells(x, z, hw, hd):
         for j in range(int((z - hd - oz) / cl), int((z + hd - oz) / cl) + 1):
             for i in range(int((x - hw - ox) / cl), int((x + hw - ox) / cl) + 1):
                 yield i, j
 
+    nonlocal_tall = [False]
+
     def ok(x, z, hw, hd):
+        if vbox and not (vbox[0] < x < vbox[2] and vbox[1] < z < vbox[3]):
+            return None
+        if nonlocal_tall[0] and any(abs(x - fx_) < hw + 0.8 and 0 < z - fz < 2.0 for fx_, fz in front):
+            return None
         if cam and area != "prismvault" and not (cam[0] + 1 < x < cam[2] - 1 and cam[1] + 1 < z < cam[3] - 1):
             return None
         hs = []
@@ -126,6 +145,8 @@ def place(area):
 
     for name, (px, pz) in PLACE.get(area, []):
         pc = pieces[name]; hw, hd = pc["size"][0] / 2, pc["size"][2] / 2
+        if name == "elf_archway": hw *= 0.6   # a thin open arch: its posts need room, the span does not
+        nonlocal_tall[0] = pc["size"][1] > 1.2
         spot = None
         for r in [0] + [x * 0.5 for x in range(1, 30)]:
             for k in range(max(1, int(r * 8))):
@@ -149,6 +170,22 @@ def place(area):
     C["data"] = base64.b64encode(d.tobytes()).decode()
     sp.write_text(json.dumps(sc, separators=(",", ":")) if "\n" not in sp.read_text()[:200] else json.dumps(sc, indent=1))
 
+
+def lumi_only(area):
+    """non-Alfheim areas: only Lumi's own sheet (she follows you everywhere once she joins)"""
+    d = GAME / "areas" / area / "public" / "art" / "sprite"
+    if not (d / "actors.json").exists():
+        return
+    keep = dict(SHEETS); SHEETS.clear(); SHEETS["lumi"] = keep["lumi"]
+    try:
+        sprites(area)
+    finally:
+        SHEETS.clear(); SHEETS.update(keep)
+
+
+if not sys.argv[1:]:
+    for a in sorted(p.name for p in (GAME / "areas").iterdir() if p.is_dir() and p.name != "src" and p.name not in AREAS):
+        lumi_only(a); print(f"{a}: lumi sheet")
 
 for a in AREAS:
     sprites(a); kit(a); fx = gamefx(a); place(a)

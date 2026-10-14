@@ -22,10 +22,22 @@ Chunk 3 result (Oct 14, ~4:30 PM ET):
   gamefx_sharp in alfheim + lumen_court (merged alfheim_fx rows; inspect gamefx_*.png), colours in alfheim (crop/src ratio 4.5),
   height in lumen_court (flat court 0.3 m; likely pre-existing, compare origin). prismvault result: see /workspace/alf_qa/cs/prismvault.
 
+Chunk 4 result (Oct 14, ~4:50 PM ET):
+- The stuck prismvault check-scene (only waiting on the browser lock, never ran) was killed. Cozy Builder's check_all on the lock was left alone.
+- check-scene fixes: gamefx_sharp now counts "sparse" frames like effects_sharp does ([ALFHEIM] in check_scene.py) -> alfheim gamefx PASS.
+- KNOWN ISSUES (pre-existing layout, not from the staging swap; logged, not fixed):
+  * alfheim sprites_sharp + colours: dwarftrader is hidden behind float_lantern_violet (-3.6, 6.0), lanternseller behind the market stall, and the qa player stands inside the Gatelight arch swirl. Fix in areas/src/alfheim.json (move the lantern and the qa spawn), then re-assemble.
+  * wispwood sprites_sharp: the qa player is partly occluded at the spawn (same kind of issue).
+  * lumen_court height: the court is built flat (0-0.3 m in base collision); the check wants >= 1 m. Spec issue.
+  * prismvault: check-scene not run yet (huge area, slow).
+- alf_art.py placement: props must sit inside a phone view box round the start spawn (+-6 m, 16 m deep) and never in a 2 m band in front of an actor/spawn. elf_archway moved to the Glimmer Steps. Checked by eye: /workspace/alf_qa/chunk4_after.png.
+- Lumi's sheet is now in every non-Alfheim area (alf_art.py lumi_only; run with no args). Wispwood now has a gamefx atlas (staging alfheim_fx) wired in scene.json.
+
 NEXT (start here):
-- Fix/triage the check-scene FAILs above.
-- Lumi sheet in non-Alfheim areas; wispwood has no gamefx atlas.
-- Then 3d (re-pull alfheim.md, alliance lock), 3e/rebase when Cozy Builder's boss camera lands, step 4 (7 screenshots, docs/ALFHEIM.md, full scan, push).
+- Fix the known layout issues above in the area specs (needs an assemble run into a private /tmp dir, then alf_art.py).
+- Run check-scene on prismvault (one area at a time, under flock).
+- Then 3d (re-pull alfheim.md, alliance lock), 3e/rebase when Cozy Builder's boss camera is on origin/main, step 4 (7 screenshots, docs/ALFHEIM.md, full history secret scan, push).
+- Merge note: alf_art.py touched actors.json in the non-Alfheim areas (adds the lumi sheet). Re-run it after Cozy Builder rebuilds those areas.
 
 ## Earlier pause note (Oct 6)
 

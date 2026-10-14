@@ -22995,12 +22995,31 @@
     "die"
    ],
    "desc": "Death Lord (rare, ~2.4x): skeleton knight in dark rune plate, horned helm over a bone skull, spiked pauldrons, deep-red cape, rune greatsword"
+  },
+  "lumi": {
+   "sheet": "lumi",
+   "row": 0,
+   "kind": "creature",
+   "anims": [
+    "idle",
+    "walk",
+    "follow",
+    "talk",
+    "happy",
+    "worried",
+    "surprised"
+   ],
+   "desc": "Lumi, the Alfheim story companion: a speaking neon-blue cold-fire starlight wisp with a pulsing violet halo, a big readable face, a five-tongue flame crown that throws prism flecks, little flame hands that gesture when she talks and a curling starry tail. Hovers at the hero's eye level; follows like a pet but talks like a person."
   }
  },
  "sheets": {
   "boss": {
    "json": "boss.json",
    "image": "boss.png"
+  },
+  "lumi": {
+   "json": "lumi.json",
+   "image": "lumi.png"
   }
  }
 }

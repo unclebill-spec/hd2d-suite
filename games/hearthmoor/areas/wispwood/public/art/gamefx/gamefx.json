@@ -1,0 +1,707 @@
+{
+ "tool": "hd2d portal",
+ "biome": "cozy-village",
+ "seed": 104,
+ "cell": 48,
+ "cast_sets": {},
+ "cycle": [],
+ "image": "gamefx.png",
+ "size": [
+  480,
+  1392
+ ],
+ "effects": {
+  "pool_violet": {
+   "row": 1,
+   "frames": 6,
+   "fps": 4,
+   "loop": true,
+   "loop_from": 0,
+   "loops": 1,
+   "kind": "decal",
+   "pivot": [
+    24,
+    24
+   ],
+   "lift": 0.02,
+   "glow": true,
+   "light": null,
+   "speed": null,
+   "travel": null,
+   "then": null,
+   "duration": 9999,
+   "notes": "radiant violet light pool: under crystal_spire / lumen_tree / prism_fountain / elf_archway / vault crystals"
+  },
+  "pool_violet_small": {
+   "row": 2,
+   "frames": 6,
+   "fps": 4,
+   "loop": true,
+   "loop_from": 0,
+   "loops": 1,
+   "kind": "decal",
+   "pivot": [
+    24,
+    24
+   ],
+   "lift": 0.02,
+   "glow": true,
+   "light": null,
+   "speed": null,
+   "travel": null,
+   "then": null,
+   "duration": 9999,
+   "notes": "under lumen_lamp / elf_rail caps / vault_pillar"
+  },
+  "pool_blue_small": {
+   "row": 3,
+   "frames": 6,
+   "fps": 4,
+   "loop": true,
+   "loop_from": 0,
+   "loops": 1,
+   "kind": "decal",
+   "pivot": [
+    24,
+    24
+   ],
+   "lift": 0.02,
+   "glow": true,
+   "light": null,
+   "speed": null,
+   "travel": null,
+   "then": null,
+   "duration": 9999,
+   "notes": "under wisp_lantern_post / wisp_jar"
+  },
+  "glow_mist_violet": {
+   "row": 4,
+   "frames": 8,
+   "fps": 5,
+   "loop": true,
+   "loop_from": 0,
+   "loops": 1,
+   "kind": "decal",
+   "pivot": [
+    24,
+    24
+   ],
+   "lift": 0.05,
+   "glow": true,
+   "light": null,
+   "speed": null,
+   "travel": null,
+   "then": null,
+   "duration": 9999,
+   "notes": "foggy glow areas: low violet fog in hollows, under bridges, around the throne"
+  },
+  "light_motes": {
+   "row": 5,
+   "frames": 8,
+   "fps": 6,
+   "loop": true,
+   "loop_from": 0,
+   "loops": 1,
+   "kind": "billboard",
+   "pivot": [
+    24,
+    47
+   ],
+   "lift": 0.2,
+   "glow": true,
+   "light": null,
+   "speed": null,
+   "travel": null,
+   "then": null,
+   "duration": 9999,
+   "notes": "ambient air of Lumenvale"
+  },
+  "prism_sparkle": {
+   "row": 6,
+   "frames": 8,
+   "fps": 6,
+   "loop": true,
+   "loop_from": 0,
+   "loops": 1,
+   "kind": "billboard",
+   "pivot": [
+    24,
+    40
+   ],
+   "lift": 0.6,
+   "glow": true,
+   "light": null,
+   "speed": null,
+   "travel": null,
+   "then": null,
+   "duration": 9999,
+   "notes": "over crystal_spire (lift 1.4), prism_fountain (lift 1.6), elf_archway keystone (lift 3.0)"
+  },
+  "fountain_sparkle": {
+   "row": 7,
+   "frames": 8,
+   "fps": 8,
+   "loop": true,
+   "loop_from": 0,
+   "loops": 1,
+   "kind": "billboard",
+   "pivot": [
+    24,
+    47
+   ],
+   "lift": 0.45,
+   "glow": true,
+   "light": null,
+   "speed": null,
+   "travel": null,
+   "then": null,
+   "duration": 9999,
+   "notes": "on prism_fountain (local [0, 0.45, 0])"
+  },
+  "wisp_violet": {
+   "row": 8,
+   "frames": 8,
+   "fps": 8,
+   "loop": true,
+   "loop_from": 0,
+   "loops": 1,
+   "kind": "billboard",
+   "pivot": [
+    24,
+    30
+   ],
+   "lift": 1.2,
+   "glow": true,
+   "light": {
+    "color": "#d4a8ff",
+    "intensity": 0.6,
+    "range": 2.0
+   },
+   "speed": null,
+   "travel": null,
+   "then": null,
+   "duration": 9999,
+   "notes": "wild wisp (catchable)"
+  },
+  "wisp_blue": {
+   "row": 9,
+   "frames": 8,
+   "fps": 8,
+   "loop": true,
+   "loop_from": 0,
+   "loops": 1,
+   "kind": "billboard",
+   "pivot": [
+    24,
+    30
+   ],
+   "lift": 1.2,
+   "glow": true,
+   "light": {
+    "color": "#a6ecff",
+    "intensity": 0.6,
+    "range": 2.0
+   },
+   "speed": null,
+   "travel": null,
+   "then": null,
+   "duration": 9999,
+   "notes": "wild wisp (catchable)"
+  },
+  "wisp_pink": {
+   "row": 10,
+   "frames": 8,
+   "fps": 8,
+   "loop": true,
+   "loop_from": 0,
+   "loops": 1,
+   "kind": "billboard",
+   "pivot": [
+    24,
+    30
+   ],
+   "lift": 1.2,
+   "glow": true,
+   "light": {
+    "color": "#ffb4ea",
+    "intensity": 0.6,
+    "range": 2.0
+   },
+   "speed": null,
+   "travel": null,
+   "then": null,
+   "duration": 9999,
+   "notes": "wild wisp (rare, catchable)"
+  },
+  "wisp_catch": {
+   "row": 11,
+   "frames": 8,
+   "fps": 12,
+   "loop": false,
+   "loop_from": 0,
+   "loops": 1,
+   "kind": "billboard",
+   "pivot": [
+    24,
+    30
+   ],
+   "lift": 1.0,
+   "glow": true,
+   "light": {
+    "color": "#a6ecff",
+    "intensity": 1.0,
+    "range": 2.5,
+    "curve": [
+     0.6,
+     0.7,
+     0.8,
+     0.9,
+     1.0,
+     1.0,
+     0.6,
+     0.2
+    ]
+   },
+   "speed": null,
+   "travel": null,
+   "then": null,
+   "duration": 0.667,
+   "notes": "on catching a wisp (at the net / jar)"
+  },
+  "lantern_glow": {
+   "row": 12,
+   "frames": 4,
+   "fps": 4,
+   "loop": true,
+   "loop_from": 0,
+   "loops": 1,
+   "kind": "billboard",
+   "pivot": [
+    24,
+    24
+   ],
+   "lift": 0.0,
+   "glow": true,
+   "light": {
+    "color": "#a6ecff",
+    "intensity": 0.5,
+    "range": 1.6
+   },
+   "speed": null,
+   "travel": null,
+   "then": null,
+   "duration": 9999,
+   "notes": "elf_lampwright's lantern: sprite px offset (-7, -21) from the feet pivot facing down, (-5, -21) left, mirrored right; hidden facing up"
+  },
+  "sylvaine_aura": {
+   "row": 13,
+   "frames": 8,
+   "fps": 8,
+   "loop": true,
+   "loop_from": 0,
+   "loops": 1,
+   "kind": "decal",
+   "pivot": [
+    24,
+    24
+   ],
+   "lift": 0.03,
+   "glow": true,
+   "light": {
+    "color": "#a45cf0",
+    "intensity": 0.9,
+    "range": 6.0
+   },
+   "speed": null,
+   "travel": null,
+   "then": null,
+   "duration": 9999,
+   "notes": "under Lady Sylvaine always (scale the decal x3 for her 5.5x footprint, or tile 3x3)"
+  },
+  "drain_stream": {
+   "row": 14,
+   "frames": 8,
+   "fps": 12,
+   "loop": true,
+   "loop_from": 0,
+   "loops": 1,
+   "kind": "billboard",
+   "pivot": [
+    0,
+    24
+   ],
+   "lift": 1.2,
+   "glow": true,
+   "light": null,
+   "speed": null,
+   "travel": null,
+   "then": null,
+   "duration": 9999,
+   "notes": "attack frame 14: stretch / tile from the target (x=47 end) to her raised hand (x=0 end)"
+  },
+  "drain_hit": {
+   "row": 15,
+   "frames": 8,
+   "fps": 10,
+   "loop": true,
+   "loop_from": 0,
+   "loops": 1,
+   "kind": "billboard",
+   "pivot": [
+    24,
+    40
+   ],
+   "lift": 0.0,
+   "glow": true,
+   "light": {
+    "color": "#d4a8ff",
+    "intensity": 0.7,
+    "range": 2.0
+   },
+   "speed": null,
+   "travel": null,
+   "then": null,
+   "duration": 9999,
+   "notes": "on the drained target"
+  },
+  "violet_moths": {
+   "row": 16,
+   "frames": 10,
+   "fps": 10,
+   "loop": false,
+   "loop_from": 0,
+   "loops": 1,
+   "kind": "billboard",
+   "pivot": [
+    24,
+    47
+   ],
+   "lift": 0.0,
+   "glow": true,
+   "light": {
+    "color": "#d4a8ff",
+    "intensity": 0.8,
+    "range": 4.0,
+    "curve": [
+     1,
+     1,
+     0.9,
+     0.8,
+     0.7,
+     0.6,
+     0.4,
+     0.3,
+     0.2,
+     0.1
+    ]
+   },
+   "speed": null,
+   "travel": null,
+   "then": null,
+   "duration": 1.0,
+   "notes": "Sylvaine die frames 26-27 (spawn 3 offset copies across her gown)"
+  },
+  "prism_shatter": {
+   "row": 17,
+   "frames": 7,
+   "fps": 14,
+   "loop": false,
+   "loop_from": 0,
+   "loops": 1,
+   "kind": "billboard",
+   "pivot": [
+    24,
+    30
+   ],
+   "lift": 0.6,
+   "glow": true,
+   "light": {
+    "color": "#a6ecff",
+    "intensity": 1.0,
+    "range": 2.5,
+    "curve": [
+     1,
+     0.8,
+     0.6,
+     0.4,
+     0.3,
+     0.2,
+     0.1
+    ]
+   },
+   "speed": null,
+   "travel": null,
+   "then": null,
+   "duration": 0.5,
+   "notes": "prism shard die (frame 25) and its splinter hits"
+  },
+  "mirror_flash": {
+   "row": 18,
+   "frames": 6,
+   "fps": 14,
+   "loop": false,
+   "loop_from": 0,
+   "loops": 1,
+   "kind": "billboard",
+   "pivot": [
+    24,
+    24
+   ],
+   "lift": 1.0,
+   "glow": true,
+   "light": {
+    "color": "#fff8e6",
+    "intensity": 1.0,
+    "range": 2.0,
+    "curve": [
+     0.6,
+     1,
+     0.7,
+     0.4,
+     0.2,
+     0.1
+    ]
+   },
+   "speed": null,
+   "travel": null,
+   "then": null,
+   "duration": 0.429,
+   "notes": "mirror duelist thrust (frame 14) at the rapier tip"
+  },
+  "glow_orb_blue": {
+   "row": 19,
+   "frames": 8,
+   "fps": 6,
+   "loop": true,
+   "loop_from": 0,
+   "loops": 1,
+   "kind": "billboard",
+   "pivot": [
+    24,
+    33
+   ],
+   "lift": 1.4,
+   "glow": true,
+   "light": {
+    "color": "#a6ecff",
+    "intensity": 0.7,
+    "range": 3.0,
+    "pool": "glow_orb_pool_blue"
+   },
+   "speed": null,
+   "travel": null,
+   "then": null,
+   "duration": 9999,
+   "notes": "floating glow orb (hover 1.1-2.2 m); light pool colour neon_blue -> glow_orb_pool_blue on the ground below"
+  },
+  "glow_orb_pool_blue": {
+   "row": 20,
+   "frames": 6,
+   "fps": 4,
+   "loop": true,
+   "loop_from": 0,
+   "loops": 1,
+   "kind": "decal",
+   "pivot": [
+    24,
+    24
+   ],
+   "lift": 0.02,
+   "glow": true,
+   "light": null,
+   "speed": null,
+   "travel": null,
+   "then": null,
+   "duration": 9999,
+   "notes": "the ground light pool under glow_orb_blue"
+  },
+  "glow_orb_violet": {
+   "row": 21,
+   "frames": 8,
+   "fps": 6,
+   "loop": true,
+   "loop_from": 0,
+   "loops": 1,
+   "kind": "billboard",
+   "pivot": [
+    24,
+    33
+   ],
+   "lift": 1.4,
+   "glow": true,
+   "light": {
+    "color": "#d4a8ff",
+    "intensity": 0.7,
+    "range": 3.0,
+    "pool": "glow_orb_pool_violet"
+   },
+   "speed": null,
+   "travel": null,
+   "then": null,
+   "duration": 9999,
+   "notes": "floating glow orb (hover 1.1-2.2 m); light pool colour neon_violet -> glow_orb_pool_violet on the ground below"
+  },
+  "glow_orb_pool_violet": {
+   "row": 22,
+   "frames": 6,
+   "fps": 4,
+   "loop": true,
+   "loop_from": 0,
+   "loops": 1,
+   "kind": "decal",
+   "pivot": [
+    24,
+    24
+   ],
+   "lift": 0.02,
+   "glow": true,
+   "light": null,
+   "speed": null,
+   "travel": null,
+   "then": null,
+   "duration": 9999,
+   "notes": "the ground light pool under glow_orb_violet"
+  },
+  "glow_orb_red": {
+   "row": 23,
+   "frames": 8,
+   "fps": 6,
+   "loop": true,
+   "loop_from": 0,
+   "loops": 1,
+   "kind": "billboard",
+   "pivot": [
+    24,
+    33
+   ],
+   "lift": 1.4,
+   "glow": true,
+   "light": {
+    "color": "#ff5a4a",
+    "intensity": 0.7,
+    "range": 3.0,
+    "pool": "glow_orb_pool_red"
+   },
+   "speed": null,
+   "travel": null,
+   "then": null,
+   "duration": 9999,
+   "notes": "floating glow orb (hover 1.1-2.2 m); light pool colour neon_red -> glow_orb_pool_red on the ground below"
+  },
+  "glow_orb_pool_red": {
+   "row": 24,
+   "frames": 6,
+   "fps": 4,
+   "loop": true,
+   "loop_from": 0,
+   "loops": 1,
+   "kind": "decal",
+   "pivot": [
+    24,
+    24
+   ],
+   "lift": 0.02,
+   "glow": true,
+   "light": null,
+   "speed": null,
+   "travel": null,
+   "then": null,
+   "duration": 9999,
+   "notes": "the ground light pool under glow_orb_red"
+  },
+  "glow_orb_green": {
+   "row": 25,
+   "frames": 8,
+   "fps": 6,
+   "loop": true,
+   "loop_from": 0,
+   "loops": 1,
+   "kind": "billboard",
+   "pivot": [
+    24,
+    33
+   ],
+   "lift": 1.4,
+   "glow": true,
+   "light": {
+    "color": "#b8ffd4",
+    "intensity": 0.7,
+    "range": 3.0,
+    "pool": "glow_orb_pool_green"
+   },
+   "speed": null,
+   "travel": null,
+   "then": null,
+   "duration": 9999,
+   "notes": "floating glow orb (hover 1.1-2.2 m); light pool colour neon_green -> glow_orb_pool_green on the ground below"
+  },
+  "glow_orb_pool_green": {
+   "row": 26,
+   "frames": 6,
+   "fps": 4,
+   "loop": true,
+   "loop_from": 0,
+   "loops": 1,
+   "kind": "decal",
+   "pivot": [
+    24,
+    24
+   ],
+   "lift": 0.02,
+   "glow": true,
+   "light": null,
+   "speed": null,
+   "travel": null,
+   "then": null,
+   "duration": 9999,
+   "notes": "the ground light pool under glow_orb_green"
+  },
+  "glow_orb_pink": {
+   "row": 27,
+   "frames": 8,
+   "fps": 6,
+   "loop": true,
+   "loop_from": 0,
+   "loops": 1,
+   "kind": "billboard",
+   "pivot": [
+    24,
+    33
+   ],
+   "lift": 1.4,
+   "glow": true,
+   "light": {
+    "color": "#ffb4ea",
+    "intensity": 0.7,
+    "range": 3.0,
+    "pool": "glow_orb_pool_pink"
+   },
+   "speed": null,
+   "travel": null,
+   "then": null,
+   "duration": 9999,
+   "notes": "floating glow orb (hover 1.1-2.2 m); light pool colour neon_pink -> glow_orb_pool_pink on the ground below"
+  },
+  "glow_orb_pool_pink": {
+   "row": 28,
+   "frames": 6,
+   "fps": 4,
+   "loop": true,
+   "loop_from": 0,
+   "loops": 1,
+   "kind": "decal",
+   "pivot": [
+    24,
+    24
+   ],
+   "lift": 0.02,
+   "glow": true,
+   "light": null,
+   "speed": null,
+   "travel": null,
+   "then": null,
+   "duration": 9999,
+   "notes": "the ground light pool under glow_orb_pink"
+  }
+ }
+}

@@ -710,9 +710,10 @@ def run(root, out, size=(1280, 720), timeout=120, scene_dir="", params="", phone
         ok_g = [a for a in gfx["effects"] if "uniform_frac" in a]
         wu = min((a["uniform_frac"] for a in ok_g), default=0)
         wc = min((a["atlas_corr"] for a in ok_g), default=0)
-        C["gamefx_sharp"] = {"pass": len(ok_g) == gfx["expected"] and gfx["expected"] > 0 and wu >= 0.97 and wc >= 0.85
+        gsparse = sum(1 for a in gfx["effects"] if a.get("skipped") == "sparse")   # [ALFHEIM] count sparse frames like effects_sharp does (motes / flashes)
+        C["gamefx_sharp"] = {"pass": len(ok_g) + gsparse == gfx["expected"] and len(ok_g) > 0 and gfx["expected"] > 0 and wu >= 0.97 and wc >= 0.85
                              and gfx["near_white"] < 0.004 and gfx["bright_frac"] < 0.03,
-                             "effects_checked": len(ok_g), "effects_spawned": gfx["expected"], "worst_uniform_block_frac": wu,
+                             "effects_checked": len(ok_g), "effects_sparse": gsparse, "effects_spawned": gfx["expected"], "worst_uniform_block_frac": wu,
                              "worst_atlas_corr": wc, "near_white": round(gfx["near_white"], 5), "bright_frac": round(gfx["bright_frac"], 5),
                              "per_effect": [{k: v for k, v in a.items() if k not in ("_crop", "src_colours", "crop_colours", "facing", "role")} for a in gfx["effects"]]}
     if acts is not None:
