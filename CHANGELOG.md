@@ -2,6 +2,13 @@
 
 Dates are America/New_York. Newest first. Keep this current with every change you push.
 
+## 2026-10-14: Stage 6.7 the Forge Quarter + 6.6 lantern stands (batch 2 WIP, branch `hearthmoor-batch2-wip`)
+- New area `forge` (Ravenhold's east district gate opens once *The Cold Altar* is done; `REALM.forge = 'hearth'`). A dark yard with two red forge mouths, three neon-blue quench tanks, embers, red / blue light pools + point lights (always glowing).
+- `game/forge.js`: Tova Anvilsong tempers gear +1..+10 (forge_alchemy.md 2.1-2.4: rarity caps, cost table, +7% per + on own mods in `gearMods` / `describe`, fails from +6 keep gold + gems, eat iron / steel, add heat; sure at heat 3). Orri Flintcog rerolls one stat with a rune-stone (3.1: per-item limit, keep new / old). Shops `forge` (iron bits 4 g, cold-steel 30 g) and `runebench` (rune-stones 40 g; stand-in until Nettle). New `describe` labels (crit damage, drain, regen, healing, spell cd, stamina regen).
+- Not built yet: the riot beat, *The First Temper*, sockets (Orri / Nettle), smelt / scrap-for-iron tabs, Tova's shop-style forge panel (dialogue choices for now), the Still (6.8).
+- Art: forge pack (`art/forge/`: Tova = `smith`, Orri = `dwarfsmith` sheet, `forge_fx` gamefx via `build.py install_forge`, kit via `tools/kit/kit_forge.py`). Orb lantern stands: `tools/kit/kit_orb_lanterns.py` + lampless `orb_post_*` copies (the light comes only from a placed fish), placed at the 4 lantern spots.
+- Smoke segment **L** (`--quick forge`); segment K checks the stands. Screenshots: `stage6_forge.png`, `stage6_lanterns.png` (refreshed).
+
 ## 2026-10-14: Stage 6.6 glow-fish orb lanterns (batch 2 WIP, branch `hearthmoor-batch2-wip`)
 - `game/lanterns.js`: buy glow-fish (Odo, Ida) and empty orbs (Odo), or catch glow-fish at night (Hollows spring, Ravenhold pier ends; one per spot per day). Place orb lanterns on 2 home spots (Plaza cottage) and 2 Lane garden spots (blue / violet / red / grand mix); at night each casts a pool decal + point light + light zone. E again takes it back.
 - Art: `art/orb_lanterns/orb_fx_32` (Art seat pack) appended to plaza + lane spells atlases by `build.py install_orb_lanterns`. Kit posts (glb) not placed yet: orbs hover. Smoke segment **K** (`--quick lantern`). Screenshot: `docs/screenshots/stage6_lanterns.png`.

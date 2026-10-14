@@ -12,18 +12,19 @@ export const ORB = {
 };
 // placement spots per area: [id, x, z, colour, where]
 export const SPOTS = {
-  plaza: [['home_blue', 3.9, 2.8, 'blue', 'home'], ['home_violet', 5.7, 2.8, 'violet', 'home']],
-  lane: [['garden_red', 2.0, 4.0, 'red', 'garden'], ['garden_grand', 5.2, 4.0, 'grand', 'garden']],
+// (the kit stands orb_post_* sit at the same spots in areas/src; lift = the kit orb centre, so the billboard covers it)
+  plaza: [['home_blue', 3.9, 2.8, 'blue', 'home', 1.53], ['home_violet', 5.7, 2.8, 'violet', 'home', 1.53]],
+  lane: [['garden_red', 2.0, 4.0, 'red', 'garden', 1.34], ['garden_grand', 5.2, 4.0, 'grand', 'garden', 1.37]],
 };
 // where glow-fish can be caught at night: [id, x, z]
 export const FISH = { hollows: [['fish_spring', 10.0, -6.2]], ravenhold: [['fish_pier_w', -6.0, 7.9], ['fish_pier_e', 6.0, 7.9]] };
 const NIGHT = (t) => t > 0.8 || t < 0.25;
-const REACH = 1.3, ZONE_R = 2.6, LIFT = 1.25;
+const REACH = 1.6, ZONE_R = 2.6;
 export class Lanterns {
   constructor(G) { this.G = G; this.ctx = null; this.spots = []; this.fish = []; }
   attach(ctx, area) {
     this.detach(); this.ctx = ctx; const S = this.G.S; S.orbs = S.orbs || {}; S.fishDay = S.fishDay || {};
-    this.spots = (SPOTS[area] || []).map(([id, x, z, col, where]) => ({ id, x, z, col, where, orb: null, pool: null, light: null, lit: false }));
+    this.spots = (SPOTS[area] || []).map(([id, x, z, col, where, lift]) => ({ id, x, z, col, where, lift, orb: null, pool: null, light: null, lit: false }));
     this.fish = (FISH[area] || []).map(([id, x, z]) => ({ id, x, z }));
     for (const p of this.spots) this.show(p);
   }
@@ -36,11 +37,11 @@ export class Lanterns {
     const ctx = this.ctx; if (!ctx || !ctx.effects) return;
     const on = !!this.orbs()[p.id], still = !!this.G.qaStill, O = ORB[p.col], y = ctx.heightAt(p.x, p.z);
     if (!on) { if (p.orb || p.lit) this.clear(p); return; }
-    if (!p.orb) p.orb = ctx.effects.spawn(O.fx, p.x, y + LIFT, p.z, { duration: 1e9, fadeIn: still ? 0 : 0.6 });
+    if (!p.orb) p.orb = ctx.effects.spawn(O.fx, p.x, y + p.lift, p.z + 0.12, { duration: 1e9, fadeIn: still ? 0 : 0.6 });
     const want = NIGHT(ctx.clock.t);
     if (want && !p.lit) {
       p.pool = ctx.effects.spawn(O.pool, p.x, y, p.z + 0.04, { duration: 1e9, fadeIn: still ? 0 : 1.0 });
-      p.light = ctx.addGlow ? ctx.addGlow(p.x, y, p.z, { color: O.color, intensity: 6, range: 4.5, lift: LIFT, fadeIn: still ? 0.01 : 1.0 }) : null;
+      p.light = ctx.addGlow ? ctx.addGlow(p.x, y, p.z, { color: O.color, intensity: 6, range: 4.5, lift: p.lift, fadeIn: still ? 0.01 : 1.0 }) : null;
       p.lit = true;
     } else if (!want && p.lit) {
       if (p.pool) p.pool.dur = p.pool.t + 0.6; if (p.light) p.light.kill = true; p.pool = p.light = null; p.lit = false;

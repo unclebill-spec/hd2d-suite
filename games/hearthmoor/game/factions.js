@@ -29,7 +29,7 @@ export const FACTIONS = {
 };
 export const IDS = Object.keys(FACTIONS);
 // the realm faction of each area: rifts, rares and mini-bosses there earn its merit
-export const REALM = { plaza: 'hearth', lane: 'hearth', mossglen: 'hearth', hollows: 'hearth', vanaheim: 'embassy', rift: 'gate', ravenhold: 'corsair', bifrost: 'gate', temple: 'hearth',
+export const REALM = { plaza: 'hearth', lane: 'hearth', mossglen: 'hearth', hollows: 'hearth', vanaheim: 'embassy', rift: 'gate', ravenhold: 'corsair', bifrost: 'gate', temple: 'hearth', forge: 'hearth',
                         rotwood: 'embassy', verdant: 'embassy' };   // 6.4 Vanaheim dungeons (areas not built yet)
 export const VANAHEIM_AREAS = { vanaheim: 1, rotwood: 1, verdant: 1 };
 export const MERIT = { errand: 40, rift: [30, 60, 120], rare: 50, rareTrait: 40, boss: 80, riddle: 60, secret: 40, smuggle: 15, rival: 5, warden: 20,

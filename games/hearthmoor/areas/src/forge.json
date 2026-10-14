@@ -1,0 +1,444 @@
+{
+ "name": "Ravenhold: the Forge Quarter",
+ "seed": 108,
+ "biome": "cozy-village",
+ "about": "The Forge Quarter on Ravenhold's east cliff (6.7): a dark stone yard of red forge mouths and neon-blue cold-fire quench tanks. Tova Anvilsong tempers gear +1 to +10; Orri Flintcog rerolls stats with rune-stones. Art: the forge pack (art/forge/, Art seat 2026-10-05).",
+ "time": {
+  "start": "night",
+  "speed": 0.0016
+ },
+ "spells": true,
+ "sprite_roles": [
+  "actors",
+  "heroes",
+  "combat"
+ ],
+ "boss_roles": [],
+ "camera": {
+  "fov": 24,
+  "pitch": 36,
+  "distance": 31,
+  "zoom": [
+   23,
+   40
+  ],
+  "look": [
+   0,
+   0,
+   -2.6
+  ],
+  "bounds": [
+   -10.5,
+   -9.8,
+   10.5,
+   4.2
+  ]
+ },
+ "ground": {
+  "size": [
+   80,
+   70
+  ],
+  "mat": "dirt",
+  "walk": [
+   -12.0,
+   -12.6,
+   12.0,
+   5.6
+  ]
+ },
+ "slabs": [],
+ "terraces": [
+  {
+   "name": "yard",
+   "rect": [
+    -40,
+    -40,
+    40,
+    -6.2
+   ],
+   "h": 0.8,
+   "top": "cobble",
+   "gaps": [
+    [
+     -1.6,
+     1.6
+    ]
+   ]
+  }
+ ],
+ "stairs": [
+  {
+   "name": "stair_yard",
+   "x": 0.0,
+   "z_top": -6.2,
+   "width": 3.0,
+   "rise": 0.8,
+   "base": 0.0
+  }
+ ],
+ "decks": [],
+ "blocks": [
+  [
+   -12.0,
+   -12.6,
+   12.0,
+   -11.9
+  ],
+  [
+   -12.0,
+   -12.6,
+   -11.3,
+   5.6
+  ],
+  [
+   11.3,
+   -12.6,
+   12.0,
+   5.6
+  ]
+ ],
+ "buildings": [],
+ "props": [
+  {
+   "piece": "forge_hearth",
+   "pos": [
+    -4.2,
+    -9.6
+   ]
+  },
+  {
+   "piece": "forge_anvil",
+   "pos": [
+    -4.2,
+    -7.4
+   ]
+  },
+  {
+   "piece": "quench_tank",
+   "pos": [
+    -1.8,
+    -8.0
+   ]
+  },
+  {
+   "piece": "coal_bin",
+   "pos": [
+    -6.6,
+    -8.2
+   ]
+  },
+  {
+   "piece": "tool_rack",
+   "pos": [
+    -7.4,
+    -10.8
+   ]
+  },
+  {
+   "piece": "forge_hearth",
+   "pos": [
+    5.2,
+    -9.6
+   ]
+  },
+  {
+   "piece": "grindstone",
+   "pos": [
+    3.2,
+    -7.6
+   ]
+  },
+  {
+   "piece": "quench_tank",
+   "pos": [
+    7.4,
+    -7.8
+   ]
+  },
+  {
+   "piece": "forge_sign",
+   "pos": [
+    2.4,
+    3.6
+   ]
+  },
+  {
+   "piece": "coal_bin",
+   "pos": [
+    -8.6,
+    1.6
+   ]
+  },
+  {
+   "piece": "crate",
+   "pos": [
+    -9.4,
+    0.4
+   ]
+  },
+  {
+   "piece": "barrel",
+   "pos": [
+    8.8,
+    1.2
+   ]
+  },
+  {
+   "piece": "crate",
+   "pos": [
+    9.4,
+    0.0
+   ]
+  },
+  {
+   "piece": "lamp_post",
+   "pos": [
+    -3.0,
+    3.6
+   ]
+  },
+  {
+   "piece": "quench_tank",
+   "pos": [
+    6.4,
+    -1.6
+   ]
+  },
+  {
+   "piece": "forge_anvil",
+   "pos": [
+    4.6,
+    -0.8
+   ]
+  }
+ ],
+ "hedges": [],
+ "trees": [],
+ "backdrop": {
+  "hills": [
+   0,
+   -40
+  ]
+ },
+ "emitters": [
+  {
+   "preset": "dust_motes",
+   "pos": [
+    0,
+    1.8,
+    -3.0
+   ],
+   "area": [
+    22,
+    3.0,
+    12
+   ]
+  }
+ ],
+ "actors": [
+  {
+   "id": "smith",
+   "role": "smith",
+   "name": "Tova Anvilsong, master smith",
+   "pos": [
+    -3.0,
+    -6.8
+   ],
+   "facing": "down",
+   "behavior": "idle",
+   "talkable": true,
+   "say": [
+    "The forge is hot. What are we making better today?"
+   ]
+  },
+  {
+   "id": "runesmith",
+   "role": "dwarfsmith",
+   "name": "Orri Flintcog, rune bench",
+   "pos": [
+    3.6,
+    -0.2
+   ],
+   "facing": "down",
+   "behavior": "idle",
+   "talkable": true,
+   "say": [
+    "Rune bench. Pick a stat you don't love and let the stone decide."
+   ]
+  },
+  {
+   "id": "forgehand",
+   "role": "fisher",
+   "name": "A forgehand",
+   "pos": [
+    -7.4,
+    2.4
+   ],
+   "facing": "right",
+   "behavior": "idle",
+   "talkable": true,
+   "say": [
+    "Coal in, iron out. Mind the sparks, they've opinions."
+   ]
+  }
+ ],
+ "player": {
+  "role": "traveler",
+  "pos": [
+   0.0,
+   3.2
+  ],
+  "facing": "up"
+ },
+ "fx": [],
+ "grades": {
+  "day": {
+   "fog_color": "#5c6c84",
+   "sky_top": "#46587c",
+   "sky_bottom": "#8c9cb4",
+   "hemi_sky": "#7a8cb0",
+   "sun_intensity": 1.5,
+   "sun_color": "#d8dcf0",
+   "saturation": 0.92,
+   "exposure": 0.96,
+   "warmth": -0.06,
+   "window_emissive": "#ffa040",
+   "window_intensity": 0.9,
+   "lamp_intensity": 0.6,
+   "bugs": 0.3
+  },
+  "dusk": {
+   "fog_color": "#2c3a60",
+   "sky_bottom": "#7c6c9c",
+   "sky_top": "#1c2650",
+   "exposure": 0.98,
+   "sun_intensity": 0.7,
+   "bugs": 0.8,
+   "warmth": -0.1
+  },
+  "night": {
+   "fog_color": "#101c38",
+   "sky_top": "#080c20",
+   "sky_bottom": "#1c2a52",
+   "hemi_sky": "#3c5088",
+   "hemi_intensity": 0.5,
+   "exposure": 1.0,
+   "sun_intensity": 0.3,
+   "sun_color": "#8ea8e8",
+   "bugs": 1.0
+  }
+ },
+ "game": {
+  "id": "forge",
+  "title": "The Forge Quarter",
+  "exits": [
+   {
+    "rect": [
+     -1.8,
+     4.6,
+     1.8,
+     5.6
+    ],
+    "to": "ravenhold",
+    "spawn": "from_forge",
+    "label": "the lane down to Ravenhold Harbor"
+   }
+  ],
+  "portals": [],
+  "spawns": {
+   "start": [
+    0.0,
+    3.2,
+    "up"
+   ],
+   "from_harbor": [
+    0.0,
+    3.2,
+    "up"
+   ],
+   "qa": [
+    0.0,
+    1.0,
+    "up"
+   ]
+  },
+  "anvils": [
+   {
+    "id": "tova",
+    "pos": [
+     -4.2,
+     -7.4
+    ],
+    "npc": "smith"
+   }
+  ],
+  "forgefx": [
+   {
+    "name": "forge_fire",
+    "pos": [
+     -4.2,
+     0.27,
+     -8.88
+    ]
+   },
+   {
+    "name": "forge_fire",
+    "pos": [
+     5.2,
+     0.27,
+     -8.88
+    ]
+   },
+   {
+    "name": "forge_pool_red",
+    "pos": [
+     -4.2,
+     0.02,
+     -7.6
+    ]
+   },
+   {
+    "name": "forge_pool_red",
+    "pos": [
+     5.2,
+     0.02,
+     -7.9
+    ]
+   },
+   {
+    "name": "quench_pool_blue",
+    "pos": [
+     -1.8,
+     0.82,
+     -7.0
+    ]
+   },
+   {
+    "name": "quench_pool_blue",
+    "pos": [
+     7.4,
+     0.82,
+     -6.8
+    ]
+   },
+   {
+    "name": "quench_pool_blue",
+    "pos": [
+     6.4,
+     0.02,
+     -0.6
+    ]
+   },
+   {
+    "name": "embers_drift",
+    "pos": [
+     -4.2,
+     3.0,
+     -9.4
+    ]
+   }
+  ]
+ },
+ "gamefx": true
+}

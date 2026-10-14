@@ -15,7 +15,7 @@ const TOADS = {
   bifrost: [[-12.6, -2.6], [-12.5, -1.2], [11.6, 0.8], [-12.1, -9.7], [12.2, -9.8], [8.6, -7.4], [-8.6, -7.5], [-3.1, 14.6]],
 };
 // areas that glow at every hour (the hollow is always dim), and their standing light pools: [x, z, kind, colour]
-const ALWAYS = { hollows: true, rift: true, ravenhold: true, bifrost: true, temple: true };   // Ravenhold + Bifrost sit in the Rift's gloom: their glow never sleeps
+const ALWAYS = { hollows: true, rift: true, ravenhold: true, bifrost: true, temple: true, forge: true };   // Ravenhold + Bifrost sit in the Rift's gloom: their glow never sleeps
 const POOLS = {
   hollows: [[-1.0, 1.4, 'light', '#9a6cd4'], [5.0, 0.2, 'cold', '#5ac8ff'], [-8.2, 1.4, 'cold', '#5ac8ff'],
             [-9.4, -6.4, 'light', '#9a6cd4'], [8.6, -6.6, 'cold', '#5ac8ff'], [1.8, 5.6, 'light', '#e47c8c'],
@@ -121,6 +121,7 @@ export class Glow {
     for (const p of this.fixed) out.push({ x: p.x, z: p.z, r: p.r, src: 'pool' });
     if (this.G.hollows) out.push(...this.G.hollows.zones());   // lit braziers + the spring
     if (this.G.garden) out.push(...this.G.garden.zones());
+    if (this.G.forge) out.push(...this.G.forge.zones());        // forge mouths + quench tanks
     if (this.G.lanterns) out.push(...this.G.lanterns.zones());   // placed orb lanterns at night     // glow-garden blooms at night
     if (this.G.pets) out.push(...this.G.pets.zones());
     if (this.G.temple) out.push(...this.G.temple.zones());     // the Old Temple's relit sacred brazier (6.3)         // the active pet's glow (Stage 6 part 2)

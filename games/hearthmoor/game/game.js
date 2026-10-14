@@ -16,6 +16,7 @@ import { Glow } from './glow.js';
 import { Hollows } from './hollows.js';
 import { Garden } from './garden.js';
 import { Lanterns } from './lanterns.js';
+import { Forge } from './forge.js';
 import { Weather, weatherAt } from './weather.js';
 import { Intro } from './intro.js';
 import { Rares, ELEMENTS as RARE_EL } from './rares.js';
@@ -41,7 +42,7 @@ const V1_DONE = 'hearthmoor-v1-migrated';     // set when slot 1 is deleted, so 
 const LAST_SLOT = 'hearthmoor-lastslot';
 const QA = Q.has('qa');                       // check-scene / screenshots: straight into ?area=, fresh state, no title, no saving
 const AREAS = { plaza: 'areas/plaza/', lane: 'areas/lane/', mossglen: 'areas/mossglen/', hollows: 'areas/hollows/',
-                rift: 'areas/rift/', vanaheim: 'areas/vanaheim/', ravenhold: 'areas/ravenhold/', bifrost: 'areas/bifrost/', temple: 'areas/temple/', rotwood: 'areas/rotwood/', verdant: 'areas/verdant/' };
+                rift: 'areas/rift/', vanaheim: 'areas/vanaheim/', ravenhold: 'areas/ravenhold/', bifrost: 'areas/bifrost/', temple: 'areas/temple/', rotwood: 'areas/rotwood/', verdant: 'areas/verdant/', forge: 'areas/forge/' };
 const DAY_SECONDS = Number(Q.get('day') || 1440);  // one whole day = 24 real minutes (day, dusk, night, dawn)
 const $ = (id) => document.getElementById(id);
 
@@ -64,6 +65,8 @@ G.temple = new Temple(G);   // Stage 6.3: the Old Temple (Harbor gate, clues, al
 G.crossing = new Crossing(G);   // Bifrost Crossing: the realm gates' looks (alliance / merit keys)
 G.garden = new Garden(G);
 G.lanterns = new Lanterns(G);   // 6.6 glow-fish orb lanterns
+G.forge = new Forge(G);   // 6.7 the Forge Quarter (Tova tempers, Orri rerolls)
+TALK.smith = () => G.forge.tova(); TALK.runesmith = () => G.forge.orri();
 G.weather = new Weather(G);
 G.intro = new Intro(G);
 G.framePullFor = framePullFor; G.isTrial = isTrial;   // 6.4 boss camera + trial mode (smoke)
@@ -333,12 +336,12 @@ async function loadArea(id, spawnKey, pos) {
   const old = $('view'); if (old) old.remove();
   const canvas = document.createElement('canvas'); canvas.id = 'view'; document.body.prepend(canvas);
   G.area = id; G.S.area = id; G.armed = false;
-  G.rifts.detach(); G.storms.detach(); G.rares.detach(); G.combat.detach(); G.glow.detach(); G.hollows.detach(); G.harbor.detach(); G.crossing.detach(); G.garden.detach(); G.lanterns.detach(); G.weather.detach(); G.loot.detach(); G.shopUI.detach(); G.pets.detach(); G.temple.detach(); G.verdant.detach();
+  G.rifts.detach(); G.storms.detach(); G.rares.detach(); G.combat.detach(); G.glow.detach(); G.hollows.detach(); G.harbor.detach(); G.crossing.detach(); G.garden.detach(); G.lanterns.detach(); G.forge.detach(); G.weather.detach(); G.loot.detach(); G.shopUI.detach(); G.pets.detach(); G.temple.detach(); G.verdant.detach();
   G.game = await boot({ base: AREAS[id], canvas, spawn: sp, startT: G.S.t, glowLights: glowCap(), clockSpeed: 1 / DAY_SECONDS, spellCycle: slots(),
                         player: { role: G.S.cls || G.preview || 'wildcaller' }, castAdvance: false,
                         keepTitle: true, padHandled: true, hooks, toast: (m, t) => toast(m, t) });
   const ctx = G.ctx = G.game.ctx;
-  G.storms.attach(ctx, id); G.combat.attach(ctx, id); G.rares.attach(ctx, id); G.rifts.attach(ctx, id); G.factions.attach(ctx, id); G.glow.attach(ctx, id); G.hollows.attach(ctx); G.harbor.attach(ctx, id); G.crossing.attach(ctx, id); G.temple.attach(ctx, id); G.verdant.attach(ctx, id); G.garden.attach(ctx); G.lanterns.attach(ctx, id); G.weather.attach(ctx, id); G.loot.attach(ctx); G.shopUI.attach(ctx, id); PR.ensure(G.S); G.loot.restorePurse(id);
+  G.storms.attach(ctx, id); G.combat.attach(ctx, id); G.rares.attach(ctx, id); G.rifts.attach(ctx, id); G.factions.attach(ctx, id); G.glow.attach(ctx, id); G.hollows.attach(ctx); G.harbor.attach(ctx, id); G.crossing.attach(ctx, id); G.temple.attach(ctx, id); G.verdant.attach(ctx, id); G.garden.attach(ctx); G.lanterns.attach(ctx, id); G.forge.attach(ctx, id); G.weather.attach(ctx, id); G.loot.attach(ctx); G.shopUI.attach(ctx, id); PR.ensure(G.S); G.loot.restorePurse(id);
   // portrait source: this area's actor atlas
   portraitImg = new Image(); portraitImg.src = AREAS[id] + ctx.scene.atlas.image;
   // pickups already taken stay gone
@@ -534,7 +537,7 @@ const hooks = {
     if (kind !== 'tap' && G.verdant.interact()) return true;    // 6.4: red caps, the spring, the roots, cages, riddle door, root bowls
     if (kind !== 'tap' && G.harbor.interact()) return true;    // waystones (Lane <-> Ravenhold <-> Bifrost) + the rift-skiff
     if (kind !== 'tap' && G.garden.interact()) return true;
-    if (kind !== 'tap' && G.lanterns.interact()) return true;  // orb lanterns: place / take back; glow-fish catch spots    // glow-garden plots: plant / check / harvest
+    if (kind !== 'tap' && G.lanterns.interact()) return true;  // orb lanterns: place / take back; glow-fish catch spots
     return false;
   },
   onTalk: (npc, ctx) => {

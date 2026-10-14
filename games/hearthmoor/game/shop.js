@@ -6,6 +6,9 @@ import * as LO from './loot.js';
 export const GOODS = {
   tonic: { name: 'Hearth tonic', about: 'Drink (U, right-stick click, or tap it in the bag): heals 60 HP.', price: 12 },
   denbiscuit: { name: 'Den biscuit', about: "Signe's oat-and-moonpetal biscuit. Feed your pet once a day (hero screen, Gear tab, pet row): bond grows, and its glow doubles for 60 s.", price: 6 },
+  ironbit: { name: 'Iron bits', about: "Scrap iron, sorted by size. Tova's forge eats it by the bucket.", price: 4 },
+  coldsteel: { name: 'Cold-steel ingot', about: 'Iron quenched in cold fire. Blue at the edges. Needed for +4 and up.', price: 30 },
+  runestone: { name: 'Rune-stone', about: 'A dwarven rune carved in river stone. Orri uses one to reroll a gear stat.', price: 40 },
   glowfish: { name: 'Glow-fish', about: 'Caught in the Hollows spring and off Ravenhold\'s piers at night, or bought here. Put one in an empty orb.', price: 10 },
   orblamp: { name: 'Empty orb', about: 'A water orb for a glow-fish. Orb lantern spots: by the Plaza cottage (home) and the Lane garden.', price: 18 },
   glowseed: { name: 'Glow seed', about: 'A seed that hums in the dark. Plant it in a garden plot (on the lower street of Bakery Lane by the lamp post, or in the Hollows): it blooms in two days.', price: 8 },
@@ -42,6 +45,8 @@ export function readBank() {
 }
 export const writeBank = (b) => localStorage.setItem(BANK_STORE, JSON.stringify(b));
 export const bankUsed = (b) => b.items.length + Object.values(b.gems).filter((n) => n > 0).length;
+SHOPS.forge = { name: 'Anvilsong Forge', keeper: 'Tova Anvilsong, master smith', goods: ['ironbit', 'coldsteel'], gear: { n: 0, rar: [] }, sellMul: 1 };
+SHOPS.runebench = { name: "Orri's Rune Bench", keeper: 'Orri Flintcog, rune bench', goods: ['runestone'], gear: { n: 0, rar: [] }, sellMul: 1 };
 SHOPS.bank = { name: 'The Nine Keys Bank', keeper: 'Bix Coppertuft', goods: [], gear: { n: 0, rar: [] }, sellMul: 1, bank: true, tabs: ['Deposit', 'Vault'] };
 export const MERCHANT = { plaza: { id: 'merchant', role: 'shopkeeper', name: 'Odo the merchant', pos: [5.4, 3.4], facing: 'down',
   say: ['Tonics, seeds, sturdy kit. And I buy whatever you drag out of the glade.'] } };

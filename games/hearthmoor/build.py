@@ -19,7 +19,7 @@ from PIL import Image  # noqa: E402
 
 from hd2d_common import load_biome  # noqa: E402
 
-AREAS = ["plaza", "lane", "mossglen", "hollows", "rift", "vanaheim", "ravenhold", "bifrost", "temple", "rotwood", "verdant"]
+AREAS = ["plaza", "lane", "mossglen", "hollows", "rift", "vanaheim", "ravenhold", "bifrost", "temple", "rotwood", "verdant", "forge"]
 TMP = Path("/tmp/hearthmoor_build")
 
 
@@ -481,6 +481,35 @@ def make_zip():
     return z
 
 
+FORGE_AREAS = ["forge"]
+FORGE_ROLES = ["smith", "dwarfsmith"]
+
+
+def install_forge(areas=AREAS):
+    """6.7 Forge pack (art/forge/, Art seat 2026-10-05): Tova (smith) + Orri (dwarfsmith) in their own sheet like the
+    temple pair; forge_fx (fire, sparks, quench steam, embers, red / blue pools) appended to the area's gamefx atlas."""
+    P = GAME / "art" / "forge"
+    am_f = json.loads((P / "forge_actors.json").read_text())
+    fxm = json.loads((P / "forge_fx.json").read_text())
+    for a in [x for x in areas if x in FORGE_AREAS]:
+        root = GAME / "areas" / a
+        scene = json.loads((root / "scene.json").read_text())
+        sp = root / scene["atlas"]["json"]
+        am = json.loads(sp.read_text())
+        shutil.copy2(P / "forge_actors.png", sp.parent / "forge.png")
+        (sp.parent / "forge.json").write_text(json.dumps(am_f, indent=1))
+        am.setdefault("sheets", {})["forge"] = {"json": "forge.json", "image": "forge.png"}
+        for r in FORGE_ROLES:
+            am["roles"][r] = {"sheet": "forge", "row": am_f["roles"][r]["row"], "kind": "human", "anims": ["idle", "walk"]}
+        sp.write_text(json.dumps(am, indent=1))
+        jp = root / scene["gamefx"]["json"]; ip = root / scene["gamefx"]["image"]
+        m = _append_atlas(ip, json.loads(jp.read_text()), P / "forge_fx.png", fxm, "effects", mark="forge_from")
+        for v in m["effects"].values():
+            v.pop("strip", None)
+        jp.write_text(json.dumps(m, indent=1))
+    print(f"forge: sheet ({len(FORGE_ROLES)} roles) + {len(fxm['effects'])} gamefx in {', '.join(x for x in areas if x in FORGE_AREAS)}")
+
+
 ORB_AREAS = ["plaza", "lane"]
 
 
@@ -513,6 +542,7 @@ if __name__ == "__main__":
     install_old_temple(only)
     install_verdant_heart(only)
     install_orb_lanterns(only)
+    install_forge(only)
     draw_icons()
     draw_button_icons()
     write_pwa()

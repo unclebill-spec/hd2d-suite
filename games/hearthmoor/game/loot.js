@@ -65,7 +65,8 @@ export function makeItem(lv = 1, rar = null, slot = null, rnd = Math.random, luc
   return { uid: `${Date.now().toString(36)}${(uidN++).toString(36)}`, slot: sl, name: `${pre} ${base}`, rar: r, lv, mods, gems: Array(n).fill(null) };
 }
 export function describe(it) {
-  const m = it.mods, out = [];
+  const k = 1 + 0.07 * (it.up || 0), m = Object.fromEntries(Object.entries(it.mods).map(([key, v]) => [key, ['hpAdd', 'stAdd'].includes(key) ? Math.round(v * k) : v * k])), out = [];
+  if (it.up) out.push(`+${it.up} tempered`);
   if (m.meleeMul) out.push(`+${Math.round(m.meleeMul * 100)}% melee`);
   if (m.spellMul) out.push(`+${Math.round(m.spellMul * 100)}% spells`);
   if (m.hpAdd) out.push(`+${m.hpAdd} HP`);
@@ -73,13 +74,21 @@ export function describe(it) {
   if (m.crit) out.push(`+${(m.crit * 100).toFixed(1)}% crit`);
   if (m.stAdd) out.push(`+${m.stAdd} stamina`);
   if (m.summonMul) out.push(`+${Math.round(m.summonMul * 100)}% summons`);
+  if (m.critDmg) out.push(`+${Math.round(m.critDmg * 100)}% crit damage`);
+  if (m.drain) out.push(`${(m.drain * 100).toFixed(1)}% life drain`);
+  if (m.regen) out.push(`+${m.regen.toFixed(1)} HP/s resting`);
+  if (m.healMul) out.push(`+${Math.round(m.healMul * 100)}% healing`);
+  if (m.spellCd) out.push(`-${(m.spellCd * 100).toFixed(1)}% spell cooldown`);
+  if (m.stRegen) out.push(`+${Math.round(m.stRegen * 100)}% stamina regen`);
   for (const g of it.gems || []) out.push(g ? `◆ ${GEMS[g].name}` : '◇ empty socket');
   return out.join(' · ');
 }
 export function gearMods(S, m) {   // fold equipped gear into progress.mods()
   for (const it of Object.values((S && S.gear) || {})) {
     if (!it) continue;
-    const all = [it.mods, ...(it.gems || []).filter(Boolean).map((g) => GEMS[g].mods)];
+    const k = 1 + 0.07 * (it.up || 0);   // 6.7 forge: +7% per + on the item's own mods (not gems)
+    const own = Object.fromEntries(Object.entries(it.mods).map(([key, v]) => [key, ['hpAdd', 'stAdd'].includes(key) ? Math.round(v * k) : v * k]));
+    const all = [own, ...(it.gems || []).filter(Boolean).map((g) => GEMS[g].mods)];
     for (const mods of all) for (const [k, v] of Object.entries(mods)) {
       if (k === 'guardMul') m.guardMul = Math.max(0.4, m.guardMul + v);
       else m[k] = (m[k] || 0) + v;
