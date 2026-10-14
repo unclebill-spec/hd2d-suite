@@ -7,6 +7,7 @@ import { ITEMS, QUESTS, TALK, SPELL_NAMES, markerFor, errandsDone, stormTalk } f
 import { Harbor } from './ravenhold.js';
 import { Crossing } from './bifrost.js';
 import { Temple } from './temple.js';
+import { Verdant } from './verdant.js';
 import { Ambient } from './audio.js';
 import * as PR from './progress.js';
 import { HEROES, HERO, SPELLS, SUMMONS, CHARM_DMG, CHARM_CD } from './heroes.js';
@@ -39,7 +40,7 @@ const V1_DONE = 'hearthmoor-v1-migrated';     // set when slot 1 is deleted, so 
 const LAST_SLOT = 'hearthmoor-lastslot';
 const QA = Q.has('qa');                       // check-scene / screenshots: straight into ?area=, fresh state, no title, no saving
 const AREAS = { plaza: 'areas/plaza/', lane: 'areas/lane/', mossglen: 'areas/mossglen/', hollows: 'areas/hollows/',
-                rift: 'areas/rift/', vanaheim: 'areas/vanaheim/', ravenhold: 'areas/ravenhold/', bifrost: 'areas/bifrost/', temple: 'areas/temple/' };
+                rift: 'areas/rift/', vanaheim: 'areas/vanaheim/', ravenhold: 'areas/ravenhold/', bifrost: 'areas/bifrost/', temple: 'areas/temple/', rotwood: 'areas/rotwood/', verdant: 'areas/verdant/' };
 const DAY_SECONDS = Number(Q.get('day') || 1440);  // one whole day = 24 real minutes (day, dusk, night, dawn)
 const $ = (id) => document.getElementById(id);
 
@@ -57,6 +58,7 @@ G.combat = new Combat(G);
 G.glow = new Glow(G);
 G.hollows = new Hollows(G);
 G.harbor = new Harbor(G);   // Ravenhold Harbor: waystones + the district gates' story hook + Sable's rift-skiff ferry
+G.verdant = new Verdant(G);   // Stage 6.4: the Violet Spring, the Rotwood Hollow, the Verdant Heart
 G.temple = new Temple(G);   // Stage 6.3: the Old Temple (Harbor gate, clues, altar, Rift-gate, Midgard's arch)
 G.crossing = new Crossing(G);   // Bifrost Crossing: the realm gates' looks (alliance / merit keys)
 G.garden = new Garden(G);
@@ -178,7 +180,7 @@ function drawLog() {
   const el = $('logList'); if (!el) return;
   const rows = Object.entries(QUESTS).map(([id, q]) => {
     const st = G.S.quests[id];
-    if (!st && (q.story || q.side)) return '';   // story and side quests appear once they start
+    if (!st && (q.story || q.side || q.ripple)) return '';   // story and side quests appear once they start
     if (!st) return `<li class="todo"><b>${q.title}</b><span>Someone in town may need a hand… (${q.giver})</span></li>`;
     let step = q.steps[st] || '';
     if (typeof step === 'function') step = step(G.S);   // story steps can depend on the save (the harbor quest's road to Bifrost)
@@ -329,12 +331,12 @@ async function loadArea(id, spawnKey, pos) {
   const old = $('view'); if (old) old.remove();
   const canvas = document.createElement('canvas'); canvas.id = 'view'; document.body.prepend(canvas);
   G.area = id; G.S.area = id; G.armed = false;
-  G.rifts.detach(); G.storms.detach(); G.rares.detach(); G.combat.detach(); G.glow.detach(); G.hollows.detach(); G.harbor.detach(); G.crossing.detach(); G.garden.detach(); G.weather.detach(); G.loot.detach(); G.shopUI.detach(); G.pets.detach(); G.temple.detach();
+  G.rifts.detach(); G.storms.detach(); G.rares.detach(); G.combat.detach(); G.glow.detach(); G.hollows.detach(); G.harbor.detach(); G.crossing.detach(); G.garden.detach(); G.weather.detach(); G.loot.detach(); G.shopUI.detach(); G.pets.detach(); G.temple.detach(); G.verdant.detach();
   G.game = await boot({ base: AREAS[id], canvas, spawn: sp, startT: G.S.t, glowLights: glowCap(), clockSpeed: 1 / DAY_SECONDS, spellCycle: slots(),
                         player: { role: G.S.cls || G.preview || 'wildcaller' }, castAdvance: false,
                         keepTitle: true, padHandled: true, hooks, toast: (m, t) => toast(m, t) });
   const ctx = G.ctx = G.game.ctx;
-  G.storms.attach(ctx, id); G.combat.attach(ctx, id); G.rares.attach(ctx, id); G.rifts.attach(ctx, id); G.factions.attach(ctx, id); G.glow.attach(ctx, id); G.hollows.attach(ctx); G.harbor.attach(ctx, id); G.crossing.attach(ctx, id); G.temple.attach(ctx, id); G.garden.attach(ctx); G.weather.attach(ctx, id); G.loot.attach(ctx); G.shopUI.attach(ctx, id); PR.ensure(G.S); G.loot.restorePurse(id);
+  G.storms.attach(ctx, id); G.combat.attach(ctx, id); G.rares.attach(ctx, id); G.rifts.attach(ctx, id); G.factions.attach(ctx, id); G.glow.attach(ctx, id); G.hollows.attach(ctx); G.harbor.attach(ctx, id); G.crossing.attach(ctx, id); G.temple.attach(ctx, id); G.verdant.attach(ctx, id); G.garden.attach(ctx); G.weather.attach(ctx, id); G.loot.attach(ctx); G.shopUI.attach(ctx, id); PR.ensure(G.S); G.loot.restorePurse(id);
   // portrait source: this area's actor atlas
   portraitImg = new Image(); portraitImg.src = AREAS[id] + ctx.scene.atlas.image;
   // pickups already taken stay gone
@@ -457,7 +459,7 @@ function onFrame(dt, ctx) {
   syncMarkers();
   padWheel();
   G.hollows.update(dt); G.garden.update(dt); G.glow.update(dt); G.weather.update(dt); G.intro.update(dt);
-  G.loot.update(dt); G.shopUI.update(dt); G.rares.update(dt); G.storms.update(dt); G.rifts.update(dt); G.pets.update(dt); G.temple.update(dt);
+  G.loot.update(dt); G.shopUI.update(dt); G.rares.update(dt); G.storms.update(dt); G.rifts.update(dt); G.pets.update(dt); G.temple.update(dt); G.verdant.update(dt);
   G.combat.update(dt, ctx);
   drawVitals(ctx);
   if (G.title || G.busy) return;
@@ -475,7 +477,7 @@ function onFrame(dt, ctx) {
   let prompt = '';
   const close = trig.find((e) => Math.max(e.rect[0] - p.x, p.x - e.rect[2], e.rect[1] - p.z, p.z - e.rect[3]) < 1.6);
   if (close) prompt = close.how === 'portal' ? `step into the swirl: ${canChoose(close) ? close.label_rift || close.label : close.label}` : close.label;
-  else { const sg = sealedNear(ctx); if (sg) prompt = sg.district ? `the gate to ${sg.name} is sealed: coming soon (E / A to look)` : `${sg.realm}'s gate is sealed (E / A to look)`; else prompt = G.temple.prompt() || G.harbor.prompt(); }
+  else { const sg = sealedNear(ctx); if (sg) prompt = sg.district ? `the gate to ${sg.name} is sealed: coming soon (E / A to look)` : `${sg.realm}'s gate is sealed (E / A to look)`; else prompt = G.temple.prompt() || G.verdant.prompt() || G.harbor.prompt(); }
   const pe = $('prompt'); if (pe.textContent !== prompt) { pe.textContent = prompt; pe.hidden = !prompt; }
   G.audio.setNight(ctx.clock.grade ? (ctx.clock.grade().bugs ?? 0) : 0);
   G.autosave -= dt; if (G.autosave <= 0) { G.autosave = 20; save(); }
@@ -525,8 +527,9 @@ const hooks = {
     if (G.log) { setLog(false); return true; }
     if (G.busy) return true;
     if (kind !== 'tap' && G.hollows.interact()) return true;   // gnome doors
-    if (kind !== 'tap' && sealedLook(ctx)) return true;        // sealed Rift gates + Ravenhold's district gates
-    if (kind !== 'tap' && G.temple.interact()) return true;    // the Old Temple: clue spots, the cold altar, the Rift-gate
+    if (kind !== 'tap' && !(ctx.nearestNpc && ctx.nearestNpc(1.3)) && sealedLook(ctx)) return true;   // sealed Rift gates + Ravenhold's district gates (someone standing right there, e.g. Novice Edda at the Temple gate, takes E first)
+    if (kind !== 'tap' && G.temple.interact()) return true;
+    if (kind !== 'tap' && G.verdant.interact()) return true;    // 6.4: red caps, the spring, the roots, cages, riddle door, root bowls
     if (kind !== 'tap' && G.harbor.interact()) return true;    // waystones (Lane <-> Ravenhold <-> Bifrost) + the rift-skiff
     if (kind !== 'tap' && G.garden.interact()) return true;    // glow-garden plots: plant / check / harvest
     return false;
@@ -593,7 +596,7 @@ const hooks = {
     return true;
   },
   onFrame,
-  nearThing: (ctx) => !!nearPickup(ctx, 1.4) || G.hollows.nearThing(ctx) || G.garden.nearThing(ctx) || !!sealedNear(ctx) || G.temple.nearThing() || G.harbor.nearThing(),
+  nearThing: (ctx) => !!nearPickup(ctx, 1.4) || G.hollows.nearThing(ctx) || G.garden.nearThing(ctx) || !!sealedNear(ctx) || G.temple.nearThing() || G.verdant.nearThing() || G.harbor.nearThing(),
 };
 
 // ------------------------------------------------------------------ touch action buttons + slow-time spell wheel

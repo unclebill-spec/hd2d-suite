@@ -19,7 +19,7 @@ from PIL import Image  # noqa: E402
 
 from hd2d_common import load_biome  # noqa: E402
 
-AREAS = ["plaza", "lane", "mossglen", "hollows", "rift", "vanaheim", "ravenhold", "bifrost", "temple"]
+AREAS = ["plaza", "lane", "mossglen", "hollows", "rift", "vanaheim", "ravenhold", "bifrost", "temple", "rotwood", "verdant"]
 TMP = Path("/tmp/hearthmoor_build")
 
 
@@ -404,6 +404,62 @@ self.addEventListener('fetch', (e) => {{
     print(f"pwa: {len(files)} files precached, cache hearthmoor-v1-{ver}")
 
 
+VERDANT_AREAS = ["rotwood", "verdant"]
+VERDANT_SHEETS = {"verdant_actors": ["rottreant", "sporeelemental"], "boss_blight_regent": ["blightregent"],
+                  "boss_thornmother": ["thornmother"], "boss_hjortur": ["hjortur", "hjortur_corrupted"]}
+
+
+def _critters48(P, root):
+    cm = json.loads((P / "gamefx" / "verdant_critters.json").read_text())
+    src = Image.open(P / "gamefx" / "verdant_critters.png").convert("RGBA")
+    c = cm["cell"]; nrows = len(cm["effects"]); ncol = max(v["frames"] for v in cm["effects"].values())
+    out = Image.new("RGBA", (ncol * 48, nrows * 48), (0, 0, 0, 0))
+    for i, (k, v) in enumerate(sorted(cm["effects"].items(), key=lambda kv: kv[1]["row"])):
+        fl = []
+        for j, f in enumerate(v["frame_list"]):
+            out.paste(src.crop((f["x"], f["y"], f["x"] + f["w"], f["y"] + f["h"])), (j * 48 + 24 - c // 2, i * 48 + 48 - c))
+            fl.append({"x": j * 48, "y": i * 48, "w": 48, "h": 48})
+        v.update(row=i, frame_list=fl, pivot=[24, 47])
+    tmp = root / "_critters48.png"; out.save(tmp)
+    return tmp, {**cm, "cell": 48, "size": [out.size[0], out.size[1]]}
+
+
+def install_verdant_heart(areas=AREAS):
+    """Stage 6.4: the Verdant Heart art pack (art/verdant_heart/, Art bot 2026-10-06) for the Rotwood Hollow and the
+    Verdant Heart: rot treant / spore elemental + the three big foes (Regent 5.5x, Thornmother 2.4x, Hjortur 6x) ride
+    in their own sheets (drop-in boss_sheet output); verdant_fx + the glow-frog critters join the area's gamefx atlas.
+    The kit pieces build through tools/kit/kit_verdant_heart.py."""
+    P = GAME / "art" / "verdant_heart"
+    n = 0
+    for a in areas:
+        if a not in VERDANT_AREAS:
+            continue
+        root = GAME / "areas" / a
+        scene = json.loads((root / "scene.json").read_text())
+        sp = root / scene["atlas"]["json"]
+        am = json.loads(sp.read_text())
+        for sheet, roles in VERDANT_SHEETS.items():
+            sj = json.loads((P / "sprite" / f"{sheet}.json").read_text())
+            shutil.copy2(P / "sprite" / f"{sheet}.png", sp.parent / f"{sheet}.png")
+            (sp.parent / f"{sheet}.json").write_text(json.dumps(sj, indent=1))
+            am.setdefault("sheets", {})[sheet] = {"json": f"{sheet}.json", "image": f"{sheet}.png"}
+            for r in roles:
+                rd = sj["roles"][r]
+                am["roles"][r] = {"sheet": sheet, "row": rd["row"], "kind": "enemy", "enemy": True, "anims": rd.get("anims", ["idle", "walk", "attack", "die"]),
+                                  **({"boss": True, "scale": rd["scale"], "frame": sj["frame"]} if rd.get("boss") else {})}
+        sp.write_text(json.dumps(am, indent=1))
+        jp = root / scene["gamefx"]["json"]; ip = root / scene["gamefx"]["image"]
+        m = json.loads(jp.read_text())
+        m = _append_atlas(ip, m, P / "gamefx" / "verdant_fx.png", json.loads((P / "gamefx" / "verdant_fx.json").read_text()), "effects", mark="verdant_fx_from")
+        cp, cm = _critters48(P, root)   # the glow frogs come in 24 px cells: re-seat them in 48 px cells (same pixels, frog at the bottom centre)
+        m = _append_atlas(ip, m, cp, cm, "effects", mark="verdant_critters_from")
+        for v in m["effects"].values():
+            v.pop("strip", None)
+        jp.write_text(json.dumps(m, indent=1)); (root / "_critters48.png").unlink()
+        n += 1
+    print(f"verdant heart: {len(VERDANT_SHEETS)} sheets + verdant fx / critters in {n} areas")
+
+
 ZIP_SKIP = ("areas/src", "tests/shots", "shots", "__pycache__")
 
 
@@ -433,6 +489,7 @@ if __name__ == "__main__":
     copy_areas(only)
     install_pets(only)
     install_old_temple(only)
+    install_verdant_heart(only)
     draw_icons()
     draw_button_icons()
     write_pwa()

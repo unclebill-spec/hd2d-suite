@@ -8,6 +8,7 @@ Bill (GitHub `unclebill-spec`) hands this project between his bots and Cursor th
 
 ## PAUSED (2026-10-06, Bill)
 Hearthmoor is paused. Don't start new work until Bill picks it back up.
+- 2026-10-14: Stage 6.4 (Violet Spring, Rotwood Hollow, Verdant Heart) is built on the WIP branch; see the CHANGELOG top entry.
 - Live: main 56f9b2f (Bifrost Crossing). The batch 1 work in progress is on branch `hearthmoor-batch1-wip` (pets, Old Temple, 6.4 groundwork, rift storms, sharded tests). It is not green yet; see the top CHANGELOG entry for the open failures and next steps.
 - Staging material (backed up in this branch under staging/hearthmoor/; the live working copy is /workspace/hearthmoor-staging) is ready: story (pets, old_temple, verdant_heart, rift_storms, forge_alchemy, alfheim, svartalfheim) and art (pets, old_temple, verdant_heart, orb_lanterns, forge, alchemy, alfheim + lumi).
 - Master Builder's Alfheim realm is paused at WIP 47a5b82 on `realm-alfheim` (worktree /workspace/hd2d-alfheim; read ALFHEIM_PROGRESS.md, "RESUME HERE").

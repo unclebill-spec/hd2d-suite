@@ -19,6 +19,10 @@ export const ITEMS = {
   heartwood: { name: 'Regent\'s heartwood', px: 'heartwood', about: 'A slab of the Blight Regent\'s heart, rot-black and cold. A rare forging material. Sable would pay.' },   // 6.4 (conquer)
   alder_charm: { name: 'Warden Aldis\'s lantern charm', px: 'alder_charm', key: true, about: 'A thumb-sized brass lantern on a chain. Grandpa Alder\'s grandmother carried it on the Rift.',
                  aboutLit: 'A thumb-sized brass lantern. A small cold-fire flame burns inside and never gutters.' },
+  // Stage 6.4 (Vanaheim's dungeons)
+  redcap: { name: 'Red toadstool cap', px: 'glowseed', about: 'A red cap with white spots, glowing faintly. Burrowmoss says three of them sweeten a sour spring.' },
+  blight_spike: { name: 'Frost-iron spike', px: 'heartwood', key: true, about: 'Pulled from the Blight Regent\'s heart. Cold runes, no maker\'s mark. Not elf-work. Not anyone\'s, on purpose.' },
+  greenheart_tine: { name: 'Greenheart tine', px: 'glowseed', key: true, about: 'A living tine from Hjortur\'s antlers, still in leaf. The forest knows your step.' },
   denbiscuit: { name: 'Den biscuit', px: 'denbiscuit', about: "Signe's oat-and-moonpetal biscuit. Feed your pet once a day (hero screen, Gear tab): bond grows, and its glow doubles for 60 s." },
 };
 // the Stray Den's three yard lanterns (Hollows brazier rule: S.found.den_l1..3)
@@ -94,6 +98,37 @@ export const QUESTS = {
                ? 'Come back to the Stray Den after dusk and sit by the cold-fire hearth.'
                : 'Bring Signe a glow seed (Odo\'s Wares or Wickmere\'s Chandlery) or a moonpetal.'),
              3: (S) => `${(S.pet && S.pet.name) || 'Your pet'} has a home with you now. The other strays wait at the Den.` },
+  },
+  // Stage 6.4: Vanaheim's dungeons (Story bot's verdant_heart.md)
+  vh_spring: {
+    title: 'The Violet Spring',
+    giver: 'Elder Burrowmoss',
+    story: true,
+    steps: { 1: (S) => { const F = S.flags || {}, n = ((S.inv || {}).redcap || 0), L = ['brazier_vh_w', 'brazier_vh_spring'].filter((k) => (S.found || {})[k]).length;
+               if (L < 2) return `Light Mossbrook's two cold-fire braziers (cast a spell at each). ${L}/2`;
+               if (n < 3 && !F.vh_caps) return `Gather 3 red toadstool caps from Mossbrook's giant toadstools. ${n}/3`;
+               return 'Drop the red caps into the spring (E / A at the water).'; },
+             2: 'The spring is clearing, but a violet trickle still runs down from the Old Bough. Tell Burrowmoss.',
+             3: 'Mossbrook\'s spring runs sweet again. The poison comes from somewhere upstream.' },
+  },
+  rotwood: {
+    title: 'The Rotwood Hollow',
+    giver: 'Elder Burrowmoss',
+    story: true,
+    steps: { 1: (S) => { const F = S.flags || {}, A = (F.alliance || {}).vanaheim;
+               if (!F.rw_in) return A === 'conquer' ? 'Burn through the thorny roots under the Old Bough and take the Rotwood Hollow.' : 'Follow Tobble into the root-cave under the Old Bough.';
+               if (!F.rw_lock) return 'Find a way through the Rotwood Hollow. The rune-sealed root door wants three cold-fire braziers lit.';
+               return 'Go down to the Regent\'s Bower, where the taproot weeps violet.'; },
+             2: (S) => { const F = S.flags || {}; return F.rw_spike ? (((F.alliance || {}).vanaheim === 'conquer') ? 'The Regent is dead. Take what you came for and leave Vanaheim.' : 'Bring the frost-iron spike to Elder Burrowmoss.') : 'Defeat the Blight Regent.'; },
+             3: (S) => ((((S.flags || {}).alliance || {}).vanaheim === 'conquer') ? 'Vanaheim bows to you, and hates you for it. The spike\'s cold runes are yours to keep.' : 'The Blight Regent rests. The spike\'s cold runes say the elves were framed.') },
+  },
+  verdant: {
+    title: 'The Verdant Heart',
+    giver: 'Tobble Capwhistle',
+    ripple: true,
+    steps: { 1: (S) => ((((S.flags || {}).alliance || {}).vanaheim === 'conquer') ? 'Something sick and violet stirs under the Regent\'s grave. Go down into the Verdant Heart.' : 'Go down through the sapling into the Verdant Heart. Hjortur the Greenheart is waiting.'),
+             2: (S) => ((((S.flags || {}).alliance || {}).vanaheim === 'conquer') ? 'Kill the corrupted Hjortur.' : 'Pass Hjortur\'s guardian trial: root, bloom and light.'),
+             3: (S) => ((((S.flags || {}).alliance || {}).vanaheim === 'conquer') ? 'Hjortur the Greenheart is dead. The forest is very quiet.' : 'Hjortur blessed you. The forest knows your step.') },
   },
   // 6.5: the Gatekeepers' Guild's repeatable rift-storm bounty (offered again at the next storm's onset once done)
   stormwatch: {
@@ -376,6 +411,18 @@ export const TALK = {
         { label: 'I\'m only passing through.', cancel: true, pick: () => ({ pages: ['Then pass carefully. The spores don\'t care whose side you\'re on.'] }) },
       ] },
     };
+    if (A === 'befriend') {   // 6.4: The Violet Spring -> The Rotwood Hollow
+      const q = S.quests || {}, F = S.flags || {};
+      if (!q.vh_spring) return { pages: ['Friend of Mossbrook! The spring still tastes of violet. Whoever did this wanted us blaming the elves.',
+          'Light our two cold-fire braziers, bring me... no, bring the SPRING three red toadstool caps from the giant toadstools. Drop them in. Red caps sweeten sour water.'],
+        then: (G) => G.setQuest('vh_spring', 1) };
+      if (q.vh_spring === 2) return { pages: ['It\'s clearing! But taste that: violet, still. It runs down from the Old Bough, from the root-cave.',
+          'Tobble! Take our friend down the root-cave. The roots will part for you now. Mind the Rotwood.'],
+        then: (G) => { G.setQuest('vh_spring', 3); G.factions.add('embassy', MERIT.vh_spring, 'vh_spring'); G.setQuest('rotwood', 1); } };
+      if (q.rotwood === 2 && F.rw_spike) return { pages: ['(Burrowmoss turns the frost-iron spike over in his mittens.) Cold runes. Not elf-work. Not anyone\'s, on purpose.',
+          'Someone wanted Vanaheim and Alfheim at each other\'s throats. You\'ve given us the truth instead. The Verdant Heart under the Regent\'s grave is open to you, friend.'],
+        then: (G) => { G.setQuest('rotwood', 3); G.verdant.resolve('befriend'); } };
+    }
     return { pages: [A === 'befriend'
       ? 'Friend of Mossbrook! The spring still tastes of violet. Whoever did this wanted us blaming the elves.'
       : 'You again. Say what you came to say, Midgarder, and go.'] };

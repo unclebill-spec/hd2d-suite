@@ -1,0 +1,1040 @@
+{
+ "tool": "hd2d boss_sheet",
+ "biome": "cozy-village",
+ "frame": [
+  48,
+  77
+ ],
+ "pivot": [
+  24,
+  77
+ ],
+ "ground_row": 76,
+ "facings": [
+  "down",
+  "up",
+  "left",
+  "right"
+ ],
+ "anims": {
+  "idle": {
+   "start": 0,
+   "count": 4,
+   "fps": 3,
+   "loop": [
+    0,
+    1,
+    2,
+    1
+   ],
+   "blink": 3
+  },
+  "walk": {
+   "start": 4,
+   "count": 4,
+   "fps": 8
+  },
+  "cast": {
+   "start": 8,
+   "count": 4,
+   "fps": 6,
+   "loop": [
+    0,
+    1,
+    2,
+    2,
+    3,
+    3
+   ],
+   "casters_only": true
+  },
+  "attack": {
+   "start": 12,
+   "count": 4,
+   "fps": 10,
+   "loop": [
+    0,
+    1,
+    2,
+    2,
+    3
+   ],
+   "heroes_only": true
+  },
+  "defend": {
+   "start": 16,
+   "count": 4,
+   "fps": 6,
+   "loop": [
+    0,
+    1
+   ],
+   "hold": [
+    2,
+    3
+   ],
+   "heroes_only": true
+  },
+  "jump": {
+   "start": 20,
+   "count": 4,
+   "fps": 8,
+   "phases": [
+    "crouch",
+    "launch",
+    "airborne",
+    "land"
+   ],
+   "heroes_only": true
+  },
+  "die": {
+   "start": 24,
+   "count": 4,
+   "fps": 6,
+   "once": true,
+   "enemies_only": true
+  }
+ },
+ "cols": 28,
+ "image": "boss_thornmother.png",
+ "size": [
+  1344,
+  308
+ ],
+ "roles": {
+  "thornmother": {
+   "row": 0,
+   "kind": "enemy",
+   "enemy": true,
+   "boss": true,
+   "scale": 2.4,
+   "desc": "The Thornmother (Verdant Heart V4 rare, story/verdant_heart.md): a corrupted dryad-tree - willowy figure of bark and thorns: thorn-studded bark bodice, dark vine bound at the waist, long skirt of willow fronds, root feet, willow-frond hair, pale birch face with violet-rose eyes, a moonpetal crown gone violet, a bramble staff with a violet bud. Die: sinks into a mound that blooms with violet moonpetals.",
+   "anims": [
+    "idle",
+    "walk",
+    "attack",
+    "die"
+   ],
+   "size_bounds": [
+    [
+     12,
+     46
+    ],
+    [
+     12,
+     77
+    ]
+   ],
+   "caster": false,
+   "frames": [
+    {
+     "name": "thornmother_down_idle0",
+     "facing": "down",
+     "anim": "idle",
+     "i": 0,
+     "x": 0,
+     "y": 0,
+     "w": 48,
+     "h": 77,
+     "pivot": [
+      24,
+      77
+     ]
+    },
+    {
+     "name": "thornmother_down_idle1",
+     "facing": "down",
+     "anim": "idle",
+     "i": 1,
+     "x": 48,
+     "y": 0,
+     "w": 48,
+     "h": 77,
+     "pivot": [
+      72,
+      77
+     ]
+    },
+    {
+     "name": "thornmother_down_idle2",
+     "facing": "down",
+     "anim": "idle",
+     "i": 2,
+     "x": 96,
+     "y": 0,
+     "w": 48,
+     "h": 77,
+     "pivot": [
+      120,
+      77
+     ]
+    },
+    {
+     "name": "thornmother_down_idle3",
+     "facing": "down",
+     "anim": "idle",
+     "i": 3,
+     "x": 144,
+     "y": 0,
+     "w": 48,
+     "h": 77,
+     "pivot": [
+      168,
+      77
+     ]
+    },
+    {
+     "name": "thornmother_down_walk0",
+     "facing": "down",
+     "anim": "walk",
+     "i": 0,
+     "x": 192,
+     "y": 0,
+     "w": 48,
+     "h": 77,
+     "pivot": [
+      216,
+      77
+     ]
+    },
+    {
+     "name": "thornmother_down_walk1",
+     "facing": "down",
+     "anim": "walk",
+     "i": 1,
+     "x": 240,
+     "y": 0,
+     "w": 48,
+     "h": 77,
+     "pivot": [
+      264,
+      77
+     ]
+    },
+    {
+     "name": "thornmother_down_walk2",
+     "facing": "down",
+     "anim": "walk",
+     "i": 2,
+     "x": 288,
+     "y": 0,
+     "w": 48,
+     "h": 77,
+     "pivot": [
+      312,
+      77
+     ]
+    },
+    {
+     "name": "thornmother_down_walk3",
+     "facing": "down",
+     "anim": "walk",
+     "i": 3,
+     "x": 336,
+     "y": 0,
+     "w": 48,
+     "h": 77,
+     "pivot": [
+      360,
+      77
+     ]
+    },
+    {
+     "name": "thornmother_down_attack0",
+     "facing": "down",
+     "anim": "attack",
+     "i": 0,
+     "x": 576,
+     "y": 0,
+     "w": 48,
+     "h": 77,
+     "pivot": [
+      600,
+      77
+     ]
+    },
+    {
+     "name": "thornmother_down_attack1",
+     "facing": "down",
+     "anim": "attack",
+     "i": 1,
+     "x": 624,
+     "y": 0,
+     "w": 48,
+     "h": 77,
+     "pivot": [
+      648,
+      77
+     ]
+    },
+    {
+     "name": "thornmother_down_attack2",
+     "facing": "down",
+     "anim": "attack",
+     "i": 2,
+     "x": 672,
+     "y": 0,
+     "w": 48,
+     "h": 77,
+     "pivot": [
+      696,
+      77
+     ]
+    },
+    {
+     "name": "thornmother_down_attack3",
+     "facing": "down",
+     "anim": "attack",
+     "i": 3,
+     "x": 720,
+     "y": 0,
+     "w": 48,
+     "h": 77,
+     "pivot": [
+      744,
+      77
+     ]
+    },
+    {
+     "name": "thornmother_down_die0",
+     "facing": "down",
+     "anim": "die",
+     "i": 0,
+     "x": 1152,
+     "y": 0,
+     "w": 48,
+     "h": 77,
+     "pivot": [
+      1176,
+      77
+     ]
+    },
+    {
+     "name": "thornmother_down_die1",
+     "facing": "down",
+     "anim": "die",
+     "i": 1,
+     "x": 1200,
+     "y": 0,
+     "w": 48,
+     "h": 77,
+     "pivot": [
+      1224,
+      77
+     ]
+    },
+    {
+     "name": "thornmother_down_die2",
+     "facing": "down",
+     "anim": "die",
+     "i": 2,
+     "x": 1248,
+     "y": 0,
+     "w": 48,
+     "h": 77,
+     "pivot": [
+      1272,
+      77
+     ]
+    },
+    {
+     "name": "thornmother_down_die3",
+     "facing": "down",
+     "anim": "die",
+     "i": 3,
+     "x": 1296,
+     "y": 0,
+     "w": 48,
+     "h": 77,
+     "pivot": [
+      1320,
+      77
+     ]
+    },
+    {
+     "name": "thornmother_up_idle0",
+     "facing": "up",
+     "anim": "idle",
+     "i": 0,
+     "x": 0,
+     "y": 77,
+     "w": 48,
+     "h": 77,
+     "pivot": [
+      24,
+      154
+     ]
+    },
+    {
+     "name": "thornmother_up_idle1",
+     "facing": "up",
+     "anim": "idle",
+     "i": 1,
+     "x": 48,
+     "y": 77,
+     "w": 48,
+     "h": 77,
+     "pivot": [
+      72,
+      154
+     ]
+    },
+    {
+     "name": "thornmother_up_idle2",
+     "facing": "up",
+     "anim": "idle",
+     "i": 2,
+     "x": 96,
+     "y": 77,
+     "w": 48,
+     "h": 77,
+     "pivot": [
+      120,
+      154
+     ]
+    },
+    {
+     "name": "thornmother_up_idle3",
+     "facing": "up",
+     "anim": "idle",
+     "i": 3,
+     "x": 144,
+     "y": 77,
+     "w": 48,
+     "h": 77,
+     "pivot": [
+      168,
+      154
+     ]
+    },
+    {
+     "name": "thornmother_up_walk0",
+     "facing": "up",
+     "anim": "walk",
+     "i": 0,
+     "x": 192,
+     "y": 77,
+     "w": 48,
+     "h": 77,
+     "pivot": [
+      216,
+      154
+     ]
+    },
+    {
+     "name": "thornmother_up_walk1",
+     "facing": "up",
+     "anim": "walk",
+     "i": 1,
+     "x": 240,
+     "y": 77,
+     "w": 48,
+     "h": 77,
+     "pivot": [
+      264,
+      154
+     ]
+    },
+    {
+     "name": "thornmother_up_walk2",
+     "facing": "up",
+     "anim": "walk",
+     "i": 2,
+     "x": 288,
+     "y": 77,
+     "w": 48,
+     "h": 77,
+     "pivot": [
+      312,
+      154
+     ]
+    },
+    {
+     "name": "thornmother_up_walk3",
+     "facing": "up",
+     "anim": "walk",
+     "i": 3,
+     "x": 336,
+     "y": 77,
+     "w": 48,
+     "h": 77,
+     "pivot": [
+      360,
+      154
+     ]
+    },
+    {
+     "name": "thornmother_up_attack0",
+     "facing": "up",
+     "anim": "attack",
+     "i": 0,
+     "x": 576,
+     "y": 77,
+     "w": 48,
+     "h": 77,
+     "pivot": [
+      600,
+      154
+     ]
+    },
+    {
+     "name": "thornmother_up_attack1",
+     "facing": "up",
+     "anim": "attack",
+     "i": 1,
+     "x": 624,
+     "y": 77,
+     "w": 48,
+     "h": 77,
+     "pivot": [
+      648,
+      154
+     ]
+    },
+    {
+     "name": "thornmother_up_attack2",
+     "facing": "up",
+     "anim": "attack",
+     "i": 2,
+     "x": 672,
+     "y": 77,
+     "w": 48,
+     "h": 77,
+     "pivot": [
+      696,
+      154
+     ]
+    },
+    {
+     "name": "thornmother_up_attack3",
+     "facing": "up",
+     "anim": "attack",
+     "i": 3,
+     "x": 720,
+     "y": 77,
+     "w": 48,
+     "h": 77,
+     "pivot": [
+      744,
+      154
+     ]
+    },
+    {
+     "name": "thornmother_up_die0",
+     "facing": "up",
+     "anim": "die",
+     "i": 0,
+     "x": 1152,
+     "y": 77,
+     "w": 48,
+     "h": 77,
+     "pivot": [
+      1176,
+      154
+     ]
+    },
+    {
+     "name": "thornmother_up_die1",
+     "facing": "up",
+     "anim": "die",
+     "i": 1,
+     "x": 1200,
+     "y": 77,
+     "w": 48,
+     "h": 77,
+     "pivot": [
+      1224,
+      154
+     ]
+    },
+    {
+     "name": "thornmother_up_die2",
+     "facing": "up",
+     "anim": "die",
+     "i": 2,
+     "x": 1248,
+     "y": 77,
+     "w": 48,
+     "h": 77,
+     "pivot": [
+      1272,
+      154
+     ]
+    },
+    {
+     "name": "thornmother_up_die3",
+     "facing": "up",
+     "anim": "die",
+     "i": 3,
+     "x": 1296,
+     "y": 77,
+     "w": 48,
+     "h": 77,
+     "pivot": [
+      1320,
+      154
+     ]
+    },
+    {
+     "name": "thornmother_left_idle0",
+     "facing": "left",
+     "anim": "idle",
+     "i": 0,
+     "x": 0,
+     "y": 154,
+     "w": 48,
+     "h": 77,
+     "pivot": [
+      24,
+      231
+     ]
+    },
+    {
+     "name": "thornmother_left_idle1",
+     "facing": "left",
+     "anim": "idle",
+     "i": 1,
+     "x": 48,
+     "y": 154,
+     "w": 48,
+     "h": 77,
+     "pivot": [
+      72,
+      231
+     ]
+    },
+    {
+     "name": "thornmother_left_idle2",
+     "facing": "left",
+     "anim": "idle",
+     "i": 2,
+     "x": 96,
+     "y": 154,
+     "w": 48,
+     "h": 77,
+     "pivot": [
+      120,
+      231
+     ]
+    },
+    {
+     "name": "thornmother_left_idle3",
+     "facing": "left",
+     "anim": "idle",
+     "i": 3,
+     "x": 144,
+     "y": 154,
+     "w": 48,
+     "h": 77,
+     "pivot": [
+      168,
+      231
+     ]
+    },
+    {
+     "name": "thornmother_left_walk0",
+     "facing": "left",
+     "anim": "walk",
+     "i": 0,
+     "x": 192,
+     "y": 154,
+     "w": 48,
+     "h": 77,
+     "pivot": [
+      216,
+      231
+     ]
+    },
+    {
+     "name": "thornmother_left_walk1",
+     "facing": "left",
+     "anim": "walk",
+     "i": 1,
+     "x": 240,
+     "y": 154,
+     "w": 48,
+     "h": 77,
+     "pivot": [
+      264,
+      231
+     ]
+    },
+    {
+     "name": "thornmother_left_walk2",
+     "facing": "left",
+     "anim": "walk",
+     "i": 2,
+     "x": 288,
+     "y": 154,
+     "w": 48,
+     "h": 77,
+     "pivot": [
+      312,
+      231
+     ]
+    },
+    {
+     "name": "thornmother_left_walk3",
+     "facing": "left",
+     "anim": "walk",
+     "i": 3,
+     "x": 336,
+     "y": 154,
+     "w": 48,
+     "h": 77,
+     "pivot": [
+      360,
+      231
+     ]
+    },
+    {
+     "name": "thornmother_left_attack0",
+     "facing": "left",
+     "anim": "attack",
+     "i": 0,
+     "x": 576,
+     "y": 154,
+     "w": 48,
+     "h": 77,
+     "pivot": [
+      600,
+      231
+     ]
+    },
+    {
+     "name": "thornmother_left_attack1",
+     "facing": "left",
+     "anim": "attack",
+     "i": 1,
+     "x": 624,
+     "y": 154,
+     "w": 48,
+     "h": 77,
+     "pivot": [
+      648,
+      231
+     ]
+    },
+    {
+     "name": "thornmother_left_attack2",
+     "facing": "left",
+     "anim": "attack",
+     "i": 2,
+     "x": 672,
+     "y": 154,
+     "w": 48,
+     "h": 77,
+     "pivot": [
+      696,
+      231
+     ]
+    },
+    {
+     "name": "thornmother_left_attack3",
+     "facing": "left",
+     "anim": "attack",
+     "i": 3,
+     "x": 720,
+     "y": 154,
+     "w": 48,
+     "h": 77,
+     "pivot": [
+      744,
+      231
+     ]
+    },
+    {
+     "name": "thornmother_left_die0",
+     "facing": "left",
+     "anim": "die",
+     "i": 0,
+     "x": 1152,
+     "y": 154,
+     "w": 48,
+     "h": 77,
+     "pivot": [
+      1176,
+      231
+     ]
+    },
+    {
+     "name": "thornmother_left_die1",
+     "facing": "left",
+     "anim": "die",
+     "i": 1,
+     "x": 1200,
+     "y": 154,
+     "w": 48,
+     "h": 77,
+     "pivot": [
+      1224,
+      231
+     ]
+    },
+    {
+     "name": "thornmother_left_die2",
+     "facing": "left",
+     "anim": "die",
+     "i": 2,
+     "x": 1248,
+     "y": 154,
+     "w": 48,
+     "h": 77,
+     "pivot": [
+      1272,
+      231
+     ]
+    },
+    {
+     "name": "thornmother_left_die3",
+     "facing": "left",
+     "anim": "die",
+     "i": 3,
+     "x": 1296,
+     "y": 154,
+     "w": 48,
+     "h": 77,
+     "pivot": [
+      1320,
+      231
+     ]
+    },
+    {
+     "name": "thornmother_right_idle0",
+     "facing": "right",
+     "anim": "idle",
+     "i": 0,
+     "x": 0,
+     "y": 231,
+     "w": 48,
+     "h": 77,
+     "pivot": [
+      24,
+      308
+     ]
+    },
+    {
+     "name": "thornmother_right_idle1",
+     "facing": "right",
+     "anim": "idle",
+     "i": 1,
+     "x": 48,
+     "y": 231,
+     "w": 48,
+     "h": 77,
+     "pivot": [
+      72,
+      308
+     ]
+    },
+    {
+     "name": "thornmother_right_idle2",
+     "facing": "right",
+     "anim": "idle",
+     "i": 2,
+     "x": 96,
+     "y": 231,
+     "w": 48,
+     "h": 77,
+     "pivot": [
+      120,
+      308
+     ]
+    },
+    {
+     "name": "thornmother_right_idle3",
+     "facing": "right",
+     "anim": "idle",
+     "i": 3,
+     "x": 144,
+     "y": 231,
+     "w": 48,
+     "h": 77,
+     "pivot": [
+      168,
+      308
+     ]
+    },
+    {
+     "name": "thornmother_right_walk0",
+     "facing": "right",
+     "anim": "walk",
+     "i": 0,
+     "x": 192,
+     "y": 231,
+     "w": 48,
+     "h": 77,
+     "pivot": [
+      216,
+      308
+     ]
+    },
+    {
+     "name": "thornmother_right_walk1",
+     "facing": "right",
+     "anim": "walk",
+     "i": 1,
+     "x": 240,
+     "y": 231,
+     "w": 48,
+     "h": 77,
+     "pivot": [
+      264,
+      308
+     ]
+    },
+    {
+     "name": "thornmother_right_walk2",
+     "facing": "right",
+     "anim": "walk",
+     "i": 2,
+     "x": 288,
+     "y": 231,
+     "w": 48,
+     "h": 77,
+     "pivot": [
+      312,
+      308
+     ]
+    },
+    {
+     "name": "thornmother_right_walk3",
+     "facing": "right",
+     "anim": "walk",
+     "i": 3,
+     "x": 336,
+     "y": 231,
+     "w": 48,
+     "h": 77,
+     "pivot": [
+      360,
+      308
+     ]
+    },
+    {
+     "name": "thornmother_right_attack0",
+     "facing": "right",
+     "anim": "attack",
+     "i": 0,
+     "x": 576,
+     "y": 231,
+     "w": 48,
+     "h": 77,
+     "pivot": [
+      600,
+      308
+     ]
+    },
+    {
+     "name": "thornmother_right_attack1",
+     "facing": "right",
+     "anim": "attack",
+     "i": 1,
+     "x": 624,
+     "y": 231,
+     "w": 48,
+     "h": 77,
+     "pivot": [
+      648,
+      308
+     ]
+    },
+    {
+     "name": "thornmother_right_attack2",
+     "facing": "right",
+     "anim": "attack",
+     "i": 2,
+     "x": 672,
+     "y": 231,
+     "w": 48,
+     "h": 77,
+     "pivot": [
+      696,
+      308
+     ]
+    },
+    {
+     "name": "thornmother_right_attack3",
+     "facing": "right",
+     "anim": "attack",
+     "i": 3,
+     "x": 720,
+     "y": 231,
+     "w": 48,
+     "h": 77,
+     "pivot": [
+      744,
+      308
+     ]
+    },
+    {
+     "name": "thornmother_right_die0",
+     "facing": "right",
+     "anim": "die",
+     "i": 0,
+     "x": 1152,
+     "y": 231,
+     "w": 48,
+     "h": 77,
+     "pivot": [
+      1176,
+      308
+     ]
+    },
+    {
+     "name": "thornmother_right_die1",
+     "facing": "right",
+     "anim": "die",
+     "i": 1,
+     "x": 1200,
+     "y": 231,
+     "w": 48,
+     "h": 77,
+     "pivot": [
+      1224,
+      308
+     ]
+    },
+    {
+     "name": "thornmother_right_die2",
+     "facing": "right",
+     "anim": "die",
+     "i": 2,
+     "x": 1248,
+     "y": 231,
+     "w": 48,
+     "h": 77,
+     "pivot": [
+      1272,
+      308
+     ]
+    },
+    {
+     "name": "thornmother_right_die3",
+     "facing": "right",
+     "anim": "die",
+     "i": 3,
+     "x": 1296,
+     "y": 231,
+     "w": 48,
+     "h": 77,
+     "pivot": [
+      1320,
+      308
+     ]
+    }
+   ],
+   "light": {
+    "color": "#a45cf0",
+    "intensity": 0.5,
+    "range": 2.5,
+    "pool": "pool_violet"
+   },
+   "notes": "attack frames 13-14: bramble whips from the hem (+ thorn_lash fx)",
+   "stats_hint": {
+    "tier": "rare",
+    "height_x_player": 2.4
+   }
+  }
+ }
+}

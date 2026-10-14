@@ -161,7 +161,7 @@ export class Rifts {
     }
   }
   // QA / smoke: jump the random timer (the fox warning fires on the next frame when t <= riftWarn)
-  setTimer(t) { this.timer = t; this.warned = false; this.nextPos = null; }
+  setTimer(t) { const ff = this.warned && this.nextPos && t < this.timer; this.timer = t; if (!ff) { this.warned = false; this.nextPos = null; } }   // fast-forwarding a warned rift keeps its spot (the fox already pointed there)
   state() {
     const R = this.cur;
     return { area: this.area, storm: this.storm(), timer: +this.timer.toFixed(1), nextPos: this.nextPos, warned: this.warned, rift: R ? { tag: R.tag, tier: R.tier, id: R.T.id, state: R.state, wave: R.wave, waves: R.T.waves, foes: R.foes.length,

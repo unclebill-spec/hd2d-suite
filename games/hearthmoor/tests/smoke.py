@@ -188,7 +188,7 @@ class Smoke:
 # segment before it saved (localStorage only: the same thing the serial run's reload + Continue restores from).
 # Every step still runs exactly once across the shards, with the same assertions and thresholds.
 FIX = Path(__file__).resolve().parent / "fixtures"
-SEGS = "ABCDEFGHI"
+SEGS = "ABCDEFGHIJ"
 SEG_INFO = {
     "A": "title, loading gate, Lantern Eve, errands, controller, Mossglen, leveling, combat, loot, rares + rifts, Hollows, garden (ends: K save in Mossglen -> cp1)",
     "B": "reload #1 + Continue, save slots, Pudding home, shop, bank, riddle, night merchant, factions, glow cap, weather, sockets, errand 2 (ends: K save in the Lane -> cp2)",
@@ -198,6 +198,7 @@ SEG_INFO = {
     "F": "Stage 6+: the Stray Den + glowing pets (continues the cp3 save)",
     "G": "Stage 6.3: the Old Temple (Hilde's writ, the Harbor gate, clues, Alder's charm, Ida's wick, braziers, the rite, the rift, Veyra, Midgard's arch; continues cp3)",
     "H": "Stage 6.5: rift storms (calendar, storm rifts + Rift Marks +25%, sky cracks, Storm Watch bounty, NPC / ferry storm lines, dawn, toasts; continues cp3)",
+    "J": "Stage 6.4: the Violet Spring, the Rotwood Hollow (8 rooms, root-door brazier order, the Blight Regent 5.5x: phases + frost-iron spike weak point), the Verdant Heart (6 rooms, Thornmother 2.4x, Hjortur 6x trial / corrupted) (continues cp3)",
     "I": "Stage 6.4 groundwork: Glenheart rename, trial-mode yield, 5-6x boss camera pull, Vanaheim conquer merit -> Rift Marks, heartwood sale to Sable (continues cp3)",
 }
 # --quick <area>: the segments that cover an area / feature (a per-change check; the batch still runs everything)
@@ -209,11 +210,11 @@ QUICK = {
     "phone": "D", "touch": "D", "migration": "E", "save": "BE",
     "pet": "F", "pets": "F", "stray": "F",
     "temple": "G", "oldtemple": "G", "midgard": "G",
-    "vanaheim4": "I", "trial": "I", "glenheart": "I", "heartwood": "I",
+    "vanaheim4": "I", "verdant": "J", "rotwood": "J", "regent": "J", "hjortur": "J", "vhspring": "J", "trial": "I", "glenheart": "I", "heartwood": "I",
     "storm": "H", "storms": "H", "riftstorm": "H", "bounty": "H",
 }
 TIMING = FIX / "smoke_timing.json"   # seconds per segment from the last passing runs (shard balancing only)
-DEFAULT_SECONDS = {"A": 560, "B": 260, "C": 230, "D": 140, "E": 25, "F": 150, "G": 200, "H": 170, "I": 90}
+DEFAULT_SECONDS = {"A": 560, "B": 260, "C": 230, "D": 140, "E": 25, "F": 150, "G": 200, "H": 170, "I": 90, "J": 120}
 
 
 def seg_seconds():
@@ -1896,12 +1897,12 @@ def run(out, simscale=4, size=(960, 540), segs=SEGS):
                        and M["riftWarn"] == 10 and abs(M["riftMarkMul"] - 0.10) < 1e-9 and M["stRegen"] >= 0.08, glow=gl, mods=M)
                 # Rift-sense: in Mossglen the fox's tail flares riftWarn seconds early, pointing where the tear will open
                 T.ev("window.__hm.loadArea('mossglen', 'start')"); T.wait("window.__hm.area === 'mossglen' && window.__hm.pets.a", 120); T.idle(); f.wait_for_timeout(300)
-                T.ev("window.__hm.peace = false; window.__hm.rifts.setTimer(10.5)")
+                T.ev("window.__hm.storms.force('off'); window.__hm.peace = false; window.__hm.rifts.setTimer(10.5)")   # peace off would let the 6.5 storm calendar toast over the fox's warning: storms off for this step
                 T.wait("window.__hm.rifts.warned", 30)
                 wn = T.ev("({ warn: window.__hm.pets.state().warned, toast: document.getElementById('toast').innerText, next: window.__hm.rifts.nextPos, open: !!window.__hm.rifts.cur })")
                 T.ev("window.__hm.rifts.setTimer(0.01)"); T.wait("!!window.__hm.rifts.cur", 30)
                 op = T.ev("window.__hm.rifts.state().rift")
-                T.ev("window.__hm.rifts.close(false, true); window.__hm.peace = true")
+                T.ev("window.__hm.rifts.close(false, true); window.__hm.peace = true; window.__hm.storms.force(undefined)")
                 T.step("lantern-fox Rift-sense: the tail flares red with a direction ~10 s before a random rift opens, and the rift opens where it pointed",
                        wn["warn"] and not wn["open"] and "tail flares red" in wn["toast"] and wn["warn"]["t"] <= 10.5 and op and wn["next"]
                        and math.hypot(op["pos"][0] - wn["next"][0], op["pos"][1] - wn["next"][1]) < 1.5, warn=wn, rift=op)
@@ -2321,6 +2322,97 @@ def run(out, simscale=4, size=(960, 540), segs=SEGS):
                 rep["error"] = f"vanaheim4: {type(e).__name__}: {e}"[:400]
                 try:
                     rep["shots"]["failure_I"] = T.shot("failure_I"); rep["state"] = T.S()
+                except Exception:  # noqa: BLE001
+                    pass
+        # ---------------------------------------------------------- J: Stage 6.4 Vanaheim's dungeons (continues cp3)
+        if rep["pass"] and "J" in segs:
+            seg_mark("J")
+            try:
+                saved = cp_load(None, T, url, "cp3")["hearthmoor-slot-1-v2"]
+                jc = b.new_context(viewport={"width": size[0], "height": size[1]})
+                jc.add_init_script(f"if (!sessionStorage.getItem('seeded')) {{ localStorage.clear(); localStorage.setItem('hearthmoor-slot-1-v2', {json.dumps(saved)}); sessionStorage.setItem('seeded', '1'); }}")
+                jc.add_init_script(STUB)
+                jp = jc.new_page()
+                jp.on("pageerror", lambda e: errors.append(f"PAGEERROR {e}"))
+                jp.on("console", lambda m: errors.append(f"console.error {m.text}") if m.type == "error" else None)
+                T.pg = jp
+                jp.goto(url)
+                T.wait("window.__hm && window.__hm.ready && window.__hd2d && window.__hd2d.ready && !window.__hd2dGate.loading", 120)
+                jp.click("#btnCont"); T.idle(); jp.wait_for_timeout(400)
+
+                def jarea(a, spawn="start"):
+                    T.ev(f"window.__hm.loadArea('{a}', '{spawn}')"); T.wait(f"window.__hm.area === '{a}' && window.__hm.ctx && !window.__hm.busy", 120); T.idle(); jp.wait_for_timeout(300)
+
+                def tp(x, z):
+                    T.ev(f"(() => {{ const p = window.__hm.ctx.player; p.x = {x}; p.z = {z}; }})()"); T.frames(3)
+                jarea("vanaheim")
+                T.ev("(() => { const G = window.__hm, F = (G.S.flags = G.S.flags || {}); G.peace = true; F.alliance = { ...(F.alliance || {}), vanaheim: 'befriend' }; })()")
+                T.talk("warden"); q1 = T.ev("window.__hm.S.quests.vh_spring")
+                T.ev("(() => { const S = window.__hm.S; S.found.brazier_vh_w = 1; S.found.brazier_vh_spring = 1; })()")
+                for x, z in [(-5.6, -5.0), (9.6, 4.0), (-7.0, 6.0)]:
+                    tp(x, z); T.ev("window.__hm.verdant.interact()")
+                caps = T.ev("window.__hm.S.inv.redcap || 0")
+                tp(4.6, -5.0); T.ev("window.__hm.verdant.interact()"); T.frames(2)
+                sp = T.ev("({ q: window.__hm.S.quests.vh_spring, f: window.__hm.S.flags.vanaheim_spring, caps: window.__hm.S.inv.redcap || 0 })")
+                e0 = T.ev("window.__hm.S.merit.embassy || 0")
+                T.talk("warden")
+                after = T.ev("({ q: window.__hm.S.quests.vh_spring, rw: window.__hm.S.quests.rotwood, de: (window.__hm.S.merit.embassy || 0) })")
+                jarea("vanaheim")
+                cave = T.ev("!!(window.__hm.ctx.scene.game.exits || []).find((e) => e.to === 'rotwood')")
+                T.step("The Violet Spring (befriend): Burrowmoss starts it; 2 braziers + 3 red caps, E at the spring cleanses it (the violet->cold swap flag); his word pays +60 Realm Favor, starts The Rotwood Hollow and opens the root-cave under the Old Bough",
+                       q1 == 1 and caps == 3 and sp["q"] == 2 and sp["f"] == "cleansed" and sp["caps"] == 0 and after["q"] == 3 and after["rw"] == 1 and after["de"] - e0 == 60 and cave,
+                       spring=sp, after=after, caps=caps, cave=cave)
+                jarea("rotwood", "from_mossbrook")
+                rw = T.ev("({ rooms: window.__hm.ctx.scene.game.rooms.length, inn: window.__hm.S.flags.rw_in, enemies: window.__hm.combat.alive().length, frog: !!window.__hm.ctx.effects })")
+                door = T.ev("window.__hm.ctx.scene.game.rootdoor")
+                tp(door["x"] + 1.5, 2.0); held = T.ev("window.__hm.ctx.player.x") < door["x"]
+                T.ev("window.__hm.S.found.rw_lock_1 = 1"); T.frames(3)
+                snuffed = not T.ev("window.__hm.S.found.rw_lock_1")
+                for bid in door["order"]:
+                    T.ev(f"window.__hm.S.found['{bid}'] = 1"); T.frames(3)
+                opened = T.ev("!!window.__hm.S.flags.rw_lock")
+                T.step("the Rotwood Hollow: 8 rooms (R0-R7), rw_in on entry, foes in the halls; the rune-sealed root door holds you back, a wrong brazier order snuffs them, the pulse order opens it",
+                       rw["rooms"] == 8 and rw["inn"] == 1 and rw["enemies"] >= 5 and held and snuffed and opened, rotwood=rw, held=held, snuffed=snuffed, opened=opened)
+                bw = T.ev("window.__hm.ctx.scene.game.bower")
+                tp(bw["pos"][0] - 1.0, 2.0); T.frames(4)
+                T.ev("window.__hm.peace = true")
+                st1 = T.ev("window.__hm.verdant.state()")
+                T.ev("(() => { const G = window.__hm, e = G.verdant.boss; G.combat.damageEnemy(e, e.D.hp * 0.45, null, 0); })()"); T.frames(3)
+                st2 = T.ev("window.__hm.verdant.state()")
+                T.ev("(() => { const G = window.__hm, e = G.verdant.boss; G.combat.damageEnemy(e, e.D.hp * 0.35, null, 0); G.verdant.pulseT = 3.0; })()"); T.frames(4)
+                st3 = T.ev("window.__hm.verdant.state()")
+                hp0 = T.ev("window.__hm.verdant.boss.hp")
+                T.ev("window.__hm.combat.damageEnemy(window.__hm.verdant.boss, 10, null, 0)")
+                hit = hp0 - T.ev("window.__hm.verdant.boss.hp"); st4 = T.ev("window.__hm.verdant.state()")
+                T.step("the Blight Regent (5.5x) rises in the Bower (quest stage 2): phase 2 under 60%, phase 3 under 25%; in the blue pulse window a hit strikes the frost-iron spike (double damage + stagger)",
+                       st1["boss"] and st1["boss"]["scale"] == 5.5 and T.ev("window.__hm.S.quests.rotwood") == 2 and st2["boss"]["phase"] == 2 and st3["boss"]["phase"] == 3
+                       and st3["boss"]["spikeOpen"] and hit == 20 and st4["boss"]["spikeHits"] == 1, s1=st1["boss"], s2=st2["boss"], s3=st3["boss"], hit=hit)
+                T.ev("window.__hm.combat.damageEnemy(window.__hm.verdant.boss, 99999, null, 0)"); T.frames(4)
+                dn = T.ev("({ boss: window.__hm.S.flags.rw_boss, spike: window.__hm.S.inv.blight_spike || 0, sap: !!(window.__hm.ctx.scene.game.exits || []).find((e) => e.to === 'verdant') })")
+                jarea("vanaheim"); T.talk("warden")
+                rs = T.ev("({ rw: window.__hm.S.quests.rotwood, vd: window.__hm.S.quests.verdant, res: window.__hm.S.flags.vh_resolved, pup: !!((window.__hm.S.pets || {}).mosspup || {}).atDen })")
+                T.step("the Regent falls: the frost-iron spike, the sapling stair to the Verdant Heart; Burrowmoss reads the spike: Rotwood done (befriend), the moss-pup goes to the Den, the Verdant Heart opens",
+                       dn["boss"] == 1 and dn["spike"] == 1 and dn["sap"] and rs["rw"] == 3 and rs["vd"] == 1 and rs["res"] == "befriend" and rs["pup"], down=dn, resolved=rs)
+                jarea("verdant", "from_rotwood")
+                vd = T.ev("window.__hm.ctx.scene.game")
+                tp(vd["moonwell"]["pos"][0] - 1.0, 2.0); T.frames(4); th = T.ev("window.__hm.verdant.state().thorn")
+                tp(vd["glade"]["enter_x"] + 1.0, 2.0); T.frames(4); hj = T.ev("window.__hm.verdant.state().hj")
+                T.ev("(() => { const G = window.__hm, e = G.verdant.hj; G.combat.damageEnemy(e, 99999, null, 0); })()"); T.frames(3)
+                vq = T.ev("({ q: window.__hm.S.quests.verdant, tine: window.__hm.S.inv.greenheart_tine || 0, tr: (window.__hm.S.trials || {}).hjortur || 0 })")
+                T.step("the Verdant Heart: 6 rooms (V0-V5); the Thornmother (2.4x) rises at the Moonwell; Hjortur (6x) holds the guardian trial on the befriend path: he yields, the quest is done, a Greenheart tine",
+                       len(vd["rooms"]) == 6 and th and th["scale"] == 2.4 and hj and hj["scale"] == 6 and hj["role"] == "hjortur" and hj["trial"]
+                       and vq["q"] == 3 and vq["tine"] == 1 and vq["tr"] == 1, thorn=th, hj=hj, quest=vq)
+                T.ev("(() => { const S = window.__hm.S; S.flags.alliance.vanaheim = 'conquer'; delete S.flags.vh_hjortur; S.quests.verdant = 1; })()")
+                jarea("verdant", "from_rotwood"); tp(vd["glade"]["enter_x"] + 1.0, 2.0); T.frames(4); hc = T.ev("window.__hm.verdant.state().hj")
+                T.step("conquer path: the corrupted Hjortur (6x) fights for real (no trial)", hc and hc["role"] == "hjortur_corrupted" and not hc["trial"], hj=hc)
+                T.step("no JS errors (6.4 Vanaheim dungeons)", not errors and not T.ev("window.__hd2d.errors.length"), errors=errors[:5])
+                jc.close()
+                seg_done("J")
+            except Exception as e:  # noqa: BLE001
+                rep["pass"] = False
+                rep["error"] = f"verdant: {type(e).__name__}: {e}"[:400]
+                try:
+                    rep["shots"]["failure_J"] = T.shot("failure_J"); rep["state"] = T.S()
                 except Exception:  # noqa: BLE001
                     pass
         # every shard checks its own pages for JS errors even when the counted 'no JS errors' steps live in another shard
