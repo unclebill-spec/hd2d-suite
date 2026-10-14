@@ -18,13 +18,14 @@ export const capsAt = [[-5.6, -5.0], [9.6, 4.0], [-7.0, 6.0]];   // Mossbrook's 
 export const ROOT_CAVE = { pos: [8.4, -6.4], rect: [7.6, -7.2, 9.2, -6.0], to: 'rotwood', spawn: 'from_mossbrook', label: 'the root-cave under the Old Bough' };
 export const REGENT = { phases: [0.6, 0.25], pulseEvery: 4.0, pulseWin: 1.3, stagger: 3.0, spikeMul: 2.0, blightMax: 3 };
 const SPRING_AT = [4.6, -5.0];
+export const MIRE_DRAIN = 12;   // stamina / s while Mired (off the R1 glow-moss path)
 
 export class Verdant {
   constructor(G) { this.G = G; this.ctx = null; this.area = null; this.boss = null; this.pulseT = 0; this.room = -1; this.order = []; this.blight = 0; }
   get S() { return this.G.S; }
   get gm() { return (this.ctx && this.ctx.scene.game) || {}; }
   attach(ctx, area) {
-    this.ctx = ctx; this.area = area; this.boss = null; this.pulseT = 0; this.room = -1; this.order = []; this.blight = 0; this.fx = [];
+    this.ctx = ctx; this.area = area; this.boss = null; this.pulseT = 0; this.room = -1; this.order = []; this.blight = 0; this.fx = []; this.lit = []; this.mired = false;
     const S = this.S, F = flags(S), q = S.quests || {}, gm = ctx.scene.game || (ctx.scene.game = {});
     if (area === 'vanaheim' && (q.rotwood >= 1)) gm.exits = (gm.exits || []).filter((e) => e.to !== 'rotwood').concat([{ ...ROOT_CAVE }]);
     if (area === 'rotwood') {
@@ -67,6 +68,18 @@ export class Verdant {
     if (!F.rw_lock && gm.rootdoor && p.x > gm.rootdoor.x - 0.5) {   // the rune-sealed root door holds (the baked collision can't move, so the door is a soft wall)
       p.x = gm.rootdoor.x - 0.5; this.doorT = (this.doorT || 0) - dt;
       if (this.doorT <= 0) { this.doorT = 4; G.toast && G.toast('A wall of roots, three violet runes pulsing in turn. Three cold braziers stand before it.', 2.4); }
+    }
+    const mi = gm.mire;   // R1: the glow-moss path; off it, the rot-mire saps your stamina
+    if (mi && p.x > mi.rect[0] && p.x < mi.rect[2] && p.z > mi.rect[1] && p.z < mi.rect[3]) {
+      const k = mi.path.findIndex(([x, z]) => Math.hypot(p.x - x, p.z - z) < mi.r);
+      if (k >= 0) { this.mired = false; if (!this.lit[k] && this.ctx.effects) { this.lit[k] = 1; this.ctx.effects.spawn('glow_orb_blue', mi.path[k][0], 0.3, mi.path[k][1], { duration: 2.5 }); } }
+      else { if (!this.mired && G.toast) G.toast('Mired! The rot-mire drags at you. Step on the glowing moss.', 1.8); this.mired = true;
+        if (G.combat.st != null) { G.combat.st = Math.max(0, G.combat.st - MIRE_DRAIN * dt); G.combat.stT = Math.max(G.combat.stT || 0, 0.6); } }   // no regen while Mired (like the frost golem's chill)
+    } else this.mired = false;
+    const th = gm.thorns;   // R4: thorn walls until the gallery brazier burns them away
+    if (th && !found[th.brazier] && p.x > th.x - 0.5 && p.x < th.x + 1.0) {
+      p.x = th.x - 0.5; this.thornT = (this.thornT || 0) - dt;
+      if (this.thornT <= 0) { this.thornT = 4; G.toast && G.toast('A wall of violet thorns. The gallery brazier might burn it away.', 2.2); }
     }
     const bw = gm.bower;   // the Regent's Bower
     if (bw && !F.rw_boss && !this.boss && F.rw_lock && p.x > bw.enter_x) {
@@ -214,6 +227,6 @@ export class Verdant {
     }
     return false;
   }
-  state() { const e = this.boss; return { area: this.area, room: this.room, order: this.order.slice(), blight: this.blight, boss: e ? { hp: e.hp, max: e.D.hp, phase: e.phaseN || 1, spikeOpen: !!e.spikeOpen, spikeHits: e.spikeHits || 0, scale: e.D.scale } : null,
+  state() { const e = this.boss; return { mired: this.mired, mossLit: this.lit.filter(Boolean).length, area: this.area, room: this.room, order: this.order.slice(), blight: this.blight, boss: e ? { hp: e.hp, max: e.D.hp, phase: e.phaseN || 1, spikeOpen: !!e.spikeOpen, spikeHits: e.spikeHits || 0, scale: e.D.scale } : null,
                      thorn: this.thorn ? { hp: this.thorn.hp, scale: this.thorn.D.scale } : null, hj: this.hj ? { role: this.hj.a.role, trial: this.G.isTrial(this.hj, this.S), scale: this.hj.D.scale } : null }; }
 }

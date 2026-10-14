@@ -111,13 +111,14 @@ class Smoke:
             self.pg.keyboard.press("e")
             self.pg.wait_for_timeout(250)
             who = self.ev("window.__hm.dlg ? window.__hm.dlg.npc.id : null")
+            self.tries = getattr(self, "tries", [])[-5:] + [{"who": who, "near": self.ev(f"(() => {{ const c = window.__hm.ctx, n = c.nearestNpc(), a = c.npc('{npc_id}'); return {{ n: n && n.id, vis: a && a.quad && a.quad.visible, noTalk: a && !!a.noTalk, talkable: a && !!a.talkable, say: a && !!a.say, prompt: (document.getElementById('prompt') || {{}}).textContent }}; }})()")}]
             if who == npc_id:
                 break
             while self.ev("!!window.__hm.dlg"):
                 self.pg.keyboard.press("Escape"); self.pg.wait_for_timeout(100)
         else:
             st = self.ev(f"(() => {{ const G = window.__hm, c = G.ctx, p = c.player, a = c.npc('{npc_id}'); return {{ p: [p.x, p.z, p.y].map((v) => +v.toFixed(2)), a: a && [a.x, a.z, a.y], busy: !!G.busy, walking: c.walking(), prompt: (document.getElementById('prompt') || {{}}).textContent }}; }})()")
-            raise AssertionError(f"could not talk to {npc_id}: {st}")
+            raise AssertionError(f"could not talk to {npc_id}: {st} tries={getattr(self, 'tries', [])}")
         pages = self.ev("window.__hm.dlg.pages.length")
         first = self.ev("window.__hm.dlg.pages[0]")
         if keep_open:
@@ -2373,6 +2374,15 @@ def run(out, simscale=4, size=(960, 540), segs=SEGS):
                 opened = T.ev("!!window.__hm.S.flags.rw_lock")
                 T.step("the Rotwood Hollow: 8 rooms (R0-R7), rw_in on entry, foes in the halls; the rune-sealed root door holds you back, a wrong brazier order snuffs them, the pulse order opens it",
                        rw["rooms"] == 8 and rw["inn"] == 1 and rw["enemies"] >= 5 and held and snuffed and opened, rotwood=rw, held=held, snuffed=snuffed, opened=opened)
+                gmr = T.ev("(() => { const g = window.__hm.ctx.scene.game; return { mire: g.mire, thorns: g.thorns, hops: window.__hm.hollows.list.length }; })()")
+                T.ev("window.__hm.combat.st = 100"); off = gmr["mire"]["path"][0]
+                r1 = (gmr["mire"]["rect"][0] + gmr["mire"]["rect"][2]) / 2; tp(r1 - 1.5, -1.4); T.frames(6); m1 = T.ev("({ s: window.__hm.verdant.state(), st: window.__hm.combat.st })")
+                tp(off[0], off[1]); T.frames(3); m2 = T.ev("window.__hm.verdant.state()")
+                tx = gmr["thorns"]["x"]; tp(tx + 0.4, 2.0); held2 = T.ev("window.__hm.ctx.player.x") < tx
+                T.ev(f"window.__hm.S.found['{gmr['thorns']['brazier']}'] = 1"); tp(tx + 0.4, 2.0); passed = T.ev("window.__hm.ctx.player.x") > tx
+                T.step("R1 glow-moss path: off the patches you're Mired (stamina drains), on one the moss flares; R2: 4 bounce caps (3 hops + the hidden ledge cap); R4: the thorn wall holds until the gallery brazier is lit",
+                       m1["s"]["mired"] and m1["st"] < 100 and not m2["mired"] and m2["mossLit"] >= 1 and gmr["hops"] == 4 and held2 and passed,
+                       mire1=m1, mire2={"mired": m2["mired"], "lit": m2["mossLit"]}, hops=gmr["hops"], thorns=[held2, passed])
                 bw = T.ev("window.__hm.ctx.scene.game.bower")
                 tp(bw["pos"][0] - 1.0, 2.0); T.frames(4)
                 T.ev("window.__hm.peace = true")

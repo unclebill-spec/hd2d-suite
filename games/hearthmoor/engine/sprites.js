@@ -162,7 +162,7 @@ export class Actors {
     const a = {
       id: spec.id || spec.role, role: spec.role, roleRow: role.row, kind: role.kind,
       x: spec.pos[0], z: spec.pos[1], y: 0, facing: spec.facing || 'down', anim: 'idle', t: Math.random() * 3,
-      frame: 0, mat, quad, caster, ctex, speed: spec.speed || (isCreature ? 1.7 : 2.2), say: spec.say || null,
+      frame: 0, mat, quad, caster, ctex, speed: spec.speed || (isCreature ? 1.7 : 2.2), say: spec.say || null, talkable: !!spec.talkable,
       behavior: spec.behavior || 'idle', home: [spec.pos[0], spec.pos[1]], radius: spec.radius || 2.5,
       target: null, wait: 1 + Math.random() * 2, shade: 0, shadeTarget: 0, tint: new THREE.Color(1, 1, 1),
       blinkAt: 2 + Math.random() * 4, idleTurn: spec.turn !== false, r: isCreature ? 0.22 : 0.28, rect: null,

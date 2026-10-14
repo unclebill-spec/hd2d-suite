@@ -50,8 +50,95 @@
   ]
  },
  "slabs": [],
- "terraces": [],
- "stairs": [],
+ "terraces": [
+  {
+   "name": "root_ledge",
+   "rect": [
+    -29.0,
+    -40,
+    29.0,
+    -2.4
+   ],
+   "h": 1.2,
+   "top": "moss",
+   "gaps": [
+    [
+     -22.3,
+     -20.3
+    ],
+    [
+     -13.3,
+     -11.3
+    ],
+    [
+     -4.3,
+     -2.3
+    ],
+    [
+     4.7,
+     6.7
+    ],
+    [
+     13.7,
+     15.7
+    ],
+    [
+     22.7,
+     24.7
+    ]
+   ]
+  }
+ ],
+ "stairs": [
+  {
+   "name": "stair_0",
+   "x": -21.3,
+   "z_top": -2.4,
+   "width": 2.0,
+   "rise": 1.2,
+   "base": 0.0
+  },
+  {
+   "name": "stair_1",
+   "x": -12.3,
+   "z_top": -2.4,
+   "width": 2.0,
+   "rise": 1.2,
+   "base": 0.0
+  },
+  {
+   "name": "stair_2",
+   "x": -3.3,
+   "z_top": -2.4,
+   "width": 2.0,
+   "rise": 1.2,
+   "base": 0.0
+  },
+  {
+   "name": "stair_3",
+   "x": 5.7,
+   "z_top": -2.4,
+   "width": 2.0,
+   "rise": 1.2,
+   "base": 0.0
+  },
+  {
+   "name": "stair_4",
+   "x": 14.7,
+   "z_top": -2.4,
+   "width": 2.0,
+   "rise": 1.2,
+   "base": 0.0
+  },
+  {
+   "name": "stair_5",
+   "x": 23.7,
+   "z_top": -2.4,
+   "width": 2.0,
+   "rise": 1.2,
+   "base": 0.0
+  }
+ ],
  "decks": [],
  "buildings": [],
  "hedges": [],
@@ -421,8 +508,8 @@
   {
    "piece": "glowfern",
    "pos": [
-    -25.1,
-    3.6
+    -19.9,
+    4.1
    ]
   },
   {
@@ -488,8 +575,8 @@
   {
    "piece": "glowfern_blue",
    "pos": [
-    -16.1,
-    3.6
+    -10.9,
+    4.1
    ]
   },
   {
@@ -555,8 +642,8 @@
   {
    "piece": "glowfern",
    "pos": [
-    -7.1,
-    3.6
+    -1.9,
+    4.1
    ]
   },
   {
@@ -622,8 +709,8 @@
   {
    "piece": "glowfern_blue",
    "pos": [
-    1.9,
-    3.6
+    7.1,
+    4.1
    ]
   },
   {
@@ -689,8 +776,8 @@
   {
    "piece": "glowfern",
    "pos": [
-    10.9,
-    3.6
+    16.1,
+    4.1
    ]
   },
   {
@@ -756,8 +843,8 @@
   {
    "piece": "glowfern_blue",
    "pos": [
-    19.9,
-    3.6
+    25.1,
+    4.1
    ]
   },
   {
@@ -801,13 +888,13 @@
    "preset": "fireflies",
    "pos": [
     -22.5,
-    1.2,
-    0.0
+    2.4,
+    -4.0
    ],
    "area": [
     6,
-    1.2,
-    4
+    0.8,
+    1.2
    ],
    "min_gate": 0.0
   },
@@ -815,13 +902,13 @@
    "preset": "fireflies",
    "pos": [
     -13.5,
-    1.2,
-    0.0
+    2.4,
+    -4.0
    ],
    "area": [
     6,
-    1.2,
-    4
+    0.8,
+    1.2
    ],
    "min_gate": 0.0
   },
@@ -829,13 +916,13 @@
    "preset": "fireflies",
    "pos": [
     -4.5,
-    1.2,
-    0.0
+    2.4,
+    -4.0
    ],
    "area": [
     6,
-    1.2,
-    4
+    0.8,
+    1.2
    ],
    "min_gate": 0.0
   },
@@ -843,13 +930,13 @@
    "preset": "fireflies",
    "pos": [
     4.5,
-    1.2,
-    0.0
+    2.4,
+    -4.0
    ],
    "area": [
     6,
-    1.2,
-    4
+    0.8,
+    1.2
    ],
    "min_gate": 0.0
   },
@@ -857,13 +944,13 @@
    "preset": "fireflies",
    "pos": [
     13.5,
-    1.2,
-    0.0
+    2.4,
+    -4.0
    ],
    "area": [
     6,
-    1.2,
-    4
+    0.8,
+    1.2
    ],
    "min_gate": 0.0
   },
@@ -871,13 +958,13 @@
    "preset": "fireflies",
    "pos": [
     22.5,
-    1.2,
-    0.0
+    2.4,
+    -4.0
    ],
    "area": [
     6,
-    1.2,
-    4
+    0.8,
+    1.2
    ],
    "min_gate": 0.0
   }
@@ -888,8 +975,8 @@
    "role": "gnome",
    "name": "A dryad of the Grove",
    "pos": [
-    -15.5,
-    -1.6
+    -16.1,
+    0.8
    ],
    "facing": "down",
    "behavior": "idle",
@@ -903,8 +990,8 @@
    "role": "gnome",
    "name": "A dryad of the Grove",
    "pos": [
-    -13.5,
-    -1.6
+    -14.1,
+    0.8
    ],
    "facing": "down",
    "behavior": "idle",
@@ -918,8 +1005,8 @@
    "role": "gnome",
    "name": "A dryad of the Grove",
    "pos": [
-    -11.5,
-    -1.6
+    -12.1,
+    0.8
    ],
    "facing": "down",
    "behavior": "idle",
@@ -934,32 +1021,32 @@
    "name": "stream_flow",
    "pos": [
     -22.5,
-    0.05,
+    1.25,
     -3.2
    ]
   },
   {
    "name": "glow_mist_blue",
    "pos": [
-    -22.5,
-    0.4,
-    -2.6
+    -24.0,
+    1.6,
+    -3.4
    ]
   },
   {
    "name": "fireflies_blue",
    "pos": [
     -23.5,
-    1.3,
-    0.5
+    2.4,
+    -4.2
    ]
   },
   {
    "name": "glowfrog_violet_idle",
    "pos": [
-    -24.7,
-    0.0,
-    -2.2
+    -25.1,
+    1.2,
+    -2.7
    ]
   },
   {
@@ -974,32 +1061,32 @@
    "name": "stream_flow",
    "pos": [
     -13.5,
-    0.05,
+    1.25,
     -3.2
    ]
   },
   {
    "name": "glow_mist_violet",
    "pos": [
-    -13.5,
-    0.4,
-    -2.6
+    -15.0,
+    1.6,
+    -3.4
    ]
   },
   {
    "name": "fireflies_neon",
    "pos": [
     -14.5,
-    1.3,
-    0.5
+    2.4,
+    -4.2
    ]
   },
   {
    "name": "glowfrog_pink_idle",
    "pos": [
-    -15.7,
-    0.0,
-    -2.2
+    -16.1,
+    1.2,
+    -2.7
    ]
   },
   {
@@ -1014,32 +1101,32 @@
    "name": "stream_flow",
    "pos": [
     -4.5,
-    0.05,
+    1.25,
     -3.2
    ]
   },
   {
    "name": "glow_mist_pink",
    "pos": [
-    -4.5,
-    0.4,
-    -2.6
+    -6.0,
+    1.6,
+    -3.4
    ]
   },
   {
    "name": "fireflies_violet",
    "pos": [
     -5.5,
-    1.3,
-    0.5
+    2.4,
+    -4.2
    ]
   },
   {
    "name": "glowfrog_green_idle",
    "pos": [
-    -6.7,
-    0.0,
-    -2.2
+    -7.1,
+    1.2,
+    -2.7
    ]
   },
   {
@@ -1054,32 +1141,32 @@
    "name": "stream_flow",
    "pos": [
     4.5,
-    0.05,
+    1.25,
     -3.2
    ]
   },
   {
    "name": "glow_mist_green",
    "pos": [
-    4.5,
-    0.4,
-    -2.6
+    3.0,
+    1.6,
+    -3.4
    ]
   },
   {
    "name": "fireflies_green",
    "pos": [
     3.5,
-    1.3,
-    0.5
+    2.4,
+    -4.2
    ]
   },
   {
    "name": "glowfrog_blue_idle",
    "pos": [
-    2.3,
-    0.0,
-    -2.2
+    1.9,
+    1.2,
+    -2.7
    ]
   },
   {
@@ -1094,32 +1181,32 @@
    "name": "stream_flow",
    "pos": [
     13.5,
-    0.05,
+    1.25,
     -3.2
    ]
   },
   {
    "name": "glow_mist_blue",
    "pos": [
-    13.5,
-    0.4,
-    -2.6
+    12.0,
+    1.6,
+    -3.4
    ]
   },
   {
    "name": "fireflies_pink",
    "pos": [
     12.5,
-    1.3,
-    0.5
+    2.4,
+    -4.2
    ]
   },
   {
    "name": "glowfrog_violet_idle",
    "pos": [
-    11.3,
-    0.0,
-    -2.2
+    10.9,
+    1.2,
+    -2.7
    ]
   },
   {
@@ -1134,32 +1221,32 @@
    "name": "stream_flow",
    "pos": [
     22.5,
-    0.05,
+    1.25,
     -3.2
    ]
   },
   {
    "name": "glow_mist_violet",
    "pos": [
-    22.5,
-    0.4,
-    -2.6
+    21.0,
+    1.6,
+    -3.4
    ]
   },
   {
    "name": "fireflies_blue",
    "pos": [
     21.5,
-    1.3,
-    0.5
+    2.4,
+    -4.2
    ]
   },
   {
    "name": "glowfrog_pink_idle",
    "pos": [
-    20.3,
-    0.0,
-    -2.2
+    19.9,
+    1.2,
+    -2.7
    ]
   },
   {
@@ -1174,7 +1261,7 @@
    "name": "waterfall_sheet",
    "pos": [
     -4.5,
-    1.6,
+    2.8,
     -4.4
    ]
   },
@@ -1182,7 +1269,7 @@
    "name": "waterfall_splash",
    "pos": [
     -4.5,
-    0.1,
+    1.3,
     -3.6
    ]
   },
@@ -1206,41 +1293,41 @@
   {
    "name": "glow_orb_blue",
    "pos": [
-    -21.3,
+    -20.5,
     1.1,
-    1.0
+    -1.2
    ]
   },
   {
    "name": "glow_orb_violet",
    "pos": [
-    -12.3,
+    -11.5,
     1.1,
-    1.0
+    -1.2
    ]
   },
   {
    "name": "glow_orb_red",
    "pos": [
-    -3.3,
+    -2.5,
     1.1,
-    1.0
+    -1.2
    ]
   },
   {
    "name": "glow_orb_green",
    "pos": [
-    5.7,
+    6.5,
     1.1,
-    1.0
+    -1.2
    ]
   },
   {
    "name": "glow_orb_pink",
    "pos": [
-    14.7,
+    15.5,
     1.1,
-    1.0
+    -1.2
    ]
   }
  ],
@@ -1252,15 +1339,28 @@
  },
  "grades": {
   "day": {
-   "fog_color": "#0c1424",
-   "sky_top": "#04060e",
-   "sky_bottom": "#0e1830",
-   "hemi_sky": "#24345c",
-   "sun_intensity": 0.25,
-   "exposure": 0.95,
-   "saturation": 1.05,
-   "warmth": -0.1,
-   "bugs": 1.0
+   "fog_color": "#3c4a3c",
+   "sky_top": "#1c2a24",
+   "sky_bottom": "#4c5c4c",
+   "hemi_sky": "#8c9c7c",
+   "hemi_intensity": 0.95,
+   "sun_intensity": 1.2,
+   "sun_color": "#e8e0c0",
+   "exposure": 1.05,
+   "saturation": 1.0,
+   "warmth": 0.04,
+   "bugs": 0.6
+  },
+  "dusk": {
+   "fog_color": "#1c2448",
+   "sky_top": "#0c1230",
+   "sky_bottom": "#3c3c6c",
+   "hemi_sky": "#4c5c94",
+   "hemi_intensity": 0.7,
+   "sun_intensity": 0.6,
+   "exposure": 1.0,
+   "warmth": -0.08,
+   "bugs": 0.9
   },
   "night": {
    "fog_color": "#0a1022",
@@ -1327,7 +1427,7 @@
   "spawns": {
    "start": [
     -24.9,
-    2.0,
+    3.6,
     "right"
    ],
    "from_rotwood": [
@@ -1436,7 +1536,7 @@
   "role": "traveler",
   "pos": [
    -24.9,
-   2.0
+   3.6
   ],
   "facing": "right"
  }

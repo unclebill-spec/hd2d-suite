@@ -527,7 +527,7 @@ const hooks = {
     if (G.log) { setLog(false); return true; }
     if (G.busy) return true;
     if (kind !== 'tap' && G.hollows.interact()) return true;   // gnome doors
-    if (kind !== 'tap' && !(ctx.nearestNpc && ctx.nearestNpc(1.3)) && sealedLook(ctx)) return true;   // sealed Rift gates + Ravenhold's district gates (someone standing right there, e.g. Novice Edda at the Temple gate, takes E first)
+    if (kind !== 'tap' && sealedLook(ctx)) return true;        // sealed Rift gates + Ravenhold's district gates
     if (kind !== 'tap' && G.temple.interact()) return true;
     if (kind !== 'tap' && G.verdant.interact()) return true;    // 6.4: red caps, the spring, the roots, cages, riddle door, root bowls
     if (kind !== 'tap' && G.harbor.interact()) return true;    // waystones (Lane <-> Ravenhold <-> Bifrost) + the rift-skiff

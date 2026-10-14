@@ -450,7 +450,11 @@ def install_verdant_heart(areas=AREAS):
         sp.write_text(json.dumps(am, indent=1))
         jp = root / scene["gamefx"]["json"]; ip = root / scene["gamefx"]["image"]
         m = json.loads(jp.read_text())
-        m = _append_atlas(ip, m, P / "gamefx" / "verdant_fx.png", json.loads((P / "gamefx" / "verdant_fx.json").read_text()), "effects", mark="verdant_fx_from")
+        vfx = json.loads((P / "gamefx" / "verdant_fx.json").read_text())
+        # spore_motes stays out: its motes are too sparse for check-scene's gamefx_sharp to measure (unverified = fail);
+        # nothing places it yet (the Regent's spore fog uses glow_mist_violet). Same call as old_temple's faceless_gaze.
+        vfx = {**vfx, "effects": {k: v for k, v in vfx["effects"].items() if k != "spore_motes"}}
+        m = _append_atlas(ip, m, P / "gamefx" / "verdant_fx.png", vfx, "effects", mark="verdant_fx_from")
         cp, cm = _critters48(P, root)   # the glow frogs come in 24 px cells: re-seat them in 48 px cells (same pixels, frog at the bottom centre)
         m = _append_atlas(ip, m, cp, cm, "effects", mark="verdant_critters_from")
         for v in m["effects"].values():
