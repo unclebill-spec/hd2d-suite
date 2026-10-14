@@ -561,9 +561,13 @@ def run(out, simscale=4, size=(960, 540), segs=SEGS):
                 w1 = T.ev("window.__hd2d.camState().dist")
                 T.step("keyboard, mouse click-to-walk and wheel zoom still work with a controller connected", abs(k1[0] - k0[0]) + abs(k1[1] - k0[1]) > 0.2 and clicked and w1 > w0 + 0.3,
                        keys_moved=[round(k1[0] - k0[0], 2), round(k1[1] - k0[1], 2)], click=tgt and [round(tgt["x"], 2), round(tgt["z"], 2)], wheel=[round(w0, 2), round(w1, 2)])
-                T.ev("__padPlug(false)"); pg.wait_for_timeout(600)
+                T.ev("__padPlug(false)"); pg.wait_for_timeout(300)
+                # the unplug is seen by the per-frame poll: under load (parallel shards) 600 ms can be too few frames
+                try: T.wait("document.getElementById('toast').textContent.includes('disconnected') && !document.body.classList.contains('ctrl')", 5)
+                except Exception: pass   # the step below reports what is on screen
                 T.step("controller unplugged: toast, controller mode off", "disconnected" in T.ev("document.getElementById('toast').textContent")
-                       and not T.ev("document.body.classList.contains('ctrl')"))
+                       and not T.ev("document.body.classList.contains('ctrl')"), toast=T.ev("document.getElementById('toast').textContent"),
+                       ctrl=T.ev("document.body.classList.contains('ctrl')"), pads=T.ev("navigator.getGamepads().filter(Boolean).length"))
                 rep["shots"]["lane"] = T.shot("lane")
 
                 # ---------------------------------------------------------- back up to the plaza, through the moss gate
