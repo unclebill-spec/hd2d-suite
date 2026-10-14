@@ -6,10 +6,17 @@ Chunk 1 result (Oct 14):
 - drawPortrait reads npc.portrait {src, cell} (own sheet) [ALFHEIM]; COMPANIONS.lumi has sheet + portrait paths. sw.js regenerated via build.write_pwa() only.
 - WARNING: do NOT run `build.py --skip-assemble` here: copy_areas() wipes areas/*/public when /tmp/hearthmoor_build is absent (restored from git once).
 
+Chunk 2 result (Oct 14, ~4:20 PM ET):
+- tools/hearthmoor/alf_art.py = the minimal additive area build (never deletes; idempotent; keeps gamefx.base.*). Run it after any staging re-copy, then `python3 -c "import build; build.write_pwa()"` in games/hearthmoor.
+  It adds sheets lumi / alfnpc / alfenemy to the 4 Alfheim actors.json (lanternseller->elf_lampwright, wispcatcher->elf_child, poolkeeper->elf_gardener, librarian->elf_scholar; prismshard + mirrorduelist on the staging sheet), copies all 15 staging glbs (clashes lumen_tree/light_bridge/vault_pillar now staging), appends alfheim_fx rows to gamefx (staging wins clashes).
+- In-world Lumi = her own sheet actor (ai-driven, lift 0.3 + bob) where the area lists role lumi; fx wisp fallback elsewhere.
+- check-sprite: scoped LUMI_NEON_ALLOW (role lumi only) -> lumi.png PASS.
+- Quick loads (alfheim, lumen_court lumi, wispwood dim, prismvault boss): 0 errors.
+
 NEXT (start here):
-- 3a finish: Lumi's in-world body still uses fx (lumi_wisp); switch it to her own 32x40 sheet billboard (anims per lumi.json) + light pool.
-- Art swap into areas (needs an assemble run): elf townsfolk x4 + prismshard/mirrorduelist sheets into actors.json via the sprite tool; staging kit glbs (lumen_tree, light_bridge, vault_pillar overlap mine) + alfheim_fx gamefx. Recreate a build_alf.sh (assemble 4 areas to a private /tmp dir, pruned copy).
-- 3c check-sprite `lumi` neon allow-list; then step 2 (game.js line 59 comment, smoke_alfheim rewrite, check-scene) and 3d/3e, 4.
+- Lumi only has her sheet in the 4 Alfheim areas: other areas need the lumi sheet (merge note for Cozy Builder, or run alf_art.py sprites() on them at the rebase).
+- wispwood has no gamefx atlas (alfheim_fx not there). The 12 new staging kit pieces are copied but not placed in any scene (needs spec edits + assemble per the art README placement recipe); unused glbs inflate the precache.
+- Then step 2 (game.js line 59 comment, smoke_alfheim rewrite, check-scene), 3d/3e, 4.
 
 ## Earlier pause note (Oct 6)
 

@@ -1,0 +1,217 @@
+{
+ "tool": "hd2d sprite",
+ "biome": "cozy-village",
+ "frame": [
+  20,
+  32
+ ],
+ "pivot": [
+  10,
+  32
+ ],
+ "ground_row": 31,
+ "facings": [
+  "down",
+  "up",
+  "left",
+  "right"
+ ],
+ "anims": {
+  "idle": {
+   "start": 0,
+   "count": 4,
+   "fps": 3,
+   "loop": [
+    0,
+    1,
+    2,
+    1
+   ],
+   "blink": 3
+  },
+  "walk": {
+   "start": 4,
+   "count": 4,
+   "fps": 8
+  },
+  "cast": {
+   "start": 8,
+   "count": 4,
+   "fps": 6,
+   "loop": [
+    0,
+    1,
+    2,
+    2,
+    3,
+    3
+   ],
+   "casters_only": true
+  },
+  "attack": {
+   "start": 12,
+   "count": 4,
+   "fps": 10,
+   "loop": [
+    0,
+    1,
+    2,
+    2,
+    3
+   ],
+   "heroes_only": true
+  },
+  "defend": {
+   "start": 16,
+   "count": 4,
+   "fps": 6,
+   "loop": [
+    0,
+    1
+   ],
+   "hold": [
+    2,
+    3
+   ],
+   "heroes_only": true
+  },
+  "jump": {
+   "start": 20,
+   "count": 4,
+   "fps": 8,
+   "phases": [
+    "crouch",
+    "launch",
+    "airborne",
+    "land"
+   ],
+   "heroes_only": true
+  },
+  "die": {
+   "start": 24,
+   "count": 4,
+   "fps": 6,
+   "once": true,
+   "enemies_only": true
+  }
+ },
+ "cols": 12,
+ "size": [
+  240,
+  512
+ ],
+ "image": "alfnpc.png",
+ "roles": {
+  "librarian": {
+   "row": 4,
+   "kind": "human",
+   "desc": "Thalion Prismwright, prism scholar: platinum hair, long ears, round glasses, periwinkle shirt under a deep-blue vest, dark belt, pale trousers, black boots, a ledger of light-runes",
+   "size_bounds": [
+    [
+     14,
+     24
+    ],
+    [
+     24,
+     40
+    ]
+   ],
+   "caster": false,
+   "anims": [
+    "idle",
+    "walk"
+   ],
+   "named": true
+  },
+  "elf_lampwright": {
+   "row": 0,
+   "kind": "human",
+   "desc": "Elowen Brightwick, Lumenvale's wisp-lantern keeper: long silver hair, gold circlet with a sky gem, long pointed ears, white blouse under a sky-blue vest, dark belt, deep-blue skirt, brown boots, a brass wisp lantern on a pole",
+   "size_bounds": [
+    [
+     14,
+     24
+    ],
+    [
+     24,
+     40
+    ]
+   ],
+   "caster": false,
+   "anims": [
+    "idle",
+    "walk"
+   ],
+   "named": true,
+   "light": {
+    "color": "#a6ecff",
+    "intensity": 0.5,
+    "range": 1.6,
+    "fx": "lantern_glow"
+   }
+  },
+  "elf_child": {
+   "row": 12,
+   "kind": "human",
+   "desc": "Pip Starling, elf child (wisp-catcher): white cowlick, long ears, sky-blue shirt, dark belt, deep-blue shorts, red shoes",
+   "size_bounds": [
+    [
+     14,
+     24
+    ],
+    [
+     24,
+     40
+    ]
+   ],
+   "caster": false,
+   "anims": [
+    "idle",
+    "walk"
+   ],
+   "named": true
+  },
+  "elf_gardener": {
+   "row": 8,
+   "kind": "human",
+   "desc": "Faelin Dewpetal, treetop gardener: golden bun, long ears, rose blouse, dark belt, moss-green skirt, brown shoes, a basket of moonpetals",
+   "size_bounds": [
+    [
+     14,
+     24
+    ],
+    [
+     24,
+     40
+    ]
+   ],
+   "caster": false,
+   "anims": [
+    "idle",
+    "walk"
+   ],
+   "named": true
+  },
+  "elf_scholar": {
+   "row": 4,
+   "kind": "human",
+   "desc": "Thalion Prismwright, prism scholar: platinum hair, long ears, round glasses, periwinkle shirt under a deep-blue vest, dark belt, pale trousers, black boots, a ledger of light-runes",
+   "size_bounds": [
+    [
+     14,
+     24
+    ],
+    [
+     24,
+     40
+    ]
+   ],
+   "caster": false,
+   "anims": [
+    "idle",
+    "walk"
+   ],
+   "named": true
+  }
+ }
+}

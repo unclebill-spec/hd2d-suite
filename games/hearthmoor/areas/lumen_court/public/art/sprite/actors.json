@@ -1044,474 +1044,14 @@
    ]
   },
   "librarian": {
-   "row": 8,
+   "sheet": "alfnpc",
+   "row": 4,
    "kind": "human",
-   "desc": "Mirelle Glasswing: round spectacles, messy bun, cream shirt, violet vest, belt of lens pouches, brown pleated skirt, brown shoes, a glass book",
-   "size_bounds": [
-    [
-     14,
-     24
-    ],
-    [
-     24,
-     40
-    ]
-   ],
-   "caster": false,
    "anims": [
     "idle",
     "walk"
    ],
-   "frames": [
-    {
-     "name": "librarian_down_idle0",
-     "facing": "down",
-     "anim": "idle",
-     "i": 0,
-     "x": 0,
-     "y": 256,
-     "w": 20,
-     "h": 32,
-     "pivot": [
-      10,
-      288
-     ]
-    },
-    {
-     "name": "librarian_down_idle1",
-     "facing": "down",
-     "anim": "idle",
-     "i": 1,
-     "x": 20,
-     "y": 256,
-     "w": 20,
-     "h": 32,
-     "pivot": [
-      30,
-      288
-     ]
-    },
-    {
-     "name": "librarian_down_idle2",
-     "facing": "down",
-     "anim": "idle",
-     "i": 2,
-     "x": 40,
-     "y": 256,
-     "w": 20,
-     "h": 32,
-     "pivot": [
-      50,
-      288
-     ]
-    },
-    {
-     "name": "librarian_down_idle3",
-     "facing": "down",
-     "anim": "idle",
-     "i": 3,
-     "x": 60,
-     "y": 256,
-     "w": 20,
-     "h": 32,
-     "pivot": [
-      70,
-      288
-     ]
-    },
-    {
-     "name": "librarian_down_walk0",
-     "facing": "down",
-     "anim": "walk",
-     "i": 0,
-     "x": 80,
-     "y": 256,
-     "w": 20,
-     "h": 32,
-     "pivot": [
-      90,
-      288
-     ]
-    },
-    {
-     "name": "librarian_down_walk1",
-     "facing": "down",
-     "anim": "walk",
-     "i": 1,
-     "x": 100,
-     "y": 256,
-     "w": 20,
-     "h": 32,
-     "pivot": [
-      110,
-      288
-     ]
-    },
-    {
-     "name": "librarian_down_walk2",
-     "facing": "down",
-     "anim": "walk",
-     "i": 2,
-     "x": 120,
-     "y": 256,
-     "w": 20,
-     "h": 32,
-     "pivot": [
-      130,
-      288
-     ]
-    },
-    {
-     "name": "librarian_down_walk3",
-     "facing": "down",
-     "anim": "walk",
-     "i": 3,
-     "x": 140,
-     "y": 256,
-     "w": 20,
-     "h": 32,
-     "pivot": [
-      150,
-      288
-     ]
-    },
-    {
-     "name": "librarian_up_idle0",
-     "facing": "up",
-     "anim": "idle",
-     "i": 0,
-     "x": 0,
-     "y": 288,
-     "w": 20,
-     "h": 32,
-     "pivot": [
-      10,
-      320
-     ]
-    },
-    {
-     "name": "librarian_up_idle1",
-     "facing": "up",
-     "anim": "idle",
-     "i": 1,
-     "x": 20,
-     "y": 288,
-     "w": 20,
-     "h": 32,
-     "pivot": [
-      30,
-      320
-     ]
-    },
-    {
-     "name": "librarian_up_idle2",
-     "facing": "up",
-     "anim": "idle",
-     "i": 2,
-     "x": 40,
-     "y": 288,
-     "w": 20,
-     "h": 32,
-     "pivot": [
-      50,
-      320
-     ]
-    },
-    {
-     "name": "librarian_up_idle3",
-     "facing": "up",
-     "anim": "idle",
-     "i": 3,
-     "x": 60,
-     "y": 288,
-     "w": 20,
-     "h": 32,
-     "pivot": [
-      70,
-      320
-     ]
-    },
-    {
-     "name": "librarian_up_walk0",
-     "facing": "up",
-     "anim": "walk",
-     "i": 0,
-     "x": 80,
-     "y": 288,
-     "w": 20,
-     "h": 32,
-     "pivot": [
-      90,
-      320
-     ]
-    },
-    {
-     "name": "librarian_up_walk1",
-     "facing": "up",
-     "anim": "walk",
-     "i": 1,
-     "x": 100,
-     "y": 288,
-     "w": 20,
-     "h": 32,
-     "pivot": [
-      110,
-      320
-     ]
-    },
-    {
-     "name": "librarian_up_walk2",
-     "facing": "up",
-     "anim": "walk",
-     "i": 2,
-     "x": 120,
-     "y": 288,
-     "w": 20,
-     "h": 32,
-     "pivot": [
-      130,
-      320
-     ]
-    },
-    {
-     "name": "librarian_up_walk3",
-     "facing": "up",
-     "anim": "walk",
-     "i": 3,
-     "x": 140,
-     "y": 288,
-     "w": 20,
-     "h": 32,
-     "pivot": [
-      150,
-      320
-     ]
-    },
-    {
-     "name": "librarian_left_idle0",
-     "facing": "left",
-     "anim": "idle",
-     "i": 0,
-     "x": 0,
-     "y": 320,
-     "w": 20,
-     "h": 32,
-     "pivot": [
-      10,
-      352
-     ]
-    },
-    {
-     "name": "librarian_left_idle1",
-     "facing": "left",
-     "anim": "idle",
-     "i": 1,
-     "x": 20,
-     "y": 320,
-     "w": 20,
-     "h": 32,
-     "pivot": [
-      30,
-      352
-     ]
-    },
-    {
-     "name": "librarian_left_idle2",
-     "facing": "left",
-     "anim": "idle",
-     "i": 2,
-     "x": 40,
-     "y": 320,
-     "w": 20,
-     "h": 32,
-     "pivot": [
-      50,
-      352
-     ]
-    },
-    {
-     "name": "librarian_left_idle3",
-     "facing": "left",
-     "anim": "idle",
-     "i": 3,
-     "x": 60,
-     "y": 320,
-     "w": 20,
-     "h": 32,
-     "pivot": [
-      70,
-      352
-     ]
-    },
-    {
-     "name": "librarian_left_walk0",
-     "facing": "left",
-     "anim": "walk",
-     "i": 0,
-     "x": 80,
-     "y": 320,
-     "w": 20,
-     "h": 32,
-     "pivot": [
-      90,
-      352
-     ]
-    },
-    {
-     "name": "librarian_left_walk1",
-     "facing": "left",
-     "anim": "walk",
-     "i": 1,
-     "x": 100,
-     "y": 320,
-     "w": 20,
-     "h": 32,
-     "pivot": [
-      110,
-      352
-     ]
-    },
-    {
-     "name": "librarian_left_walk2",
-     "facing": "left",
-     "anim": "walk",
-     "i": 2,
-     "x": 120,
-     "y": 320,
-     "w": 20,
-     "h": 32,
-     "pivot": [
-      130,
-      352
-     ]
-    },
-    {
-     "name": "librarian_left_walk3",
-     "facing": "left",
-     "anim": "walk",
-     "i": 3,
-     "x": 140,
-     "y": 320,
-     "w": 20,
-     "h": 32,
-     "pivot": [
-      150,
-      352
-     ]
-    },
-    {
-     "name": "librarian_right_idle0",
-     "facing": "right",
-     "anim": "idle",
-     "i": 0,
-     "x": 0,
-     "y": 352,
-     "w": 20,
-     "h": 32,
-     "pivot": [
-      10,
-      384
-     ]
-    },
-    {
-     "name": "librarian_right_idle1",
-     "facing": "right",
-     "anim": "idle",
-     "i": 1,
-     "x": 20,
-     "y": 352,
-     "w": 20,
-     "h": 32,
-     "pivot": [
-      30,
-      384
-     ]
-    },
-    {
-     "name": "librarian_right_idle2",
-     "facing": "right",
-     "anim": "idle",
-     "i": 2,
-     "x": 40,
-     "y": 352,
-     "w": 20,
-     "h": 32,
-     "pivot": [
-      50,
-      384
-     ]
-    },
-    {
-     "name": "librarian_right_idle3",
-     "facing": "right",
-     "anim": "idle",
-     "i": 3,
-     "x": 60,
-     "y": 352,
-     "w": 20,
-     "h": 32,
-     "pivot": [
-      70,
-      384
-     ]
-    },
-    {
-     "name": "librarian_right_walk0",
-     "facing": "right",
-     "anim": "walk",
-     "i": 0,
-     "x": 80,
-     "y": 352,
-     "w": 20,
-     "h": 32,
-     "pivot": [
-      90,
-      384
-     ]
-    },
-    {
-     "name": "librarian_right_walk1",
-     "facing": "right",
-     "anim": "walk",
-     "i": 1,
-     "x": 100,
-     "y": 352,
-     "w": 20,
-     "h": 32,
-     "pivot": [
-      110,
-      384
-     ]
-    },
-    {
-     "name": "librarian_right_walk2",
-     "facing": "right",
-     "anim": "walk",
-     "i": 2,
-     "x": 120,
-     "y": 352,
-     "w": 20,
-     "h": 32,
-     "pivot": [
-      130,
-      384
-     ]
-    },
-    {
-     "name": "librarian_right_walk3",
-     "facing": "right",
-     "anim": "walk",
-     "i": 3,
-     "x": 140,
-     "y": 352,
-     "w": 20,
-     "h": 32,
-     "pivot": [
-      150,
-      384
-     ]
-    }
-   ]
+   "desc": "Thalion Prismwright, prism scholar: platinum hair, long ears, round glasses, periwinkle shirt under a deep-blue vest, dark belt, pale trousers, black boots, a ledger of light-runes"
   },
   "ranger": {
    "row": 12,
@@ -25044,6 +24584,101 @@
     }
    ],
    "summon": true
+  },
+  "lumi": {
+   "sheet": "lumi",
+   "row": 0,
+   "kind": "creature",
+   "anims": [
+    "idle",
+    "walk",
+    "follow",
+    "talk",
+    "happy",
+    "worried",
+    "surprised"
+   ],
+   "desc": "Lumi, the Alfheim story companion: a speaking neon-blue cold-fire starlight wisp with a pulsing violet halo, a big readable face, a five-tongue flame crown that throws prism flecks, little flame hands that gesture when she talks and a curling starry tail. Hovers at the hero's eye level; follows like a pet but talks like a person."
+  },
+  "elf_lampwright": {
+   "sheet": "alfnpc",
+   "row": 0,
+   "kind": "human",
+   "anims": [
+    "idle",
+    "walk"
+   ],
+   "desc": "Elowen Brightwick, Lumenvale's wisp-lantern keeper: long silver hair, gold circlet with a sky gem, long pointed ears, white blouse under a sky-blue vest, dark belt, deep-blue skirt, brown boots, a brass wisp lantern on a pole"
+  },
+  "elf_child": {
+   "sheet": "alfnpc",
+   "row": 12,
+   "kind": "human",
+   "anims": [
+    "idle",
+    "walk"
+   ],
+   "desc": "Pip Starling, elf child (wisp-catcher): white cowlick, long ears, sky-blue shirt, dark belt, deep-blue shorts, red shoes"
+  },
+  "elf_gardener": {
+   "sheet": "alfnpc",
+   "row": 8,
+   "kind": "human",
+   "anims": [
+    "idle",
+    "walk"
+   ],
+   "desc": "Faelin Dewpetal, treetop gardener: golden bun, long ears, rose blouse, dark belt, moss-green skirt, brown shoes, a basket of moonpetals"
+  },
+  "elf_scholar": {
+   "sheet": "alfnpc",
+   "row": 4,
+   "kind": "human",
+   "anims": [
+    "idle",
+    "walk"
+   ],
+   "desc": "Thalion Prismwright, prism scholar: platinum hair, long ears, round glasses, periwinkle shirt under a deep-blue vest, dark belt, pale trousers, black boots, a ledger of light-runes"
+  },
+  "prismshard": {
+   "sheet": "alfenemy",
+   "row": 0,
+   "kind": "enemy",
+   "anims": [
+    "idle",
+    "walk",
+    "attack",
+    "die"
+   ],
+   "desc": "Prism shard (Prism Vault common): a floating diamond crystal with slit eyes and two orbiting splinters, a sparkle trail to the ground; attack = rears back and flings its splinters (frame 14); die = cracks, splits and falls into a pile of glinting shards",
+   "enemy": true
+  },
+  "mirrorduelist": {
+   "sheet": "alfenemy",
+   "row": 4,
+   "kind": "enemy",
+   "anims": [
+    "idle",
+    "walk",
+    "attack",
+    "die"
+   ],
+   "desc": "Mirror Duelist (Prism Vault elite): oval hand-mirror face under a plumed hat, deep-blue frock coat, white cravat, dark belt with a gold buckle, pale trousers, black boots, white gloves, silver rapier; attack = en garde, lunge, thrust (hit 14); die = mirror cracks, kneels, collapses into coat + shards",
+   "enemy": true
+  }
+ },
+ "sheets": {
+  "lumi": {
+   "json": "lumi.json",
+   "image": "lumi.png"
+  },
+  "alfnpc": {
+   "json": "alfnpc.json",
+   "image": "alfnpc.png"
+  },
+  "alfenemy": {
+   "json": "alfenemy.json",
+   "image": "alfenemy.png"
   }
  }
 }

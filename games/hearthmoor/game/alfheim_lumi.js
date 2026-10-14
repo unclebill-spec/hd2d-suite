@@ -10,7 +10,7 @@
 export const COMPANIONS = {
   lumi: { name: 'Lumi', kind: 'wisp', talks: true, role: 'companion_lumi', realm: 'alfheim', scale: 2.0,
           sheet: 'art/alfheim/lumi/lumi.png', portrait: { src: 'art/alfheim/lumi/lumi_portrait.png', cell: [33, 33] },   // staging art, recoloured neon blue + violet
-          hover: { lift: 1.1, bob: 0.08, hz: 0.7 },
+          sheetLift: 0.3, hover: { lift: 1.1, bob: 0.08, hz: 0.7 },
           glow: '#5ac8ff', halo: '#a45cf0',
           light: { color: '#5ac8ff', intensity: 5.5, range: 4.2, lift: 1.1, pulse: [0.85, 1.15, 0.8], r: 2.6 },
           fx: { aura: 'lumi_wisp', pool: 'coldfire_pool', parts: 'lumi_spark' },
@@ -55,7 +55,10 @@ export class Lumi {
   spawnBody(at) {
     const c = this.ctx, p = c.player, x = at ? at[0] : p.x + 0.7, z = at ? at[1] : p.z + 0.3, y = c.heightAt(x, z);
     this.x = x; this.z = z; this.y = y;
-    this.body = this.fx('lumi_wisp', 'light_orb', x, y + L.hover.lift, z + 0.04, { duration: 1e9 });
+    // her own sheet (staging art, neon blue + violet) when the area's atlas lists role lumi; else the fx wisp
+    const A = c.actors;
+    if (A && A.meta.roles.lumi) { this.sprite = A.add({ role: 'lumi', id: 'lumi', pos: [x, z], behavior: 'none', turn: false }); this.sprite.ai = true; }
+    else this.body = this.fx('lumi_wisp', 'light_orb', x, y + L.hover.lift, z + 0.04, { duration: 1e9 });
     this.pool = this.fx('coldfire_pool', 'light_pool', x, y + 0.02, z + 0.03, { duration: 1e9 });
     this.light = c.addGlow ? c.addGlow(x, y, z, { color: L.light.color, intensity: L.light.intensity, range: L.light.range, lift: L.light.lift, fadeIn: 0.4 }) : null;
     this.on = true;
@@ -64,7 +67,8 @@ export class Lumi {
     const E = this.ctx && this.ctx.effects;
     if (E) { for (const f of [this.body, this.pool, ...this.minis.map((m) => m.f), this.markFx]) if (f) E.remove(f); }
     if (this.light) this.light.kill = true;
-    this.body = this.pool = this.light = this.markFx = null; this.minis = []; this.on = false; this.ctx = null;
+    if (this.sprite && this.ctx && this.ctx.actors) this.ctx.actors.remove(this.sprite);
+    this.sprite = null; this.body = this.pool = this.light = this.markFx = null; this.minis = []; this.on = false; this.ctx = null;
   }
   later(s, fn) { const c = this.ctx; setTimeout(() => { if (this.ctx === c) fn(); }, s * 1000); }
   bark(line, key) {
@@ -89,6 +93,12 @@ export class Lumi {
     this.y = c.heightAt(this.x, this.z);
     const bob = Math.sin(this.t * Math.PI * 2 * L.hover.hz) * L.hover.bob, pulse = 1 + Math.sin(this.t * Math.PI * 2 / 1.2) * 0.15;
     if (this.body) { this.body.x = this.x; this.body.y = this.y + L.hover.lift + bob + (p.lift || 0) * 0.5; this.body.z = this.z + 0.04; }
+    if (this.sprite) {
+      const a = this.sprite, A = c.actors, mv = d > 0.15;
+      a.x = this.x; a.z = this.z; a.y = this.y; a.lift = L.sheetLift + bob + (p.lift || 0) * 0.5;
+      if (mv) A.setFacingFromVec(a, tx - this.x, tz - this.z); else a.facing = p.facing;
+      A.animate(a, dt, mv);
+    }
     if (this.pool) { this.pool.x = this.x; this.pool.y = this.y + 0.02; this.pool.z = this.z + 0.03; }
     if (this.light) { this.light.pos.set(this.x, this.y, this.z); this.light.base = L.light.intensity * pulse; }
     if (d > 2.5 && Math.floor(this.t * 8) !== Math.floor((this.t - dt) * 8)) this.fx('lumi_spark', 'glitter', this.x - fv[0] * 0.3, this.y + L.hover.lift, this.z + 0.05, { duration: 0.5 });

@@ -1,0 +1,180 @@
+{
+ "tool": "hd2d sprite",
+ "biome": "cozy-village",
+ "frame": [
+  20,
+  32
+ ],
+ "pivot": [
+  10,
+  32
+ ],
+ "ground_row": 31,
+ "facings": [
+  "down",
+  "up",
+  "left",
+  "right"
+ ],
+ "anims": {
+  "idle": {
+   "start": 0,
+   "count": 4,
+   "fps": 3,
+   "loop": [
+    0,
+    1,
+    2,
+    1
+   ],
+   "blink": 3
+  },
+  "walk": {
+   "start": 4,
+   "count": 4,
+   "fps": 8
+  },
+  "cast": {
+   "start": 8,
+   "count": 4,
+   "fps": 6,
+   "loop": [
+    0,
+    1,
+    2,
+    2,
+    3,
+    3
+   ],
+   "casters_only": true
+  },
+  "attack": {
+   "start": 12,
+   "count": 4,
+   "fps": 10,
+   "loop": [
+    0,
+    1,
+    2,
+    2,
+    3
+   ],
+   "heroes_only": true
+  },
+  "defend": {
+   "start": 16,
+   "count": 4,
+   "fps": 6,
+   "loop": [
+    0,
+    1
+   ],
+   "hold": [
+    2,
+    3
+   ],
+   "heroes_only": true
+  },
+  "jump": {
+   "start": 20,
+   "count": 4,
+   "fps": 8,
+   "phases": [
+    "crouch",
+    "launch",
+    "airborne",
+    "land"
+   ],
+   "heroes_only": true
+  },
+  "die": {
+   "start": 24,
+   "count": 4,
+   "fps": 6,
+   "once": true,
+   "enemies_only": true
+  }
+ },
+ "cols": 28,
+ "size": [
+  560,
+  256
+ ],
+ "image": "alfenemy.png",
+ "roles": {
+  "prismshard": {
+   "row": 0,
+   "kind": "enemy",
+   "desc": "Prism shard (Prism Vault common): a floating diamond crystal with slit eyes and two orbiting splinters, a sparkle trail to the ground; attack = rears back and flings its splinters (frame 14); die = cracks, splits and falls into a pile of glinting shards",
+   "size_bounds": [
+    [
+     6,
+     20
+    ],
+    [
+     6,
+     32
+    ]
+   ],
+   "caster": false,
+   "anims": [
+    "idle",
+    "walk",
+    "attack",
+    "die"
+   ],
+   "enemy": true,
+   "named": true,
+   "light": {
+    "color": "#a6ecff",
+    "intensity": 0.5,
+    "range": 1.8,
+    "pool": "pool_blue_small"
+   },
+   "stats_hint": {
+    "tier": "common",
+    "hp": "low",
+    "speed": "fast (hover)",
+    "attack": "splinter volley (frame 14)",
+    "fx": {
+     "hit": "prism_shatter",
+     "die": "prism_shatter on frame 25"
+    }
+   }
+  },
+  "mirrorduelist": {
+   "row": 4,
+   "kind": "enemy",
+   "desc": "Mirror Duelist (Prism Vault elite): oval hand-mirror face under a plumed hat, deep-blue frock coat, white cravat, dark belt with a gold buckle, pale trousers, black boots, white gloves, silver rapier; attack = en garde, lunge, thrust (hit 14); die = mirror cracks, kneels, collapses into coat + shards",
+   "size_bounds": [
+    [
+     6,
+     20
+    ],
+    [
+     6,
+     32
+    ]
+   ],
+   "caster": false,
+   "anims": [
+    "idle",
+    "walk",
+    "attack",
+    "die"
+   ],
+   "enemy": true,
+   "named": true,
+   "stats_hint": {
+    "tier": "elite",
+    "hp": "medium",
+    "speed": "fast",
+    "attack": "lunge thrust (frame 14) + mirror_flash",
+    "fx": {
+     "hit": "mirror_flash at the rapier tip",
+     "die": "prism_shatter on frame 26"
+    }
+   }
+  }
+ }
+}

@@ -30,6 +30,11 @@ def _hex(px):
     return "#%02x%02x%02x" % px[:3]
 
 
+# [ALFHEIM] Scoped palette exception: the Lumi companion sheet only (role "lumi") may use the NEON blue core and NEON violet
+# halo (spells.py NEON hexes; Bill's Lumi look, alfheim.md 5.5). Any other role, or any other off-palette colour, still fails.
+LUMI_NEON_ALLOW = {"lumi": {"#2ab4ff", "#a6ecff", "#1c62d8", "#a45cf0", "#d4a8ff", "#6a34b8"}}
+
+
 def check(atlas_path, json_path=None, biome=None, max_colors=20, project=None):
     atlas_path = Path(atlas_path)
     json_path = Path(json_path) if json_path else atlas_path.with_suffix(".json")
@@ -69,7 +74,7 @@ def check(atlas_path, json_path=None, biome=None, max_colors=20, project=None):
                         opaque.append((x, y))
                         c = _hex(p)
                         colors.add(c)
-                        if c not in palette:
+                        if c not in palette and c not in LUMI_NEON_ALLOW.get(role, ()):  # [ALFHEIM]
                             rr["issues"].append(f"{fr['name']}: colour {c} not in {biome}")
             if not opaque:
                 rr["issues"].append(f"{fr['name']}: empty frame")
