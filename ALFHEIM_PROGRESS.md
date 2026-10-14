@@ -13,10 +13,19 @@ Chunk 2 result (Oct 14, ~4:20 PM ET):
 - check-sprite: scoped LUMI_NEON_ALLOW (role lumi only) -> lumi.png PASS.
 - Quick loads (alfheim, lumen_court lumi, wispwood dim, prismvault boss): 0 errors.
 
+Chunk 3 result (Oct 14, ~4:30 PM ET):
+- alf_art.py now also PLACES the 12 staging props (PLACE table; auto-finds flat free ground; objects + lamps + collision blockers tagged alf_art; collision.base_data kept, so re-runs are idempotent). lumen_pavilion had no room on the Steps -> placed in Lumen Court. Many land off the portrait camera; tune PLACE coords by eye.
+- QA loader /workspace/alf_qa/load.py: per-page timeouts + os._exit at the end (no more hang; 4 areas in ~35 s).
+- game.js line 59 comment lists the wraps. tests/smoke_alfheim.py rewritten for the script flow (presets): PASS 8/8, no JS errors.
+- check-scene (--no-phone, /workspace/alf_qa/cs/<area>): no_errors PASS everywhere, but FAILS:
+  sprites_sharp in alfheim + wispwood (atlas_corr ~0.3: check-scene probably compares extra-sheet actors (alfnpc/alfenemy/lumi) against the main atlas -> teach it role.sheet),
+  gamefx_sharp in alfheim + lumen_court (merged alfheim_fx rows; inspect gamefx_*.png), colours in alfheim (crop/src ratio 4.5),
+  height in lumen_court (flat court 0.3 m; likely pre-existing, compare origin). prismvault result: see /workspace/alf_qa/cs/prismvault.
+
 NEXT (start here):
-- Lumi only has her sheet in the 4 Alfheim areas: other areas need the lumi sheet (merge note for Cozy Builder, or run alf_art.py sprites() on them at the rebase).
-- wispwood has no gamefx atlas (alfheim_fx not there). The 12 new staging kit pieces are copied but not placed in any scene (needs spec edits + assemble per the art README placement recipe); unused glbs inflate the precache.
-- Then step 2 (game.js line 59 comment, smoke_alfheim rewrite, check-scene), 3d/3e, 4.
+- Fix/triage the check-scene FAILs above.
+- Lumi sheet in non-Alfheim areas; wispwood has no gamefx atlas.
+- Then 3d (re-pull alfheim.md, alliance lock), 3e/rebase when Cozy Builder's boss camera lands, step 4 (7 screenshots, docs/ALFHEIM.md, full scan, push).
 
 ## Earlier pause note (Oct 6)
 

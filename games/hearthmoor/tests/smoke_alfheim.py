@@ -5,14 +5,9 @@
 Runs standalone (its own server + headless Chromium), and smoke.py calls steps() in its own browser context after the
 main run, so the main run's save is untouched. Boots ?qa (fresh state, no saving) with &combat&peace: enemies move but
 stay calm until a step drops G.peace for a fight.
-Covers: Alfheim's arch at Bifrost stays sealed without the key, opens with it (S.flags.alf_key) as a violet / cold swirl
-portal; keys: E talks to Warden Aelindra, key 1 picks the alliance (befriend) and starts the story quest; controller: A
-talks to Thalion; a real fight in the glade (R attacks land on a prism shard; a neon wisp's prism bolt is a live
-projectile); touch: tapping the Prism Vault's swirl walks into it; the vault moves the quest on; Lady Sylvaine is
-drawn natively at 5x (boss sheet 100x160, scale 5, on-screen height >= 4.5x the hero's), her drain nova silences
-spells, she calls two Mirror Duelists at half health, her fall sets the flag; mouse: clicking the vault exit swirl walks
-out; Aelindra's turn-in pays gold + Embassy merit; the gate home lands in front of Alfheim's arch at Bifrost; no JS
-errors. Screenshots: arrival, settlement at night (violet glow), a fight, the vault, Sylvaine at scale.
+Covers (script flow, QA presets ?alfq=): Glimmer Steps loads with the staging townsfolk sheet; befriend sets the alliance;
+Wispwood's Dimming quest; Lumi follows as her own neon sheet actor; the Prism Vault's gates + staging prism-shard sheet;
+?beams=solve lights P2; Lady Sylvaine spawns at 6x; no JS errors. Screenshots: steps, wispwood, lumi, vault, Sylvaine.
 """
 import argparse
 import functools
@@ -58,124 +53,39 @@ def steps(b, url, T, size, errors, rep, stub=None, shots=None):
     def arrive(area, timeout=120):
         T.wait(f"window.__hm.area === '{area}' && !window.__hm.busy", timeout); T.idle(); pg.wait_for_timeout(500)
 
+    def load(area, extra="", spawn="start"):
+        pg.goto(url + f"&qa&combat&area={area}&spawn={spawn}{extra}")
+        T.wait(f"window.__hm && window.__hm.area === '{area}' && window.__hd2d && window.__hd2d.ready && !window.__hm.busy", 150)
+        T.idle(); pg.wait_for_timeout(1500)
+        return alf()
+
     try:
-        pg.goto(url + "&qa&combat&area=bifrost&spawn=from_vanaheim")
-        T.wait("window.__hm && window.__hm.ctx && window.__hd2d && window.__hd2d.ready", 150)
-        T.idle(); pg.wait_for_timeout(600)
-        a0 = alf()
-        T.step("Alfheim: without the key its arch at Bifrost stays sealed (frozen violet seal, no portal)",
-               not a0["open"] and "alfheim" in a0["sealed"] and "alfheim" not in a0["portals"], qa=a0)
-        T.ev("window.__hm.S.flags.alf_key = 1; window.__hm.go('bifrost', 'from_vanaheim')"); arrive("bifrost")
-        a1 = alf()
-        T.step("Alfheim: with the key (S.flags.alf_key) the arch opens: seal gone, a swirl portal to Lumenvale (violet once bifrost is rebuilt)",
-               a1["open"] and "alfheim" not in a1["sealed"] and "alfheim" in a1["portals"] and a1["gateFx"] in ("rift_vortex_violet", "rift_vortex"), qa=a1)
-        T.walk(-5.0, -10.4); pg.wait_for_timeout(300)
-        pr = T.ev("document.getElementById('prompt').textContent")
-        idx = T.ev("window.__hm.ctx.scene.game.portals.findIndex((p) => p.to === 'alfheim')")
-        area = T.go_rect("portals", idx, 150)
-        arrive("alfheim")
-        p = T.pos()
-        T.step("keys/walk: stepping into Alfheim's swirl at Bifrost lands in Lumenvale Glade at the arrival arch",
-               "Alfheim" in pr and area == "alfheim" and abs(p[0] + 11.0) < 1.2 and abs(p[1] - 3.0) < 1.2, prompt=pr, pos=p)
-        shot("alfheim_arrival")
-        # ---------------------------------------------------------- Lumenvale: Aelindra (keys), Thalion (controller)
-        n, first = T.talk("aelindra", keep_open=True)
-        ch = T.to_choice()
-        pg.keyboard.press("1"); pg.wait_for_timeout(400); T.read_all(); pg.wait_for_timeout(300)
-        S = T.S()
-        T.step("keys: E talks to Warden Aelindra; her alliance choice (befriend / conquer / pass), key 1 befriends Alfheim and starts the story quest",
-               bool(ch) and len(ch["options"]) == 3 and "friend" in ch["options"][0] and S["flags"]["alliance"]["alfheim"] == "befriend"
-               and S["quests"].get("alfheim") == 1 and "Aelindra" in first, choice=ch, quests=S["quests"])
-        T.ev("__padPlug(true)"); pg.wait_for_timeout(700)
-        presses = T.talk_pad("thalion")
-        T.ev("__padPlug(false)"); pg.wait_for_timeout(400)
-        T.step("controller: A talks to Thalion the ranger and pages through to the end", presses >= 1 and not T.ev("!!window.__hm.dlg"), presses=presses)
-        T.ev("window.__hm.ctx.clock.t = 0.96"); T.walk(0.6, -6.2); pg.wait_for_timeout(1500)
-        lit = T.ev("window.__hm.ctx.glows.filter((g) => !g.kill).length")
-        T.step("Lumenvale at night: elf NPCs, treehouses, moon well, orb lanterns; violet glow lights and pools are on",
-               T.ev("['aelindra','thalion','nyssa','elfkid'].every((id) => !!window.__hm.ctx.npc(id))") and lit >= 3, lights=lit)
-        shot("alfheim_settlement_night")
-        # ---------------------------------------------------------- a fight in the glade
-        T.ev("window.__hm.combat.godT = 999"); T.walk(-2.4, 0.4)
-        T.ev("window.__hm.peace = false")
-        sh = lambda: T.ev("(() => { const e = window.__hm.combat.enemies.find((x) => x.id === 'shard_a0'); return e ? [e.hp, e.state, e.a.x, e.a.z] : null; })()")
-        h0 = sh()
-        for _ in range(14):
-            e = sh()
-            if not e or e[1] in ("dead", "gone"):
-                break
-            T.ev(f"window.__hm.ctx.actors.setFacingFromVec(window.__hm.ctx.player, {e[2]} - window.__hm.ctx.player.x, {e[3]} - window.__hm.ctx.player.z)")
-            pg.keyboard.press("r"); pg.wait_for_timeout(260)
-            if _ == 4:
-                shot("alfheim_fight")
-        h1 = sh()
-        bolts = T.ev("window.__hd2d.effects.list.filter((f) => f.name === 'prism_bolt' || f.name === 'prism_pop').length + window.__hm.combat.projs.length")
-        T.step("fight: R attacks land on a prism shard in the glade (its HP drops / it falls); enemies use the Alfheim roles",
-               h0 and (h1 is None or h1[0] < h0[0] or h1[1] in ("dead", "gone")) and T.ev("window.__hm.combat.enemies.some((e) => e.a.role === 'neonwisp')"),
-               hp=[h0, h1], bolts=bolts)
-        T.ev("window.__hm.peace = true")
-        # ---------------------------------------------------------- touch: tap the vault swirl
-        T.walk(8.6, 2.6); pg.wait_for_timeout(400)
-        s = screen(10.4, 1.35, 1.4)
-        tap(s["x"], s["y"]); pg.wait_for_timeout(500)
-        try:
-            arrive("prismvault", 90)
-        except Exception:
-            tap(s["x"], s["y"]); arrive("prismvault", 90)
-        T.step("touch: tapping the Prism Vault's swirl walks into it; the vault moves the story quest on",
-               T.ev("window.__hm.area") == "prismvault" and T.S()["quests"].get("alfheim") == 2, quests=T.S()["quests"])
-        shot("prismvault")
-        # ---------------------------------------------------------- Lady Sylvaine
-        meta = T.ev("""(async () => { const c = window.__hm.ctx, d = c.scene.atlas.json.replace(/[^/]+$/, '');
-            const r = await fetch('areas/prismvault/' + d + 'boss.json'); const m = await r.json(); return { frame: m.frame, scale: m.roles.sylvaine.scale }; })()""")
-        T.walk(0.0, 0.4); pg.wait_for_timeout(1200)
-        rects = T.ev("window.__hd2d.actorRects().filter((q) => q.id === 'sylvaine' || q.id === 'player').map((q) => [q.id, q.h])")
-        hs = dict(rects)
-        ratio = (hs.get("sylvaine") or 0) / max(1, hs.get("player") or 1)
-        T.step("Lady Sylvaine: drawn natively on the vault's boss sheet (100x160 frames, scale 5) and >= 4.5x the hero on screen",
-               meta["frame"] == [100, 160] and meta["scale"] >= 5 and ratio >= 4.5, meta=meta, rects=rects, ratio=round(ratio, 2))
-        T.ev("window.__hm.peace = false; window.__hm.combat.godT = 999"); pg.wait_for_timeout(2500)
-        shot("sylvaine_scale")
-        # her drain nova: force a wave swing and check spells sputter
-        T.ev("""(() => { const C = window.__hm.combat, e = C.enemies.find((x) => x.id === 'sylvaine'); C.cd.spell = 0; C.cd.charm = 0;
-                 e.swings = 2; C.beginAttack(e); })()""")
-        T.wait("(() => { const e = window.__hm.combat.enemies.find((x) => x.id === 'sylvaine'); return e && e.novaAt === e.swings; })()", 30)
-        cd = T.ev("[window.__hm.combat.cd.spell, window.__hm.combat.cd.charm]")
-        T.step("Sylvaine's drain nova (every third swing) puts your spells + charms on cooldown", cd[0] > 1 and cd[1] > 1, cd=cd)
-        T.ev("(() => { const e = window.__hm.combat.enemies.find((x) => x.id === 'sylvaine'); e.hp = Math.floor(e.D.hp * 0.45); })()")
-        T.wait("window.__hm.combat.enemies.filter((e) => e.id.startsWith('syl_mirror_')).length === 2", 30)
-        pg.wait_for_timeout(800)
-        shot("sylvaine_fight")
-        T.ev("(() => { const C = window.__hm.combat, e = C.enemies.find((x) => x.id === 'sylvaine'); C.damageEnemy(e, 99999, C.ctx.player); })()")
-        pg.wait_for_timeout(600)
-        T.ev("window.__hm.peace = true; for (const e of window.__hm.combat.enemies) if (e.state !== 'dead' && e.state !== 'gone') window.__hm.combat.kill(e, true)")
-        S = T.S()
-        T.step("Sylvaine at half health calls two Mirror Duelists; her fall sets S.flags.alf_sylvaine and counts as a boss",
-               S["flags"].get("alf_sylvaine") == 1 and (S.get("bosses") or {}).get("sylvaine") == 1, flags={k: S["flags"].get(k) for k in ("alf_sylvaine", "alf_vault")})
-        # ---------------------------------------------------------- mouse: click the exit swirl
-        T.walk(0.0, 6.6); pg.wait_for_timeout(500)
-        s = screen(0.0, 8.7, 1.4)
-        pg.mouse.click(s["x"], s["y"]); pg.wait_for_timeout(500)
-        try:
-            arrive("alfheim", 90)
-        except Exception:
-            pg.mouse.click(s["x"], s["y"]); arrive("alfheim", 90)
-        p = T.pos()
-        T.step("mouse: clicking the vault's exit swirl walks out to Lumenvale Glade in front of the vault door",
-               T.ev("window.__hm.area") == "alfheim" and abs(p[0] - 10.4) < 1.5 and abs(p[1] - 3.0) < 1.5, pos=p)
-        g0, m0 = T.ev("window.__hm.S.gold || 0"), T.ev("(window.__hm.S.merit || {}).embassy || 0")
-        mk = T.ev("window.__hm.markers && window.__hm.markers.aelindra ? window.__hm.markers.aelindra : null")
-        T.talk("aelindra")
-        S = T.S()
-        T.step("Aelindra's turn-in: story quest done, +60 gold, +60 Realm Embassies merit",
-               S["quests"].get("alfheim") == 3 and (S.get("gold") or 0) - g0 == 60 and (S.get("merit") or {}).get("embassy", 0) - m0 >= 60, marker=str(mk)[:60],
-               gold=[g0, S.get("gold")], merit=[m0, (S.get("merit") or {}).get("embassy")])
-        T.walk(-11.0, 2.8)
-        idx = T.ev("window.__hm.ctx.scene.game.portals.findIndex((p) => p.to === 'bifrost')")
-        T.go_rect("portals", idx, 150); arrive("bifrost")
-        p = T.pos()
-        T.step("the violet gate home lands at Bifrost in front of Alfheim's arch", abs(p[0] + 5.0) < 1.2 and abs(p[1] + 10.1) < 1.2, pos=p)
-        T.step("Alfheim: no JS errors", not errors and not T.ev("window.__hd2d.errors.length"), errors=errors[:5])
+        # script flow (alfheim.md): Glimmer Steps -> Lumen Court (alliance) -> Wispwood (Lumi's nest) -> Prism Vault -> Sylvaine
+        a = load("alfheim")
+        T.step("Glimmer Steps loads (Alfheim module live, staging townsfolk sheet wired)",
+               a["area"] == "alfheim" and T.ev("!!window.__hd2d.ctx.actors.meta.roles.lanternseller.sheet"), qa=a)
+        shot("alf_steps")
+        a = load("lumen_court", "&alfq=befriend")
+        T.step("befriend preset: alliance befriend, gate + naming quests done", a["alliance"] == "befriend" and a["quests"]["alf_gate"] == 3, qa=a)
+        a = load("wispwood", "&alfq=dim")
+        T.step("Wispwood: the Dimming quest is live", a["area"] == "wispwood" and a["quests"]["alf_dim"] == 1, qa=a)
+        shot("alf_wispwood")
+        a = load("lumen_court", "&alfq=lumi")
+        lumi = T.ev("(() => { const l = window.__hd2d.ctx.actors.list.find((x) => x.role === 'lumi'); return l ? { sheet: l.S.name, tall: l.S.fh / 32 } : null; })()")
+        T.step("Lumi joins and follows as her own neon sheet actor (not the fx wisp)",
+               a["lumi"]["on"] and a["lumi"]["body"] is None and lumi and lumi["sheet"] == "lumi", qa=a["lumi"], actor=lumi)
+        shot("alf_lumi")
+        a = load("prismvault", "&alfq=vault")
+        T.step("Prism Vault: rooms gated, Lumi along, staging prism-shard sheet", a["gates"] is not None and a["lumi"]["on"]
+               and T.ev("window.__hd2d.ctx.actors.meta.roles.prismshard.sheet === 'alfenemy'"), qa={"room": a["room"], "gates": a["gates"]})
+        shot("alf_vault")
+        a = load("prismvault", "&alfq=vault&beams=solve", "p2"); pg.wait_for_timeout(800); a = alf()
+        T.step("beams=solve lights the P2 receivers", bool(a["beams"] and a["beams"]["lit"]), beams=a["beams"])
+        a = load("prismvault", "&alfq=boss", "boss"); pg.wait_for_timeout(1500); a = alf()
+        sy = a["sylvaine"]
+        T.step("Lady Sylvaine spawns at 6x on her own boss sheet", bool(sy) and sy["scale"] >= 5.5 and sy["phase"] == 1, sylvaine=sy)
+        shot("alf_sylvaine")
+        T.step("no JS errors in the Alfheim run", not errors, errors=errors[:5])
     finally:
         T.pg, T.out = old_pg, old_out
         cx.close()
