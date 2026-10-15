@@ -76,7 +76,7 @@ RARE_AREAS.wispwood = { bases: ['shardmother', 'glassstalker'], spots: [[5.4, -3
 RARE_AREAS.prismvault = { bases: ['shardmother', 'glassstalker'], spots: [[11.2, 2.2], [0.0, -30.0]] };   // P3 grotto / P7 stair head
 RIFT_AREAS.wispwood = { foes: ['prismshard', 'willwisp', 'crystalgolem'], spots: [[3.6, 1.6], [-4.4, -4.6], [-2.4, 7.4]] };
 SPAWNS.wispwood = [
-  { id: 'ww_wisp0', role: 'willwisp', pos: [3.8, -1.2] }, { id: 'ww_wisp1', role: 'willwisp', pos: [-3.6, 3.0] },
+  { id: 'ww_wisp0', role: 'willwisp', pos: [3.8, -1.2] }, { id: 'ww_wisp1', role: 'willwisp', pos: [-4.8, 1.4] },
   { id: 'ww_golem0', role: 'crystalgolem', pos: [-4.2, -4.6] },
   { id: 'ww_shard_n0', role: 'prismshard', pos: [6.4, -3.4], night: true }, { id: 'ww_shard_n1', role: 'prismshard', pos: [-6.6, 0.4], night: true },
   { id: 'ww_wisp_n', role: 'willwisp', pos: [1.2, -3.6], night: true },
