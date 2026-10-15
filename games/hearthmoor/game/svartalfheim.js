@@ -2,13 +2,13 @@
 // with Cozy Builder's decisions (section 14). Chunk 1 = the first area only: Anvildeep, Copper Row (`svartalfheim`).
 // The realm's game module (quests, TALK, shops, gate at Bifrost, alliance lock, Dagna / Tick) comes in later chunks and merges into the
 // shared tables from here, like alfheim.js, so shared files only carry a few marked hook lines.
-export const AREAS_SV = { svartalfheim: 'areas/svartalfheim/', forge_hall: 'areas/forge_hall/', glowmines: 'areas/glowmines/' };
-export const AREA_NAMES_SV = { svartalfheim: 'Anvildeep: Copper Row', forge_hall: 'The Great Forge', glowmines: 'The Amethyst Mines' };
+export const AREAS_SV = { svartalfheim: 'areas/svartalfheim/', forge_hall: 'areas/forge_hall/', glowmines: 'areas/glowmines/', clockdeep: 'areas/clockdeep/' };
+export const AREA_NAMES_SV = { svartalfheim: 'Anvildeep: Copper Row', forge_hall: 'The Great Forge', glowmines: 'The Amethyst Mines', clockdeep: 'The Clockwork Deep' };
 
 // Ground light pools and glow lights placed from an area spec's `game.svfx` ([{ name, pos: [x, y, z], light? }]): svart_fx decals (pool_red /
 // pool_blue / pool_violet / water_glow) with a matching point light at night, like forge.js does for the Forge Quarter. Data only; a later chunk
 // adds the realm's quests / TALK / shops / gate on this class.
-const SV_AREAS = Object.keys(AREAS_SV).concat(['clockdeep']);
+const SV_AREAS = Object.keys(AREAS_SV);
 const SV_LIGHT = { pool_red: ['#ff5a4a', 7, 5.0], pool_blue: ['#2ab4ff', 5, 3.6], pool_violet: ['#a45cf0', 5, 4.0], water_glow: ['#3ac8b0', 4, 3.2] };
 export class Svartalfheim {
   constructor(G) { this.G = G; this.ctx = null; this.area = null; this.fx = []; this.lights = []; }

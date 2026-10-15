@@ -18,7 +18,7 @@ from PIL import Image
 GAME = Path(__file__).resolve().parents[2] / "games" / "hearthmoor"
 ST = GAME / "art" / "svartalfheim"
 ALF = GAME / "art" / "alfheim"
-AREAS = sys.argv[1:] or ["svartalfheim", "forge_hall", "glowmines"]
+AREAS = sys.argv[1:] or ["svartalfheim", "forge_hall", "glowmines", "clockdeep"]
 TOWNS = {"lanternseller": "tinker", "wispcatcher": "minerunner", "poolkeeper": "poolkeeper_sv", "dwarftrader": "dwarftrader",
          "elffolk": "dw1", "elffolk2": "sv1",
          "innkeeper": "thane", "shopkeeper": "runewarden", "nightmerchant": "hushed", "gnome": "dagna"}   # base-atlas stand-in role -> svart_npcs role (only roles the area has are re-pointed)
@@ -103,6 +103,9 @@ PLACE["glowmines"] = [("crystal_cluster", [-9.0, -9.0], "fixed"), ("crystal_clus
                       ("crystal_cluster", [-8.4, -3.0]), ("crystal_cluster", [8.0, -4.6]), ("crystal_cluster", [10.2, 3.0]),
                       ("mine_cart", [-7.6, 8.0]), ("rail_straight", [-7.6, 6.2], "fixed"), ("rail_straight", [-7.6, 8.2], "fixed"),
                       ("rune_lamp", [-3.2, 6.0]), ("rune_lamp", [4.2, 6.0]), ("gear_wall", [-9.8, 11.2], "fixed")]
+PLACE["clockdeep"] = [("gear_wall", [-5.2, 41.2], "fixed"), ("gear_wall", [5.2, 41.2], "fixed"), ("gear_wall", [-5.2, 15.0], "fixed"), ("gear_wall", [5.2, 15.0], "fixed"),
+                      ("gear_wall", [-5.2, -1.0], "fixed"), ("gear_wall", [5.2, -1.0], "fixed"), ("rune_lamp", [-2.8, 34.0]), ("rune_lamp", [2.8, 34.0]),
+                      ("rune_lamp", [-3.0, 12.0], "fixed"), ("rune_lamp", [3.0, 12.0], "fixed"), ("crystal_cluster", [-5.6, -12.4], "fixed"), ("crystal_cluster", [5.6, -5.0], "fixed")]
 WALK = {"rail_straight", "glow_pool", "deep_floor"}   # flat decals: walkable, no blocker
 
 
