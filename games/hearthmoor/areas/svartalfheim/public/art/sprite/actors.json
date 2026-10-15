@@ -23030,6 +23030,18 @@
    ],
    "desc": "Hushed blade (conquer only, dark-elf assassin): ash-grey skin, silver hair, long ears, black wrap-top, grey sash, slate trousers bound at the shins, black shoes, two short blades (cold-blue edge). Attack = blade combo (frame 14); fades in / out with shadow_puff",
    "enemy": true
+  },
+  "dagna_safe": {
+   "sheet": "dagna_safe",
+   "row": 0,
+   "kind": "creature",
+   "anims": [
+    "idle",
+    "walk",
+    "cast",
+    "attack"
+   ],
+   "desc": "Dagna Coalbeard (dwarf smith, companion): soot-black beard in two thick braids with copper rings, ruddy cheeks, red-brown work shirt with sleeves rolled to the elbow, leather bracers, leather apron tied at the waist over grey trousers, tan steel-toed boots, big square hammer on her back (head glows faint ember-orange). Attack = hammer swing (frame 14), cast = ember strike (sparks in lamp / gold)"
   }
  },
  "sheets": {
@@ -23052,6 +23064,10 @@
   "svenemy": {
    "json": "svenemy.json",
    "image": "svenemy.png"
+  },
+  "dagna_safe": {
+   "json": "dagna_safe.json",
+   "image": "dagna_safe.png"
   }
  }
 }

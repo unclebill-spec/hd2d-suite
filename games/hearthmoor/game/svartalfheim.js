@@ -32,7 +32,7 @@ Object.assign(ENEMIES, {
   gorrak: { name: 'Gorrak Ironmaw, the Bound Forge-Tyrant', scale: 6, hp: 1800, dmg: 26, speed: 1.1, reach: 3.2, windup: 0.85, cd: 2.1, aggro: 12, r: 1.5, push: 0.1,
             heavy: true, slam: true, boss: true, minion: 'forgeconstruct', phases: [0.65, 0.3], chained: { r: 6 }, whip: { len: 9, dmg: 20 }, spray: { n: 5, dmg: 10 },
             plates: { every: 12, open: 4, mul: 2 }, quench: { stagger: 6 }, molten: { life: 8, dps: 10 }, rain: { every: 10, dmg: 22 }, anvils: 4, bindMul: 1.5,
-            glow: '#e0602a', legendary: true, noRespawn: true },
+            glow: '#7a2a62', aura: { pulse: '#2ab4ff', every: 1.8 }, legendary: true, noRespawn: true },
   cavegolem: { ...ENEMIES.golem, name: 'Cave golem', glow: '#7a4ab0' },   // the stone golem's sprite (spawn { role: 'golem', def: 'cavegolem' }) with amethyst crusts
 });
 Object.assign(XP, { forgeconstruct: 50, sparkgolem: 60, sootling: 22, shadowsmith: 74, hushblade: 40, cavegolem: 56, gorrak: 900 });
@@ -112,7 +112,7 @@ export class Svartalfheim {
   qa() {   // read-only snapshot for the smoke test
     const c = this.ctx, gm = c ? (c.scene.game || {}) : {}, S0 = this.G.S;
     return { area: this.area, seal: hasSeal(this.G.S), exits: (gm.exits || []).map((e) => e.to),
-             foes: c ? c.actors.list.filter((a) => ['sootling', 'forgeconstruct', 'golem', 'sparkgolem', 'shadowsmith'].includes(a.role)).map((a) => a.role) : [],
+             foes: c ? c.actors.list.filter((a) => ['sootling', 'forgeconstruct', 'golem', 'sparkgolem', 'shadowsmith', 'hushblade'].includes(a.role)).map((a) => a.role) : [],
              deep: { vents: this.deep.v.reduce((n, v) => n + (v.n || 0), 0), hits: this.deep.hits, gusts: this.deep.gust.n, pushed: this.deep.gust.pushed || 0 },
              spots: this.spots.filter((x) => x.show()).length,
              quests: S0.quests || {}, alliance: ((S0.flags || {}).alliance || {}).svartalfheim || null, alfheim_alliance: ((S0.flags || {}).alliance || {}).alfheim || null, rivals: (S0.flags || {}).rivals || null, inv: S0.inv || {},
@@ -154,6 +154,7 @@ export class Svartalfheim {
   }
   detach() { for (const f of this.fx) if (f) f.dur = f.t + 0.2; for (const l of this.lights) if (l) l.kill = true; this.fx = []; this.lights = []; this.spots = []; this.ctx = null; this.area = null; }
   anvilsOn() {}
+  openLift() { const gm = this.ctx && this.ctx.scene.game; if (gm && !(gm.exits || []).some((e) => e.to === 'clockdeep')) gm.exits.push({ ...LIFT }); }
   // the arena trigger: step into the Binding Forge and Gorrak wakes (intro dialogue, then the fight)
   gorrakIntro() {
     const G = this.G, S = G.S, conquer = ((flags(S).alliance || {}).svartalfheim) === 'conquer'; this.started = true;

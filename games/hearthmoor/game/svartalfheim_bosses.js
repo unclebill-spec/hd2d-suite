@@ -46,6 +46,7 @@ export class GorrakFight {
     this.pools = this.pools.filter((q) => q.end > this.t);
     if (e.stagEnd && this.t >= e.stagEnd) { e.a.speed = e.a.speed0 || e.D.speed; e.stagEnd = 0; }
     const a = e.a, p = ctx.player, D = e.D, d = Math.hypot(p.x - a.x, p.z - a.z);
+    this.aura(e, dt);
     if (ctx.framePull) ctx.framePull(d < 18 ? 2.0 : 1);
     if (frozen || C.peace || e.state === 'idle' || e.state === 'home') return;
     const f = e.hp / D.hp;
@@ -76,6 +77,19 @@ export class GorrakFight {
       if (e.rainT <= 0) { e.rainT = 10; this.rain(e); }
       if (e.golemT <= 0) { e.golemT = 15; C.spawnEnemy({ id: `gk_sg_${Math.floor(this.t * 10)}`, role: 'sparkgolem', pos: [a.x + 3, a.z + 2], once: true, noLoot: true }, true); this.tell('A spark golem tumbles out of the flue.', 2); }
     }
+  }
+  // Gorrak's own aura (lead, 2026-10-15; replaces the scaled red pool): a dark red-violet light (D.glow) with cold-blue rune pulses
+  // that run along his plate seams every 1.8 s (a brighter double pulse when the plates are open)
+  aura(e, dt) {
+    const a = e.a, D = e.D, A = D.aura; if (!A) return;
+    e.auraT = (e.auraT ?? 0.6) - dt;
+    if (e.light && e.light.base !== undefined) e.light.base = (e.light.base0 = e.light.base0 || e.light.base) * (1 + 0.18 * Math.sin(this.t * 2.6) + (e.auraPulse > 0 ? 0.35 : 0));
+    if (e.auraPulse > 0) e.auraPulse -= dt;
+    if (e.auraT > 0) return;
+    e.auraT = A.every; e.auraPulse = 0.35;
+    const k = D.scale || 6;
+    this.fx('coldfire_motes', a.x, a.y + 0.55 * k * 0.5, a.z + 0.05);
+    if (e.plateOpen > 0) this.fx('coldfire_motes', a.x + 0.4, a.y + 0.55 * k * 0.8, a.z + 0.05);
   }
   phase(e, n) {
     e.ph = n; const a = e.a;

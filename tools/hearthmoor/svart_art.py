@@ -26,10 +26,12 @@ NPC = ["thane", "runewarden", "hushed", "dwarftrader", "tinker", "minerunner", "
 SHEETS = {  # sheet name -> (staging json, {area role: staging role})
     "lumi": (ALF / "lumi" / "lumi.json", {"lumi": "lumi"}),
     "svnpc": (ST / "sprite" / "svart_npcs.json", {**{k: v for k, v in TOWNS.items() if k != "gnome"}, **{v: v for v in NPC}}),
-    "dagna": (ST / "sprite" / "dagna.json", {"gnome": "dagna", "dagna": "dagna"}),
+    "dagna": (ST / "sprite" / "dagna.json", {"gnome": "dagna", "dagna": "dagna"}),   # the neon-red twin is her main look (lead, 2026-10-15)
+    "dagna_safe": (ST / "sprite" / "dagna.json", {"dagna_safe": "dagna"}),   # palette-only fallback sheet (its own role, not placed)
     "svenemy": (ST / "sprite" / "deep_enemies.json", {r: r for r in ("forgeconstruct", "sparkgolem", "sootling", "shadowsmith", "hushblade")}),
 }
 
+IMAGE = {"dagna": "dagna_neon.png", "dagna_safe": "dagna.png"}   # sheet -> staging png (default: the json's own image)
 EXTRA = {"clockdeep2": {"boss_gorrak": (ST / "sprite" / "boss_gorrak.json", {"gorrak": "gorrak"})}}   # Gorrak's own 144x192 boss sheet, only where the fight is
 
 
@@ -38,7 +40,7 @@ def sprites(area):
     mp = d / "actors.json"; m = json.loads(mp.read_text()); m.setdefault("sheets", {})
     for nm, (src, roles) in {**SHEETS, **EXTRA.get(area, {})}.items():
         sm = json.loads(src.read_text())
-        shutil.copy2(src.parent / sm["image"], d / f"{nm}.png")
+        shutil.copy2(src.parent / IMAGE.get(nm, sm["image"]), d / f"{nm}.png")
         out = {k: sm[k] for k in ("tool", "biome", "frame", "pivot", "ground_row", "facings", "anims", "cols", "size")}
         out["image"] = f"{nm}.png"; out["roles"] = {}
         for ar, sr in roles.items():

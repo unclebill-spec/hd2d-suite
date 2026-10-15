@@ -183,8 +183,9 @@ export class Pets {
     const want = this.dark() || this.boostT > 0;
     if (want && !this.lit) this.lightOn(); else if (!want && this.lit) this.lightOff();
     if (this.lit) {
-      const L = P.light, [lo, hi, hz] = L.pulse;
+      const L = P.light, pl = L.pulse, [lo, hi, hz] = Array.isArray(pl) ? pl : [pl.min, pl.max, pl.hz];
       let k = lo + (hi - lo) * (0.5 + 0.5 * Math.sin(this.t * 2 * Math.PI * hz));
+      if (pl.shape === 'tick') k = lo + (hi - lo) * (Math.floor(this.t * hz * 4) % 2 ? 1 : 0);   // [SVARTALFHEIM] Tick's stepped pulse: a clockwork tick (two beats a cycle, no easing)
       if (L.flicker) k = lo + (hi - lo) * (0.5 + 0.5 * Math.sin(this.t * 2 * Math.PI * hz) * Math.sin(this.t * 7.3));
       if (this.boostT > 0) k *= 1.6;
       if (this.light) { this.light.pos.set(a.x, a.y, a.z); this.light.base = L.intensity * k; }
