@@ -6,10 +6,10 @@ Bill (GitHub `unclebill-spec`) hands this project between his bots and Cursor th
 
 **New design (2026-10-03, Bill approved):** [`docs/story/DESIGN_EXPANSION_2026-10-03.md`](docs/story/DESIGN_EXPANSION_2026-10-03.md) (also appended to `STORY_SEEDS.md`): opening hour, main quest beats, leveling and skill trees, death / difficulty / New Game+, day-night and weather, Ravenhold's Forge Quarter / Old Temple / Market Terraces, music and sound. Not yet merged into the handoff; read it alongside it.
 
-## Current state (2026-10-14)
-Hearthmoor batch 1 (6.2-6.5) and batch 2 (6.6 orb lanterns, 6.7 Forge Quarter, 6.8 Glowfrog Still) are merged to main and live. Remaining: Nettle (jeweler / unsocket), The Cold Cauldron quest, Bloop's sprite, toadstool daily limit / regrow, and the 6.4 leftovers (V3 firefly maze guidance, Tobble follower, cutscene dialogue, Veyra's beat). Next: merge Master Builder's `realm-alfheim`, then Svartalfheim.
+## Current state (2026-10-15)
+Hearthmoor batch 1 (6.2-6.5), batch 2 (6.6 orb lanterns, 6.7 Forge Quarter, 6.8 Glowfrog Still) and the **Alfheim realm** (4 areas, Lumi, Lady Sylvaine; merged 2026-10-15) are on main and live. Next realms (Svartalfheim, Jotunheim, ...) use Alfheim as the template: read [`docs/REALM_TEMPLATE.md`](docs/REALM_TEMPLATE.md) and `docs/ALFHEIM.md`. Remaining small items: Nettle (jeweler / unsocket), The Cold Cauldron quest, Bloop's sprite, toadstool daily limit / regrow, and the 6.4 leftovers (V3 firefly maze guidance, Tobble follower, cutscene dialogue, Veyra's beat).
 - Staging material (backed up in this branch under staging/hearthmoor/; the live working copy is /workspace/hearthmoor-staging) is ready: story (pets, old_temple, verdant_heart, rift_storms, forge_alchemy, alfheim, svartalfheim) and art (pets, old_temple, verdant_heart, orb_lanterns, forge, alchemy, alfheim + lumi).
-- Master Builder's Alfheim realm is paused at WIP 47a5b82 on `realm-alfheim` (worktree /workspace/hd2d-alfheim; read ALFHEIM_PROGRESS.md, "RESUME HERE").
+- Alfheim is merged (worktree /workspace/hd2d-alfheim, `ALFHEIM_PROGRESS.md` has the history). Svartalfheim is held by Bill until he says go.
 - Testing policy: batch 3-4 additions with quick checks per change, then a full smoke + check_all before publishing. Secret scan before every push.
 
 ## Before you start / before you stop

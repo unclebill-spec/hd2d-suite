@@ -2,6 +2,13 @@
 
 Dates are America/New_York. Newest first. Keep this current with every change you push.
 
+## 2026-10-15: Alfheim realm LIVE: merged Master Builder's `realm-alfheim` (3f5194e, already containing batch 2) to main and published
+- Four new areas: Glimmer Steps (`alfheim`), Lumen Court, Wispwood, the Prism Vault. Reached from Bifrost Crossing's Alfheim arch (the Frozen Gate quest). Quests alf_gate / alf_name / alf_dim / alf_take / prismvault, the alliance choice (Alfheim vs Svartalfheim lock), Lumi the wisp companion, the beam and mirror puzzle, five bosses ending with Lady Sylvaine (6x, three phases). See `docs/ALFHEIM.md`.
+- Checks: full sharded smoke (A-M, with the Alfheim steps in seg B), `check_all --lowres` on all 16 areas.
+- Fixes during the merge: smoke's Sefa step now waits for her to arrive (it flaked under two shards); the second Wispwood willwisp moved off a prism crystal that occluded its sprite crop (sprites_sharp).
+- `docs/REALM_TEMPLATE.md`: the files and steps for adding the next realm, as Alfheim did it. Screenshots: `docs/screenshots/alfheim_steps.png`, `alfheim_lumi.png`, `alfheim_sylvaine.png`.
+- Next: Svartalfheim (held by Bill), then Jotunheim and the other realms, each following the template.
+
 ## 2026-10-14: Batch 2 (6.6-6.8) LIVE: merged `hearthmoor-batch2-wip` to main and published
 - Batch 2 = 6.6 glow-fish orb lanterns (+ kit stands), 6.7 the Forge Quarter (Tova's +1..+10 tempering, Orri's rerolls and sockets, smelt / scrap, the riot, The First Temper, cold-blue +7 / +10 sparks), 6.8 the Glowfrog Still (10 brews, potions, garden herbs, dew, spring vials). Details in the three WIP entries below.
 - Checks before the merge: full sharded smoke (segments A-M, `--jobs 2`), `check_all --lowres` on all 12 areas, full-size check-scene on plaza, lane and forge.
@@ -102,12 +109,6 @@ Story: the Hearthmoor Story bot's `pets.md`, `old_temple.md`, `verdant_heart.md`
   - `tests/smoke.py` is cut into segments A-I at real save points (A-E the old playthrough; F pets, G Old Temple, H rift storms, I 6.4 groundwork) (checkpoints `tests/fixtures/smoke_cp{1,2,3}.json`). New flags: `--jobs N` (N parallel browser workers, longest segments first, results merged into one `smoke.json`), `--shard i/N`, `--quick <area>` (that area's segments only, for per-change checks), `--segments` and `--list`.
   - New `tests/check_all.py` runs every area's check-scene, serially or with `--jobs N`.
   - The serial default is unchanged. The same steps and thresholds run exactly once across the shards.
-
-## 2026-10-06: [ALFHEIM] WIP / PAUSED (branch realm-alfheim, not merged)
-- Not yet run: all four areas (Glimmer Steps, Lumen Court, Wispwood, Prism Vault) and the bosses are coded, but they have never been loaded in a browser. Expect JS errors on the first load.
-- Art: only Sylvaine's art is wired. The staging art is in `/workspace/hearthmoor-staging/art/alfheim/`.
-- Paused because Bill set the game focus to Gravewake and Nick's Bad Day.
-- Next: (1) quick-load each area and fix JS errors; (2) rewrite tests/smoke_alfheim.py and run check-scene per area; (3) wire Lumi's own sheet and portraits, use per-role portraits in drawPortrait, add a `lumi` neon allow-list entry, and re-pull alfheim.md for the Svartalfheim choice edits; (4) once Cozy Builder's 5-6x boss and camera support is on main, rebase and pick one Sylvaine size; (5) take screenshots, update docs/ALFHEIM.md, run the secret scan, push. Full list: `ALFHEIM_PROGRESS.md` (RESUME HERE).
 
 ## 2026-10-04: Hearthmoor Stage 6, part 1: Bifrost Crossing (the portal capital)
 World flow per `docs/story/STORY_SEEDS.md` and the builder handoff: Hearthmoor → Ravenhold → **Bifrost Crossing** → one city per realm. Screenshots: `docs/screenshots/stage6_bifrost_night.png` (the Crossing at night) and `docs/screenshots/stage6_bifrost_arches.png` (the realm gates).
