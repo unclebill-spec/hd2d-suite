@@ -45,6 +45,10 @@ ORB_NEON = {"#3cf08a", "#b8ffd4", "#14a85a", "#ff4fc8", "#ffb4ea", "#b82a8c"}
 # [ALFHEIM] Scoped palette exception: the Lumi companion sheet only (role "lumi") may use the NEON blue core and NEON violet
 # halo (spells.py NEON hexes; Bill's Lumi look, alfheim.md 5.5). Any other role, or any other off-palette colour, still fails.
 LUMI_NEON_ALLOW = {"lumi": {"#2ab4ff", "#a6ecff", "#1c62d8", "#a45cf0", "#d4a8ff", "#6a34b8"}}
+# [SVARTALFHEIM] Scoped palette exceptions (Cozy Builder approved 2026-10-15; art README "Neon flag"): only Tick (role "pet_tick": neon-blue
+# eyes + chest core, tick_neon.png) and Dagna (role "dagna": neon-red ember hammer + cast sparks, dagna_neon.png). Every other role
+# and every other off-palette colour on these two still fails.
+SVART_NEON_ALLOW = {"pet_tick": {"#1c62d8", "#2ab4ff", "#a6ecff"}, "dagna": {"#e0302a", "#ff5a4a"}}
 
 
 def check(atlas_path, json_path=None, biome=None, max_colors=20, project=None):
@@ -86,7 +90,7 @@ def check(atlas_path, json_path=None, biome=None, max_colors=20, project=None):
                         opaque.append((x, y))
                         c = _hex(p)
                         colors.add(c)
-                        if c not in palette and c not in LUMI_NEON_ALLOW.get(role, ()) and c not in NEON_PETS_ALLOW.get(role, ()) and not (role.startswith(("orb_", "glow_orb")) and c in ORB_NEON):  # [ALFHEIM] + LUMI_NEON_ALLOW
+                        if c not in palette and c not in LUMI_NEON_ALLOW.get(role, ()) and c not in SVART_NEON_ALLOW.get(role, ()) and c not in NEON_PETS_ALLOW.get(role, ()) and not (role.startswith(("orb_", "glow_orb")) and c in ORB_NEON):  # [ALFHEIM] + LUMI_NEON_ALLOW
                             rr["issues"].append(f"{fr['name']}: colour {c} not in {biome}")
             if not opaque:
                 rr["issues"].append(f"{fr['name']}: empty frame")

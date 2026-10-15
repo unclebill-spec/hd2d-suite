@@ -1,0 +1,1032 @@
+{
+ "tool": "hd2d boss_sheet",
+ "biome": "cozy-village",
+ "frame": [
+  64,
+  90
+ ],
+ "pivot": [
+  32,
+  90
+ ],
+ "ground_row": 89,
+ "facings": [
+  "down",
+  "up",
+  "left",
+  "right"
+ ],
+ "anims": {
+  "idle": {
+   "start": 0,
+   "count": 4,
+   "fps": 3,
+   "loop": [
+    0,
+    1,
+    2,
+    1
+   ],
+   "blink": 3
+  },
+  "walk": {
+   "start": 4,
+   "count": 4,
+   "fps": 8
+  },
+  "cast": {
+   "start": 8,
+   "count": 4,
+   "fps": 6,
+   "loop": [
+    0,
+    1,
+    2,
+    2,
+    3,
+    3
+   ],
+   "casters_only": true
+  },
+  "attack": {
+   "start": 12,
+   "count": 4,
+   "fps": 10,
+   "loop": [
+    0,
+    1,
+    2,
+    2,
+    3
+   ],
+   "heroes_only": true
+  },
+  "defend": {
+   "start": 16,
+   "count": 4,
+   "fps": 6,
+   "loop": [
+    0,
+    1
+   ],
+   "hold": [
+    2,
+    3
+   ],
+   "heroes_only": true
+  },
+  "jump": {
+   "start": 20,
+   "count": 4,
+   "fps": 8,
+   "phases": [
+    "crouch",
+    "launch",
+    "airborne",
+    "land"
+   ],
+   "heroes_only": true
+  },
+  "die": {
+   "start": 24,
+   "count": 4,
+   "fps": 6,
+   "once": true,
+   "enemies_only": true
+  }
+ },
+ "cols": 28,
+ "image": "rare_sootcolossus.png",
+ "size": [
+  1792,
+  360
+ ],
+ "roles": {
+  "sootcolossus": {
+   "row": 0,
+   "kind": "enemy",
+   "enemy": true,
+   "boss": true,
+   "scale": 2.8,
+   "desc": "Soot Colossus (rare, 2.8x): soot elemental over a cracked forge grate.",
+   "anims": [
+    "idle",
+    "walk",
+    "attack",
+    "die"
+   ],
+   "size_bounds": [
+    [
+     12,
+     62
+    ],
+    [
+     12,
+     90
+    ]
+   ],
+   "caster": false,
+   "frames": [
+    {
+     "name": "sootcolossus_down_idle0",
+     "facing": "down",
+     "anim": "idle",
+     "i": 0,
+     "x": 0,
+     "y": 0,
+     "w": 64,
+     "h": 90,
+     "pivot": [
+      32,
+      90
+     ]
+    },
+    {
+     "name": "sootcolossus_down_idle1",
+     "facing": "down",
+     "anim": "idle",
+     "i": 1,
+     "x": 64,
+     "y": 0,
+     "w": 64,
+     "h": 90,
+     "pivot": [
+      96,
+      90
+     ]
+    },
+    {
+     "name": "sootcolossus_down_idle2",
+     "facing": "down",
+     "anim": "idle",
+     "i": 2,
+     "x": 128,
+     "y": 0,
+     "w": 64,
+     "h": 90,
+     "pivot": [
+      160,
+      90
+     ]
+    },
+    {
+     "name": "sootcolossus_down_idle3",
+     "facing": "down",
+     "anim": "idle",
+     "i": 3,
+     "x": 192,
+     "y": 0,
+     "w": 64,
+     "h": 90,
+     "pivot": [
+      224,
+      90
+     ]
+    },
+    {
+     "name": "sootcolossus_down_walk0",
+     "facing": "down",
+     "anim": "walk",
+     "i": 0,
+     "x": 256,
+     "y": 0,
+     "w": 64,
+     "h": 90,
+     "pivot": [
+      288,
+      90
+     ]
+    },
+    {
+     "name": "sootcolossus_down_walk1",
+     "facing": "down",
+     "anim": "walk",
+     "i": 1,
+     "x": 320,
+     "y": 0,
+     "w": 64,
+     "h": 90,
+     "pivot": [
+      352,
+      90
+     ]
+    },
+    {
+     "name": "sootcolossus_down_walk2",
+     "facing": "down",
+     "anim": "walk",
+     "i": 2,
+     "x": 384,
+     "y": 0,
+     "w": 64,
+     "h": 90,
+     "pivot": [
+      416,
+      90
+     ]
+    },
+    {
+     "name": "sootcolossus_down_walk3",
+     "facing": "down",
+     "anim": "walk",
+     "i": 3,
+     "x": 448,
+     "y": 0,
+     "w": 64,
+     "h": 90,
+     "pivot": [
+      480,
+      90
+     ]
+    },
+    {
+     "name": "sootcolossus_down_attack0",
+     "facing": "down",
+     "anim": "attack",
+     "i": 0,
+     "x": 768,
+     "y": 0,
+     "w": 64,
+     "h": 90,
+     "pivot": [
+      800,
+      90
+     ]
+    },
+    {
+     "name": "sootcolossus_down_attack1",
+     "facing": "down",
+     "anim": "attack",
+     "i": 1,
+     "x": 832,
+     "y": 0,
+     "w": 64,
+     "h": 90,
+     "pivot": [
+      864,
+      90
+     ]
+    },
+    {
+     "name": "sootcolossus_down_attack2",
+     "facing": "down",
+     "anim": "attack",
+     "i": 2,
+     "x": 896,
+     "y": 0,
+     "w": 64,
+     "h": 90,
+     "pivot": [
+      928,
+      90
+     ]
+    },
+    {
+     "name": "sootcolossus_down_attack3",
+     "facing": "down",
+     "anim": "attack",
+     "i": 3,
+     "x": 960,
+     "y": 0,
+     "w": 64,
+     "h": 90,
+     "pivot": [
+      992,
+      90
+     ]
+    },
+    {
+     "name": "sootcolossus_down_die0",
+     "facing": "down",
+     "anim": "die",
+     "i": 0,
+     "x": 1536,
+     "y": 0,
+     "w": 64,
+     "h": 90,
+     "pivot": [
+      1568,
+      90
+     ]
+    },
+    {
+     "name": "sootcolossus_down_die1",
+     "facing": "down",
+     "anim": "die",
+     "i": 1,
+     "x": 1600,
+     "y": 0,
+     "w": 64,
+     "h": 90,
+     "pivot": [
+      1632,
+      90
+     ]
+    },
+    {
+     "name": "sootcolossus_down_die2",
+     "facing": "down",
+     "anim": "die",
+     "i": 2,
+     "x": 1664,
+     "y": 0,
+     "w": 64,
+     "h": 90,
+     "pivot": [
+      1696,
+      90
+     ]
+    },
+    {
+     "name": "sootcolossus_down_die3",
+     "facing": "down",
+     "anim": "die",
+     "i": 3,
+     "x": 1728,
+     "y": 0,
+     "w": 64,
+     "h": 90,
+     "pivot": [
+      1760,
+      90
+     ]
+    },
+    {
+     "name": "sootcolossus_up_idle0",
+     "facing": "up",
+     "anim": "idle",
+     "i": 0,
+     "x": 0,
+     "y": 90,
+     "w": 64,
+     "h": 90,
+     "pivot": [
+      32,
+      180
+     ]
+    },
+    {
+     "name": "sootcolossus_up_idle1",
+     "facing": "up",
+     "anim": "idle",
+     "i": 1,
+     "x": 64,
+     "y": 90,
+     "w": 64,
+     "h": 90,
+     "pivot": [
+      96,
+      180
+     ]
+    },
+    {
+     "name": "sootcolossus_up_idle2",
+     "facing": "up",
+     "anim": "idle",
+     "i": 2,
+     "x": 128,
+     "y": 90,
+     "w": 64,
+     "h": 90,
+     "pivot": [
+      160,
+      180
+     ]
+    },
+    {
+     "name": "sootcolossus_up_idle3",
+     "facing": "up",
+     "anim": "idle",
+     "i": 3,
+     "x": 192,
+     "y": 90,
+     "w": 64,
+     "h": 90,
+     "pivot": [
+      224,
+      180
+     ]
+    },
+    {
+     "name": "sootcolossus_up_walk0",
+     "facing": "up",
+     "anim": "walk",
+     "i": 0,
+     "x": 256,
+     "y": 90,
+     "w": 64,
+     "h": 90,
+     "pivot": [
+      288,
+      180
+     ]
+    },
+    {
+     "name": "sootcolossus_up_walk1",
+     "facing": "up",
+     "anim": "walk",
+     "i": 1,
+     "x": 320,
+     "y": 90,
+     "w": 64,
+     "h": 90,
+     "pivot": [
+      352,
+      180
+     ]
+    },
+    {
+     "name": "sootcolossus_up_walk2",
+     "facing": "up",
+     "anim": "walk",
+     "i": 2,
+     "x": 384,
+     "y": 90,
+     "w": 64,
+     "h": 90,
+     "pivot": [
+      416,
+      180
+     ]
+    },
+    {
+     "name": "sootcolossus_up_walk3",
+     "facing": "up",
+     "anim": "walk",
+     "i": 3,
+     "x": 448,
+     "y": 90,
+     "w": 64,
+     "h": 90,
+     "pivot": [
+      480,
+      180
+     ]
+    },
+    {
+     "name": "sootcolossus_up_attack0",
+     "facing": "up",
+     "anim": "attack",
+     "i": 0,
+     "x": 768,
+     "y": 90,
+     "w": 64,
+     "h": 90,
+     "pivot": [
+      800,
+      180
+     ]
+    },
+    {
+     "name": "sootcolossus_up_attack1",
+     "facing": "up",
+     "anim": "attack",
+     "i": 1,
+     "x": 832,
+     "y": 90,
+     "w": 64,
+     "h": 90,
+     "pivot": [
+      864,
+      180
+     ]
+    },
+    {
+     "name": "sootcolossus_up_attack2",
+     "facing": "up",
+     "anim": "attack",
+     "i": 2,
+     "x": 896,
+     "y": 90,
+     "w": 64,
+     "h": 90,
+     "pivot": [
+      928,
+      180
+     ]
+    },
+    {
+     "name": "sootcolossus_up_attack3",
+     "facing": "up",
+     "anim": "attack",
+     "i": 3,
+     "x": 960,
+     "y": 90,
+     "w": 64,
+     "h": 90,
+     "pivot": [
+      992,
+      180
+     ]
+    },
+    {
+     "name": "sootcolossus_up_die0",
+     "facing": "up",
+     "anim": "die",
+     "i": 0,
+     "x": 1536,
+     "y": 90,
+     "w": 64,
+     "h": 90,
+     "pivot": [
+      1568,
+      180
+     ]
+    },
+    {
+     "name": "sootcolossus_up_die1",
+     "facing": "up",
+     "anim": "die",
+     "i": 1,
+     "x": 1600,
+     "y": 90,
+     "w": 64,
+     "h": 90,
+     "pivot": [
+      1632,
+      180
+     ]
+    },
+    {
+     "name": "sootcolossus_up_die2",
+     "facing": "up",
+     "anim": "die",
+     "i": 2,
+     "x": 1664,
+     "y": 90,
+     "w": 64,
+     "h": 90,
+     "pivot": [
+      1696,
+      180
+     ]
+    },
+    {
+     "name": "sootcolossus_up_die3",
+     "facing": "up",
+     "anim": "die",
+     "i": 3,
+     "x": 1728,
+     "y": 90,
+     "w": 64,
+     "h": 90,
+     "pivot": [
+      1760,
+      180
+     ]
+    },
+    {
+     "name": "sootcolossus_left_idle0",
+     "facing": "left",
+     "anim": "idle",
+     "i": 0,
+     "x": 0,
+     "y": 180,
+     "w": 64,
+     "h": 90,
+     "pivot": [
+      32,
+      270
+     ]
+    },
+    {
+     "name": "sootcolossus_left_idle1",
+     "facing": "left",
+     "anim": "idle",
+     "i": 1,
+     "x": 64,
+     "y": 180,
+     "w": 64,
+     "h": 90,
+     "pivot": [
+      96,
+      270
+     ]
+    },
+    {
+     "name": "sootcolossus_left_idle2",
+     "facing": "left",
+     "anim": "idle",
+     "i": 2,
+     "x": 128,
+     "y": 180,
+     "w": 64,
+     "h": 90,
+     "pivot": [
+      160,
+      270
+     ]
+    },
+    {
+     "name": "sootcolossus_left_idle3",
+     "facing": "left",
+     "anim": "idle",
+     "i": 3,
+     "x": 192,
+     "y": 180,
+     "w": 64,
+     "h": 90,
+     "pivot": [
+      224,
+      270
+     ]
+    },
+    {
+     "name": "sootcolossus_left_walk0",
+     "facing": "left",
+     "anim": "walk",
+     "i": 0,
+     "x": 256,
+     "y": 180,
+     "w": 64,
+     "h": 90,
+     "pivot": [
+      288,
+      270
+     ]
+    },
+    {
+     "name": "sootcolossus_left_walk1",
+     "facing": "left",
+     "anim": "walk",
+     "i": 1,
+     "x": 320,
+     "y": 180,
+     "w": 64,
+     "h": 90,
+     "pivot": [
+      352,
+      270
+     ]
+    },
+    {
+     "name": "sootcolossus_left_walk2",
+     "facing": "left",
+     "anim": "walk",
+     "i": 2,
+     "x": 384,
+     "y": 180,
+     "w": 64,
+     "h": 90,
+     "pivot": [
+      416,
+      270
+     ]
+    },
+    {
+     "name": "sootcolossus_left_walk3",
+     "facing": "left",
+     "anim": "walk",
+     "i": 3,
+     "x": 448,
+     "y": 180,
+     "w": 64,
+     "h": 90,
+     "pivot": [
+      480,
+      270
+     ]
+    },
+    {
+     "name": "sootcolossus_left_attack0",
+     "facing": "left",
+     "anim": "attack",
+     "i": 0,
+     "x": 768,
+     "y": 180,
+     "w": 64,
+     "h": 90,
+     "pivot": [
+      800,
+      270
+     ]
+    },
+    {
+     "name": "sootcolossus_left_attack1",
+     "facing": "left",
+     "anim": "attack",
+     "i": 1,
+     "x": 832,
+     "y": 180,
+     "w": 64,
+     "h": 90,
+     "pivot": [
+      864,
+      270
+     ]
+    },
+    {
+     "name": "sootcolossus_left_attack2",
+     "facing": "left",
+     "anim": "attack",
+     "i": 2,
+     "x": 896,
+     "y": 180,
+     "w": 64,
+     "h": 90,
+     "pivot": [
+      928,
+      270
+     ]
+    },
+    {
+     "name": "sootcolossus_left_attack3",
+     "facing": "left",
+     "anim": "attack",
+     "i": 3,
+     "x": 960,
+     "y": 180,
+     "w": 64,
+     "h": 90,
+     "pivot": [
+      992,
+      270
+     ]
+    },
+    {
+     "name": "sootcolossus_left_die0",
+     "facing": "left",
+     "anim": "die",
+     "i": 0,
+     "x": 1536,
+     "y": 180,
+     "w": 64,
+     "h": 90,
+     "pivot": [
+      1568,
+      270
+     ]
+    },
+    {
+     "name": "sootcolossus_left_die1",
+     "facing": "left",
+     "anim": "die",
+     "i": 1,
+     "x": 1600,
+     "y": 180,
+     "w": 64,
+     "h": 90,
+     "pivot": [
+      1632,
+      270
+     ]
+    },
+    {
+     "name": "sootcolossus_left_die2",
+     "facing": "left",
+     "anim": "die",
+     "i": 2,
+     "x": 1664,
+     "y": 180,
+     "w": 64,
+     "h": 90,
+     "pivot": [
+      1696,
+      270
+     ]
+    },
+    {
+     "name": "sootcolossus_left_die3",
+     "facing": "left",
+     "anim": "die",
+     "i": 3,
+     "x": 1728,
+     "y": 180,
+     "w": 64,
+     "h": 90,
+     "pivot": [
+      1760,
+      270
+     ]
+    },
+    {
+     "name": "sootcolossus_right_idle0",
+     "facing": "right",
+     "anim": "idle",
+     "i": 0,
+     "x": 0,
+     "y": 270,
+     "w": 64,
+     "h": 90,
+     "pivot": [
+      32,
+      360
+     ]
+    },
+    {
+     "name": "sootcolossus_right_idle1",
+     "facing": "right",
+     "anim": "idle",
+     "i": 1,
+     "x": 64,
+     "y": 270,
+     "w": 64,
+     "h": 90,
+     "pivot": [
+      96,
+      360
+     ]
+    },
+    {
+     "name": "sootcolossus_right_idle2",
+     "facing": "right",
+     "anim": "idle",
+     "i": 2,
+     "x": 128,
+     "y": 270,
+     "w": 64,
+     "h": 90,
+     "pivot": [
+      160,
+      360
+     ]
+    },
+    {
+     "name": "sootcolossus_right_idle3",
+     "facing": "right",
+     "anim": "idle",
+     "i": 3,
+     "x": 192,
+     "y": 270,
+     "w": 64,
+     "h": 90,
+     "pivot": [
+      224,
+      360
+     ]
+    },
+    {
+     "name": "sootcolossus_right_walk0",
+     "facing": "right",
+     "anim": "walk",
+     "i": 0,
+     "x": 256,
+     "y": 270,
+     "w": 64,
+     "h": 90,
+     "pivot": [
+      288,
+      360
+     ]
+    },
+    {
+     "name": "sootcolossus_right_walk1",
+     "facing": "right",
+     "anim": "walk",
+     "i": 1,
+     "x": 320,
+     "y": 270,
+     "w": 64,
+     "h": 90,
+     "pivot": [
+      352,
+      360
+     ]
+    },
+    {
+     "name": "sootcolossus_right_walk2",
+     "facing": "right",
+     "anim": "walk",
+     "i": 2,
+     "x": 384,
+     "y": 270,
+     "w": 64,
+     "h": 90,
+     "pivot": [
+      416,
+      360
+     ]
+    },
+    {
+     "name": "sootcolossus_right_walk3",
+     "facing": "right",
+     "anim": "walk",
+     "i": 3,
+     "x": 448,
+     "y": 270,
+     "w": 64,
+     "h": 90,
+     "pivot": [
+      480,
+      360
+     ]
+    },
+    {
+     "name": "sootcolossus_right_attack0",
+     "facing": "right",
+     "anim": "attack",
+     "i": 0,
+     "x": 768,
+     "y": 270,
+     "w": 64,
+     "h": 90,
+     "pivot": [
+      800,
+      360
+     ]
+    },
+    {
+     "name": "sootcolossus_right_attack1",
+     "facing": "right",
+     "anim": "attack",
+     "i": 1,
+     "x": 832,
+     "y": 270,
+     "w": 64,
+     "h": 90,
+     "pivot": [
+      864,
+      360
+     ]
+    },
+    {
+     "name": "sootcolossus_right_attack2",
+     "facing": "right",
+     "anim": "attack",
+     "i": 2,
+     "x": 896,
+     "y": 270,
+     "w": 64,
+     "h": 90,
+     "pivot": [
+      928,
+      360
+     ]
+    },
+    {
+     "name": "sootcolossus_right_attack3",
+     "facing": "right",
+     "anim": "attack",
+     "i": 3,
+     "x": 960,
+     "y": 270,
+     "w": 64,
+     "h": 90,
+     "pivot": [
+      992,
+      360
+     ]
+    },
+    {
+     "name": "sootcolossus_right_die0",
+     "facing": "right",
+     "anim": "die",
+     "i": 0,
+     "x": 1536,
+     "y": 270,
+     "w": 64,
+     "h": 90,
+     "pivot": [
+      1568,
+      360
+     ]
+    },
+    {
+     "name": "sootcolossus_right_die1",
+     "facing": "right",
+     "anim": "die",
+     "i": 1,
+     "x": 1600,
+     "y": 270,
+     "w": 64,
+     "h": 90,
+     "pivot": [
+      1632,
+      360
+     ]
+    },
+    {
+     "name": "sootcolossus_right_die2",
+     "facing": "right",
+     "anim": "die",
+     "i": 2,
+     "x": 1664,
+     "y": 270,
+     "w": 64,
+     "h": 90,
+     "pivot": [
+      1696,
+      360
+     ]
+    },
+    {
+     "name": "sootcolossus_right_die3",
+     "facing": "right",
+     "anim": "die",
+     "i": 3,
+     "x": 1728,
+     "y": 270,
+     "w": 64,
+     "h": 90,
+     "pivot": [
+      1760,
+      360
+     ]
+    }
+   ],
+   "stats_hint": {
+    "tier": "rare"
+   }
+  }
+ }
+}

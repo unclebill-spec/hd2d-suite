@@ -1,0 +1,436 @@
+{
+ "tool": "hd2d sprite",
+ "biome": "cozy-village",
+ "frame": [
+  20,
+  32
+ ],
+ "pivot": [
+  10,
+  32
+ ],
+ "ground_row": 31,
+ "facings": [
+  "down",
+  "up",
+  "left",
+  "right"
+ ],
+ "anims": {
+  "idle": {
+   "start": 0,
+   "count": 4,
+   "fps": 3,
+   "loop": [
+    0,
+    1,
+    2,
+    1
+   ],
+   "blink": 3
+  },
+  "walk": {
+   "start": 4,
+   "count": 4,
+   "fps": 8
+  },
+  "cast": {
+   "start": 8,
+   "count": 4,
+   "fps": 6,
+   "loop": [
+    0,
+    1,
+    2,
+    2,
+    3,
+    3
+   ],
+   "casters_only": true
+  },
+  "attack": {
+   "start": 12,
+   "count": 4,
+   "fps": 10,
+   "loop": [
+    0,
+    1,
+    2,
+    2,
+    3
+   ],
+   "heroes_only": true
+  },
+  "defend": {
+   "start": 16,
+   "count": 4,
+   "fps": 6,
+   "loop": [
+    0,
+    1
+   ],
+   "hold": [
+    2,
+    3
+   ],
+   "heroes_only": true
+  },
+  "jump": {
+   "start": 20,
+   "count": 4,
+   "fps": 8,
+   "phases": [
+    "crouch",
+    "launch",
+    "airborne",
+    "land"
+   ],
+   "heroes_only": true
+  },
+  "die": {
+   "start": 24,
+   "count": 4,
+   "fps": 6,
+   "once": true,
+   "enemies_only": true
+  }
+ },
+ "cols": 12,
+ "size": [
+  240,
+  1408
+ ],
+ "image": "svnpc.png",
+ "roles": {
+  "lanternseller": {
+   "row": 16,
+   "kind": "creature",
+   "desc": "Tansy Brasswhistle (gnome tinker): tiny red white-spotted toadstool cap, brass goggles, mustard shirt, brown corduroy shorts with braces and a dark belt, striped socks, black shoes",
+   "size_bounds": [
+    [
+     10,
+     24
+    ],
+    [
+     10,
+     40
+    ]
+   ],
+   "caster": false,
+   "anims": [
+    "idle",
+    "walk"
+   ],
+   "named": true
+  },
+  "wispcatcher": {
+   "row": 20,
+   "kind": "creature",
+   "desc": "Kesh (dark-elf kid, mine-runner): slate-blue skin, messy white hair, long ears, too-big grey knitted jumper, rope belt, short brown trousers, sooty knees, a cave orb in a jar",
+   "size_bounds": [
+    [
+     10,
+     24
+    ],
+    [
+     10,
+     40
+    ]
+   ],
+   "caster": false,
+   "anims": [
+    "idle",
+    "walk"
+   ],
+   "named": true
+  },
+  "poolkeeper": {
+   "row": 24,
+   "kind": "creature",
+   "desc": "Old Haldis (dwarf grandmother): white bun and one long white beard braid, lavender cardigan (periwinkle palette) over a cream blouse, dark skirt with a cream apron tied at the waist, brown shoes, a fishing net",
+   "size_bounds": [
+    [
+     10,
+     24
+    ],
+    [
+     10,
+     40
+    ]
+   ],
+   "caster": false,
+   "anims": [
+    "idle",
+    "walk"
+   ],
+   "named": true
+  },
+  "dwarftrader": {
+   "row": 12,
+   "kind": "creature",
+   "desc": "Brokk Emberlode (dwarf trader): soot-black beard in two braids with brass beads, rust wool shirt, leather apron belted over slate trousers, brown boots",
+   "size_bounds": [
+    [
+     10,
+     24
+    ],
+    [
+     10,
+     40
+    ]
+   ],
+   "caster": false,
+   "anims": [
+    "idle",
+    "walk"
+   ],
+   "named": true
+  },
+  "elffolk": {
+   "row": 28,
+   "kind": "creature",
+   "desc": "Anvildeep dwarf smith (ambient): auburn beard in two braids with copper rings, blue tunic, dark leather apron, dark belt, stone trousers, black boots",
+   "size_bounds": [
+    [
+     10,
+     24
+    ],
+    [
+     10,
+     40
+    ]
+   ],
+   "caster": false,
+   "anims": [
+    "idle",
+    "walk"
+   ]
+  },
+  "elffolk2": {
+   "row": 36,
+   "kind": "human",
+   "desc": "Svartalf rune-carver (ambient): ash-grey skin, long white hair, long ears, deep-blue wrap-top, cold-blue sash, slim dark trousers, brown soft boots, rune tattoo",
+   "size_bounds": [
+    [
+     14,
+     24
+    ],
+    [
+     24,
+     40
+    ]
+   ],
+   "caster": false,
+   "anims": [
+    "idle",
+    "walk"
+   ]
+  },
+  "thane": {
+   "row": 0,
+   "kind": "creature",
+   "desc": "Forge-Thane Ragna Copperbraid (dwarf smith-queen): copper-red beard in three braids with gold rings, deep-green wool tunic, wide leather belt with a copper buckle, brown trousers, heavy black boots, smith's hammer sceptre",
+   "size_bounds": [
+    [
+     10,
+     24
+    ],
+    [
+     10,
+     40
+    ]
+   ],
+   "caster": false,
+   "anims": [
+    "idle",
+    "walk"
+   ],
+   "named": true
+  },
+  "runewarden": {
+   "row": 4,
+   "kind": "human",
+   "desc": "Sereth Gloamweave (dark-elf rune-warden): slate-blue skin, white jaw-length hair, long ears, high-collared charcoal blouse, cold-blue sash, slim black trousers, soft brown boots, a rune-lens on a gold chain, white rune tattoo on the cheek",
+   "size_bounds": [
+    [
+     14,
+     24
+    ],
+    [
+     24,
+     40
+    ]
+   ],
+   "caster": false,
+   "anims": [
+    "idle",
+    "walk"
+   ],
+   "named": true
+  },
+  "hushed": {
+   "row": 8,
+   "kind": "human",
+   "desc": "Captain Ilvar Hushblade (dark elf, captain of the Hushed): ash-grey skin, silver topknot, long ears, fitted black wrap-top, grey sash, dark trousers bound at the shins, two short blades at his hips, cold-blue rune tattoo",
+   "size_bounds": [
+    [
+     14,
+     24
+    ],
+    [
+     24,
+     40
+    ]
+   ],
+   "caster": false,
+   "anims": [
+    "idle",
+    "walk"
+   ],
+   "named": true
+  },
+  "tinker": {
+   "row": 16,
+   "kind": "creature",
+   "desc": "Tansy Brasswhistle (gnome tinker): tiny red white-spotted toadstool cap, brass goggles, mustard shirt, brown corduroy shorts with braces and a dark belt, striped socks, black shoes",
+   "size_bounds": [
+    [
+     10,
+     24
+    ],
+    [
+     10,
+     40
+    ]
+   ],
+   "caster": false,
+   "anims": [
+    "idle",
+    "walk"
+   ],
+   "named": true
+  },
+  "minerunner": {
+   "row": 20,
+   "kind": "creature",
+   "desc": "Kesh (dark-elf kid, mine-runner): slate-blue skin, messy white hair, long ears, too-big grey knitted jumper, rope belt, short brown trousers, sooty knees, a cave orb in a jar",
+   "size_bounds": [
+    [
+     10,
+     24
+    ],
+    [
+     10,
+     40
+    ]
+   ],
+   "caster": false,
+   "anims": [
+    "idle",
+    "walk"
+   ],
+   "named": true
+  },
+  "poolkeeper_sv": {
+   "row": 24,
+   "kind": "creature",
+   "desc": "Old Haldis (dwarf grandmother): white bun and one long white beard braid, lavender cardigan (periwinkle palette) over a cream blouse, dark skirt with a cream apron tied at the waist, brown shoes, a fishing net",
+   "size_bounds": [
+    [
+     10,
+     24
+    ],
+    [
+     10,
+     40
+    ]
+   ],
+   "caster": false,
+   "anims": [
+    "idle",
+    "walk"
+   ],
+   "named": true
+  },
+  "dw1": {
+   "row": 28,
+   "kind": "creature",
+   "desc": "Anvildeep dwarf smith (ambient): auburn beard in two braids with copper rings, blue tunic, dark leather apron, dark belt, stone trousers, black boots",
+   "size_bounds": [
+    [
+     10,
+     24
+    ],
+    [
+     10,
+     40
+    ]
+   ],
+   "caster": false,
+   "anims": [
+    "idle",
+    "walk"
+   ]
+  },
+  "dw2": {
+   "row": 32,
+   "kind": "creature",
+   "desc": "Anvildeep dwarf woman (ambient): golden bun and braided golden beard with copper rings, cream shirt under a moss vest, dark belt, brown trousers, red-brown boots",
+   "size_bounds": [
+    [
+     10,
+     24
+    ],
+    [
+     10,
+     40
+    ]
+   ],
+   "caster": false,
+   "anims": [
+    "idle",
+    "walk"
+   ]
+  },
+  "sv1": {
+   "row": 36,
+   "kind": "human",
+   "desc": "Svartalf rune-carver (ambient): ash-grey skin, long white hair, long ears, deep-blue wrap-top, cold-blue sash, slim dark trousers, brown soft boots, rune tattoo",
+   "size_bounds": [
+    [
+     14,
+     24
+    ],
+    [
+     24,
+     40
+    ]
+   ],
+   "caster": false,
+   "anims": [
+    "idle",
+    "walk"
+   ]
+  },
+  "sv2": {
+   "row": 40,
+   "kind": "human",
+   "desc": "Svartalf miner (ambient): slate-blue skin, silver bun, long ears, wine-red wrap-top, pale sash, slim slate trousers, black shoes, white rune tattoo",
+   "size_bounds": [
+    [
+     14,
+     24
+    ],
+    [
+     24,
+     40
+    ]
+   ],
+   "caster": false,
+   "anims": [
+    "idle",
+    "walk"
+   ]
+  }
+ }
+}

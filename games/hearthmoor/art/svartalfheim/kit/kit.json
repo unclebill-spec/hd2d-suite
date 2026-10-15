@@ -1,0 +1,336 @@
+{
+ "tool": "hd2d kit",
+ "biome": "cozy-village",
+ "seed": 1,
+ "sprite_height_m": 1.8,
+ "pieces": {
+  "deep_floor": {
+   "file": "deep_floor.glb",
+   "kind": "prop",
+   "tris": 44,
+   "size": [
+    2,
+    0.01,
+    2
+   ],
+   "markers": {
+    "lamps": [],
+    "chimneys": [],
+    "windows": [],
+    "doors": []
+   },
+   "blockers": [],
+   "placement": "2 m grid"
+  },
+  "deep_wall": {
+   "file": "deep_wall.glb",
+   "kind": "prop",
+   "tris": 240,
+   "size": [
+    2,
+    3.2,
+    0.5
+   ],
+   "markers": {
+    "lamps": [
+     [
+      0,
+      1.4,
+      0.4
+     ]
+    ],
+    "chimneys": [],
+    "windows": [],
+    "doors": [],
+    "lamp_color": "#2ab4ff",
+    "lamp_range": 3.0,
+    "lamp_fixed": 0.5
+   },
+   "blockers": [
+    [
+     -1,
+     -0.25,
+     1,
+     0.25
+    ]
+   ],
+   "fx": [
+    "pool_blue"
+   ],
+   "placement": "2 m modules"
+  },
+  "rail_straight": {
+   "file": "rail_straight.glb",
+   "kind": "prop",
+   "tris": 84,
+   "size": [
+    0.9,
+    0.13,
+    2.0
+   ],
+   "markers": {
+    "lamps": [],
+    "chimneys": [],
+    "windows": [],
+    "doors": [],
+    "track_gauge": 0.6
+   },
+   "blockers": [],
+   "placement": "chain end to end along z"
+  },
+  "mine_cart": {
+   "file": "mine_cart.glb",
+   "kind": "prop",
+   "tris": 376,
+   "size": [
+    0.84,
+    1.1,
+    1.14
+   ],
+   "markers": {
+    "lamps": [
+     [
+      0,
+      0.9,
+      0
+     ]
+    ],
+    "chimneys": [],
+    "windows": [],
+    "doors": [],
+    "lamp_color": "#a45cf0",
+    "lamp_range": 2.2,
+    "lamp_fixed": 0.5
+   },
+   "blockers": [
+    [
+     -0.45,
+     -0.6,
+     0.45,
+     0.6
+    ]
+   ],
+   "fx": [
+    "pool_violet"
+   ],
+   "placement": "on rails"
+  },
+  "gear_wall": {
+   "file": "gear_wall.glb",
+   "kind": "prop",
+   "tris": 516,
+   "size": [
+    2.4,
+    2.5,
+    0.4
+   ],
+   "markers": {
+    "lamps": [
+     [
+      -0.35,
+      1.25,
+      0.4
+     ]
+    ],
+    "chimneys": [],
+    "windows": [],
+    "doors": [],
+    "lamp_color": "#2ab4ff",
+    "lamp_range": 2.0,
+    "lamp_fixed": 0.5
+   },
+   "blockers": [
+    [
+     -1.2,
+     -0.2,
+     1.2,
+     0.3
+    ]
+   ],
+   "fx": [
+    "pool_blue"
+   ],
+   "placement": "Clockwork Deep walls"
+  },
+  "crystal_cluster": {
+   "file": "crystal_cluster.glb",
+   "kind": "prop",
+   "tris": 426,
+   "size": [
+    1.4,
+    1.8,
+    1.2
+   ],
+   "markers": {
+    "lamps": [
+     [
+      0,
+      1.0,
+      0.3
+     ]
+    ],
+    "chimneys": [],
+    "windows": [],
+    "doors": [],
+    "lamp_color": "#a45cf0",
+    "lamp_range": 4.5,
+    "lamp_fixed": 0.5
+   },
+   "blockers": [
+    [
+     -0.6,
+     -0.5,
+     0.6,
+     0.5
+    ]
+   ],
+   "fx": [
+    "pool_violet",
+    "neon_fireflies_violet"
+   ],
+   "placement": "Amethyst Mines"
+  },
+  "rune_lamp": {
+   "file": "rune_lamp.glb",
+   "kind": "prop",
+   "tris": 108,
+   "size": [
+    0.44,
+    2.63,
+    0.44
+   ],
+   "markers": {
+    "lamps": [
+     [
+      0,
+      2.35,
+      0.1
+     ]
+    ],
+    "chimneys": [],
+    "windows": [],
+    "doors": [],
+    "lamp_color": "#2ab4ff",
+    "lamp_range": 5.0,
+    "lamp_fixed": 0.5
+   },
+   "blockers": [],
+   "fx": [
+    "pool_blue",
+    "neon_fireflies_blue"
+   ],
+   "placement": "every 5-6 m"
+  },
+  "forge_brazier": {
+   "file": "forge_brazier.glb",
+   "kind": "prop",
+   "tris": 130,
+   "size": [
+    0.8,
+    1.3,
+    0.8
+   ],
+   "markers": {
+    "lamps": [
+     [
+      0,
+      1.15,
+      0.1
+     ]
+    ],
+    "chimneys": [],
+    "windows": [],
+    "doors": [],
+    "lamp_color": "#e0302a",
+    "lamp_range": 4.5,
+    "lamp_fixed": 0.5
+   },
+   "blockers": [],
+   "fx": [
+    "pool_red",
+    "forge_embers"
+   ],
+   "placement": "forges, boss room"
+  },
+  "glow_pool": {
+   "file": "glow_pool.glb",
+   "kind": "prop",
+   "tris": 260,
+   "size": [
+    3.4,
+    0.12,
+    2.4
+   ],
+   "markers": {
+    "lamps": [
+     [
+      0,
+      0.4,
+      0
+     ]
+    ],
+    "chimneys": [],
+    "windows": [],
+    "doors": [],
+    "lamp_color": "#1fb0a8",
+    "lamp_range": 4.0,
+    "lamp_fixed": 0.5
+   },
+   "blockers": [
+    [
+     -1.5,
+     -1.0,
+     1.5,
+     1.0
+    ]
+   ],
+   "fx": [
+    "water_glow"
+   ],
+   "placement": "cave floors"
+  },
+  "anvil_pillar": {
+   "file": "anvil_pillar.glb",
+   "kind": "prop",
+   "tris": 160,
+   "size": [
+    2.4,
+    4.25,
+    2.4
+   ],
+   "markers": {
+    "lamps": [
+     [
+      0,
+      2.0,
+      0.8
+     ]
+    ],
+    "chimneys": [],
+    "windows": [],
+    "doors": [],
+    "lamp_color": "#2ab4ff",
+    "lamp_range": 5.0,
+    "lamp_fixed": 0.5,
+    "boss_stand": [
+     0,
+     0,
+     2.2
+    ]
+   },
+   "blockers": [
+    [
+     -1.2,
+     -1.2,
+     1.2,
+     1.2
+    ]
+   ],
+   "fx": [
+    "pool_blue",
+    "forge_embers"
+   ],
+   "placement": "boss room centre back; boss_stand marker"
+  }
+ }
+}

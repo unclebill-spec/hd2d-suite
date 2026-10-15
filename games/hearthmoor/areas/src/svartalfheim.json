@@ -1,0 +1,622 @@
+{
+ "name": "Anvildeep: Copper Row",
+ "seed": 131,
+ "biome": "cozy-village",
+ "about": "Svartalfheim, realm of the dark elves and dwarves. Copper Row is a long terrace street along the wall of one huge cavern vault: squat stone houses with copper roofs, cold-blue rune-lamps, the Copper Row market under copper awnings and the Glowpool Grotto, with the Great Forge glowing far below. Arrival from Bifrost, Brokk's stall, Tansy's tinker stall, the waystone and Kesh's cart.",
+ "time": {
+  "start": "night",
+  "speed": 0.0016
+ },
+ "spells": true,
+ "sprite_roles": [
+  "actors",
+  "heroes",
+  "combat",
+  "lanternseller",
+  "dwarftrader",
+  "poolkeeper",
+  "wispcatcher",
+  "elffolk",
+  "elffolk2"
+ ],
+ "boss_roles": [],
+ "camera": {
+  "fov": 24,
+  "pitch": 36,
+  "distance": 33,
+  "zoom": [
+   24,
+   44
+  ],
+  "look": [
+   0,
+   0,
+   -2.4
+  ],
+  "bounds": [
+   -11.0,
+   -9.6,
+   11.0,
+   12.0
+  ]
+ },
+ "ground": {
+  "size": [
+   80,
+   70
+  ],
+  "mat": "stone",
+  "walk": [
+   -12.4,
+   -12.0,
+   12.4,
+   12.4
+  ]
+ },
+ "slabs": [
+  {
+   "name": "arrival",
+   "rect": [
+    -1.8,
+    3.0,
+    1.8,
+    11.6
+   ],
+   "mat": "cobble",
+   "h": 0.03
+  },
+  {
+   "name": "market",
+   "rect": [
+    -9.6,
+    2.4,
+    -2.2,
+    8.6
+   ],
+   "mat": "cobble",
+   "h": 0.03
+  }
+ ],
+ "terraces": [
+  {
+   "name": "rail_row",
+   "rect": [
+    -12.4,
+    -12.0,
+    12.4,
+    -2.4
+   ],
+   "h": 1.2,
+   "top": "cobble",
+   "gaps": [
+    [
+     -1.5,
+     1.5
+    ]
+   ]
+  },
+  {
+   "name": "wall_w",
+   "rect": [
+    -30,
+    -30,
+    -12.4,
+    13
+   ],
+   "h": 3.6,
+   "top": "stone",
+   "coping": true
+  },
+  {
+   "name": "wall_e",
+   "rect": [
+    12.4,
+    -30,
+    30,
+    13
+   ],
+   "h": 3.6,
+   "top": "stone",
+   "coping": true
+  },
+  {
+   "name": "wall_n",
+   "rect": [
+    -12.4,
+    -30,
+    12.4,
+    -12.0
+   ],
+   "h": 3.6,
+   "top": "stone",
+   "coping": true
+  }
+ ],
+ "stairs": [
+  {
+   "name": "stair_rail",
+   "x": 0.0,
+   "z_top": -2.4,
+   "width": 3.0,
+   "rise": 1.2,
+   "base": 0.0
+  }
+ ],
+ "decks": [],
+ "blocks": [],
+ "buildings": [],
+ "props": [
+  {
+   "piece": "realm_arch",
+   "pos": [
+    0.0,
+    10.6
+   ],
+   "glow": {
+    "color": "#f2a63a",
+    "range": 6.0,
+    "fixed": 0.8
+   }
+  },
+  {
+   "piece": "realm_glow_amber",
+   "pos": [
+    0.0,
+    10.6
+   ]
+  },
+  {
+   "piece": "waystone",
+   "pos": [
+    3.2,
+    8.4
+   ]
+  },
+  {
+   "piece": "dwarf_stall",
+   "pos": [
+    -3.0,
+    5.2
+   ],
+   "glow": {
+    "color": "#f2a63a",
+    "range": 4.5,
+    "fixed": 0.7
+   }
+  },
+  {
+   "piece": "market_stall",
+   "pos": [
+    -7.0,
+    4.0
+   ],
+   "glow": {
+    "color": "#f2a63a",
+    "range": 4.5,
+    "fixed": 0.7
+   }
+  },
+  {
+   "piece": "orb_standing_blue",
+   "pos": [
+    -9.0,
+    7.4
+   ]
+  },
+  {
+   "piece": "barrel",
+   "pos": [
+    -8.4,
+    2.8
+   ]
+  },
+  {
+   "piece": "crate",
+   "pos": [
+    -1.6,
+    3.0
+   ]
+  },
+  {
+   "piece": "glow_pool",
+   "pos": [
+    7.0,
+    3.0
+   ]
+  },
+  {
+   "piece": "toadstool_cluster",
+   "pos": [
+    9.0,
+    4.8
+   ]
+  },
+  {
+   "piece": "toadstool_cluster",
+   "pos": [
+    5.0,
+    1.4
+   ]
+  },
+  {
+   "piece": "toadstool_big",
+   "pos": [
+    9.6,
+    0.4
+   ]
+  },
+  {
+   "piece": "waterfall",
+   "pos": [
+    9.4,
+    -0.6
+   ]
+  },
+  {
+   "piece": "bench",
+   "pos": [
+    4.6,
+    4.2
+   ]
+  },
+  {
+   "piece": "brazier",
+   "pos": [
+    -4.6,
+    10.0
+   ],
+   "glow": {
+    "color": "#f2a63a",
+    "range": 5.5,
+    "fixed": 0.8
+   }
+  },
+  {
+   "piece": "brazier",
+   "pos": [
+    4.6,
+    10.0
+   ],
+   "glow": {
+    "color": "#f2a63a",
+    "range": 5.5,
+    "fixed": 0.8
+   }
+  },
+  {
+   "piece": "lamp_post",
+   "pos": [
+    -5.4,
+    7.4
+   ],
+   "glow": {
+    "color": "#f2a63a",
+    "range": 5.0,
+    "fixed": 0.8
+   }
+  },
+  {
+   "piece": "lamp_post",
+   "pos": [
+    7.8,
+    8.2
+   ],
+   "glow": {
+    "color": "#f2a63a",
+    "range": 5.0,
+    "fixed": 0.8
+   }
+  },
+  {
+   "piece": "tool_rack",
+   "pos": [
+    -10.2,
+    -5.0
+   ]
+  },
+  {
+   "piece": "coal_bin",
+   "pos": [
+    -8.2,
+    -5.6
+   ]
+  },
+  {
+   "piece": "grindstone",
+   "pos": [
+    -9.4,
+    -8.0
+   ]
+  },
+  {
+   "piece": "orb_standing_blue",
+   "pos": [
+    -2.6,
+    -3.6
+   ]
+  },
+  {
+   "piece": "orb_standing_blue",
+   "pos": [
+    2.6,
+    -3.6
+   ]
+  },
+  {
+   "piece": "rift_brazier_red",
+   "pos": [
+    -4.0,
+    -6.0
+   ],
+   "glow": {
+    "color": "#ff6a3a",
+    "range": 5.5,
+    "fixed": 0.8
+   }
+  },
+  {
+   "piece": "rift_brazier_red",
+   "pos": [
+    4.0,
+    -6.0
+   ],
+   "glow": {
+    "color": "#ff6a3a",
+    "range": 5.5,
+    "fixed": 0.8
+   }
+  },
+  {
+   "piece": "standing_stone",
+   "pos": [
+    -10.6,
+    2.4
+   ]
+  }
+ ],
+ "hedges": [],
+ "trees": [],
+ "backdrop": {},
+ "emitters": [
+  {
+   "preset": "fireflies",
+   "pos": [
+    0,
+    2.4,
+    4.0
+   ],
+   "area": [
+    22,
+    2.0,
+    12
+   ],
+   "min_gate": 0.0
+  },
+  {
+   "preset": "fireflies",
+   "pos": [
+    6,
+    2.2,
+    1.0
+   ],
+   "area": [
+    8,
+    1.6,
+    6
+   ],
+   "min_gate": 0.0
+  },
+  {
+   "preset": "embers",
+   "pos": [
+    0,
+    1.4,
+    9.0
+   ],
+   "area": [
+    10,
+    1.0,
+    3
+   ],
+   "min_gate": 0.0
+  }
+ ],
+ "actors": [
+  {
+   "id": "brokk",
+   "role": "dwarftrader",
+   "name": "Brokk Emberlode of Anvildeep",
+   "pos": [
+    -3.0,
+    7.0
+   ],
+   "facing": "down",
+   "behavior": "idle",
+   "talkable": true,
+   "say": [
+    "A Midgarder. Hm. Haven't picked a side yet? Down here, everyone picks a side."
+   ]
+  },
+  {
+   "id": "tansy",
+   "role": "lanternseller",
+   "name": "Tansy Brasswhistle, tinker",
+   "pos": [
+    -7.0,
+    5.8
+   ],
+   "facing": "down",
+   "behavior": "idle",
+   "talkable": true,
+   "say": [
+    "Tansy Brasswhistle, tinker! Mind the owl. He's not finished. Well, he's finished. He just doesn't know it.",
+    "Gnomes and dwarves built half this city together. Dwarves did the heavy bits. We did the clever bits."
+   ]
+  },
+  {
+   "id": "kesh",
+   "role": "wispcatcher",
+   "name": "Kesh, mine-runner",
+   "pos": [
+    4.4,
+    -3.2
+   ],
+   "facing": "down",
+   "behavior": "idle",
+   "talkable": true,
+   "say": [
+    "I'm Kesh! I run the carts. Well, the carts run. I hang on. Want a ride? It's free. Mostly.",
+    "Cave orbs follow you if you stand still. I stood still for an hour once. I had nine."
+   ]
+  },
+  {
+   "id": "haldis",
+   "role": "poolkeeper",
+   "name": "Old Haldis",
+   "pos": [
+    5.6,
+    5.6
+   ],
+   "facing": "left",
+   "behavior": "idle",
+   "talkable": true,
+   "say": [
+    "Mind the lanternfish. That orange one's Ember. He's ninety. He's earned the good spot.",
+    "Fish glow, frogs glow, moss glow. Down here, if you don't glow, you're furniture."
+   ]
+  },
+  {
+   "id": "dw_a",
+   "role": "elffolk",
+   "name": "Anvildeep dwarf",
+   "pos": [
+    -0.8,
+    1.4
+   ],
+   "facing": "right",
+   "behavior": "idle",
+   "talkable": true,
+   "say": [
+    "Soot in my porridge again. Soot in everything. Soot is the dwarf seasoning."
+   ]
+  },
+  {
+   "id": "sv_a",
+   "role": "elffolk2",
+   "name": "Dark elf",
+   "pos": [
+    8.6,
+    7.8
+   ],
+   "facing": "down",
+   "behavior": "idle",
+   "talkable": true,
+   "say": [
+    "We light the runes, they get the songs. One day someone will write a song about a rune."
+   ]
+  }
+ ],
+ "player": {
+  "role": "traveler",
+  "pos": [
+   1.6,
+   5.0
+  ],
+  "facing": "up"
+ },
+ "fx": [],
+ "grades": {
+  "day": {
+   "fog_color": "#4a2c20",
+   "sky_top": "#2a1814",
+   "sky_bottom": "#7a4630",
+   "hemi_sky": "#c8a890",
+   "saturation": 1.02,
+   "bugs": 0.6,
+   "warmth": 0.1,
+   "exposure": 1.0,
+   "sun_intensity": 1.35,
+   "hemi_intensity": 0.8,
+   "sun_color": "#ffd0a0",
+   "lamp_intensity": 0.8
+  },
+  "dusk": {
+   "fog_color": "#1c2444",
+   "sky_top": "#0c1226",
+   "sky_bottom": "#34457c",
+   "exposure": 0.9,
+   "sun_intensity": 0.6,
+   "warmth": -0.12,
+   "sun_color": "#8ca0e8",
+   "bugs": 1.0
+  },
+  "night": {
+   "fog_color": "#080a1c",
+   "sky_top": "#040612",
+   "sky_bottom": "#142448",
+   "hemi_sky": "#3c5088",
+   "bugs": 1.0,
+   "exposure": 0.9,
+   "sun_intensity": 0.28,
+   "hemi_intensity": 0.42,
+   "sun_color": "#6a84d4"
+  }
+ },
+ "game": {
+  "id": "svartalfheim",
+  "title": "Anvildeep: Copper Row",
+  "exits": [],
+  "portals": [],
+  "spawns": {
+   "start": [
+    1.6,
+    5.0,
+    "up"
+   ],
+   "from_bifrost": [
+    1.6,
+    5.0,
+    "up"
+   ],
+   "from_waystone": [
+    3.2,
+    9.8,
+    "up"
+   ],
+   "qa": [
+    1.6,
+    4.6,
+    "up"
+   ],
+   "market": [
+    -5.0,
+    6.4,
+    "up"
+   ],
+   "walk": [
+    0.0,
+    -1.0,
+    "up"
+   ],
+   "pool": [
+    6.0,
+    5.4,
+    "up"
+   ]
+  },
+  "waystone": {
+   "pos": [
+    3.2,
+    8.4
+   ]
+  },
+  "spring": {
+   "pos": [
+    9.2,
+    1.8
+   ],
+   "r": 1.6,
+   "secret": "cr_spring"
+  }
+ }
+}

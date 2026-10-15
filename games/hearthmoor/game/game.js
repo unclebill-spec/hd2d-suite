@@ -7,6 +7,7 @@ import { ITEMS, QUESTS, TALK, SPELL_NAMES, markerFor, errandsDone, stormTalk } f
 import { Harbor } from './ravenhold.js';
 import { Crossing } from './bifrost.js';
 import { Alfheim, AREAS_ALF, AREA_NAMES_ALF } from './alfheim.js';   // [ALFHEIM]
+import { AREAS_SV, AREA_NAMES_SV } from './svartalfheim.js';   // [SVARTALFHEIM]
 import { Temple } from './temple.js';
 import { Verdant } from './verdant.js';
 import { Ambient } from './audio.js';
@@ -44,7 +45,7 @@ const V1_DONE = 'hearthmoor-v1-migrated';     // set when slot 1 is deleted, so 
 const LAST_SLOT = 'hearthmoor-lastslot';
 const QA = Q.has('qa');                       // check-scene / screenshots: straight into ?area=, fresh state, no title, no saving
 const AREAS = { plaza: 'areas/plaza/', lane: 'areas/lane/', mossglen: 'areas/mossglen/', hollows: 'areas/hollows/',
-                rift: 'areas/rift/', vanaheim: 'areas/vanaheim/', ravenhold: 'areas/ravenhold/', bifrost: 'areas/bifrost/', temple: 'areas/temple/', rotwood: 'areas/rotwood/', verdant: 'areas/verdant/', forge: 'areas/forge/', ...AREAS_ALF };   // [ALFHEIM] + alfheim, lumen_court, wispwood, prismvault
+                rift: 'areas/rift/', vanaheim: 'areas/vanaheim/', ravenhold: 'areas/ravenhold/', bifrost: 'areas/bifrost/', temple: 'areas/temple/', rotwood: 'areas/rotwood/', verdant: 'areas/verdant/', forge: 'areas/forge/', ...AREAS_ALF, ...AREAS_SV };   // [ALFHEIM] + alfheim, lumen_court, wispwood, prismvault
 const DAY_SECONDS = Number(Q.get('day') || 1440);  // one whole day = 24 real minutes (day, dusk, night, dawn)
 const $ = (id) => document.getElementById(id);
 
@@ -916,7 +917,7 @@ function wire() {
   $('btnDel').onclick = () => slotDelete();
 }
 // ------------------------------------------------------------------ save slots on the title (3 cards: pixel hero, level, area, play time)
-const AREA_NAME = { plaza: 'Hearthmoor Plaza', lane: 'Bakery Lane', mossglen: 'Mossglen', hollows: 'Toadstool Hollows', ...AREA_NAMES_ALF };   // [ALFHEIM] + realm names
+const AREA_NAME = { plaza: 'Hearthmoor Plaza', lane: 'Bakery Lane', mossglen: 'Mossglen', hollows: 'Toadstool Hollows', ...AREA_NAMES_ALF, ...AREA_NAMES_SV };   // [ALFHEIM] + realm names
 const HERO_ATLAS = 'areas/plaza/public/art/sprite/';   // the plaza sheet carries all six heroes
 let heroSheet = null, heroMeta = null;
 function loadHeroSheet() {

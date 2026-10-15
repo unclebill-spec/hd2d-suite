@@ -1,0 +1,2 @@
+svartalfheim: READY (2026-10-14, Hearthmoor Art seat)
+See README.md + contact_sheet.png. 11 townsfolk + 5 enemies + Dagna (20x32), Tick pet (pets layout, neon + safe), runaway 2x, basilisk 2.5x, foreman/colossus 2.8x, Gorrak 6x; all pass check-sprite; 10 kit pieces; svart_fx 48 px.

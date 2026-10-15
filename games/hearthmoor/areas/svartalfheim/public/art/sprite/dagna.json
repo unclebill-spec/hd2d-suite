@@ -1,0 +1,136 @@
+{
+ "tool": "hd2d sprite",
+ "biome": "cozy-village",
+ "frame": [
+  20,
+  32
+ ],
+ "pivot": [
+  10,
+  32
+ ],
+ "ground_row": 31,
+ "facings": [
+  "down",
+  "up",
+  "left",
+  "right"
+ ],
+ "anims": {
+  "idle": {
+   "start": 0,
+   "count": 4,
+   "fps": 3,
+   "loop": [
+    0,
+    1,
+    2,
+    1
+   ],
+   "blink": 3
+  },
+  "walk": {
+   "start": 4,
+   "count": 4,
+   "fps": 8
+  },
+  "cast": {
+   "start": 8,
+   "count": 4,
+   "fps": 6,
+   "loop": [
+    0,
+    1,
+    2,
+    2,
+    3,
+    3
+   ],
+   "casters_only": true
+  },
+  "attack": {
+   "start": 12,
+   "count": 4,
+   "fps": 10,
+   "loop": [
+    0,
+    1,
+    2,
+    2,
+    3
+   ],
+   "heroes_only": true
+  },
+  "defend": {
+   "start": 16,
+   "count": 4,
+   "fps": 6,
+   "loop": [
+    0,
+    1
+   ],
+   "hold": [
+    2,
+    3
+   ],
+   "heroes_only": true
+  },
+  "jump": {
+   "start": 20,
+   "count": 4,
+   "fps": 8,
+   "phases": [
+    "crouch",
+    "launch",
+    "airborne",
+    "land"
+   ],
+   "heroes_only": true
+  },
+  "die": {
+   "start": 24,
+   "count": 4,
+   "fps": 6,
+   "once": true,
+   "enemies_only": true
+  }
+ },
+ "cols": 16,
+ "size": [
+  320,
+  128
+ ],
+ "image": "dagna.png",
+ "roles": {
+  "dagna": {
+   "row": 0,
+   "kind": "creature",
+   "desc": "Dagna Coalbeard (dwarf smith, companion): soot-black beard in two thick braids with copper rings, ruddy cheeks, red-brown work shirt with sleeves rolled to the elbow, leather bracers, leather apron tied at the waist over grey trousers, tan steel-toed boots, big square hammer on her back (head glows faint ember-orange). Attack = hammer swing (frame 14), cast = ember strike (sparks in lamp / gold)",
+   "size_bounds": [
+    [
+     10,
+     24
+    ],
+    [
+     10,
+     40
+    ]
+   ],
+   "caster": true,
+   "anims": [
+    "idle",
+    "walk",
+    "cast",
+    "attack"
+   ],
+   "named": true,
+   "light": {
+    "color": "#f2a63a",
+    "intensity": 2.0,
+    "range": 1.8,
+    "lift": 0.6,
+    "fx": "dagna_hammer_glow"
+   }
+  }
+ }
+}

@@ -1,0 +1,702 @@
+{
+ "tool": "hd2d portal",
+ "biome": "cozy-village",
+ "seed": 104,
+ "image": "svart_fx.png",
+ "cell": 48,
+ "size": [
+  384,
+  480
+ ],
+ "cast_sets": {},
+ "cycle": [],
+ "effects": {
+  "pool_blue": {
+   "row": 0,
+   "frames": 6,
+   "fps": 4,
+   "loop": true,
+   "loop_from": 0,
+   "loops": 1,
+   "kind": "decal",
+   "pivot": [
+    24,
+    24
+   ],
+   "lift": 0.02,
+   "glow": true,
+   "light": null,
+   "speed": null,
+   "travel": null,
+   "then": null,
+   "duration": 9999,
+   "strip": "strips/pool_blue.png",
+   "frame_list": [
+    {
+     "x": 0,
+     "y": 0,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 48,
+     "y": 0,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 96,
+     "y": 0,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 144,
+     "y": 0,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 192,
+     "y": 0,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 240,
+     "y": 0,
+     "w": 48,
+     "h": 48
+    }
+   ],
+   "notes": "under rune_lamp / deep_wall runes / anvil_pillar"
+  },
+  "pool_violet": {
+   "row": 1,
+   "frames": 6,
+   "fps": 4,
+   "loop": true,
+   "loop_from": 0,
+   "loops": 1,
+   "kind": "decal",
+   "pivot": [
+    24,
+    24
+   ],
+   "lift": 0.02,
+   "glow": true,
+   "light": null,
+   "speed": null,
+   "travel": null,
+   "then": null,
+   "duration": 9999,
+   "strip": "strips/pool_violet.png",
+   "frame_list": [
+    {
+     "x": 0,
+     "y": 48,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 48,
+     "y": 48,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 96,
+     "y": 48,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 144,
+     "y": 48,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 192,
+     "y": 48,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 240,
+     "y": 48,
+     "w": 48,
+     "h": 48
+    }
+   ],
+   "notes": "under crystal_cluster / mine_cart"
+  },
+  "pool_red": {
+   "row": 2,
+   "frames": 6,
+   "fps": 5,
+   "loop": true,
+   "loop_from": 0,
+   "loops": 1,
+   "kind": "decal",
+   "pivot": [
+    24,
+    24
+   ],
+   "lift": 0.02,
+   "glow": true,
+   "light": null,
+   "speed": null,
+   "travel": null,
+   "then": null,
+   "duration": 9999,
+   "strip": "strips/pool_red.png",
+   "frame_list": [
+    {
+     "x": 0,
+     "y": 96,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 48,
+     "y": 96,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 96,
+     "y": 96,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 144,
+     "y": 96,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 192,
+     "y": 96,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 240,
+     "y": 96,
+     "w": 48,
+     "h": 48
+    }
+   ],
+   "notes": "under forge_brazier; under Gorrak (x3)"
+  },
+  "water_glow": {
+   "row": 3,
+   "frames": 6,
+   "fps": 4,
+   "loop": true,
+   "loop_from": 0,
+   "loops": 1,
+   "kind": "decal",
+   "pivot": [
+    24,
+    24
+   ],
+   "lift": 0.03,
+   "glow": true,
+   "light": null,
+   "speed": null,
+   "travel": null,
+   "then": null,
+   "duration": 9999,
+   "strip": "strips/water_glow.png",
+   "frame_list": [
+    {
+     "x": 0,
+     "y": 144,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 48,
+     "y": 144,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 96,
+     "y": 144,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 144,
+     "y": 144,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 192,
+     "y": 144,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 240,
+     "y": 144,
+     "w": 48,
+     "h": 48
+    }
+   ],
+   "notes": "glowing underground water shimmer over glow_pool"
+  },
+  "neon_fireflies_blue": {
+   "row": 4,
+   "frames": 8,
+   "fps": 6,
+   "loop": true,
+   "loop_from": 0,
+   "loops": 1,
+   "kind": "billboard",
+   "pivot": [
+    24,
+    47
+   ],
+   "lift": 0.8,
+   "glow": true,
+   "light": null,
+   "speed": null,
+   "travel": null,
+   "then": null,
+   "duration": 9999,
+   "strip": "strips/neon_fireflies_blue.png",
+   "frame_list": [
+    {
+     "x": 0,
+     "y": 192,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 48,
+     "y": 192,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 96,
+     "y": 192,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 144,
+     "y": 192,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 192,
+     "y": 192,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 240,
+     "y": 192,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 288,
+     "y": 192,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 336,
+     "y": 192,
+     "w": 48,
+     "h": 48
+    }
+   ],
+   "notes": "cold-blue fireflies (Bill)"
+  },
+  "neon_fireflies_violet": {
+   "row": 5,
+   "frames": 8,
+   "fps": 6,
+   "loop": true,
+   "loop_from": 0,
+   "loops": 1,
+   "kind": "billboard",
+   "pivot": [
+    24,
+    47
+   ],
+   "lift": 0.8,
+   "glow": true,
+   "light": null,
+   "speed": null,
+   "travel": null,
+   "then": null,
+   "duration": 9999,
+   "strip": "strips/neon_fireflies_violet.png",
+   "frame_list": [
+    {
+     "x": 0,
+     "y": 240,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 48,
+     "y": 240,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 96,
+     "y": 240,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 144,
+     "y": 240,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 192,
+     "y": 240,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 240,
+     "y": 240,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 288,
+     "y": 240,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 336,
+     "y": 240,
+     "w": 48,
+     "h": 48
+    }
+   ],
+   "notes": "violet fireflies in the mines"
+  },
+  "forge_embers": {
+   "row": 6,
+   "frames": 8,
+   "fps": 8,
+   "loop": true,
+   "loop_from": 0,
+   "loops": 1,
+   "kind": "billboard",
+   "pivot": [
+    24,
+    47
+   ],
+   "lift": 0.6,
+   "glow": true,
+   "light": null,
+   "speed": null,
+   "travel": null,
+   "then": null,
+   "duration": 9999,
+   "strip": "strips/forge_embers.png",
+   "frame_list": [
+    {
+     "x": 0,
+     "y": 288,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 48,
+     "y": 288,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 96,
+     "y": 288,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 144,
+     "y": 288,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 192,
+     "y": 288,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 240,
+     "y": 288,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 288,
+     "y": 288,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 336,
+     "y": 288,
+     "w": 48,
+     "h": 48
+    }
+   ],
+   "notes": "over forge_brazier and Gorrak's plate gaps"
+  },
+  "glow_orb_blue": {
+   "row": 7,
+   "frames": 8,
+   "fps": 6,
+   "loop": true,
+   "loop_from": 0,
+   "loops": 1,
+   "kind": "billboard",
+   "pivot": [
+    24,
+    33
+   ],
+   "lift": 1.4,
+   "glow": true,
+   "light": {
+    "color": "#a6ecff",
+    "intensity": 0.7,
+    "range": 3.0,
+    "pool": "pool_blue"
+   },
+   "speed": null,
+   "travel": null,
+   "then": null,
+   "duration": 9999,
+   "strip": "strips/glow_orb_blue.png",
+   "frame_list": [
+    {
+     "x": 0,
+     "y": 336,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 48,
+     "y": 336,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 96,
+     "y": 336,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 144,
+     "y": 336,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 192,
+     "y": 336,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 240,
+     "y": 336,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 288,
+     "y": 336,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 336,
+     "y": 336,
+     "w": 48,
+     "h": 48
+    }
+   ],
+   "notes": "floating glow orb, hover 1.1-2.2 m"
+  },
+  "glow_orb_violet": {
+   "row": 8,
+   "frames": 8,
+   "fps": 6,
+   "loop": true,
+   "loop_from": 0,
+   "loops": 1,
+   "kind": "billboard",
+   "pivot": [
+    24,
+    33
+   ],
+   "lift": 1.4,
+   "glow": true,
+   "light": {
+    "color": "#d4a8ff",
+    "intensity": 0.7,
+    "range": 3.0,
+    "pool": "pool_violet"
+   },
+   "speed": null,
+   "travel": null,
+   "then": null,
+   "duration": 9999,
+   "strip": "strips/glow_orb_violet.png",
+   "frame_list": [
+    {
+     "x": 0,
+     "y": 384,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 48,
+     "y": 384,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 96,
+     "y": 384,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 144,
+     "y": 384,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 192,
+     "y": 384,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 240,
+     "y": 384,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 288,
+     "y": 384,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 336,
+     "y": 384,
+     "w": 48,
+     "h": 48
+    }
+   ],
+   "notes": "floating glow orb, hover 1.1-2.2 m"
+  },
+  "glow_orb_red": {
+   "row": 9,
+   "frames": 8,
+   "fps": 6,
+   "loop": true,
+   "loop_from": 0,
+   "loops": 1,
+   "kind": "billboard",
+   "pivot": [
+    24,
+    33
+   ],
+   "lift": 1.4,
+   "glow": true,
+   "light": {
+    "color": "#ff5a4a",
+    "intensity": 0.7,
+    "range": 3.0,
+    "pool": "pool_red"
+   },
+   "speed": null,
+   "travel": null,
+   "then": null,
+   "duration": 9999,
+   "strip": "strips/glow_orb_red.png",
+   "frame_list": [
+    {
+     "x": 0,
+     "y": 432,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 48,
+     "y": 432,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 96,
+     "y": 432,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 144,
+     "y": 432,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 192,
+     "y": 432,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 240,
+     "y": 432,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 288,
+     "y": 432,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 336,
+     "y": 432,
+     "w": 48,
+     "h": 48
+    }
+   ],
+   "notes": "floating glow orb, hover 1.1-2.2 m"
+  }
+ }
+}

@@ -1,0 +1,239 @@
+{
+ "svart_npcs": {
+  "atlas": "/workspace/hearthmoor-staging/art/svartalfheim/sprite/svart_npcs.png",
+  "biome": "cozy-village",
+  "roles": {
+   "thane": {
+    "frames": 32,
+    "colors": 15,
+    "issues": []
+   },
+   "runewarden": {
+    "frames": 32,
+    "colors": 12,
+    "issues": []
+   },
+   "hushed": {
+    "frames": 32,
+    "colors": 11,
+    "issues": []
+   },
+   "dwarftrader": {
+    "frames": 32,
+    "colors": 14,
+    "issues": []
+   },
+   "tinker": {
+    "frames": 32,
+    "colors": 15,
+    "issues": []
+   },
+   "minerunner": {
+    "frames": 32,
+    "colors": 13,
+    "issues": []
+   },
+   "poolkeeper_sv": {
+    "frames": 32,
+    "colors": 17,
+    "issues": []
+   },
+   "dw1": {
+    "frames": 32,
+    "colors": 14,
+    "issues": []
+   },
+   "dw2": {
+    "frames": 32,
+    "colors": 14,
+    "issues": []
+   },
+   "sv1": {
+    "frames": 32,
+    "colors": 13,
+    "issues": []
+   },
+   "sv2": {
+    "frames": 32,
+    "colors": 14,
+    "issues": []
+   }
+  },
+  "summary": {
+   "roles": 11,
+   "failures": 0,
+   "semi_transparent": 0,
+   "pass": true
+  },
+  "failures": []
+ },
+ "dagna": {
+  "atlas": "/workspace/hearthmoor-staging/art/svartalfheim/sprite/dagna.png",
+  "biome": "cozy-village",
+  "roles": {
+   "dagna": {
+    "frames": 64,
+    "colors": 19,
+    "issues": []
+   }
+  },
+  "summary": {
+   "roles": 1,
+   "failures": 0,
+   "semi_transparent": 0,
+   "pass": true
+  },
+  "failures": []
+ },
+ "deep_enemies": {
+  "atlas": "/workspace/hearthmoor-staging/art/svartalfheim/sprite/deep_enemies.png",
+  "biome": "cozy-village",
+  "roles": {
+   "forgeconstruct": {
+    "frames": 64,
+    "colors": 16,
+    "issues": []
+   },
+   "sparkgolem": {
+    "frames": 64,
+    "colors": 11,
+    "issues": []
+   },
+   "sootling": {
+    "frames": 64,
+    "colors": 6,
+    "issues": []
+   },
+   "shadowsmith": {
+    "frames": 48,
+    "colors": 18,
+    "issues": []
+   },
+   "hushblade": {
+    "frames": 48,
+    "colors": 11,
+    "issues": []
+   }
+  },
+  "summary": {
+   "roles": 5,
+   "failures": 0,
+   "semi_transparent": 0,
+   "pass": true
+  },
+  "failures": []
+ },
+ "boss_gorrak": {
+  "atlas": "/workspace/hearthmoor-staging/art/svartalfheim/sprite/boss_gorrak.png",
+  "biome": "cozy-village",
+  "roles": {
+   "gorrak": {
+    "frames": 64,
+    "colors": 15,
+    "issues": []
+   },
+   "gorrak_unbuckled": {
+    "frames": 64,
+    "colors": 15,
+    "issues": []
+   }
+  },
+  "summary": {
+   "roles": 2,
+   "failures": 0,
+   "semi_transparent": 0,
+   "pass": true
+  },
+  "failures": []
+ },
+ "miniboss_foreman": {
+  "atlas": "/workspace/hearthmoor-staging/art/svartalfheim/sprite/miniboss_foreman.png",
+  "biome": "cozy-village",
+  "roles": {
+   "foreman": {
+    "frames": 64,
+    "colors": 18,
+    "issues": []
+   }
+  },
+  "summary": {
+   "roles": 1,
+   "failures": 0,
+   "semi_transparent": 0,
+   "pass": true
+  },
+  "failures": []
+ },
+ "rare_basilisk": {
+  "atlas": "/workspace/hearthmoor-staging/art/svartalfheim/sprite/rare_basilisk.png",
+  "biome": "cozy-village",
+  "roles": {
+   "basilisk": {
+    "frames": 64,
+    "colors": 12,
+    "issues": []
+   }
+  },
+  "summary": {
+   "roles": 1,
+   "failures": 0,
+   "semi_transparent": 0,
+   "pass": true
+  },
+  "failures": []
+ },
+ "rare_sootcolossus": {
+  "atlas": "/workspace/hearthmoor-staging/art/svartalfheim/sprite/rare_sootcolossus.png",
+  "biome": "cozy-village",
+  "roles": {
+   "sootcolossus": {
+    "frames": 64,
+    "colors": 10,
+    "issues": []
+   }
+  },
+  "summary": {
+   "roles": 1,
+   "failures": 0,
+   "semi_transparent": 0,
+   "pass": true
+  },
+  "failures": []
+ },
+ "runaway_construct": {
+  "atlas": "/workspace/hearthmoor-staging/art/svartalfheim/sprite/runaway_construct.png",
+  "biome": "cozy-village",
+  "roles": {
+   "runaway": {
+    "frames": 64,
+    "colors": 16,
+    "issues": []
+   }
+  },
+  "summary": {
+   "roles": 1,
+   "failures": 0,
+   "semi_transparent": 0,
+   "pass": true
+  },
+  "failures": []
+ },
+ "tick (safe)": {
+  "atlas": "/workspace/hearthmoor-staging/art/svartalfheim/tick/tick.png",
+  "biome": "cozy-village",
+  "roles": {
+   "pet_tick": {
+    "frames": 48,
+    "colors": 13,
+    "issues": []
+   }
+  },
+  "summary": {
+   "roles": 1,
+   "failures": 0,
+   "semi_transparent": 0,
+   "pass": true
+  },
+  "failures": []
+ }
+}

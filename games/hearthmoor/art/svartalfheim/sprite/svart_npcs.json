@@ -1,0 +1,5284 @@
+{
+ "tool": "hd2d sprite",
+ "biome": "cozy-village",
+ "seed": 104,
+ "frame": [
+  20,
+  32
+ ],
+ "pivot": [
+  10,
+  32
+ ],
+ "ground_row": 31,
+ "facings": [
+  "down",
+  "up",
+  "left",
+  "right"
+ ],
+ "anims": {
+  "idle": {
+   "start": 0,
+   "count": 4,
+   "fps": 3,
+   "loop": [
+    0,
+    1,
+    2,
+    1
+   ],
+   "blink": 3
+  },
+  "walk": {
+   "start": 4,
+   "count": 4,
+   "fps": 8
+  },
+  "cast": {
+   "start": 8,
+   "count": 4,
+   "fps": 6,
+   "loop": [
+    0,
+    1,
+    2,
+    2,
+    3,
+    3
+   ],
+   "casters_only": true
+  },
+  "attack": {
+   "start": 12,
+   "count": 4,
+   "fps": 10,
+   "loop": [
+    0,
+    1,
+    2,
+    2,
+    3
+   ],
+   "heroes_only": true
+  },
+  "defend": {
+   "start": 16,
+   "count": 4,
+   "fps": 6,
+   "loop": [
+    0,
+    1
+   ],
+   "hold": [
+    2,
+    3
+   ],
+   "heroes_only": true
+  },
+  "jump": {
+   "start": 20,
+   "count": 4,
+   "fps": 8,
+   "phases": [
+    "crouch",
+    "launch",
+    "airborne",
+    "land"
+   ],
+   "heroes_only": true
+  },
+  "die": {
+   "start": 24,
+   "count": 4,
+   "fps": 6,
+   "once": true,
+   "enemies_only": true
+  }
+ },
+ "cols": 12,
+ "image": "svart_npcs.png",
+ "size": [
+  240,
+  1408
+ ],
+ "roles": {
+  "thane": {
+   "row": 0,
+   "kind": "creature",
+   "desc": "Forge-Thane Ragna Copperbraid (dwarf smith-queen): copper-red beard in three braids with gold rings, deep-green wool tunic, wide leather belt with a copper buckle, brown trousers, heavy black boots, smith's hammer sceptre",
+   "size_bounds": [
+    [
+     10,
+     24
+    ],
+    [
+     10,
+     40
+    ]
+   ],
+   "caster": false,
+   "anims": [
+    "idle",
+    "walk"
+   ],
+   "frames": [
+    {
+     "name": "thane_down_idle0",
+     "facing": "down",
+     "anim": "idle",
+     "i": 0,
+     "x": 0,
+     "y": 0,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      10,
+      32
+     ]
+    },
+    {
+     "name": "thane_down_idle1",
+     "facing": "down",
+     "anim": "idle",
+     "i": 1,
+     "x": 20,
+     "y": 0,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      30,
+      32
+     ]
+    },
+    {
+     "name": "thane_down_idle2",
+     "facing": "down",
+     "anim": "idle",
+     "i": 2,
+     "x": 40,
+     "y": 0,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      50,
+      32
+     ]
+    },
+    {
+     "name": "thane_down_idle3",
+     "facing": "down",
+     "anim": "idle",
+     "i": 3,
+     "x": 60,
+     "y": 0,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      70,
+      32
+     ]
+    },
+    {
+     "name": "thane_down_walk0",
+     "facing": "down",
+     "anim": "walk",
+     "i": 0,
+     "x": 80,
+     "y": 0,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      90,
+      32
+     ]
+    },
+    {
+     "name": "thane_down_walk1",
+     "facing": "down",
+     "anim": "walk",
+     "i": 1,
+     "x": 100,
+     "y": 0,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      110,
+      32
+     ]
+    },
+    {
+     "name": "thane_down_walk2",
+     "facing": "down",
+     "anim": "walk",
+     "i": 2,
+     "x": 120,
+     "y": 0,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      130,
+      32
+     ]
+    },
+    {
+     "name": "thane_down_walk3",
+     "facing": "down",
+     "anim": "walk",
+     "i": 3,
+     "x": 140,
+     "y": 0,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      150,
+      32
+     ]
+    },
+    {
+     "name": "thane_up_idle0",
+     "facing": "up",
+     "anim": "idle",
+     "i": 0,
+     "x": 0,
+     "y": 32,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      10,
+      64
+     ]
+    },
+    {
+     "name": "thane_up_idle1",
+     "facing": "up",
+     "anim": "idle",
+     "i": 1,
+     "x": 20,
+     "y": 32,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      30,
+      64
+     ]
+    },
+    {
+     "name": "thane_up_idle2",
+     "facing": "up",
+     "anim": "idle",
+     "i": 2,
+     "x": 40,
+     "y": 32,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      50,
+      64
+     ]
+    },
+    {
+     "name": "thane_up_idle3",
+     "facing": "up",
+     "anim": "idle",
+     "i": 3,
+     "x": 60,
+     "y": 32,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      70,
+      64
+     ]
+    },
+    {
+     "name": "thane_up_walk0",
+     "facing": "up",
+     "anim": "walk",
+     "i": 0,
+     "x": 80,
+     "y": 32,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      90,
+      64
+     ]
+    },
+    {
+     "name": "thane_up_walk1",
+     "facing": "up",
+     "anim": "walk",
+     "i": 1,
+     "x": 100,
+     "y": 32,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      110,
+      64
+     ]
+    },
+    {
+     "name": "thane_up_walk2",
+     "facing": "up",
+     "anim": "walk",
+     "i": 2,
+     "x": 120,
+     "y": 32,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      130,
+      64
+     ]
+    },
+    {
+     "name": "thane_up_walk3",
+     "facing": "up",
+     "anim": "walk",
+     "i": 3,
+     "x": 140,
+     "y": 32,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      150,
+      64
+     ]
+    },
+    {
+     "name": "thane_left_idle0",
+     "facing": "left",
+     "anim": "idle",
+     "i": 0,
+     "x": 0,
+     "y": 64,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      10,
+      96
+     ]
+    },
+    {
+     "name": "thane_left_idle1",
+     "facing": "left",
+     "anim": "idle",
+     "i": 1,
+     "x": 20,
+     "y": 64,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      30,
+      96
+     ]
+    },
+    {
+     "name": "thane_left_idle2",
+     "facing": "left",
+     "anim": "idle",
+     "i": 2,
+     "x": 40,
+     "y": 64,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      50,
+      96
+     ]
+    },
+    {
+     "name": "thane_left_idle3",
+     "facing": "left",
+     "anim": "idle",
+     "i": 3,
+     "x": 60,
+     "y": 64,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      70,
+      96
+     ]
+    },
+    {
+     "name": "thane_left_walk0",
+     "facing": "left",
+     "anim": "walk",
+     "i": 0,
+     "x": 80,
+     "y": 64,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      90,
+      96
+     ]
+    },
+    {
+     "name": "thane_left_walk1",
+     "facing": "left",
+     "anim": "walk",
+     "i": 1,
+     "x": 100,
+     "y": 64,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      110,
+      96
+     ]
+    },
+    {
+     "name": "thane_left_walk2",
+     "facing": "left",
+     "anim": "walk",
+     "i": 2,
+     "x": 120,
+     "y": 64,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      130,
+      96
+     ]
+    },
+    {
+     "name": "thane_left_walk3",
+     "facing": "left",
+     "anim": "walk",
+     "i": 3,
+     "x": 140,
+     "y": 64,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      150,
+      96
+     ]
+    },
+    {
+     "name": "thane_right_idle0",
+     "facing": "right",
+     "anim": "idle",
+     "i": 0,
+     "x": 0,
+     "y": 96,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      10,
+      128
+     ]
+    },
+    {
+     "name": "thane_right_idle1",
+     "facing": "right",
+     "anim": "idle",
+     "i": 1,
+     "x": 20,
+     "y": 96,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      30,
+      128
+     ]
+    },
+    {
+     "name": "thane_right_idle2",
+     "facing": "right",
+     "anim": "idle",
+     "i": 2,
+     "x": 40,
+     "y": 96,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      50,
+      128
+     ]
+    },
+    {
+     "name": "thane_right_idle3",
+     "facing": "right",
+     "anim": "idle",
+     "i": 3,
+     "x": 60,
+     "y": 96,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      70,
+      128
+     ]
+    },
+    {
+     "name": "thane_right_walk0",
+     "facing": "right",
+     "anim": "walk",
+     "i": 0,
+     "x": 80,
+     "y": 96,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      90,
+      128
+     ]
+    },
+    {
+     "name": "thane_right_walk1",
+     "facing": "right",
+     "anim": "walk",
+     "i": 1,
+     "x": 100,
+     "y": 96,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      110,
+      128
+     ]
+    },
+    {
+     "name": "thane_right_walk2",
+     "facing": "right",
+     "anim": "walk",
+     "i": 2,
+     "x": 120,
+     "y": 96,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      130,
+      128
+     ]
+    },
+    {
+     "name": "thane_right_walk3",
+     "facing": "right",
+     "anim": "walk",
+     "i": 3,
+     "x": 140,
+     "y": 96,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      150,
+      128
+     ]
+    }
+   ],
+   "named": true
+  },
+  "runewarden": {
+   "row": 4,
+   "kind": "human",
+   "desc": "Sereth Gloamweave (dark-elf rune-warden): slate-blue skin, white jaw-length hair, long ears, high-collared charcoal blouse, cold-blue sash, slim black trousers, soft brown boots, a rune-lens on a gold chain, white rune tattoo on the cheek",
+   "size_bounds": [
+    [
+     14,
+     24
+    ],
+    [
+     24,
+     40
+    ]
+   ],
+   "caster": false,
+   "anims": [
+    "idle",
+    "walk"
+   ],
+   "frames": [
+    {
+     "name": "runewarden_down_idle0",
+     "facing": "down",
+     "anim": "idle",
+     "i": 0,
+     "x": 0,
+     "y": 128,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      10,
+      160
+     ]
+    },
+    {
+     "name": "runewarden_down_idle1",
+     "facing": "down",
+     "anim": "idle",
+     "i": 1,
+     "x": 20,
+     "y": 128,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      30,
+      160
+     ]
+    },
+    {
+     "name": "runewarden_down_idle2",
+     "facing": "down",
+     "anim": "idle",
+     "i": 2,
+     "x": 40,
+     "y": 128,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      50,
+      160
+     ]
+    },
+    {
+     "name": "runewarden_down_idle3",
+     "facing": "down",
+     "anim": "idle",
+     "i": 3,
+     "x": 60,
+     "y": 128,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      70,
+      160
+     ]
+    },
+    {
+     "name": "runewarden_down_walk0",
+     "facing": "down",
+     "anim": "walk",
+     "i": 0,
+     "x": 80,
+     "y": 128,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      90,
+      160
+     ]
+    },
+    {
+     "name": "runewarden_down_walk1",
+     "facing": "down",
+     "anim": "walk",
+     "i": 1,
+     "x": 100,
+     "y": 128,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      110,
+      160
+     ]
+    },
+    {
+     "name": "runewarden_down_walk2",
+     "facing": "down",
+     "anim": "walk",
+     "i": 2,
+     "x": 120,
+     "y": 128,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      130,
+      160
+     ]
+    },
+    {
+     "name": "runewarden_down_walk3",
+     "facing": "down",
+     "anim": "walk",
+     "i": 3,
+     "x": 140,
+     "y": 128,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      150,
+      160
+     ]
+    },
+    {
+     "name": "runewarden_up_idle0",
+     "facing": "up",
+     "anim": "idle",
+     "i": 0,
+     "x": 0,
+     "y": 160,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      10,
+      192
+     ]
+    },
+    {
+     "name": "runewarden_up_idle1",
+     "facing": "up",
+     "anim": "idle",
+     "i": 1,
+     "x": 20,
+     "y": 160,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      30,
+      192
+     ]
+    },
+    {
+     "name": "runewarden_up_idle2",
+     "facing": "up",
+     "anim": "idle",
+     "i": 2,
+     "x": 40,
+     "y": 160,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      50,
+      192
+     ]
+    },
+    {
+     "name": "runewarden_up_idle3",
+     "facing": "up",
+     "anim": "idle",
+     "i": 3,
+     "x": 60,
+     "y": 160,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      70,
+      192
+     ]
+    },
+    {
+     "name": "runewarden_up_walk0",
+     "facing": "up",
+     "anim": "walk",
+     "i": 0,
+     "x": 80,
+     "y": 160,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      90,
+      192
+     ]
+    },
+    {
+     "name": "runewarden_up_walk1",
+     "facing": "up",
+     "anim": "walk",
+     "i": 1,
+     "x": 100,
+     "y": 160,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      110,
+      192
+     ]
+    },
+    {
+     "name": "runewarden_up_walk2",
+     "facing": "up",
+     "anim": "walk",
+     "i": 2,
+     "x": 120,
+     "y": 160,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      130,
+      192
+     ]
+    },
+    {
+     "name": "runewarden_up_walk3",
+     "facing": "up",
+     "anim": "walk",
+     "i": 3,
+     "x": 140,
+     "y": 160,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      150,
+      192
+     ]
+    },
+    {
+     "name": "runewarden_left_idle0",
+     "facing": "left",
+     "anim": "idle",
+     "i": 0,
+     "x": 0,
+     "y": 192,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      10,
+      224
+     ]
+    },
+    {
+     "name": "runewarden_left_idle1",
+     "facing": "left",
+     "anim": "idle",
+     "i": 1,
+     "x": 20,
+     "y": 192,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      30,
+      224
+     ]
+    },
+    {
+     "name": "runewarden_left_idle2",
+     "facing": "left",
+     "anim": "idle",
+     "i": 2,
+     "x": 40,
+     "y": 192,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      50,
+      224
+     ]
+    },
+    {
+     "name": "runewarden_left_idle3",
+     "facing": "left",
+     "anim": "idle",
+     "i": 3,
+     "x": 60,
+     "y": 192,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      70,
+      224
+     ]
+    },
+    {
+     "name": "runewarden_left_walk0",
+     "facing": "left",
+     "anim": "walk",
+     "i": 0,
+     "x": 80,
+     "y": 192,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      90,
+      224
+     ]
+    },
+    {
+     "name": "runewarden_left_walk1",
+     "facing": "left",
+     "anim": "walk",
+     "i": 1,
+     "x": 100,
+     "y": 192,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      110,
+      224
+     ]
+    },
+    {
+     "name": "runewarden_left_walk2",
+     "facing": "left",
+     "anim": "walk",
+     "i": 2,
+     "x": 120,
+     "y": 192,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      130,
+      224
+     ]
+    },
+    {
+     "name": "runewarden_left_walk3",
+     "facing": "left",
+     "anim": "walk",
+     "i": 3,
+     "x": 140,
+     "y": 192,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      150,
+      224
+     ]
+    },
+    {
+     "name": "runewarden_right_idle0",
+     "facing": "right",
+     "anim": "idle",
+     "i": 0,
+     "x": 0,
+     "y": 224,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      10,
+      256
+     ]
+    },
+    {
+     "name": "runewarden_right_idle1",
+     "facing": "right",
+     "anim": "idle",
+     "i": 1,
+     "x": 20,
+     "y": 224,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      30,
+      256
+     ]
+    },
+    {
+     "name": "runewarden_right_idle2",
+     "facing": "right",
+     "anim": "idle",
+     "i": 2,
+     "x": 40,
+     "y": 224,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      50,
+      256
+     ]
+    },
+    {
+     "name": "runewarden_right_idle3",
+     "facing": "right",
+     "anim": "idle",
+     "i": 3,
+     "x": 60,
+     "y": 224,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      70,
+      256
+     ]
+    },
+    {
+     "name": "runewarden_right_walk0",
+     "facing": "right",
+     "anim": "walk",
+     "i": 0,
+     "x": 80,
+     "y": 224,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      90,
+      256
+     ]
+    },
+    {
+     "name": "runewarden_right_walk1",
+     "facing": "right",
+     "anim": "walk",
+     "i": 1,
+     "x": 100,
+     "y": 224,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      110,
+      256
+     ]
+    },
+    {
+     "name": "runewarden_right_walk2",
+     "facing": "right",
+     "anim": "walk",
+     "i": 2,
+     "x": 120,
+     "y": 224,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      130,
+      256
+     ]
+    },
+    {
+     "name": "runewarden_right_walk3",
+     "facing": "right",
+     "anim": "walk",
+     "i": 3,
+     "x": 140,
+     "y": 224,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      150,
+      256
+     ]
+    }
+   ],
+   "named": true
+  },
+  "hushed": {
+   "row": 8,
+   "kind": "human",
+   "desc": "Captain Ilvar Hushblade (dark elf, captain of the Hushed): ash-grey skin, silver topknot, long ears, fitted black wrap-top, grey sash, dark trousers bound at the shins, two short blades at his hips, cold-blue rune tattoo",
+   "size_bounds": [
+    [
+     14,
+     24
+    ],
+    [
+     24,
+     40
+    ]
+   ],
+   "caster": false,
+   "anims": [
+    "idle",
+    "walk"
+   ],
+   "frames": [
+    {
+     "name": "hushed_down_idle0",
+     "facing": "down",
+     "anim": "idle",
+     "i": 0,
+     "x": 0,
+     "y": 256,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      10,
+      288
+     ]
+    },
+    {
+     "name": "hushed_down_idle1",
+     "facing": "down",
+     "anim": "idle",
+     "i": 1,
+     "x": 20,
+     "y": 256,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      30,
+      288
+     ]
+    },
+    {
+     "name": "hushed_down_idle2",
+     "facing": "down",
+     "anim": "idle",
+     "i": 2,
+     "x": 40,
+     "y": 256,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      50,
+      288
+     ]
+    },
+    {
+     "name": "hushed_down_idle3",
+     "facing": "down",
+     "anim": "idle",
+     "i": 3,
+     "x": 60,
+     "y": 256,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      70,
+      288
+     ]
+    },
+    {
+     "name": "hushed_down_walk0",
+     "facing": "down",
+     "anim": "walk",
+     "i": 0,
+     "x": 80,
+     "y": 256,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      90,
+      288
+     ]
+    },
+    {
+     "name": "hushed_down_walk1",
+     "facing": "down",
+     "anim": "walk",
+     "i": 1,
+     "x": 100,
+     "y": 256,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      110,
+      288
+     ]
+    },
+    {
+     "name": "hushed_down_walk2",
+     "facing": "down",
+     "anim": "walk",
+     "i": 2,
+     "x": 120,
+     "y": 256,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      130,
+      288
+     ]
+    },
+    {
+     "name": "hushed_down_walk3",
+     "facing": "down",
+     "anim": "walk",
+     "i": 3,
+     "x": 140,
+     "y": 256,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      150,
+      288
+     ]
+    },
+    {
+     "name": "hushed_up_idle0",
+     "facing": "up",
+     "anim": "idle",
+     "i": 0,
+     "x": 0,
+     "y": 288,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      10,
+      320
+     ]
+    },
+    {
+     "name": "hushed_up_idle1",
+     "facing": "up",
+     "anim": "idle",
+     "i": 1,
+     "x": 20,
+     "y": 288,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      30,
+      320
+     ]
+    },
+    {
+     "name": "hushed_up_idle2",
+     "facing": "up",
+     "anim": "idle",
+     "i": 2,
+     "x": 40,
+     "y": 288,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      50,
+      320
+     ]
+    },
+    {
+     "name": "hushed_up_idle3",
+     "facing": "up",
+     "anim": "idle",
+     "i": 3,
+     "x": 60,
+     "y": 288,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      70,
+      320
+     ]
+    },
+    {
+     "name": "hushed_up_walk0",
+     "facing": "up",
+     "anim": "walk",
+     "i": 0,
+     "x": 80,
+     "y": 288,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      90,
+      320
+     ]
+    },
+    {
+     "name": "hushed_up_walk1",
+     "facing": "up",
+     "anim": "walk",
+     "i": 1,
+     "x": 100,
+     "y": 288,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      110,
+      320
+     ]
+    },
+    {
+     "name": "hushed_up_walk2",
+     "facing": "up",
+     "anim": "walk",
+     "i": 2,
+     "x": 120,
+     "y": 288,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      130,
+      320
+     ]
+    },
+    {
+     "name": "hushed_up_walk3",
+     "facing": "up",
+     "anim": "walk",
+     "i": 3,
+     "x": 140,
+     "y": 288,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      150,
+      320
+     ]
+    },
+    {
+     "name": "hushed_left_idle0",
+     "facing": "left",
+     "anim": "idle",
+     "i": 0,
+     "x": 0,
+     "y": 320,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      10,
+      352
+     ]
+    },
+    {
+     "name": "hushed_left_idle1",
+     "facing": "left",
+     "anim": "idle",
+     "i": 1,
+     "x": 20,
+     "y": 320,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      30,
+      352
+     ]
+    },
+    {
+     "name": "hushed_left_idle2",
+     "facing": "left",
+     "anim": "idle",
+     "i": 2,
+     "x": 40,
+     "y": 320,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      50,
+      352
+     ]
+    },
+    {
+     "name": "hushed_left_idle3",
+     "facing": "left",
+     "anim": "idle",
+     "i": 3,
+     "x": 60,
+     "y": 320,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      70,
+      352
+     ]
+    },
+    {
+     "name": "hushed_left_walk0",
+     "facing": "left",
+     "anim": "walk",
+     "i": 0,
+     "x": 80,
+     "y": 320,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      90,
+      352
+     ]
+    },
+    {
+     "name": "hushed_left_walk1",
+     "facing": "left",
+     "anim": "walk",
+     "i": 1,
+     "x": 100,
+     "y": 320,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      110,
+      352
+     ]
+    },
+    {
+     "name": "hushed_left_walk2",
+     "facing": "left",
+     "anim": "walk",
+     "i": 2,
+     "x": 120,
+     "y": 320,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      130,
+      352
+     ]
+    },
+    {
+     "name": "hushed_left_walk3",
+     "facing": "left",
+     "anim": "walk",
+     "i": 3,
+     "x": 140,
+     "y": 320,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      150,
+      352
+     ]
+    },
+    {
+     "name": "hushed_right_idle0",
+     "facing": "right",
+     "anim": "idle",
+     "i": 0,
+     "x": 0,
+     "y": 352,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      10,
+      384
+     ]
+    },
+    {
+     "name": "hushed_right_idle1",
+     "facing": "right",
+     "anim": "idle",
+     "i": 1,
+     "x": 20,
+     "y": 352,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      30,
+      384
+     ]
+    },
+    {
+     "name": "hushed_right_idle2",
+     "facing": "right",
+     "anim": "idle",
+     "i": 2,
+     "x": 40,
+     "y": 352,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      50,
+      384
+     ]
+    },
+    {
+     "name": "hushed_right_idle3",
+     "facing": "right",
+     "anim": "idle",
+     "i": 3,
+     "x": 60,
+     "y": 352,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      70,
+      384
+     ]
+    },
+    {
+     "name": "hushed_right_walk0",
+     "facing": "right",
+     "anim": "walk",
+     "i": 0,
+     "x": 80,
+     "y": 352,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      90,
+      384
+     ]
+    },
+    {
+     "name": "hushed_right_walk1",
+     "facing": "right",
+     "anim": "walk",
+     "i": 1,
+     "x": 100,
+     "y": 352,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      110,
+      384
+     ]
+    },
+    {
+     "name": "hushed_right_walk2",
+     "facing": "right",
+     "anim": "walk",
+     "i": 2,
+     "x": 120,
+     "y": 352,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      130,
+      384
+     ]
+    },
+    {
+     "name": "hushed_right_walk3",
+     "facing": "right",
+     "anim": "walk",
+     "i": 3,
+     "x": 140,
+     "y": 352,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      150,
+      384
+     ]
+    }
+   ],
+   "named": true
+  },
+  "dwarftrader": {
+   "row": 12,
+   "kind": "creature",
+   "desc": "Brokk Emberlode (dwarf trader): soot-black beard in two braids with brass beads, rust wool shirt, leather apron belted over slate trousers, brown boots",
+   "size_bounds": [
+    [
+     10,
+     24
+    ],
+    [
+     10,
+     40
+    ]
+   ],
+   "caster": false,
+   "anims": [
+    "idle",
+    "walk"
+   ],
+   "frames": [
+    {
+     "name": "dwarftrader_down_idle0",
+     "facing": "down",
+     "anim": "idle",
+     "i": 0,
+     "x": 0,
+     "y": 384,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      10,
+      416
+     ]
+    },
+    {
+     "name": "dwarftrader_down_idle1",
+     "facing": "down",
+     "anim": "idle",
+     "i": 1,
+     "x": 20,
+     "y": 384,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      30,
+      416
+     ]
+    },
+    {
+     "name": "dwarftrader_down_idle2",
+     "facing": "down",
+     "anim": "idle",
+     "i": 2,
+     "x": 40,
+     "y": 384,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      50,
+      416
+     ]
+    },
+    {
+     "name": "dwarftrader_down_idle3",
+     "facing": "down",
+     "anim": "idle",
+     "i": 3,
+     "x": 60,
+     "y": 384,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      70,
+      416
+     ]
+    },
+    {
+     "name": "dwarftrader_down_walk0",
+     "facing": "down",
+     "anim": "walk",
+     "i": 0,
+     "x": 80,
+     "y": 384,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      90,
+      416
+     ]
+    },
+    {
+     "name": "dwarftrader_down_walk1",
+     "facing": "down",
+     "anim": "walk",
+     "i": 1,
+     "x": 100,
+     "y": 384,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      110,
+      416
+     ]
+    },
+    {
+     "name": "dwarftrader_down_walk2",
+     "facing": "down",
+     "anim": "walk",
+     "i": 2,
+     "x": 120,
+     "y": 384,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      130,
+      416
+     ]
+    },
+    {
+     "name": "dwarftrader_down_walk3",
+     "facing": "down",
+     "anim": "walk",
+     "i": 3,
+     "x": 140,
+     "y": 384,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      150,
+      416
+     ]
+    },
+    {
+     "name": "dwarftrader_up_idle0",
+     "facing": "up",
+     "anim": "idle",
+     "i": 0,
+     "x": 0,
+     "y": 416,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      10,
+      448
+     ]
+    },
+    {
+     "name": "dwarftrader_up_idle1",
+     "facing": "up",
+     "anim": "idle",
+     "i": 1,
+     "x": 20,
+     "y": 416,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      30,
+      448
+     ]
+    },
+    {
+     "name": "dwarftrader_up_idle2",
+     "facing": "up",
+     "anim": "idle",
+     "i": 2,
+     "x": 40,
+     "y": 416,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      50,
+      448
+     ]
+    },
+    {
+     "name": "dwarftrader_up_idle3",
+     "facing": "up",
+     "anim": "idle",
+     "i": 3,
+     "x": 60,
+     "y": 416,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      70,
+      448
+     ]
+    },
+    {
+     "name": "dwarftrader_up_walk0",
+     "facing": "up",
+     "anim": "walk",
+     "i": 0,
+     "x": 80,
+     "y": 416,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      90,
+      448
+     ]
+    },
+    {
+     "name": "dwarftrader_up_walk1",
+     "facing": "up",
+     "anim": "walk",
+     "i": 1,
+     "x": 100,
+     "y": 416,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      110,
+      448
+     ]
+    },
+    {
+     "name": "dwarftrader_up_walk2",
+     "facing": "up",
+     "anim": "walk",
+     "i": 2,
+     "x": 120,
+     "y": 416,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      130,
+      448
+     ]
+    },
+    {
+     "name": "dwarftrader_up_walk3",
+     "facing": "up",
+     "anim": "walk",
+     "i": 3,
+     "x": 140,
+     "y": 416,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      150,
+      448
+     ]
+    },
+    {
+     "name": "dwarftrader_left_idle0",
+     "facing": "left",
+     "anim": "idle",
+     "i": 0,
+     "x": 0,
+     "y": 448,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      10,
+      480
+     ]
+    },
+    {
+     "name": "dwarftrader_left_idle1",
+     "facing": "left",
+     "anim": "idle",
+     "i": 1,
+     "x": 20,
+     "y": 448,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      30,
+      480
+     ]
+    },
+    {
+     "name": "dwarftrader_left_idle2",
+     "facing": "left",
+     "anim": "idle",
+     "i": 2,
+     "x": 40,
+     "y": 448,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      50,
+      480
+     ]
+    },
+    {
+     "name": "dwarftrader_left_idle3",
+     "facing": "left",
+     "anim": "idle",
+     "i": 3,
+     "x": 60,
+     "y": 448,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      70,
+      480
+     ]
+    },
+    {
+     "name": "dwarftrader_left_walk0",
+     "facing": "left",
+     "anim": "walk",
+     "i": 0,
+     "x": 80,
+     "y": 448,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      90,
+      480
+     ]
+    },
+    {
+     "name": "dwarftrader_left_walk1",
+     "facing": "left",
+     "anim": "walk",
+     "i": 1,
+     "x": 100,
+     "y": 448,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      110,
+      480
+     ]
+    },
+    {
+     "name": "dwarftrader_left_walk2",
+     "facing": "left",
+     "anim": "walk",
+     "i": 2,
+     "x": 120,
+     "y": 448,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      130,
+      480
+     ]
+    },
+    {
+     "name": "dwarftrader_left_walk3",
+     "facing": "left",
+     "anim": "walk",
+     "i": 3,
+     "x": 140,
+     "y": 448,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      150,
+      480
+     ]
+    },
+    {
+     "name": "dwarftrader_right_idle0",
+     "facing": "right",
+     "anim": "idle",
+     "i": 0,
+     "x": 0,
+     "y": 480,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      10,
+      512
+     ]
+    },
+    {
+     "name": "dwarftrader_right_idle1",
+     "facing": "right",
+     "anim": "idle",
+     "i": 1,
+     "x": 20,
+     "y": 480,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      30,
+      512
+     ]
+    },
+    {
+     "name": "dwarftrader_right_idle2",
+     "facing": "right",
+     "anim": "idle",
+     "i": 2,
+     "x": 40,
+     "y": 480,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      50,
+      512
+     ]
+    },
+    {
+     "name": "dwarftrader_right_idle3",
+     "facing": "right",
+     "anim": "idle",
+     "i": 3,
+     "x": 60,
+     "y": 480,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      70,
+      512
+     ]
+    },
+    {
+     "name": "dwarftrader_right_walk0",
+     "facing": "right",
+     "anim": "walk",
+     "i": 0,
+     "x": 80,
+     "y": 480,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      90,
+      512
+     ]
+    },
+    {
+     "name": "dwarftrader_right_walk1",
+     "facing": "right",
+     "anim": "walk",
+     "i": 1,
+     "x": 100,
+     "y": 480,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      110,
+      512
+     ]
+    },
+    {
+     "name": "dwarftrader_right_walk2",
+     "facing": "right",
+     "anim": "walk",
+     "i": 2,
+     "x": 120,
+     "y": 480,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      130,
+      512
+     ]
+    },
+    {
+     "name": "dwarftrader_right_walk3",
+     "facing": "right",
+     "anim": "walk",
+     "i": 3,
+     "x": 140,
+     "y": 480,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      150,
+      512
+     ]
+    }
+   ],
+   "named": true
+  },
+  "tinker": {
+   "row": 16,
+   "kind": "creature",
+   "desc": "Tansy Brasswhistle (gnome tinker): tiny red white-spotted toadstool cap, brass goggles, mustard shirt, brown corduroy shorts with braces and a dark belt, striped socks, black shoes",
+   "size_bounds": [
+    [
+     10,
+     24
+    ],
+    [
+     10,
+     40
+    ]
+   ],
+   "caster": false,
+   "anims": [
+    "idle",
+    "walk"
+   ],
+   "frames": [
+    {
+     "name": "tinker_down_idle0",
+     "facing": "down",
+     "anim": "idle",
+     "i": 0,
+     "x": 0,
+     "y": 512,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      10,
+      544
+     ]
+    },
+    {
+     "name": "tinker_down_idle1",
+     "facing": "down",
+     "anim": "idle",
+     "i": 1,
+     "x": 20,
+     "y": 512,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      30,
+      544
+     ]
+    },
+    {
+     "name": "tinker_down_idle2",
+     "facing": "down",
+     "anim": "idle",
+     "i": 2,
+     "x": 40,
+     "y": 512,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      50,
+      544
+     ]
+    },
+    {
+     "name": "tinker_down_idle3",
+     "facing": "down",
+     "anim": "idle",
+     "i": 3,
+     "x": 60,
+     "y": 512,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      70,
+      544
+     ]
+    },
+    {
+     "name": "tinker_down_walk0",
+     "facing": "down",
+     "anim": "walk",
+     "i": 0,
+     "x": 80,
+     "y": 512,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      90,
+      544
+     ]
+    },
+    {
+     "name": "tinker_down_walk1",
+     "facing": "down",
+     "anim": "walk",
+     "i": 1,
+     "x": 100,
+     "y": 512,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      110,
+      544
+     ]
+    },
+    {
+     "name": "tinker_down_walk2",
+     "facing": "down",
+     "anim": "walk",
+     "i": 2,
+     "x": 120,
+     "y": 512,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      130,
+      544
+     ]
+    },
+    {
+     "name": "tinker_down_walk3",
+     "facing": "down",
+     "anim": "walk",
+     "i": 3,
+     "x": 140,
+     "y": 512,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      150,
+      544
+     ]
+    },
+    {
+     "name": "tinker_up_idle0",
+     "facing": "up",
+     "anim": "idle",
+     "i": 0,
+     "x": 0,
+     "y": 544,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      10,
+      576
+     ]
+    },
+    {
+     "name": "tinker_up_idle1",
+     "facing": "up",
+     "anim": "idle",
+     "i": 1,
+     "x": 20,
+     "y": 544,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      30,
+      576
+     ]
+    },
+    {
+     "name": "tinker_up_idle2",
+     "facing": "up",
+     "anim": "idle",
+     "i": 2,
+     "x": 40,
+     "y": 544,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      50,
+      576
+     ]
+    },
+    {
+     "name": "tinker_up_idle3",
+     "facing": "up",
+     "anim": "idle",
+     "i": 3,
+     "x": 60,
+     "y": 544,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      70,
+      576
+     ]
+    },
+    {
+     "name": "tinker_up_walk0",
+     "facing": "up",
+     "anim": "walk",
+     "i": 0,
+     "x": 80,
+     "y": 544,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      90,
+      576
+     ]
+    },
+    {
+     "name": "tinker_up_walk1",
+     "facing": "up",
+     "anim": "walk",
+     "i": 1,
+     "x": 100,
+     "y": 544,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      110,
+      576
+     ]
+    },
+    {
+     "name": "tinker_up_walk2",
+     "facing": "up",
+     "anim": "walk",
+     "i": 2,
+     "x": 120,
+     "y": 544,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      130,
+      576
+     ]
+    },
+    {
+     "name": "tinker_up_walk3",
+     "facing": "up",
+     "anim": "walk",
+     "i": 3,
+     "x": 140,
+     "y": 544,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      150,
+      576
+     ]
+    },
+    {
+     "name": "tinker_left_idle0",
+     "facing": "left",
+     "anim": "idle",
+     "i": 0,
+     "x": 0,
+     "y": 576,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      10,
+      608
+     ]
+    },
+    {
+     "name": "tinker_left_idle1",
+     "facing": "left",
+     "anim": "idle",
+     "i": 1,
+     "x": 20,
+     "y": 576,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      30,
+      608
+     ]
+    },
+    {
+     "name": "tinker_left_idle2",
+     "facing": "left",
+     "anim": "idle",
+     "i": 2,
+     "x": 40,
+     "y": 576,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      50,
+      608
+     ]
+    },
+    {
+     "name": "tinker_left_idle3",
+     "facing": "left",
+     "anim": "idle",
+     "i": 3,
+     "x": 60,
+     "y": 576,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      70,
+      608
+     ]
+    },
+    {
+     "name": "tinker_left_walk0",
+     "facing": "left",
+     "anim": "walk",
+     "i": 0,
+     "x": 80,
+     "y": 576,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      90,
+      608
+     ]
+    },
+    {
+     "name": "tinker_left_walk1",
+     "facing": "left",
+     "anim": "walk",
+     "i": 1,
+     "x": 100,
+     "y": 576,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      110,
+      608
+     ]
+    },
+    {
+     "name": "tinker_left_walk2",
+     "facing": "left",
+     "anim": "walk",
+     "i": 2,
+     "x": 120,
+     "y": 576,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      130,
+      608
+     ]
+    },
+    {
+     "name": "tinker_left_walk3",
+     "facing": "left",
+     "anim": "walk",
+     "i": 3,
+     "x": 140,
+     "y": 576,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      150,
+      608
+     ]
+    },
+    {
+     "name": "tinker_right_idle0",
+     "facing": "right",
+     "anim": "idle",
+     "i": 0,
+     "x": 0,
+     "y": 608,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      10,
+      640
+     ]
+    },
+    {
+     "name": "tinker_right_idle1",
+     "facing": "right",
+     "anim": "idle",
+     "i": 1,
+     "x": 20,
+     "y": 608,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      30,
+      640
+     ]
+    },
+    {
+     "name": "tinker_right_idle2",
+     "facing": "right",
+     "anim": "idle",
+     "i": 2,
+     "x": 40,
+     "y": 608,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      50,
+      640
+     ]
+    },
+    {
+     "name": "tinker_right_idle3",
+     "facing": "right",
+     "anim": "idle",
+     "i": 3,
+     "x": 60,
+     "y": 608,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      70,
+      640
+     ]
+    },
+    {
+     "name": "tinker_right_walk0",
+     "facing": "right",
+     "anim": "walk",
+     "i": 0,
+     "x": 80,
+     "y": 608,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      90,
+      640
+     ]
+    },
+    {
+     "name": "tinker_right_walk1",
+     "facing": "right",
+     "anim": "walk",
+     "i": 1,
+     "x": 100,
+     "y": 608,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      110,
+      640
+     ]
+    },
+    {
+     "name": "tinker_right_walk2",
+     "facing": "right",
+     "anim": "walk",
+     "i": 2,
+     "x": 120,
+     "y": 608,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      130,
+      640
+     ]
+    },
+    {
+     "name": "tinker_right_walk3",
+     "facing": "right",
+     "anim": "walk",
+     "i": 3,
+     "x": 140,
+     "y": 608,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      150,
+      640
+     ]
+    }
+   ],
+   "named": true
+  },
+  "minerunner": {
+   "row": 20,
+   "kind": "creature",
+   "desc": "Kesh (dark-elf kid, mine-runner): slate-blue skin, messy white hair, long ears, too-big grey knitted jumper, rope belt, short brown trousers, sooty knees, a cave orb in a jar",
+   "size_bounds": [
+    [
+     10,
+     24
+    ],
+    [
+     10,
+     40
+    ]
+   ],
+   "caster": false,
+   "anims": [
+    "idle",
+    "walk"
+   ],
+   "frames": [
+    {
+     "name": "minerunner_down_idle0",
+     "facing": "down",
+     "anim": "idle",
+     "i": 0,
+     "x": 0,
+     "y": 640,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      10,
+      672
+     ]
+    },
+    {
+     "name": "minerunner_down_idle1",
+     "facing": "down",
+     "anim": "idle",
+     "i": 1,
+     "x": 20,
+     "y": 640,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      30,
+      672
+     ]
+    },
+    {
+     "name": "minerunner_down_idle2",
+     "facing": "down",
+     "anim": "idle",
+     "i": 2,
+     "x": 40,
+     "y": 640,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      50,
+      672
+     ]
+    },
+    {
+     "name": "minerunner_down_idle3",
+     "facing": "down",
+     "anim": "idle",
+     "i": 3,
+     "x": 60,
+     "y": 640,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      70,
+      672
+     ]
+    },
+    {
+     "name": "minerunner_down_walk0",
+     "facing": "down",
+     "anim": "walk",
+     "i": 0,
+     "x": 80,
+     "y": 640,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      90,
+      672
+     ]
+    },
+    {
+     "name": "minerunner_down_walk1",
+     "facing": "down",
+     "anim": "walk",
+     "i": 1,
+     "x": 100,
+     "y": 640,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      110,
+      672
+     ]
+    },
+    {
+     "name": "minerunner_down_walk2",
+     "facing": "down",
+     "anim": "walk",
+     "i": 2,
+     "x": 120,
+     "y": 640,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      130,
+      672
+     ]
+    },
+    {
+     "name": "minerunner_down_walk3",
+     "facing": "down",
+     "anim": "walk",
+     "i": 3,
+     "x": 140,
+     "y": 640,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      150,
+      672
+     ]
+    },
+    {
+     "name": "minerunner_up_idle0",
+     "facing": "up",
+     "anim": "idle",
+     "i": 0,
+     "x": 0,
+     "y": 672,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      10,
+      704
+     ]
+    },
+    {
+     "name": "minerunner_up_idle1",
+     "facing": "up",
+     "anim": "idle",
+     "i": 1,
+     "x": 20,
+     "y": 672,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      30,
+      704
+     ]
+    },
+    {
+     "name": "minerunner_up_idle2",
+     "facing": "up",
+     "anim": "idle",
+     "i": 2,
+     "x": 40,
+     "y": 672,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      50,
+      704
+     ]
+    },
+    {
+     "name": "minerunner_up_idle3",
+     "facing": "up",
+     "anim": "idle",
+     "i": 3,
+     "x": 60,
+     "y": 672,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      70,
+      704
+     ]
+    },
+    {
+     "name": "minerunner_up_walk0",
+     "facing": "up",
+     "anim": "walk",
+     "i": 0,
+     "x": 80,
+     "y": 672,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      90,
+      704
+     ]
+    },
+    {
+     "name": "minerunner_up_walk1",
+     "facing": "up",
+     "anim": "walk",
+     "i": 1,
+     "x": 100,
+     "y": 672,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      110,
+      704
+     ]
+    },
+    {
+     "name": "minerunner_up_walk2",
+     "facing": "up",
+     "anim": "walk",
+     "i": 2,
+     "x": 120,
+     "y": 672,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      130,
+      704
+     ]
+    },
+    {
+     "name": "minerunner_up_walk3",
+     "facing": "up",
+     "anim": "walk",
+     "i": 3,
+     "x": 140,
+     "y": 672,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      150,
+      704
+     ]
+    },
+    {
+     "name": "minerunner_left_idle0",
+     "facing": "left",
+     "anim": "idle",
+     "i": 0,
+     "x": 0,
+     "y": 704,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      10,
+      736
+     ]
+    },
+    {
+     "name": "minerunner_left_idle1",
+     "facing": "left",
+     "anim": "idle",
+     "i": 1,
+     "x": 20,
+     "y": 704,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      30,
+      736
+     ]
+    },
+    {
+     "name": "minerunner_left_idle2",
+     "facing": "left",
+     "anim": "idle",
+     "i": 2,
+     "x": 40,
+     "y": 704,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      50,
+      736
+     ]
+    },
+    {
+     "name": "minerunner_left_idle3",
+     "facing": "left",
+     "anim": "idle",
+     "i": 3,
+     "x": 60,
+     "y": 704,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      70,
+      736
+     ]
+    },
+    {
+     "name": "minerunner_left_walk0",
+     "facing": "left",
+     "anim": "walk",
+     "i": 0,
+     "x": 80,
+     "y": 704,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      90,
+      736
+     ]
+    },
+    {
+     "name": "minerunner_left_walk1",
+     "facing": "left",
+     "anim": "walk",
+     "i": 1,
+     "x": 100,
+     "y": 704,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      110,
+      736
+     ]
+    },
+    {
+     "name": "minerunner_left_walk2",
+     "facing": "left",
+     "anim": "walk",
+     "i": 2,
+     "x": 120,
+     "y": 704,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      130,
+      736
+     ]
+    },
+    {
+     "name": "minerunner_left_walk3",
+     "facing": "left",
+     "anim": "walk",
+     "i": 3,
+     "x": 140,
+     "y": 704,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      150,
+      736
+     ]
+    },
+    {
+     "name": "minerunner_right_idle0",
+     "facing": "right",
+     "anim": "idle",
+     "i": 0,
+     "x": 0,
+     "y": 736,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      10,
+      768
+     ]
+    },
+    {
+     "name": "minerunner_right_idle1",
+     "facing": "right",
+     "anim": "idle",
+     "i": 1,
+     "x": 20,
+     "y": 736,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      30,
+      768
+     ]
+    },
+    {
+     "name": "minerunner_right_idle2",
+     "facing": "right",
+     "anim": "idle",
+     "i": 2,
+     "x": 40,
+     "y": 736,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      50,
+      768
+     ]
+    },
+    {
+     "name": "minerunner_right_idle3",
+     "facing": "right",
+     "anim": "idle",
+     "i": 3,
+     "x": 60,
+     "y": 736,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      70,
+      768
+     ]
+    },
+    {
+     "name": "minerunner_right_walk0",
+     "facing": "right",
+     "anim": "walk",
+     "i": 0,
+     "x": 80,
+     "y": 736,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      90,
+      768
+     ]
+    },
+    {
+     "name": "minerunner_right_walk1",
+     "facing": "right",
+     "anim": "walk",
+     "i": 1,
+     "x": 100,
+     "y": 736,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      110,
+      768
+     ]
+    },
+    {
+     "name": "minerunner_right_walk2",
+     "facing": "right",
+     "anim": "walk",
+     "i": 2,
+     "x": 120,
+     "y": 736,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      130,
+      768
+     ]
+    },
+    {
+     "name": "minerunner_right_walk3",
+     "facing": "right",
+     "anim": "walk",
+     "i": 3,
+     "x": 140,
+     "y": 736,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      150,
+      768
+     ]
+    }
+   ],
+   "named": true
+  },
+  "poolkeeper_sv": {
+   "row": 24,
+   "kind": "creature",
+   "desc": "Old Haldis (dwarf grandmother): white bun and one long white beard braid, lavender cardigan (periwinkle palette) over a cream blouse, dark skirt with a cream apron tied at the waist, brown shoes, a fishing net",
+   "size_bounds": [
+    [
+     10,
+     24
+    ],
+    [
+     10,
+     40
+    ]
+   ],
+   "caster": false,
+   "anims": [
+    "idle",
+    "walk"
+   ],
+   "frames": [
+    {
+     "name": "poolkeeper_sv_down_idle0",
+     "facing": "down",
+     "anim": "idle",
+     "i": 0,
+     "x": 0,
+     "y": 768,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      10,
+      800
+     ]
+    },
+    {
+     "name": "poolkeeper_sv_down_idle1",
+     "facing": "down",
+     "anim": "idle",
+     "i": 1,
+     "x": 20,
+     "y": 768,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      30,
+      800
+     ]
+    },
+    {
+     "name": "poolkeeper_sv_down_idle2",
+     "facing": "down",
+     "anim": "idle",
+     "i": 2,
+     "x": 40,
+     "y": 768,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      50,
+      800
+     ]
+    },
+    {
+     "name": "poolkeeper_sv_down_idle3",
+     "facing": "down",
+     "anim": "idle",
+     "i": 3,
+     "x": 60,
+     "y": 768,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      70,
+      800
+     ]
+    },
+    {
+     "name": "poolkeeper_sv_down_walk0",
+     "facing": "down",
+     "anim": "walk",
+     "i": 0,
+     "x": 80,
+     "y": 768,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      90,
+      800
+     ]
+    },
+    {
+     "name": "poolkeeper_sv_down_walk1",
+     "facing": "down",
+     "anim": "walk",
+     "i": 1,
+     "x": 100,
+     "y": 768,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      110,
+      800
+     ]
+    },
+    {
+     "name": "poolkeeper_sv_down_walk2",
+     "facing": "down",
+     "anim": "walk",
+     "i": 2,
+     "x": 120,
+     "y": 768,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      130,
+      800
+     ]
+    },
+    {
+     "name": "poolkeeper_sv_down_walk3",
+     "facing": "down",
+     "anim": "walk",
+     "i": 3,
+     "x": 140,
+     "y": 768,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      150,
+      800
+     ]
+    },
+    {
+     "name": "poolkeeper_sv_up_idle0",
+     "facing": "up",
+     "anim": "idle",
+     "i": 0,
+     "x": 0,
+     "y": 800,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      10,
+      832
+     ]
+    },
+    {
+     "name": "poolkeeper_sv_up_idle1",
+     "facing": "up",
+     "anim": "idle",
+     "i": 1,
+     "x": 20,
+     "y": 800,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      30,
+      832
+     ]
+    },
+    {
+     "name": "poolkeeper_sv_up_idle2",
+     "facing": "up",
+     "anim": "idle",
+     "i": 2,
+     "x": 40,
+     "y": 800,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      50,
+      832
+     ]
+    },
+    {
+     "name": "poolkeeper_sv_up_idle3",
+     "facing": "up",
+     "anim": "idle",
+     "i": 3,
+     "x": 60,
+     "y": 800,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      70,
+      832
+     ]
+    },
+    {
+     "name": "poolkeeper_sv_up_walk0",
+     "facing": "up",
+     "anim": "walk",
+     "i": 0,
+     "x": 80,
+     "y": 800,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      90,
+      832
+     ]
+    },
+    {
+     "name": "poolkeeper_sv_up_walk1",
+     "facing": "up",
+     "anim": "walk",
+     "i": 1,
+     "x": 100,
+     "y": 800,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      110,
+      832
+     ]
+    },
+    {
+     "name": "poolkeeper_sv_up_walk2",
+     "facing": "up",
+     "anim": "walk",
+     "i": 2,
+     "x": 120,
+     "y": 800,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      130,
+      832
+     ]
+    },
+    {
+     "name": "poolkeeper_sv_up_walk3",
+     "facing": "up",
+     "anim": "walk",
+     "i": 3,
+     "x": 140,
+     "y": 800,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      150,
+      832
+     ]
+    },
+    {
+     "name": "poolkeeper_sv_left_idle0",
+     "facing": "left",
+     "anim": "idle",
+     "i": 0,
+     "x": 0,
+     "y": 832,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      10,
+      864
+     ]
+    },
+    {
+     "name": "poolkeeper_sv_left_idle1",
+     "facing": "left",
+     "anim": "idle",
+     "i": 1,
+     "x": 20,
+     "y": 832,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      30,
+      864
+     ]
+    },
+    {
+     "name": "poolkeeper_sv_left_idle2",
+     "facing": "left",
+     "anim": "idle",
+     "i": 2,
+     "x": 40,
+     "y": 832,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      50,
+      864
+     ]
+    },
+    {
+     "name": "poolkeeper_sv_left_idle3",
+     "facing": "left",
+     "anim": "idle",
+     "i": 3,
+     "x": 60,
+     "y": 832,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      70,
+      864
+     ]
+    },
+    {
+     "name": "poolkeeper_sv_left_walk0",
+     "facing": "left",
+     "anim": "walk",
+     "i": 0,
+     "x": 80,
+     "y": 832,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      90,
+      864
+     ]
+    },
+    {
+     "name": "poolkeeper_sv_left_walk1",
+     "facing": "left",
+     "anim": "walk",
+     "i": 1,
+     "x": 100,
+     "y": 832,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      110,
+      864
+     ]
+    },
+    {
+     "name": "poolkeeper_sv_left_walk2",
+     "facing": "left",
+     "anim": "walk",
+     "i": 2,
+     "x": 120,
+     "y": 832,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      130,
+      864
+     ]
+    },
+    {
+     "name": "poolkeeper_sv_left_walk3",
+     "facing": "left",
+     "anim": "walk",
+     "i": 3,
+     "x": 140,
+     "y": 832,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      150,
+      864
+     ]
+    },
+    {
+     "name": "poolkeeper_sv_right_idle0",
+     "facing": "right",
+     "anim": "idle",
+     "i": 0,
+     "x": 0,
+     "y": 864,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      10,
+      896
+     ]
+    },
+    {
+     "name": "poolkeeper_sv_right_idle1",
+     "facing": "right",
+     "anim": "idle",
+     "i": 1,
+     "x": 20,
+     "y": 864,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      30,
+      896
+     ]
+    },
+    {
+     "name": "poolkeeper_sv_right_idle2",
+     "facing": "right",
+     "anim": "idle",
+     "i": 2,
+     "x": 40,
+     "y": 864,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      50,
+      896
+     ]
+    },
+    {
+     "name": "poolkeeper_sv_right_idle3",
+     "facing": "right",
+     "anim": "idle",
+     "i": 3,
+     "x": 60,
+     "y": 864,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      70,
+      896
+     ]
+    },
+    {
+     "name": "poolkeeper_sv_right_walk0",
+     "facing": "right",
+     "anim": "walk",
+     "i": 0,
+     "x": 80,
+     "y": 864,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      90,
+      896
+     ]
+    },
+    {
+     "name": "poolkeeper_sv_right_walk1",
+     "facing": "right",
+     "anim": "walk",
+     "i": 1,
+     "x": 100,
+     "y": 864,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      110,
+      896
+     ]
+    },
+    {
+     "name": "poolkeeper_sv_right_walk2",
+     "facing": "right",
+     "anim": "walk",
+     "i": 2,
+     "x": 120,
+     "y": 864,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      130,
+      896
+     ]
+    },
+    {
+     "name": "poolkeeper_sv_right_walk3",
+     "facing": "right",
+     "anim": "walk",
+     "i": 3,
+     "x": 140,
+     "y": 864,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      150,
+      896
+     ]
+    }
+   ],
+   "named": true
+  },
+  "dw1": {
+   "row": 28,
+   "kind": "creature",
+   "desc": "Anvildeep dwarf smith (ambient): auburn beard in two braids with copper rings, blue tunic, dark leather apron, dark belt, stone trousers, black boots",
+   "size_bounds": [
+    [
+     10,
+     24
+    ],
+    [
+     10,
+     40
+    ]
+   ],
+   "caster": false,
+   "anims": [
+    "idle",
+    "walk"
+   ],
+   "frames": [
+    {
+     "name": "dw1_down_idle0",
+     "facing": "down",
+     "anim": "idle",
+     "i": 0,
+     "x": 0,
+     "y": 896,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      10,
+      928
+     ]
+    },
+    {
+     "name": "dw1_down_idle1",
+     "facing": "down",
+     "anim": "idle",
+     "i": 1,
+     "x": 20,
+     "y": 896,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      30,
+      928
+     ]
+    },
+    {
+     "name": "dw1_down_idle2",
+     "facing": "down",
+     "anim": "idle",
+     "i": 2,
+     "x": 40,
+     "y": 896,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      50,
+      928
+     ]
+    },
+    {
+     "name": "dw1_down_idle3",
+     "facing": "down",
+     "anim": "idle",
+     "i": 3,
+     "x": 60,
+     "y": 896,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      70,
+      928
+     ]
+    },
+    {
+     "name": "dw1_down_walk0",
+     "facing": "down",
+     "anim": "walk",
+     "i": 0,
+     "x": 80,
+     "y": 896,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      90,
+      928
+     ]
+    },
+    {
+     "name": "dw1_down_walk1",
+     "facing": "down",
+     "anim": "walk",
+     "i": 1,
+     "x": 100,
+     "y": 896,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      110,
+      928
+     ]
+    },
+    {
+     "name": "dw1_down_walk2",
+     "facing": "down",
+     "anim": "walk",
+     "i": 2,
+     "x": 120,
+     "y": 896,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      130,
+      928
+     ]
+    },
+    {
+     "name": "dw1_down_walk3",
+     "facing": "down",
+     "anim": "walk",
+     "i": 3,
+     "x": 140,
+     "y": 896,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      150,
+      928
+     ]
+    },
+    {
+     "name": "dw1_up_idle0",
+     "facing": "up",
+     "anim": "idle",
+     "i": 0,
+     "x": 0,
+     "y": 928,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      10,
+      960
+     ]
+    },
+    {
+     "name": "dw1_up_idle1",
+     "facing": "up",
+     "anim": "idle",
+     "i": 1,
+     "x": 20,
+     "y": 928,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      30,
+      960
+     ]
+    },
+    {
+     "name": "dw1_up_idle2",
+     "facing": "up",
+     "anim": "idle",
+     "i": 2,
+     "x": 40,
+     "y": 928,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      50,
+      960
+     ]
+    },
+    {
+     "name": "dw1_up_idle3",
+     "facing": "up",
+     "anim": "idle",
+     "i": 3,
+     "x": 60,
+     "y": 928,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      70,
+      960
+     ]
+    },
+    {
+     "name": "dw1_up_walk0",
+     "facing": "up",
+     "anim": "walk",
+     "i": 0,
+     "x": 80,
+     "y": 928,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      90,
+      960
+     ]
+    },
+    {
+     "name": "dw1_up_walk1",
+     "facing": "up",
+     "anim": "walk",
+     "i": 1,
+     "x": 100,
+     "y": 928,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      110,
+      960
+     ]
+    },
+    {
+     "name": "dw1_up_walk2",
+     "facing": "up",
+     "anim": "walk",
+     "i": 2,
+     "x": 120,
+     "y": 928,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      130,
+      960
+     ]
+    },
+    {
+     "name": "dw1_up_walk3",
+     "facing": "up",
+     "anim": "walk",
+     "i": 3,
+     "x": 140,
+     "y": 928,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      150,
+      960
+     ]
+    },
+    {
+     "name": "dw1_left_idle0",
+     "facing": "left",
+     "anim": "idle",
+     "i": 0,
+     "x": 0,
+     "y": 960,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      10,
+      992
+     ]
+    },
+    {
+     "name": "dw1_left_idle1",
+     "facing": "left",
+     "anim": "idle",
+     "i": 1,
+     "x": 20,
+     "y": 960,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      30,
+      992
+     ]
+    },
+    {
+     "name": "dw1_left_idle2",
+     "facing": "left",
+     "anim": "idle",
+     "i": 2,
+     "x": 40,
+     "y": 960,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      50,
+      992
+     ]
+    },
+    {
+     "name": "dw1_left_idle3",
+     "facing": "left",
+     "anim": "idle",
+     "i": 3,
+     "x": 60,
+     "y": 960,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      70,
+      992
+     ]
+    },
+    {
+     "name": "dw1_left_walk0",
+     "facing": "left",
+     "anim": "walk",
+     "i": 0,
+     "x": 80,
+     "y": 960,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      90,
+      992
+     ]
+    },
+    {
+     "name": "dw1_left_walk1",
+     "facing": "left",
+     "anim": "walk",
+     "i": 1,
+     "x": 100,
+     "y": 960,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      110,
+      992
+     ]
+    },
+    {
+     "name": "dw1_left_walk2",
+     "facing": "left",
+     "anim": "walk",
+     "i": 2,
+     "x": 120,
+     "y": 960,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      130,
+      992
+     ]
+    },
+    {
+     "name": "dw1_left_walk3",
+     "facing": "left",
+     "anim": "walk",
+     "i": 3,
+     "x": 140,
+     "y": 960,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      150,
+      992
+     ]
+    },
+    {
+     "name": "dw1_right_idle0",
+     "facing": "right",
+     "anim": "idle",
+     "i": 0,
+     "x": 0,
+     "y": 992,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      10,
+      1024
+     ]
+    },
+    {
+     "name": "dw1_right_idle1",
+     "facing": "right",
+     "anim": "idle",
+     "i": 1,
+     "x": 20,
+     "y": 992,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      30,
+      1024
+     ]
+    },
+    {
+     "name": "dw1_right_idle2",
+     "facing": "right",
+     "anim": "idle",
+     "i": 2,
+     "x": 40,
+     "y": 992,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      50,
+      1024
+     ]
+    },
+    {
+     "name": "dw1_right_idle3",
+     "facing": "right",
+     "anim": "idle",
+     "i": 3,
+     "x": 60,
+     "y": 992,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      70,
+      1024
+     ]
+    },
+    {
+     "name": "dw1_right_walk0",
+     "facing": "right",
+     "anim": "walk",
+     "i": 0,
+     "x": 80,
+     "y": 992,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      90,
+      1024
+     ]
+    },
+    {
+     "name": "dw1_right_walk1",
+     "facing": "right",
+     "anim": "walk",
+     "i": 1,
+     "x": 100,
+     "y": 992,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      110,
+      1024
+     ]
+    },
+    {
+     "name": "dw1_right_walk2",
+     "facing": "right",
+     "anim": "walk",
+     "i": 2,
+     "x": 120,
+     "y": 992,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      130,
+      1024
+     ]
+    },
+    {
+     "name": "dw1_right_walk3",
+     "facing": "right",
+     "anim": "walk",
+     "i": 3,
+     "x": 140,
+     "y": 992,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      150,
+      1024
+     ]
+    }
+   ]
+  },
+  "dw2": {
+   "row": 32,
+   "kind": "creature",
+   "desc": "Anvildeep dwarf woman (ambient): golden bun and braided golden beard with copper rings, cream shirt under a moss vest, dark belt, brown trousers, red-brown boots",
+   "size_bounds": [
+    [
+     10,
+     24
+    ],
+    [
+     10,
+     40
+    ]
+   ],
+   "caster": false,
+   "anims": [
+    "idle",
+    "walk"
+   ],
+   "frames": [
+    {
+     "name": "dw2_down_idle0",
+     "facing": "down",
+     "anim": "idle",
+     "i": 0,
+     "x": 0,
+     "y": 1024,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      10,
+      1056
+     ]
+    },
+    {
+     "name": "dw2_down_idle1",
+     "facing": "down",
+     "anim": "idle",
+     "i": 1,
+     "x": 20,
+     "y": 1024,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      30,
+      1056
+     ]
+    },
+    {
+     "name": "dw2_down_idle2",
+     "facing": "down",
+     "anim": "idle",
+     "i": 2,
+     "x": 40,
+     "y": 1024,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      50,
+      1056
+     ]
+    },
+    {
+     "name": "dw2_down_idle3",
+     "facing": "down",
+     "anim": "idle",
+     "i": 3,
+     "x": 60,
+     "y": 1024,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      70,
+      1056
+     ]
+    },
+    {
+     "name": "dw2_down_walk0",
+     "facing": "down",
+     "anim": "walk",
+     "i": 0,
+     "x": 80,
+     "y": 1024,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      90,
+      1056
+     ]
+    },
+    {
+     "name": "dw2_down_walk1",
+     "facing": "down",
+     "anim": "walk",
+     "i": 1,
+     "x": 100,
+     "y": 1024,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      110,
+      1056
+     ]
+    },
+    {
+     "name": "dw2_down_walk2",
+     "facing": "down",
+     "anim": "walk",
+     "i": 2,
+     "x": 120,
+     "y": 1024,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      130,
+      1056
+     ]
+    },
+    {
+     "name": "dw2_down_walk3",
+     "facing": "down",
+     "anim": "walk",
+     "i": 3,
+     "x": 140,
+     "y": 1024,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      150,
+      1056
+     ]
+    },
+    {
+     "name": "dw2_up_idle0",
+     "facing": "up",
+     "anim": "idle",
+     "i": 0,
+     "x": 0,
+     "y": 1056,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      10,
+      1088
+     ]
+    },
+    {
+     "name": "dw2_up_idle1",
+     "facing": "up",
+     "anim": "idle",
+     "i": 1,
+     "x": 20,
+     "y": 1056,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      30,
+      1088
+     ]
+    },
+    {
+     "name": "dw2_up_idle2",
+     "facing": "up",
+     "anim": "idle",
+     "i": 2,
+     "x": 40,
+     "y": 1056,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      50,
+      1088
+     ]
+    },
+    {
+     "name": "dw2_up_idle3",
+     "facing": "up",
+     "anim": "idle",
+     "i": 3,
+     "x": 60,
+     "y": 1056,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      70,
+      1088
+     ]
+    },
+    {
+     "name": "dw2_up_walk0",
+     "facing": "up",
+     "anim": "walk",
+     "i": 0,
+     "x": 80,
+     "y": 1056,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      90,
+      1088
+     ]
+    },
+    {
+     "name": "dw2_up_walk1",
+     "facing": "up",
+     "anim": "walk",
+     "i": 1,
+     "x": 100,
+     "y": 1056,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      110,
+      1088
+     ]
+    },
+    {
+     "name": "dw2_up_walk2",
+     "facing": "up",
+     "anim": "walk",
+     "i": 2,
+     "x": 120,
+     "y": 1056,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      130,
+      1088
+     ]
+    },
+    {
+     "name": "dw2_up_walk3",
+     "facing": "up",
+     "anim": "walk",
+     "i": 3,
+     "x": 140,
+     "y": 1056,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      150,
+      1088
+     ]
+    },
+    {
+     "name": "dw2_left_idle0",
+     "facing": "left",
+     "anim": "idle",
+     "i": 0,
+     "x": 0,
+     "y": 1088,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      10,
+      1120
+     ]
+    },
+    {
+     "name": "dw2_left_idle1",
+     "facing": "left",
+     "anim": "idle",
+     "i": 1,
+     "x": 20,
+     "y": 1088,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      30,
+      1120
+     ]
+    },
+    {
+     "name": "dw2_left_idle2",
+     "facing": "left",
+     "anim": "idle",
+     "i": 2,
+     "x": 40,
+     "y": 1088,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      50,
+      1120
+     ]
+    },
+    {
+     "name": "dw2_left_idle3",
+     "facing": "left",
+     "anim": "idle",
+     "i": 3,
+     "x": 60,
+     "y": 1088,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      70,
+      1120
+     ]
+    },
+    {
+     "name": "dw2_left_walk0",
+     "facing": "left",
+     "anim": "walk",
+     "i": 0,
+     "x": 80,
+     "y": 1088,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      90,
+      1120
+     ]
+    },
+    {
+     "name": "dw2_left_walk1",
+     "facing": "left",
+     "anim": "walk",
+     "i": 1,
+     "x": 100,
+     "y": 1088,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      110,
+      1120
+     ]
+    },
+    {
+     "name": "dw2_left_walk2",
+     "facing": "left",
+     "anim": "walk",
+     "i": 2,
+     "x": 120,
+     "y": 1088,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      130,
+      1120
+     ]
+    },
+    {
+     "name": "dw2_left_walk3",
+     "facing": "left",
+     "anim": "walk",
+     "i": 3,
+     "x": 140,
+     "y": 1088,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      150,
+      1120
+     ]
+    },
+    {
+     "name": "dw2_right_idle0",
+     "facing": "right",
+     "anim": "idle",
+     "i": 0,
+     "x": 0,
+     "y": 1120,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      10,
+      1152
+     ]
+    },
+    {
+     "name": "dw2_right_idle1",
+     "facing": "right",
+     "anim": "idle",
+     "i": 1,
+     "x": 20,
+     "y": 1120,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      30,
+      1152
+     ]
+    },
+    {
+     "name": "dw2_right_idle2",
+     "facing": "right",
+     "anim": "idle",
+     "i": 2,
+     "x": 40,
+     "y": 1120,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      50,
+      1152
+     ]
+    },
+    {
+     "name": "dw2_right_idle3",
+     "facing": "right",
+     "anim": "idle",
+     "i": 3,
+     "x": 60,
+     "y": 1120,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      70,
+      1152
+     ]
+    },
+    {
+     "name": "dw2_right_walk0",
+     "facing": "right",
+     "anim": "walk",
+     "i": 0,
+     "x": 80,
+     "y": 1120,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      90,
+      1152
+     ]
+    },
+    {
+     "name": "dw2_right_walk1",
+     "facing": "right",
+     "anim": "walk",
+     "i": 1,
+     "x": 100,
+     "y": 1120,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      110,
+      1152
+     ]
+    },
+    {
+     "name": "dw2_right_walk2",
+     "facing": "right",
+     "anim": "walk",
+     "i": 2,
+     "x": 120,
+     "y": 1120,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      130,
+      1152
+     ]
+    },
+    {
+     "name": "dw2_right_walk3",
+     "facing": "right",
+     "anim": "walk",
+     "i": 3,
+     "x": 140,
+     "y": 1120,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      150,
+      1152
+     ]
+    }
+   ]
+  },
+  "sv1": {
+   "row": 36,
+   "kind": "human",
+   "desc": "Svartalf rune-carver (ambient): ash-grey skin, long white hair, long ears, deep-blue wrap-top, cold-blue sash, slim dark trousers, brown soft boots, rune tattoo",
+   "size_bounds": [
+    [
+     14,
+     24
+    ],
+    [
+     24,
+     40
+    ]
+   ],
+   "caster": false,
+   "anims": [
+    "idle",
+    "walk"
+   ],
+   "frames": [
+    {
+     "name": "sv1_down_idle0",
+     "facing": "down",
+     "anim": "idle",
+     "i": 0,
+     "x": 0,
+     "y": 1152,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      10,
+      1184
+     ]
+    },
+    {
+     "name": "sv1_down_idle1",
+     "facing": "down",
+     "anim": "idle",
+     "i": 1,
+     "x": 20,
+     "y": 1152,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      30,
+      1184
+     ]
+    },
+    {
+     "name": "sv1_down_idle2",
+     "facing": "down",
+     "anim": "idle",
+     "i": 2,
+     "x": 40,
+     "y": 1152,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      50,
+      1184
+     ]
+    },
+    {
+     "name": "sv1_down_idle3",
+     "facing": "down",
+     "anim": "idle",
+     "i": 3,
+     "x": 60,
+     "y": 1152,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      70,
+      1184
+     ]
+    },
+    {
+     "name": "sv1_down_walk0",
+     "facing": "down",
+     "anim": "walk",
+     "i": 0,
+     "x": 80,
+     "y": 1152,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      90,
+      1184
+     ]
+    },
+    {
+     "name": "sv1_down_walk1",
+     "facing": "down",
+     "anim": "walk",
+     "i": 1,
+     "x": 100,
+     "y": 1152,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      110,
+      1184
+     ]
+    },
+    {
+     "name": "sv1_down_walk2",
+     "facing": "down",
+     "anim": "walk",
+     "i": 2,
+     "x": 120,
+     "y": 1152,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      130,
+      1184
+     ]
+    },
+    {
+     "name": "sv1_down_walk3",
+     "facing": "down",
+     "anim": "walk",
+     "i": 3,
+     "x": 140,
+     "y": 1152,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      150,
+      1184
+     ]
+    },
+    {
+     "name": "sv1_up_idle0",
+     "facing": "up",
+     "anim": "idle",
+     "i": 0,
+     "x": 0,
+     "y": 1184,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      10,
+      1216
+     ]
+    },
+    {
+     "name": "sv1_up_idle1",
+     "facing": "up",
+     "anim": "idle",
+     "i": 1,
+     "x": 20,
+     "y": 1184,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      30,
+      1216
+     ]
+    },
+    {
+     "name": "sv1_up_idle2",
+     "facing": "up",
+     "anim": "idle",
+     "i": 2,
+     "x": 40,
+     "y": 1184,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      50,
+      1216
+     ]
+    },
+    {
+     "name": "sv1_up_idle3",
+     "facing": "up",
+     "anim": "idle",
+     "i": 3,
+     "x": 60,
+     "y": 1184,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      70,
+      1216
+     ]
+    },
+    {
+     "name": "sv1_up_walk0",
+     "facing": "up",
+     "anim": "walk",
+     "i": 0,
+     "x": 80,
+     "y": 1184,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      90,
+      1216
+     ]
+    },
+    {
+     "name": "sv1_up_walk1",
+     "facing": "up",
+     "anim": "walk",
+     "i": 1,
+     "x": 100,
+     "y": 1184,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      110,
+      1216
+     ]
+    },
+    {
+     "name": "sv1_up_walk2",
+     "facing": "up",
+     "anim": "walk",
+     "i": 2,
+     "x": 120,
+     "y": 1184,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      130,
+      1216
+     ]
+    },
+    {
+     "name": "sv1_up_walk3",
+     "facing": "up",
+     "anim": "walk",
+     "i": 3,
+     "x": 140,
+     "y": 1184,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      150,
+      1216
+     ]
+    },
+    {
+     "name": "sv1_left_idle0",
+     "facing": "left",
+     "anim": "idle",
+     "i": 0,
+     "x": 0,
+     "y": 1216,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      10,
+      1248
+     ]
+    },
+    {
+     "name": "sv1_left_idle1",
+     "facing": "left",
+     "anim": "idle",
+     "i": 1,
+     "x": 20,
+     "y": 1216,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      30,
+      1248
+     ]
+    },
+    {
+     "name": "sv1_left_idle2",
+     "facing": "left",
+     "anim": "idle",
+     "i": 2,
+     "x": 40,
+     "y": 1216,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      50,
+      1248
+     ]
+    },
+    {
+     "name": "sv1_left_idle3",
+     "facing": "left",
+     "anim": "idle",
+     "i": 3,
+     "x": 60,
+     "y": 1216,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      70,
+      1248
+     ]
+    },
+    {
+     "name": "sv1_left_walk0",
+     "facing": "left",
+     "anim": "walk",
+     "i": 0,
+     "x": 80,
+     "y": 1216,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      90,
+      1248
+     ]
+    },
+    {
+     "name": "sv1_left_walk1",
+     "facing": "left",
+     "anim": "walk",
+     "i": 1,
+     "x": 100,
+     "y": 1216,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      110,
+      1248
+     ]
+    },
+    {
+     "name": "sv1_left_walk2",
+     "facing": "left",
+     "anim": "walk",
+     "i": 2,
+     "x": 120,
+     "y": 1216,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      130,
+      1248
+     ]
+    },
+    {
+     "name": "sv1_left_walk3",
+     "facing": "left",
+     "anim": "walk",
+     "i": 3,
+     "x": 140,
+     "y": 1216,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      150,
+      1248
+     ]
+    },
+    {
+     "name": "sv1_right_idle0",
+     "facing": "right",
+     "anim": "idle",
+     "i": 0,
+     "x": 0,
+     "y": 1248,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      10,
+      1280
+     ]
+    },
+    {
+     "name": "sv1_right_idle1",
+     "facing": "right",
+     "anim": "idle",
+     "i": 1,
+     "x": 20,
+     "y": 1248,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      30,
+      1280
+     ]
+    },
+    {
+     "name": "sv1_right_idle2",
+     "facing": "right",
+     "anim": "idle",
+     "i": 2,
+     "x": 40,
+     "y": 1248,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      50,
+      1280
+     ]
+    },
+    {
+     "name": "sv1_right_idle3",
+     "facing": "right",
+     "anim": "idle",
+     "i": 3,
+     "x": 60,
+     "y": 1248,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      70,
+      1280
+     ]
+    },
+    {
+     "name": "sv1_right_walk0",
+     "facing": "right",
+     "anim": "walk",
+     "i": 0,
+     "x": 80,
+     "y": 1248,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      90,
+      1280
+     ]
+    },
+    {
+     "name": "sv1_right_walk1",
+     "facing": "right",
+     "anim": "walk",
+     "i": 1,
+     "x": 100,
+     "y": 1248,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      110,
+      1280
+     ]
+    },
+    {
+     "name": "sv1_right_walk2",
+     "facing": "right",
+     "anim": "walk",
+     "i": 2,
+     "x": 120,
+     "y": 1248,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      130,
+      1280
+     ]
+    },
+    {
+     "name": "sv1_right_walk3",
+     "facing": "right",
+     "anim": "walk",
+     "i": 3,
+     "x": 140,
+     "y": 1248,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      150,
+      1280
+     ]
+    }
+   ]
+  },
+  "sv2": {
+   "row": 40,
+   "kind": "human",
+   "desc": "Svartalf miner (ambient): slate-blue skin, silver bun, long ears, wine-red wrap-top, pale sash, slim slate trousers, black shoes, white rune tattoo",
+   "size_bounds": [
+    [
+     14,
+     24
+    ],
+    [
+     24,
+     40
+    ]
+   ],
+   "caster": false,
+   "anims": [
+    "idle",
+    "walk"
+   ],
+   "frames": [
+    {
+     "name": "sv2_down_idle0",
+     "facing": "down",
+     "anim": "idle",
+     "i": 0,
+     "x": 0,
+     "y": 1280,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      10,
+      1312
+     ]
+    },
+    {
+     "name": "sv2_down_idle1",
+     "facing": "down",
+     "anim": "idle",
+     "i": 1,
+     "x": 20,
+     "y": 1280,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      30,
+      1312
+     ]
+    },
+    {
+     "name": "sv2_down_idle2",
+     "facing": "down",
+     "anim": "idle",
+     "i": 2,
+     "x": 40,
+     "y": 1280,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      50,
+      1312
+     ]
+    },
+    {
+     "name": "sv2_down_idle3",
+     "facing": "down",
+     "anim": "idle",
+     "i": 3,
+     "x": 60,
+     "y": 1280,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      70,
+      1312
+     ]
+    },
+    {
+     "name": "sv2_down_walk0",
+     "facing": "down",
+     "anim": "walk",
+     "i": 0,
+     "x": 80,
+     "y": 1280,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      90,
+      1312
+     ]
+    },
+    {
+     "name": "sv2_down_walk1",
+     "facing": "down",
+     "anim": "walk",
+     "i": 1,
+     "x": 100,
+     "y": 1280,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      110,
+      1312
+     ]
+    },
+    {
+     "name": "sv2_down_walk2",
+     "facing": "down",
+     "anim": "walk",
+     "i": 2,
+     "x": 120,
+     "y": 1280,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      130,
+      1312
+     ]
+    },
+    {
+     "name": "sv2_down_walk3",
+     "facing": "down",
+     "anim": "walk",
+     "i": 3,
+     "x": 140,
+     "y": 1280,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      150,
+      1312
+     ]
+    },
+    {
+     "name": "sv2_up_idle0",
+     "facing": "up",
+     "anim": "idle",
+     "i": 0,
+     "x": 0,
+     "y": 1312,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      10,
+      1344
+     ]
+    },
+    {
+     "name": "sv2_up_idle1",
+     "facing": "up",
+     "anim": "idle",
+     "i": 1,
+     "x": 20,
+     "y": 1312,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      30,
+      1344
+     ]
+    },
+    {
+     "name": "sv2_up_idle2",
+     "facing": "up",
+     "anim": "idle",
+     "i": 2,
+     "x": 40,
+     "y": 1312,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      50,
+      1344
+     ]
+    },
+    {
+     "name": "sv2_up_idle3",
+     "facing": "up",
+     "anim": "idle",
+     "i": 3,
+     "x": 60,
+     "y": 1312,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      70,
+      1344
+     ]
+    },
+    {
+     "name": "sv2_up_walk0",
+     "facing": "up",
+     "anim": "walk",
+     "i": 0,
+     "x": 80,
+     "y": 1312,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      90,
+      1344
+     ]
+    },
+    {
+     "name": "sv2_up_walk1",
+     "facing": "up",
+     "anim": "walk",
+     "i": 1,
+     "x": 100,
+     "y": 1312,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      110,
+      1344
+     ]
+    },
+    {
+     "name": "sv2_up_walk2",
+     "facing": "up",
+     "anim": "walk",
+     "i": 2,
+     "x": 120,
+     "y": 1312,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      130,
+      1344
+     ]
+    },
+    {
+     "name": "sv2_up_walk3",
+     "facing": "up",
+     "anim": "walk",
+     "i": 3,
+     "x": 140,
+     "y": 1312,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      150,
+      1344
+     ]
+    },
+    {
+     "name": "sv2_left_idle0",
+     "facing": "left",
+     "anim": "idle",
+     "i": 0,
+     "x": 0,
+     "y": 1344,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      10,
+      1376
+     ]
+    },
+    {
+     "name": "sv2_left_idle1",
+     "facing": "left",
+     "anim": "idle",
+     "i": 1,
+     "x": 20,
+     "y": 1344,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      30,
+      1376
+     ]
+    },
+    {
+     "name": "sv2_left_idle2",
+     "facing": "left",
+     "anim": "idle",
+     "i": 2,
+     "x": 40,
+     "y": 1344,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      50,
+      1376
+     ]
+    },
+    {
+     "name": "sv2_left_idle3",
+     "facing": "left",
+     "anim": "idle",
+     "i": 3,
+     "x": 60,
+     "y": 1344,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      70,
+      1376
+     ]
+    },
+    {
+     "name": "sv2_left_walk0",
+     "facing": "left",
+     "anim": "walk",
+     "i": 0,
+     "x": 80,
+     "y": 1344,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      90,
+      1376
+     ]
+    },
+    {
+     "name": "sv2_left_walk1",
+     "facing": "left",
+     "anim": "walk",
+     "i": 1,
+     "x": 100,
+     "y": 1344,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      110,
+      1376
+     ]
+    },
+    {
+     "name": "sv2_left_walk2",
+     "facing": "left",
+     "anim": "walk",
+     "i": 2,
+     "x": 120,
+     "y": 1344,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      130,
+      1376
+     ]
+    },
+    {
+     "name": "sv2_left_walk3",
+     "facing": "left",
+     "anim": "walk",
+     "i": 3,
+     "x": 140,
+     "y": 1344,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      150,
+      1376
+     ]
+    },
+    {
+     "name": "sv2_right_idle0",
+     "facing": "right",
+     "anim": "idle",
+     "i": 0,
+     "x": 0,
+     "y": 1376,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      10,
+      1408
+     ]
+    },
+    {
+     "name": "sv2_right_idle1",
+     "facing": "right",
+     "anim": "idle",
+     "i": 1,
+     "x": 20,
+     "y": 1376,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      30,
+      1408
+     ]
+    },
+    {
+     "name": "sv2_right_idle2",
+     "facing": "right",
+     "anim": "idle",
+     "i": 2,
+     "x": 40,
+     "y": 1376,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      50,
+      1408
+     ]
+    },
+    {
+     "name": "sv2_right_idle3",
+     "facing": "right",
+     "anim": "idle",
+     "i": 3,
+     "x": 60,
+     "y": 1376,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      70,
+      1408
+     ]
+    },
+    {
+     "name": "sv2_right_walk0",
+     "facing": "right",
+     "anim": "walk",
+     "i": 0,
+     "x": 80,
+     "y": 1376,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      90,
+      1408
+     ]
+    },
+    {
+     "name": "sv2_right_walk1",
+     "facing": "right",
+     "anim": "walk",
+     "i": 1,
+     "x": 100,
+     "y": 1376,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      110,
+      1408
+     ]
+    },
+    {
+     "name": "sv2_right_walk2",
+     "facing": "right",
+     "anim": "walk",
+     "i": 2,
+     "x": 120,
+     "y": 1376,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      130,
+      1408
+     ]
+    },
+    {
+     "name": "sv2_right_walk3",
+     "facing": "right",
+     "anim": "walk",
+     "i": 3,
+     "x": 140,
+     "y": 1376,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      150,
+      1408
+     ]
+    }
+   ]
+  }
+ }
+}
