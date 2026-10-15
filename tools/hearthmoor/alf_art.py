@@ -92,7 +92,7 @@ PLACE = {
     "wispwood": [("wisp_lantern_post", [6.0, -2.0]), ("wisp_jar", [0.0, 3.0]), ("lumen_tree_small", [-5.0, 3.0])],
     "prismvault": [("sylvaine_throne", [0.0, -52.0]), ("vault_wall", [-5.3, 31.4], "fixed"), ("crystal_spire", [5.3, 31.4], "fixed"),   # clear of the entry view (check-scene lineup)
                   
-                   ("vault_floor", [0.0, 34.5])],
+                   ("vault_floor", [0.0, 38.6])],
 }
 WALK = {"vault_floor"}   # flat decals: walkable, no blocker
 

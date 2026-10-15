@@ -240,7 +240,7 @@
   {
    "name": "cross0e",
    "rect": [
-    1.2,
+    2.4,
     33,
     6,
     34
@@ -619,8 +619,8 @@
   {
    "piece": "rift_brazier_violet",
    "pos": [
-    2.4,
-    36.4
+    4.6,
+    40.4
    ]
   },
   {
@@ -640,8 +640,8 @@
   {
    "piece": "prism_crystal",
    "pos": [
-    -3.0,
-    35.2
+    -4.6,
+    37.2
    ],
    "rot": 30
   },
@@ -1104,6 +1104,48 @@
     6.8,
     -47.0
    ]
+  },
+  {
+   "piece": "stone_lantern",
+   "pos": [
+    -2.6,
+    32.6
+   ]
+  },
+  {
+   "piece": "stone_lantern",
+   "pos": [
+    2.6,
+    32.6
+   ]
+  },
+  {
+   "piece": "stone_lantern",
+   "pos": [
+    -2.6,
+    37.6
+   ]
+  },
+  {
+   "piece": "stone_lantern",
+   "pos": [
+    2.6,
+    37.6
+   ]
+  },
+  {
+   "piece": "stone_lantern",
+   "pos": [
+    -2.2,
+    30.8
+   ]
+  },
+  {
+   "piece": "stone_lantern",
+   "pos": [
+    2.2,
+    30.8
+   ]
   }
  ],
  "hedges": [],
@@ -1223,7 +1265,7 @@
   "role": "traveler",
   "pos": [
    0.0,
-   39.6
+   35.0
   ],
   "facing": "up"
  },
@@ -1249,40 +1291,45 @@
  ],
  "grades": {
   "day": {
-   "fog_color": "#100a24",
-   "sky_top": "#06041a",
-   "sky_bottom": "#1a1034",
-   "hemi_sky": "#4a3a7c",
+   "fog_color": "#1c1638",
+   "sky_top": "#0c0826",
+   "sky_bottom": "#2a1e4c",
+   "hemi_sky": "#7a6ab0",
    "saturation": 1.05,
-   "bugs": 1.0,
-   "exposure": 0.86,
-   "sun_intensity": 0.28,
-   "hemi_intensity": 0.42,
-   "sun_color": "#9a8ae8"
+   "bugs": 0.6,
+   "exposure": 1.08,
+   "sun_intensity": 0.7,
+   "hemi_intensity": 0.78,
+   "sun_color": "#c8bcf0",
+   "warmth": 0.04,
+   "lamp_intensity": 0.6
   },
   "dusk": {
-   "fog_color": "#100a24",
-   "sky_top": "#06041a",
-   "sky_bottom": "#1a1034",
-   "hemi_sky": "#4a3a7c",
+   "fog_color": "#0e0c30",
+   "sky_top": "#04041a",
+   "sky_bottom": "#141844",
+   "hemi_sky": "#3c4a9c",
    "saturation": 1.05,
-   "bugs": 1.0,
-   "exposure": 0.86,
-   "sun_intensity": 0.28,
-   "hemi_intensity": 0.42,
-   "sun_color": "#9a8ae8"
+   "bugs": 0.9,
+   "exposure": 0.92,
+   "sun_intensity": 0.36,
+   "hemi_intensity": 0.5,
+   "sun_color": "#7a8ae8",
+   "warmth": -0.12,
+   "lamp_intensity": 0.9
   },
   "night": {
-   "fog_color": "#100a24",
-   "sky_top": "#06041a",
-   "sky_bottom": "#1a1034",
-   "hemi_sky": "#4a3a7c",
+   "fog_color": "#08061a",
+   "sky_top": "#020210",
+   "sky_bottom": "#0c0a22",
+   "hemi_sky": "#2a2458",
    "saturation": 1.05,
    "bugs": 1.0,
-   "exposure": 0.86,
-   "sun_intensity": 0.28,
-   "hemi_intensity": 0.42,
-   "sun_color": "#9a8ae8"
+   "exposure": 0.82,
+   "sun_intensity": 0.12,
+   "hemi_intensity": 0.26,
+   "sun_color": "#6a5ad0",
+   "lamp_intensity": 1.25
   }
  },
  "game": {
@@ -1306,12 +1353,12 @@
   "spawns": {
    "start": [
     0.0,
-    39.4,
+    36.2,
     "up"
    ],
    "qa": [
     0.0,
-    38.0,
+    34.6,
     "up"
    ],
    "p1": [
@@ -1364,8 +1411,8 @@
    {
     "id": "pv_brazier0",
     "pos": [
-     2.4,
-     36.4
+     4.6,
+     40.4
     ]
    },
    {
