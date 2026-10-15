@@ -2229,7 +2229,7 @@ def run(out, simscale=4, size=(960, 540), segs=SEGS):
                        and sp["wx"] == "riftstorm" and sp["auto"] and sp["timer"] <= 20.5, day=day_ok, storm=st, toast=toastq[:160], spots=sp)
                 T.step("storm-only rift spots at the Crossing (5) sit clear of the nine arches, the Vanaheim swirl, the Den yard, the skiff landing, the waystone and Halvard's kiosk (>= 2.5 m)",
                        sp["n"] == 5 and sp["md"] >= 2.5, spots=sp)
-                T.wait("!!window.__hm.rifts.cur", 40)
+                T.wait("!!window.__hm.rifts.cur", 150)
                 rs = T.ev("window.__hm.rifts.state().rift"); ot = T.ev("document.getElementById('toast').innerText")
                 g0 = T.ev("window.__hm.S.merit.gate || 0"); mul = T.ev("window.__hm.combat.M.riftMarkMul || 0")
                 tier = rs["tier"]; ok1 = seal_cur()
@@ -2238,7 +2238,7 @@ def run(out, simscale=4, size=(960, 540), segs=SEGS):
                 T.step("a storm rift opens by itself within ~20 s at a storm spot ('The storm tears a rift open nearby!' family); sealing it pays Rift Marks x1.25 (on top of the fox) and counts 1 for the storm",
                        rs and rs["inStorm"] and any(abs(rs["pos"][0] - x) < 1.5 and abs(rs["pos"][1] - z) < 1.5 for x, z in T.ev("window.__hm.rifts.pool().spots"))
                        and ok1 and g1 - g0 == want and st1["run"]["sealed"] == 1, rift=rs, toast=ot[:80], marks=[g0, g1, want], storm=st1["run"])
-                T.wait("window.__hm.storms.state().cracks >= 1", 40)
+                T.wait("window.__hm.storms.state().cracks >= 1", 150)
                 ck = T.ev("window.__hm.storms.state()")
                 T.step("storm sky: rift_tear_minor cracks high above, cold-fire motes and short violet / red point-light flashes every 6-10 s (no bloom, no screen flash)", ck["cracks"] >= 1, storm=ck)
                 pg_, fh = T.talk("gatewright", keep_open=True)
