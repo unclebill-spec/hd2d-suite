@@ -8,6 +8,7 @@ import { REALM, MERIT } from './factions.js';
 import { XP } from './progress.js';
 import { SHOPS } from './shop.js';
 import { WAYS } from './ravenhold.js';
+import { SvStory } from './svartalfheim_story.js';
 import { DeepRooms, ROOM_SPAWNS } from './svartalfheim_deep.js';
 import { GorrakFight, PILLAR, ANVILS, VALVES } from './svartalfheim_bosses.js';
 
@@ -79,7 +80,7 @@ const hasSeal = (S) => !!(S.inv || {}).forge_seal;
 const SV_AREAS = Object.keys(AREAS_SV);
 const SV_LIGHT = { pool_red: ['#ff5a4a', 7, 5.0], pool_blue: ['#2ab4ff', 5, 3.6], pool_violet: ['#a45cf0', 5, 4.0], water_glow: ['#3ac8b0', 4, 3.2] };
 export class Svartalfheim {
-  constructor(G) { this.G = G; this.ctx = null; this.area = null; this.fx = []; this.lights = []; this.spots = []; this.qaDone = false; this.fight = new GorrakFight(this); this.deep = new DeepRooms(this); this.started = false; this.wrap(); }
+  constructor(G) { this.G = G; this.ctx = null; this.area = null; this.fx = []; this.lights = []; this.spots = []; this.qaDone = false; this.fight = new GorrakFight(this); this.deep = new DeepRooms(this); this.story = new SvStory(this); this.started = false; this.wrap(); }
   // E / A and tap try the realm's interactables first (same hook as Alfheim's, chained)
   wrap() {
     const G = this.G, me = this;
@@ -109,18 +110,23 @@ export class Svartalfheim {
   }
   look(id, name, pages) { this.G.openDialogue({ id, name }, { pages }); }
   qa() {   // read-only snapshot for the smoke test
-    const c = this.ctx, gm = c ? (c.scene.game || {}) : {};
+    const c = this.ctx, gm = c ? (c.scene.game || {}) : {}, S0 = this.G.S;
     return { area: this.area, seal: hasSeal(this.G.S), exits: (gm.exits || []).map((e) => e.to),
              foes: c ? c.actors.list.filter((a) => ['sootling', 'forgeconstruct', 'golem', 'sparkgolem', 'shadowsmith'].includes(a.role)).map((a) => a.role) : [],
              deep: { vents: this.deep.v.reduce((n, v) => n + (v.n || 0), 0), hits: this.deep.hits, gusts: this.deep.gust.n, pushed: this.deep.gust.pushed || 0 },
              spots: this.spots.filter((x) => x.show()).length,
+             quests: S0.quests || {}, alliance: ((S0.flags || {}).alliance || {}).svartalfheim || null, alfheim_alliance: ((S0.flags || {}).alliance || {}).alfheim || null, rivals: (S0.flags || {}).rivals || null, inv: S0.inv || {},
              gorrak: this.fight.e ? { hp: Math.round(this.fight.e.hp), max: this.fight.e.D.hp, scale: this.fight.e.D.scale, phase: this.fight.e.ph, state: this.fight.e.state, role: this.fight.e.a.role } : null };
   }
+  // QA helpers for the smoke test: run an NPC's TALK entry (its `then`), or pick a Thane option by label
+  qaTalk(id) { const e = TALK[id](this.G.S); if (e && e.then) e.then(this.G); return { pages: e ? e.pages.length : 0, choice: e && e.choice ? e.choice.options.map((o) => o.label) : null }; }
+  qaPick(label, id = 'thane') { const e = TALK[id](this.G.S), o = e.choice.options.find((x) => x.label === label), nx = o.pick(this.G); if (nx && nx.then) nx.then(this.G); return nx ? nx.pages.length : 0; }
   qaPreset() {   // ?svq=seal gives the Forge-Seal (QA / smoke; the quests that hand it out come later)
     const q = (this.G.qs || new URLSearchParams(location.search)).get('svq'), S = this.G.S; if (!q || this.qaDone === q) return;
     this.qaDone = q;
     if (q === 'seal' || q === 'gorrak') { S.inv = S.inv || {}; S.inv.forge_seal = 1; }
     if (q === 'gorrak') { S.inv.lesser_heart = 1; this.skipIntro = true; }
+    this.story.qaPreset(q);
   }
   attach(ctx, area) {
     this.detach(); this.ctx = ctx; this.area = area;
@@ -133,7 +139,7 @@ export class Svartalfheim {
       this.spot({ pos: [4.1, -10.0], r: 2.0, label: 'the Deep\'s lift is sealed (E / A to look)', show: () => !hasSeal(S),
         act: () => this.look('deep_lift', 'The Deep\'s lift', ['A lift cage. A seal of copper and rune-light holds it shut.']) });
     }
-    this.started = false; this.fight.reset(); this.deep.reset();
+    this.started = false; this.fight.reset(); this.deep.reset(); this.story.attach(area);
     if (area === 'clockdeep2') {   // Gorrak's arena (C8): the quench valves (phase 2) and the rune-anvils (phase 3)
       VALVES.forEach((v, i) => this.spot({ pos: v, r: 1.7, label: 'open the quench valve (E / A)', show: () => !!this.fight.e && this.fight.e.ph === 2 && this.fight.e.state !== 'dead', act: () => this.fight.valve(i) }));
       ANVILS.forEach((v, i) => this.spot({ pos: v, r: 1.7, label: 'strike the rune-anvil (E / A)', show: () => !!this.fight.e && this.fight.e.ph === 3 && !this.fight.struck[i] && this.fight.e.state !== 'dead', act: () => this.fight.anvil(i) }));
@@ -164,11 +170,11 @@ export class Svartalfheim {
     // story 6.7: conquer = he gutters out; else rebound with the Lesser Heart (the Dagna / bargain variant waits on the companions)
     const pages = conquer ? ['(Gorrak falls to one knee. His plates split. The fire inside him has nothing left to hold it.)', 'Gorrak: "No little heart. No chains. Only a sword. ...So this is how a fire ends. Quietly."', '(The armour goes dark and cold. Above it, something glows under a shell of rime in the flue.)']
       : ['(Gorrak sags against the chains. The Lesser Heart fits his chest-plate with a clank.)', 'Gorrak: "A hired hand. Not even a dwarf. They could not be bothered to come themselves."', '(The runes flare cold blue.)'];
-    G.openDialogue({ id: 'gorrak', name: 'Gorrak Ironmaw' }, { pages, then: (G2) => { const ff = flags(G2.S); if (conquer) ff.cd_taken = 1; else { ff.cd_bound = 1; if ((G2.S.inv || {}).lesser_heart) G2.take('lesser_heart', 1); } } });
+    G.openDialogue({ id: 'gorrak', name: 'Gorrak Ironmaw' }, { pages, then: (G2) => { const ff = flags(G2.S); if (conquer) ff.cd_taken = 1; else { ff.cd_bound = 1; if ((G2.S.inv || {}).lesser_heart) G2.take('lesser_heart', 1); if (((G2.S.quests || {}).sv_hire || 0) === 1) G2.setQuest('sv_hire', 2); } } });
   }
   update(dt) {
     const c = this.ctx;
-    if (c && dt) this.deep.update(dt, this.area);
+    if (c && dt) { this.deep.update(dt, this.area); this.story.update(dt, this.area); }
     if (c && this.area === 'clockdeep2' && !this.started && !flags(this.G.S).cd_boss && !this.G.dlg) {
       const p = c.player; if (Math.hypot(p.x - PILLAR[0], p.z - PILLAR[1]) < 9) this.gorrakIntro();
     }

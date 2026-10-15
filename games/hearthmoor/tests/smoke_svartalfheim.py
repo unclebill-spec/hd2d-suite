@@ -103,6 +103,50 @@ def steps(b, url, T, size, errors, rep, stub=None, shots=None):
         pg.wait_for_timeout(7000); a = sv()
         T.step("C7 bellows gusts: one blows every 6 s and pushes you back off the bridge line", a["deep"]["gusts"] >= 1 and a["deep"]["pushed"] >= 1, deep=a["deep"])
         shot("sv_c7")
+        # ---- the Thane's alliance choice + quests (lead's decisions: locks mirror, hired path for a locked player)
+        def tq(js):
+            return T.ev("window.__hm.svart." + js)
+        load("forge_hall")
+        o = tq("qaTalk('thane')")["choice"]
+        T.step("Thane's first audience: befriend / conquer / pass; no 'hire me' for a free player",
+               "I'll help. Let me find your Heart." in o and "Then hire me." not in o and len(o) == 3, options=o)
+        load("forge_hall", "&svq=hire")
+        o = tq("qaTalk('thane')")["choice"]
+        T.step("locked (befriended Alfheim): befriend greyed '(Locked. You stand with Alfheim.)', 'Then hire me.' offered",
+               "(Locked. You stand with Alfheim.)" in o and "Then hire me." in o, options=o)
+        tq("qaPick('Then hire me.')"); a = sv()
+        T.step("contract: Hired Hammer + Clockwork Deep start, Forge-Seal + Lesser Heart given",
+               a["quests"].get("sv_hire") == 1 and a["quests"].get("clockdeep") == 1 and a["inv"].get("forge_seal") and a["inv"].get("lesser_heart"), qa=a["quests"])
+        tq("qaTalk('kesh')"); a = sv()
+        T.step("Kesh guides the contract (speaking-tube badge)", bool(a["inv"].get("speaktube")), inv=a["inv"])
+        load("forge_hall", "&svq=befriend&anvil=auto")
+        for _ in range(3):
+            tq("story.strike()")
+        tq("qaTalk('dagna')"); a = sv()
+        T.step("befriend: 3 true strikes, Dagna's verdict moves Trial of the Anvil to 2", a["alliance"] == "befriend" and a["quests"].get("sv_trial") == 2, q=a["quests"])
+        tq("qaTalk('thane')"); a = sv()
+        T.step("the Thane closes the Trial and starts Giant Footprints", a["quests"].get("sv_trial") == 3 and a["quests"].get("sv_name") == 1, q=a["quests"])
+        load("forge_hall", "&svq=kindle")
+        for k in ("fc_1", "fc_2", "fc_3"):
+            tq(f"story.core('{k}')")
+        tq("qaTalk('dagna')"); a = sv()
+        T.step("The Banked Fire: 3 forge-cores, Dagna forges the Lesser Heart", a["quests"].get("sv_kindle") == 2 and a["inv"].get("lesser_heart"), q=a["quests"])
+        tq("qaTalk('thane')"); a = sv()
+        T.step("the Thane hands over the Forge-Seal and starts The Clockwork Deep", a["quests"].get("sv_kindle") == 3 and a["inv"].get("forge_seal") and a["quests"].get("clockdeep") == 1, q=a["quests"])
+        load("forge_hall"); tq("qaPick('Anvildeep will answer for the Temple tongs.')"); a = sv()
+        T.step("conquer: The Forge Claim starts, alliance conquer", a["alliance"] == "conquer" and a["quests"].get("sv_take") == 1, q=a["quests"])
+        # ---- the mirrored hired path in the Alfheim code: a player who befriended Svartalfheim first
+        load("lumen_court", "&alfq=hire")
+        o = tq("qaTalk('regent')")["choice"]
+        T.step("Aerin (Svartalfheim befriended): befriend greyed '(Locked. You stand with Anvildeep.)', 'Then hire me.' offered",
+               "(Locked. You stand with Anvildeep.)" in o and "Then hire me." in o, options=o)
+        tq("qaPick('Then hire me.', 'regent')"); a = sv()
+        T.step("hired path: the Vault quest starts, the Spire key is given, no alliance", a["quests"].get("prismvault") == 1 and a["inv"].get("spirekey") and not a["alfheim_alliance"], qa=a["quests"])
+        T.ev("(() => { window.__hm.S.quests.prismvault = 2; })()")
+        g0 = T.ev("window.__hm.S.gold || 0")
+        tq("qaTalk('regent')"); a = sv(); g1 = T.ev("window.__hm.S.gold || 0")
+        T.step("hired payout: a smaller reward (90 gold), no Realm Favor, resolved as contract", a["quests"].get("prismvault") == 3 and g1 - g0 == 90
+               and T.ev("window.__hm.S.flags.alf_resolved === 'contract'"), gold=[g0, g1])
         T.step("no JS errors in the Svartalfheim run", not errors, errors=errors[:5])
     finally:
         T.pg, T.out = old_pg, old_out
