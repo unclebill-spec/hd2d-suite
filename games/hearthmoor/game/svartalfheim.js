@@ -8,6 +8,7 @@ import { REALM, MERIT } from './factions.js';
 import { XP } from './progress.js';
 import { SHOPS } from './shop.js';
 import { WAYS } from './ravenhold.js';
+import { DeepRooms, ROOM_SPAWNS } from './svartalfheim_deep.js';
 import { GorrakFight, PILLAR, ANVILS, VALVES } from './svartalfheim_bosses.js';
 
 export const AREAS_SV = { svartalfheim: 'areas/svartalfheim/', forge_hall: 'areas/forge_hall/', glowmines: 'areas/glowmines/', clockdeep: 'areas/clockdeep/', clockdeep2: 'areas/clockdeep2/' };
@@ -34,6 +35,7 @@ Object.assign(ENEMIES, {
   cavegolem: { ...ENEMIES.golem, name: 'Cave golem', glow: '#7a4ab0' },   // the stone golem's sprite (spawn { role: 'golem', def: 'cavegolem' }) with amethyst crusts
 });
 Object.assign(XP, { forgeconstruct: 50, sparkgolem: 60, sootling: 22, shadowsmith: 74, hushblade: 40, cavegolem: 56, gorrak: 900 });
+Object.assign(SPAWNS, ROOM_SPAWNS);   // the Deep's foe pools (story 7)
 SPAWNS.glowmines = [   // story 2.5: sootling, forgeconstruct (strays), cavegolem in the crystal galleries (north half) and around the lake
   { id: 'gm_soot1', role: 'sootling', pos: [6.8, -9.4] }, { id: 'gm_soot2', role: 'sootling', pos: [-1.2, -10.6] },
   { id: 'gm_fc0', role: 'forgeconstruct', pos: [-8.0, -3.2] }, { id: 'gm_fc1', role: 'forgeconstruct', pos: [7.8, -1.6] },
@@ -77,7 +79,7 @@ const hasSeal = (S) => !!(S.inv || {}).forge_seal;
 const SV_AREAS = Object.keys(AREAS_SV);
 const SV_LIGHT = { pool_red: ['#ff5a4a', 7, 5.0], pool_blue: ['#2ab4ff', 5, 3.6], pool_violet: ['#a45cf0', 5, 4.0], water_glow: ['#3ac8b0', 4, 3.2] };
 export class Svartalfheim {
-  constructor(G) { this.G = G; this.ctx = null; this.area = null; this.fx = []; this.lights = []; this.spots = []; this.qaDone = false; this.fight = new GorrakFight(this); this.started = false; this.wrap(); }
+  constructor(G) { this.G = G; this.ctx = null; this.area = null; this.fx = []; this.lights = []; this.spots = []; this.qaDone = false; this.fight = new GorrakFight(this); this.deep = new DeepRooms(this); this.started = false; this.wrap(); }
   // E / A and tap try the realm's interactables first (same hook as Alfheim's, chained)
   wrap() {
     const G = this.G, me = this;
@@ -109,7 +111,8 @@ export class Svartalfheim {
   qa() {   // read-only snapshot for the smoke test
     const c = this.ctx, gm = c ? (c.scene.game || {}) : {};
     return { area: this.area, seal: hasSeal(this.G.S), exits: (gm.exits || []).map((e) => e.to),
-             foes: c ? c.actors.list.filter((a) => ['sootling', 'forgeconstruct', 'golem'].includes(a.role)).map((a) => a.role) : [],
+             foes: c ? c.actors.list.filter((a) => ['sootling', 'forgeconstruct', 'golem', 'sparkgolem', 'shadowsmith'].includes(a.role)).map((a) => a.role) : [],
+             deep: { vents: this.deep.v.reduce((n, v) => n + (v.n || 0), 0), hits: this.deep.hits, gusts: this.deep.gust.n, pushed: this.deep.gust.pushed || 0 },
              spots: this.spots.filter((x) => x.show()).length,
              gorrak: this.fight.e ? { hp: Math.round(this.fight.e.hp), max: this.fight.e.D.hp, scale: this.fight.e.D.scale, phase: this.fight.e.ph, state: this.fight.e.state, role: this.fight.e.a.role } : null };
   }
@@ -130,7 +133,7 @@ export class Svartalfheim {
       this.spot({ pos: [4.1, -10.0], r: 2.0, label: 'the Deep\'s lift is sealed (E / A to look)', show: () => !hasSeal(S),
         act: () => this.look('deep_lift', 'The Deep\'s lift', ['A lift cage. A seal of copper and rune-light holds it shut.']) });
     }
-    this.started = false; this.fight.reset();
+    this.started = false; this.fight.reset(); this.deep.reset();
     if (area === 'clockdeep2') {   // Gorrak's arena (C8): the quench valves (phase 2) and the rune-anvils (phase 3)
       VALVES.forEach((v, i) => this.spot({ pos: v, r: 1.7, label: 'open the quench valve (E / A)', show: () => !!this.fight.e && this.fight.e.ph === 2 && this.fight.e.state !== 'dead', act: () => this.fight.valve(i) }));
       ANVILS.forEach((v, i) => this.spot({ pos: v, r: 1.7, label: 'strike the rune-anvil (E / A)', show: () => !!this.fight.e && this.fight.e.ph === 3 && !this.fight.struck[i] && this.fight.e.state !== 'dead', act: () => this.fight.anvil(i) }));
@@ -163,8 +166,9 @@ export class Svartalfheim {
       : ['(Gorrak sags against the chains. The Lesser Heart fits his chest-plate with a clank.)', 'Gorrak: "A hired hand. Not even a dwarf. They could not be bothered to come themselves."', '(The runes flare cold blue.)'];
     G.openDialogue({ id: 'gorrak', name: 'Gorrak Ironmaw' }, { pages, then: (G2) => { const ff = flags(G2.S); if (conquer) ff.cd_taken = 1; else { ff.cd_bound = 1; if ((G2.S.inv || {}).lesser_heart) G2.take('lesser_heart', 1); } } });
   }
-  update() {
+  update(dt) {
     const c = this.ctx;
+    if (c && dt) this.deep.update(dt, this.area);
     if (c && this.area === 'clockdeep2' && !this.started && !flags(this.G.S).cd_boss && !this.G.dlg) {
       const p = c.player; if (Math.hypot(p.x - PILLAR[0], p.z - PILLAR[1]) < 9) this.gorrakIntro();
     }

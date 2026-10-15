@@ -92,6 +92,17 @@ def steps(b, url, T, size, errors, rep, stub=None, shots=None):
         T.ev("(() => { const f = window.__hm.svart.fight; for (let i = 0; i < 4; i++) f.anvil(i); })()")
         bind = T.ev("(() => { const e = window.__hm.combat.enemies.find((x) => x.id === 'gorrak'); return { bind: e.bind, kneel: e.kneelEnd > window.__hm.svart.fight.t }; })()")
         T.step("all 4 rune-anvils struck: Gorrak kneels and takes x1.5", bool(bind["bind"]) and bind["kneel"], bind=bind)
+        a = load("clockdeep", "&svq=seal"); a = sv()
+        T.step("clockdeep C1-C3 foe pools spawn (forge constructs, sootlings, a spark golem)", {"forgeconstruct", "sootling", "sparkgolem"} <= set(a["foes"]), qa=a)
+        T.ev("(() => { window.__hm.peace = false; window.__hd2d.ctx.player.iframes = 99; })()")
+        pg.wait_for_timeout(6500); a = sv()
+        T.step("C1 steam vents cycle (puff tell, then blast)", a["deep"]["vents"] >= 2, deep=a["deep"])
+        a = load("clockdeep2", "&svq=seal", "c7"); a = sv()
+        T.step("clockdeep2 C4-C7 foe pools spawn (shadowsmiths, spark golems...)", {"shadowsmith", "sparkgolem", "sootling"} <= set(a["foes"]), qa=a)
+        T.ev("(() => { window.__hm.peace = false; window.__hd2d.ctx.player.iframes = 99; })()")
+        pg.wait_for_timeout(7000); a = sv()
+        T.step("C7 bellows gusts: one blows every 6 s and pushes you back off the bridge line", a["deep"]["gusts"] >= 1 and a["deep"]["pushed"] >= 1, deep=a["deep"])
+        shot("sv_c7")
         T.step("no JS errors in the Svartalfheim run", not errors, errors=errors[:5])
     finally:
         T.pg, T.out = old_pg, old_out
