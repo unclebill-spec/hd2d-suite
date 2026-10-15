@@ -20,6 +20,7 @@ export function unlock(G, id) {
 export function swap(G, id) {
   const f = flags(G.S); if (!owned(G.S).includes(id)) return false;
   f.companion_active = id; G.toast && G.toast(`${COMP[id]} walks with you now.`, 2.4);
+  const F = G.svart && G.svart.follow; if (F && F.ctx) { try { F.attach(F.ctx, F.area); } catch (e) { /* the body only */ } }
   const L = G.alfheim && G.alfheim.lumi; if (L && L.ctx) { try { L.attach(L.ctx, L.area); } catch (e) { /* re-attach only toggles her body */ } }
   return true;
 }

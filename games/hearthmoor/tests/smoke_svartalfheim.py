@@ -236,6 +236,9 @@ def steps(b, url, T, size, errors, rep, stub=None, shots=None):
         T.step("Foreman: spawns in C4 on his own sheet at 2.8x (540 hp)", fm["up"] and fm["scale"] == 2.8 and fm["hp"] == 540 and T.ev("window.__hd2d.ctx.actors.meta.roles.foreman.sheet") == "miniboss_foreman", fm=fm)
         tq("foreman.whistle()"); fm = sv()["foreman"]
         T.step("Foreman: the whistle calls 2 forge constructs and opens his belly", fm["minions"] == 2 and fm["whistling"], fm=fm)
+        T.ev("(() => { const G = window.__hm; G.S.flags.companions = { dagna: 1 }; G.S.flags.companion_active = 'dagna'; G.svart.follow.attach(window.__hd2d.ctx, 'clockdeep2'); })()"); pg.wait_for_timeout(300)
+        bd = tq("follow.qaBrawl()")
+        T.step("Dagna's brawl: a hit on the nearest foe lands for 10 damage", bd == 10, bd=bd)
         T.step("Foreman: damage doubles while he whistles (weak belly)", tq("foreman.qaWeak()") == [10, 20])
         T.ev("(() => { const G = window.__hm, e = G.combat.enemies.find((x) => x.sp.id === 'cd_foreman'); G.combat.damageEnemy(e, 9999, { x: 0, z: 0 }, 0, '#fff'); })()"); pg.wait_for_timeout(500); a = sv()
         T.step("Foreman falls: 1 clock spring + 2 deep brass, stays dead", a["inv"].get("clock_spring") == 1 and a["inv"].get("deep_brass") == 2 and a["foreman"]["dead"], inv=a["inv"])
@@ -282,6 +285,20 @@ def steps(b, url, T, size, errors, rep, stub=None, shots=None):
         T.step("Bifrost wired with the portal to Svartalfheim (open via QA)", "svartalfheim" in a["gate"]["portals"], g=a["gate"])
         T.ev("(() => { const p = window.__hd2d.ctx.player; p.x = -6.6; p.z = -5.0; })()"); arrive("svartalfheim"); a = sv()
         T.step("through Svartalfheim's gate: back in Copper Row", a["area"] == "svartalfheim")
+        # ---- followers: only the active companion walks with you
+        T.ev("(() => { const S = window.__hm.S; S.flags.companions = { dagna: 1, tobble: 1 }; S.flags.companion_active = 'dagna'; })()")
+        T.ev("window.__hm.svart.follow.attach(window.__hd2d.ctx, window.__hm.area)"); pg.wait_for_timeout(300)
+        fo = tq("follow.qa()")
+        T.step("Dagna follows in Copper Row on her own sheet (role dagna)", fo["on"] and fo["id"] == "dagna" and fo["role"] == "dagna", f=fo)
+        T.ev("(() => { const p = window.__hd2d.ctx.player; p.x += 6; })()"); pg.wait_for_timeout(2500); fo = tq("follow.qa()")
+        T.step("she catches up to the player (within 3 m after the player moves 6 m)",
+               T.ev("(() => { const p = window.__hd2d.ctx.player, f = window.__hm.svart.follow.sprite; return Math.hypot(p.x - f.x, p.z - f.z) < 3; })()"), f=fo)
+        T.step("Dagna's mend: once a fight, +40 HP below 30%", tq("follow.qaMend()") == [True, False, True])
+        T.ev("window.__hm.S.flags.companion_active = 'tobble'; window.__hm.svart.follow.attach(window.__hd2d.ctx, window.__hm.area)"); fo = tq("follow.qa()")
+        T.step("Tobble: no body in the realm areas ('gnome' is Dagna's sheet there)", not fo["on"] and fo["id"] == "tobble", f=fo)
+        a = load("plaza"); T.ev("(() => { const S = window.__hm.S; S.flags.companions = { dagna: 1, tobble: 1 }; S.flags.companion_active = 'tobble'; })()")
+        T.ev("window.__hm.svart.follow.attach(window.__hd2d.ctx, window.__hm.area)"); fo = tq("follow.qa()")
+        T.step("Tobble follows in the plaza (role gnome)", fo["on"] and fo["role"] == "gnome", f=fo)
         T.step("no JS errors in the Svartalfheim run", not errors, errors=errors[:5])
     finally:
         T.pg, T.out = old_pg, old_out
