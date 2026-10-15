@@ -42,6 +42,22 @@ Merge with main (Oct 14, ~7:05 PM ET): origin/main 6ba785f (batch 1: pets, templ
   The other 8 checks pass, including gamefx_sharp and no_errors.
 - QA browser: /workspace/alf_qa/load.py now uses its own Chromium profile (/workspace/alf_qa/chrome-profile) under /workspace/.hm-logs/browser-mb.lock.
 
+Known-issue fixes (Oct 14, 8:15 PM ET). The proper rebuild is HM_BUILD_TMP=/tmp/alf_hmbuild python3 build.py --areas <a> --no-zip, then alf_art.py and write_pwa. The check is HD2D_USER_DATA_DIR=/workspace/alf_qa/chrome-profile-cs + /workspace/.hm-logs/browser-mb.lock, run with /workspace/alf_qa/cs6/one.sh <area>.
+- Lumen Court DONE (b2c57a6): library terrace now 1.2 m with a stair; check_scene --quick PASS.
+- Prism Vault: uncommitted spec edits.
+  * spawn/player moved to z 34.6-36.2.
+  * day/dusk/night grades split.
+  * 4 warm stone_lanterns at the entry.
+  * rift brazier and prism crystal moved off the entry view.
+  Still FAILS 2 checks:
+  * grades: night_warm_frac 0.0019 (needs 0.002; add 1-2 more stone_lanterns).
+  * effects_sharp: pet_aura_moth uniform 0.85; it overlaps something in the effect lineup. See /workspace/alf_qa/cs7/prismvault/effects*.png.
+- Glimmer Steps: uncommitted spec edits.
+  * dwarf moved to (-4.6, 6.8), lanternseller to (-7.8, 9.0), float lantern to (-2.2, 4.0).
+  * spawn/player moved to (0, 4.4), out of the arch.
+  * archway fixed at (7.4, -2.0).
+  Desktop sprites now pass. The phone sprites_sharp failed at 0.968; per-actor detail will be in /workspace/alf_qa/cs7/alfheim (run in progress at stop).
+
 NEXT (start here):
 - Fix the known layout issues above in the area specs (needs an assemble run into a private /tmp dir, then alf_art.py).
 - Run check-scene on prismvault (one area at a time, under flock).
