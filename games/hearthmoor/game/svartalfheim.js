@@ -10,6 +10,8 @@ import { SHOPS } from './shop.js';
 import { WAYS } from './ravenhold.js';
 import { SvStory } from './svartalfheim_story.js';
 import { DeepRooms, ROOM_SPAWNS } from './svartalfheim_deep.js';
+import { SvGate } from './svartalfheim_gate.js';
+import { unlock, swap, owned, active } from './svartalfheim_companions.js';
 import { GorrakFight, PILLAR, ANVILS, VALVES } from './svartalfheim_bosses.js';
 
 export const AREAS_SV = { svartalfheim: 'areas/svartalfheim/', forge_hall: 'areas/forge_hall/', glowmines: 'areas/glowmines/', clockdeep: 'areas/clockdeep/', clockdeep2: 'areas/clockdeep2/' };
@@ -59,6 +61,9 @@ SHOPS.tinker = { name: 'Brasswhistle\'s Tinkery', keeper: 'Tansy Brasswhistle, g
 Object.assign(TALK, {
   tansy(S) {
     const first = !(S.met || {}).tansy;
+    if (((S.flags || {}).alliance || {}).svartalfheim === 'befriend' && (S.quests || {}).clockdeep === 3 && !(S.pets || {}).tick) return {   // story 9.5: Tick, finished
+      pages: ['He\'s done! He\'s yours! Tick, say hello.', '(Tick says \'tick\'.) He\'s shy.'],
+      then: (G) => { met('tansy')(G); G.S.pets = { ...(G.S.pets || {}), tick: { name: 'Tick', bond: 1, fed: 0 } }; G.pets.swap('tick'); G.toast('✦ Tick the clockwork owl joined you. Aura: Clockwork Eye. (Swap at the Stray Den.)', 3); } };
     return { pages: [first ? 'Tansy Brasswhistle, tinker! Mind the owl. He\'s not finished. Well, he\'s finished. He just doesn\'t know it.' : 'Gnomes and dwarves built half this city together. Dwarves did the heavy bits. We did the clever bits.'],
              then: (G) => { met('tansy')(G); G.shopUI.show('tinker'); } };
   },
@@ -80,7 +85,7 @@ const hasSeal = (S) => !!(S.inv || {}).forge_seal;
 const SV_AREAS = Object.keys(AREAS_SV);
 const SV_LIGHT = { pool_red: ['#ff5a4a', 7, 5.0], pool_blue: ['#2ab4ff', 5, 3.6], pool_violet: ['#a45cf0', 5, 4.0], water_glow: ['#3ac8b0', 4, 3.2] };
 export class Svartalfheim {
-  constructor(G) { this.G = G; this.ctx = null; this.area = null; this.fx = []; this.lights = []; this.spots = []; this.qaDone = false; this.fight = new GorrakFight(this); this.deep = new DeepRooms(this); this.story = new SvStory(this); this.started = false; this.wrap(); }
+  constructor(G) { this.G = G; this.ctx = null; this.area = null; this.fx = []; this.lights = []; this.spots = []; this.qaDone = false; this.fight = new GorrakFight(this); this.deep = new DeepRooms(this); this.story = new SvStory(this); this.gate = new SvGate(this); this.started = false; this.wrap(); }
   // E / A and tap try the realm's interactables first (same hook as Alfheim's, chained)
   wrap() {
     const G = this.G, me = this;
@@ -114,13 +119,15 @@ export class Svartalfheim {
     return { area: this.area, seal: hasSeal(this.G.S), exits: (gm.exits || []).map((e) => e.to),
              foes: c ? c.actors.list.filter((a) => ['sootling', 'forgeconstruct', 'golem', 'sparkgolem', 'shadowsmith', 'hushblade'].includes(a.role)).map((a) => a.role) : [],
              deep: { vents: this.deep.v.reduce((n, v) => n + (v.n || 0), 0), hits: this.deep.hits, gusts: this.deep.gust.n, pushed: this.deep.gust.pushed || 0 },
-             spots: this.spots.filter((x) => x.show()).length,
+             spots: this.spots.filter((x) => x.show()).length, gate: this.gate.qa(), comps: { owned: owned(this.G.S), active: active(this.G.S) },
              quests: S0.quests || {}, alliance: ((S0.flags || {}).alliance || {}).svartalfheim || null, alfheim_alliance: ((S0.flags || {}).alliance || {}).alfheim || null, rivals: (S0.flags || {}).rivals || null, inv: S0.inv || {},
              gorrak: this.fight.e ? { hp: Math.round(this.fight.e.hp), max: this.fight.e.D.hp, scale: this.fight.e.D.scale, phase: this.fight.e.ph, state: this.fight.e.state, role: this.fight.e.a.role } : null };
   }
   // QA helpers for the smoke test: run an NPC's TALK entry (its `then`), or pick a Thane option by label
   qaTalk(id) { const e = TALK[id](this.G.S); if (e && e.then) e.then(this.G); return { pages: e ? e.pages.length : 0, choice: e && e.choice ? e.choice.options.map((o) => o.label) : null }; }
   qaPick(label, id = 'thane') { const e = TALK[id](this.G.S), o = e.choice.options.find((x) => x.label === label), nx = o.pick(this.G); if (nx && nx.then) nx.then(this.G); return nx ? nx.pages.length : 0; }
+  qaUnlock(id) { return unlock(this.G, id); }
+  qaSwap(id) { return swap(this.G, id); }
   qaPreset() {   // ?svq=seal gives the Forge-Seal (QA / smoke; the quests that hand it out come later)
     const q = (this.G.qs || new URLSearchParams(location.search)).get('svq'), S = this.G.S; if (!q || this.qaDone === q) return;
     this.qaDone = q;
@@ -130,9 +137,12 @@ export class Svartalfheim {
   }
   attach(ctx, area) {
     this.detach(); this.ctx = ctx; this.area = area;
+    if (area === 'bifrost') { this.gate.atBifrost(ctx); return; }
     if (!SV_AREAS.includes(area)) return;
     this.qaPreset();
+    if (area === 'svartalfheim') this.gate.atHub(ctx);
     const S = this.G.S, gm = ctx.scene.game || (ctx.scene.game = {});
+    { const F = S.flags || {}; if ((F.alliance || {}).svartalfheim === 'befriend' && ((S.quests || {}).clockdeep || 0) >= 1) unlock(this.G, 'dagna'); if ((F.alliance || {}).vanaheim === 'befriend') unlock(this.G, 'tobble'); }
     if (area === 'forge_hall') {   // the lift stays shut until the Forge-Seal is in the bag
       gm.exits = (gm.exits || []).filter((e) => e.to !== 'clockdeep');
       if (hasSeal(S)) gm.exits.push({ ...LIFT });

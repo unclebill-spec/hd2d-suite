@@ -169,6 +169,49 @@ def steps(b, url, T, size, errors, rep, stub=None, shots=None):
         g0 = T.ev("window.__hm.S.gold || 0"); tq("story.claimLift()"); a = sv()
         T.step("the lift is claimed: stage 3, +80 gold, The Clockwork Deep starts", a["quests"].get("sv_take") == 3 and a["quests"].get("clockdeep") == 1 and T.ev("window.__hm.S.gold || 0") - g0 == 80, q=a["quests"])
         shot("sv_conquer")
+        # ---- Tick (pet) + the one-active-companion swap
+        a = load("svartalfheim")
+        T.step("Tick: pet_tick role + his aura / pool effects are in the area atlases, PETS.tick registered",
+               T.ev("(() => { const c = window.__hd2d.ctx, m = c.actors.meta.roles.pet_tick; return !!m && m.pet === true && !!c.effects.meta.effects.pet_aura_tick && !!c.effects.meta.effects.pet_pool_tick; })()"))
+        T.ev("(() => { const S = window.__hm.S; S.flags = S.flags || {}; S.flags.alliance = { svartalfheim: 'befriend' }; S.quests.clockdeep = 3; })()")
+        tq("qaTalk('tansy')"); pg.wait_for_timeout(800)
+        T.step("Tansy gives Tick after The Clockwork Deep (befriend): S.pets.tick, active pet", T.ev("!!(window.__hm.S.pets && window.__hm.S.pets.tick) && window.__hm.S.pet && window.__hm.S.pet.id === 'tick'"))
+        T.step("Tick's pulse is the stepped 'tick' shape", T.ev("(async () => (await import('./game/pets.js')).PETS.tick.light.pulse.shape)()") == "tick")
+        a = sv(); tq("qaUnlock('lumi')"); a = sv()
+        T.step("one companion: no swap option yet at the Guild desk", a["comps"]["owned"] == ["lumi"] and not (tq("qaTalk('gatewright')")["choice"] or []).count("Swap my companion."))
+        tq("qaUnlock('dagna')"); a = sv()
+        T.step("two companions: the Guild desk offers 'Swap my companion.'", "Swap my companion." in (tq("qaTalk('gatewright')")["choice"] or []), comps=a["comps"])
+        tq("qaSwap('dagna')"); a = sv()
+        T.step("swap: Dagna is the one active companion (Lumi stays unlocked)", a["comps"]["active"] == "dagna" and "lumi" in a["comps"]["owned"], comps=a["comps"])
+        # ---- the Copper Gate: Bix's vouch -> Halvard -> key -> wind it -> the runaway -> the gate opens; both ends + return spawns
+        a = load("bifrost"); g = a["gate"]
+        T.step("Bifrost: Svartalfheim's arch is sealed before the quest (no portal)", "svartalfheim" in g["sealed"] and "svartalfheim" not in g["portals"] and not g["open"], g=g)
+        T.ev("(() => { const S = window.__hm.S; S.ranks = { ...(S.ranks || {}), gnome: 2 }; })()")
+        tq("qaPick('About the copper gate...', 'banker')"); a = sv()
+        T.step("Bix (Trusted): the copper-gate option gives the Council vouch and starts A Word from the Council", a["quests"].get("sv_gate") == 1 and a["inv"].get("council_vouch"), q=a["quests"], inv=a["inv"])
+        tq("qaTalk('gatewright')"); a = sv()
+        T.step("Halvard posts the vouch (sg_sent)", T.ev("!!window.__hm.S.flags.sg_sent") and not a["inv"].get("council_vouch"), inv=a["inv"])
+        T.step("no answer the same day", T.ev("!window.__hm.S.flags.sg_key"))
+        T.ev("window.__hm.S.day = (window.__hm.S.day || 0) + 1"); tq("qaTalk('gatewright')"); a = sv()
+        T.step("next day: Halvard has the key capsule (copper_key)", T.ev("!!window.__hm.S.flags.sg_key") and a["inv"].get("copper_key"), inv=a["inv"])
+        tq("gate.wind()"); pg.wait_for_timeout(300); T.ev("(() => { const G = window.__hm, d = G.dlg; if (d && d.then) d.then(G); G.dropDialogue(); })()"); pg.wait_for_timeout(600)
+        T.step("winding the key lets a 2x runaway construct out",
+               T.ev("(() => { const e = window.__hm.combat.enemies.find((x) => x.sp.id === 'runaway'); return !!e && e.D.scale === 2; })()"))
+        T.ev("(() => { const C = window.__hm.combat, e = C.enemies.find((x) => x.sp.id === 'runaway'); C.damageEnemy(e, 9999, { x: 0, z: 0 }, 0, '#fff'); })()"); pg.wait_for_timeout(400); a = sv()
+        T.step("the runaway falls: stage 2", a["quests"].get("sv_gate") == 2, q=a["quests"])
+        g0 = T.ev("window.__hm.S.gold || 0"); tq("qaTalk('gatewright')"); a = sv(); g = a["gate"]
+        T.step("Halvard opens the gate: stage 3, +50 gold, the arch moves from sealed to portals",
+               a["quests"].get("sv_gate") == 3 and T.ev("window.__hm.S.gold || 0") - g0 == 50 and "svartalfheim" in g["portals"] and "svartalfheim" not in g["sealed"], q=a["quests"], g=g)
+        a = load("svartalfheim", "&svq=gate"); pg.wait_for_timeout(1200); g = a["gate"]
+        T.step("Copper Row: the Copper Gate portal back to Bifrost, and Bifrost's return spawn is registered",
+               "bifrost" in g["portals"] and T.ev("!!(window.__hm.scenes.bifrost && window.__hm.scenes.bifrost.game.spawns.from_svartalfheim)"), g=g)
+        T.ev("(() => { const p = window.__hd2d.ctx.player; p.x = 0; p.z = 8; })()"); pg.wait_for_timeout(500)
+        T.ev("(() => { const p = window.__hd2d.ctx.player; p.x = 0; p.z = 10.6; })()"); arrive("bifrost"); a = sv()
+        T.step("through the Copper Gate: Bifrost, standing at the from_svartalfheim spawn by the amber arch",
+               T.ev("(() => { const p = window.__hd2d.ctx.player; return Math.abs(p.x + 6.6) < 1.5 && p.z > -4.4 && p.z < -2.5; })()"), a=a["gate"])
+        T.step("Bifrost wired with the portal to Svartalfheim (open via QA)", "svartalfheim" in a["gate"]["portals"], g=a["gate"])
+        T.ev("(() => { const p = window.__hd2d.ctx.player; p.x = -6.6; p.z = -5.0; })()"); arrive("svartalfheim"); a = sv()
+        T.step("through Svartalfheim's gate: back in Copper Row", a["area"] == "svartalfheim")
         T.step("no JS errors in the Svartalfheim run", not errors, errors=errors[:5])
     finally:
         T.pg, T.out = old_pg, old_out
