@@ -1685,7 +1685,10 @@ def run(out, simscale=4, size=(960, 540), segs=SEGS):
                        and s4["base"] and abs(s4["base"]["x"] - tx) < 3, zone=[round(v) for v in z2])
                 q.tap("#btnOpts"); q.wait_for_timeout(300); q.tap("#btnHand"); q.wait_for_timeout(200); q.tap("#optsClose"); q.wait_for_timeout(200)
                 # controller on the phone: pad hides while it is used, a touch brings it back
-                T.ev("__padPlug(true)"); T.ev("__padAxes(0, 1)"); q.wait_for_timeout(800); T.ev("__padAxes(0, 0)"); q.wait_for_timeout(300)
+                T.ev("__padPlug(true)"); T.ev("__padAxes(0, 1)"); q.wait_for_timeout(800)
+                try: T.wait("getComputedStyle(document.getElementById('pad')).display === 'none'", 20)   # the next poll hides it; slow frames on a busy box need longer than a fixed pause
+                except Exception: pass
+                T.ev("__padAxes(0, 0)"); q.wait_for_timeout(300)
                 hid = T.ev("getComputedStyle(document.getElementById('pad')).display === 'none'")
                 tap(195, 150); q.wait_for_timeout(300)
                 back = T.ev("!document.body.classList.contains('ctrl') && getComputedStyle(document.getElementById('pad')).display !== 'none'")

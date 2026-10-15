@@ -104,7 +104,10 @@ def steps(b, url, T, size, errors, rep, stub=None, shots=None):
         a = load("clockdeep", "&svq=seal"); a = sv()
         T.step("clockdeep C1-C3 foe pools spawn (forge constructs, sootlings, a spark golem)", {"forgeconstruct", "sootling", "sparkgolem"} <= set(a["foes"]), qa=a)
         T.ev("(() => { window.__hm.peace = false; window.__hd2d.ctx.player.iframes = 99; })()")
-        pg.wait_for_timeout(6500); a = sv()
+        pg.wait_for_timeout(6500)
+        try: T.wait("window.__hm.svart.qa().deep.vents >= 2", 60)   # game time runs slow on a busy box: wait for the cycle, not a fixed 6.5 s
+        except Exception: pass
+        a = sv()
         T.step("C1 steam vents cycle (puff tell, then blast)", a["deep"]["vents"] >= 2, deep=a["deep"])
         a = load("clockdeep2", "&svq=seal", "c7"); a = sv()
         T.step("clockdeep2 C4-C7 foe pools spawn (shadowsmiths, spark golems...)", {"shadowsmith", "sparkgolem", "sootling"} <= set(a["foes"]), qa=a)
