@@ -278,6 +278,20 @@
     0.9,
     -9.0
    ]
+  },
+  {
+   "piece": "orb_post_standing_blue",
+   "pos": [
+    3.9,
+    2.8
+   ]
+  },
+  {
+   "piece": "orb_post_standing_violet",
+   "pos": [
+    5.7,
+    2.8
+   ]
   }
  ],
  "hedges": [

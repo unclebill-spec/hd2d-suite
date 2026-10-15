@@ -4,6 +4,8 @@ import { PETS, PET_IDS, DEN, petNames, isNight } from './pets.js';
 import { clues, tmBraziers, TAMSIN_CLUE } from './temple.js';
 import { MERIT } from './factions.js';
 import { stormName, stormHere } from './storms.js';
+import { calmed } from './forge.js';
+import { BREWS } from './alchemy.js';
 
 export const ITEMS = {
   loaf:      { name: 'Hearthloaf', icon: 0, about: 'A round loaf, still warm. Smells like Tuesday mornings.' },
@@ -12,6 +14,17 @@ export const ITEMS = {
   acorn:     { name: "Tib's lucky acorn", icon: 3, about: 'Polished smooth by a very small thumb.' },
   tea:       { name: 'Moonpetal tea', icon: 4, about: 'A tin of Wren\'s tea. Calms storms, and also grandparents.' },
   tonic:     { name: 'Hearth tonic', px: 'tonic', about: 'Heals 60 HP. Drink: U, right-stick click, or tap it here.' },
+  dewdrop:   { name: 'Glow-dew', px: 'glowseed', about: "Dew from Bloop's lily pad. It glows faintly blue. Bloop seems proud." },
+  vial:      { name: 'Empty vial', px: 'tonic', about: 'Fill it at a hidden spring.' },
+  springwater: { name: 'Spring water', px: 'tonic', about: 'A stoppered vial of hidden-spring water. Still fizzing.' },
+  glowcap:   { name: 'Red glow-cap', px: 'glowseed', about: 'A garden glow toadstool, warm red. It hums when stirred.' },
+  coldpetal: { name: 'Cold-fire petal', px: 'glowseed', about: 'A petal from a cold-fire bloom. Chilly. Bright. Neon blue.' },
+  glowbell:  { name: 'Violet glowbell', px: 'glowseed', about: 'A violet glowbell flower. It rings very quietly in the dark.' },
+  ironbit:   { name: 'Iron bits', px: 'tonic', about: "Scrap iron, sorted by size. Tova's forge eats it by the bucket." },
+  coldsteel: { name: 'Cold-steel ingot', px: 'tonic', about: 'Iron quenched in cold fire. Blue at the edges. Needed for +4 and up.' },
+  runestone: { name: 'Rune-stone', px: 'glowseed', about: 'A dwarven rune carved in river stone. Orri uses one to reroll a gear stat.' },
+  glowfish:  { name: 'Glow-fish', px: 'glowseed', about: 'A finger-long fish that glows blue, violet or red. Set it in an empty orb to make an orb lantern.' },
+  orblamp:   { name: 'Empty orb', px: 'tonic', about: 'A water orb on a little stand. Add a glow-fish and set it at home or in the Lane garden.' },
   glowseed:  { name: 'Glow seed', px: 'glowseed', about: 'Hums in the dark. Plant it in a garden plot: it blooms in two days.' },
   // Stage 6.3 (the Old Temple): key items, never sold
   reliefbasket: { name: 'Order relief basket', px: 'reliefbasket', about: 'Hearthloaves, wool blankets and a tin of Wren\'s tea, packed by the Order of the Hearth for the Old Temple.' },
@@ -25,6 +38,8 @@ export const ITEMS = {
   greenheart_tine: { name: 'Greenheart tine', px: 'glowseed', key: true, about: 'A living tine from Hjortur\'s antlers, still in leaf. The forest knows your step.' },
   denbiscuit: { name: 'Den biscuit', px: 'denbiscuit', about: "Signe's oat-and-moonpetal biscuit. Feed your pet once a day (hero screen, Gear tab): bond grows, and its glow doubles for 60 s." },
 };
+// 6.8 potions: bag items brew_<id> (tap to drink)
+for (const [id, B] of Object.entries(BREWS)) ITEMS[`brew_${id}`] = { name: B.name, px: 'tonic', about: `${B.about} Tap to drink.` };
 // the Stray Den's three yard lanterns (Hollows brazier rule: S.found.den_l1..3)
 export const denLit = (S) => ['den_l1', 'den_l2', 'den_l3'].filter((k) => (S.found || {})[k]).length;
 
@@ -84,6 +99,26 @@ export const QUESTS = {
                if (!F.tm_rift) return 'Seal the rift tearing open above the Rift-gate!';
                return 'Tell Mother Ilse the gate is lit.'; },
              3: 'The Rift-gate burns blue again. Midgard\'s arch at Bifrost Crossing stands open, and the skiff can rest.' },
+  },
+  // 6.7 the Forge Quarter (forge_alchemy.md 5-6; game/forge.js drives the stages)
+  forge_riot: {
+    title: 'Sparks in the Street',
+    giver: 'Mother Ilse Brightwater',
+    story: true,
+    steps: { 1: (S) => (calmed(S) < 3 ? `Calm the crowd at the Forge Quarter gate. Answer each shout with the right temple clue. ${calmed(S)}/3` : 'Talk to Orri Flintcog, the dwarf whose shutters were smashed.'),
+             2: 'Talk to Orri Flintcog about the tongs.',
+             3: "The crowd went home. The tongs were Orri's, stolen the night his quench froze in midsummer." },
+  },
+  temper: {
+    title: 'The First Temper',
+    giver: 'Tova Anvilsong',
+    side: true,
+    steps: { 1: (S) => { const F = S.flags || {};
+               if (!F.tp_scrap) return "Scrap one piece of gear at Tova's forge (Scrap) for iron bits.";
+               if (!F.tp_bellows) return `Work the forge bellows (E / A) until the fire roars. ${F.tp_pumps || 0}/3`;
+               return "Temper any piece of gear to +1 at the forge (Temper). The first one's free."; },
+             2: 'Show Orri Flintcog your tempered gear.',
+             3: "Tova's forge and Orri's bench are open to you now." },
   },
   strays: {
     title: 'Strays of the Rift',

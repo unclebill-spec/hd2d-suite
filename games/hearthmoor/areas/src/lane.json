@@ -8,7 +8,23 @@
   "speed": 0.0016
  },
  "spells": true,
- "sprite_roles": ["actors", "cat", "heroes", "mushgolem", "runesentinel", "runewisp", "stormsprite", "sapling", "emberimp", "mushgolem_r", "runesentinel_r", "runewisp_r", "stormsprite_r", "sapling_r", "emberimp_r"],
+ "sprite_roles": [
+  "actors",
+  "cat",
+  "heroes",
+  "mushgolem",
+  "runesentinel",
+  "runewisp",
+  "stormsprite",
+  "sapling",
+  "emberimp",
+  "mushgolem_r",
+  "runesentinel_r",
+  "runewisp_r",
+  "stormsprite_r",
+  "sapling_r",
+  "emberimp_r"
+ ],
  "spell_cycle": [
   "healing_petals",
   "sparkle_burst",
@@ -271,7 +287,27 @@
     -12.0
    ]
   },
-  {"piece": "waystone", "pos": [-13.4, 4.4]}
+  {
+   "piece": "waystone",
+   "pos": [
+    -13.4,
+    4.4
+   ]
+  },
+  {
+   "piece": "orb_post_garden_red",
+   "pos": [
+    2.0,
+    4.0
+   ]
+  },
+  {
+   "piece": "orb_post_grand",
+   "pos": [
+    5.2,
+    4.0
+   ]
+  }
  ],
  "hedges": [
   {
@@ -584,7 +620,21 @@
   }
  },
  "game": {
-  "id": "lane", "gardens": [{"id": "lane_garden", "pos": [3.6, 4.6], "kinds": ["coldfire", "violet", "toadcap"]}],
+  "id": "lane",
+  "gardens": [
+   {
+    "id": "lane_garden",
+    "pos": [
+     3.6,
+     4.6
+    ],
+    "kinds": [
+     "coldfire",
+     "violet",
+     "toadcap"
+    ]
+   }
+  ],
   "title": "Bakery Lane",
   "exits": [
    {
@@ -598,9 +648,24 @@
     "spawn": "from_lane",
     "label": "up to the Plaza"
    },
-   {"rect": [-17.4, -1.6, -15.6, 5.2], "to": "ravenhold", "spawn": "from_lane", "label": "the west road to Ravenhold"}
+   {
+    "rect": [
+     -17.4,
+     -1.6,
+     -15.6,
+     5.2
+    ],
+    "to": "ravenhold",
+    "spawn": "from_lane",
+    "label": "the west road to Ravenhold"
+   }
   ],
-  "waystone": {"pos": [-13.4, 4.4]},
+  "waystone": {
+   "pos": [
+    -13.4,
+    4.4
+   ]
+  },
   "spawns": {
    "start": [
     0.5,
@@ -612,7 +677,11 @@
     -12.8,
     "down"
    ],
-   "from_ravenhold": [-13.8, 1.6, "right"],
+   "from_ravenhold": [
+    -13.8,
+    1.6,
+    "right"
+   ],
    "qa": [
     1.5,
     4.2,

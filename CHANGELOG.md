@@ -2,6 +2,37 @@
 
 Dates are America/New_York. Newest first. Keep this current with every change you push.
 
+## 2026-10-14: Batch 2 (6.6-6.8) LIVE: merged `hearthmoor-batch2-wip` to main and published
+- Batch 2 = 6.6 glow-fish orb lanterns (+ kit stands), 6.7 the Forge Quarter (Tova's +1..+10 tempering, Orri's rerolls and sockets, smelt / scrap, the riot, The First Temper, cold-blue +7 / +10 sparks), 6.8 the Glowfrog Still (10 brews, potions, garden herbs, dew, spring vials). Details in the three WIP entries below.
+- Checks before the merge: full sharded smoke (segments A-M, `--jobs 2`), `check_all --lowres` on all 12 areas, full-size check-scene on plaza, lane and forge.
+- Smoke fix: Odo's shop now lists 7 rows (empty orb + glow-fish added).
+- Still open: Nettle (jeweler / unsocket; Orri's stand-in rune-stone shop stays until then), The Cold Cauldron quest, Bloop's sprite, the 3-a-day toadstool limit and regrowing toadstool patches, the 6.4 leftovers (V3 firefly maze guidance, Tobble follower, cutscenes, Veyra's beat).
+
+## 2026-10-14: Stage 6.8 the Glowfrog Still (batch 2 WIP, branch `hearthmoor-batch2-wip`)
+- `game/alchemy.js`: Bryony Glasswort (stand-in `lamplighter` sprite; the pack has no alchemist sheet) and Old Gurgle on the forge's lower yard. All 10 brews and recipes from forge_alchemy.md 7.2-7.3 (cheap brews x2), discovery lines, fizzle = nothing used + a hint, the Warm Bread Broth Gnome secret. Brew menu = dialogue choices (add up to 3, stir, take out); recipe book re-brews known ones.
+- Potions are bag items `brew_<id>`: tap to drink (U stays tonic-only). One timed brew at a time (`S.brew`), folded into `progress.mods()` by `brewMods`, motes while active. Heals use `C.heal`.
+- Ingredients: garden blooms now also give a herb (cold-fire petal / violet glowbell / red glow-cap); Bloop's lily pad (barrel by the Still) 1 glow-dew a day; fill a vial at any hidden spring; `SHOPS.still` sells glow-dew 5 g, vials 2 g, red toadstools 4 g.
+- Art: alchemy kit (cauldron_blue, alchemy table, potion shelf, herb rack via `tools/kit/kit_alchemy.py`) + `cauldron_brew_blue` / fire / pool / brew_puff gamefx appended to the forge atlas.
+- Not built: The Cold Cauldron quest (Bryony teaches Glowcap + Moonmilk on first talk), Bloop's sprite, the 3-a-day red toadstool limit, regrowing toadstool pickups, Nettle (jeweler / unsocket). Smoke segment **M** (`--quick still`). Screenshot `stage6_alchemy.png`.
+
+## 2026-10-14: Stage 6.7 leftovers (batch 2 WIP, branch `hearthmoor-batch2-wip`)
+- **Sparks in the Street** (riot, forge_alchemy.md 5): three rioters spawn at the forge gate after the Cold Altar; answer each with the right temple clue (wrong = reopen, seer shortcut, cinderknight line); Orri's tongs story ends it (+60 Hearth, first socket free). Tova and Orri wait until it's done.
+- **The First Temper** (6): Tova's offer, scrap at the forge, 3 bellows pumps by the left forge, a free +1, Orri's turn-in (6 iron bits + 1 rune-stone).
+- Tova's menu: Temper / Smelt (4 iron + frost core -> 2 cold-steel) / Scrap (scrap gold + iron bits by rarity 1/2/3/4/6) / Buy (iron bits now 6 g). Orri: random reroll (1 stone), **pick-your-stat** (2 stones), **socket punching** (cap 0/1/2/3/3, costs from 4.1; Commons refused); `iconCanvas` draws 3 sockets top / middle / bottom.
+- **Cold-blue sparks:** +7..+9 icons get a cold-blue glint, +10 a glint + mote; +7 weapons throw 2 cold-blue glints per swing, +10 throw 5 and shed a slow mote at rest.
+- Not done: Nettle (unsocket, jeweler), the Still (6.8). Smoke segment L extended.
+
+## 2026-10-14: Stage 6.7 the Forge Quarter + 6.6 lantern stands (batch 2 WIP, branch `hearthmoor-batch2-wip`)
+- New area `forge` (Ravenhold's east district gate opens once *The Cold Altar* is done; `REALM.forge = 'hearth'`). A dark yard with two red forge mouths, three neon-blue quench tanks, embers, red / blue light pools + point lights (always glowing).
+- `game/forge.js`: Tova Anvilsong tempers gear +1..+10 (forge_alchemy.md 2.1-2.4: rarity caps, cost table, +7% per + on own mods in `gearMods` / `describe`, fails from +6 keep gold + gems, eat iron / steel, add heat; sure at heat 3). Orri Flintcog rerolls one stat with a rune-stone (3.1: per-item limit, keep new / old). Shops `forge` (iron bits 4 g, cold-steel 30 g) and `runebench` (rune-stones 40 g; stand-in until Nettle). New `describe` labels (crit damage, drain, regen, healing, spell cd, stamina regen).
+- Not built yet: the riot beat, *The First Temper*, sockets (Orri / Nettle), smelt / scrap-for-iron tabs, Tova's shop-style forge panel (dialogue choices for now), the Still (6.8).
+- Art: forge pack (`art/forge/`: Tova = `smith`, Orri = `dwarfsmith` sheet, `forge_fx` gamefx via `build.py install_forge`, kit via `tools/kit/kit_forge.py`). Orb lantern stands: `tools/kit/kit_orb_lanterns.py` + lampless `orb_post_*` copies (the light comes only from a placed fish), placed at the 4 lantern spots.
+- Smoke segment **L** (`--quick forge`); segment K checks the stands. Screenshots: `stage6_forge.png`, `stage6_lanterns.png` (refreshed).
+
+## 2026-10-14: Stage 6.6 glow-fish orb lanterns (batch 2 WIP, branch `hearthmoor-batch2-wip`)
+- `game/lanterns.js`: buy glow-fish (Odo, Ida) and empty orbs (Odo), or catch glow-fish at night (Hollows spring, Ravenhold pier ends; one per spot per day). Place orb lanterns on 2 home spots (Plaza cottage) and 2 Lane garden spots (blue / violet / red / grand mix); at night each casts a pool decal + point light + light zone. E again takes it back.
+- Art: `art/orb_lanterns/orb_fx_32` (Art seat pack) appended to plaza + lane spells atlases by `build.py install_orb_lanterns`. Kit posts (glb) not placed yet: orbs hover. Smoke segment **K** (`--quick lantern`). Screenshot: `docs/screenshots/stage6_lanterns.png`.
+
 ## 2026-10-14: Batch 1 (6.2-6.5) LIVE: merged `hearthmoor-batch1-wip` to main and published
 - Green before merge: check_all --lowres 11/11 areas, smoke --quick controller 114/114, smoke --quick vanaheim 29/29, smoke C 29/29 (full smoke 103/105 earlier; both fails fixed in d025afd/b42a14c).
 
