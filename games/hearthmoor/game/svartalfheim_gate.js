@@ -20,7 +20,7 @@ Object.assign(ITEMS, {
   council_vouch: { name: 'Council vouch', px: 'glowseed', about: 'The Gnome Council\'s word on you, sealed in wax. For the dwarves, via Halvard.' },
   copper_key: { name: 'Copper key', px: 'glowseed', about: 'A copper key with a wind-up bow. The dwarves forge them under the mountain.' },
 });
-Object.assign(MERIT, { vouch: 40, copper: 60 });
+Object.assign(MERIT, { vouch: 40, copper: 60, deep_c: 120 });
 Object.assign(ENEMIES, { runaway: { name: 'Runaway construct', scale: 2.0, hp: 300, dmg: 16, speed: 1.0, reach: 2.0, windup: 0.6, cd: 1.8, aggro: 9, r: 0.6, push: 0.2, heavy: true, weakBelly: 1.5 } });
 Object.assign(XP, { runaway: 180 });
 Object.assign(QUESTS, {
@@ -94,6 +94,12 @@ export class SvGate {
     this.wrapLook();
     this.wire(ctx);
     if (f.sg_wound && !f.sg_runaway) setTimeout(() => this.ctx === ctx && this.spawnRunaway(), 300);
+    if (((f.alliance || {}).svartalfheim) === 'conquer' && (S.inv || {}).anvil_heart && q(S, 'clockdeep') === 2) setTimeout(() => this.ctx === ctx && this.conquerLeave(), 900);
+  }
+  // story 6.8: leaving Svartalfheim with the Anvil-Heart on the conquer path (stage 2 -> 3)
+  conquerLeave() {
+    this.G.openDialogue({ id: 'narr', name: 'Svartalfheim' }, { pages: ['(Behind you, the copper door grinds shut. The gears around it slow, and stop.)', '(Through the keyhole, the forge-glow is gone. Only cold-blue runes, and the violet glow of the mines.)'],
+      then: (G) => { G.setQuest('clockdeep', 3); G.factions.add('gate', MERIT.deep_c, 'deep_c'); gold(G, 200); const f = flags(G.S); f.sv_resolved = 'conquer'; f.sv_cold = 1; } });
   }
   reopen() { if (this.ctx && this.sv.area === 'bifrost') this.wire(this.ctx); }
   wire(ctx) {

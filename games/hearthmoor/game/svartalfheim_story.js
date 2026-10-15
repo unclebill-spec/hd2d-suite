@@ -94,6 +94,10 @@ const say1 = (line, then) => ({ pages: [line], then });
 const thane = (S) => {
   const f = F(S), a = SV(S);
   if (!a && !f.sv_contract) return choiceEntry(S);
+  if (q(S, 'clockdeep') === 2 && (S.inv || {}).anvil_heart && a === 'befriend') return { pages: ['Our Heart. In the flue, all along. Set it down. There. On the plinth. ...Hear that? The forge, roaring like it\'s young.', 'Anvildeep is your friend, Midgarder. We\'ll forge you anything. Within reason. Our reason. It\'s quite generous.'],
+    then: (G) => { G.setQuest('clockdeep', 3); G.factions.add('embassy', MERIT.deep, 'deep'); gold(G, 150); G.take('anvil_heart', 1); const ff = flags(G.S); ff.heart_home = 1; ff.sv_resolved = 'befriend'; G.toast('Svartalfheim is your ally. Forgefire Week is coming.', 3.0); } };   // story 6.9
+  if (q(S, 'clockdeep') === 2 && (S.inv || {}).anvil_heart && !a && f.sv_contract) return { pages: ['Bound? And you found the Heart? ...Good. Put it down. Here\'s your pay. Dwarves never short a debt.', 'We\'re square, elf-friend. Mind the door on your way out.'],
+    then: (G) => { G.take('anvil_heart', 1); flags(G.S).heart_home = 1; G.setQuest('clockdeep', 3); G.setQuest('sv_hire', 3); G.factions.add('gate', MERIT.contract, 'contract'); gold(G, 250); flags(G.S).sv_resolved = 'contract'; } };
   const night = false;
   if (a === 'befriend') {
     if (q(S, 'sv_trial') === 2) return { pages: ['Dagna says your arm is not bad. From Dagna, that is a parade.', 'Anvildeep will hear you out.'], then: (G) => { G.setQuest('sv_trial', 3); G.factions.add('embassy', MERIT.sv_trial, 'sv_trial'); gold(G, 20); flags(G.S).sv_trusted = 1; G.setQuest('sv_name', 1); } };

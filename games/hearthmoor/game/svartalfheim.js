@@ -50,6 +50,7 @@ SPAWNS.glowmines = [   // story 2.5: sootling, forgeconstruct (strays), cavegole
 Object.assign(ITEMS, {
   forge_seal: { name: 'Forge-Seal', px: 'thawkey', about: 'Copper and rune-light. It opens the Deep\'s lift, and nothing else.' },
   forge_core: { name: 'Forge-core', px: 'glowseed', about: 'A lump of ember-ore that beats faintly, like it\'s thinking about being a heart.' },
+  anvil_heart: { name: 'Anvil-Heart', px: 'glowseed', about: 'A heart of red-gold metal, wrapped in rime. It beats slowly. Anvildeep\'s fire runs on it.' },
   lesser_heart: { name: 'Lesser Heart', px: 'glowseed', about: 'Dagna\'s stopgap heart in a copper cage. Ugly. Works.' },
   deep_brass: { name: 'Deep brass', px: 'tonic', about: 'Old dwarven brass from the Deep\'s clockwork. Darker than normal brass, and warmer.' },
   amethyst: { name: 'Amethyst', px: 'glowseed', about: 'Violet crystal from the mines. It catches rune-light and keeps a little.' },
@@ -83,6 +84,7 @@ const hasSeal = (S) => !!(S.inv || {}).forge_seal;
 // pool_blue / pool_violet / water_glow) with a matching point light at night, like forge.js does for the Forge Quarter. Data only; a later chunk
 // adds the realm's quests / TALK / shops / gate on this class.
 const SV_AREAS = Object.keys(AREAS_SV);
+const FLUE = [0, -31.2];   // the frozen flue, north rim of the Binding Forge (z -32 is the walk limit; the pillar stands at z -30)
 const SV_LIGHT = { pool_red: ['#ff5a4a', 7, 5.0], pool_blue: ['#2ab4ff', 5, 3.6], pool_violet: ['#a45cf0', 5, 4.0], water_glow: ['#3ac8b0', 4, 3.2] };
 export class Svartalfheim {
   constructor(G) { this.G = G; this.ctx = null; this.area = null; this.fx = []; this.lights = []; this.spots = []; this.qaDone = false; this.fight = new GorrakFight(this); this.deep = new DeepRooms(this); this.story = new SvStory(this); this.gate = new SvGate(this); this.started = false; this.wrap(); }
@@ -94,6 +96,7 @@ export class Svartalfheim {
     G.harbor.prompt = (...a) => me.prompt() || p0(...a);
     G.harbor.interact = (...a) => me.interact() || i0(...a);
     G.harbor.onTap = (hit, ...a) => me.onTap(hit) || t0(hit, ...a);
+    if (G.hollows) { const c0 = G.hollows.onCast.bind(G.hollows); G.hollows.onCast = (...a) => { const r = c0(...a); me.onCast(); return r; }; }
   }
   spot(o) { this.spots.push({ r: 1.6, show: () => true, ...o }); }
   nearSpot() {
@@ -118,7 +121,7 @@ export class Svartalfheim {
     const c = this.ctx, gm = c ? (c.scene.game || {}) : {}, S0 = this.G.S;
     return { area: this.area, seal: hasSeal(this.G.S), exits: (gm.exits || []).map((e) => e.to),
              foes: c ? c.actors.list.filter((a) => ['sootling', 'forgeconstruct', 'golem', 'sparkgolem', 'shadowsmith', 'hushblade'].includes(a.role)).map((a) => a.role) : [],
-             deep: { vents: this.deep.v.reduce((n, v) => n + (v.n || 0), 0), hits: this.deep.hits, gusts: this.deep.gust.n, pushed: this.deep.gust.pushed || 0 },
+             flue: { thawed: !!(this.G.S.flags || {}).cd_thawed, heart: !!(this.G.S.inv || {}).anvil_heart }, deep: { vents: this.deep.v.reduce((n, v) => n + (v.n || 0), 0), hits: this.deep.hits, gusts: this.deep.gust.n, pushed: this.deep.gust.pushed || 0 },
              spots: this.spots.filter((x) => x.show()).length, gate: this.gate.qa(), comps: { owned: owned(this.G.S), active: active(this.G.S) },
              quests: S0.quests || {}, alliance: ((S0.flags || {}).alliance || {}).svartalfheim || null, alfheim_alliance: ((S0.flags || {}).alliance || {}).alfheim || null, rivals: (S0.flags || {}).rivals || null, inv: S0.inv || {},
              gorrak: this.fight.e ? { hp: Math.round(this.fight.e.hp), max: this.fight.e.D.hp, scale: this.fight.e.D.scale, phase: this.fight.e.ph, state: this.fight.e.state, role: this.fight.e.a.role } : null };
@@ -150,6 +153,8 @@ export class Svartalfheim {
         act: () => this.look('deep_lift', 'The Deep\'s lift', ['A lift cage. A seal of copper and rune-light holds it shut.']) });
     }
     this.started = false; this.fight.reset(); this.deep.reset(); this.story.attach(area);
+    this.thawFx = null;
+    if (area === 'clockdeep2') this.flue();   // story 6.7: the frozen flue (spell thaws it, then E / A gives the Anvil-Heart)
     if (area === 'clockdeep2') {   // Gorrak's arena (C8): the quench valves (phase 2) and the rune-anvils (phase 3)
       VALVES.forEach((v, i) => this.spot({ pos: v, r: 1.7, label: 'open the quench valve (E / A)', show: () => !!this.fight.e && this.fight.e.ph === 2 && this.fight.e.state !== 'dead', act: () => this.fight.valve(i) }));
       ANVILS.forEach((v, i) => this.spot({ pos: v, r: 1.7, label: 'strike the rune-anvil (E / A)', show: () => !!this.fight.e && this.fight.e.ph === 3 && !this.fight.struck[i] && this.fight.e.state !== 'dead', act: () => this.fight.anvil(i) }));
@@ -163,6 +168,27 @@ export class Svartalfheim {
     }
   }
   detach() { for (const f of this.fx) if (f) f.dur = f.t + 0.2; for (const l of this.lights) if (l) l.kill = true; this.fx = []; this.lights = []; this.spots = []; this.ctx = null; this.area = null; }
+  // ---- the frozen flue (story 3.7 / 6.7): north rim of the Binding Forge. A spell within 2.6 m thaws it, E / A takes the Anvil-Heart.
+  flue() {
+    const G = this.G, S = G.S, f = () => flags(S), ctx = this.ctx, X = FLUE[0], Z = FLUE[1];
+    const live = () => !!f().cd_boss && (!!f().cd_bound || !!f().cd_taken) && !f().cd_heart;
+    this.spot({ pos: FLUE, r: 2.2, label: 'the frozen flue (E / A)', show: live, act: () => {
+      if (!f().cd_thawed) { this.look('flue', 'The frozen flue', ['A shell of rime fills the flue. Something red-gold glows under it, beating slowly.', '(Any spell cast close by would thaw it.)']); return; }
+      const bef = ((f().alliance || {}).svartalfheim) === 'befriend', con = ((f().alliance || {}).svartalfheim) === 'conquer';
+      const pages = ['(The rime cracks and slides away. Inside, wrapped in frost, a heart of red-gold metal beats slowly.)', '(The Anvil-Heart. It never left the mountain. It was here, starving the chains it was meant to feed.)'];
+      if (bef) pages.push('Dagna: "There you are. You daft lump. Let\'s get you home."'); else if (!con) pages.push('Kesh: "Is that it? It\'s warm! Can I hold it? No? Fine."');
+      G.openDialogue({ id: 'flue', name: 'The frozen flue' }, { pages, then: (G2) => { flags(G2.S).cd_heart = 1; G2.give('anvil_heart', 1); G2.setQuest('clockdeep', 2); G2.toast('Found: the Anvil-Heart', 2.6); } });
+    } });
+    if (live() && ctx.effects && ctx.effects.meta.effects.coldfire_motes) this.thawFx = ctx.effects.spawn('coldfire_motes', X, ctx.heightAt(X, Z) + 0.8, Z, { duration: Infinity });
+    if (this.thawFx) this.fx.push(this.thawFx);
+  }
+  // a cast near the flue thaws it (the Hollows brazier rule)
+  onCast() {
+    const c = this.ctx, f = flags(this.G.S); if (!c || this.area !== 'clockdeep2' || f.cd_thawed || !f.cd_boss || !(f.cd_bound || f.cd_taken)) return;
+    if (Math.hypot(c.player.x - FLUE[0], c.player.z - FLUE[1]) > 2.6) return;
+    f.cd_thawed = 1; this.G.toast('The rime sweats and cracks. Something red-gold shows through.', 2.6);
+    if (c.effects && c.effects.meta.effects.ember_pop) c.effects.spawn('ember_pop', FLUE[0], c.heightAt(FLUE[0], FLUE[1]) + 0.8, FLUE[1], {});
+  }
   anvilsOn() {}
   openLift() { const gm = this.ctx && this.ctx.scene.game; if (gm && !(gm.exits || []).some((e) => e.to === 'clockdeep')) gm.exits.push({ ...LIFT }); }
   // the arena trigger: step into the Binding Forge and Gorrak wakes (intro dialogue, then the fight)

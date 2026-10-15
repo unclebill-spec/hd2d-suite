@@ -169,6 +169,25 @@ def steps(b, url, T, size, errors, rep, stub=None, shots=None):
         g0 = T.ev("window.__hm.S.gold || 0"); tq("story.claimLift()"); a = sv()
         T.step("the lift is claimed: stage 3, +80 gold, The Clockwork Deep starts", a["quests"].get("sv_take") == 3 and a["quests"].get("clockdeep") == 1 and T.ev("window.__hm.S.gold || 0") - g0 == 80, q=a["quests"])
         shot("sv_conquer")
+        # ---- the frozen flue (spell thaws it, E / A gives the Anvil-Heart), the Thane's turn-in, the conquer exit (6.8)
+        load("clockdeep2", "&svq=seal", "c8")
+        done = "(() => { const G = window.__hm, d = G.dlg; if (d && d.then) d.then(G); G.dropDialogue(); })()"
+        T.ev("(() => { window.__hm.S.flags.cd_boss = 1; })()")   # Gorrak down: the arena trigger stays quiet while we stand at the flue
+        T.ev("(() => { const p = window.__hd2d.ctx.player; p.x = 0; p.z = -31.2; })()"); pg.wait_for_timeout(500)
+        T.step("flue: no spot before Gorrak is bound", T.ev("window.__hm.svart.nearSpot() === null || window.__hm.svart.nearSpot().label.indexOf('flue') < 0"))
+        T.ev("(() => { window.__hm.S.flags.cd_bound = 1; })()")
+        T.step("flue: after the binding the frozen flue can be looked at", T.ev("(() => { const s = window.__hm.svart.nearSpot(); return !!s && s.label.indexOf('flue') >= 0; })()"))
+        T.ev("window.__hm.svart.interact()"); pg.wait_for_timeout(200); T.ev(done)
+        T.step("flue: frozen, E / A only looks (no Anvil-Heart yet)", not (sv()["flue"]["heart"]) and not T.ev("!!window.__hm.S.flags.cd_thawed"))
+        T.ev("window.__hm.svart.onCast()")
+        T.step("flue: a spell within 2.6 m thaws it", T.ev("!!window.__hm.S.flags.cd_thawed"))
+        T.ev("window.__hm.svart.interact()"); pg.wait_for_timeout(200); T.ev(done); a = sv()
+        T.step("flue: E / A takes the Anvil-Heart and The Clockwork Deep moves to stage 2", a["flue"]["heart"] and a["quests"].get("clockdeep") == 2, q=a["quests"])
+        T.ev("(() => { window.__hm.S.flags.alliance = { svartalfheim: 'befriend' }; })()"); g0 = T.ev("window.__hm.S.gold || 0"); tq("qaTalk('thane')"); a = sv()
+        T.step("the Thane takes the Heart home (befriend): stage 3, +150 gold, sv_resolved", a["quests"].get("clockdeep") == 3 and not a["inv"].get("anvil_heart") and T.ev("window.__hm.S.gold || 0") - g0 == 150 and T.ev("window.__hm.S.flags.sv_resolved") == "befriend", q=a["quests"])
+        load("bifrost"); T.ev("(() => { const S = window.__hm.S; S.flags.alliance = { svartalfheim: 'conquer' }; S.inv.anvil_heart = 1; S.quests.clockdeep = 2; })()")
+        g0 = T.ev("window.__hm.S.gold || 0"); tq("gate.conquerLeave()"); pg.wait_for_timeout(200); T.ev(done); a = sv()
+        T.step("conquer exit (6.8): the copper door grinds shut, stage 3, +200 gold, Cold Anvildeep flag", a["quests"].get("clockdeep") == 3 and T.ev("window.__hm.S.gold || 0") - g0 == 200 and T.ev("!!window.__hm.S.flags.sv_cold"), q=a["quests"])
         # ---- Tick (pet) + the one-active-companion swap
         a = load("svartalfheim")
         T.step("Tick: pet_tick role + his aura / pool effects are in the area atlases, PETS.tick registered",
