@@ -39,6 +39,7 @@ const A = (S) => ((S.flags || {}).alliance || {}).alfheim;
 const F_ = (S) => S.flags || {};
 const found = (S, ids) => ids.filter((id) => (S.found || {})[id]).length;
 const DW = ['dw_1', 'dw_2', 'dw_3', 'dw_4', 'dw_5'];
+const lockedA = (S) => ((S.flags || {}).rivals || {}).alfheim === 'locked';
 const gold = (G, n) => { G.S.gold = (G.S.gold || 0) + n; G.toast(`+${n} gold`, 1.8); G.drawBag && G.drawBag(); };
 export const lockRival = (S, realm) => { const f = flags(S); f.rivals = { ...(f.rivals || {}), [realm]: 'locked' }; };
 export const moodUp = (S, realm) => { const f = flags(S); f.realm_mood = { ...(f.realm_mood || {}), [realm]: ((f.realm_mood || {})[realm] || 0) + 1 }; };
@@ -205,7 +206,7 @@ Object.assign(TALK, {
   },
   regent(S) {
     const a = A(S), q = S.quests || {}, f = F_(S), inv = S.inv || {};
-    if (!a) {
+    if (!a && !f.alf_contract) {
       const pages = ['A Midgard face. The first through our gate in months. I am Aerin Vael, Regent of Lumenvale.',
                      'Mossbrook calls us poisoners. Midgard sends you. And our own wisps are going dark. It has not been a good season.'];
       if (inv.blight_spike) pages.push('You carry frost-iron. I can feel it from here. Is that Vanaheim\'s \'proof\'?');
@@ -213,13 +214,18 @@ Object.assign(TALK, {
       const befriend = (extra) => (G) => { ally(G.S).alfheim = 'befriend'; G.toast('Alfheim: befriended', 2.2); G.setQuest('alf_name', 1); lockRival(G.S, 'svartalfheim');
         return { pages: [...(extra ? [extra] : []), 'Then you are welcome under our boughs. Mirelle keeps the Prism Library. If proof exists, she will see it.',
                          '(Alfheim is your friend now. Its rival, Svartalfheim, will not stand with you as well.)'] }; };
+      // the hired path (lead's decision, mirrors Svartalfheim's contract): a player who befriended Svartalfheim first is locked out of the alliance,
+      // but Sylvaine's old rivals will pay for the Vault: coin only, no Realm Favor, a smaller reward, the same vault boss
+      const hireMe = { label: 'Then hire me.', pick: (G) => { flags(G.S).alf_contract = 1; G.setQuest('prismvault', 1);
+        return { pages: ['A friend of the dwarves. For hire. Sylvaine\'s old rivals will pay for a quiet Vault, and I will not ask who.', 'Here is the Spire key. Put the Light-Drinker back to sleep, or put her down. The coin is modest. So is my trust.'], then: (G2) => { G2.give('spirekey', 1); } }; } };
       const opts = [];
       if (S.cls === 'seer') opts.push({ label: 'Your runes on Mossbrook\'s moss were forged. I\'ve seen the hand.', pick: befriend('...You\'ve seen it too? Then perhaps we are not mad after all.') });
-      opts.push({ label: 'A friend. Let me prove you innocent.', pick: befriend() },
+      opts.push(lockedA(S) ? { label: '(Locked. You stand with Anvildeep.)', pick: () => ({ pages: ['(Locked. You stand with Anvildeep.)'] }) } : { label: 'A friend. Let me prove you innocent.', pick: befriend() },
         { label: 'Alfheim will answer to Hearthmoor.', pick: (G) => { ally(G.S).alfheim = 'conquer'; G.toast('Alfheim: conquered', 2.2); G.setQuest('alf_take', 1); moodUp(G.S, 'svartalfheim');
             G.alfheim && G.alfheim.onConquer();
             return { pages: ['...I see. Then you will find the Spire barred, and Captain Thorne between you and it.', 'Faelan: "So that\'s what you are. Rangers! To the Spire bridge. Nobody passes."',
                              '(Alfheim stands against you now. The light elves will remember.)'] }; } },
+        ...(lockedA(S) ? [hireMe] : []),
         { label: 'I\'m only passing through.', cancel: true, pick: () => ({ pages: ['Then pass gently. Our light is thin enough already.'] }) });
       return { pages, choice: { id: 'alliance_alfheim', options: opts } };
     }
@@ -248,6 +254,11 @@ Object.assign(TALK, {
       then: (G) => { G.setQuest('prismvault', 3); G.factions.add('embassy', MERIT.vault, 'vault'); gold(G, 150); G.give('queen_lantern', 1);
         flags(G.S).alf_resolved = 'befriend'; G.toast('Alfheim is your ally.', 3.0); },
     };
+    if (f.alf_contract) {
+      if (q.prismvault === 2) return { pages: ['She sleeps, or she\'s gone. Either way the Vault is quiet. Here is your coin. Count it.', 'You were hired. That is all. Alfheim owes you nothing, and says so.'],
+        then: (G) => { G.setQuest('prismvault', 3); gold(G, 90); flags(G.S).alf_resolved = 'contract'; } };
+      return say1(q.prismvault === 3 ? 'You were paid. Don\'t take it personally. We remember who your friends are.' : 'The Vault is under the Spire. Mind the light. It bites.');
+    }
     if (a === 'conquer') return say1(f.alf_dark ? 'You took the Heart. Look at the trees. Every light you see is a light going out.' : 'Say what you came to say, Midgarder. Then go, and take your cold with you.');
     if (q.prismvault === 3) return say1('She sleeps. I went down and sat with her. I told her about the frogs. She\'d have liked the frogs.');
     return say1(night() ? 'The aurora\'s out. When I was small, I thought it was the queen dancing. Now I know better.' : 'The throne stays empty. A regent is a promise to keep the chair warm, not to sit in it.');
@@ -403,6 +414,7 @@ export class Alfheim {
     if (q === 'dim') { bef(); S.quests.alf_dim = 1; }
     if (q === 'lumi' || q === 'vault' || q === 'boss') { bef(); S.quests.alf_dim = 3; f.dm_lumi = 1; f.dm_trail = 1; for (const k of DW) S.found[k] = 1; f.companions = { ...(f.companions || {}), lumi: 1 }; S.inv.spirekey = 1; S.inv.speaklens = 1; S.quests.prismvault = 1; }
     if (q === 'boss') { for (const k of ['pv_lens1', 'pv_lens2', 'pv_lens3', 'pv_lens2v', 'pv_lens2b', 'pv_lens2r', 'p2_src', 'p4_src', 'p6_src']) S.found[k] = 1; f.pv_warden = 1; }
+    if (q === 'hire') { lockRival(S, 'alfheim'); f.alf_gate_open = 1; S.quests.alf_gate = 3; }
     if (q === 'conquer' || q === 'dark') { ally(S).alfheim = 'conquer'; f.alf_gate_open = 1; S.quests.alf_gate = 3; S.quests.alf_take = 1; moodUp(S, 'svartalfheim'); }
     if (q === 'dark') { f.alf_dark = 1; f.pv_taken = 1; S.quests.alf_take = 3; S.quests.prismvault = 3; f.alf_resolved = 'conquer'; f.alf_veyra_seen = 1; }
   }
