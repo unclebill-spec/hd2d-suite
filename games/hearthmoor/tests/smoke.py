@@ -1129,6 +1129,7 @@ def run(out, simscale=4, size=(960, 540), segs=SEGS):
                 # ---------------------------------------------------------- stage 3: the travelling night merchant + gem sockets
                 t_day = T.ev("window.__hd2d.clock.t")
                 T.ev("window.__hd2d.setTime(0.9)"); pg.wait_for_timeout(700)
+                T.wait("!!(window.__hm.ctx.npc('nightmerchant') && window.__hm.shopUI.nm && window.__hm.shopUI.nm.light)", 15)   # she arrives on shopUI.update; slow under 2 shards, so wait for it
                 nm = T.ev("(() => { const a = window.__hm.ctx.npc('nightmerchant'), s = window.__hm.shopUI; return { here: !!a, role: a && a.role, light: !!(s.nm && s.nm.light), zone: window.__hm.glow.zones().some((z) => z.src === 'lantern'),"
                      " pool: !!(s.nm && s.nm.fx.some((f) => f.name === 'coldfire_pool')), motes: s.nm ? s.nm.fx.filter((f) => f.name === 'coldfire_motes').length : 0, power: s.nm && s.nm.light ? s.nm.light.base : 0 }; })()")
                 T.step("night: Sefa the night merchant sets up by the well with a neon-blue lantern (light + light zone)", nm["here"] and nm["role"] == "nightmerchant" and nm["light"] and nm["zone"], nm=nm)
