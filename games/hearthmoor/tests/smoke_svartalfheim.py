@@ -112,7 +112,10 @@ def steps(b, url, T, size, errors, rep, stub=None, shots=None):
         a = load("clockdeep2", "&svq=seal", "c7"); a = sv()
         T.step("clockdeep2 C4-C7 foe pools spawn (shadowsmiths, spark golems...)", {"shadowsmith", "sparkgolem", "sootling"} <= set(a["foes"]), qa=a)
         T.ev("(() => { window.__hm.peace = false; window.__hd2d.ctx.player.iframes = 99; })()")
-        pg.wait_for_timeout(7000); a = sv()
+        pg.wait_for_timeout(7000)
+        try: T.wait("window.__hm.svart.qa().deep.gusts >= 1 && window.__hm.svart.qa().deep.pushed >= 1", 90)   # the gust timer runs in game time (slow frames on a big area): wait for it
+        except Exception: pass
+        a = sv()
         T.step("C7 bellows gusts: one blows every 6 s and pushes you back off the bridge line", a["deep"]["gusts"] >= 1 and a["deep"]["pushed"] >= 1, deep=a["deep"])
         shot("sv_c7")
         # ---- the Thane's alliance choice + quests (lead's decisions: locks mirror, hired path for a locked player)
