@@ -1,0 +1,806 @@
+{
+ "name": "The Clockwork Deep: the Binding Forge",
+ "seed": 163,
+ "biome": "cozy-village",
+ "about": "The lower Clockwork Deep (rooms C4-C8): C4 the Assembly Line, C5 the Frost Bell, C6 the Switchyard, C7 Bellows Bridge, and C8 the Binding Forge, a round chamber with Gorrak's anvil-pillar (boss arena placeholder, no fight yet). One long hall, entered from C3 of the Clockwork Deep.",
+ "time": {
+  "start": "night",
+  "speed": 0.0
+ },
+ "spells": true,
+ "sprite_roles": [
+  "actors",
+  "heroes",
+  "combat"
+ ],
+ "boss_roles": [],
+ "camera": {
+  "fov": 24,
+  "pitch": 36,
+  "distance": 36,
+  "zoom": [
+   24,
+   46
+  ],
+  "look": [
+   0,
+   0,
+   -2.0
+  ],
+  "bounds": [
+   -3.0,
+   -32.0,
+   3.0,
+   40.0
+  ]
+ },
+ "ground": {
+  "size": [
+   70,
+   110
+  ],
+  "mat": "stone",
+  "walk": [
+   -10.0,
+   -40.0,
+   10.0,
+   45.0
+  ]
+ },
+ "slabs": [
+  {
+   "name": "c4floor",
+   "rect": [
+    -4.0,
+    29.0,
+    4.0,
+    43.0
+   ],
+   "mat": "cobble",
+   "h": 0.03
+  },
+  {
+   "name": "c5floor",
+   "rect": [
+    -4.0,
+    13.0,
+    4.0,
+    27.0
+   ],
+   "mat": "cobble",
+   "h": 1.23
+  },
+  {
+   "name": "c8floor",
+   "rect": [
+    -7.0,
+    -37.0,
+    7.0,
+    -21.0
+   ],
+   "mat": "cobble",
+   "h": 2.43
+  }
+ ],
+ "terraces": [
+  {
+   "name": "c5",
+   "rect": [
+    -7.0,
+    12.0,
+    7.0,
+    28.0
+   ],
+   "h": 1.2,
+   "top": "cobble",
+   "gaps": [
+    [
+     -1.5,
+     1.5
+    ]
+   ]
+  },
+  {
+   "name": "c6",
+   "rect": [
+    -7.0,
+    -4.0,
+    7.0,
+    12.0
+   ],
+   "h": 1.2,
+   "top": "cobble"
+  },
+  {
+   "name": "c7",
+   "rect": [
+    -7.0,
+    -20.0,
+    7.0,
+    -4.0
+   ],
+   "h": 2.4,
+   "top": "cobble",
+   "gaps": [
+    [
+     -1.5,
+     1.5
+    ]
+   ]
+  },
+  {
+   "name": "c8",
+   "rect": [
+    -9.0,
+    -38.0,
+    9.0,
+    -20.0
+   ],
+   "h": 2.4,
+   "top": "stone"
+  },
+  {
+   "name": "wall_w4",
+   "rect": [
+    -30,
+    28,
+    -7.0,
+    46
+   ],
+   "h": 3.6,
+   "top": "stone",
+   "coping": true
+  },
+  {
+   "name": "wall_e4",
+   "rect": [
+    7.0,
+    28,
+    30,
+    46
+   ],
+   "h": 3.6,
+   "top": "stone",
+   "coping": true
+  },
+  {
+   "name": "wall_w5",
+   "rect": [
+    -30,
+    -4,
+    -7.0,
+    28
+   ],
+   "h": 4.8,
+   "top": "stone",
+   "coping": true
+  },
+  {
+   "name": "wall_e5",
+   "rect": [
+    7.0,
+    -4,
+    30,
+    28
+   ],
+   "h": 4.8,
+   "top": "stone",
+   "coping": true
+  },
+  {
+   "name": "wall_w7",
+   "rect": [
+    -30,
+    -20,
+    -7.0,
+    -4
+   ],
+   "h": 6.0,
+   "top": "stone",
+   "coping": true
+  },
+  {
+   "name": "wall_e7",
+   "rect": [
+    7.0,
+    -20,
+    30,
+    -4
+   ],
+   "h": 6.0,
+   "top": "stone",
+   "coping": true
+  },
+  {
+   "name": "wall_w8",
+   "rect": [
+    -30,
+    -38,
+    -9.0,
+    -20
+   ],
+   "h": 6.0,
+   "top": "stone",
+   "coping": true
+  },
+  {
+   "name": "wall_e8",
+   "rect": [
+    9.0,
+    -38,
+    30,
+    -20
+   ],
+   "h": 6.0,
+   "top": "stone",
+   "coping": true
+  },
+  {
+   "name": "wall_n",
+   "rect": [
+    -9.0,
+    -60,
+    9.0,
+    -38
+   ],
+   "h": 6.0,
+   "top": "stone",
+   "coping": true
+  },
+  {
+   "name": "wall_s",
+   "rect": [
+    -7.0,
+    46,
+    7.0,
+    60
+   ],
+   "h": 3.6,
+   "top": "stone",
+   "coping": true
+  }
+ ],
+ "stairs": [
+  {
+   "name": "stair_c5",
+   "x": 0.0,
+   "z_top": 28.0,
+   "width": 3.0,
+   "rise": 1.2,
+   "base": 0.0
+  },
+  {
+   "name": "stair_c7",
+   "x": 0.0,
+   "z_top": -4.0,
+   "width": 3.0,
+   "rise": 1.2,
+   "base": 1.2
+  }
+ ],
+ "decks": [],
+ "blocks": [],
+ "buildings": [],
+ "props": [
+  {
+   "piece": "brazier",
+   "pos": [
+    3.8,
+    38.6
+   ],
+   "glow": {
+    "color": "#f2a63a",
+    "range": 6.0,
+    "fixed": 0.9
+   }
+  },
+  {
+   "piece": "rift_brazier_red",
+   "pos": [
+    -3.8,
+    38.6
+   ],
+   "glow": {
+    "color": "#ff6a3a",
+    "range": 6.0,
+    "fixed": 0.9
+   }
+  },
+  {
+   "piece": "lamp_post",
+   "pos": [
+    -4.6,
+    33.0
+   ],
+   "glow": {
+    "color": "#f2a63a",
+    "range": 5.5,
+    "fixed": 0.9
+   }
+  },
+  {
+   "piece": "lamp_post",
+   "pos": [
+    4.6,
+    33.0
+   ],
+   "glow": {
+    "color": "#f2a63a",
+    "range": 5.5,
+    "fixed": 0.9
+   }
+  },
+  {
+   "piece": "forge_anvil",
+   "pos": [
+    -4.6,
+    36.0
+   ]
+  },
+  {
+   "piece": "barrel",
+   "pos": [
+    4.6,
+    41.4
+   ]
+  },
+  {
+   "piece": "crate",
+   "pos": [
+    -4.4,
+    41.6
+   ]
+  },
+  {
+   "piece": "rift_brazier_red",
+   "pos": [
+    -4.2,
+    22.0
+   ],
+   "glow": {
+    "color": "#ff6a3a",
+    "range": 6.0,
+    "fixed": 0.9
+   }
+  },
+  {
+   "piece": "rift_brazier_red",
+   "pos": [
+    4.2,
+    22.0
+   ],
+   "glow": {
+    "color": "#ff6a3a",
+    "range": 6.0,
+    "fixed": 0.9
+   }
+  },
+  {
+   "piece": "temple_brazier_cold",
+   "pos": [
+    0.0,
+    16.0
+   ]
+  },
+  {
+   "piece": "frost_scar",
+   "pos": [
+    4.8,
+    19.0
+   ]
+  },
+  {
+   "piece": "frost_scar",
+   "pos": [
+    -4.8,
+    25.0
+   ]
+  },
+  {
+   "piece": "mural_wall",
+   "pos": [
+    -6.2,
+    20.0
+   ]
+  },
+  {
+   "piece": "rift_brazier_red",
+   "pos": [
+    -4.4,
+    8.0
+   ],
+   "glow": {
+    "color": "#ff6a3a",
+    "range": 6.0,
+    "fixed": 0.9
+   }
+  },
+  {
+   "piece": "rift_brazier_red",
+   "pos": [
+    4.4,
+    0.0
+   ],
+   "glow": {
+    "color": "#ff6a3a",
+    "range": 6.0,
+    "fixed": 0.9
+   }
+  },
+  {
+   "piece": "crate",
+   "pos": [
+    -5.0,
+    4.4
+   ]
+  },
+  {
+   "piece": "barrel",
+   "pos": [
+    5.2,
+    8.6
+   ]
+  },
+  {
+   "piece": "tool_rack",
+   "pos": [
+    -5.6,
+    -1.6
+   ]
+  },
+  {
+   "piece": "rift_brazier_red",
+   "pos": [
+    -4.4,
+    -8.0
+   ],
+   "glow": {
+    "color": "#ff6a3a",
+    "range": 6.5,
+    "fixed": 0.9
+   }
+  },
+  {
+   "piece": "rift_brazier_red",
+   "pos": [
+    4.4,
+    -8.0
+   ],
+   "glow": {
+    "color": "#ff6a3a",
+    "range": 6.5,
+    "fixed": 0.9
+   }
+  },
+  {
+   "piece": "rift_brazier_red",
+   "pos": [
+    -4.4,
+    -16.0
+   ],
+   "glow": {
+    "color": "#ff6a3a",
+    "range": 6.5,
+    "fixed": 0.9
+   }
+  },
+  {
+   "piece": "rift_brazier_red",
+   "pos": [
+    4.4,
+    -16.0
+   ],
+   "glow": {
+    "color": "#ff6a3a",
+    "range": 6.5,
+    "fixed": 0.9
+   }
+  },
+  {
+   "piece": "coal_bin",
+   "pos": [
+    5.4,
+    -5.4
+   ]
+  },
+  {
+   "piece": "rift_brazier_red",
+   "pos": [
+    -6.4,
+    -26.0
+   ],
+   "glow": {
+    "color": "#ff6a3a",
+    "range": 7.0,
+    "fixed": 0.9
+   }
+  },
+  {
+   "piece": "rift_brazier_red",
+   "pos": [
+    6.4,
+    -26.0
+   ],
+   "glow": {
+    "color": "#ff6a3a",
+    "range": 7.0,
+    "fixed": 0.9
+   }
+  },
+  {
+   "piece": "rift_brazier_red",
+   "pos": [
+    -6.4,
+    -33.0
+   ],
+   "glow": {
+    "color": "#ff6a3a",
+    "range": 7.0,
+    "fixed": 0.9
+   }
+  },
+  {
+   "piece": "rift_brazier_red",
+   "pos": [
+    6.4,
+    -33.0
+   ],
+   "glow": {
+    "color": "#ff6a3a",
+    "range": 7.0,
+    "fixed": 0.9
+   }
+  },
+  {
+   "piece": "forge_anvil",
+   "pos": [
+    -5.6,
+    -29.4
+   ]
+  },
+  {
+   "piece": "forge_anvil",
+   "pos": [
+    5.6,
+    -29.4
+   ]
+  },
+  {
+   "piece": "forge_anvil",
+   "pos": [
+    -5.6,
+    -23.0
+   ]
+  },
+  {
+   "piece": "forge_anvil",
+   "pos": [
+    5.6,
+    -23.0
+   ]
+  },
+  {
+   "piece": "quench_tank",
+   "pos": [
+    -7.8,
+    -30.0
+   ]
+  },
+  {
+   "piece": "quench_tank",
+   "pos": [
+    7.8,
+    -30.0
+   ]
+  },
+  {
+   "piece": "quench_tank",
+   "pos": [
+    -7.8,
+    -23.6
+   ]
+  },
+  {
+   "piece": "quench_tank",
+   "pos": [
+    7.8,
+    -23.6
+   ]
+  }
+ ],
+ "hedges": [],
+ "trees": [],
+ "backdrop": {},
+ "emitters": [
+  {
+   "preset": "embers",
+   "pos": [
+    0,
+    1.6,
+    36.0
+   ],
+   "area": [
+    10,
+    1.2,
+    10
+   ],
+   "min_gate": 0.0
+  },
+  {
+   "preset": "embers",
+   "pos": [
+    0,
+    3.0,
+    -12.0
+   ],
+   "area": [
+    10,
+    1.6,
+    14
+   ],
+   "min_gate": 0.0
+  },
+  {
+   "preset": "embers",
+   "pos": [
+    0,
+    4.0,
+    -30.0
+   ],
+   "area": [
+    14,
+    1.6,
+    12
+   ],
+   "min_gate": 0.0
+  }
+ ],
+ "actors": [],
+ "player": {
+  "role": "traveler",
+  "pos": [
+   0.0,
+   38.0
+  ],
+  "facing": "up"
+ },
+ "fx": [],
+ "grades": {
+  "day": {
+   "fog_color": "#2c1840",
+   "sky_top": "#1a1030",
+   "sky_bottom": "#6a3c70",
+   "hemi_sky": "#b090c0",
+   "saturation": 1.02,
+   "bugs": 0.6,
+   "warmth": 0.04,
+   "exposure": 1.0,
+   "sun_intensity": 1.3,
+   "hemi_intensity": 0.8,
+   "sun_color": "#f0c0e0",
+   "lamp_intensity": 0.8
+  },
+  "dusk": {
+   "fog_color": "#181c40",
+   "sky_top": "#0a0e26",
+   "sky_bottom": "#303c78",
+   "exposure": 0.9,
+   "sun_intensity": 0.55,
+   "warmth": -0.12,
+   "sun_color": "#8ca0e8",
+   "bugs": 1.0
+  },
+  "night": {
+   "fog_color": "#0a0818",
+   "sky_top": "#040410",
+   "sky_bottom": "#18183c",
+   "hemi_sky": "#3c4488",
+   "bugs": 1.0,
+   "exposure": 0.9,
+   "sun_intensity": 0.28,
+   "hemi_intensity": 0.42,
+   "sun_color": "#6a7cd0"
+  }
+ },
+ "game": {
+  "id": "clockdeep2",
+  "title": "The Clockwork Deep: the Binding Forge",
+  "exits": [
+   {
+    "rect": [
+     -1.5,
+     42.6,
+     1.5,
+     43.8
+    ],
+    "to": "clockdeep",
+    "spawn": "from_c4",
+    "label": "the stair back up to the Glowpool Cistern"
+   }
+  ],
+  "portals": [],
+  "spawns": {
+   "start": [
+    0.0,
+    38.0,
+    "up"
+   ],
+   "from_c3": [
+    0.0,
+    38.0,
+    "up"
+   ],
+   "qa": [
+    0.0,
+    37.4,
+    "up"
+   ],
+   "c5": [
+    0.0,
+    24.0,
+    "up"
+   ],
+   "c6": [
+    0.0,
+    8.0,
+    "up"
+   ],
+   "c7": [
+    0.0,
+    -8.0,
+    "up"
+   ],
+   "c8": [
+    0.0,
+    -22.0,
+    "up"
+   ],
+   "boss": [
+    0.0,
+    -24.0,
+    "up"
+   ],
+   "walk": [
+    0.0,
+    20.0,
+    "up"
+   ]
+  },
+  "svfx": [
+   {
+    "name": "pool_red",
+    "pos": [
+     3.8,
+     0,
+     39.6
+    ],
+    "light": false
+   },
+   {
+    "name": "pool_red",
+    "pos": [
+     0.0,
+     0,
+     -11.0
+    ]
+   },
+   {
+    "name": "pool_red",
+    "pos": [
+     0.0,
+     0,
+     -30.0
+    ]
+   },
+   {
+    "name": "pool_red",
+    "pos": [
+     0.0,
+     0,
+     -26.0
+    ],
+    "light": false
+   }
+  ]
+ }
+}

@@ -2,8 +2,8 @@
 // with Cozy Builder's decisions (section 14). Chunk 1 = the first area only: Anvildeep, Copper Row (`svartalfheim`).
 // The realm's game module (quests, TALK, shops, gate at Bifrost, alliance lock, Dagna / Tick) comes in later chunks and merges into the
 // shared tables from here, like alfheim.js, so shared files only carry a few marked hook lines.
-export const AREAS_SV = { svartalfheim: 'areas/svartalfheim/', forge_hall: 'areas/forge_hall/', glowmines: 'areas/glowmines/', clockdeep: 'areas/clockdeep/' };
-export const AREA_NAMES_SV = { svartalfheim: 'Anvildeep: Copper Row', forge_hall: 'The Great Forge', glowmines: 'The Amethyst Mines', clockdeep: 'The Clockwork Deep' };
+export const AREAS_SV = { svartalfheim: 'areas/svartalfheim/', forge_hall: 'areas/forge_hall/', glowmines: 'areas/glowmines/', clockdeep: 'areas/clockdeep/', clockdeep2: 'areas/clockdeep2/' };
+export const AREA_NAMES_SV = { svartalfheim: 'Anvildeep: Copper Row', forge_hall: 'The Great Forge', glowmines: 'The Amethyst Mines', clockdeep: 'The Clockwork Deep', clockdeep2: 'The Clockwork Deep: the Binding Forge' };
 
 // Ground light pools and glow lights placed from an area spec's `game.svfx` ([{ name, pos: [x, y, z], light? }]): svart_fx decals (pool_red /
 // pool_blue / pool_violet / water_glow) with a matching point light at night, like forge.js does for the Forge Quarter. Data only; a later chunk
