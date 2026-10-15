@@ -97,7 +97,8 @@ export function gearMods(S, m) {   // fold equipped gear into progress.mods()
   return m;
 }
 // pixel art: icon canvas (8x8 at scale, 1 px ink outline) and beam canvas
-export function iconCanvas(kind, rar, scale = 3, gems = null) {
+const SOCK_Y = { 1: [1], 2: [1, 6], 3: [0, 3, 6] };   // 6.7: Orri's 3rd socket (Epic / Legendary): top, middle, bottom
+export function iconCanvas(kind, rar, scale = 3, gems = null, up = 0) {
   const R = RARITY[rar] || RARITY[0], rows = ICONS[kind] || ICONS.trinket;
   const cv = document.createElement('canvas'); cv.width = 10 * scale; cv.height = 10 * scale;
   const g = cv.getContext('2d'); g.imageSmoothingEnabled = false;
@@ -109,10 +110,13 @@ export function iconCanvas(kind, rar, scale = 3, gems = null) {
   if (kind === 'gem') return gemPaint(cv, g, px, gems && gems[0]);
   // sockets: 2x2 inlays down the right edge; a set gem glows (a dithered ring of its colour), an empty one is a dark hole
   (gems || []).forEach((gm, k) => {
-    const x = 7, y = k ? 6 : 1, G = gm && GEMS[gm];
+    const x = 7, y = (SOCK_Y[gems.length] || [1, 6, 6])[k], G = gm && GEMS[gm];
     if (G) for (const [dx, dy] of [[-1, 0], [2, 1], [0, -1], [1, 2], [-1, 1], [2, 0], [1, -1], [0, 2]]) if ((dx + dy + k) % 2 === 0) px(x + dx, y + dy, G.col);
     px(x, y, G ? '#fff8e6' : INK); px(x + 1, y, G ? G.col : INK); px(x, y + 1, G ? G.col : INK); px(x + 1, y + 1, G ? G.lo : '#5a3e26');
   });
+  // 6.7 temper marks: +7..+9 a cold-blue glint pixel on the left edge, +10 a cold-blue ember (glint + mote above it)
+  if (up >= 7) { px(0, 2, '#a6ecff'); px(0, 3, '#2ab4ff'); }
+  if (up >= 10) { px(1, 0, '#a6ecff'); px(0, 1, '#2ab4ff'); }
   return cv;
 }
 // a loose gem: a faceted 6x6 stone in its colour, white glint, ink outline
@@ -226,7 +230,7 @@ export class Loot {
     let beam = null, aura = null;
     if (it) { beam = beamCanvas(rar, sc); beam.className = 'beam'; el.appendChild(beam); }
     if (rar >= 3) { aura = document.createElement('canvas'); aura.width = 26 * sc; aura.height = 13 * sc; aura.className = 'aura'; el.appendChild(aura); }
-    const icon = what.gem ? iconCanvas('gem', 0, sc, [what.gem]) : iconCanvas(it ? it.slot : 'gold', Math.max(0, rar), sc, it ? it.gems : null); icon.className = 'icon'; el.appendChild(icon);
+    const icon = what.gem ? iconCanvas('gem', 0, sc, [what.gem]) : iconCanvas(it ? it.slot : 'gold', Math.max(0, rar), sc, it ? it.gems : null, it ? it.up || 0 : 0); icon.className = 'icon'; el.appendChild(icon);
     this.layer.appendChild(el);
     // Epic / Legendary drops also light the ground around them (a pooled point light, no bloom)
     const light = rar >= 3 && ctx.addGlow ? ctx.addGlow(x, y, z, { color: RARITY[rar].col, intensity: rar === 4 ? 6 : 3.5, range: 2.8, lift: 0.45, fadeIn: 0.3 }) : null;

@@ -2527,6 +2527,25 @@ def run(out, simscale=4, size=(960, 540), segs=SEGS):
                 larea("forge", "from_harbor")
                 fq = T.ev("(() => { const c = window.__hm.ctx; return { tova: !!c.npc('smith'), orri: !!c.npc('runesmith'), fx: window.__hm.forge.fx.length, lights: window.__hm.forge.lights.length, zones: window.__hm.glow.zones().filter((z) => z.src === 'forge').length, sheet: !!c.actors.sheetOf('smith') }; })()")
                 T.step("the forge yard: Tova + Orri, forge fire / pools / embers, red + blue lights, light zones", fq["tova"] and fq["orri"] and fq["sheet"] and fq["fx"] >= 6 and fq["lights"] >= 6 and fq["zones"] >= 4, forge=fq)
+                rt = T.ev("""(() => { const G = window.__hm, S = G.S, F = G.forge;
+                  const npcs = ['rioter1', 'rioter2', 'rioter3'].filter((id) => G.ctx.npc(id)).length, q0 = S.quests.forge_riot, blocked = F.tova().pages[0];
+                  const wrong = F.rioter('rioter1').choice.options[1].pick(G).pages[0], still = !(S.flags.rt_gunnar);
+                  [0, 1, 2].forEach((k) => F.rioter('rioter' + (k + 1)).choice.options[k].pick(G));
+                  const q1 = S.quests.forge_riot, o = F.orri(); o.then(G);
+                  return { npcs, q0, blocked, wrong, still, q1, q2: S.quests.forge_riot, free: !!S.flags.orri_socket }; })()""")
+                T.step("Sparks in the Street: 3 rioters, wrong clue reopens, right clues calm them, Orri's tongs story ends it (free socket)",
+                       rt["npcs"] == 3 and rt["q0"] == 1 and "crowd" in rt["blocked"] and "change the subject" in rt["wrong"] and rt["still"] and rt["q1"] == 2 and rt["q2"] == 3 and rt["free"], riot=rt)
+                ft = T.ev("""(() => { const G = window.__hm, S = G.S, F = G.forge, LO = G.LO;
+                  F.tova().then(G); const q1 = S.quests.temper;
+                  S.bag = S.bag || []; S.bag.unshift(LO.makeItem(1, 1, 'armor')); const i0 = S.inv.ironbit || 0;
+                  const sc = F.scrapMenu().choice.options[0].pick(G).pages[0], iron = (S.inv.ironbit || 0) - i0;
+                  const p = G.ctx.player; p.x = -5.6; p.z = -7.6; F.interact(); F.interact(); F.interact();
+                  const w = LO.makeItem(1, 2, 'weapon'); S.gear.weapon = w; const g0 = S.gold;
+                  const t = F.temperMenu().choice.options[0].pick(G).pages[0];
+                  const q2 = S.quests.temper; F.orri().then(G);
+                  return { q1, sc, iron, bellows: !!S.flags.tp_bellows, up: w.up, free: S.gold === g0, t, q2, q3: S.quests.temper, rs: S.inv.runestone || 0 }; })()""")
+                T.step("The First Temper: offer, scrap at the forge (+2 iron), 3 bellows pumps, free +1, Orri's turn-in (rune-stone)",
+                       ft["q1"] == 1 and ft["iron"] == 2 and ft["bellows"] and ft["up"] == 1 and ft["free"] and "first temper" in ft["t"] and ft["q2"] == 2 and ft["q3"] == 3 and ft["rs"] >= 1, temper=ft)
                 tv = T.ev("""(async () => { const G = window.__hm, S = G.S, LO = G.LO;
                   S.gold = 5000; S.inv.ironbit = 100; S.inv.coldsteel = 30; S.gems = { ...(S.gems || {}), frost_core: 2, golem_core: 2, rift_shard: 1 };
                   const w = LO.makeItem(1, 4, 'weapon'); S.gear.weapon = w; const base = w.mods.meleeMul;
@@ -2544,6 +2563,20 @@ def run(out, simscale=4, size=(960, 540), segs=SEGS):
                   return { rr: w.rr, k0, k1: Object.keys(w.mods), kept: kept.pages[0], again, opts: G.forge.tova().choice.options.length }; })()""")
                 T.step("Orri: a rune-stone rerolls one stat (keep new), no stone = no reroll; Tova offers 3 slots + shop + not yet",
                        rr["rr"] == 1 and len(rr["k1"]) == len(rr["k0"]) and set(rr["k1"]) != set(rr["k0"]) and "stone likes you" in rr["kept"] and "No stone" in rr["again"] and rr["opts"] == 5, orri=rr)
+                sk = T.ev("""(() => { const G = window.__hm, S = G.S, F = G.forge, LO = G.LO;
+                  S.flags.orri_socket = 1; const w = S.gear.weapon; w.gems = [null, null]; const n0 = w.gems.length;
+                  const p1 = F.orri().choice.options[2].pick(G).choice.options[0].pick(G).pages[0], n1 = w.gems.length;
+                  const cap = F.doPunch('weapon').pages[0];
+                  S.gear.trinket = LO.makeItem(1, 0, 'trinket'); const com = F.doPunch('trinket').pages[0];
+                  S.inv.ironbit = 4; S.gems.frost_core = 1; const st0 = S.inv.coldsteel || 0; F.tova().choice.options[1].pick(G); const st = (S.inv.coldsteel || 0) - st0;
+                  S.inv.runestone = 2; const out = Object.keys(w.mods)[0], rr0 = w.rr || 0;
+                  const e = F.orri().choice.options[1].pick(G).choice.options[0].pick(G).choice.options[0].pick(G); e.choice.options[0].pick(G);
+                  const picked = !(out in w.mods) && (S.inv.runestone || 0) === 0 && w.rr === rr0 + 1;
+                  const cv = LO.iconCanvas('weapon', 4, 1, w.gems, 10), px = cv.getContext('2d').getImageData(0, 1, 1, 1).data;
+                  const s0 = F.sparks || 0; G.ctx.player.act = { name: 'attack', t: 0 }; F.update(0.016); G.ctx.player.act = null; F.update(0.016);
+                  return { n0, n1, p1, cap, com, st, picked, icon: [px[0], px[1], px[2]], sparks: (F.sparks || 0) - s0 }; })()""")
+                T.step("Orri sockets (free first punch to 3, cap, no Commons), smelt 4 iron + frost core -> 2 cold-steel, pick-your-stat reroll (2 stones), +10 icon mark + cold-blue swing sparks",
+                       sk["n0"] == 2 and sk["n1"] == 3 and "socket" in sk["p1"] and "colander" in sk["cap"] and "Commons" in sk["com"] and sk["st"] == 2 and sk["picked"] and sk["icon"] == [42, 180, 255] and sk["sparks"] >= 5, sockets=sk)
                 T.ev("(() => { const G = window.__hm, p = G.ctx.player; G.ctx.clock.set(0.95); G.S.t = G.ctx.clock.t; p.x = -2.4; p.z = -5.4; })()"); T.frames(8)
                 T.ev("window.__hm.qaStill = true"); lp.wait_for_timeout(900)
                 rep["shots"]["stage6_forge"] = T.shot("stage6_forge"); T.ev("window.__hm.qaStill = false")

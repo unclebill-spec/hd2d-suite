@@ -6,7 +6,7 @@ import * as LO from './loot.js';
 export const GOODS = {
   tonic: { name: 'Hearth tonic', about: 'Drink (U, right-stick click, or tap it in the bag): heals 60 HP.', price: 12 },
   denbiscuit: { name: 'Den biscuit', about: "Signe's oat-and-moonpetal biscuit. Feed your pet once a day (hero screen, Gear tab, pet row): bond grows, and its glow doubles for 60 s.", price: 6 },
-  ironbit: { name: 'Iron bits', about: "Scrap iron, sorted by size. Tova's forge eats it by the bucket.", price: 4 },
+  ironbit: { name: 'Iron bits', about: "Scrap iron, sorted by size. Tova's forge eats it by the bucket.", price: 6 },
   coldsteel: { name: 'Cold-steel ingot', about: 'Iron quenched in cold fire. Blue at the edges. Needed for +4 and up.', price: 30 },
   runestone: { name: 'Rune-stone', about: 'A dwarven rune carved in river stone. Orri uses one to reroll a gear stat.', price: 40 },
   glowfish: { name: 'Glow-fish', about: 'Caught in the Hollows spring and off Ravenhold\'s piers at night, or bought here. Put one in an empty orb.', price: 10 },
@@ -186,7 +186,7 @@ export class Shop {
           + `<em class="iname">${r.it ? `<i class="ic" data-ic="${k}"></i>` : r.kind === 'gem' ? `<i class="gm" data-gm="${r.id}"></i>` : `<i class="gd" data-gd="${r.id}"></i>`}${r.name}${r.kind === 'good' || r.kind === 'gem' ? ` <small>(have ${r.have})</small>` : ''}</em>`
           + `<span>${r.about}</span><span class="bb"><button class="wbtn sm plus" data-buy="${k}" ${cant ? 'disabled' : ''}>${label}</button></span></div>`;
       }).join('');
-    body.querySelectorAll('[data-ic]').forEach((el) => { const it = rows[+el.dataset.ic].it; const cv = LO.iconCanvas(it.slot, it.rar, 2, it.gems); cv.className = 'gicon'; el.replaceWith(cv); });
+    body.querySelectorAll('[data-ic]').forEach((el) => { const it = rows[+el.dataset.ic].it; const cv = LO.iconCanvas(it.slot, it.rar, 2, it.gems, it.up || 0); cv.className = 'gicon'; el.replaceWith(cv); });
     body.querySelectorAll('[data-gm]').forEach((el) => { const cv = LO.iconCanvas('gem', 0, 2, [el.dataset.gm]); cv.className = 'gicon'; el.replaceWith(cv); });
     body.querySelectorAll('[data-gd]').forEach((el) => { const cv = goodIcon(el.dataset.gd, 2); cv.className = 'gicon gd'; el.replaceWith(cv); });
     body.querySelectorAll('[data-buy]').forEach((b) => { b.onclick = (e) => { e.stopPropagation(); this.i = +b.dataset.buy; this.act(); }; });

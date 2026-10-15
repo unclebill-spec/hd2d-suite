@@ -2,6 +2,13 @@
 
 Dates are America/New_York. Newest first. Keep this current with every change you push.
 
+## 2026-10-14: Stage 6.7 leftovers (batch 2 WIP, branch `hearthmoor-batch2-wip`)
+- **Sparks in the Street** (riot, forge_alchemy.md 5): three rioters spawn at the forge gate after the Cold Altar; answer each with the right temple clue (wrong = reopen, seer shortcut, cinderknight line); Orri's tongs story ends it (+60 Hearth, first socket free). Tova and Orri wait until it's done.
+- **The First Temper** (6): Tova's offer, scrap at the forge, 3 bellows pumps by the left forge, a free +1, Orri's turn-in (6 iron bits + 1 rune-stone).
+- Tova's menu: Temper / Smelt (4 iron + frost core -> 2 cold-steel) / Scrap (scrap gold + iron bits by rarity 1/2/3/4/6) / Buy (iron bits now 6 g). Orri: random reroll (1 stone), **pick-your-stat** (2 stones), **socket punching** (cap 0/1/2/3/3, costs from 4.1; Commons refused); `iconCanvas` draws 3 sockets top / middle / bottom.
+- **Cold-blue sparks:** +7..+9 icons get a cold-blue glint, +10 a glint + mote; +7 weapons throw 2 cold-blue glints per swing, +10 throw 5 and shed a slow mote at rest.
+- Not done: Nettle (unsocket, jeweler), the Still (6.8). Smoke segment L extended.
+
 ## 2026-10-14: Stage 6.7 the Forge Quarter + 6.6 lantern stands (batch 2 WIP, branch `hearthmoor-batch2-wip`)
 - New area `forge` (Ravenhold's east district gate opens once *The Cold Altar* is done; `REALM.forge = 'hearth'`). A dark yard with two red forge mouths, three neon-blue quench tanks, embers, red / blue light pools + point lights (always glowing).
 - `game/forge.js`: Tova Anvilsong tempers gear +1..+10 (forge_alchemy.md 2.1-2.4: rarity caps, cost table, +7% per + on own mods in `gearMods` / `describe`, fails from +6 keep gold + gems, eat iron / steel, add heat; sure at heat 3). Orri Flintcog rerolls one stat with a rune-stone (3.1: per-item limit, keep new / old). Shops `forge` (iron bits 4 g, cold-steel 30 g) and `runebench` (rune-stones 40 g; stand-in until Nettle). New `describe` labels (crit damage, drain, regen, healing, spell cd, stamina regen).

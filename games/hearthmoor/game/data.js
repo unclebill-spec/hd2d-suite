@@ -4,6 +4,7 @@ import { PETS, PET_IDS, DEN, petNames, isNight } from './pets.js';
 import { clues, tmBraziers, TAMSIN_CLUE } from './temple.js';
 import { MERIT } from './factions.js';
 import { stormName, stormHere } from './storms.js';
+import { calmed } from './forge.js';
 
 export const ITEMS = {
   loaf:      { name: 'Hearthloaf', icon: 0, about: 'A round loaf, still warm. Smells like Tuesday mornings.' },
@@ -89,6 +90,26 @@ export const QUESTS = {
                if (!F.tm_rift) return 'Seal the rift tearing open above the Rift-gate!';
                return 'Tell Mother Ilse the gate is lit.'; },
              3: 'The Rift-gate burns blue again. Midgard\'s arch at Bifrost Crossing stands open, and the skiff can rest.' },
+  },
+  // 6.7 the Forge Quarter (forge_alchemy.md 5-6; game/forge.js drives the stages)
+  forge_riot: {
+    title: 'Sparks in the Street',
+    giver: 'Mother Ilse Brightwater',
+    story: true,
+    steps: { 1: (S) => (calmed(S) < 3 ? `Calm the crowd at the Forge Quarter gate. Answer each shout with the right temple clue. ${calmed(S)}/3` : 'Talk to Orri Flintcog, the dwarf whose shutters were smashed.'),
+             2: 'Talk to Orri Flintcog about the tongs.',
+             3: "The crowd went home. The tongs were Orri's, stolen the night his quench froze in midsummer." },
+  },
+  temper: {
+    title: 'The First Temper',
+    giver: 'Tova Anvilsong',
+    side: true,
+    steps: { 1: (S) => { const F = S.flags || {};
+               if (!F.tp_scrap) return "Scrap one piece of gear at Tova's forge (Scrap) for iron bits.";
+               if (!F.tp_bellows) return `Work the forge bellows (E / A) until the fire roars. ${F.tp_pumps || 0}/3`;
+               return "Temper any piece of gear to +1 at the forge (Temper). The first one's free."; },
+             2: 'Show Orri Flintcog your tempered gear.',
+             3: "Tova's forge and Orri's bench are open to you now." },
   },
   strays: {
     title: 'Strays of the Rift',

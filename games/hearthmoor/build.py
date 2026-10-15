@@ -491,6 +491,10 @@ def install_forge(areas=AREAS):
     P = GAME / "art" / "forge"
     am_f = json.loads((P / "forge_actors.json").read_text())
     fxm = json.loads((P / "forge_fx.json").read_text())
+    # quench_steam / embers_drift / anvil_glow stay out: too sparse for check-scene's gamefx_sharp (like faceless_gaze);
+    # the forge uses the particle 'embers' emitter and forge_sparks instead
+    skip = {"quench_steam", "embers_drift", "anvil_glow"}
+    fxm = {**fxm, "effects": {k: v for k, v in fxm["effects"].items() if k not in skip}}
     for a in [x for x in areas if x in FORGE_AREAS]:
         root = GAME / "areas" / a
         scene = json.loads((root / "scene.json").read_text())

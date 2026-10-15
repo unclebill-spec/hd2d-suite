@@ -57,7 +57,7 @@
     40,
     -6.2
    ],
-   "h": 0.8,
+   "h": 1.2,
    "top": "cobble",
    "gaps": [
     [
@@ -73,7 +73,7 @@
    "x": 0.0,
    "z_top": -6.2,
    "width": 3.0,
-   "rise": 0.8,
+   "rise": 1.2,
    "base": 0.0
   }
  ],
@@ -234,6 +234,19 @@
     3.0,
     12
    ]
+  },
+  {
+   "preset": "embers",
+   "pos": [
+    -4.2,
+    3.4,
+    -9.6
+   ],
+   "area": [
+    1.2,
+    1.0,
+    0.6
+   ]
   }
  ],
  "actors": [
@@ -280,6 +293,51 @@
    "talkable": true,
    "say": [
     "Coal in, iron out. Mind the sparks, they've opinions."
+   ]
+  },
+  {
+   "id": "rioter1",
+   "role": "fisher",
+   "name": "Gunnar Saltbeck, fishmonger",
+   "pos": [
+    -1.6,
+    1.6
+   ],
+   "facing": "up",
+   "behavior": "idle",
+   "talkable": true,
+   "say": [
+    "Forges! Dwarves! Somebody do something!"
+   ]
+  },
+  {
+   "id": "rioter2",
+   "role": "lamplighter",
+   "name": "Old Mags, temple candle-seller",
+   "pos": [
+    1.4,
+    1.2
+   ],
+   "facing": "up",
+   "behavior": "idle",
+   "talkable": true,
+   "say": [
+    "Forges! Dwarves! Somebody do something!"
+   ]
+  },
+  {
+   "id": "rioter3",
+   "role": "corsair",
+   "name": "Pell, dock porter",
+   "pos": [
+    0.2,
+    -0.6
+   ],
+   "facing": "up",
+   "behavior": "idle",
+   "talkable": true,
+   "say": [
+    "Forges! Dwarves! Somebody do something!"
    ]
   }
  ],
@@ -428,14 +486,6 @@
      6.4,
      0.02,
      -0.6
-    ]
-   },
-   {
-    "name": "embers_drift",
-    "pos": [
-     -4.2,
-     3.0,
-     -9.4
     ]
    }
   ]
