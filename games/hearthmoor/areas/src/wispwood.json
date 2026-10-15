@@ -221,16 +221,16 @@
   {
    "piece": "lumen_tree",
    "pos": [
-    11.0,
-    2.0
+    14.2,
+    5.0
    ],
    "rot": 80
   },
   {
    "piece": "lumen_tree",
    "pos": [
-    1.0,
-    9.6
+    -6.0,
+    10.0
    ],
    "rot": 200
   },
@@ -466,7 +466,7 @@
  "player": {
   "role": "traveler",
   "pos": [
-   10.0,
+   5.0,
    -1.8
   ],
   "facing": "left"
@@ -528,7 +528,7 @@
   "portals": [],
   "spawns": {
    "start": [
-    10.0,
+    5.0,
     -1.8,
     "left"
    ],
