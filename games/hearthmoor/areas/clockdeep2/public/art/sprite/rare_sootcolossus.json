@@ -1,0 +1,134 @@
+{
+ "tool": "hd2d boss_sheet",
+ "biome": "cozy-village",
+ "frame": [
+  64,
+  90
+ ],
+ "pivot": [
+  32,
+  90
+ ],
+ "ground_row": 89,
+ "facings": [
+  "down",
+  "up",
+  "left",
+  "right"
+ ],
+ "anims": {
+  "idle": {
+   "start": 0,
+   "count": 4,
+   "fps": 3,
+   "loop": [
+    0,
+    1,
+    2,
+    1
+   ],
+   "blink": 3
+  },
+  "walk": {
+   "start": 4,
+   "count": 4,
+   "fps": 8
+  },
+  "cast": {
+   "start": 8,
+   "count": 4,
+   "fps": 6,
+   "loop": [
+    0,
+    1,
+    2,
+    2,
+    3,
+    3
+   ],
+   "casters_only": true
+  },
+  "attack": {
+   "start": 12,
+   "count": 4,
+   "fps": 10,
+   "loop": [
+    0,
+    1,
+    2,
+    2,
+    3
+   ],
+   "heroes_only": true
+  },
+  "defend": {
+   "start": 16,
+   "count": 4,
+   "fps": 6,
+   "loop": [
+    0,
+    1
+   ],
+   "hold": [
+    2,
+    3
+   ],
+   "heroes_only": true
+  },
+  "jump": {
+   "start": 20,
+   "count": 4,
+   "fps": 8,
+   "phases": [
+    "crouch",
+    "launch",
+    "airborne",
+    "land"
+   ],
+   "heroes_only": true
+  },
+  "die": {
+   "start": 24,
+   "count": 4,
+   "fps": 6,
+   "once": true,
+   "enemies_only": true
+  }
+ },
+ "cols": 28,
+ "size": [
+  1792,
+  360
+ ],
+ "image": "rare_sootcolossus.png",
+ "roles": {
+  "sootcolossus": {
+   "row": 0,
+   "kind": "enemy",
+   "enemy": true,
+   "boss": true,
+   "scale": 2.8,
+   "desc": "Soot Colossus (rare, 2.8x): soot elemental over a cracked forge grate.",
+   "anims": [
+    "idle",
+    "walk",
+    "attack",
+    "die"
+   ],
+   "size_bounds": [
+    [
+     12,
+     62
+    ],
+    [
+     12,
+     90
+    ]
+   ],
+   "caster": false,
+   "stats_hint": {
+    "tier": "rare"
+   }
+  }
+ }
+}

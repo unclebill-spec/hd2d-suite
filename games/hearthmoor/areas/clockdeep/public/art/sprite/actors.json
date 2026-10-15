@@ -22963,6 +22963,19 @@
     "walk",
     "follow"
    ]
+  },
+  "basilisk": {
+   "sheet": "rare_basilisk",
+   "row": 0,
+   "kind": "enemy",
+   "anims": [
+    "idle",
+    "walk",
+    "attack",
+    "die"
+   ],
+   "desc": "Amethyst Basilisk (rare, 2.5x): crystal-spined cave lizard of the Amethyst Mines.",
+   "enemy": true
   }
  },
  "sheets": {
@@ -22993,6 +23006,10 @@
   "tick": {
    "json": "tick.json",
    "image": "tick.png"
+  },
+  "rare_basilisk": {
+   "json": "rare_basilisk.json",
+   "image": "rare_basilisk.png"
   }
  }
 }

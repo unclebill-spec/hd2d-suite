@@ -64,7 +64,8 @@ export class Combat {
     this.lastCrit = crit;
     const lit = kind !== 'summon' && this.G.glow ? this.G.glow.dmgMul() : 1;   // glowlit: +10%
     const mode = (MODES[this.G.S.mode] || MODES.adventurer).deal;
-    return Math.max(1, Math.round(base * mul * lit * mode * (crit ? 1.5 + (M.critDmg || 0) : 1)));
+    const sv = this.G.svart && this.G.svart.tempMul ? this.G.svart.tempMul(kind) : 1;   // [SVARTALFHEIM] Dagna's temper, the Tinker's Heart
+    return Math.max(1, Math.round(base * mul * lit * mode * sv * (crit ? 1.5 + (M.critDmg || 0) : 1)));
   }
 
   // ---------------------------------------------------------------- area lifecycle

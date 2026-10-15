@@ -33,7 +33,11 @@ SHEETS = {  # sheet name -> (staging json, {area role: staging role})
 
 IMAGE = {"dagna": "dagna_neon.png", "dagna_safe": "dagna.png"}   # sheet -> staging png (default: the json's own image)
 EXTRA = {"clockdeep2": {"boss_gorrak": (ST / "sprite" / "boss_gorrak.json", {"gorrak": "gorrak"}),
-                          "miniboss_foreman": (ST / "sprite" / "miniboss_foreman.json", {"foreman": "foreman"})}}   # Gorrak's own 144x192 boss sheet, only where the fight is
+                          "miniboss_foreman": (ST / "sprite" / "miniboss_foreman.json", {"foreman": "foreman"}),
+                          "rare_sootcolossus": (ST / "sprite" / "rare_sootcolossus.json", {"sootcolossus": "sootcolossus"})},
+         "clockdeep": {"rare_basilisk": (ST / "sprite" / "rare_basilisk.json", {"basilisk": "basilisk"})},
+         "glowmines": {"rare_basilisk": (ST / "sprite" / "rare_basilisk.json", {"basilisk": "basilisk"}),
+                       "rare_sootcolossus": (ST / "sprite" / "rare_sootcolossus.json", {"sootcolossus": "sootcolossus"})}}   # Gorrak's own 144x192 boss sheet, only where the fight is
 
 
 def sprites(area):

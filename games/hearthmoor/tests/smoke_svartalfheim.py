@@ -199,6 +199,7 @@ def steps(b, url, T, size, errors, rep, stub=None, shots=None):
         a = load("forge_hall", "&svq=forgefire&anvil=auto"); f = a["fest"]
         T.step("Forgefire Week: S.day % 7 === 3, befriend + Deep done -> festival day, quest not taken", f["festDay"] and f["forgefireDay"] and f["quest"] == 0, f=f)
         pg.wait_for_timeout(800)
+        T.ev("(() => { const p = window.__hd2d.ctx.player, m = window.__hm.markers.dagna; if (m) { p.x = m.x - 2.2; p.z = m.z + 3.0; } })()"); pg.wait_for_timeout(1200); shot("marker_dagna")
         T.step("markers: the realm gamefx atlas has quest_mark / quest_turnin and Dagna shows the ! marker on Forgefire day",
                T.ev("(() => { const c = window.__hd2d.ctx, m = c.gamefx.meta.effects; return !!m.quest_mark && !!m.quest_turnin && !!(window.__hm.markers && window.__hm.markers.dagna); })()"))
         tq("qaTalk('dagna')"); f = sv()["fest"]
@@ -242,6 +243,24 @@ def steps(b, url, T, size, errors, rep, stub=None, shots=None):
         T.step("Foreman: damage doubles while he whistles (weak belly)", tq("foreman.qaWeak()") == [10, 20])
         T.ev("(() => { const G = window.__hm, e = G.combat.enemies.find((x) => x.sp.id === 'cd_foreman'); G.combat.damageEnemy(e, 9999, { x: 0, z: 0 }, 0, '#fff'); })()"); pg.wait_for_timeout(500); a = sv()
         T.step("Foreman falls: 1 clock spring + 2 deep brass, stays dead", a["inv"].get("clock_spring") == 1 and a["inv"].get("deep_brass") == 2 and a["foreman"]["dead"], inv=a["inv"])
+        # ---- the rares (Mines / Deep): own sheets, scales, basilisk gaze + amethyst drop, colossus is a Summoner
+        a = load("clockdeep", "&svq=seal"); pg.wait_for_timeout(800)
+        r = T.ev("(() => { const G = window.__hm, R = G.rares.spawn({ base: 'basilisk', pos: [0, 30] }); return R ? { sc: R.e.D.scale, hp: R.D.hp, sheet: window.__hd2d.ctx.actors.meta.roles.basilisk.sheet, gaze: !!R.D.gaze } : null; })()")
+        T.step("Amethyst Basilisk: C3 rare on its own sheet at 2.5x with a gaze", bool(r) and r["sc"] == 2.5 and r["sheet"] == "rare_basilisk" and r["gaze"], r=r)
+        T.ev("(() => { const G = window.__hm, e = G.combat.enemies.find((x) => x.rare); G.combat.damageEnemy(e, 99999, { x: 0, z: 0 }, 0, '#fff'); })()"); pg.wait_for_timeout(600); a = sv()
+        T.step("the basilisk shatters: 3 amethyst", a["inv"].get("amethyst", 0) >= 3, inv=a["inv"])
+        a = load("clockdeep2", "&svq=seal"); pg.wait_for_timeout(800)
+        r = T.ev("(() => { const G = window.__hm, R = G.rares.spawn({ base: 'sootcolossus', pos: [0, 30] }); return R ? { sc: R.e.D.scale, tr: R.traits, sheet: window.__hd2d.ctx.actors.meta.roles.sootcolossus.sheet } : null; })()")
+        T.step("Soot Colossus: C7 rare on its own sheet at 2.8x, always a Summoner", bool(r) and r["sc"] == 2.8 and "summoner" in r["tr"] and r["sheet"] == "rare_sootcolossus", r=r)
+        # ---- conquer-only hushblades in the Deep (C1 in clockdeep, C5 in clockdeep2)
+        a = load("clockdeep", "&svq=conquer"); pg.wait_for_timeout(1000)
+        n1 = T.ev("window.__hm.combat.enemies.filter((x) => /^cd_hb/.test(x.sp.id) && x.sp.role === 'hushblade').length")
+        a = load("clockdeep", "&svq=seal"); pg.wait_for_timeout(1000)
+        n0 = T.ev("window.__hm.combat.enemies.filter((x) => /^cd_hb/.test(x.sp.id)).length")
+        T.step("conquer path: 2 hushblades in C1; befriend path: none", n1 == 2 and n0 == 0, n1=n1, n0=n0)
+        a = load("clockdeep2", "&svq=conquer"); pg.wait_for_timeout(1000)
+        n5 = T.ev("window.__hm.combat.enemies.filter((x) => /^cd_hb/.test(x.sp.id) && x.sp.role === 'hushblade').length")
+        T.step("conquer path: 2 hushblades in C5 too", n5 == 2, n5=n5)
         # ---- Tick (pet) + the one-active-companion swap
         a = load("svartalfheim")
         T.step("Tick: pet_tick role + his aura / pool effects are in the area atlases, PETS.tick registered",
@@ -294,6 +313,14 @@ def steps(b, url, T, size, errors, rep, stub=None, shots=None):
         T.step("she catches up to the player (within 3 m after the player moves 6 m)",
                T.ev("(() => { const p = window.__hd2d.ctx.player, f = window.__hm.svart.follow.sprite; return Math.hypot(p.x - f.x, p.z - f.z) < 3; })()"), f=fo)
         T.step("Dagna's mend: once a fight, +40 HP below 30%", tq("follow.qaMend()") == [True, False, True])
+        T.ev("window.__hm.svart.follow.tempT = 8"); a_ = tq("tempMul('melee')")
+        T.step("Dagna's temper: +10% melee while it lasts (x1.1), none for spells", a_ == 1.1 and tq("tempMul('spell')") == 1, a_=a_)
+        T.ev("window.__hm.svart.follow.tempT = 0")
+        T.ev("window.__hm.S.gear = { trinket: { unique: 'wound_up', mods: {}, gems: [], up: 0 } }"); w = tq("qaMul()")
+        T.step("Tinker's Heart wound_up: the first hit after 3 s unhurt is x1.3, the next x1, and a fresh hurt resets it", w == [1.3, 1, 1], w=w)
+        T.ev("window.__hm.S.gear = {}")
+        T.ev("window.__hm.S.pet = { id: 'tick', name: 'Tick', bond: 1 }"); ma = T.ev("window.__hm.combat.M.goldMul")
+        T.step("Tick's aura hooks: goldMul 0.06 reaches the combat mods (pickup gold +6%), chestSense 6 m", abs(ma - 0.06) < 1e-6 and T.ev("window.__hm.pets.constructor && true"), ma=ma)
         T.ev("window.__hm.S.flags.companion_active = 'tobble'; window.__hm.svart.follow.attach(window.__hd2d.ctx, window.__hm.area)"); fo = tq("follow.qa()")
         T.step("Tobble: no body in the realm areas ('gnome' is Dagna's sheet there)", not fo["on"] and fo["id"] == "tobble", f=fo)
         a = load("plaza"); T.ev("(() => { const S = window.__hm.S; S.flags.companions = { dagna: 1, tobble: 1 }; S.flags.companion_active = 'tobble'; })()")

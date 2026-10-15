@@ -182,6 +182,7 @@ export class Pets {
     const ctx = this.ctx, gm = (ctx && ctx.scene.game) || {}, F = this.S.found || {}, out = [];
     if (gm.spring && !(gm.spring.secret ? F[gm.spring.secret] : F.spring)) out.push({ id: gm.spring.secret || 'spring', pos: gm.spring.pos, kind: 'spring' });
     for (const d of gm.doors || []) if (!F[d.id]) out.push({ id: d.id, pos: d.pos, kind: 'door' });
+    for (const c of gm.chests || []) if (!F[c.id]) out.push({ id: c.id, pos: c.pos, kind: 'chest' });   // Tick's chestSense
     for (const b of gm.bounces || []) if (b.secret && !F[b.id || 'bounce']) out.push({ id: b.id || 'bounce', pos: b.pos, kind: 'ledge' });
     return out;
   }
@@ -207,8 +208,8 @@ export class Pets {
     }
     // the glow-moth's Lamplight Dust: unfound secrets within range shimmer (a glitter + a soft chime, once per visit)
     const au = petAura(this.S), sr = au.secretSense || 0, wr = au.springSense || 0;   // the moss-pup's Forager's Nose: springs only
-    if (sr || wr) for (const q of this.secrets()) {
-      const r = q.kind === 'spring' ? Math.max(sr, wr) : sr;
+    if (sr || wr || au.chestSense) for (const q of this.secrets()) {
+      const r = q.kind === 'spring' ? Math.max(sr, wr) : q.kind === 'chest' ? Math.max(sr, au.chestSense || 0) : sr;
       if (!r || this.sensed[q.id] || Math.hypot(ctx.player.x - q.pos[0], ctx.player.z - q.pos[1]) > r) continue;
       this.sensed[q.id] = true; this.lastSense = { ...q };
       if (ctx.effects) ctx.effects.spawn('glitter', q.pos[0], ctx.heightAt(q.pos[0], q.pos[1]) + 0.2, q.pos[1] + 0.05, { duration: 2.4 });

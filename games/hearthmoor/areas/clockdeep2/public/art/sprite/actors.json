@@ -22989,6 +22989,19 @@
    ],
    "desc": "The Foreman (Clockwork Deep C4 mini-boss, 2.8x): brass-and-iron overseer construct with chain flail.",
    "enemy": true
+  },
+  "sootcolossus": {
+   "sheet": "rare_sootcolossus",
+   "row": 0,
+   "kind": "enemy",
+   "anims": [
+    "idle",
+    "walk",
+    "attack",
+    "die"
+   ],
+   "desc": "Soot Colossus (rare, 2.8x): soot elemental over a cracked forge grate.",
+   "enemy": true
   }
  },
  "sheets": {
@@ -23027,6 +23040,10 @@
   "miniboss_foreman": {
    "json": "miniboss_foreman.json",
    "image": "miniboss_foreman.png"
+  },
+  "rare_sootcolossus": {
+   "json": "rare_sootcolossus.json",
+   "image": "rare_sootcolossus.png"
   }
  }
 }

@@ -261,6 +261,7 @@ export class Loot {
     d.el.remove(); this.drops.splice(this.drops.indexOf(d), 1);
     if (d.purse) { S.purse = null; G.toast && G.toast(`Found your purse: +${d.gold} gold`, 2.4); }
     if (d.gold && !d.purse && G.factions) d.gold = Math.round(d.gold * G.factions.pickupGoldMul());   // Gnome Council Friend: +10%
+    if (d.gold && !d.purse) { const gm = (G.combat && G.combat.M && G.combat.M.goldMul) || 0; if (gm) d.gold = Math.floor(d.gold * (1 + gm) + Math.random()); }   // Tick's Clockwork Eye: pickup gold +6% / +8%
     if (d.gold) { S.gold += d.gold; G.popText && G.popText(`+${d.gold}`, d, '#f2c24a'); }
     if (d.gem) { S.gems[d.gem] = (S.gems[d.gem] || 0) + 1; G.toast && G.toast(`<span style="color:${GEMS[d.gem].lo}">${GEMS[d.gem].name}</span>: a socket gem (G: gear page)`, 2.6, true); }
     if (d.it) { S.bag.push(d.it); G.toast && G.toast(`<span style="color:${RARITY[d.it.rar].lo}">${RARITY[d.it.rar].name}</span> ${d.it.name}`, 2.4, true); }

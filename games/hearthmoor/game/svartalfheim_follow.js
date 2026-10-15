@@ -14,7 +14,7 @@ const KIT = {
 };
 
 export class Follow {
-  constructor(G) { this.G = G; this.ctx = null; this.on = false; this.id = null; this.sprite = null; this.t = 0; this.cd = 0; this.mended = false; this.idleT = 40; this.hits = 0; }
+  constructor(G) { this.G = G; this.ctx = null; this.on = false; this.id = null; this.sprite = null; this.t = 0; this.cd = 0; this.mended = false; this.idleT = 40; this.hits = 0; this.tmT = 0; this.tempT = 0; }
   qa() { return { on: this.on, id: this.id, role: this.sprite && this.sprite.role, x: this.sprite && +this.sprite.x.toFixed(2), z: this.sprite && +this.sprite.z.toFixed(2), hits: this.hits, mended: this.mended }; }
   attach(ctx, area) {
     this.detach(); this.ctx = ctx; this.area = area;
@@ -43,6 +43,11 @@ export class Follow {
     const G = this.G, C = G.combat, k = KIT.dagna.mend; if (this.mended || !C || !C.maxHp) return false;
     this.mended = true; G.S.hp = Math.min(C.maxHp(), (G.S.hp || 0) + k.heal); this.bark('Hold still. There. Don\'t make me do that twice.'); return true;
   }
+  temperNow() {   // every 20 s in a fight: a spark burst on your blade, +10% melee for 8 s (read by svart.tempMul)
+    this.tmT = 20; this.tempT = 8; const c = this.ctx, p = c && c.player;
+    if (c && c.effects && c.effects.meta.effects.glitter) c.effects.spawn('glitter', p.x, c.heightAt(p.x, p.z) + 0.9, p.z + 0.05, { duration: 0.8 });
+    this.bark('Sharpened. Try not to dull it on the rock.');
+  }
   brawl(foes) {
     const a = this.sprite, C = this.G.combat, k = KIT.dagna.brawl; this.cd = k.cd;
     const tgt = foes.filter((e) => Math.hypot(e.a.x - a.x, e.a.z - a.z) < k.reach + (e.def && e.def.scale ? e.def.scale * 0.25 : 0.2)).sort((u, v) => Math.hypot(u.a.x - a.x, u.a.z - a.z) - Math.hypot(v.a.x - a.x, v.a.z - a.z))[0];
@@ -65,6 +70,8 @@ export class Follow {
     const mv = d > 0.2; if (mv) A.setFacingFromVec(a, dx, dz); else a.facing = p.facing;
     A.animate(a, dt, mv);
     if (this.light) { this.light.pos.set(a.x, a.y, a.z); this.light.base = 2.0; }
+    this.tmT -= dt; this.tempT -= dt;
+    if (this.id === 'dagna' && foes.length && this.tmT <= 0) this.temperNow();
     if (!C || !C.ctx || G.downed) return;
     if (near && this.cd <= 0) this.brawl(foes);
     if (this.id === 'dagna' && G.S.hp != null && C.maxHp && G.S.hp < C.maxHp() * KIT.dagna.mend.below && foes.length) this.mend();

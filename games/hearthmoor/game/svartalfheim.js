@@ -16,6 +16,7 @@ import { SvMaster, installMaster } from './svartalfheim_master.js';
 import { Foreman } from './svartalfheim_foreman.js';
 import { unlock, swap, owned, active } from './svartalfheim_companions.js';
 import { Follow } from './svartalfheim_follow.js';
+import { updateGaze, clearGaze, gaze } from './svartalfheim_rares.js';
 import { GorrakFight, PILLAR, ANVILS, VALVES } from './svartalfheim_bosses.js';
 
 export const AREAS_SV = { svartalfheim: 'areas/svartalfheim/', forge_hall: 'areas/forge_hall/', glowmines: 'areas/glowmines/', clockdeep: 'areas/clockdeep/', clockdeep2: 'areas/clockdeep2/' };
@@ -150,6 +151,7 @@ export class Svartalfheim {
     this.qaPreset();
     if (area === 'svartalfheim') this.gate.atHub(ctx);
     this.fest.attach(area); this.master.attach(area); this.foreman.attach(area);
+    this.hushed(area);
     const S = this.G.S, gm = ctx.scene.game || (ctx.scene.game = {});
     { const F = S.flags || {}; if ((F.alliance || {}).svartalfheim === 'befriend' && ((S.quests || {}).clockdeep || 0) >= 1) unlock(this.G, 'dagna'); if ((F.alliance || {}).vanaheim === 'befriend') unlock(this.G, 'tobble'); }
     if (area === 'forge_hall') {   // the lift stays shut until the Forge-Seal is in the bag
@@ -173,7 +175,7 @@ export class Svartalfheim {
       if (ctx.addGlow && L && f.light !== false) this.lights.push(ctx.addGlow(x, y, z, { color: L[0], intensity: L[1], range: L[2], lift: 0.6, fadeIn: still ? 0.01 : 0.8 }));
     }
   }
-  detach() { this.follow && this.follow.detach(); this.fest && this.fest.detach(); for (const f of this.fx) if (f) f.dur = f.t + 0.2; for (const l of this.lights) if (l) l.kill = true; this.fx = []; this.lights = []; this.spots = []; this.ctx = null; this.area = null; }
+  detach() { clearGaze(this.ctx); this.follow && this.follow.detach(); this.fest && this.fest.detach(); for (const f of this.fx) if (f) f.dur = f.t + 0.2; for (const l of this.lights) if (l) l.kill = true; this.fx = []; this.lights = []; this.spots = []; this.ctx = null; this.area = null; }
   // ---- the frozen flue (story 3.7 / 6.7): north rim of the Binding Forge. A spell within 2.6 m thaws it, E / A takes the Anvil-Heart.
   flue() {
     const G = this.G, S = G.S, f = () => flags(S), ctx = this.ctx, X = FLUE[0], Z = FLUE[1];
@@ -215,9 +217,28 @@ export class Svartalfheim {
       : ['(Gorrak sags against the chains. The Lesser Heart fits his chest-plate with a clank.)', 'Gorrak: "A hired hand. Not even a dwarf. They could not be bothered to come themselves."', '(The runes flare cold blue.)'];
     G.openDialogue({ id: 'gorrak', name: 'Gorrak Ironmaw' }, { pages, then: (G2) => { const ff = flags(G2.S); if (conquer) ff.cd_taken = 1; else { ff.cd_bound = 1; if ((G2.S.inv || {}).lesser_heart) G2.take('lesser_heart', 1); if (((G2.S.quests || {}).sv_hire || 0) === 1) G2.setQuest('sv_hire', 2); } } });
   }
+  // conquer only (story 7): two Hushed blades in C1 (clockdeep) and two more in C5 (clockdeep2); beaten ones stay down like the room's other foes
+  hushed(area) {
+    const P = { clockdeep: [['cd_hb1a', [-1.8, 26.0]], ['cd_hb1b', [1.8, 24.6]]], clockdeep2: [['cd_hb5a', [-0.9, 14.4]], ['cd_hb5b', [0.9, 13.6]]] }[area];
+    if (!P || ((flags(this.G.S).alliance || {}).svartalfheim) !== 'conquer') return;
+    const ctx = this.ctx;
+    setTimeout(() => {
+      const C = this.G.combat; if (this.ctx !== ctx || !C || !C.ctx) return;
+      for (const [id, pos] of P) { if ((C.defeated || {})[`${area}:${id}`]) continue; C.spawnEnemy({ id, role: 'hushblade', pos: pos.slice() }, false); }
+    }, 600);
+  }
+  // damage multipliers read by combat.out(): Dagna's temper (+10% melee for 8 s) and the Tinker's Heart's wound_up (+30% on the first hit after 3 s unhurt)
+  watchHurt() { const hp = this.G.S.hp; if (this.prevHp != null && hp < this.prevHp) this.lastHurt = performance.now() / 1000; this.prevHp = hp; }
+  tempMul(kind) {
+    let m = 1; const now = performance.now() / 1000;
+    if (kind === 'melee' && this.follow && this.follow.on && this.follow.tempT > 0) m *= 1.10;
+    if (kind !== 'summon' && Object.values(this.G.S.gear || {}).some((it) => it && it.unique === 'wound_up') && now - (this.lastHurt ?? -99) >= 3 && now - (this.lastWind ?? -99) >= 3) { this.lastWind = now; m *= 1.3; }
+    return m;
+  }
+  qaMul() { this.lastHurt = -99; this.lastWind = -99; const a = this.tempMul('melee'), b = this.tempMul('melee'); this.lastWind = -99; this.lastHurt = performance.now() / 1000; const c = this.tempMul('melee'); return [a, b, c]; }
   update(dt) {
     const c = this.ctx;
-    if (c && dt) this.follow.update(dt);
+    if (c && dt) { this.follow.update(dt); updateGaze(c, dt); this.watchHurt(c); }
     if (c && dt) { this.deep.update(dt, this.area); this.story.update(dt, this.area); this.fest.update(dt); this.master.update(dt); }
     if (c && this.area === 'clockdeep2' && !this.started && !flags(this.G.S).cd_boss && !this.G.dlg) {
       const p = c.player; if (Math.hypot(p.x - PILLAR[0], p.z - PILLAR[1]) < 9) this.gorrakIntro();

@@ -22963,6 +22963,32 @@
     "walk",
     "follow"
    ]
+  },
+  "basilisk": {
+   "sheet": "rare_basilisk",
+   "row": 0,
+   "kind": "enemy",
+   "anims": [
+    "idle",
+    "walk",
+    "attack",
+    "die"
+   ],
+   "desc": "Amethyst Basilisk (rare, 2.5x): crystal-spined cave lizard of the Amethyst Mines.",
+   "enemy": true
+  },
+  "sootcolossus": {
+   "sheet": "rare_sootcolossus",
+   "row": 0,
+   "kind": "enemy",
+   "anims": [
+    "idle",
+    "walk",
+    "attack",
+    "die"
+   ],
+   "desc": "Soot Colossus (rare, 2.8x): soot elemental over a cracked forge grate.",
+   "enemy": true
   }
  },
  "sheets": {
@@ -22993,6 +23019,14 @@
   "tick": {
    "json": "tick.json",
    "image": "tick.png"
+  },
+  "rare_basilisk": {
+   "json": "rare_basilisk.json",
+   "image": "rare_basilisk.png"
+  },
+  "rare_sootcolossus": {
+   "json": "rare_sootcolossus.json",
+   "image": "rare_sootcolossus.png"
   }
  }
 }
