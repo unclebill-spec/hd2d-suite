@@ -5,6 +5,7 @@ the files its scene.json uses, draw the HUD item icons + app icons, write the se
 """
 import argparse
 import hashlib
+import os
 import json
 import shutil
 import subprocess
@@ -21,7 +22,7 @@ from hd2d_common import load_biome  # noqa: E402
 
 AREAS = ["plaza", "lane", "mossglen", "hollows", "rift", "vanaheim", "ravenhold", "bifrost", "temple", "rotwood", "verdant",
          "alfheim", "lumen_court", "wispwood", "prismvault"]   # [ALFHEIM] Lumenvale (Glimmer Steps, Lumen Court, Wispwood) + the Prism Vault
-TMP = Path("/tmp/hearthmoor_build")
+TMP = Path(os.environ.get("HM_BUILD_TMP", "/tmp/hearthmoor_build"))   # [ALFHEIM] private build dir per worker
 
 
 def sh(*a):

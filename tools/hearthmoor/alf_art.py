@@ -87,10 +87,11 @@ def gamefx(area):
 PLACE = {
     "alfheim": [("prism_fountain", [3.0, 1.0]), ("lumen_tree_small", [7.0, -4.0]),
                 ("lumen_lamp", [-2.4, 6.0]), ("lumen_lamp", [2.4, 6.0]), ("wisp_lantern_post", [-4.0, 1.0]),
-                ("elf_rail", [0.0, -3.0]), ("wisp_jar", [-6.5, 6.0]), ("elf_archway", [4.0, -2.0])],
+                ("elf_rail", [0.0, -3.0]), ("wisp_jar", [-6.5, 6.0]), ("elf_archway", [7.4, -2.0], "fixed")],
     "lumen_court": [("lumen_pavilion", [6.0, 4.5]), ("crystal_spire", [6.5, -2.0]), ("lumen_lamp", [-2.5, 2.0])],
     "wispwood": [("wisp_lantern_post", [6.0, -2.0]), ("wisp_jar", [0.0, 3.0]), ("lumen_tree_small", [-5.0, 3.0])],
-    "prismvault": [("sylvaine_throne", [0.0, -52.0]), ("vault_wall", [-5.0, 36.0]), ("crystal_spire", [4.5, 34.0]),
+    "prismvault": [("sylvaine_throne", [0.0, -52.0]), ("vault_wall", [-5.3, 31.4], "fixed"), ("crystal_spire", [5.3, 31.4], "fixed"),   # clear of the entry view (check-scene lineup)
+                  
                    ("vault_floor", [0.0, 34.5])],
 }
 WALK = {"vault_floor"}   # flat decals: walkable, no blocker
@@ -143,12 +144,15 @@ def place(area):
         if any(math.hypot(x - kx, z - kz) < kr + max(hw, hd) for kx, kz, kr in keep): return None
         return hs[len(hs) // 2] / 100
 
-    for name, (px, pz) in PLACE.get(area, []):
+    for name, (px, pz), *fixed in PLACE.get(area, []):
         pc = pieces[name]; hw, hd = pc["size"][0] / 2, pc["size"][2] / 2
         if name == "elf_archway": hw *= 0.6   # a thin open arch: its posts need room, the span does not
         nonlocal_tall[0] = pc["size"][1] > 1.2
         spot = None
-        for r in [0] + [x * 0.5 for x in range(1, 30)]:
+        if fixed:   # hand-placed against the side walls (the vault corridor is too narrow for the search)
+            i_, j_ = int((px - ox) / cl), int((pz - oz) / cl)
+            spot = (px, max(0, d[j_ * W + i_]) / 100, pz)
+        for r in ([] if spot else [0] + [x * 0.5 for x in range(1, 30)]):
             for k in range(max(1, int(r * 8))):
                 a = 2 * math.pi * k / max(1, int(r * 8)); x, z = round(px + r * math.cos(a), 2), round(pz + r * math.sin(a), 2)
                 y = ok(x, z, hw, hd)

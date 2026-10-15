@@ -6,7 +6,7 @@
  "cell": 32,
  "size": [
   256,
-  1696
+  1952
  ],
  "effects": {
   "sparkle_burst": {
@@ -3578,6 +3578,536 @@
     }
    ],
    "duration": 0.667
+  },
+  "pet_aura_wisp": {
+   "row": 53,
+   "frames": 8,
+   "fps": 10,
+   "loop": true,
+   "loop_from": 0,
+   "loops": 1,
+   "kind": "billboard",
+   "pivot": [
+    16,
+    31
+   ],
+   "lift": 0.0,
+   "glow": true,
+   "light": null,
+   "speed": null,
+   "travel": null,
+   "then": null,
+   "frame_list": [
+    {
+     "x": 0,
+     "y": 1696,
+     "w": 32,
+     "h": 32
+    },
+    {
+     "x": 32,
+     "y": 1696,
+     "w": 32,
+     "h": 32
+    },
+    {
+     "x": 64,
+     "y": 1696,
+     "w": 32,
+     "h": 32
+    },
+    {
+     "x": 96,
+     "y": 1696,
+     "w": 32,
+     "h": 32
+    },
+    {
+     "x": 128,
+     "y": 1696,
+     "w": 32,
+     "h": 32
+    },
+    {
+     "x": 160,
+     "y": 1696,
+     "w": 32,
+     "h": 32
+    },
+    {
+     "x": 192,
+     "y": 1696,
+     "w": 32,
+     "h": 32
+    },
+    {
+     "x": 224,
+     "y": 1696,
+     "w": 32,
+     "h": 32
+    }
+   ],
+   "combat": true,
+   "duration": 0.8,
+   "desc": "cold-fire sparkles orbiting the wisp + blue motes rising (palette only)",
+   "follow_lift": "hover"
+  },
+  "pet_aura_moth": {
+   "row": 54,
+   "frames": 8,
+   "fps": 8,
+   "loop": true,
+   "loop_from": 0,
+   "loops": 1,
+   "kind": "billboard",
+   "pivot": [
+    16,
+    31
+   ],
+   "lift": 0.0,
+   "glow": true,
+   "light": null,
+   "speed": null,
+   "travel": null,
+   "then": null,
+   "frame_list": [
+    {
+     "x": 0,
+     "y": 1728,
+     "w": 32,
+     "h": 32
+    },
+    {
+     "x": 32,
+     "y": 1728,
+     "w": 32,
+     "h": 32
+    },
+    {
+     "x": 64,
+     "y": 1728,
+     "w": 32,
+     "h": 32
+    },
+    {
+     "x": 96,
+     "y": 1728,
+     "w": 32,
+     "h": 32
+    },
+    {
+     "x": 128,
+     "y": 1728,
+     "w": 32,
+     "h": 32
+    },
+    {
+     "x": 160,
+     "y": 1728,
+     "w": 32,
+     "h": 32
+    },
+    {
+     "x": 192,
+     "y": 1728,
+     "w": 32,
+     "h": 32
+    },
+    {
+     "x": 224,
+     "y": 1728,
+     "w": 32,
+     "h": 32
+    }
+   ],
+   "combat": true,
+   "duration": 1.0,
+   "desc": "violet neon wing-dust twinkling and drifting down around the moth (NEON violet)",
+   "follow_lift": "hover"
+  },
+  "pet_aura_fox": {
+   "row": 55,
+   "frames": 8,
+   "fps": 10,
+   "loop": true,
+   "loop_from": 0,
+   "loops": 1,
+   "kind": "billboard",
+   "pivot": [
+    16,
+    31
+   ],
+   "lift": 0.0,
+   "glow": true,
+   "light": null,
+   "speed": null,
+   "travel": null,
+   "then": null,
+   "frame_list": [
+    {
+     "x": 0,
+     "y": 1760,
+     "w": 32,
+     "h": 32
+    },
+    {
+     "x": 32,
+     "y": 1760,
+     "w": 32,
+     "h": 32
+    },
+    {
+     "x": 64,
+     "y": 1760,
+     "w": 32,
+     "h": 32
+    },
+    {
+     "x": 96,
+     "y": 1760,
+     "w": 32,
+     "h": 32
+    },
+    {
+     "x": 128,
+     "y": 1760,
+     "w": 32,
+     "h": 32
+    },
+    {
+     "x": 160,
+     "y": 1760,
+     "w": 32,
+     "h": 32
+    },
+    {
+     "x": 192,
+     "y": 1760,
+     "w": 32,
+     "h": 32
+    },
+    {
+     "x": 224,
+     "y": 1760,
+     "w": 32,
+     "h": 32
+    }
+   ],
+   "combat": true,
+   "duration": 0.8,
+   "desc": "red neon foxfire embers rising off the lantern tail (NEON red)"
+  },
+  "pet_pool_wisp": {
+   "row": 56,
+   "frames": 6,
+   "fps": 6,
+   "loop": true,
+   "loop_from": 0,
+   "loops": 1,
+   "kind": "decal",
+   "pivot": [
+    16,
+    16
+   ],
+   "lift": 0.02,
+   "glow": true,
+   "light": null,
+   "speed": null,
+   "travel": null,
+   "then": null,
+   "frame_list": [
+    {
+     "x": 0,
+     "y": 1792,
+     "w": 32,
+     "h": 32
+    },
+    {
+     "x": 32,
+     "y": 1792,
+     "w": 32,
+     "h": 32
+    },
+    {
+     "x": 64,
+     "y": 1792,
+     "w": 32,
+     "h": 32
+    },
+    {
+     "x": 96,
+     "y": 1792,
+     "w": 32,
+     "h": 32
+    },
+    {
+     "x": 128,
+     "y": 1792,
+     "w": 32,
+     "h": 32
+    },
+    {
+     "x": 160,
+     "y": 1792,
+     "w": 32,
+     "h": 32
+    }
+   ],
+   "combat": true,
+   "duration": 1.0,
+   "desc": "soft cold-fire ground pool under the wisp (palette sky / flower_blue / cloth)"
+  },
+  "pet_pool_moth": {
+   "row": 57,
+   "frames": 6,
+   "fps": 5,
+   "loop": true,
+   "loop_from": 0,
+   "loops": 1,
+   "kind": "decal",
+   "pivot": [
+    16,
+    16
+   ],
+   "lift": 0.02,
+   "glow": true,
+   "light": null,
+   "speed": null,
+   "travel": null,
+   "then": null,
+   "frame_list": [
+    {
+     "x": 0,
+     "y": 1824,
+     "w": 32,
+     "h": 32
+    },
+    {
+     "x": 32,
+     "y": 1824,
+     "w": 32,
+     "h": 32
+    },
+    {
+     "x": 64,
+     "y": 1824,
+     "w": 32,
+     "h": 32
+    },
+    {
+     "x": 96,
+     "y": 1824,
+     "w": 32,
+     "h": 32
+    },
+    {
+     "x": 128,
+     "y": 1824,
+     "w": 32,
+     "h": 32
+    },
+    {
+     "x": 160,
+     "y": 1824,
+     "w": 32,
+     "h": 32
+    }
+   ],
+   "combat": true,
+   "duration": 1.2,
+   "desc": "soft violet ground pool under the moth (NEON violet), the widest (lights caves)"
+  },
+  "pet_pool_fox": {
+   "row": 58,
+   "frames": 6,
+   "fps": 7,
+   "loop": true,
+   "loop_from": 0,
+   "loops": 1,
+   "kind": "decal",
+   "pivot": [
+    16,
+    16
+   ],
+   "lift": 0.02,
+   "glow": true,
+   "light": null,
+   "speed": null,
+   "travel": null,
+   "then": null,
+   "frame_list": [
+    {
+     "x": 0,
+     "y": 1856,
+     "w": 32,
+     "h": 32
+    },
+    {
+     "x": 32,
+     "y": 1856,
+     "w": 32,
+     "h": 32
+    },
+    {
+     "x": 64,
+     "y": 1856,
+     "w": 32,
+     "h": 32
+    },
+    {
+     "x": 96,
+     "y": 1856,
+     "w": 32,
+     "h": 32
+    },
+    {
+     "x": 128,
+     "y": 1856,
+     "w": 32,
+     "h": 32
+    },
+    {
+     "x": 160,
+     "y": 1856,
+     "w": 32,
+     "h": 32
+    }
+   ],
+   "combat": true,
+   "duration": 0.857,
+   "desc": "soft red foxfire ground pool under the fox's tail (NEON red)"
+  },
+  "pet_aura_mosspup": {
+   "row": 59,
+   "frames": 8,
+   "fps": 8,
+   "loop": true,
+   "loop_from": 0,
+   "loops": 1,
+   "kind": "billboard",
+   "pivot": [
+    16,
+    31
+   ],
+   "lift": 0.0,
+   "glow": true,
+   "light": null,
+   "speed": null,
+   "travel": null,
+   "then": null,
+   "frame_list": [
+    {
+     "x": 0,
+     "y": 1888,
+     "w": 32,
+     "h": 32
+    },
+    {
+     "x": 32,
+     "y": 1888,
+     "w": 32,
+     "h": 32
+    },
+    {
+     "x": 64,
+     "y": 1888,
+     "w": 32,
+     "h": 32
+    },
+    {
+     "x": 96,
+     "y": 1888,
+     "w": 32,
+     "h": 32
+    },
+    {
+     "x": 128,
+     "y": 1888,
+     "w": 32,
+     "h": 32
+    },
+    {
+     "x": 160,
+     "y": 1888,
+     "w": 32,
+     "h": 32
+    },
+    {
+     "x": 192,
+     "y": 1888,
+     "w": 32,
+     "h": 32
+    },
+    {
+     "x": 224,
+     "y": 1888,
+     "w": 32,
+     "h": 32
+    }
+   ],
+   "combat": true,
+   "duration": 1.0,
+   "desc": "neon-green glowing spores puffing up off the moss-pup's toadstools (NEON green, a red fleck now and then)"
+  },
+  "pet_pool_mosspup": {
+   "row": 60,
+   "frames": 6,
+   "fps": 5,
+   "loop": true,
+   "loop_from": 0,
+   "loops": 1,
+   "kind": "decal",
+   "pivot": [
+    16,
+    16
+   ],
+   "lift": 0.02,
+   "glow": true,
+   "light": null,
+   "speed": null,
+   "travel": null,
+   "then": null,
+   "frame_list": [
+    {
+     "x": 0,
+     "y": 1920,
+     "w": 32,
+     "h": 32
+    },
+    {
+     "x": 32,
+     "y": 1920,
+     "w": 32,
+     "h": 32
+    },
+    {
+     "x": 64,
+     "y": 1920,
+     "w": 32,
+     "h": 32
+    },
+    {
+     "x": 96,
+     "y": 1920,
+     "w": 32,
+     "h": 32
+    },
+    {
+     "x": 128,
+     "y": 1920,
+     "w": 32,
+     "h": 32
+    },
+    {
+     "x": 160,
+     "y": 1920,
+     "w": 32,
+     "h": 32
+    }
+   ],
+   "combat": true,
+   "duration": 1.2,
+   "desc": "soft toxic-green ground pool under the moss-pup (NEON green)"
   }
  },
  "cast_sets": {
@@ -3691,5 +4221,6 @@
   "light_orb",
   "rune_circle",
   "bolt"
- ]
+ ],
+ "pets_from": 1696
 }

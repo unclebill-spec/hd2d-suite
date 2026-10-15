@@ -97,12 +97,27 @@
     -5.6,
     4.6
    ],
-   "h": 0.3,
+   "h": 1.2,
    "top": "timber",
-   "coping": false
+   "coping": true,
+   "gaps": [
+    [
+     -10.0,
+     -8.0
+    ]
+   ]
   }
  ],
- "stairs": [],
+ "stairs": [
+  {
+   "name": "library_stair",
+   "x": -9.0,
+   "z_top": 4.6,
+   "width": 2.0,
+   "rise": 1.2,
+   "base": 0.0
+  }
+ ],
  "decks": [],
  "blocks": [],
  "buildings": [],
@@ -429,8 +444,8 @@
    "role": "elfranger",
    "name": "A light-elf ranger",
    "pos": [
-    -5.4,
-    -0.8
+    -1.6,
+    0.2
    ],
    "facing": "down",
    "behavior": "idle",

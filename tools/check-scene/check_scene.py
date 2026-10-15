@@ -358,7 +358,8 @@ def phone_check(b, url, atlas, cam_spec, out, name, vw, vh, timeout=120, extras=
         wu = min((a["uniform_frac"] for a in ok_s), default=0)
         wc = min((a["atlas_corr"] for a in ok_s), default=0)
         r["sprites_sharp"] = {"pass": bool(ok_s) and wu >= 0.97 and wc >= 0.85, "checked": len(ok_s), "worst_uniform": wu, "worst_corr": wc,
-                              "buffer": rects[0]["buf"] if rects else None}
+                              "buffer": rects[0]["buf"] if rects else None,
+                              "per_actor": [{"id": a.get("id"), "uniform_frac": a["uniform_frac"], "atlas_corr": a["atlas_corr"], "rect": a.get("rect")} for a in ok_s]}
         pg.evaluate("window.__hd2d.showOverlays && window.__hd2d.showOverlays(true)")
         pg.evaluate(HIDE % "")
         pg.wait_for_timeout(200)
@@ -448,6 +449,37 @@ ACT_STEPS = {"jump": [[0.05, 0], [0.2, 0], [0.12, 0], [0.14, 0], [0.12, 0], [0.2
              "defend": [[0.08, 0], [0.18, 0], [0.2, 0], [0.18, 0], [0.05, 1]]}
 
 
+def _browser(p):
+    """Chromium for the run. HD2D_USER_DATA_DIR=<dir> runs it on that worker's own profile (persistent contexts,
+    <dir> for the main page, <dir>-<n> for each extra context) so parallel workers never share one; same checks."""
+    import os
+    args = ["--use-angle=swiftshader", "--enable-unsafe-swiftshader", "--ignore-gpu-blocklist"]
+    udd = os.environ.get("HD2D_USER_DATA_DIR")
+    if not udd:
+        return p.chromium.launch(args=args)
+
+    class _Own:
+        def __init__(self):
+            self.ctxs = []
+
+        def new_context(self, **kw):
+            c = p.chromium.launch_persistent_context(udd if not self.ctxs else f"{udd}-{len(self.ctxs)}", args=args, **kw)
+            self.ctxs.append(c)
+            return c
+
+        def new_page(self, **kw):
+            c = self.new_context(**kw)
+            return c.pages[0] if c.pages else c.new_page()
+
+        def close(self):
+            for c in self.ctxs:
+                try:
+                    c.close()
+                except Exception:  # noqa: BLE001  (already closed by its caller)
+                    pass
+    return _Own()
+
+
 def run(root, out, size=(1280, 720), timeout=120, scene_dir="", params="", phone=True):
     from playwright.sync_api import sync_playwright
     root, out = Path(root).resolve(), Path(out).resolve()
@@ -464,7 +496,7 @@ def run(root, out, size=(1280, 720), timeout=120, scene_dir="", params="", phone
     logs = []
     try:
         with sync_playwright() as p:
-            b = p.chromium.launch(args=["--use-angle=swiftshader", "--enable-unsafe-swiftshader", "--ignore-gpu-blocklist"])
+            b = _browser(p)
             pg = b.new_page(viewport={"width": size[0], "height": size[1]})
             pg.set_default_timeout(max(30, timeout) * 1000)
             pg.on("pageerror", lambda e: logs.append(f"PAGEERROR {e}"))
