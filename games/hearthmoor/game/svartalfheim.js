@@ -13,6 +13,7 @@ import { DeepRooms, ROOM_SPAWNS } from './svartalfheim_deep.js';
 import { SvGate } from './svartalfheim_gate.js';
 import { SvFest } from './svartalfheim_festival.js';
 import { SvMaster, installMaster } from './svartalfheim_master.js';
+import { Foreman } from './svartalfheim_foreman.js';
 import { unlock, swap, owned, active } from './svartalfheim_companions.js';
 import { GorrakFight, PILLAR, ANVILS, VALVES } from './svartalfheim_bosses.js';
 
@@ -89,7 +90,7 @@ const SV_AREAS = Object.keys(AREAS_SV);
 const FLUE = [0, -31.2];   // the frozen flue, north rim of the Binding Forge (z -32 is the walk limit; the pillar stands at z -30)
 const SV_LIGHT = { pool_red: ['#ff5a4a', 7, 5.0], pool_blue: ['#2ab4ff', 5, 3.6], pool_violet: ['#a45cf0', 5, 4.0], water_glow: ['#3ac8b0', 4, 3.2] };
 export class Svartalfheim {
-  constructor(G) { this.G = G; this.ctx = null; this.area = null; this.fx = []; this.lights = []; this.spots = []; this.qaDone = false; this.fight = new GorrakFight(this); this.deep = new DeepRooms(this); this.story = new SvStory(this); this.gate = new SvGate(this); this.fest = new SvFest(this); installMaster(); this.master = new SvMaster(this); this.started = false; this.wrap(); }
+  constructor(G) { this.G = G; this.ctx = null; this.area = null; this.fx = []; this.lights = []; this.spots = []; this.qaDone = false; this.fight = new GorrakFight(this); this.deep = new DeepRooms(this); this.story = new SvStory(this); this.gate = new SvGate(this); this.fest = new SvFest(this); installMaster(); this.master = new SvMaster(this); this.foreman = new Foreman(this); this.started = false; this.wrap(); }
   // E / A and tap try the realm's interactables first (same hook as Alfheim's, chained)
   wrap() {
     const G = this.G, me = this;
@@ -124,7 +125,7 @@ export class Svartalfheim {
     return { area: this.area, seal: hasSeal(this.G.S), exits: (gm.exits || []).map((e) => e.to),
              foes: c ? c.actors.list.filter((a) => ['sootling', 'forgeconstruct', 'golem', 'sparkgolem', 'shadowsmith', 'hushblade'].includes(a.role)).map((a) => a.role) : [],
              flue: { thawed: !!(this.G.S.flags || {}).cd_thawed, heart: !!(this.G.S.inv || {}).anvil_heart }, deep: { vents: this.deep.v.reduce((n, v) => n + (v.n || 0), 0), hits: this.deep.hits, gusts: this.deep.gust.n, pushed: this.deep.gust.pushed || 0 },
-             spots: this.spots.filter((x) => x.show()).length, gate: this.gate.qa(), fest: this.fest.qa(), master: this.master.qa(), comps: { owned: owned(this.G.S), active: active(this.G.S) },
+             spots: this.spots.filter((x) => x.show()).length, gate: this.gate.qa(), fest: this.fest.qa(), master: this.master.qa(), foreman: this.foreman.qa(), comps: { owned: owned(this.G.S), active: active(this.G.S) },
              quests: S0.quests || {}, alliance: ((S0.flags || {}).alliance || {}).svartalfheim || null, alfheim_alliance: ((S0.flags || {}).alliance || {}).alfheim || null, rivals: (S0.flags || {}).rivals || null, inv: S0.inv || {},
              gorrak: this.fight.e ? { hp: Math.round(this.fight.e.hp), max: this.fight.e.D.hp, scale: this.fight.e.D.scale, phase: this.fight.e.ph, state: this.fight.e.state, role: this.fight.e.a.role } : null };
   }
@@ -146,7 +147,7 @@ export class Svartalfheim {
     if (!SV_AREAS.includes(area)) return;
     this.qaPreset();
     if (area === 'svartalfheim') this.gate.atHub(ctx);
-    this.fest.attach(area); this.master.attach(area);
+    this.fest.attach(area); this.master.attach(area); this.foreman.attach(area);
     const S = this.G.S, gm = ctx.scene.game || (ctx.scene.game = {});
     { const F = S.flags || {}; if ((F.alliance || {}).svartalfheim === 'befriend' && ((S.quests || {}).clockdeep || 0) >= 1) unlock(this.G, 'dagna'); if ((F.alliance || {}).vanaheim === 'befriend') unlock(this.G, 'tobble'); }
     if (area === 'forge_hall') {   // the lift stays shut until the Forge-Seal is in the bag

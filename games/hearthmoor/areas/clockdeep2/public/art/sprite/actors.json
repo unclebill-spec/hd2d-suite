@@ -22976,6 +22976,19 @@
     "walk",
     "follow"
    ]
+  },
+  "foreman": {
+   "sheet": "miniboss_foreman",
+   "row": 0,
+   "kind": "enemy",
+   "anims": [
+    "idle",
+    "walk",
+    "attack",
+    "die"
+   ],
+   "desc": "The Foreman (Clockwork Deep C4 mini-boss, 2.8x): brass-and-iron overseer construct with chain flail.",
+   "enemy": true
   }
  },
  "sheets": {
@@ -23010,6 +23023,10 @@
   "tick": {
    "json": "tick.json",
    "image": "tick.png"
+  },
+  "miniboss_foreman": {
+   "json": "miniboss_foreman.json",
+   "image": "miniboss_foreman.png"
   }
  }
 }

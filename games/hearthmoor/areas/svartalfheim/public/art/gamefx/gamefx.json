@@ -8,9 +8,49 @@
  "image": "gamefx.png",
  "size": [
   384,
-  528
+  624
  ],
  "effects": {
+  "quest_mark": {
+   "row": 11,
+   "frames": 4,
+   "fps": 3,
+   "loop": true,
+   "loop_from": 0,
+   "loops": 1,
+   "kind": "billboard",
+   "pivot": [
+    24,
+    47
+   ],
+   "lift": 2.05,
+   "glow": true,
+   "light": null,
+   "speed": null,
+   "travel": null,
+   "then": null,
+   "duration": 9999
+  },
+  "quest_turnin": {
+   "row": 12,
+   "frames": 4,
+   "fps": 3,
+   "loop": true,
+   "loop_from": 0,
+   "loops": 1,
+   "kind": "billboard",
+   "pivot": [
+    24,
+    47
+   ],
+   "lift": 2.05,
+   "glow": true,
+   "light": null,
+   "speed": null,
+   "travel": null,
+   "then": null,
+   "duration": 9999
+  },
   "pool_blue": {
    "row": 1,
    "frames": 6,

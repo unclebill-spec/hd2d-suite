@@ -198,6 +198,9 @@ def steps(b, url, T, size, errors, rep, stub=None, shots=None):
         # ---- Forgefire Week: Dagna's bounty (3 true strikes + 3 forge orders), the reward, the reset at the next festival
         a = load("forge_hall", "&svq=forgefire&anvil=auto"); f = a["fest"]
         T.step("Forgefire Week: S.day % 7 === 3, befriend + Deep done -> festival day, quest not taken", f["festDay"] and f["forgefireDay"] and f["quest"] == 0, f=f)
+        pg.wait_for_timeout(800)
+        T.step("markers: the realm gamefx atlas has quest_mark / quest_turnin and Dagna shows the ! marker on Forgefire day",
+               T.ev("(() => { const c = window.__hd2d.ctx, m = c.gamefx.meta.effects; return !!m.quest_mark && !!m.quest_turnin && !!(window.__hm.markers && window.__hm.markers.dagna); })()"))
         tq("qaTalk('dagna')"); f = sv()["fest"]
         T.step("Dagna offers the bounty: quest forgefire 1, counters 0/0", f["quest"] == 1 and f["forgefire"]["strikes"] == 0 and f["forgefire"]["orders"] == 0, f=f)
         for _ in range(3):
@@ -228,6 +231,14 @@ def steps(b, url, T, size, errors, rep, stub=None, shots=None):
         load("svartalfheim"); T.ev("(() => { const S = window.__hm.S; S.flags.alliance = { svartalfheim: 'befriend' }; S.quests.clockdeep = 3; S.met = { tansy: 1 }; S.pets = { tick: { name: 'Tick', bond: 1, fed: 0 } }; })()")
         tq("qaTalk('tansy')"); m = sv()["master"]
         T.step("Tansy offers The Masterwork to a befriender who owns Tick (quest 1)", m["quest"] == 1, m=m)
+        # ---- The Foreman (C4 mini-boss): own sheet, 2.8x, whistles up 2 constructs (weak belly x2), always drops the clock spring
+        a = load("clockdeep2", "&svq=seal"); pg.wait_for_timeout(1200); fm = sv()["foreman"]
+        T.step("Foreman: spawns in C4 on his own sheet at 2.8x (540 hp)", fm["up"] and fm["scale"] == 2.8 and fm["hp"] == 540 and T.ev("window.__hd2d.ctx.actors.meta.roles.foreman.sheet") == "miniboss_foreman", fm=fm)
+        tq("foreman.whistle()"); fm = sv()["foreman"]
+        T.step("Foreman: the whistle calls 2 forge constructs and opens his belly", fm["minions"] == 2 and fm["whistling"], fm=fm)
+        T.step("Foreman: damage doubles while he whistles (weak belly)", tq("foreman.qaWeak()") == [10, 20])
+        T.ev("(() => { const G = window.__hm, e = G.combat.enemies.find((x) => x.sp.id === 'cd_foreman'); G.combat.damageEnemy(e, 9999, { x: 0, z: 0 }, 0, '#fff'); })()"); pg.wait_for_timeout(500); a = sv()
+        T.step("Foreman falls: 1 clock spring + 2 deep brass, stays dead", a["inv"].get("clock_spring") == 1 and a["inv"].get("deep_brass") == 2 and a["foreman"]["dead"], inv=a["inv"])
         # ---- Tick (pet) + the one-active-companion swap
         a = load("svartalfheim")
         T.step("Tick: pet_tick role + his aura / pool effects are in the area atlases, PETS.tick registered",

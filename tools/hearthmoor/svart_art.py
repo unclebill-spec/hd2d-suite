@@ -32,7 +32,8 @@ SHEETS = {  # sheet name -> (staging json, {area role: staging role})
 }
 
 IMAGE = {"dagna": "dagna_neon.png", "dagna_safe": "dagna.png"}   # sheet -> staging png (default: the json's own image)
-EXTRA = {"clockdeep2": {"boss_gorrak": (ST / "sprite" / "boss_gorrak.json", {"gorrak": "gorrak"})}}   # Gorrak's own 144x192 boss sheet, only where the fight is
+EXTRA = {"clockdeep2": {"boss_gorrak": (ST / "sprite" / "boss_gorrak.json", {"gorrak": "gorrak"}),
+                          "miniboss_foreman": (ST / "sprite" / "miniboss_foreman.json", {"foreman": "foreman"})}}   # Gorrak's own 144x192 boss sheet, only where the fight is
 
 
 def sprites(area):
@@ -80,9 +81,19 @@ def gamefx(area):
     base, sj = json.loads(bj.read_text()), json.loads((ST / "gamefx" / "svart_fx.json").read_text())
     assert base["cell"] == sj["cell"], "cell size mismatch"
     bi, si = Image.open(bp).convert("RGBA"), Image.open(ST / "gamefx" / sj["image"]).convert("RGBA")
-    im = Image.new("RGBA", (max(bi.width, si.width), bi.height + si.height), (0, 0, 0, 0))
-    im.paste(bi, (0, 0)); im.paste(si, (0, bi.height)); im.save(d / "gamefx.png")
+    # the ! / ? quest-marker glyphs (quest_mark, quest_turnin) copied from the plaza atlas (same 48 px cell): the realm areas' atlases had none,
+    # so the Svartalfheim NPC markers (Dagna, Tansy, Bix, Halvard...) spawned nothing
+    pm = json.loads((GAME / "areas/plaza/public/art/gamefx/gamefx.json").read_text()); pim = Image.open(GAME / "areas/plaza/public/art/gamefx/gamefx.png").convert("RGBA")
+    c = base["cell"]; assert pm["cell"] == c
+    mk = [("quest_mark", pm["effects"]["quest_mark"]), ("quest_turnin", pm["effects"]["quest_turnin"])]
+    strip = Image.new("RGBA", (pim.width, c * len(mk)), (0, 0, 0, 0))
+    for i, (_, e) in enumerate(mk):
+        strip.paste(pim.crop((0, e["row"] * c, pim.width, (e["row"] + 1) * c)), (0, i * c))
+    im = Image.new("RGBA", (max(bi.width, si.width, strip.width), bi.height + si.height + strip.height), (0, 0, 0, 0))
+    im.paste(bi, (0, 0)); im.paste(si, (0, bi.height)); im.paste(strip, (0, bi.height + si.height)); im.save(d / "gamefx.png")
     off = bi.height // base["cell"]
+    for i, (k, e) in enumerate(mk):
+        base["effects"][k] = {**{kk: vv for kk, vv in e.items() if kk != "frame_list"}, "row": off + si.height // c + i}
     for k, e in sj["effects"].items():
         e = {kk: vv for kk, vv in e.items() if kk not in ("frame_list", "strip")}
         e["row"] = e["row"] + off
