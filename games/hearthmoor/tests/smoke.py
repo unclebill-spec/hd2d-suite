@@ -2232,7 +2232,9 @@ def run(out, simscale=4, size=(960, 540), segs=SEGS):
                 ch = T.to_choice()
                 labels = ch["options"] if ch else []
                 k = next((i for i, l in enumerate(labels) if "storm work" in l), -1)
-                if k >= 0: h.keyboard.press(str(k + 1)); h.wait_for_timeout(300)
+                if k >= 0:   # the number keys only pick answers 1-4 and this hub has more rows now: walk the highlight down with the arrow keys, then E
+                    for _ in range(k): h.keyboard.press("ArrowDown"); h.wait_for_timeout(120)
+                    h.keyboard.press("e"); h.wait_for_timeout(300)
                 T.read_all()
                 logt = T.ev("document.getElementById('logList').innerText")
                 T.step("Halvard in the storm: his storm line, then the quiet keys foreshadow; 'Any storm work?' posts the Storm Watch bounty (log: 'Seal 3 rifts during the rift storm (over Bifrost Crossing). 1/3')",

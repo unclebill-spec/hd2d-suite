@@ -77,7 +77,7 @@ export class Weather {
     for (const d of KINDS[kind]) {
       if (!P.meta.presets[d.preset]) continue;
       const n = P.emitters.length;
-      P.addEmitter({ preset: d.preset, rate_scale: d.rate * light });
+      P.addEmitter({ preset: d.preset, rate_scale: d.rate * light, follow: true });   // weather follows the camera (dust_motes has no pos: it crashed the storm prewarm)
       if (P.emitters.length > n) this.ems.push(P.emitters[P.emitters.length - 1]);
     }
     this.kind = kind;
