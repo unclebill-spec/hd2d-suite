@@ -133,6 +133,10 @@ def _append_atlas(img_path, meta, add_img, add_meta, key, rows_key=None, mark="p
     return meta
 
 
+# prismvault: pet_aura_moth's dust strip reads as sparse over the vault's dark floor (uniform 0.85 < 0.97); same call as spore_motes / faceless_gaze
+PET_FX_SKIP = {"prismvault": {"pet_aura_moth"}}
+
+
 def install_pets(areas=AREAS):
     P = GAME / "art" / "pets"
     pm = json.loads((P / "pets.json").read_text())
@@ -152,6 +156,8 @@ def install_pets(areas=AREAS):
         for k, add_img, add_meta, key, rows in (("spells", P / "pets_fx.png", fxm, "effects", None),
                                                  ("particles", P / "pets_particles.png", ptm, "presets", "rows")):
             jp = root / scene[k]["json"]; ip = root / scene[k]["image"]
+            if k == "spells" and a in PET_FX_SKIP:   # sparse strip stays out of this area's atlas (check-scene effects_sharp); the pet keeps its dust particles
+                add_meta = {**add_meta, key: {n: v for n, v in add_meta[key].items() if n not in PET_FX_SKIP[a]}}
             m = _append_atlas(ip, json.loads(jp.read_text()), add_img, add_meta, key, rows)
             jp.write_text(json.dumps(m, indent=1))
     print(f"pets: sheet + {len(fxm['effects'])} effects + {len(ptm['presets'])} particle presets in {len(areas)} areas")

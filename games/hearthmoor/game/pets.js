@@ -105,7 +105,7 @@ export class Pets {
     this.fx = [];
     if (ctx.effects && ctx.effects.meta.effects[P.fx.pool]) {
       this.fx.push(this.pool = ctx.effects.spawn(P.fx.pool, a.x, a.y + 0.02, a.z + 0.03, { duration: 1e9, fadeIn: still ? 0 : 0.4 }));
-      this.fx.push(this.aura = ctx.effects.spawn(P.fx.aura, a.x, a.y + (P.fx.auraLift ?? P.hover.lift), a.z + 0.05, { duration: 1e9, fadeIn: still ? 0 : 0.4 }));
+      if (ctx.effects.meta.effects[P.fx.aura]) this.fx.push(this.aura = ctx.effects.spawn(P.fx.aura, a.x, a.y + (P.fx.auraLift ?? P.hover.lift), a.z + 0.05, { duration: 1e9, fadeIn: still ? 0 : 0.4 }));
     }
     if (ctx.particles && ctx.particles.meta && ctx.particles.meta.presets[P.fx.parts] && ctx.particles.addEmitter) {
       const pos = [a.x, a.y + P.hover.lift + 0.2, a.z];
