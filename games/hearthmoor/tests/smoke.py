@@ -103,7 +103,9 @@ class Smoke:
 
     def talk(self, npc_id, keep_open=False):
         """walk up to an NPC and press E until the dialogue with that NPC has been read to the end"""
-        for off in ((0, 1.0), (1.0, 0), (-1.0, 0), (0, -1.0), (0.7, 0.7), (-0.7, 0.7)):
+        for ti, off in enumerate(((0, 1.0), (1.0, 0), (-1.0, 0), (0, -1.0), (0.7, 0.7), (-0.7, 0.7), (0, 1.0), (1.0, 0), (-1.0, 0), (0, -1.0))):
+            if ti == 6:   # every spot failed (a slow box, or a storm rift's foe in the way): let things settle, then try the spots once more
+                self.pg.wait_for_timeout(2500); self.idle()
             a = self.ev(f"(() => {{ const a = window.__hm.ctx.npc('{npc_id}'); return a ? [a.x, a.z] : null; }})()")
             if not a:
                 raise AssertionError(f"no npc {npc_id} in {self.ev('window.__hm.area')}")
