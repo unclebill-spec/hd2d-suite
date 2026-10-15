@@ -170,9 +170,9 @@ def steps(b, url, T, size, errors, rep, stub=None, shots=None):
         T.step("the lift is claimed: stage 3, +80 gold, The Clockwork Deep starts", a["quests"].get("sv_take") == 3 and a["quests"].get("clockdeep") == 1 and T.ev("window.__hm.S.gold || 0") - g0 == 80, q=a["quests"])
         shot("sv_conquer")
         # ---- the frozen flue (spell thaws it, E / A gives the Anvil-Heart), the Thane's turn-in, the conquer exit (6.8)
-        load("clockdeep2", "&svq=seal", "c8")
+        load("clockdeep2", "&svq=seal", "c7")
         done = "(() => { const G = window.__hm, d = G.dlg; if (d && d.then) d.then(G); G.dropDialogue(); })()"
-        T.ev("(() => { window.__hm.S.flags.cd_boss = 1; })()")   # Gorrak down: the arena trigger stays quiet while we stand at the flue
+        T.ev("(() => { window.__hm.S.flags.cd_boss = 1; window.__hm.dropDialogue(); })()")   # Gorrak down: the arena trigger stays quiet while we stand at the flue
         T.ev("(() => { const p = window.__hd2d.ctx.player; p.x = 0; p.z = -31.2; })()"); pg.wait_for_timeout(500)
         T.step("flue: no spot before Gorrak is bound", T.ev("window.__hm.svart.nearSpot() === null || window.__hm.svart.nearSpot().label.indexOf('flue') < 0"))
         T.ev("(() => { window.__hm.S.flags.cd_bound = 1; })()")
