@@ -2307,7 +2307,7 @@ def run(out, simscale=4, size=(960, 540), segs=SEGS):
                 gn = T.ev("(() => { const e = window.__hm.combat.enemies.find((x) => x.id === 'eldergolem' && x.state !== 'dead'); return e ? e.D.name : null; })()")
                 pulls = T.ev("[2.5, 5.5, 6].map((k) => +window.__hm.framePullFor(k).toFixed(3))")
                 T.step("the Mossglen golem is now 'Glenheart, the Elder Golem' (display name only, id eldergolem); boss camera pull: 2.5x unchanged (1.18), 5.5x / 6x bosses ~1.8-1.9 (engine clamp 2.0)",
-                       gn == "Glenheart, the Elder Golem" and pulls[0] == 1.18 and 1.75 <= pulls[1] <= 1.9 and 1.85 <= pulls[2] <= 2.0, name=gn, pulls=pulls)
+                       gn == "Glenheart, the Elder Golem" and pulls[0] == 1.18 and 1.75 <= pulls[1] <= 1.9 and 1.85 <= pulls[2] <= 2.0, golem=gn, pulls=pulls)
                 S0 = T.S(); xp0 = T.ev("window.__hm.S.xp || 0"); d0 = T.ev("window.__hm.loot.drops ? window.__hm.loot.drops.length : -1")
                 yv = T.ev("""(() => { const G = window.__hm, C = G.combat, e = C.enemies.find((x) => x.id === 'eldergolem' && x.state !== 'dead'); G.peace = true;
                   let fired = 0; e.sp = { ...e.sp, trial: true }; e.onYield = () => { fired++; }; C.damageEnemy(e, 99999, G.ctx.player);
