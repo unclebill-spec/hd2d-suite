@@ -1,0 +1,285 @@
+{
+ "tool": "hd2d sprite",
+ "biome": "cozy-village",
+ "frame": [
+  20,
+  32
+ ],
+ "pivot": [
+  10,
+  32
+ ],
+ "ground_row": 31,
+ "facings": [
+  "down",
+  "up",
+  "left",
+  "right"
+ ],
+ "anims": {
+  "idle": {
+   "start": 0,
+   "count": 4,
+   "fps": 3,
+   "loop": [
+    0,
+    1,
+    2,
+    1
+   ],
+   "blink": 3
+  },
+  "walk": {
+   "start": 4,
+   "count": 4,
+   "fps": 8
+  },
+  "cast": {
+   "start": 8,
+   "count": 4,
+   "fps": 6,
+   "loop": [
+    0,
+    1,
+    2,
+    2,
+    3,
+    3
+   ],
+   "casters_only": true
+  },
+  "attack": {
+   "start": 12,
+   "count": 4,
+   "fps": 10,
+   "loop": [
+    0,
+    1,
+    2,
+    2,
+    3
+   ],
+   "heroes_only": true
+  },
+  "defend": {
+   "start": 16,
+   "count": 4,
+   "fps": 6,
+   "loop": [
+    0,
+    1
+   ],
+   "hold": [
+    2,
+    3
+   ],
+   "heroes_only": true
+  },
+  "jump": {
+   "start": 20,
+   "count": 4,
+   "fps": 8,
+   "phases": [
+    "crouch",
+    "launch",
+    "airborne",
+    "land"
+   ],
+   "heroes_only": true
+  },
+  "die": {
+   "start": 24,
+   "count": 4,
+   "fps": 6,
+   "once": true,
+   "enemies_only": true
+  }
+ },
+ "cols": 28,
+ "size": [
+  560,
+  640
+ ],
+ "image": "svenemy.png",
+ "roles": {
+  "forgeconstruct": {
+   "row": 0,
+   "kind": "enemy",
+   "desc": "Forge construct: waist-high brass barrel construct, dome head with a slit visor, clamp arms, piston legs, glowing furnace-belly grate (weak point, +50%). Attack = double clamp (frame 14, belly flares); die = collapses into brass plates + a loose cog",
+   "size_bounds": [
+    [
+     6,
+     20
+    ],
+    [
+     6,
+     32
+    ]
+   ],
+   "caster": false,
+   "anims": [
+    "idle",
+    "walk",
+    "attack",
+    "die"
+   ],
+   "enemy": true,
+   "named": true,
+   "light": {
+    "color": "#f2a63a",
+    "intensity": 0.6,
+    "range": 1.6,
+    "lift": 0.5
+   },
+   "stats_hint": {
+    "tier": "common",
+    "weak": "belly",
+    "fx": {
+     "hit": "spark_burst",
+     "die": "steam_puff"
+    }
+   }
+  },
+  "sparkgolem": {
+   "row": 4,
+   "kind": "enemy",
+   "desc": "Spark golem (lightning golem): open iron cage frame, copper coils on both shoulders, blue-white arcs jumping between them, a lamp-bulb head. Attack = arm thrust + arc (frame 14, spawn spark_arc); die = falls apart into iron and copper",
+   "size_bounds": [
+    [
+     6,
+     20
+    ],
+    [
+     6,
+     32
+    ]
+   ],
+   "caster": false,
+   "anims": [
+    "idle",
+    "walk",
+    "attack",
+    "die"
+   ],
+   "enemy": true,
+   "named": true,
+   "light": {
+    "color": "#a6ecff",
+    "intensity": 0.7,
+    "range": 2.0,
+    "lift": 0.9
+   },
+   "stats_hint": {
+    "tier": "common",
+    "ranged": true,
+    "fx": {
+     "bolt": "spark_arc",
+     "die": "spark_burst"
+    }
+   }
+  },
+  "sootling": {
+   "row": 8,
+   "kind": "enemy",
+   "desc": "Sootling: floating soot puff with ember eyes, a smoke tail to the ground, drifting embers. Attack = puffs up + ember mouth (frame 14); die = pops into a smoke ring (spawn soot_pop)",
+   "size_bounds": [
+    [
+     6,
+     20
+    ],
+    [
+     6,
+     32
+    ]
+   ],
+   "caster": false,
+   "anims": [
+    "idle",
+    "walk",
+    "attack",
+    "die"
+   ],
+   "enemy": true,
+   "named": true,
+   "light": {
+    "color": "#e0602a",
+    "intensity": 0.4,
+    "range": 1.2,
+    "lift": 0.7
+   },
+   "stats_hint": {
+    "tier": "common",
+    "float": true,
+    "fx": {
+     "die": "soot_pop"
+    }
+   }
+  },
+  "shadowsmith": {
+   "row": 12,
+   "kind": "human",
+   "desc": "Shadowsmith (elite, dark-elf rogue smith): ash-grey skin, short white hair, long ears, grey shirt under a leather apron tied at the waist, black trousers, a glowing hot hammer (red-hot head). Attack = hot-hammer swing (frame 14)",
+   "size_bounds": [
+    [
+     14,
+     24
+    ],
+    [
+     24,
+     40
+    ]
+   ],
+   "caster": false,
+   "anims": [
+    "idle",
+    "walk",
+    "attack"
+   ],
+   "enemy": true,
+   "named": true,
+   "light": {
+    "color": "#e0602a",
+    "intensity": 0.6,
+    "range": 1.6,
+    "lift": 0.5
+   },
+   "stats_hint": {
+    "tier": "elite",
+    "fx": {
+     "hit": "spark_burst",
+     "shadow_step": "shadow_puff"
+    }
+   }
+  },
+  "hushblade": {
+   "row": 16,
+   "kind": "human",
+   "desc": "Hushed blade (conquer only, dark-elf assassin): ash-grey skin, silver hair, long ears, black wrap-top, grey sash, slate trousers bound at the shins, black shoes, two short blades (cold-blue edge). Attack = blade combo (frame 14); fades in / out with shadow_puff",
+   "size_bounds": [
+    [
+     14,
+     24
+    ],
+    [
+     24,
+     40
+    ]
+   ],
+   "caster": false,
+   "anims": [
+    "idle",
+    "walk",
+    "attack"
+   ],
+   "enemy": true,
+   "named": true,
+   "stats_hint": {
+    "tier": "common",
+    "stealth": 4,
+    "fx": {
+     "fade": "shadow_puff"
+    }
+   }
+  }
+ }
+}

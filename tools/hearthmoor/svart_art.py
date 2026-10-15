@@ -18,14 +18,15 @@ from PIL import Image
 GAME = Path(__file__).resolve().parents[2] / "games" / "hearthmoor"
 ST = GAME / "art" / "svartalfheim"
 ALF = GAME / "art" / "alfheim"
-AREAS = sys.argv[1:] or ["svartalfheim"]
+AREAS = sys.argv[1:] or ["svartalfheim", "forge_hall"]
 TOWNS = {"lanternseller": "tinker", "wispcatcher": "minerunner", "poolkeeper": "poolkeeper_sv", "dwarftrader": "dwarftrader",
-         "elffolk": "dw1", "elffolk2": "sv1"}   # base-atlas stand-in role -> svart_npcs role (only roles the area has are re-pointed)
+         "elffolk": "dw1", "elffolk2": "sv1",
+         "innkeeper": "thane", "shopkeeper": "runewarden", "nightmerchant": "hushed", "gnome": "dagna"}   # base-atlas stand-in role -> svart_npcs role (only roles the area has are re-pointed)
 NPC = ["thane", "runewarden", "hushed", "dwarftrader", "tinker", "minerunner", "poolkeeper_sv", "dw1", "dw2", "sv1", "sv2"]
 SHEETS = {  # sheet name -> (staging json, {area role: staging role})
     "lumi": (ALF / "lumi" / "lumi.json", {"lumi": "lumi"}),
-    "svnpc": (ST / "sprite" / "svart_npcs.json", {**TOWNS, **{v: v for v in NPC}}),
-    "dagna": (ST / "sprite" / "dagna.json", {"dagna": "dagna"}),
+    "svnpc": (ST / "sprite" / "svart_npcs.json", {**{k: v for k, v in TOWNS.items() if k != "gnome"}, **{v: v for v in NPC}}),
+    "dagna": (ST / "sprite" / "dagna.json", {"gnome": "dagna", "dagna": "dagna"}),
     "svenemy": (ST / "sprite" / "deep_enemies.json", {r: r for r in ("forgeconstruct", "sparkgolem", "sootling", "shadowsmith", "hushblade")}),
 }
 
@@ -96,6 +97,12 @@ PLACE = {
                      ("mine_cart", [6.4, -3.6], "fixed"), ("rail_straight", [6.4, -3.0], "fixed"), ("rail_straight", [6.4, -5.0], "fixed"),
                      ("gear_wall", [-6.0, -11.0], "fixed"), ("gear_wall", [6.0, -11.0], "fixed")],
 }
+PLACE["forge_hall"] = [("gear_wall", [4.8, -11.0], "fixed"), ("gear_wall", [-6.8, -11.0], "fixed"), ("rune_lamp", [-2.8, 4.0]), ("rune_lamp", [2.8, 4.0]),
+                       ("rune_lamp", [6.2, 1.4]), ("forge_brazier", [-7.0, 1.0]), ("forge_brazier", [5.6, 8.4]), ("crystal_cluster", [10.8, 7.0])]
+PLACE["glowmines"] = [("crystal_cluster", [-9.0, -9.0], "fixed"), ("crystal_cluster", [-3.0, -9.6], "fixed"), ("crystal_cluster", [3.6, -9.4], "fixed"), ("crystal_cluster", [9.0, -9.0], "fixed"),
+                      ("crystal_cluster", [-8.4, -3.0]), ("crystal_cluster", [8.0, -4.6]), ("crystal_cluster", [10.2, 3.0]),
+                      ("mine_cart", [-7.6, 8.0]), ("rail_straight", [-7.6, 6.2], "fixed"), ("rail_straight", [-7.6, 8.2], "fixed"),
+                      ("rune_lamp", [-3.2, 6.0]), ("rune_lamp", [4.2, 6.0]), ("gear_wall", [-9.8, 11.2], "fixed")]
 WALK = {"rail_straight", "glow_pool", "deep_floor"}   # flat decals: walkable, no blocker
 
 

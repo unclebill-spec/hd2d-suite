@@ -1,6 +1,6 @@
 # Svartalfheim (realm-svartalfheim) progress
 
-RESUME HERE (Oct 15, 2026, chunk 1 DONE: `svartalfheim` area passes check_scene --quick, all 11 checks; result /workspace/alf_qa/sv1_b.txt; shots /workspace/alf_qa/sv/svartalfheim/): worktree /workspace/hd2d-svartalfheim, branch realm-svartalfheim from main 3b3fb0e.
+RESUME HERE (Oct 15, chunk 2): forge_hall PASSES check_scene --quick (/workspace/alf_qa/sv2_fh3.txt, shots /workspace/alf_qa/sv/forge_hall/); game/svartalfheim.js now has class Svartalfheim (spawns game.svfx light pools + glow lights; hooked in game.js as G.svart). forge_hall has its exit back to Copper Row; the hub's exit down to forge_hall (spawn from_row, return spawn from_hall) is in the hub spec and is being re-checked (commit says if it passed). glowmines spec drafted (areas/src/glowmines.json, PLACE['glowmines'] in svart_art.py) but NOT built or checked: next run `svx`-style: build glowmines + svartalfheim, svart_art glowmines, check glowmines, then add the hub's mine-lift exit (rect [-10.8,-5.8,-8.2,-3.4] -> glowmines spawn from_row; glowmines exit back to spawn from_mines [-8.0,-2.4,'down']) and re-check the hub. Later: clockdeep, quests / TALK / shops / gate at Bifrost, Dagna / Tick, rare + rift tables for glowmines. New stand-in roles in the specs: innkeeper=thane, shopkeeper=runewarden (Sereth), nightmerchant=hushed, gnome=dagna.
 Done: art pack copied to games/hearthmoor/art/svartalfheim/; check-sprite allow-list (SVART_NEON_ALLOW: pet_tick, dagna only);
 tools/hearthmoor/svart_art.py (additive, idempotent, never deletes); first area `svartalfheim` (Anvildeep: Copper Row) spec at
 areas/src/svartalfheim.json, built with `HM_BUILD_TMP=/tmp/sv_hmbuild python3 build.py --areas svartalfheim --no-zip`, then
@@ -14,8 +14,8 @@ point at areas that are not built); Tick needs PET_ROLES + pets.js entry (art in
 | id | name | kind | status |
 |---|---|---|---|
 | svartalfheim | Anvildeep: Copper Row | city hub | chunk 1 (this file's area) |
-| forge_hall | The Great Forge | city | todo |
-| glowmines | The Amethyst Mines | wild | todo |
+| forge_hall | The Great Forge | city | chunk 2, passes |
+| glowmines | The Amethyst Mines | wild | spec drafted, not built |
 | clockdeep | The Clockwork Deep (9 rooms C0-C8, boss Gorrak Ironmaw) | dungeon | todo |
 
 ## Deviations from the story's suggested positions (check-scene rules, not story changes)

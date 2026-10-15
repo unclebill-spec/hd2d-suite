@@ -1,0 +1,665 @@
+{
+ "name": "The Great Forge",
+ "seed": 137,
+ "biome": "cozy-village",
+ "about": "Anvildeep's Great Forge: the cavern floor around the furnace, a hall of pillars with the Great Forge glowing at the north end. The Thane's seat and war-table, the Great Anvil, the open Heart Vault with its empty plinth, the rune-wardens' gallery, the Hushed post, Dagna's half-cold side forge and the cog-cage lift down to the Deep.",
+ "time": {
+  "start": "night",
+  "speed": 0.0016
+ },
+ "spells": true,
+ "sprite_roles": [
+  "actors",
+  "heroes",
+  "combat",
+  "lanternseller",
+  "dwarftrader",
+  "poolkeeper",
+  "wispcatcher",
+  "elffolk",
+  "elffolk2",
+  "innkeeper",
+  "shopkeeper",
+  "nightmerchant",
+  "gnome"
+ ],
+ "boss_roles": [],
+ "camera": {
+  "fov": 24,
+  "pitch": 36,
+  "distance": 33,
+  "zoom": [
+   24,
+   44
+  ],
+  "look": [
+   0,
+   0,
+   -2.4
+  ],
+  "bounds": [
+   -11.0,
+   -9.6,
+   11.0,
+   12.0
+  ]
+ },
+ "ground": {
+  "size": [
+   80,
+   70
+  ],
+  "mat": "stone",
+  "walk": [
+   -12.4,
+   -12.0,
+   12.4,
+   12.4
+  ]
+ },
+ "slabs": [
+  {
+   "name": "entry",
+   "rect": [
+    -1.8,
+    6.0,
+    1.8,
+    11.6
+   ],
+   "mat": "cobble",
+   "h": 0.03
+  },
+  {
+   "name": "aisle",
+   "rect": [
+    -2.2,
+    -6.0,
+    2.2,
+    6.0
+   ],
+   "mat": "cobble",
+   "h": 0.03
+  }
+ ],
+ "terraces": [
+  {
+   "name": "forge_dais",
+   "rect": [
+    -12.4,
+    -12.0,
+    12.4,
+    -6.0
+   ],
+   "h": 1.2,
+   "top": "cobble",
+   "gaps": [
+    [
+     -1.5,
+     1.5
+    ]
+   ]
+  },
+  {
+   "name": "wall_w",
+   "rect": [
+    -30,
+    -30,
+    -12.4,
+    13
+   ],
+   "h": 3.6,
+   "top": "stone",
+   "coping": true
+  },
+  {
+   "name": "wall_e",
+   "rect": [
+    12.4,
+    -30,
+    30,
+    13
+   ],
+   "h": 3.6,
+   "top": "stone",
+   "coping": true
+  },
+  {
+   "name": "wall_n",
+   "rect": [
+    -12.4,
+    -30,
+    12.4,
+    -12.0
+   ],
+   "h": 3.6,
+   "top": "stone",
+   "coping": true
+  }
+ ],
+ "stairs": [
+  {
+   "name": "stair_dais",
+   "x": 0.0,
+   "z_top": -6.0,
+   "width": 3.0,
+   "rise": 1.2,
+   "base": 0.0
+  }
+ ],
+ "decks": [],
+ "blocks": [],
+ "buildings": [],
+ "props": [
+  {
+   "piece": "forge_hearth",
+   "pos": [
+    -3.6,
+    -9.8
+   ]
+  },
+  {
+   "piece": "forge_hearth",
+   "pos": [
+    -1.2,
+    -9.8
+   ]
+  },
+  {
+   "piece": "forge_hearth",
+   "pos": [
+    1.2,
+    -9.8
+   ]
+  },
+  {
+   "piece": "rift_brazier_red",
+   "pos": [
+    -5.4,
+    -7.4
+   ],
+   "glow": {
+    "color": "#ff6a3a",
+    "range": 6.0,
+    "fixed": 0.9
+   }
+  },
+  {
+   "piece": "rift_brazier_red",
+   "pos": [
+    3.6,
+    -7.4
+   ],
+   "glow": {
+    "color": "#ff6a3a",
+    "range": 6.0,
+    "fixed": 0.9
+   }
+  },
+  {
+   "piece": "forge_anvil",
+   "pos": [
+    0.0,
+    -4.0
+   ]
+  },
+  {
+   "piece": "reliquary",
+   "pos": [
+    6.4,
+    -6.6
+   ]
+  },
+  {
+   "piece": "quench_tank",
+   "pos": [
+    8.8,
+    -8.0
+   ]
+  },
+  {
+   "piece": "bench",
+   "pos": [
+    -6.0,
+    -5.4
+   ]
+  },
+  {
+   "piece": "tool_rack",
+   "pos": [
+    -8.4,
+    -8.0
+   ]
+  },
+  {
+   "piece": "coal_bin",
+   "pos": [
+    -10.2,
+    -7.2
+   ]
+  },
+  {
+   "piece": "forge_hearth",
+   "pos": [
+    -3.6,
+    1.2
+   ]
+  },
+  {
+   "piece": "coal_bin",
+   "pos": [
+    -5.4,
+    1.6
+   ]
+  },
+  {
+   "piece": "barrel",
+   "pos": [
+    -2.0,
+    1.0
+   ]
+  },
+  {
+   "piece": "forge_anvil",
+   "pos": [
+    -8.8,
+    -1.0
+   ]
+  },
+  {
+   "piece": "forge_hearth",
+   "pos": [
+    -10.0,
+    -2.4
+   ]
+  },
+  {
+   "piece": "grindstone",
+   "pos": [
+    -10.4,
+    1.2
+   ]
+  },
+  {
+   "piece": "lens_table",
+   "pos": [
+    9.6,
+    0.6
+   ]
+  },
+  {
+   "piece": "orb_standing_blue",
+   "pos": [
+    5.6,
+    4.6
+   ]
+  },
+  {
+   "piece": "orb_standing_blue",
+   "pos": [
+    10.6,
+    3.6
+   ]
+  },
+  {
+   "piece": "brazier",
+   "pos": [
+    -4.6,
+    10.0
+   ],
+   "glow": {
+    "color": "#f2a63a",
+    "range": 5.5,
+    "fixed": 0.8
+   }
+  },
+  {
+   "piece": "brazier",
+   "pos": [
+    4.6,
+    10.0
+   ],
+   "glow": {
+    "color": "#f2a63a",
+    "range": 5.5,
+    "fixed": 0.8
+   }
+  },
+  {
+   "piece": "lamp_post",
+   "pos": [
+    -3.2,
+    2.6
+   ],
+   "glow": {
+    "color": "#f2a63a",
+    "range": 5.0,
+    "fixed": 0.8
+   }
+  },
+  {
+   "piece": "lamp_post",
+   "pos": [
+    3.2,
+    -1.8
+   ],
+   "glow": {
+    "color": "#f2a63a",
+    "range": 5.0,
+    "fixed": 0.8
+   }
+  },
+  {
+   "piece": "vault_pillar",
+   "pos": [
+    -11.0,
+    10.6
+   ]
+  },
+  {
+   "piece": "vault_pillar",
+   "pos": [
+    11.0,
+    10.6
+   ]
+  },
+  {
+   "piece": "vault_pillar",
+   "pos": [
+    -11.2,
+    -6.6
+   ]
+  },
+  {
+   "piece": "vault_pillar",
+   "pos": [
+    11.2,
+    -6.6
+   ]
+  }
+ ],
+ "hedges": [],
+ "trees": [],
+ "backdrop": {},
+ "emitters": [
+  {
+   "preset": "embers",
+   "pos": [
+    0,
+    1.8,
+    -8.0
+   ],
+   "area": [
+    10,
+    1.2,
+    3
+   ],
+   "min_gate": 0.0
+  },
+  {
+   "preset": "embers",
+   "pos": [
+    0,
+    1.4,
+    2.0
+   ],
+   "area": [
+    16,
+    1.0,
+    10
+   ],
+   "min_gate": 0.0
+  }
+ ],
+ "actors": [
+  {
+   "id": "thane",
+   "role": "innkeeper",
+   "name": "Forge-Thane Ragna Copperbraid",
+   "pos": [
+    -6.0,
+    -4.0
+   ],
+   "facing": "right",
+   "behavior": "idle",
+   "talkable": true,
+   "say": [
+    "A Midgarder in my hall. Sit, or stand. Don't touch the anvil."
+   ]
+  },
+  {
+   "id": "sereth",
+   "role": "shopkeeper",
+   "name": "Rune-warden Sereth Gloamweave",
+   "pos": [
+    8.0,
+    2.0
+   ],
+   "facing": "left",
+   "behavior": "idle",
+   "talkable": true,
+   "say": [
+    "Rune-warden Sereth. I keep the cold lights. Mind the lens, it bites. Not literally. Mostly.",
+    "Dwarves make the fire. We make the runes that hold it. Nobody writes songs about the runes."
+   ]
+  },
+  {
+   "id": "ilvar",
+   "role": "nightmerchant",
+   "name": "Captain Ilvar Hushblade",
+   "pos": [
+    -8.6,
+    4.0
+   ],
+   "facing": "right",
+   "behavior": "idle",
+   "talkable": true,
+   "say": [
+    "Ilvar. Captain of the Hushed. We guard the Thane quietly. You're very loud."
+   ]
+  },
+  {
+   "id": "hushed_a",
+   "role": "nightmerchant",
+   "name": "One of the Hushed",
+   "pos": [
+    -9.8,
+    5.6
+   ],
+   "facing": "right",
+   "behavior": "idle",
+   "talkable": true,
+   "say": [
+    "(The Hushed say nothing. You can feel them listening.)"
+   ]
+  },
+  {
+   "id": "hushed_b",
+   "role": "nightmerchant",
+   "name": "One of the Hushed",
+   "pos": [
+    -7.4,
+    5.8
+   ],
+   "facing": "right",
+   "behavior": "idle",
+   "talkable": true,
+   "say": [
+    "(The Hushed say nothing. You can feel them listening.)"
+   ]
+  },
+  {
+   "id": "dagna",
+   "role": "gnome",
+   "name": "Dagna Coalbeard",
+   "pos": [
+    -3.6,
+    3.0
+   ],
+   "facing": "down",
+   "behavior": "idle",
+   "talkable": true,
+   "say": [
+    "Hm. A Midgarder. Stand back from the hot bit."
+   ]
+  },
+  {
+   "id": "dw_war",
+   "role": "elffolk",
+   "name": "Anvildeep dwarf",
+   "pos": [
+    -8.2,
+    0.4
+   ],
+   "facing": "right",
+   "behavior": "idle",
+   "talkable": true,
+   "say": [
+    "Soot in my porridge again. Soot in everything. Soot is the dwarf seasoning."
+   ]
+  }
+ ],
+ "player": {
+  "role": "traveler",
+  "pos": [
+   1.6,
+   7.8
+  ],
+  "facing": "up"
+ },
+ "fx": [],
+ "grades": {
+  "day": {
+   "fog_color": "#4a2418",
+   "sky_top": "#2a1410",
+   "sky_bottom": "#8a4428",
+   "hemi_sky": "#c8a088",
+   "saturation": 1.02,
+   "bugs": 0.4,
+   "warmth": 0.12,
+   "exposure": 1.0,
+   "sun_intensity": 1.3,
+   "hemi_intensity": 0.8,
+   "sun_color": "#ffc890",
+   "lamp_intensity": 0.8
+  },
+  "dusk": {
+   "fog_color": "#1c2040",
+   "sky_top": "#0c1026",
+   "sky_bottom": "#34407c",
+   "exposure": 0.9,
+   "sun_intensity": 0.55,
+   "warmth": -0.12,
+   "sun_color": "#8ca0e8",
+   "bugs": 1.0
+  },
+  "night": {
+   "fog_color": "#0a0814",
+   "sky_top": "#040410",
+   "sky_bottom": "#1a2040",
+   "hemi_sky": "#3c4a88",
+   "bugs": 1.0,
+   "exposure": 0.9,
+   "sun_intensity": 0.28,
+   "hemi_intensity": 0.42,
+   "sun_color": "#6a84d4"
+  }
+ },
+ "game": {
+  "id": "forge_hall",
+  "title": "The Great Forge",
+  "exits": [
+   {
+    "rect": [
+     -1.5,
+     10.4,
+     1.5,
+     11.4
+    ],
+    "to": "svartalfheim",
+    "spawn": "from_hall",
+    "label": "the stair back up to Copper Row"
+   }
+  ],
+  "portals": [],
+  "spawns": {
+   "start": [
+    1.6,
+    7.8,
+    "up"
+   ],
+   "from_row": [
+    1.6,
+    7.8,
+    "up"
+   ],
+   "qa": [
+    1.6,
+    7.4,
+    "up"
+   ],
+   "anvil": [
+    0.0,
+    -2.4,
+    "up"
+   ],
+   "throne": [
+    -6.0,
+    -2.4,
+    "up"
+   ],
+   "vault": [
+    6.4,
+    -4.6,
+    "up"
+   ],
+   "walk": [
+    0.0,
+    0.0,
+    "up"
+   ]
+  },
+  "svfx": [
+   {
+    "name": "pool_red",
+    "pos": [
+     -1.2,
+     0,
+     -8.0
+    ]
+   },
+   {
+    "name": "pool_red",
+    "pos": [
+     1.2,
+     0,
+     -8.0
+    ]
+   },
+   {
+    "name": "pool_red",
+    "pos": [
+     0.0,
+     0,
+     -4.6
+    ]
+   },
+   {
+    "name": "pool_red",
+    "pos": [
+     -3.6,
+     0,
+     2.6
+    ]
+   },
+   {
+    "name": "pool_blue",
+    "pos": [
+     10.8,
+     0,
+     -1.6
+    ],
+    "light": false
+   }
+  ]
+ }
+}
