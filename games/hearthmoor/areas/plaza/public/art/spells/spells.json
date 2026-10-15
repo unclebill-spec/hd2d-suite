@@ -6,7 +6,7 @@
  "cell": 32,
  "size": [
   256,
-  1760
+  2176
  ],
  "effects": {
   "sparkle_burst": {
@@ -3000,8 +3000,1310 @@
    ],
    "duration": 1.333
   },
-  "orb_large_blue": {
+  "lumi_wisp": {
+   "row": 44,
+   "frames": 8,
+   "fps": 8,
+   "loop": true,
+   "loop_from": 0,
+   "loops": 1,
+   "kind": "billboard",
+   "pivot": [
+    16,
+    16
+   ],
+   "lift": 0.0,
+   "glow": true,
+   "light": null,
+   "speed": null,
+   "travel": null,
+   "then": null,
+   "strip": "lumi_wisp.png",
+   "frame_list": [
+    {
+     "x": 0,
+     "y": 1408,
+     "w": 32,
+     "h": 32
+    },
+    {
+     "x": 32,
+     "y": 1408,
+     "w": 32,
+     "h": 32
+    },
+    {
+     "x": 64,
+     "y": 1408,
+     "w": 32,
+     "h": 32
+    },
+    {
+     "x": 96,
+     "y": 1408,
+     "w": 32,
+     "h": 32
+    },
+    {
+     "x": 128,
+     "y": 1408,
+     "w": 32,
+     "h": 32
+    },
+    {
+     "x": 160,
+     "y": 1408,
+     "w": 32,
+     "h": 32
+    },
+    {
+     "x": 192,
+     "y": 1408,
+     "w": 32,
+     "h": 32
+    },
+    {
+     "x": 224,
+     "y": 1408,
+     "w": 32,
+     "h": 32
+    }
+   ],
+   "duration": 1.0
+  },
+  "lumi_dim": {
+   "row": 45,
+   "frames": 6,
+   "fps": 6,
+   "loop": true,
+   "loop_from": 0,
+   "loops": 1,
+   "kind": "billboard",
+   "pivot": [
+    16,
+    16
+   ],
+   "lift": 0.0,
+   "glow": true,
+   "light": null,
+   "speed": null,
+   "travel": null,
+   "then": null,
+   "strip": "lumi_dim.png",
+   "frame_list": [
+    {
+     "x": 0,
+     "y": 1440,
+     "w": 32,
+     "h": 32
+    },
+    {
+     "x": 32,
+     "y": 1440,
+     "w": 32,
+     "h": 32
+    },
+    {
+     "x": 64,
+     "y": 1440,
+     "w": 32,
+     "h": 32
+    },
+    {
+     "x": 96,
+     "y": 1440,
+     "w": 32,
+     "h": 32
+    },
+    {
+     "x": 128,
+     "y": 1440,
+     "w": 32,
+     "h": 32
+    },
+    {
+     "x": 160,
+     "y": 1440,
+     "w": 32,
+     "h": 32
+    }
+   ],
+   "duration": 1.0
+  },
+  "lumi_spark": {
+   "row": 46,
+   "frames": 6,
+   "fps": 10,
+   "loop": true,
+   "loop_from": 0,
+   "loops": 1,
+   "kind": "billboard",
+   "pivot": [
+    16,
+    16
+   ],
+   "lift": 0.0,
+   "glow": true,
+   "light": null,
+   "speed": null,
+   "travel": null,
+   "then": null,
+   "strip": "lumi_spark.png",
+   "frame_list": [
+    {
+     "x": 0,
+     "y": 1472,
+     "w": 32,
+     "h": 32
+    },
+    {
+     "x": 32,
+     "y": 1472,
+     "w": 32,
+     "h": 32
+    },
+    {
+     "x": 64,
+     "y": 1472,
+     "w": 32,
+     "h": 32
+    },
+    {
+     "x": 96,
+     "y": 1472,
+     "w": 32,
+     "h": 32
+    },
+    {
+     "x": 128,
+     "y": 1472,
+     "w": 32,
+     "h": 32
+    },
+    {
+     "x": 160,
+     "y": 1472,
+     "w": 32,
+     "h": 32
+    }
+   ],
+   "duration": 0.6
+  },
+  "lumi_zap": {
+   "row": 47,
+   "frames": 4,
+   "fps": 14,
+   "loop": true,
+   "loop_from": 0,
+   "loops": 1,
+   "kind": "projectile",
+   "pivot": [
+    16,
+    16
+   ],
+   "lift": 0.0,
+   "glow": true,
+   "light": null,
+   "speed": 9.0,
+   "travel": 4.0,
+   "then": "prism_pop",
+   "strip": "lumi_zap.png",
+   "frame_list": [
+    {
+     "x": 0,
+     "y": 1504,
+     "w": 32,
+     "h": 32
+    },
+    {
+     "x": 32,
+     "y": 1504,
+     "w": 32,
+     "h": 32
+    },
+    {
+     "x": 64,
+     "y": 1504,
+     "w": 32,
+     "h": 32
+    },
+    {
+     "x": 96,
+     "y": 1504,
+     "w": 32,
+     "h": 32
+    }
+   ],
+   "duration": 0.286
+  },
+  "lumi_mark": {
+   "row": 48,
+   "frames": 8,
+   "fps": 8,
+   "loop": true,
+   "loop_from": 0,
+   "loops": 1,
+   "kind": "decal",
+   "pivot": [
+    16,
+    16
+   ],
+   "lift": 0.03,
+   "glow": true,
+   "light": null,
+   "speed": null,
+   "travel": null,
+   "then": null,
+   "strip": "lumi_mark.png",
+   "frame_list": [
+    {
+     "x": 0,
+     "y": 1536,
+     "w": 32,
+     "h": 32
+    },
+    {
+     "x": 32,
+     "y": 1536,
+     "w": 32,
+     "h": 32
+    },
+    {
+     "x": 64,
+     "y": 1536,
+     "w": 32,
+     "h": 32
+    },
+    {
+     "x": 96,
+     "y": 1536,
+     "w": 32,
+     "h": 32
+    },
+    {
+     "x": 128,
+     "y": 1536,
+     "w": 32,
+     "h": 32
+    },
+    {
+     "x": 160,
+     "y": 1536,
+     "w": 32,
+     "h": 32
+    },
+    {
+     "x": 192,
+     "y": 1536,
+     "w": 32,
+     "h": 32
+    },
+    {
+     "x": 224,
+     "y": 1536,
+     "w": 32,
+     "h": 32
+    }
+   ],
+   "duration": 1.0
+  },
+  "beam_hit": {
+   "row": 49,
+   "frames": 6,
+   "fps": 12,
+   "loop": false,
+   "loop_from": 0,
+   "loops": 1,
+   "kind": "billboard",
+   "pivot": [
+    16,
+    31
+   ],
+   "lift": 0.0,
+   "glow": true,
+   "light": null,
+   "speed": null,
+   "travel": null,
+   "then": null,
+   "strip": "beam_hit.png",
+   "frame_list": [
+    {
+     "x": 0,
+     "y": 1568,
+     "w": 32,
+     "h": 32
+    },
+    {
+     "x": 32,
+     "y": 1568,
+     "w": 32,
+     "h": 32
+    },
+    {
+     "x": 64,
+     "y": 1568,
+     "w": 32,
+     "h": 32
+    },
+    {
+     "x": 96,
+     "y": 1568,
+     "w": 32,
+     "h": 32
+    },
+    {
+     "x": 128,
+     "y": 1568,
+     "w": 32,
+     "h": 32
+    },
+    {
+     "x": 160,
+     "y": 1568,
+     "w": 32,
+     "h": 32
+    }
+   ],
+   "duration": 0.5
+  },
+  "prism_bolt": {
+   "row": 50,
+   "frames": 6,
+   "fps": 12,
+   "loop": true,
+   "loop_from": 0,
+   "loops": 1,
+   "kind": "projectile",
+   "pivot": [
+    16,
+    16
+   ],
+   "lift": 1.0,
+   "glow": true,
+   "light": {
+    "color": "#6c8cd4",
+    "intensity": 4,
+    "range": 3.5,
+    "curve": [
+     1,
+     1,
+     1,
+     1,
+     1,
+     1
+    ]
+   },
+   "speed": 5.5,
+   "travel": 7.0,
+   "then": "prism_pop",
+   "strip": "prism_bolt.png",
+   "frame_list": [
+    {
+     "x": 0,
+     "y": 1600,
+     "w": 32,
+     "h": 32
+    },
+    {
+     "x": 32,
+     "y": 1600,
+     "w": 32,
+     "h": 32
+    },
+    {
+     "x": 64,
+     "y": 1600,
+     "w": 32,
+     "h": 32
+    },
+    {
+     "x": 96,
+     "y": 1600,
+     "w": 32,
+     "h": 32
+    },
+    {
+     "x": 128,
+     "y": 1600,
+     "w": 32,
+     "h": 32
+    },
+    {
+     "x": 160,
+     "y": 1600,
+     "w": 32,
+     "h": 32
+    }
+   ],
+   "duration": 0.5
+  },
+  "prism_pop": {
+   "row": 51,
+   "frames": 6,
+   "fps": 14,
+   "loop": false,
+   "loop_from": 0,
+   "loops": 1,
+   "kind": "billboard",
+   "pivot": [
+    16,
+    31
+   ],
+   "lift": 0.0,
+   "glow": true,
+   "light": {
+    "color": "#6c8cd4",
+    "intensity": 5,
+    "range": 3.0,
+    "curve": [
+     1,
+     0.8,
+     0.5,
+     0.3,
+     0.1,
+     0
+    ]
+   },
+   "speed": null,
+   "travel": null,
+   "then": null,
+   "strip": "prism_pop.png",
+   "frame_list": [
+    {
+     "x": 0,
+     "y": 1632,
+     "w": 32,
+     "h": 32
+    },
+    {
+     "x": 32,
+     "y": 1632,
+     "w": 32,
+     "h": 32
+    },
+    {
+     "x": 64,
+     "y": 1632,
+     "w": 32,
+     "h": 32
+    },
+    {
+     "x": 96,
+     "y": 1632,
+     "w": 32,
+     "h": 32
+    },
+    {
+     "x": 128,
+     "y": 1632,
+     "w": 32,
+     "h": 32
+    },
+    {
+     "x": 160,
+     "y": 1632,
+     "w": 32,
+     "h": 32
+    }
+   ],
+   "duration": 0.429
+  },
+  "drain_nova": {
    "row": 52,
+   "frames": 8,
+   "fps": 12,
+   "loop": false,
+   "loop_from": 0,
+   "loops": 1,
+   "kind": "decal",
+   "pivot": [
+    16,
+    16
+   ],
+   "lift": 0.03,
+   "glow": true,
+   "light": null,
+   "speed": null,
+   "travel": null,
+   "then": null,
+   "strip": "drain_nova.png",
+   "frame_list": [
+    {
+     "x": 0,
+     "y": 1664,
+     "w": 32,
+     "h": 32
+    },
+    {
+     "x": 32,
+     "y": 1664,
+     "w": 32,
+     "h": 32
+    },
+    {
+     "x": 64,
+     "y": 1664,
+     "w": 32,
+     "h": 32
+    },
+    {
+     "x": 96,
+     "y": 1664,
+     "w": 32,
+     "h": 32
+    },
+    {
+     "x": 128,
+     "y": 1664,
+     "w": 32,
+     "h": 32
+    },
+    {
+     "x": 160,
+     "y": 1664,
+     "w": 32,
+     "h": 32
+    },
+    {
+     "x": 192,
+     "y": 1664,
+     "w": 32,
+     "h": 32
+    },
+    {
+     "x": 224,
+     "y": 1664,
+     "w": 32,
+     "h": 32
+    }
+   ],
+   "duration": 0.667
+  },
+  "pet_aura_wisp": {
+   "row": 53,
+   "frames": 8,
+   "fps": 10,
+   "loop": true,
+   "loop_from": 0,
+   "loops": 1,
+   "kind": "billboard",
+   "pivot": [
+    16,
+    31
+   ],
+   "lift": 0.0,
+   "glow": true,
+   "light": null,
+   "speed": null,
+   "travel": null,
+   "then": null,
+   "frame_list": [
+    {
+     "x": 0,
+     "y": 1696,
+     "w": 32,
+     "h": 32
+    },
+    {
+     "x": 32,
+     "y": 1696,
+     "w": 32,
+     "h": 32
+    },
+    {
+     "x": 64,
+     "y": 1696,
+     "w": 32,
+     "h": 32
+    },
+    {
+     "x": 96,
+     "y": 1696,
+     "w": 32,
+     "h": 32
+    },
+    {
+     "x": 128,
+     "y": 1696,
+     "w": 32,
+     "h": 32
+    },
+    {
+     "x": 160,
+     "y": 1696,
+     "w": 32,
+     "h": 32
+    },
+    {
+     "x": 192,
+     "y": 1696,
+     "w": 32,
+     "h": 32
+    },
+    {
+     "x": 224,
+     "y": 1696,
+     "w": 32,
+     "h": 32
+    }
+   ],
+   "combat": true,
+   "duration": 0.8,
+   "desc": "cold-fire sparkles orbiting the wisp + blue motes rising (palette only)",
+   "follow_lift": "hover"
+  },
+  "pet_aura_moth": {
+   "row": 54,
+   "frames": 8,
+   "fps": 8,
+   "loop": true,
+   "loop_from": 0,
+   "loops": 1,
+   "kind": "billboard",
+   "pivot": [
+    16,
+    31
+   ],
+   "lift": 0.0,
+   "glow": true,
+   "light": null,
+   "speed": null,
+   "travel": null,
+   "then": null,
+   "frame_list": [
+    {
+     "x": 0,
+     "y": 1728,
+     "w": 32,
+     "h": 32
+    },
+    {
+     "x": 32,
+     "y": 1728,
+     "w": 32,
+     "h": 32
+    },
+    {
+     "x": 64,
+     "y": 1728,
+     "w": 32,
+     "h": 32
+    },
+    {
+     "x": 96,
+     "y": 1728,
+     "w": 32,
+     "h": 32
+    },
+    {
+     "x": 128,
+     "y": 1728,
+     "w": 32,
+     "h": 32
+    },
+    {
+     "x": 160,
+     "y": 1728,
+     "w": 32,
+     "h": 32
+    },
+    {
+     "x": 192,
+     "y": 1728,
+     "w": 32,
+     "h": 32
+    },
+    {
+     "x": 224,
+     "y": 1728,
+     "w": 32,
+     "h": 32
+    }
+   ],
+   "combat": true,
+   "duration": 1.0,
+   "desc": "violet neon wing-dust twinkling and drifting down around the moth (NEON violet)",
+   "follow_lift": "hover"
+  },
+  "pet_aura_fox": {
+   "row": 55,
+   "frames": 8,
+   "fps": 10,
+   "loop": true,
+   "loop_from": 0,
+   "loops": 1,
+   "kind": "billboard",
+   "pivot": [
+    16,
+    31
+   ],
+   "lift": 0.0,
+   "glow": true,
+   "light": null,
+   "speed": null,
+   "travel": null,
+   "then": null,
+   "frame_list": [
+    {
+     "x": 0,
+     "y": 1760,
+     "w": 32,
+     "h": 32
+    },
+    {
+     "x": 32,
+     "y": 1760,
+     "w": 32,
+     "h": 32
+    },
+    {
+     "x": 64,
+     "y": 1760,
+     "w": 32,
+     "h": 32
+    },
+    {
+     "x": 96,
+     "y": 1760,
+     "w": 32,
+     "h": 32
+    },
+    {
+     "x": 128,
+     "y": 1760,
+     "w": 32,
+     "h": 32
+    },
+    {
+     "x": 160,
+     "y": 1760,
+     "w": 32,
+     "h": 32
+    },
+    {
+     "x": 192,
+     "y": 1760,
+     "w": 32,
+     "h": 32
+    },
+    {
+     "x": 224,
+     "y": 1760,
+     "w": 32,
+     "h": 32
+    }
+   ],
+   "combat": true,
+   "duration": 0.8,
+   "desc": "red neon foxfire embers rising off the lantern tail (NEON red)"
+  },
+  "pet_pool_wisp": {
+   "row": 56,
+   "frames": 6,
+   "fps": 6,
+   "loop": true,
+   "loop_from": 0,
+   "loops": 1,
+   "kind": "decal",
+   "pivot": [
+    16,
+    16
+   ],
+   "lift": 0.02,
+   "glow": true,
+   "light": null,
+   "speed": null,
+   "travel": null,
+   "then": null,
+   "frame_list": [
+    {
+     "x": 0,
+     "y": 1792,
+     "w": 32,
+     "h": 32
+    },
+    {
+     "x": 32,
+     "y": 1792,
+     "w": 32,
+     "h": 32
+    },
+    {
+     "x": 64,
+     "y": 1792,
+     "w": 32,
+     "h": 32
+    },
+    {
+     "x": 96,
+     "y": 1792,
+     "w": 32,
+     "h": 32
+    },
+    {
+     "x": 128,
+     "y": 1792,
+     "w": 32,
+     "h": 32
+    },
+    {
+     "x": 160,
+     "y": 1792,
+     "w": 32,
+     "h": 32
+    }
+   ],
+   "combat": true,
+   "duration": 1.0,
+   "desc": "soft cold-fire ground pool under the wisp (palette sky / flower_blue / cloth)"
+  },
+  "pet_pool_moth": {
+   "row": 57,
+   "frames": 6,
+   "fps": 5,
+   "loop": true,
+   "loop_from": 0,
+   "loops": 1,
+   "kind": "decal",
+   "pivot": [
+    16,
+    16
+   ],
+   "lift": 0.02,
+   "glow": true,
+   "light": null,
+   "speed": null,
+   "travel": null,
+   "then": null,
+   "frame_list": [
+    {
+     "x": 0,
+     "y": 1824,
+     "w": 32,
+     "h": 32
+    },
+    {
+     "x": 32,
+     "y": 1824,
+     "w": 32,
+     "h": 32
+    },
+    {
+     "x": 64,
+     "y": 1824,
+     "w": 32,
+     "h": 32
+    },
+    {
+     "x": 96,
+     "y": 1824,
+     "w": 32,
+     "h": 32
+    },
+    {
+     "x": 128,
+     "y": 1824,
+     "w": 32,
+     "h": 32
+    },
+    {
+     "x": 160,
+     "y": 1824,
+     "w": 32,
+     "h": 32
+    }
+   ],
+   "combat": true,
+   "duration": 1.2,
+   "desc": "soft violet ground pool under the moth (NEON violet), the widest (lights caves)"
+  },
+  "pet_pool_fox": {
+   "row": 58,
+   "frames": 6,
+   "fps": 7,
+   "loop": true,
+   "loop_from": 0,
+   "loops": 1,
+   "kind": "decal",
+   "pivot": [
+    16,
+    16
+   ],
+   "lift": 0.02,
+   "glow": true,
+   "light": null,
+   "speed": null,
+   "travel": null,
+   "then": null,
+   "frame_list": [
+    {
+     "x": 0,
+     "y": 1856,
+     "w": 32,
+     "h": 32
+    },
+    {
+     "x": 32,
+     "y": 1856,
+     "w": 32,
+     "h": 32
+    },
+    {
+     "x": 64,
+     "y": 1856,
+     "w": 32,
+     "h": 32
+    },
+    {
+     "x": 96,
+     "y": 1856,
+     "w": 32,
+     "h": 32
+    },
+    {
+     "x": 128,
+     "y": 1856,
+     "w": 32,
+     "h": 32
+    },
+    {
+     "x": 160,
+     "y": 1856,
+     "w": 32,
+     "h": 32
+    }
+   ],
+   "combat": true,
+   "duration": 0.857,
+   "desc": "soft red foxfire ground pool under the fox's tail (NEON red)"
+  },
+  "pet_aura_mosspup": {
+   "row": 59,
+   "frames": 8,
+   "fps": 8,
+   "loop": true,
+   "loop_from": 0,
+   "loops": 1,
+   "kind": "billboard",
+   "pivot": [
+    16,
+    31
+   ],
+   "lift": 0.0,
+   "glow": true,
+   "light": null,
+   "speed": null,
+   "travel": null,
+   "then": null,
+   "frame_list": [
+    {
+     "x": 0,
+     "y": 1888,
+     "w": 32,
+     "h": 32
+    },
+    {
+     "x": 32,
+     "y": 1888,
+     "w": 32,
+     "h": 32
+    },
+    {
+     "x": 64,
+     "y": 1888,
+     "w": 32,
+     "h": 32
+    },
+    {
+     "x": 96,
+     "y": 1888,
+     "w": 32,
+     "h": 32
+    },
+    {
+     "x": 128,
+     "y": 1888,
+     "w": 32,
+     "h": 32
+    },
+    {
+     "x": 160,
+     "y": 1888,
+     "w": 32,
+     "h": 32
+    },
+    {
+     "x": 192,
+     "y": 1888,
+     "w": 32,
+     "h": 32
+    },
+    {
+     "x": 224,
+     "y": 1888,
+     "w": 32,
+     "h": 32
+    }
+   ],
+   "combat": true,
+   "duration": 1.0,
+   "desc": "neon-green glowing spores puffing up off the moss-pup's toadstools (NEON green, a red fleck now and then)"
+  },
+  "pet_pool_mosspup": {
+   "row": 60,
+   "frames": 6,
+   "fps": 5,
+   "loop": true,
+   "loop_from": 0,
+   "loops": 1,
+   "kind": "decal",
+   "pivot": [
+    16,
+    16
+   ],
+   "lift": 0.02,
+   "glow": true,
+   "light": null,
+   "speed": null,
+   "travel": null,
+   "then": null,
+   "frame_list": [
+    {
+     "x": 0,
+     "y": 1920,
+     "w": 32,
+     "h": 32
+    },
+    {
+     "x": 32,
+     "y": 1920,
+     "w": 32,
+     "h": 32
+    },
+    {
+     "x": 64,
+     "y": 1920,
+     "w": 32,
+     "h": 32
+    },
+    {
+     "x": 96,
+     "y": 1920,
+     "w": 32,
+     "h": 32
+    },
+    {
+     "x": 128,
+     "y": 1920,
+     "w": 32,
+     "h": 32
+    },
+    {
+     "x": 160,
+     "y": 1920,
+     "w": 32,
+     "h": 32
+    }
+   ],
+   "combat": true,
+   "duration": 1.2,
+   "desc": "soft toxic-green ground pool under the moss-pup (NEON green)"
+  },
+  "pet_aura_tick": {
+   "row": 61,
+   "frames": 8,
+   "fps": 8,
+   "loop": true,
+   "loop_from": 0,
+   "loops": 1,
+   "kind": "billboard",
+   "pivot": [
+    16,
+    31
+   ],
+   "lift": 0.0,
+   "glow": true,
+   "light": null,
+   "speed": null,
+   "travel": null,
+   "then": null,
+   "frame_list": [
+    {
+     "x": 0,
+     "y": 1952,
+     "w": 32,
+     "h": 32
+    },
+    {
+     "x": 32,
+     "y": 1952,
+     "w": 32,
+     "h": 32
+    },
+    {
+     "x": 64,
+     "y": 1952,
+     "w": 32,
+     "h": 32
+    },
+    {
+     "x": 96,
+     "y": 1952,
+     "w": 32,
+     "h": 32
+    },
+    {
+     "x": 128,
+     "y": 1952,
+     "w": 32,
+     "h": 32
+    },
+    {
+     "x": 160,
+     "y": 1952,
+     "w": 32,
+     "h": 32
+    },
+    {
+     "x": 192,
+     "y": 1952,
+     "w": 32,
+     "h": 32
+    },
+    {
+     "x": 224,
+     "y": 1952,
+     "w": 32,
+     "h": 32
+    }
+   ],
+   "combat": true,
+   "duration": 1.0,
+   "desc": "neon-blue rune sparks orbiting Tick like clock ticks (NEON blue)",
+   "follow_lift": "hover"
+  },
+  "pet_pool_tick": {
+   "row": 62,
+   "frames": 6,
+   "fps": 6,
+   "loop": true,
+   "loop_from": 0,
+   "loops": 1,
+   "kind": "decal",
+   "pivot": [
+    16,
+    16
+   ],
+   "lift": 0.02,
+   "glow": true,
+   "light": null,
+   "speed": null,
+   "travel": null,
+   "then": null,
+   "frame_list": [
+    {
+     "x": 0,
+     "y": 1984,
+     "w": 32,
+     "h": 32
+    },
+    {
+     "x": 32,
+     "y": 1984,
+     "w": 32,
+     "h": 32
+    },
+    {
+     "x": 64,
+     "y": 1984,
+     "w": 32,
+     "h": 32
+    },
+    {
+     "x": 96,
+     "y": 1984,
+     "w": 32,
+     "h": 32
+    },
+    {
+     "x": 128,
+     "y": 1984,
+     "w": 32,
+     "h": 32
+    },
+    {
+     "x": 160,
+     "y": 1984,
+     "w": 32,
+     "h": 32
+    }
+   ],
+   "combat": true,
+   "duration": 1.0,
+   "desc": "cold-blue light pool under Tick (NEON blue)"
+  },
+  "pet_pool_tick_safe": {
+   "row": 63,
+   "frames": 6,
+   "fps": 6,
+   "loop": true,
+   "loop_from": 0,
+   "loops": 1,
+   "kind": "decal",
+   "pivot": [
+    16,
+    16
+   ],
+   "lift": 0.02,
+   "glow": true,
+   "light": null,
+   "speed": null,
+   "travel": null,
+   "then": null,
+   "frame_list": [
+    {
+     "x": 0,
+     "y": 2016,
+     "w": 32,
+     "h": 32
+    },
+    {
+     "x": 32,
+     "y": 2016,
+     "w": 32,
+     "h": 32
+    },
+    {
+     "x": 64,
+     "y": 2016,
+     "w": 32,
+     "h": 32
+    },
+    {
+     "x": 96,
+     "y": 2016,
+     "w": 32,
+     "h": 32
+    },
+    {
+     "x": 128,
+     "y": 2016,
+     "w": 32,
+     "h": 32
+    },
+    {
+     "x": 160,
+     "y": 2016,
+     "w": 32,
+     "h": 32
+    }
+   ],
+   "combat": true,
+   "duration": 1.0,
+   "desc": "palette-safe twin of the pool"
+  },
+  "orb_large_blue": {
+   "row": 64,
    "frames": 8,
    "fps": 6,
    "loop": true,
@@ -3027,49 +4329,49 @@
    "frame_list": [
     {
      "x": 0,
-     "y": 1664,
+     "y": 2048,
      "w": 32,
      "h": 32
     },
     {
      "x": 32,
-     "y": 1664,
+     "y": 2048,
      "w": 32,
      "h": 32
     },
     {
      "x": 64,
-     "y": 1664,
+     "y": 2048,
      "w": 32,
      "h": 32
     },
     {
      "x": 96,
-     "y": 1664,
+     "y": 2048,
      "w": 32,
      "h": 32
     },
     {
      "x": 128,
-     "y": 1664,
+     "y": 2048,
      "w": 32,
      "h": 32
     },
     {
      "x": 160,
-     "y": 1664,
+     "y": 2048,
      "w": 32,
      "h": 32
     },
     {
      "x": 192,
-     "y": 1664,
+     "y": 2048,
      "w": 32,
      "h": 32
     },
     {
      "x": 224,
-     "y": 1664,
+     "y": 2048,
      "w": 32,
      "h": 32
     }
@@ -3077,7 +4379,7 @@
    "notes": "orb_garden_* (orb centre = lamp marker)"
   },
   "orb_large_violet": {
-   "row": 53,
+   "row": 65,
    "frames": 8,
    "fps": 6,
    "loop": true,
@@ -3103,49 +4405,49 @@
    "frame_list": [
     {
      "x": 0,
-     "y": 1696,
+     "y": 2080,
      "w": 32,
      "h": 32
     },
     {
      "x": 32,
-     "y": 1696,
+     "y": 2080,
      "w": 32,
      "h": 32
     },
     {
      "x": 64,
-     "y": 1696,
+     "y": 2080,
      "w": 32,
      "h": 32
     },
     {
      "x": 96,
-     "y": 1696,
+     "y": 2080,
      "w": 32,
      "h": 32
     },
     {
      "x": 128,
-     "y": 1696,
+     "y": 2080,
      "w": 32,
      "h": 32
     },
     {
      "x": 160,
-     "y": 1696,
+     "y": 2080,
      "w": 32,
      "h": 32
     },
     {
      "x": 192,
-     "y": 1696,
+     "y": 2080,
      "w": 32,
      "h": 32
     },
     {
      "x": 224,
-     "y": 1696,
+     "y": 2080,
      "w": 32,
      "h": 32
     }
@@ -3153,7 +4455,7 @@
    "notes": "orb_garden_* (orb centre = lamp marker)"
   },
   "orb_large_red": {
-   "row": 54,
+   "row": 66,
    "frames": 8,
    "fps": 6,
    "loop": true,
@@ -3179,49 +4481,49 @@
    "frame_list": [
     {
      "x": 0,
-     "y": 1728,
+     "y": 2112,
      "w": 32,
      "h": 32
     },
     {
      "x": 32,
-     "y": 1728,
+     "y": 2112,
      "w": 32,
      "h": 32
     },
     {
      "x": 64,
-     "y": 1728,
+     "y": 2112,
      "w": 32,
      "h": 32
     },
     {
      "x": 96,
-     "y": 1728,
+     "y": 2112,
      "w": 32,
      "h": 32
     },
     {
      "x": 128,
-     "y": 1728,
+     "y": 2112,
      "w": 32,
      "h": 32
     },
     {
      "x": 160,
-     "y": 1728,
+     "y": 2112,
      "w": 32,
      "h": 32
     },
     {
      "x": 192,
-     "y": 1728,
+     "y": 2112,
      "w": 32,
      "h": 32
     },
     {
      "x": 224,
-     "y": 1728,
+     "y": 2112,
      "w": 32,
      "h": 32
     }
@@ -3229,7 +4531,7 @@
    "notes": "orb_garden_* (orb centre = lamp marker)"
   },
   "orb_grand_mix": {
-   "row": 55,
+   "row": 67,
    "frames": 8,
    "fps": 6,
    "loop": true,
@@ -3255,777 +4557,54 @@
    "frame_list": [
     {
      "x": 0,
-     "y": 1760,
+     "y": 2144,
      "w": 32,
      "h": 32
     },
     {
      "x": 32,
-     "y": 1760,
+     "y": 2144,
      "w": 32,
      "h": 32
     },
     {
      "x": 64,
-     "y": 1760,
+     "y": 2144,
      "w": 32,
      "h": 32
     },
     {
      "x": 96,
-     "y": 1760,
+     "y": 2144,
      "w": 32,
      "h": 32
     },
     {
      "x": 128,
-     "y": 1760,
+     "y": 2144,
      "w": 32,
      "h": 32
     },
     {
      "x": 160,
-     "y": 1760,
+     "y": 2144,
      "w": 32,
      "h": 32
     },
     {
      "x": 192,
-     "y": 1760,
+     "y": 2144,
      "w": 32,
      "h": 32
     },
     {
      "x": 224,
-     "y": 1760,
+     "y": 2144,
      "w": 32,
      "h": 32
     }
    ],
    "notes": "orb_grand (1.1 m orb = 20 px; this 30 px billboard is a touch larger: scale 0.66 or use as UI / close-up)"
-  },
-  "pet_aura_wisp": {
-   "row": 44,
-   "frames": 8,
-   "fps": 10,
-   "loop": true,
-   "loop_from": 0,
-   "loops": 1,
-   "kind": "billboard",
-   "pivot": [
-    16,
-    31
-   ],
-   "lift": 0.0,
-   "glow": true,
-   "light": null,
-   "speed": null,
-   "travel": null,
-   "then": null,
-   "frame_list": [
-    {
-     "x": 0,
-     "y": 1408,
-     "w": 32,
-     "h": 32
-    },
-    {
-     "x": 32,
-     "y": 1408,
-     "w": 32,
-     "h": 32
-    },
-    {
-     "x": 64,
-     "y": 1408,
-     "w": 32,
-     "h": 32
-    },
-    {
-     "x": 96,
-     "y": 1408,
-     "w": 32,
-     "h": 32
-    },
-    {
-     "x": 128,
-     "y": 1408,
-     "w": 32,
-     "h": 32
-    },
-    {
-     "x": 160,
-     "y": 1408,
-     "w": 32,
-     "h": 32
-    },
-    {
-     "x": 192,
-     "y": 1408,
-     "w": 32,
-     "h": 32
-    },
-    {
-     "x": 224,
-     "y": 1408,
-     "w": 32,
-     "h": 32
-    }
-   ],
-   "combat": true,
-   "duration": 0.8,
-   "desc": "cold-fire sparkles orbiting the wisp + blue motes rising (palette only)",
-   "follow_lift": "hover"
-  },
-  "pet_aura_moth": {
-   "row": 45,
-   "frames": 8,
-   "fps": 8,
-   "loop": true,
-   "loop_from": 0,
-   "loops": 1,
-   "kind": "billboard",
-   "pivot": [
-    16,
-    31
-   ],
-   "lift": 0.0,
-   "glow": true,
-   "light": null,
-   "speed": null,
-   "travel": null,
-   "then": null,
-   "frame_list": [
-    {
-     "x": 0,
-     "y": 1440,
-     "w": 32,
-     "h": 32
-    },
-    {
-     "x": 32,
-     "y": 1440,
-     "w": 32,
-     "h": 32
-    },
-    {
-     "x": 64,
-     "y": 1440,
-     "w": 32,
-     "h": 32
-    },
-    {
-     "x": 96,
-     "y": 1440,
-     "w": 32,
-     "h": 32
-    },
-    {
-     "x": 128,
-     "y": 1440,
-     "w": 32,
-     "h": 32
-    },
-    {
-     "x": 160,
-     "y": 1440,
-     "w": 32,
-     "h": 32
-    },
-    {
-     "x": 192,
-     "y": 1440,
-     "w": 32,
-     "h": 32
-    },
-    {
-     "x": 224,
-     "y": 1440,
-     "w": 32,
-     "h": 32
-    }
-   ],
-   "combat": true,
-   "duration": 1.0,
-   "desc": "violet neon wing-dust twinkling and drifting down around the moth (NEON violet)",
-   "follow_lift": "hover"
-  },
-  "pet_aura_fox": {
-   "row": 46,
-   "frames": 8,
-   "fps": 10,
-   "loop": true,
-   "loop_from": 0,
-   "loops": 1,
-   "kind": "billboard",
-   "pivot": [
-    16,
-    31
-   ],
-   "lift": 0.0,
-   "glow": true,
-   "light": null,
-   "speed": null,
-   "travel": null,
-   "then": null,
-   "frame_list": [
-    {
-     "x": 0,
-     "y": 1472,
-     "w": 32,
-     "h": 32
-    },
-    {
-     "x": 32,
-     "y": 1472,
-     "w": 32,
-     "h": 32
-    },
-    {
-     "x": 64,
-     "y": 1472,
-     "w": 32,
-     "h": 32
-    },
-    {
-     "x": 96,
-     "y": 1472,
-     "w": 32,
-     "h": 32
-    },
-    {
-     "x": 128,
-     "y": 1472,
-     "w": 32,
-     "h": 32
-    },
-    {
-     "x": 160,
-     "y": 1472,
-     "w": 32,
-     "h": 32
-    },
-    {
-     "x": 192,
-     "y": 1472,
-     "w": 32,
-     "h": 32
-    },
-    {
-     "x": 224,
-     "y": 1472,
-     "w": 32,
-     "h": 32
-    }
-   ],
-   "combat": true,
-   "duration": 0.8,
-   "desc": "red neon foxfire embers rising off the lantern tail (NEON red)"
-  },
-  "pet_pool_wisp": {
-   "row": 47,
-   "frames": 6,
-   "fps": 6,
-   "loop": true,
-   "loop_from": 0,
-   "loops": 1,
-   "kind": "decal",
-   "pivot": [
-    16,
-    16
-   ],
-   "lift": 0.02,
-   "glow": true,
-   "light": null,
-   "speed": null,
-   "travel": null,
-   "then": null,
-   "frame_list": [
-    {
-     "x": 0,
-     "y": 1504,
-     "w": 32,
-     "h": 32
-    },
-    {
-     "x": 32,
-     "y": 1504,
-     "w": 32,
-     "h": 32
-    },
-    {
-     "x": 64,
-     "y": 1504,
-     "w": 32,
-     "h": 32
-    },
-    {
-     "x": 96,
-     "y": 1504,
-     "w": 32,
-     "h": 32
-    },
-    {
-     "x": 128,
-     "y": 1504,
-     "w": 32,
-     "h": 32
-    },
-    {
-     "x": 160,
-     "y": 1504,
-     "w": 32,
-     "h": 32
-    }
-   ],
-   "combat": true,
-   "duration": 1.0,
-   "desc": "soft cold-fire ground pool under the wisp (palette sky / flower_blue / cloth)"
-  },
-  "pet_pool_moth": {
-   "row": 48,
-   "frames": 6,
-   "fps": 5,
-   "loop": true,
-   "loop_from": 0,
-   "loops": 1,
-   "kind": "decal",
-   "pivot": [
-    16,
-    16
-   ],
-   "lift": 0.02,
-   "glow": true,
-   "light": null,
-   "speed": null,
-   "travel": null,
-   "then": null,
-   "frame_list": [
-    {
-     "x": 0,
-     "y": 1536,
-     "w": 32,
-     "h": 32
-    },
-    {
-     "x": 32,
-     "y": 1536,
-     "w": 32,
-     "h": 32
-    },
-    {
-     "x": 64,
-     "y": 1536,
-     "w": 32,
-     "h": 32
-    },
-    {
-     "x": 96,
-     "y": 1536,
-     "w": 32,
-     "h": 32
-    },
-    {
-     "x": 128,
-     "y": 1536,
-     "w": 32,
-     "h": 32
-    },
-    {
-     "x": 160,
-     "y": 1536,
-     "w": 32,
-     "h": 32
-    }
-   ],
-   "combat": true,
-   "duration": 1.2,
-   "desc": "soft violet ground pool under the moth (NEON violet), the widest (lights caves)"
-  },
-  "pet_pool_fox": {
-   "row": 49,
-   "frames": 6,
-   "fps": 7,
-   "loop": true,
-   "loop_from": 0,
-   "loops": 1,
-   "kind": "decal",
-   "pivot": [
-    16,
-    16
-   ],
-   "lift": 0.02,
-   "glow": true,
-   "light": null,
-   "speed": null,
-   "travel": null,
-   "then": null,
-   "frame_list": [
-    {
-     "x": 0,
-     "y": 1568,
-     "w": 32,
-     "h": 32
-    },
-    {
-     "x": 32,
-     "y": 1568,
-     "w": 32,
-     "h": 32
-    },
-    {
-     "x": 64,
-     "y": 1568,
-     "w": 32,
-     "h": 32
-    },
-    {
-     "x": 96,
-     "y": 1568,
-     "w": 32,
-     "h": 32
-    },
-    {
-     "x": 128,
-     "y": 1568,
-     "w": 32,
-     "h": 32
-    },
-    {
-     "x": 160,
-     "y": 1568,
-     "w": 32,
-     "h": 32
-    }
-   ],
-   "combat": true,
-   "duration": 0.857,
-   "desc": "soft red foxfire ground pool under the fox's tail (NEON red)"
-  },
-  "pet_aura_mosspup": {
-   "row": 50,
-   "frames": 8,
-   "fps": 8,
-   "loop": true,
-   "loop_from": 0,
-   "loops": 1,
-   "kind": "billboard",
-   "pivot": [
-    16,
-    31
-   ],
-   "lift": 0.0,
-   "glow": true,
-   "light": null,
-   "speed": null,
-   "travel": null,
-   "then": null,
-   "frame_list": [
-    {
-     "x": 0,
-     "y": 1600,
-     "w": 32,
-     "h": 32
-    },
-    {
-     "x": 32,
-     "y": 1600,
-     "w": 32,
-     "h": 32
-    },
-    {
-     "x": 64,
-     "y": 1600,
-     "w": 32,
-     "h": 32
-    },
-    {
-     "x": 96,
-     "y": 1600,
-     "w": 32,
-     "h": 32
-    },
-    {
-     "x": 128,
-     "y": 1600,
-     "w": 32,
-     "h": 32
-    },
-    {
-     "x": 160,
-     "y": 1600,
-     "w": 32,
-     "h": 32
-    },
-    {
-     "x": 192,
-     "y": 1600,
-     "w": 32,
-     "h": 32
-    },
-    {
-     "x": 224,
-     "y": 1600,
-     "w": 32,
-     "h": 32
-    }
-   ],
-   "combat": true,
-   "duration": 1.0,
-   "desc": "neon-green glowing spores puffing up off the moss-pup's toadstools (NEON green, a red fleck now and then)"
-  },
-  "pet_pool_mosspup": {
-   "row": 51,
-   "frames": 6,
-   "fps": 5,
-   "loop": true,
-   "loop_from": 0,
-   "loops": 1,
-   "kind": "decal",
-   "pivot": [
-    16,
-    16
-   ],
-   "lift": 0.02,
-   "glow": true,
-   "light": null,
-   "speed": null,
-   "travel": null,
-   "then": null,
-   "frame_list": [
-    {
-     "x": 0,
-     "y": 1632,
-     "w": 32,
-     "h": 32
-    },
-    {
-     "x": 32,
-     "y": 1632,
-     "w": 32,
-     "h": 32
-    },
-    {
-     "x": 64,
-     "y": 1632,
-     "w": 32,
-     "h": 32
-    },
-    {
-     "x": 96,
-     "y": 1632,
-     "w": 32,
-     "h": 32
-    },
-    {
-     "x": 128,
-     "y": 1632,
-     "w": 32,
-     "h": 32
-    },
-    {
-     "x": 160,
-     "y": 1632,
-     "w": 32,
-     "h": 32
-    }
-   ],
-   "combat": true,
-   "duration": 1.2,
-   "desc": "soft toxic-green ground pool under the moss-pup (NEON green)"
-  },
-  "pet_aura_tick": {
-   "row": 52,
-   "frames": 8,
-   "fps": 8,
-   "loop": true,
-   "loop_from": 0,
-   "loops": 1,
-   "kind": "billboard",
-   "pivot": [
-    16,
-    31
-   ],
-   "lift": 0.0,
-   "glow": true,
-   "light": null,
-   "speed": null,
-   "travel": null,
-   "then": null,
-   "frame_list": [
-    {
-     "x": 0,
-     "y": 1664,
-     "w": 32,
-     "h": 32
-    },
-    {
-     "x": 32,
-     "y": 1664,
-     "w": 32,
-     "h": 32
-    },
-    {
-     "x": 64,
-     "y": 1664,
-     "w": 32,
-     "h": 32
-    },
-    {
-     "x": 96,
-     "y": 1664,
-     "w": 32,
-     "h": 32
-    },
-    {
-     "x": 128,
-     "y": 1664,
-     "w": 32,
-     "h": 32
-    },
-    {
-     "x": 160,
-     "y": 1664,
-     "w": 32,
-     "h": 32
-    },
-    {
-     "x": 192,
-     "y": 1664,
-     "w": 32,
-     "h": 32
-    },
-    {
-     "x": 224,
-     "y": 1664,
-     "w": 32,
-     "h": 32
-    }
-   ],
-   "combat": true,
-   "duration": 1.0,
-   "desc": "neon-blue rune sparks orbiting Tick like clock ticks (NEON blue)",
-   "follow_lift": "hover"
-  },
-  "pet_pool_tick": {
-   "row": 53,
-   "frames": 6,
-   "fps": 6,
-   "loop": true,
-   "loop_from": 0,
-   "loops": 1,
-   "kind": "decal",
-   "pivot": [
-    16,
-    16
-   ],
-   "lift": 0.02,
-   "glow": true,
-   "light": null,
-   "speed": null,
-   "travel": null,
-   "then": null,
-   "frame_list": [
-    {
-     "x": 0,
-     "y": 1696,
-     "w": 32,
-     "h": 32
-    },
-    {
-     "x": 32,
-     "y": 1696,
-     "w": 32,
-     "h": 32
-    },
-    {
-     "x": 64,
-     "y": 1696,
-     "w": 32,
-     "h": 32
-    },
-    {
-     "x": 96,
-     "y": 1696,
-     "w": 32,
-     "h": 32
-    },
-    {
-     "x": 128,
-     "y": 1696,
-     "w": 32,
-     "h": 32
-    },
-    {
-     "x": 160,
-     "y": 1696,
-     "w": 32,
-     "h": 32
-    }
-   ],
-   "combat": true,
-   "duration": 1.0,
-   "desc": "cold-blue light pool under Tick (NEON blue)"
-  },
-  "pet_pool_tick_safe": {
-   "row": 54,
-   "frames": 6,
-   "fps": 6,
-   "loop": true,
-   "loop_from": 0,
-   "loops": 1,
-   "kind": "decal",
-   "pivot": [
-    16,
-    16
-   ],
-   "lift": 0.02,
-   "glow": true,
-   "light": null,
-   "speed": null,
-   "travel": null,
-   "then": null,
-   "frame_list": [
-    {
-     "x": 0,
-     "y": 1728,
-     "w": 32,
-     "h": 32
-    },
-    {
-     "x": 32,
-     "y": 1728,
-     "w": 32,
-     "h": 32
-    },
-    {
-     "x": 64,
-     "y": 1728,
-     "w": 32,
-     "h": 32
-    },
-    {
-     "x": 96,
-     "y": 1728,
-     "w": 32,
-     "h": 32
-    },
-    {
-     "x": 128,
-     "y": 1728,
-     "w": 32,
-     "h": 32
-    },
-    {
-     "x": 160,
-     "y": 1728,
-     "w": 32,
-     "h": 32
-    }
-   ],
-   "combat": true,
-   "duration": 1.0,
-   "desc": "palette-safe twin of the pool"
   }
  },
  "cast_sets": {
@@ -4140,6 +4719,6 @@
   "rune_circle",
   "bolt"
  ],
- "pets_from": 1408,
- "orbs_from": 1664
+ "pets_from": 1696,
+ "orbs_from": 2048
 }
