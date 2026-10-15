@@ -511,6 +511,9 @@ def run(out, simscale=4, size=(960, 540), segs=SEGS):
                 T.wait("window.__hm.wheel.state().sel >= 0", 10)
                 w_sel = T.ev("window.__hm.wheel.state().sel")
                 T.ev("__padBtn(3, 0)"); pg.wait_for_timeout(300); T.ev("__padAxes(0, 0)"); pg.wait_for_timeout(200)
+                # slow frames under load: wait (same assertion, no looser) until the engine has seen Y up and closed the wheel
+                T.wait("!window.__hm.wheel.state().open", 20)
+                if n_cyc >= 2: T.wait("window.__hm.ctx.spellIndex() === 1", 20)
                 T.step("hold Y: slow-time spell wheel, stick picks, release casts", w_open and (n_cyc < 2 or (w_sel == 1 and T.ev("window.__hm.ctx.spellIndex()") == 1))
                        and not T.ev("window.__hm.wheel.state().open"), open=w_open, sel=w_sel, slots=n_cyc)
                 T.ev("window.__hm.ctx.selectSpell(0)")
@@ -1050,7 +1053,7 @@ def run(out, simscale=4, size=(960, 540), segs=SEGS):
                 T.ev("(() => { const S = window.__hm.S, LO = window.__hm.LO; S.gold = 120; S.bag.push(LO.makeItem(2, 2, 'weapon')); })()")
                 T.talk("merchant"); pg.wait_for_timeout(300)
                 shop0 = T.ev("window.__hm.shopUI.qa()")
-                T.step("talking to Odo opens the shop panel (tonic, glow seed, 3 pieces of gear)", T.ev("!!window.__hm.shop && !document.getElementById('shopui').hidden") and len(shop0["rows"]) == 5
+                T.step("talking to Odo opens the shop panel (tonic, glow seed, empty orb, glow-fish, 3 pieces of gear)", T.ev("!!window.__hm.shop && !document.getElementById('shopui').hidden") and len(shop0["rows"]) == 7
                        and shop0["rows"][0]["name"] == "Hearth tonic", rows=[r["name"] for r in shop0["rows"]])
                 g0, t0 = T.ev("window.__hm.S.gold"), T.ev("window.__hm.S.inv.tonic || 0")
                 hfr = T.ev("window.__hm.S.ranks.hearth") >= 1   # Order of the Hearth Friend: 10% off at Odo's (rounded)

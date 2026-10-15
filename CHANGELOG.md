@@ -2,6 +2,12 @@
 
 Dates are America/New_York. Newest first. Keep this current with every change you push.
 
+## 2026-10-14: Batch 2 (6.6-6.8) LIVE: merged `hearthmoor-batch2-wip` to main and published
+- Batch 2 = 6.6 glow-fish orb lanterns (+ kit stands), 6.7 the Forge Quarter (Tova's +1..+10 tempering, Orri's rerolls and sockets, smelt / scrap, the riot, The First Temper, cold-blue +7 / +10 sparks), 6.8 the Glowfrog Still (10 brews, potions, garden herbs, dew, spring vials). Details in the three WIP entries below.
+- Checks before the merge: full sharded smoke (segments A-M, `--jobs 2`), `check_all --lowres` on all 12 areas, full-size check-scene on plaza, lane and forge.
+- Smoke fix: Odo's shop now lists 7 rows (empty orb + glow-fish added).
+- Still open: Nettle (jeweler / unsocket; Orri's stand-in rune-stone shop stays until then), The Cold Cauldron quest, Bloop's sprite, the 3-a-day toadstool limit and regrowing toadstool patches, the 6.4 leftovers (V3 firefly maze guidance, Tobble follower, cutscenes, Veyra's beat).
+
 ## 2026-10-14: Stage 6.8 the Glowfrog Still (batch 2 WIP, branch `hearthmoor-batch2-wip`)
 - `game/alchemy.js`: Bryony Glasswort (stand-in `lamplighter` sprite; the pack has no alchemist sheet) and Old Gurgle on the forge's lower yard. All 10 brews and recipes from forge_alchemy.md 7.2-7.3 (cheap brews x2), discovery lines, fizzle = nothing used + a hint, the Warm Bread Broth Gnome secret. Brew menu = dialogue choices (add up to 3, stir, take out); recipe book re-brews known ones.
 - Potions are bag items `brew_<id>`: tap to drink (U stays tonic-only). One timed brew at a time (`S.brew`), folded into `progress.mods()` by `brewMods`, motes while active. Heals use `C.heal`.
