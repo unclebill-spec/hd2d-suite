@@ -18,7 +18,7 @@ from PIL import Image
 GAME = Path(__file__).resolve().parents[2] / "games" / "hearthmoor"
 ST = GAME / "art" / "svartalfheim"
 ALF = GAME / "art" / "alfheim"
-AREAS = sys.argv[1:] or ["svartalfheim", "forge_hall"]
+AREAS = sys.argv[1:] or ["svartalfheim", "forge_hall", "glowmines"]
 TOWNS = {"lanternseller": "tinker", "wispcatcher": "minerunner", "poolkeeper": "poolkeeper_sv", "dwarftrader": "dwarftrader",
          "elffolk": "dw1", "elffolk2": "sv1",
          "innkeeper": "thane", "shopkeeper": "runewarden", "nightmerchant": "hushed", "gnome": "dagna"}   # base-atlas stand-in role -> svart_npcs role (only roles the area has are re-pointed)

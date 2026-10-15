@@ -22,7 +22,7 @@ from hd2d_common import load_biome  # noqa: E402
 
 AREAS = ["plaza", "lane", "mossglen", "hollows", "rift", "vanaheim", "ravenhold", "bifrost", "temple", "rotwood", "verdant", "forge",
          "alfheim", "lumen_court", "wispwood", "prismvault",
-         "svartalfheim", "forge_hall"]   # [ALFHEIM] Lumenvale (Glimmer Steps, Lumen Court, Wispwood) + the Prism Vault
+         "svartalfheim", "forge_hall", "glowmines"]   # [ALFHEIM] Lumenvale (Glimmer Steps, Lumen Court, Wispwood) + the Prism Vault
 TMP = Path(os.environ.get("HM_BUILD_TMP", "/tmp/hearthmoor_build"))   # [ALFHEIM] private build dir per worker
 
 
