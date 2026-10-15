@@ -60,6 +60,13 @@ def steps(b, url, T, size, errors, rep, stub=None, shots=None):
         return sv()
 
     try:
+        import hashlib
+        art = Path(__file__).resolve().parents[1]
+        h = lambda p_: hashlib.md5(Path(p_).read_bytes()).hexdigest()  # noqa: E731
+        T.step("Dagna ships the neon-red twin as the main sheet, palette-only as the dagna_safe fallback",
+               all(h(art / "areas" / ar / "public/art/sprite/dagna.png") == h(art / "art/svartalfheim/sprite/dagna_neon.png")
+                   and h(art / "areas" / ar / "public/art/sprite/dagna_safe.png") == h(art / "art/svartalfheim/sprite/dagna.png")
+                   for ar in ("svartalfheim", "forge_hall", "glowmines", "clockdeep", "clockdeep2")))
         a = load("svartalfheim")
         T.step("Copper Row loads (Svartalfheim module live, art-pack roles wired)", a["area"] == "svartalfheim"
                and T.ev("!!window.__hd2d.ctx.actors.meta.roles.lanternseller.sheet"), qa=a)
@@ -83,6 +90,8 @@ def steps(b, url, T, size, errors, rep, stub=None, shots=None):
                bool(g) and g["scale"] == 6 and g["phase"] == 1 and a["spots"] == 0
                and T.ev("window.__hd2d.ctx.actors.meta.roles.gorrak.sheet === 'boss_gorrak'"), qa=a)
         shot("sv_gorrak")
+        au = T.ev("(() => { const e = window.__hm.combat.enemies.find((x) => x.id === 'gorrak'); return { glow: e.D.glow, pulse: e.D.aura && e.D.aura.pulse, ticking: e.auraT !== undefined }; })()")
+        T.step("Gorrak's own aura: a dark red-violet glow with cold-blue rune pulses (not the red pool)", au["glow"] == "#7a2a62" and au["pulse"] == "#2ab4ff" and au["ticking"], aura=au)
         T.ev("(() => { const G = window.__hm; G.peace = false; window.__hd2d.ctx.player.iframes = 99; const e = G.combat.enemies.find((x) => x.id === 'gorrak'); e.hp = Math.round(e.D.hp * 0.6); })()")
         pg.wait_for_timeout(1200); a = sv()
         T.step("phase 2 at 65%: the 4 quench valves become usable", a["gorrak"]["phase"] == 2 and a["spots"] == 4, qa=a)
@@ -147,6 +156,19 @@ def steps(b, url, T, size, errors, rep, stub=None, shots=None):
         tq("qaTalk('regent')"); a = sv(); g1 = T.ev("window.__hm.S.gold || 0")
         T.step("hired payout: a smaller reward (90 gold), no Realm Favor, resolved as contract", a["quests"].get("prismvault") == 3 and g1 - g0 == 90
                and T.ev("window.__hm.S.flags.alf_resolved === 'contract'"), gold=[g0, g1])
+        # ---- the conquer path: watch posts -> Ilvar's duel (yields at 25%) -> the Forge-Seal -> the lift
+        load("forge_hall", "&svq=conquer"); pg.wait_for_timeout(1200); a = sv()
+        T.step("conquer: three Hushed watch posts (6 hushblades) appear round the Great Forge", a["foes"].count("hushblade") == 6 and a["quests"].get("sv_take") == 1, foes=a["foes"])
+        T.ev("(() => { window.__hm.peace = false; window.__hd2d.ctx.player.iframes = 99; })()")
+        tq("story.qaClear()"); pg.wait_for_timeout(600); a = sv()
+        T.step("all three posts broken: fk_p1..3 found and Ilvar's duel starts (1.3x elite)",
+               all(T.ev("!!window.__hm.S.found.fk_p%d" % i) for i in (1, 2, 3)) and T.ev("(() => { const e = window.__hm.combat.enemies.find((x) => x.sp.id === 'ilvar_duel'); return !!e && e.D.scale === 1.3; })()"))
+        tq("story.qaDuelHit()"); pg.wait_for_timeout(500); T.ev("(() => { const G = window.__hm, d = G.dlg; if (d && d.then) d.then(G); G.dropDialogue(); })()"); a = sv()
+        T.step("Ilvar yields at 25% (no kill): the Forge-Seal is given and The Forge Claim moves to stage 2",
+               a["inv"].get("forge_seal") and a["quests"].get("sv_take") == 2 and "clockdeep" in a["exits"], q=a["quests"], exits=a["exits"])
+        g0 = T.ev("window.__hm.S.gold || 0"); tq("story.claimLift()"); a = sv()
+        T.step("the lift is claimed: stage 3, +80 gold, The Clockwork Deep starts", a["quests"].get("sv_take") == 3 and a["quests"].get("clockdeep") == 1 and T.ev("window.__hm.S.gold || 0") - g0 == 80, q=a["quests"])
+        shot("sv_conquer")
         T.step("no JS errors in the Svartalfheim run", not errors, errors=errors[:5])
     finally:
         T.pg, T.out = old_pg, old_out

@@ -6,6 +6,8 @@
 //   end to end, The Clockwork Deep quest (stage 1 text; cogs / flue not built yet).
 // Not built: Giant Footprints' clue scenes (Jotunheim areas), The Forge Claim's watch posts + Ilvar duel, the flue thaw, Bifrost's sv_gate.
 import { QUESTS, ITEMS, TALK } from './data.js';
+import { ENEMIES } from './heroes.js';
+import { XP } from './progress.js';
 import { MERIT } from './factions.js';
 import { lockRival, moodUp } from './alfheim.js';
 
@@ -80,7 +82,7 @@ const choiceEntry = (S) => {
   if (S.cls === 'seer') opts.push({ label: 'Your vault was opened by frost, not giants. I\'ve seen the hand.', pick: befriend('...Frost? Hm. My grandmother said the old ones had a word for folk like you. \'Annoying.\' Go on.') });
   opts.push(locked(S) ? { label: '(Locked. You stand with Alfheim.)', pick: () => ({ pages: ['(Locked. You stand with Alfheim.)'] }) }
                       : { label: 'I\'ll help. Let me find your Heart.', pick: befriend() },
-    { label: 'Anvildeep will answer for the Temple tongs.', pick: (G) => { ally(G.S).svartalfheim = 'conquer'; G.toast('Svartalfheim: conquered', 2.2); G.setQuest('sv_take', 1); moodUp(G.S, 'alfheim');
+    { label: 'Anvildeep will answer for the Temple tongs.', pick: (G) => { ally(G.S).svartalfheim = 'conquer'; G.toast('Svartalfheim: conquered', 2.2); G.setQuest('sv_take', 1); moodUp(G.S, 'alfheim'); G.toast('The Hushed have gone quiet. That\'s how you know they\'re watching.', 3); setTimeout(() => G.svart && G.svart.story && G.svart.story.posts(), 600);
         return { pages: ['...Tongs. You come for my fire over tongs. Then you\'ll meet the Hushed before you meet the Deep.', '(Svartalfheim stands against you now. The dwarves will remember. They write everything down.)'] }; } });
   if (locked(S)) opts.push({ label: 'Then hire me.', pick: (G) => { flags(G.S).sv_contract = 1; G.setQuest('sv_hire', 1); G.setQuest('clockdeep', 1);
       return { pages: ['An elf-friend, for hire. Ha. Fine. Gold\'s gold, and my Deep is waking.', 'Here\'s the seal, and a Lesser Heart my smiths forged. Kesh will guide you. Don\'t come back for tea.'],
@@ -137,6 +139,10 @@ const kesh = (S) => {
 Object.assign(TALK, { thane, dagna, kesh });
 
 // ---------------------------------------------------------------- spots (the Great Anvil's ring beat, the ember seams) + QA
+// The Forge Claim (3.5, 8.2, 6.2): three Hushed watch posts (pairs of hushblade) round the Great Forge, then Captain Ilvar's duel
+Object.assign(ENEMIES, { ilvar: { name: 'Captain Ilvar Hushblade', scale: 1.3, hp: 260, dmg: 13, speed: 2.4, reach: 1.4, windup: 0.4, cd: 1.2, aggro: 10, r: 0.32, push: 0.5, elite: true, shadowStep: 6, knives: 3, yieldAt: 0.25, noRespawn: true } });
+Object.assign(XP, { ilvar: 200 });
+export const POSTS = [[6.2, -2.4], [-6.4, -8.2], [1.6, 4.6]];   // fk_p1..3 (open floor: east of the vault, west of the forge, south of the anvil)
 export const SEAMS = [['fc_1', [-8.0, 2.4]], ['fc_2', [7.4, -4.0]], ['fc_3', [3.0, -7.6]]];
 export const ANVIL = [0.0, -3.2];
 export class SvStory {
@@ -146,8 +152,75 @@ export class SvStory {
     const sv = this.sv, G = this.G, S = G.S;
     if (area === 'forge_hall') sv.spot({ pos: ANVIL, r: 1.9, label: 'strike the Great Anvil (E / A)', show: () => SV(S) === 'befriend' && q(S, 'sv_trial') === 1 && (F(S).st_hits || 0) < 3, act: () => this.strike() });
     if (area === 'glowmines') for (const [id, pos] of SEAMS) sv.spot({ pos, r: 1.8, label: 'dig a forge-core from the ember seam (E / A)', show: () => q(S, 'sv_kindle') === 1 && !(S.found || {})[id], act: () => this.core(id) });
+    if (area === 'forge_hall') {
+      sv.spot({ pos: [4.1, -10.0], r: 2.0, label: 'open the Deep\'s lift with the Forge-Seal (E / A)', show: () => SV(S) === 'conquer' && q(S, 'sv_take') === 2 && !!(S.inv || {}).forge_seal, act: () => this.claimLift() });
+      if (SV(S) === 'conquer' && q(S, 'sv_take') === 1) setTimeout(() => this.ctx === sv.ctx && this.posts(), 400);
+    }
     this.auto = (G.qs || new URLSearchParams(location.search)).get('anvil') === 'auto';
   }
+  // ---- The Forge Claim
+  posts() {
+    const G = this.G, S = G.S, C = G.combat, ctx = this.ctx; if (!C || !C.ctx || !ctx || this.postsUp === ctx) return;
+    this.postsUp = ctx;
+    for (const id of ['ilvar', 'hushed_a', 'hushed_b']) { const a = ctx.npc(id); if (a) ctx.removeNpc(a); }   // the Hushed spread out
+    const n3 = () => found(S, ['fk_p1', 'fk_p2', 'fk_p3']);
+    POSTS.forEach(([x, z], i) => {
+      const id = `fk_p${i + 1}`; if ((S.found || {})[id]) return;
+      let left = 2;
+      for (const ox of [-0.6, 0.6]) {
+        const e = C.spawnEnemy({ id: `${id}_${ox > 0 ? 1 : 0}`, role: 'hushblade', pos: [x + ox, z], once: true }, false);
+        e.onKill = () => { if (--left <= 0) { S.found = { ...(S.found || {}), [id]: 1 }; G.toast(`Watch post broken. ${n3()}/3`, 2); G.setQuest('sv_take', 1); if (n3() === 3) this.duel(); } };
+      }
+    });
+    if (n3() === 3 && !F(S).fk_ilvar) this.duel();
+  }
+  duel() {
+    const C = this.G.combat, ctx = this.ctx; if (!C || !ctx || this.duelUp === ctx) return; this.duelUp = ctx;
+    const e = C.spawnEnemy({ id: 'ilvar_duel', role: 'hushblade', def: 'ilvar', pos: [-8.6, 4.0], once: true, noLoot: true }, true);
+    this.hookIlvar(e);
+    this.G.toast('Ilvar: "The Forge-Seal stays with the Hushed. Come and take it. Quietly, if you can."', 3);
+  }
+  hookIlvar(e) {
+    const self = this, G = this.G, D = e.D; let blinkT = D.shadowStep, knifeT = 3.5;
+    const prev = e.mods && e.mods.hurt;
+    e.mods = { ...(e.mods || {}), hurt(en, dmg) {
+      const d = prev ? prev(en, dmg) : dmg;
+      if (!en.yielded && en.hp - d <= D.hp * D.yieldAt) { en.yielded = true; en.hp = Math.round(D.hp * D.yieldAt) + d; setTimeout(() => self.onYield(en), 50); }   // the blow lands, he stays standing
+      return d;
+    } };
+    e.tick = (en, dt, frozen) => {
+      const ctx = self.ctx, C = G.combat; if (!ctx || frozen || C.peace || en.state === 'idle' || en.yielded) return;
+      const a = en.a, p = ctx.player;
+      blinkT -= dt; knifeT -= dt;
+      if (blinkT <= 0) {   // shadow step: a puff of blue smoke, then he is behind you
+        blinkT = D.shadowStep;
+        if (ctx.effects && ctx.effects.meta.effects.frost_puff) ctx.effects.spawn('frost_puff', a.x, a.y + 0.5, a.z + 0.05);
+        const FV = { up: [0, -1], down: [0, 1], left: [-1, 0], right: [1, 0] }[p.facing] || [0, 1];
+        C.shove(a, p.x - FV[0] * 1.2 - a.x, p.z - FV[1] * 1.2 - a.z, Math.hypot(p.x - FV[0] * 1.2 - a.x, p.z - FV[1] * 1.2 - a.z));
+        if (ctx.effects && ctx.effects.meta.effects.frost_puff) ctx.effects.spawn('frost_puff', a.x, a.y + 0.5, a.z + 0.05);
+      }
+      if (knifeT <= 0 && Math.hypot(p.x - a.x, p.z - a.z) > 2.5) {   // thrown knives: a fan of 3
+        knifeT = 5;
+        const base = Math.atan2(p.z - a.z, p.x - a.x);
+        for (const off of [-0.2, 0, 0.2]) {
+          const ang = base + off, R = 9, tx = a.x + Math.cos(ang) * R, tz = a.z + Math.sin(ang) * R;
+          const f = ctx.effects && ctx.effects.meta.effects.bolt ? ctx.effects.spawn('bolt', a.x, a.y + 0.6, a.z + 0.05, { to: [tx, ctx.heightAt(tx, tz), tz] }) : null;
+          if (f) C.projs.push({ f, owner: 'enemy', dmg: 6, r: 0.45, src: a });
+        }
+      }
+    };
+  }
+  onYield(e) {
+    const G = this.G, C = G.combat; if (C && e.state !== 'dead') C.kill(e, true);
+    G.openDialogue({ id: 'ilvar', name: 'Captain Ilvar Hushblade' }, { pages: ['Enough. Take it. Whatever\'s in the Deep, you\'re the one who let it out.'],
+      then: (G2) => { flags(G2.S).fk_ilvar = 1; G2.give('forge_seal', 1); G2.setQuest('sv_take', 2); const gm = this.ctx && this.ctx.scene.game; if (gm && !(gm.exits || []).some((x) => x.to === 'clockdeep')) this.sv.openLift(); } });
+  }
+  claimLift() {
+    const G = this.G; G.setQuest('sv_take', 3); G.factions.add('gate', MERIT.forgeclaim, 'forgeclaim'); gold(G, 80); G.setQuest('clockdeep', 1);
+    G.toast('The lift is yours. Below it lies the Clockwork Deep.', 3);
+  }
+  qaClear() { const G = this.G, C = G.combat; for (const e of C.enemies.filter((x) => /^fk_p\d_/.test(x.sp.id) && x.state !== 'dead')) C.damageEnemy(e, 9999, { x: 0, z: 0 }, 0, '#fff'); }
+  qaDuelHit() { const G = this.G, C = G.combat, e = C.enemies.find((x) => x.sp.id === 'ilvar_duel'); if (!e) return false; e.hp = Math.round(e.D.hp * 0.26); C.damageEnemy(e, 5, { x: 0, z: 0 }, 0, '#fff'); return true; }
   strike() {
     const G = this.G, f = flags(G.S), ph = (this.t - this.t0) % 2.0, hit = this.auto || (ph >= 1.4 && ph <= 1.95);
     if (hit) { f.st_hits = (f.st_hits || 0) + 1; G.toast(['Dagna: "Hm. Not bad."', 'Dagna: "That one sang. Do it again."', 'Dagna: "Three true."'][Math.min(2, f.st_hits - 1)] + ` (${f.st_hits}/3)`, 2.2); const c = this.ctx; if (c && c.effects) c.effects.spawn('ember_pop', ANVIL[0], c.heightAt(...[ANVIL[0], ANVIL[1]]) + 0.6, ANVIL[1]); }
