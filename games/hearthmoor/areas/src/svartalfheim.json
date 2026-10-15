@@ -580,6 +580,17 @@
     "to": "forge_hall",
     "spawn": "from_row",
     "label": "the wide stair down to the Great Forge"
+   },
+   {
+    "rect": [
+     -10.8,
+     -5.8,
+     -8.2,
+     -3.4
+    ],
+    "to": "glowmines",
+    "spawn": "from_row",
+    "label": "the chain-lift down to the Amethyst Mines"
    }
   ],
   "portals": [],
@@ -622,6 +633,11 @@
    "from_hall": [
     0.0,
     -7.4,
+    "down"
+   ],
+   "from_mines": [
+    -8.0,
+    -2.4,
     "down"
    ]
   },

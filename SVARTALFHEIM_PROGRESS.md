@@ -1,6 +1,6 @@
 # Svartalfheim (realm-svartalfheim) progress
 
-RESUME HERE (Oct 15, chunk 2): forge_hall PASSES check_scene --quick (/workspace/alf_qa/sv2_fh3.txt, shots /workspace/alf_qa/sv/forge_hall/); game/svartalfheim.js now has class Svartalfheim (spawns game.svfx light pools + glow lights; hooked in game.js as G.svart). forge_hall has its exit back to Copper Row; the hub's exit down to forge_hall (spawn from_row, return spawn from_hall) is wired and the hub re-checked: PASS (/workspace/alf_qa/sv2_hub.txt). glowmines spec drafted (areas/src/glowmines.json, PLACE['glowmines'] in svart_art.py) but NOT built or checked: next run `svx`-style: build glowmines + svartalfheim, svart_art glowmines, check glowmines, then add the hub's mine-lift exit (rect [-10.8,-5.8,-8.2,-3.4] -> glowmines spawn from_row; glowmines exit back to spawn from_mines [-8.0,-2.4,'down']) and re-check the hub. Later: clockdeep, quests / TALK / shops / gate at Bifrost, Dagna / Tick, rare + rift tables for glowmines. New stand-in roles in the specs: innkeeper=thane, shopkeeper=runewarden (Sereth), nightmerchant=hushed, gnome=dagna.
+RESUME HERE (Oct 15, chunk 3 DONE): svartalfheim (Copper Row), forge_hall and glowmines all PASS check_scene --quick (/workspace/alf_qa/sv2_hub.txt, sv2_fh3.txt, sv3_gm.txt, sv3_hub.txt). Exits wired: Copper Row <-> Great Forge stair, Copper Row mine lift [-10.8,-5.8,-8.2,-3.4] <-> glowmines lift (spawns from_row / from_mines / from_hall). Build recipe: `HM_BUILD_TMP=/tmp/sv_hmbuild python3 build.py --areas a,b --no-zip`, `python3 tools/hearthmoor/svart_art.py a b`, `python3 -c "import build; build.write_pwa()"`. Next: clockdeep (9 rooms C0-C8, boss Gorrak, big sheets: runaway, basilisk, colossus, foreman, gorrak; no sky), the realm game module (quests, TALK, shops, Bifrost gate + alliance lock, Dagna / Tick, glowmines enemies / rift / rare tables, secrets cr_spring / gm_spring wiring check), Copper Gate portal to Bifrost, smoke_svartalfheim.py. glowmines has no NPCs yet (only the lift exit). Section 15 questions still open (not answered).
 Done: art pack copied to games/hearthmoor/art/svartalfheim/; check-sprite allow-list (SVART_NEON_ALLOW: pet_tick, dagna only);
 tools/hearthmoor/svart_art.py (additive, idempotent, never deletes); first area `svartalfheim` (Anvildeep: Copper Row) spec at
 areas/src/svartalfheim.json, built with `HM_BUILD_TMP=/tmp/sv_hmbuild python3 build.py --areas svartalfheim --no-zip`, then
@@ -15,7 +15,7 @@ point at areas that are not built); Tick needs PET_ROLES + pets.js entry (art in
 |---|---|---|---|
 | svartalfheim | Anvildeep: Copper Row | city hub | chunk 1 (this file's area) |
 | forge_hall | The Great Forge | city | chunk 2, passes |
-| glowmines | The Amethyst Mines | wild | spec drafted, not built |
+| glowmines | The Amethyst Mines | wild | chunk 3, passes |
 | clockdeep | The Clockwork Deep (9 rooms C0-C8, boss Gorrak Ironmaw) | dungeon | todo |
 
 ## Deviations from the story's suggested positions (check-scene rules, not story changes)
