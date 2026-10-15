@@ -102,6 +102,36 @@
  ],
  "image": "dagna.png",
  "roles": {
+  "gnome": {
+   "row": 0,
+   "kind": "creature",
+   "desc": "Dagna Coalbeard (dwarf smith, companion): soot-black beard in two thick braids with copper rings, ruddy cheeks, red-brown work shirt with sleeves rolled to the elbow, leather bracers, leather apron tied at the waist over grey trousers, tan steel-toed boots, big square hammer on her back (head glows faint ember-orange). Attack = hammer swing (frame 14), cast = ember strike (sparks in lamp / gold)",
+   "size_bounds": [
+    [
+     10,
+     24
+    ],
+    [
+     10,
+     40
+    ]
+   ],
+   "caster": true,
+   "anims": [
+    "idle",
+    "walk",
+    "cast",
+    "attack"
+   ],
+   "named": true,
+   "light": {
+    "color": "#f2a63a",
+    "intensity": 2.0,
+    "range": 1.8,
+    "lift": 0.6,
+    "fx": "dagna_hammer_glow"
+   }
+  },
   "dagna": {
    "row": 0,
    "kind": "creature",

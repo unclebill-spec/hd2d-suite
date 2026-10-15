@@ -226,6 +226,69 @@
     "walk"
    ]
   },
+  "innkeeper": {
+   "row": 0,
+   "kind": "creature",
+   "desc": "Forge-Thane Ragna Copperbraid (dwarf smith-queen): copper-red beard in three braids with gold rings, deep-green wool tunic, wide leather belt with a copper buckle, brown trousers, heavy black boots, smith's hammer sceptre",
+   "size_bounds": [
+    [
+     10,
+     24
+    ],
+    [
+     10,
+     40
+    ]
+   ],
+   "caster": false,
+   "anims": [
+    "idle",
+    "walk"
+   ],
+   "named": true
+  },
+  "shopkeeper": {
+   "row": 4,
+   "kind": "human",
+   "desc": "Sereth Gloamweave (dark-elf rune-warden): slate-blue skin, white jaw-length hair, long ears, high-collared charcoal blouse, cold-blue sash, slim black trousers, soft brown boots, a rune-lens on a gold chain, white rune tattoo on the cheek",
+   "size_bounds": [
+    [
+     14,
+     24
+    ],
+    [
+     24,
+     40
+    ]
+   ],
+   "caster": false,
+   "anims": [
+    "idle",
+    "walk"
+   ],
+   "named": true
+  },
+  "nightmerchant": {
+   "row": 8,
+   "kind": "human",
+   "desc": "Captain Ilvar Hushblade (dark elf, captain of the Hushed): ash-grey skin, silver topknot, long ears, fitted black wrap-top, grey sash, dark trousers bound at the shins, two short blades at his hips, cold-blue rune tattoo",
+   "size_bounds": [
+    [
+     14,
+     24
+    ],
+    [
+     24,
+     40
+    ]
+   ],
+   "caster": false,
+   "anims": [
+    "idle",
+    "walk"
+   ],
+   "named": true
+  },
   "thane": {
    "row": 0,
    "kind": "creature",
