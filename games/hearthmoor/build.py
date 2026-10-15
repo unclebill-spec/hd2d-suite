@@ -20,7 +20,7 @@ from PIL import Image  # noqa: E402
 
 from hd2d_common import load_biome  # noqa: E402
 
-AREAS = ["plaza", "lane", "mossglen", "hollows", "rift", "vanaheim", "ravenhold", "bifrost", "temple", "rotwood", "verdant",
+AREAS = ["plaza", "lane", "mossglen", "hollows", "rift", "vanaheim", "ravenhold", "bifrost", "temple", "rotwood", "verdant", "forge",
          "alfheim", "lumen_court", "wispwood", "prismvault"]   # [ALFHEIM] Lumenvale (Glimmer Steps, Lumen Court, Wispwood) + the Prism Vault
 TMP = Path(os.environ.get("HM_BUILD_TMP", "/tmp/hearthmoor_build"))   # [ALFHEIM] private build dir per worker
 
@@ -489,6 +489,64 @@ def make_zip():
     return z
 
 
+FORGE_AREAS = ["forge"]
+FORGE_ROLES = ["smith", "dwarfsmith"]
+
+
+def install_forge(areas=AREAS):
+    """6.7 Forge pack (art/forge/, Art seat 2026-10-05): Tova (smith) + Orri (dwarfsmith) in their own sheet like the
+    temple pair; forge_fx (fire, sparks, quench steam, embers, red / blue pools) appended to the area's gamefx atlas."""
+    P = GAME / "art" / "forge"
+    am_f = json.loads((P / "forge_actors.json").read_text())
+    fxm = json.loads((P / "forge_fx.json").read_text())
+    # quench_steam / embers_drift / anvil_glow stay out: too sparse for check-scene's gamefx_sharp (like faceless_gaze);
+    # the forge uses the particle 'embers' emitter and forge_sparks instead
+    skip = {"quench_steam", "embers_drift", "anvil_glow"}
+    fxm = {**fxm, "effects": {k: v for k, v in fxm["effects"].items() if k not in skip}}
+    for a in [x for x in areas if x in FORGE_AREAS]:
+        root = GAME / "areas" / a
+        scene = json.loads((root / "scene.json").read_text())
+        sp = root / scene["atlas"]["json"]
+        am = json.loads(sp.read_text())
+        shutil.copy2(P / "forge_actors.png", sp.parent / "forge.png")
+        (sp.parent / "forge.json").write_text(json.dumps(am_f, indent=1))
+        am.setdefault("sheets", {})["forge"] = {"json": "forge.json", "image": "forge.png"}
+        for r in FORGE_ROLES:
+            am["roles"][r] = {"sheet": "forge", "row": am_f["roles"][r]["row"], "kind": "human", "anims": ["idle", "walk"]}
+        sp.write_text(json.dumps(am, indent=1))
+        jp = root / scene["gamefx"]["json"]; ip = root / scene["gamefx"]["image"]
+        m = _append_atlas(ip, json.loads(jp.read_text()), P / "forge_fx.png", fxm, "effects", mark="forge_from")
+        for v in m["effects"].values():
+            v.pop("strip", None)
+        jp.write_text(json.dumps(m, indent=1))
+        al = GAME / "art" / "alchemy"; alm = json.loads((al / "alchemy_fx.json").read_text())
+        keep = {"cauldron_brew_blue", "cauldron_fire", "cauldron_pool_blue", "brew_puff_blue"}   # 6.8 the Still: Old Gurgle's blue brew
+        alm = {**alm, "effects": {k: v for k, v in alm["effects"].items() if k in keep}}
+        m = _append_atlas(ip, json.loads(jp.read_text()), al / "alchemy_fx.png", alm, "effects", mark="alchemy_from")
+        for v in m["effects"].values():
+            v.pop("strip", None)
+        jp.write_text(json.dumps(m, indent=1))
+    print(f"forge: sheet ({len(FORGE_ROLES)} roles) + {len(fxm['effects'])} gamefx in {', '.join(x for x in areas if x in FORGE_AREAS)}")
+
+
+ORB_AREAS = ["plaza", "lane"]
+
+
+def install_orb_lanterns(areas=AREAS):
+    """6.6 orb lanterns (art/orb_lanterns/, Art seat 2026-10-05): the 32 px orb billboards (orb_large_blue / violet / red,
+    orb_grand_mix) appended under the spells atlas of the areas with lantern spots (cell 32 matches). Runs after
+    install_pets (which crops at pets_from); a re-run crops at orbs_from first."""
+    P = GAME / "art" / "orb_lanterns"
+    fxm = json.loads((P / "orb_fx_32.json").read_text())
+    for a in [x for x in areas if x in ORB_AREAS]:
+        root = GAME / "areas" / a
+        scene = json.loads((root / "scene.json").read_text())
+        jp = root / scene["spells"]["json"]; ip = root / scene["spells"]["image"]
+        m = _append_atlas(ip, json.loads(jp.read_text()), P / "orb_fx_32.png", fxm, "effects", None, mark="orbs_from")
+        jp.write_text(json.dumps(m, indent=1))
+    print(f"orb lanterns: {len(fxm['effects'])} orb effects in {', '.join(x for x in areas if x in ORB_AREAS)}")
+
+
 if __name__ == "__main__":
     ap = argparse.ArgumentParser()
     ap.add_argument("--no-zip", action="store_true")
@@ -502,6 +560,8 @@ if __name__ == "__main__":
     install_pets(only)
     install_old_temple(only)
     install_verdant_heart(only)
+    install_orb_lanterns(only)
+    install_forge(only)
     draw_icons()
     draw_button_icons()
     write_pwa()

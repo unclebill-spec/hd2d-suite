@@ -3,9 +3,9 @@
 // (S.day counts whole days as the clock wraps). Blooms glow by palette pixels only; at night each one casts a light
 // pool (decal + a point light in its colour) and is a light zone. E / A / tap beside a bloom harvests it.
 export const PLANTS = {
-  coldfire: { name: 'cold-fire bloom', fx: 'glowplant_coldfire', pool: 'coldfire_pool', color: '#5ab4f0', gives: { gem: 'frost_core' } },
-  violet:   { name: 'violet glowbell', fx: 'glowplant_violet', pool: 'violet_pool', color: '#a45cf0', gives: { gem: 'moon_opal' } },
-  toadcap:  { name: 'red glow toadstool', fx: 'glowplant_toadcap', pool: 'red_pool', color: '#ff4a3a', gives: { item: 'tonic', n: 2 } },
+  coldfire: { name: 'cold-fire bloom', fx: 'glowplant_coldfire', pool: 'coldfire_pool', color: '#5ab4f0', gives: { gem: 'frost_core' }, herb: 'coldpetal' },
+  violet:   { name: 'violet glowbell', fx: 'glowplant_violet', pool: 'violet_pool', color: '#a45cf0', gives: { gem: 'moon_opal' }, herb: 'glowbell' },
+  toadcap:  { name: 'red glow toadstool', fx: 'glowplant_toadcap', pool: 'red_pool', color: '#ff4a3a', gives: { item: 'tonic', n: 2 }, herb: 'glowcap' },
 };
 export const GROW = { sprout: 1, bloom: 2 };           // in-game days after planting
 const NIGHT = (t) => t > 0.8 || t < 0.25;
@@ -81,6 +81,7 @@ export class Garden {
       delete S.garden[p.id];
       if (P.gives.gem) { S.gems = S.gems || {}; S.gems[P.gives.gem] = (S.gems[P.gives.gem] || 0) + 1; G.toast && G.toast(`Harvested the ${P.name}: +1 ${P.gives.gem.replace('_', ' ')}`, 2.4); }
       else { G.give(P.gives.item, P.gives.n + (G.forage ? G.forage() : 0)); }
+      if (P.herb) G.give(P.herb, 1);   // 6.8: every bloom also gives its brewing herb
       if (this.ctx.effects) this.ctx.effects.spawn('sparkle_burst', p.x, this.ctx.heightAt(p.x, p.z), p.z + 0.1);
       G.audio && G.audio.sfx('quest');
       this.clear(p, true);

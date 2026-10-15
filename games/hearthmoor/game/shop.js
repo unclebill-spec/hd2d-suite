@@ -6,6 +6,14 @@ import * as LO from './loot.js';
 export const GOODS = {
   tonic: { name: 'Hearth tonic', about: 'Drink (U, right-stick click, or tap it in the bag): heals 60 HP.', price: 12 },
   denbiscuit: { name: 'Den biscuit', about: "Signe's oat-and-moonpetal biscuit. Feed your pet once a day (hero screen, Gear tab, pet row): bond grows, and its glow doubles for 60 s.", price: 6 },
+  dewdrop: { name: 'Glow-dew', about: "Dew from Bloop's lily pad. Bryony bottles the spare.", price: 5 },
+  vial: { name: 'Empty vial', about: 'Fill it at a hidden spring.', price: 2 },
+  redcap: { name: 'Red toadstool', about: "A red cap with white spots. Don't eat it raw. Do brew it.", price: 4 },
+  ironbit: { name: 'Iron bits', about: "Scrap iron, sorted by size. Tova's forge eats it by the bucket.", price: 6 },
+  coldsteel: { name: 'Cold-steel ingot', about: 'Iron quenched in cold fire. Blue at the edges. Needed for +4 and up.', price: 30 },
+  runestone: { name: 'Rune-stone', about: 'A dwarven rune carved in river stone. Orri uses one to reroll a gear stat.', price: 40 },
+  glowfish: { name: 'Glow-fish', about: 'Caught in the Hollows spring and off Ravenhold\'s piers at night, or bought here. Put one in an empty orb.', price: 10 },
+  orblamp: { name: 'Empty orb', about: 'A water orb for a glow-fish. Orb lantern spots: by the Plaza cottage (home) and the Lane garden.', price: 18 },
   glowseed: { name: 'Glow seed', about: 'A seed that hums in the dark. Plant it in a garden plot (on the lower street of Bakery Lane by the lamp post, or in the Hollows): it blooms in two days.', price: 8 },
 };
 // buy price of a piece of gear by rarity (sell-back is a quarter of it, always more than scrapping)
@@ -14,13 +22,13 @@ export const buyPrice = (it) => Math.round(GEAR_PRICE[it.rar] * (1 + 0.05 * ((it
 export const sellPrice = (it, mul = 1) => Math.max(LO.RARITY[it.rar].scrap + 1, Math.round(buyPrice(it) * 0.25 * mul));
 
 export const SHOPS = {
-  hearthmoor: { name: "Odo's Wares", keeper: 'Odo the merchant', goods: ['tonic', 'glowseed'], gear: { n: 3, rar: [0, 0, 1] }, sellMul: 1 },
+  hearthmoor: { name: "Odo's Wares", keeper: 'Odo the merchant', goods: ['tonic', 'glowseed', 'orblamp', 'glowfish'], gear: { n: 3, rar: [0, 0, 1] }, sellMul: 1 },
   night: { name: 'The Lantern Pack', keeper: 'Sefa, the night merchant', goods: ['tonic'], gems: ['rift_shard', 'golem_core', 'frost_core', 'moon_opal'],
            gear: { n: 2, rar: [2, 3], sockets: 1 }, sellMul: 1.2 },
   // Ravenhold Harbor: Ida Wickmere's chandlery on the quay (cold-fire, rope, tonics; a rift shard when the boats bring one)
   // Bifrost Crossing: Signe Larkspur's Stray Den (biscuits only; unlocked by 'Strays of the Rift')
   den: { name: 'The Stray Den', keeper: 'Signe Larkspur, keeper of the Stray Den', goods: ['denbiscuit'], gear: { n: 0, rar: [] }, sellMul: 1 },
-  harbor: { name: "Wickmere's Chandlery", keeper: 'Ida Wickmere, cold-fire chandler', goods: ['tonic', 'glowseed'], gems: ['rift_shard'],
+  harbor: { name: "Wickmere's Chandlery", keeper: 'Ida Wickmere, cold-fire chandler', goods: ['tonic', 'glowseed', 'glowfish'], gems: ['rift_shard'],
             gear: { n: 3, rar: [0, 1, 1] }, sellMul: 1.1 },
 };
 // the travelling night merchant: sets up by the well after dark, packs up at dawn (a neon-blue cold-fire lantern)
@@ -40,6 +48,9 @@ export function readBank() {
 }
 export const writeBank = (b) => localStorage.setItem(BANK_STORE, JSON.stringify(b));
 export const bankUsed = (b) => b.items.length + Object.values(b.gems).filter((n) => n > 0).length;
+SHOPS.forge = { name: 'Anvilsong Forge', keeper: 'Tova Anvilsong, master smith', goods: ['ironbit', 'coldsteel'], gear: { n: 0, rar: [] }, sellMul: 1 };
+SHOPS.runebench = { name: "Orri's Rune Bench", keeper: 'Orri Flintcog, rune bench', goods: ['runestone'], gear: { n: 0, rar: [] }, sellMul: 1 };
+SHOPS.still = { name: 'The Glowfrog Still', keeper: 'Bryony Glasswort, alchemist', goods: ['dewdrop', 'vial', 'redcap'], gear: { n: 0, rar: [] }, sellMul: 1 };
 SHOPS.bank = { name: 'The Nine Keys Bank', keeper: 'Bix Coppertuft', goods: [], gear: { n: 0, rar: [] }, sellMul: 1, bank: true, tabs: ['Deposit', 'Vault'] };
 export const MERCHANT = { plaza: { id: 'merchant', role: 'shopkeeper', name: 'Odo the merchant', pos: [5.4, 3.4], facing: 'down',
   say: ['Tonics, seeds, sturdy kit. And I buy whatever you drag out of the glade.'] } };
@@ -179,7 +190,7 @@ export class Shop {
           + `<em class="iname">${r.it ? `<i class="ic" data-ic="${k}"></i>` : r.kind === 'gem' ? `<i class="gm" data-gm="${r.id}"></i>` : `<i class="gd" data-gd="${r.id}"></i>`}${r.name}${r.kind === 'good' || r.kind === 'gem' ? ` <small>(have ${r.have})</small>` : ''}</em>`
           + `<span>${r.about}</span><span class="bb"><button class="wbtn sm plus" data-buy="${k}" ${cant ? 'disabled' : ''}>${label}</button></span></div>`;
       }).join('');
-    body.querySelectorAll('[data-ic]').forEach((el) => { const it = rows[+el.dataset.ic].it; const cv = LO.iconCanvas(it.slot, it.rar, 2, it.gems); cv.className = 'gicon'; el.replaceWith(cv); });
+    body.querySelectorAll('[data-ic]').forEach((el) => { const it = rows[+el.dataset.ic].it; const cv = LO.iconCanvas(it.slot, it.rar, 2, it.gems, it.up || 0); cv.className = 'gicon'; el.replaceWith(cv); });
     body.querySelectorAll('[data-gm]').forEach((el) => { const cv = LO.iconCanvas('gem', 0, 2, [el.dataset.gm]); cv.className = 'gicon'; el.replaceWith(cv); });
     body.querySelectorAll('[data-gd]').forEach((el) => { const cv = goodIcon(el.dataset.gd, 2); cv.className = 'gicon gd'; el.replaceWith(cv); });
     body.querySelectorAll('[data-buy]').forEach((b) => { b.onclick = (e) => { e.stopPropagation(); this.i = +b.dataset.buy; this.act(); }; });

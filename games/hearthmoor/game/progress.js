@@ -2,7 +2,8 @@
 // 1 skill point per level and the first tier of each starter's skill tree (docs/story/DESIGN_EXPANSION_2026-10-03.md E3).
 // Pure data + maths; game.js owns the UI, combat.js reads mods().
 import { ensure as lootEnsure, gearMods } from './loot.js';
-import { petMods } from './pets.js';   // the active pet's aura (Stage 6 part 2)
+import { petMods } from './pets.js';
+import { brewMods } from './alchemy.js';   // 6.8: the active timed brew   // the active pet's aura (Stage 6 part 2)
 // difficulty: Story (gentle, no faint penalty), Adventurer (default), Hero (hits harder, better loot)
 export const MODES = {
   story: { name: 'Story', hurt: 0.6, deal: 1.15, penalty: 0, luck: 0 },
@@ -188,5 +189,5 @@ export function mods(S) {
       else m[k] = (m[k] || 0) + v;
     }
   }
-  return petMods(S, gearMods(S, m));
+  return brewMods(S, petMods(S, gearMods(S, m)));
 }

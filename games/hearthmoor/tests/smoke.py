@@ -195,7 +195,7 @@ class Smoke:
 # segment before it saved (localStorage only: the same thing the serial run's reload + Continue restores from).
 # Every step still runs exactly once across the shards, with the same assertions and thresholds.
 FIX = Path(__file__).resolve().parent / "fixtures"
-SEGS = "ABCDEFGHIJ"
+SEGS = "ABCDEFGHIJKLM"
 SEG_INFO = {
     "A": "title, loading gate, Lantern Eve, errands, controller, Mossglen, leveling, combat, loot, rares + rifts, Hollows, garden (ends: K save in Mossglen -> cp1)",
     "B": "reload #1 + Continue, save slots, Pudding home, shop, bank, riddle, night merchant, factions, glow cap, weather, sockets, errand 2 (ends: K save in the Lane -> cp2)",
@@ -206,6 +206,9 @@ SEG_INFO = {
     "G": "Stage 6.3: the Old Temple (Hilde's writ, the Harbor gate, clues, Alder's charm, Ida's wick, braziers, the rite, the rift, Veyra, Midgard's arch; continues cp3)",
     "H": "Stage 6.5: rift storms (calendar, storm rifts + Rift Marks +25%, sky cracks, Storm Watch bounty, NPC / ferry storm lines, dawn, toasts; continues cp3)",
     "J": "Stage 6.4: the Violet Spring, the Rotwood Hollow (8 rooms, root-door brazier order, the Blight Regent 5.5x: phases + frost-iron spike weak point), the Verdant Heart (6 rooms, Thornmother 2.4x, Hjortur 6x trial / corrupted) (continues cp3)",
+    "K": "Stage 6.6: glow-fish orb lanterns (buy, night catch, place at home + garden, night pools + light zones, day off, take back; continues cp3)",
+    "L": "Stage 6.7: the Forge Quarter (gate after the Cold Altar, red forges + blue quench glow, Tova +1..+10 temper with caps / fail heat, Orri rune rerolls; continues cp3)",
+    "M": "Stage 6.8: the Glowfrog Still (Bryony, Old Gurgle glow, recipes, fizzle hint, yields, secret broth, timed brew mods, drink from the bag, Bloop's dew, spring vial, garden herbs; continues cp3)",
     "I": "Stage 6.4 groundwork: Glenheart rename, trial-mode yield, 5-6x boss camera pull, Vanaheim conquer merit -> Rift Marks, heartwood sale to Sable (continues cp3)",
 }
 # --quick <area>: the segments that cover an area / feature (a per-change check; the batch still runs everything)
@@ -218,10 +221,13 @@ QUICK = {
     "pet": "F", "pets": "F", "stray": "F",
     "temple": "G", "oldtemple": "G", "midgard": "G",
     "vanaheim4": "I", "verdant": "J", "rotwood": "J", "regent": "J", "hjortur": "J", "vhspring": "J", "trial": "I", "glenheart": "I", "heartwood": "I",
+    "still": "M", "alchemy": "M", "brew": "M", "nettle": "M",
+    "forge": "L", "temper": "L", "reroll": "L",
+    "lantern": "K", "lanterns": "K", "orb": "K", "glowfish": "K",
     "storm": "H", "storms": "H", "riftstorm": "H", "bounty": "H",
 }
 TIMING = FIX / "smoke_timing.json"   # seconds per segment from the last passing runs (shard balancing only)
-DEFAULT_SECONDS = {"A": 560, "B": 260, "C": 230, "D": 140, "E": 25, "F": 150, "G": 200, "H": 170, "I": 90, "J": 120}
+DEFAULT_SECONDS = {"A": 560, "B": 260, "C": 230, "D": 140, "E": 25, "F": 150, "G": 200, "H": 170, "I": 90, "J": 120, "K": 60, "L": 60, "M": 60}
 
 
 def seg_seconds():
@@ -505,6 +511,9 @@ def run(out, simscale=4, size=(960, 540), segs=SEGS):
                 T.wait("window.__hm.wheel.state().sel >= 0", 10)
                 w_sel = T.ev("window.__hm.wheel.state().sel")
                 T.ev("__padBtn(3, 0)"); pg.wait_for_timeout(300); T.ev("__padAxes(0, 0)"); pg.wait_for_timeout(200)
+                # slow frames under load: wait (same assertion, no looser) until the engine has seen Y up and closed the wheel
+                T.wait("!window.__hm.wheel.state().open", 20)
+                if n_cyc >= 2: T.wait("window.__hm.ctx.spellIndex() === 1", 20)
                 T.step("hold Y: slow-time spell wheel, stick picks, release casts", w_open and (n_cyc < 2 or (w_sel == 1 and T.ev("window.__hm.ctx.spellIndex()") == 1))
                        and not T.ev("window.__hm.wheel.state().open"), open=w_open, sel=w_sel, slots=n_cyc)
                 T.ev("window.__hm.ctx.selectSpell(0)")
@@ -1044,7 +1053,7 @@ def run(out, simscale=4, size=(960, 540), segs=SEGS):
                 T.ev("(() => { const S = window.__hm.S, LO = window.__hm.LO; S.gold = 120; S.bag.push(LO.makeItem(2, 2, 'weapon')); })()")
                 T.talk("merchant"); pg.wait_for_timeout(300)
                 shop0 = T.ev("window.__hm.shopUI.qa()")
-                T.step("talking to Odo opens the shop panel (tonic, glow seed, 3 pieces of gear)", T.ev("!!window.__hm.shop && !document.getElementById('shopui').hidden") and len(shop0["rows"]) == 5
+                T.step("talking to Odo opens the shop panel (tonic, glow seed, empty orb, glow-fish, 3 pieces of gear)", T.ev("!!window.__hm.shop && !document.getElementById('shopui').hidden") and len(shop0["rows"]) == 7
                        and shop0["rows"][0]["name"] == "Hearth tonic", rows=[r["name"] for r in shop0["rows"]])
                 g0, t0 = T.ev("window.__hm.S.gold"), T.ev("window.__hm.S.inv.tonic || 0")
                 hfr = T.ev("window.__hm.S.ranks.hearth") >= 1   # Order of the Hearth Friend: 10% off at Odo's (rounded)
@@ -2307,7 +2316,7 @@ def run(out, simscale=4, size=(960, 540), segs=SEGS):
                 gn = T.ev("(() => { const e = window.__hm.combat.enemies.find((x) => x.id === 'eldergolem' && x.state !== 'dead'); return e ? e.D.name : null; })()")
                 pulls = T.ev("[2.5, 5.5, 6].map((k) => +window.__hm.framePullFor(k).toFixed(3))")
                 T.step("the Mossglen golem is now 'Glenheart, the Elder Golem' (display name only, id eldergolem); boss camera pull: 2.5x unchanged (1.18), 5.5x / 6x bosses ~1.8-1.9 (engine clamp 2.0)",
-                       gn == "Glenheart, the Elder Golem" and pulls[0] == 1.18 and 1.75 <= pulls[1] <= 1.9 and 1.85 <= pulls[2] <= 2.0, name=gn, pulls=pulls)
+                       gn == "Glenheart, the Elder Golem" and pulls[0] == 1.18 and 1.75 <= pulls[1] <= 1.9 and 1.85 <= pulls[2] <= 2.0, golem=gn, pulls=pulls)
                 S0 = T.S(); xp0 = T.ev("window.__hm.S.xp || 0"); d0 = T.ev("window.__hm.loot.drops ? window.__hm.loot.drops.length : -1")
                 yv = T.ev("""(() => { const G = window.__hm, C = G.combat, e = C.enemies.find((x) => x.id === 'eldergolem' && x.state !== 'dead'); G.peace = true;
                   let fired = 0; e.sp = { ...e.sp, trial: true }; e.onYield = () => { fired++; }; C.damageEnemy(e, 99999, G.ctx.player);
@@ -2443,6 +2452,216 @@ def run(out, simscale=4, size=(960, 540), segs=SEGS):
                 rep["error"] = f"verdant: {type(e).__name__}: {e}"[:400]
                 try:
                     rep["shots"]["failure_J"] = T.shot("failure_J"); rep["state"] = T.S()
+                except Exception:  # noqa: BLE001
+                    pass
+        # ---------------------------------------------------------- K: Stage 6.6 glow-fish orb lanterns (continues cp3)
+        if rep["pass"] and "K" in segs:
+            seg_mark("K")
+            try:
+                saved = cp_load(None, T, url, "cp3")["hearthmoor-slot-1-v2"]
+                kc = b.new_context(viewport={"width": size[0], "height": size[1]})
+                kc.add_init_script(f"if (!sessionStorage.getItem('seeded')) {{ localStorage.clear(); localStorage.setItem('hearthmoor-slot-1-v2', {json.dumps(saved)}); sessionStorage.setItem('seeded', '1'); }}")
+                kc.add_init_script(STUB)
+                kp = kc.new_page()
+                kp.on("pageerror", lambda e: errors.append(f"PAGEERROR {e}"))
+                kp.on("console", lambda m: errors.append(f"console.error {m.text}") if m.type == "error" else None)
+                T.pg = kp
+                kp.goto(url)
+                T.wait("window.__hm && window.__hm.ready && window.__hd2d && window.__hd2d.ready && !window.__hd2dGate.loading", 120)
+                kp.click("#btnCont"); T.idle(); kp.wait_for_timeout(400)
+
+                def karea(a, spawn="start"):
+                    T.ev(f"window.__hm.loadArea('{a}', '{spawn}')"); T.wait(f"window.__hm.area === '{a}' && window.__hm.ctx && !window.__hm.busy", 120); T.idle(); kp.wait_for_timeout(300)
+
+                def ktp(x, z):
+                    T.ev(f"(() => {{ const p = window.__hm.ctx.player; p.x = {x}; p.z = {z}; }})()"); T.frames(3)
+
+                def kclock(t):
+                    T.ev(f"(() => {{ const G = window.__hm; G.ctx.clock.set({t}); G.S.t = G.ctx.clock.t; }})()"); T.frames(4)
+                T.ev("(() => { const G = window.__hm; G.peace = true; G.S.inv.glowfish = 0; G.S.inv.orblamp = 0; G.S.orbs = {}; G.S.fishDay = {}; })()")
+                gw = T.ev("(async () => { const m = await import('./game/shop.js'); return { odo: m.SHOPS.hearthmoor.goods, ida: m.SHOPS.harbor.goods, fish: m.GOODS.glowfish.price, orb: m.GOODS.orblamp.price }; })()")
+                T.step("6.6 shops: Odo sells empty orbs + glow-fish, Ida sells glow-fish", "orblamp" in gw["odo"] and "glowfish" in gw["odo"] and "glowfish" in gw["ida"] and gw["fish"] > 0 and gw["orb"] > 0, shop=gw)
+                karea("hollows"); kclock(0.5); ktp(10.0, -6.2); T.ev("window.__hm.lanterns.interact()")
+                f_day = T.ev("window.__hm.S.inv.glowfish || 0")
+                kclock(0.9); T.ev("window.__hm.lanterns.interact()"); f1 = T.ev("window.__hm.S.inv.glowfish || 0")
+                T.ev("window.__hm.lanterns.interact()"); f2 = T.ev("window.__hm.S.inv.glowfish || 0")
+                T.step("glow-fish: none by day, one caught at night, the spot is spent till tomorrow", f_day == 0 and f1 == 1 and f2 == 1, day=f_day, night=[f1, f2])
+                T.ev("(() => { const S = window.__hm.S; S.inv.glowfish = 4; S.inv.orblamp = 4; })()")
+                for a, xs in (("plaza", [(3.9, 3.5), (5.7, 3.5)]), ("lane", [(2.0, 4.7), (5.2, 5.25)])):
+                    karea(a); kclock(0.5)
+                    for x, z in xs:
+                        ktp(x, z); T.ev("window.__hm.lanterns.interact()")
+                    q = T.ev("window.__hm.lanterns.qa()")["spots"]
+                    posts = T.ev("window.__hm.ctx.scene.objects.filter((o) => /orb_post/.test(o.glb || '')).length")
+                    T.step(f"{a}: both orb lanterns placed on their kit stands, orbs shown, dark by day", posts == 2 and len(q) == 2 and all(s["on"] and s["orb"] and not s["lit"] for s in q), spots=q)
+                inv = T.ev("({ f: window.__hm.S.inv.glowfish || 0, o: window.__hm.S.inv.orblamp || 0 })")
+                T.step("placing used one orb + one glow-fish each", inv == {"f": 0, "o": 0}, inv=inv)
+                kclock(0.92); T.frames(8)
+                q = T.ev("window.__hm.lanterns.qa()")["spots"]; z = T.ev("window.__hm.glow.zones().filter((z) => z.src === 'orb').length")
+                T.step("night: each orb lights a pool of radiance (light + light zone)", all(s["lit"] for s in q) and z == 2, spots=q, zones=z)
+                ktp(3.6, 6.2); T.ev("window.__hm.qaStill = true"); kp.wait_for_timeout(900)
+                rep["shots"]["stage6_lanterns"] = T.shot("stage6_lanterns"); T.ev("window.__hm.qaStill = false")
+                karea("plaza"); kclock(0.92); T.frames(8)
+                T.step("the home lanterns survive an area change and glow at night", all(s["on"] and s["lit"] for s in T.ev("window.__hm.lanterns.qa()")["spots"]))
+                ktp(3.9, 3.5); T.ev("window.__hm.lanterns.interact()")
+                tb = T.ev("({ on: window.__hm.lanterns.qa().spots[0].on, f: window.__hm.S.inv.glowfish || 0, o: window.__hm.S.inv.orblamp || 0 })")
+                T.step("taking a lantern back returns the orb and the fish", not tb["on"] and tb["f"] == 1 and tb["o"] == 1, back=tb)
+                T.step("no JS errors (6.6 orb lanterns)", not errors and not T.ev("window.__hd2d.errors.length"), errors=errors[:5])
+                kc.close()
+                seg_done("K")
+            except Exception as e:  # noqa: BLE001
+                rep["pass"] = False
+                rep["error"] = f"lanterns: {type(e).__name__}: {e}"[:400]
+                try:
+                    rep["shots"]["failure_K"] = T.shot("failure_K"); rep["state"] = T.S()
+                except Exception:  # noqa: BLE001
+                    pass
+        # ---------------------------------------------------------- L: Stage 6.7 the Forge Quarter (continues cp3)
+        if rep["pass"] and "L" in segs:
+            seg_mark("L")
+            try:
+                saved = cp_load(None, T, url, "cp3")["hearthmoor-slot-1-v2"]
+                lc = b.new_context(viewport={"width": size[0], "height": size[1]})
+                lc.add_init_script(f"if (!sessionStorage.getItem('seeded')) {{ localStorage.clear(); localStorage.setItem('hearthmoor-slot-1-v2', {json.dumps(saved)}); sessionStorage.setItem('seeded', '1'); }}")
+                lc.add_init_script(STUB)
+                lp = lc.new_page()
+                lp.on("pageerror", lambda e: errors.append(f"PAGEERROR {e}"))
+                lp.on("console", lambda m: errors.append(f"console.error {m.text}") if m.type == "error" else None)
+                T.pg = lp
+                lp.goto(url)
+                T.wait("window.__hm && window.__hm.ready && window.__hd2d && window.__hd2d.ready && !window.__hd2dGate.loading", 120)
+                lp.click("#btnCont"); T.idle(); lp.wait_for_timeout(400)
+
+                def larea(a, spawn="start"):
+                    T.ev(f"window.__hm.loadArea('{a}', '{spawn}')"); T.wait(f"window.__hm.area === '{a}' && window.__hm.ctx && !window.__hm.busy", 120); T.idle(); lp.wait_for_timeout(300)
+                T.ev("(() => { const G = window.__hm; G.peace = true; G.S.quests.altar = 2; })()")
+                larea("ravenhold"); g0 = T.ev("window.__hm.ctx.scene.game.exits.map((e) => e.to)")
+                T.ev("window.__hm.S.quests.altar = 3"); larea("ravenhold"); g1 = T.ev("({ ex: window.__hm.ctx.scene.game.exits.map((e) => e.to), sealed: window.__hm.ctx.scene.game.sealed.map((g) => g.id) })")
+                T.step("Forge Quarter gate: sealed until the Cold Altar is done, then an exit", "forge" not in g0 and "forge" in g1["ex"] and "forge" not in g1["sealed"], before=g0, after=g1)
+                larea("forge", "from_harbor")
+                fq = T.ev("(() => { const c = window.__hm.ctx; return { tova: !!c.npc('smith'), orri: !!c.npc('runesmith'), fx: window.__hm.forge.fx.length, lights: window.__hm.forge.lights.length, zones: window.__hm.glow.zones().filter((z) => z.src === 'forge').length, sheet: !!c.actors.sheetOf('smith') }; })()")
+                T.step("the forge yard: Tova + Orri, forge fire / pools / embers, red + blue lights, light zones", fq["tova"] and fq["orri"] and fq["sheet"] and fq["fx"] >= 6 and fq["lights"] >= 6 and fq["zones"] >= 4, forge=fq)
+                rt = T.ev("""(() => { const G = window.__hm, S = G.S, F = G.forge;
+                  const npcs = ['rioter1', 'rioter2', 'rioter3'].filter((id) => G.ctx.npc(id)).length, q0 = S.quests.forge_riot, blocked = F.tova().pages[0];
+                  const wrong = F.rioter('rioter1').choice.options[1].pick(G).pages[0], still = !(S.flags.rt_gunnar);
+                  [0, 1, 2].forEach((k) => F.rioter('rioter' + (k + 1)).choice.options[k].pick(G));
+                  const q1 = S.quests.forge_riot, o = F.orri(); o.then(G);
+                  return { npcs, q0, blocked, wrong, still, q1, q2: S.quests.forge_riot, free: !!S.flags.orri_socket }; })()""")
+                T.step("Sparks in the Street: 3 rioters, wrong clue reopens, right clues calm them, Orri's tongs story ends it (free socket)",
+                       rt["npcs"] == 3 and rt["q0"] == 1 and "crowd" in rt["blocked"] and "change the subject" in rt["wrong"] and rt["still"] and rt["q1"] == 2 and rt["q2"] == 3 and rt["free"], riot=rt)
+                ft = T.ev("""(() => { const G = window.__hm, S = G.S, F = G.forge, LO = G.LO;
+                  F.tova().then(G); const q1 = S.quests.temper;
+                  S.bag = S.bag || []; S.bag.unshift(LO.makeItem(1, 1, 'armor')); const i0 = S.inv.ironbit || 0;
+                  const sc = F.scrapMenu().choice.options[0].pick(G).pages[0], iron = (S.inv.ironbit || 0) - i0;
+                  const p = G.ctx.player; p.x = -5.6; p.z = -7.6; F.interact(); F.interact(); F.interact();
+                  const w = LO.makeItem(1, 2, 'weapon'); S.gear.weapon = w; const g0 = S.gold;
+                  const t = F.temperMenu().choice.options[0].pick(G).pages[0];
+                  const q2 = S.quests.temper; F.orri().then(G);
+                  return { q1, sc, iron, bellows: !!S.flags.tp_bellows, up: w.up, free: S.gold === g0, t, q2, q3: S.quests.temper, rs: S.inv.runestone || 0 }; })()""")
+                T.step("The First Temper: offer, scrap at the forge (+2 iron), 3 bellows pumps, free +1, Orri's turn-in (rune-stone)",
+                       ft["q1"] == 1 and ft["iron"] == 2 and ft["bellows"] and ft["up"] == 1 and ft["free"] and "first temper" in ft["t"] and ft["q2"] == 2 and ft["q3"] == 3 and ft["rs"] >= 1, temper=ft)
+                tv = T.ev("""(async () => { const G = window.__hm, S = G.S, LO = G.LO;
+                  S.gold = 5000; S.inv.ironbit = 100; S.inv.coldsteel = 30; S.gems = { ...(S.gems || {}), frost_core: 2, golem_core: 2, rift_shard: 1 };
+                  const w = LO.makeItem(1, 4, 'weapon'); S.gear.weapon = w; const base = w.mods.meleeMul;
+                  const lines = []; for (let i = 0; i < 10; i++) lines.push(G.forge.doTemper('weapon', () => 0).pages[0]);
+                  const cap = G.forge.doTemper('weapon', () => 0).pages[0];
+                  const m = LO.gearMods({ gear: { weapon: w } }, { guardMul: 1 });
+                  const a = LO.makeItem(1, 2, 'armor'); a.up = 5; S.gear.armor = a; const g0 = S.gold, i0 = S.inv.ironbit;
+                  const fail = G.forge.doTemper('armor', () => 0.99).pages[0];
+                  return { up: w.up, last: lines[9], cap, k: m.meleeMul / base, aUp: a.up, heat: a.heat, gold: S.gold === g0, iron: i0 - S.inv.ironbit, fail, desc: LO.describe(w) }; })()""")
+                T.step("Tova: +1..+10 on a Legendary (7% per +), capped at +10, a failed +6 keeps gold, eats iron, adds heat",
+                       tv["up"] == 10 and abs(tv["k"] - 1.7) < 0.01 and "Hearthforged" in tv["last"] and "as far as" in tv["cap"] and tv["aUp"] == 5 and tv["heat"] == 1 and tv["gold"] and tv["iron"] == 6 and "+10 tempered" in tv["desc"], tova=tv)
+                rr = T.ev("""(() => { const G = window.__hm, S = G.S; S.inv.runestone = 1; const w = S.gear.weapon, k0 = Object.keys(w.mods);
+                  const e = G.forge.doReroll('weapon', null, () => 0.5); const kept = e.choice.options[0].pick(G);
+                  const again = G.forge.doReroll('weapon').pages[0];
+                  return { rr: w.rr, k0, k1: Object.keys(w.mods), kept: kept.pages[0], again, opts: G.forge.tova().choice.options.length }; })()""")
+                T.step("Orri: a rune-stone rerolls one stat (keep new), no stone = no reroll; Tova offers 3 slots + shop + not yet",
+                       rr["rr"] == 1 and len(rr["k1"]) == len(rr["k0"]) and set(rr["k1"]) != set(rr["k0"]) and "stone likes you" in rr["kept"] and "No stone" in rr["again"] and rr["opts"] == 5, orri=rr)
+                sk = T.ev("""(() => { const G = window.__hm, S = G.S, F = G.forge, LO = G.LO;
+                  S.flags.orri_socket = 1; const w = S.gear.weapon; w.gems = [null, null]; const n0 = w.gems.length;
+                  const p1 = F.orri().choice.options[2].pick(G).choice.options[0].pick(G).pages[0], n1 = w.gems.length;
+                  const cap = F.doPunch('weapon').pages[0];
+                  S.gear.trinket = LO.makeItem(1, 0, 'trinket'); const com = F.doPunch('trinket').pages[0];
+                  S.inv.ironbit = 4; S.gems.frost_core = 1; const st0 = S.inv.coldsteel || 0; F.tova().choice.options[1].pick(G); const st = (S.inv.coldsteel || 0) - st0;
+                  S.inv.runestone = 2; const out = Object.keys(w.mods)[0], rr0 = w.rr || 0;
+                  const e = F.orri().choice.options[1].pick(G).choice.options[0].pick(G).choice.options[0].pick(G); e.choice.options[0].pick(G);
+                  const picked = !(out in w.mods) && (S.inv.runestone || 0) === 0 && w.rr === rr0 + 1;
+                  const cv = LO.iconCanvas('weapon', 4, 1, w.gems, 10), px = cv.getContext('2d').getImageData(0, 1, 1, 1).data;
+                  const s0 = F.sparks || 0; G.ctx.player.act = { name: 'attack', t: 0 }; F.update(0.016); G.ctx.player.act = null; F.update(0.016);
+                  return { n0, n1, p1, cap, com, st, picked, icon: [px[0], px[1], px[2]], sparks: (F.sparks || 0) - s0 }; })()""")
+                T.step("Orri sockets (free first punch to 3, cap, no Commons), smelt 4 iron + frost core -> 2 cold-steel, pick-your-stat reroll (2 stones), +10 icon mark + cold-blue swing sparks",
+                       sk["n0"] == 2 and sk["n1"] == 3 and "socket" in sk["p1"] and "colander" in sk["cap"] and "Commons" in sk["com"] and sk["st"] == 2 and sk["picked"] and sk["icon"] == [42, 180, 255] and sk["sparks"] >= 5, sockets=sk)
+                T.ev("(() => { const G = window.__hm, p = G.ctx.player; G.ctx.clock.set(0.95); G.S.t = G.ctx.clock.t; p.x = -2.4; p.z = -5.4; })()"); T.frames(8)
+                T.ev("window.__hm.qaStill = true"); lp.wait_for_timeout(900)
+                rep["shots"]["stage6_forge"] = T.shot("stage6_forge"); T.ev("window.__hm.qaStill = false")
+                T.step("no JS errors (6.7 Forge Quarter)", not errors and not T.ev("window.__hd2d.errors.length"), errors=errors[:5])
+                lc.close()
+                seg_done("L")
+            except Exception as e:  # noqa: BLE001
+                rep["pass"] = False
+                rep["error"] = f"forge: {type(e).__name__}: {e}"[:400]
+                try:
+                    rep["shots"]["failure_L"] = T.shot("failure_L"); rep["state"] = T.S()
+                except Exception:  # noqa: BLE001
+                    pass
+        # ---------------------------------------------------------- M: Stage 6.8 the Glowfrog Still (continues cp3)
+        if rep["pass"] and "M" in segs:
+            seg_mark("M")
+            try:
+                saved = cp_load(None, T, url, "cp3")["hearthmoor-slot-1-v2"]
+                mc = b.new_context(viewport={"width": size[0], "height": size[1]})
+                mc.add_init_script(f"if (!sessionStorage.getItem('seeded')) {{ localStorage.clear(); localStorage.setItem('hearthmoor-slot-1-v2', {json.dumps(saved)}); sessionStorage.setItem('seeded', '1'); }}")
+                mc.add_init_script(STUB)
+                mp = mc.new_page()
+                mp.on("pageerror", lambda e: errors.append(f"PAGEERROR {e}"))
+                mp.on("console", lambda m: errors.append(f"console.error {m.text}") if m.type == "error" else None)
+                T.pg = mp
+                mp.goto(url)
+                T.wait("window.__hm && window.__hm.ready && window.__hd2d && window.__hd2d.ready && !window.__hd2dGate.loading", 120)
+                mp.click("#btnCont"); T.idle(); mp.wait_for_timeout(400)
+
+                def marea(a, spawn="start"):
+                    T.ev(f"window.__hm.loadArea('{a}', '{spawn}')"); T.wait(f"window.__hm.area === '{a}' && window.__hm.ctx && !window.__hm.busy", 120); T.idle(); mp.wait_for_timeout(300)
+                T.ev("(() => { const G = window.__hm, S = G.S; G.peace = true; S.quests.altar = 3; S.quests.forge_riot = 3; S.recipes = {}; S.brew = null; delete S.dew; })()")
+                marea("forge", "from_harbor")
+                st = T.ev("(() => { const G = window.__hm, c = G.ctx; return { bryony: !!c.npc('alchemist'), fx: G.alchemy.fx.length, zone: G.glow.zones().some((z) => z.src === 'still'), cauldron: c.scene.objects.some((o) => /cauldron_blue/.test(o.glb || '')) }; })()")
+                T.step("the Still: Bryony, Old Gurgle (kit cauldron + bubbling brew / fire / pool gamefx), a blue light zone", st["bryony"] and st["fx"] == 3 and st["zone"] and st["cauldron"], still=st)
+                br = T.ev("""(() => { const G = window.__hm, S = G.S, A = G.alchemy;
+                  A.bryony().then(G); const r0 = Object.keys(S.recipes).sort();
+                  Object.assign(S.inv, { redcap: 3, moonpetal: 4, tea: 1, coldpetal: 1, glowbell: 1, glowcap: 1, springwater: 0, loaf: 1 }); delete S.inv.dewdrop;
+                  const p = G.ctx.player; p.x = -9.2; p.z = -1.4; A.interact(); const dew1 = S.inv.dewdrop || 0; A.interact(); const dew2 = S.inv.dewdrop || 0;
+                  A.pot.length = 0; A.pot.push('redcap', 'moonpetal'); const fz = A.stir(); const hinted = Object.keys(S.hints || {}).length, keptCap = S.inv.redcap;
+                  const g = A.stir(['redcap', 'dewdrop']).pages[0], gc = S.inv.brew_glowcap || 0;
+                  const e = A.stir(['glowcap', 'redcap']); const ec = S.inv.brew_ember || 0;
+                  S.inv.dewdrop = 1; const ac0 = (S.factions || {}).gnome; const sec0 = !!(S.found || {}).brew_breadbroth; A.stir(['loaf', 'moonpetal', 'dewdrop']);
+                  const menu = A.bryony().choice.options.length;
+                  return { r0, dew1, dew2, fz: fz.pages[0], hinted, keptCap, g, gc, ember: ec, newEmber: !!S.recipes.ember, secret: !sec0 && !!S.found.brew_breadbroth, menu, eline: e.pages[0] }; })()""")
+                T.step("brewing: Bryony teaches 2 recipes, Bloop's pad gives 1 dew a day, a miss fizzles (nothing used, a hint), Glowcap x2, Ember discovered, the bread-broth secret",
+                       br["r0"] == ["glowcap", "moonmilk"] and br["dew1"] == 1 and br["dew2"] == 1 and "fizzles" in br["fz"] and br["hinted"] == 1 and br["keptCap"] == 3 and br["gc"] == 2 and br["ember"] == 1 and br["newEmber"] and br["secret"] and br["menu"] == 4, brew=br)
+                dk = T.ev("""(() => { const G = window.__hm, S = G.S, PR = G.PR;
+                  const m0 = PR.mods(S).meleeMul; G.drinkBrew('ember'); const m1 = PR.mods(S).meleeMul, b1 = S.brew && S.brew.id;
+                  G.alchemy.update(61); const m2 = PR.mods(S).meleeMul;
+                  S.hp = 10; G.drinkBrew('glowcap'); const hp = S.hp;
+                  document.querySelector('[data-item="brew_glowcap"]') && document.querySelector('[data-item="brew_glowcap"]').click(); const tap = S.inv.brew_glowcap || 0;
+                  return { up: +(m1 - m0).toFixed(3), b1, off: +(m2 - m0).toFixed(3), hp, tap, brew: S.brew }; })()""")
+                T.step("drinking: Ember Cap +15% melee for 60 s then off, Glowcap heals 120, tapping a potion in the bag drinks it",
+                       dk["up"] == 0.15 and dk["b1"] == "ember" and dk["off"] == 0 and dk["hp"] >= 120 and dk["tap"] == 0 and dk["brew"] is None, drink=dk)
+                hv = T.ev("""(async () => { const m = await import('./game/garden.js'); const s = await import('./game/shop.js');
+                  return { herbs: Object.values(m.PLANTS).map((p) => p.herb), still: s.SHOPS.still.goods }; })()""")
+                T.step("garden blooms give herbs (cold-fire petal, glowbell, glow-cap); Bryony sells dew, vials, red toadstools", hv["herbs"] == ["coldpetal", "glowbell", "glowcap"] and hv["still"] == ["dewdrop", "vial", "redcap"], herbs=hv)
+                T.ev("(() => { const G = window.__hm, p = G.ctx.player; G.ctx.clock.set(0.95); G.S.t = G.ctx.clock.t; p.x = -5.0; p.z = -2.2; })()"); T.frames(8)
+                T.ev("window.__hm.qaStill = true"); mp.wait_for_timeout(900)
+                rep["shots"]["stage6_alchemy"] = T.shot("stage6_alchemy"); T.ev("window.__hm.qaStill = false")
+                marea("hollows"); sw = T.ev("""(() => { const G = window.__hm, S = G.S, sp = G.ctx.scene.game.spring.pos, p = G.ctx.player; S.inv.vial = 1; delete S.inv.springwater; p.x = sp[0]; p.z = sp[1] + 1.0; G.alchemy.interact(); return { w: S.inv.springwater || 0, v: S.inv.vial || 0 }; })()""")
+                T.step("a vial fills with spring water at the Hollows spring", sw == {"w": 1, "v": 0}, spring=sw)
+                T.step("no JS errors (6.8 Glowfrog Still)", not errors and not T.ev("window.__hd2d.errors.length"), errors=errors[:5])
+                mc.close()
+                seg_done("M")
+            except Exception as e:  # noqa: BLE001
+                rep["pass"] = False
+                rep["error"] = f"still: {type(e).__name__}: {e}"[:400]
+                try:
+                    rep["shots"]["failure_M"] = T.shot("failure_M"); rep["state"] = T.S()
                 except Exception:  # noqa: BLE001
                     pass
         # every shard checks its own pages for JS errors even when the counted 'no JS errors' steps live in another shard
