@@ -491,8 +491,8 @@
   {
    "piece": "neon_mushrooms_violet",
    "pos": [
-    -1.4,
-    -17.0
+    -3.4,
+    -16.2
    ]
   },
   {
@@ -628,6 +628,17 @@
     "to": "forge_hall",
     "spawn": "from_deep",
     "label": "the chain cage back up to the Great Forge"
+   },
+   {
+    "rect": [
+     -1.5,
+     -19.6,
+     1.5,
+     -18.4
+    ],
+    "to": "clockdeep2",
+    "spawn": "from_c3",
+    "label": "the stair down to the Assembly Line"
    }
   ],
   "portals": [],
@@ -666,6 +677,11 @@
     0.0,
     20.0,
     "up"
+   ],
+   "from_c4": [
+    0.0,
+    -16.4,
+    "down"
    ]
   },
   "svfx": [
