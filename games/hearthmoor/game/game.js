@@ -443,7 +443,7 @@ function refreshMarkers() {
     const want = markerFor(a.id, G.S);
     const have = G.markers[a.id];
     if (have && have.name !== want) { ctx.gamefx.remove(have); delete G.markers[a.id]; }
-    if (want && !G.markers[a.id]) G.markers[a.id] = ctx.gamefx.spawn(want, a.x, a.y, a.z, { duration: Infinity });
+    if (want && !G.markers[a.id]) { const m = ctx.gamefx.spawn(want, a.x, a.y, a.z, { duration: Infinity }); if (m) G.markers[a.id] = m; }   // [SVARTALFHEIM] areas without the marker glyphs (the realm areas' gamefx atlases) just show none
   }
 }
 function syncMarkers() {

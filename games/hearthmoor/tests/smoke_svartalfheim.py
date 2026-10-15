@@ -194,6 +194,40 @@ def steps(b, url, T, size, errors, rep, stub=None, shots=None):
         load("bifrost"); T.ev("(() => { const S = window.__hm.S; S.flags.alliance = { svartalfheim: 'conquer' }; S.inv.anvil_heart = 1; S.quests.clockdeep = 2; })()")
         g0 = T.ev("window.__hm.S.gold || 0"); tq("gate.conquerLeave()"); pg.wait_for_timeout(200); T.ev(done); a = sv()
         T.step("conquer exit (6.8): the copper door grinds shut, stage 3, +200 gold, Cold Anvildeep flag", a["quests"].get("clockdeep") == 3 and T.ev("window.__hm.S.gold || 0") - g0 == 200 and T.ev("!!window.__hm.S.flags.sv_cold"), q=a["quests"])
+        done_ = "(() => { const G = window.__hm, d = G.dlg; if (d && d.then) d.then(G); G.dropDialogue(); })()"
+        # ---- Forgefire Week: Dagna's bounty (3 true strikes + 3 forge orders), the reward, the reset at the next festival
+        a = load("forge_hall", "&svq=forgefire&anvil=auto"); f = a["fest"]
+        T.step("Forgefire Week: S.day % 7 === 3, befriend + Deep done -> festival day, quest not taken", f["festDay"] and f["forgefireDay"] and f["quest"] == 0, f=f)
+        tq("qaTalk('dagna')"); f = sv()["fest"]
+        T.step("Dagna offers the bounty: quest forgefire 1, counters 0/0", f["quest"] == 1 and f["forgefire"]["strikes"] == 0 and f["forgefire"]["orders"] == 0, f=f)
+        for _ in range(3):
+            tq("fest.strike()")
+        f = sv()["fest"]
+        T.step("three true strikes at the Great Anvil", f["forgefire"]["strikes"] == 3, f=f)
+        T.ev("(() => { window.__hm.S.inv.ironbit = 3; })()")
+        for who in ("dw_a", "sv_a", "haldis"):
+            tq(f"qaPick('Hand over an iron bit.', '{who}')")
+        f = sv()["fest"]
+        T.step("three forge orders handed in on Copper Row (iron bits taken)", f["forgefire"]["orders"] == 3 and T.ev("window.__hm.S.inv.ironbit || 0") == 0, f=f)
+        g0 = T.ev("window.__hm.S.gold || 0"); tq("qaTalk('dagna')"); a = sv()
+        T.step("Dagna takes the work: stage 3, +30 gold, 1 deep brass, soot-smudge decal flag",
+               a["quests"].get("forgefire") == 3 and T.ev("window.__hm.S.gold || 0") - g0 == 30 and a["inv"].get("deep_brass") == 1 and T.ev("!!window.__hm.S.flags.soot_smudge"), q=a["quests"])
+        T.ev("window.__hm.S.day += 7"); tq("qaTalk('dagna')"); f = sv()["fest"]
+        T.step("next festival: the bounty resets (counters 0) and Dagna offers it again", f["quest"] == 1 and f["forgefire"]["strikes"] == 0 and f["forgefire"]["fday"] == T.ev("window.__hm.S.day"), f=f)
+        # ---- The Masterwork: Tansy's offer, the parts, the Great Anvil build on Forgefire Week, the Tinker's Heart + Tinkerforge
+        a = load("forge_hall", "&svq=master&anvil=auto"); m = a["master"]
+        T.step("Masterwork (quest 1, parts in the bag, Forgefire day): the build spot is live at the Great Anvil", m["quest"] == 1 and m["parts"] and a["fest"]["forgefireDay"], m=m)
+        T.ev("(() => { const p = window.__hd2d.ctx.player; p.x = -1.3; p.z = -2.0; })()"); pg.wait_for_timeout(400)
+        T.ev("window.__hm.svart.interact()"); pg.wait_for_timeout(200); T.ev(done_)
+        T.step("first E / A: stage 2 (Tansy and Dagna gather round)", sv()["master"]["quest"] == 2, m=sv()["master"])
+        for _ in range(3):
+            T.ev("window.__hm.svart.interact()"); pg.wait_for_timeout(150)
+        T.ev(done_); a = sv(); m = a["master"]
+        T.step("three strikes build the Tinker's Heart: stage 3, Legendary trinket in the bag, Tinkerforge unlocked, parts spent",
+               m["quest"] == 3 and m["heart"] and m["tinkerforge"] and not a["inv"].get("clock_spring") and not a["inv"].get("coldsteel"), m=m)
+        load("svartalfheim"); T.ev("(() => { const S = window.__hm.S; S.flags.alliance = { svartalfheim: 'befriend' }; S.quests.clockdeep = 3; S.met = { tansy: 1 }; S.pets = { tick: { name: 'Tick', bond: 1, fed: 0 } }; })()")
+        tq("qaTalk('tansy')"); m = sv()["master"]
+        T.step("Tansy offers The Masterwork to a befriender who owns Tick (quest 1)", m["quest"] == 1, m=m)
         # ---- Tick (pet) + the one-active-companion swap
         a = load("svartalfheim")
         T.step("Tick: pet_tick role + his aura / pool effects are in the area atlases, PETS.tick registered",
