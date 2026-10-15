@@ -2,7 +2,15 @@
 
 Dates are America/New_York. Newest first. Keep this current with every change you push.
 
-## 2026-10-15: Svartalfheim (WIP, branch `realm-svartalfheim`): Cozy Builder's section 15 decisions, the Thane's choice and quests
+## 2026-10-15: Svartalfheim realm LIVE: merged Master Builder's `realm-svartalfheim` (08ba6bb, cut from main 3b3fb0e) to main and published
+- Five new areas: Anvildeep: Copper Row (hub), the Great Forge, the Amethyst Mines, the Clockwork Deep (two areas, C0-C8, boss Gorrak Ironmaw 6x with his own aura). Gate at Bifrost: *A Word from the Council* (Bix, Council vouch, Halvard, copper key, runaway construct). The Thane's alliance choice (befriend / conquer / hire / pass) with the mirrored Alfheim lock, one active companion, Tick the clockwork owl (neon pet, stepped pulse), Dagna's recruit flag, Tansy's tinker shop, steam vents and bellows gusts in the Deep, the frozen flue and the Anvil-Heart. See `SVARTALFHEIM_PROGRESS.md`.
+- Checks: full sharded smoke (A-M with the Svartalfheim and Alfheim steps) and `check_all --lowres` on all 21 areas. Segments that stopped a shard were rerun alone.
+- Fixes during the merge: **plaza and lane were rebuilt** (Tick's install_pets re-run had cropped the orb-lantern fx rows from their spells atlases: duplicate rows and a truncated PNG, which crashed check-scene's effect lineup); smoke fixes: the phone pad-hide, C1 steam-vent and C7 bellows-gust steps wait for their conditions (game-time timers on slow frames), `talk()` retries every standing spot once after a settle wait.
+- Not built yet (details in `SVARTALFHEIM_PROGRESS.md`): Giant Footprints clue scenes (need Jotunheim), Forgefire Week, Tansy's Masterwork quest (Tick is given after the Deep without it), the Council's rift-seal shortcut (`sg_riftAfter`), Tick's chestSense / goldMul aura hooks, in-world followers for Dagna and Tobble, soot / tremor weather, peg and cog art for the C2 / C4 / C6 puzzles (placeholders).
+- Screenshots: `docs/screenshots/svartalfheim_hub.png`, `svartalfheim_forge_hall.png`, `svartalfheim_gorrak.png`.
+- Next: Jotunheim and the other realms, following `docs/REALM_TEMPLATE.md`.
+
+## 2026-10-15: Svartalfheim chunk notes (branch `realm-svartalfheim`, now merged): decisions and quests: Cozy Builder's section 15 decisions, the Thane's choice and quests
 - **Decisions (final, built in):**
   1. **Mirror the rival lock.** Befriend Svartalfheim first = Alfheim is locked (Aerin's befriend option greys: "(Locked. You stand with Anvildeep.)") and she offers **"Then hire me."**: the *hired* path into the Prism Vault, hired by Sylvaine's old rivals for coin: Spire key, same vault boss, **no Realm Favor**, 90 gold instead of 150 + the Queen's Lantern + Embassy favour (`flags.alf_contract`, `alf_resolved = "contract"`). Separate small commit in `game/alfheim.js`; the other way round is the Thane's "Then hire me." (Hired Hammer).
   2. **One active companion at a time.** Recruited companions stay unlocked (`flags.companions.*`); you swap them at the Gatekeepers' Guild desk in Bifrost or at any inn. A conquer-Alfheim player may own Dagna and Tobble but brings one. (Companion system itself is still not built; Dagna's recruit flag is set at The Banked Fire.)
