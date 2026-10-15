@@ -121,6 +121,7 @@ export class Glow {
     for (const p of this.fixed) out.push({ x: p.x, z: p.z, r: p.r, src: 'pool' });
     if (this.G.hollows) out.push(...this.G.hollows.zones());   // lit braziers + the spring
     if (this.G.garden) out.push(...this.G.garden.zones());
+    if (this.G.alchemy) out.push(...this.G.alchemy.zones());    // Old Gurgle's blue glow
     if (this.G.forge) out.push(...this.G.forge.zones());        // forge mouths + quench tanks
     if (this.G.lanterns) out.push(...this.G.lanterns.zones());   // placed orb lanterns at night     // glow-garden blooms at night
     if (this.G.pets) out.push(...this.G.pets.zones());

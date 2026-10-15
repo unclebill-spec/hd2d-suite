@@ -511,6 +511,13 @@ def install_forge(areas=AREAS):
         for v in m["effects"].values():
             v.pop("strip", None)
         jp.write_text(json.dumps(m, indent=1))
+        al = GAME / "art" / "alchemy"; alm = json.loads((al / "alchemy_fx.json").read_text())
+        keep = {"cauldron_brew_blue", "cauldron_fire", "cauldron_pool_blue", "brew_puff_blue"}   # 6.8 the Still: Old Gurgle's blue brew
+        alm = {**alm, "effects": {k: v for k, v in alm["effects"].items() if k in keep}}
+        m = _append_atlas(ip, json.loads(jp.read_text()), al / "alchemy_fx.png", alm, "effects", mark="alchemy_from")
+        for v in m["effects"].values():
+            v.pop("strip", None)
+        jp.write_text(json.dumps(m, indent=1))
     print(f"forge: sheet ({len(FORGE_ROLES)} roles) + {len(fxm['effects'])} gamefx in {', '.join(x for x in areas if x in FORGE_AREAS)}")
 
 

@@ -2,6 +2,13 @@
 
 Dates are America/New_York. Newest first. Keep this current with every change you push.
 
+## 2026-10-14: Stage 6.8 the Glowfrog Still (batch 2 WIP, branch `hearthmoor-batch2-wip`)
+- `game/alchemy.js`: Bryony Glasswort (stand-in `lamplighter` sprite; the pack has no alchemist sheet) and Old Gurgle on the forge's lower yard. All 10 brews and recipes from forge_alchemy.md 7.2-7.3 (cheap brews x2), discovery lines, fizzle = nothing used + a hint, the Warm Bread Broth Gnome secret. Brew menu = dialogue choices (add up to 3, stir, take out); recipe book re-brews known ones.
+- Potions are bag items `brew_<id>`: tap to drink (U stays tonic-only). One timed brew at a time (`S.brew`), folded into `progress.mods()` by `brewMods`, motes while active. Heals use `C.heal`.
+- Ingredients: garden blooms now also give a herb (cold-fire petal / violet glowbell / red glow-cap); Bloop's lily pad (barrel by the Still) 1 glow-dew a day; fill a vial at any hidden spring; `SHOPS.still` sells glow-dew 5 g, vials 2 g, red toadstools 4 g.
+- Art: alchemy kit (cauldron_blue, alchemy table, potion shelf, herb rack via `tools/kit/kit_alchemy.py`) + `cauldron_brew_blue` / fire / pool / brew_puff gamefx appended to the forge atlas.
+- Not built: The Cold Cauldron quest (Bryony teaches Glowcap + Moonmilk on first talk), Bloop's sprite, the 3-a-day red toadstool limit, regrowing toadstool pickups, Nettle (jeweler / unsocket). Smoke segment **M** (`--quick still`). Screenshot `stage6_alchemy.png`.
+
 ## 2026-10-14: Stage 6.7 leftovers (batch 2 WIP, branch `hearthmoor-batch2-wip`)
 - **Sparks in the Street** (riot, forge_alchemy.md 5): three rioters spawn at the forge gate after the Cold Altar; answer each with the right temple clue (wrong = reopen, seer shortcut, cinderknight line); Orri's tongs story ends it (+60 Hearth, first socket free). Tova and Orri wait until it's done.
 - **The First Temper** (6): Tova's offer, scrap at the forge, 3 bellows pumps by the left forge, a free +1, Orri's turn-in (6 iron bits + 1 rune-stone).

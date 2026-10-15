@@ -6,7 +6,7 @@
  "cell": 48,
  "size": [
   384,
-  1248
+  1728
  ],
  "effects": {
   "portal_vortex": {
@@ -703,9 +703,272 @@
     }
    ],
    "notes": "around the quench tank"
+  },
+  "cauldron_brew_blue": {
+   "row": 26,
+   "frames": 8,
+   "fps": 8,
+   "loop": true,
+   "loop_from": 0,
+   "loops": 1,
+   "kind": "billboard",
+   "pivot": [
+    24,
+    36
+   ],
+   "lift": 0.98,
+   "glow": true,
+   "light": {
+    "color": "#2ab4ff",
+    "intensity": 0.9,
+    "range": 4.5
+   },
+   "speed": null,
+   "travel": null,
+   "then": null,
+   "duration": 9999,
+   "frame_list": [
+    {
+     "x": 0,
+     "y": 1248,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 48,
+     "y": 1248,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 96,
+     "y": 1248,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 144,
+     "y": 1248,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 192,
+     "y": 1248,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 240,
+     "y": 1248,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 288,
+     "y": 1248,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 336,
+     "y": 1248,
+     "w": 48,
+     "h": 48
+    }
+   ],
+   "notes": "on cauldron_blue: pivot = centre of the brew surface (local [0, 0.98, 0])"
+  },
+  "cauldron_fire": {
+   "row": 29,
+   "frames": 6,
+   "fps": 10,
+   "loop": true,
+   "loop_from": 0,
+   "loops": 1,
+   "kind": "billboard",
+   "pivot": [
+    24,
+    47
+   ],
+   "lift": 0.04,
+   "glow": true,
+   "light": {
+    "color": "#ff5a4a",
+    "intensity": 0.5,
+    "range": 2.0
+   },
+   "speed": null,
+   "travel": null,
+   "then": null,
+   "duration": 9999,
+   "frame_list": [
+    {
+     "x": 0,
+     "y": 1392,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 48,
+     "y": 1392,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 96,
+     "y": 1392,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 144,
+     "y": 1392,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 192,
+     "y": 1392,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 240,
+     "y": 1392,
+     "w": 48,
+     "h": 48
+    }
+   ],
+   "notes": "under any cauldron (local [0, 0.04, 0.32]): peeks out below the belly"
+  },
+  "cauldron_pool_blue": {
+   "row": 30,
+   "frames": 6,
+   "fps": 4,
+   "loop": true,
+   "loop_from": 0,
+   "loops": 1,
+   "kind": "decal",
+   "pivot": [
+    24,
+    24
+   ],
+   "lift": 0.02,
+   "glow": true,
+   "light": null,
+   "speed": null,
+   "travel": null,
+   "then": null,
+   "duration": 9999,
+   "frame_list": [
+    {
+     "x": 0,
+     "y": 1440,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 48,
+     "y": 1440,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 96,
+     "y": 1440,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 144,
+     "y": 1440,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 192,
+     "y": 1440,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 240,
+     "y": 1440,
+     "w": 48,
+     "h": 48
+    }
+   ],
+   "notes": "floor pool round cauldron_blue (r ~2 m)"
+  },
+  "brew_puff_blue": {
+   "row": 33,
+   "frames": 7,
+   "fps": 12,
+   "loop": false,
+   "loop_from": 0,
+   "loops": 1,
+   "kind": "billboard",
+   "pivot": [
+    24,
+    47
+   ],
+   "lift": 1.0,
+   "glow": true,
+   "light": null,
+   "speed": null,
+   "travel": null,
+   "then": null,
+   "duration": 0.583,
+   "frame_list": [
+    {
+     "x": 0,
+     "y": 1584,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 48,
+     "y": 1584,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 96,
+     "y": 1584,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 144,
+     "y": 1584,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 192,
+     "y": 1584,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 240,
+     "y": 1584,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 288,
+     "y": 1584,
+     "w": 48,
+     "h": 48
+    }
+   ],
+   "notes": "crafting success over the cauldron"
   }
  },
  "cast_sets": {},
  "cycle": [],
- "forge_from": 864
+ "forge_from": 864,
+ "alchemy_from": 1248
 }

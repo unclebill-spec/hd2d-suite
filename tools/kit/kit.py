@@ -910,6 +910,8 @@ for _n, _fn in list(_OL.items()):
     PROPS[_n.replace("orb_", "orb_post_", 1)] = _no_lamp(_fn, _n.replace("orb_", "orb_post_", 1))
 import kit_forge as _fg  # noqa: E402  (Forge Quarter pieces, Art seat 2026-10-05: anvil, hearth, quench tank, tool rack, grindstone, coal bin, sign)
 PROPS.update(_fg.pieces(__import__('types').SimpleNamespace(**globals())))
+import kit_alchemy as _al  # noqa: E402  (Alchemy pack, Art seat: cauldrons, alchemy table, potion shelf, herb rack)
+PROPS.update(_al.pieces(__import__('types').SimpleNamespace(**globals())))
 
 
 def export_piece(cx: Ctx, pc: Piece, out: Path):

@@ -195,7 +195,7 @@ class Smoke:
 # segment before it saved (localStorage only: the same thing the serial run's reload + Continue restores from).
 # Every step still runs exactly once across the shards, with the same assertions and thresholds.
 FIX = Path(__file__).resolve().parent / "fixtures"
-SEGS = "ABCDEFGHIJKL"
+SEGS = "ABCDEFGHIJKLM"
 SEG_INFO = {
     "A": "title, loading gate, Lantern Eve, errands, controller, Mossglen, leveling, combat, loot, rares + rifts, Hollows, garden (ends: K save in Mossglen -> cp1)",
     "B": "reload #1 + Continue, save slots, Pudding home, shop, bank, riddle, night merchant, factions, glow cap, weather, sockets, errand 2 (ends: K save in the Lane -> cp2)",
@@ -208,6 +208,7 @@ SEG_INFO = {
     "J": "Stage 6.4: the Violet Spring, the Rotwood Hollow (8 rooms, root-door brazier order, the Blight Regent 5.5x: phases + frost-iron spike weak point), the Verdant Heart (6 rooms, Thornmother 2.4x, Hjortur 6x trial / corrupted) (continues cp3)",
     "K": "Stage 6.6: glow-fish orb lanterns (buy, night catch, place at home + garden, night pools + light zones, day off, take back; continues cp3)",
     "L": "Stage 6.7: the Forge Quarter (gate after the Cold Altar, red forges + blue quench glow, Tova +1..+10 temper with caps / fail heat, Orri rune rerolls; continues cp3)",
+    "M": "Stage 6.8: the Glowfrog Still (Bryony, Old Gurgle glow, recipes, fizzle hint, yields, secret broth, timed brew mods, drink from the bag, Bloop's dew, spring vial, garden herbs; continues cp3)",
     "I": "Stage 6.4 groundwork: Glenheart rename, trial-mode yield, 5-6x boss camera pull, Vanaheim conquer merit -> Rift Marks, heartwood sale to Sable (continues cp3)",
 }
 # --quick <area>: the segments that cover an area / feature (a per-change check; the batch still runs everything)
@@ -220,12 +221,13 @@ QUICK = {
     "pet": "F", "pets": "F", "stray": "F",
     "temple": "G", "oldtemple": "G", "midgard": "G",
     "vanaheim4": "I", "verdant": "J", "rotwood": "J", "regent": "J", "hjortur": "J", "vhspring": "J", "trial": "I", "glenheart": "I", "heartwood": "I",
+    "still": "M", "alchemy": "M", "brew": "M", "nettle": "M",
     "forge": "L", "temper": "L", "reroll": "L",
     "lantern": "K", "lanterns": "K", "orb": "K", "glowfish": "K",
     "storm": "H", "storms": "H", "riftstorm": "H", "bounty": "H",
 }
 TIMING = FIX / "smoke_timing.json"   # seconds per segment from the last passing runs (shard balancing only)
-DEFAULT_SECONDS = {"A": 560, "B": 260, "C": 230, "D": 140, "E": 25, "F": 150, "G": 200, "H": 170, "I": 90, "J": 120, "K": 60, "L": 60}
+DEFAULT_SECONDS = {"A": 560, "B": 260, "C": 230, "D": 140, "E": 25, "F": 150, "G": 200, "H": 170, "I": 90, "J": 120, "K": 60, "L": 60, "M": 60}
 
 
 def seg_seconds():
@@ -2588,6 +2590,66 @@ def run(out, simscale=4, size=(960, 540), segs=SEGS):
                 rep["error"] = f"forge: {type(e).__name__}: {e}"[:400]
                 try:
                     rep["shots"]["failure_L"] = T.shot("failure_L"); rep["state"] = T.S()
+                except Exception:  # noqa: BLE001
+                    pass
+        # ---------------------------------------------------------- M: Stage 6.8 the Glowfrog Still (continues cp3)
+        if rep["pass"] and "M" in segs:
+            seg_mark("M")
+            try:
+                saved = cp_load(None, T, url, "cp3")["hearthmoor-slot-1-v2"]
+                mc = b.new_context(viewport={"width": size[0], "height": size[1]})
+                mc.add_init_script(f"if (!sessionStorage.getItem('seeded')) {{ localStorage.clear(); localStorage.setItem('hearthmoor-slot-1-v2', {json.dumps(saved)}); sessionStorage.setItem('seeded', '1'); }}")
+                mc.add_init_script(STUB)
+                mp = mc.new_page()
+                mp.on("pageerror", lambda e: errors.append(f"PAGEERROR {e}"))
+                mp.on("console", lambda m: errors.append(f"console.error {m.text}") if m.type == "error" else None)
+                T.pg = mp
+                mp.goto(url)
+                T.wait("window.__hm && window.__hm.ready && window.__hd2d && window.__hd2d.ready && !window.__hd2dGate.loading", 120)
+                mp.click("#btnCont"); T.idle(); mp.wait_for_timeout(400)
+
+                def marea(a, spawn="start"):
+                    T.ev(f"window.__hm.loadArea('{a}', '{spawn}')"); T.wait(f"window.__hm.area === '{a}' && window.__hm.ctx && !window.__hm.busy", 120); T.idle(); mp.wait_for_timeout(300)
+                T.ev("(() => { const G = window.__hm, S = G.S; G.peace = true; S.quests.altar = 3; S.quests.forge_riot = 3; S.recipes = {}; S.brew = null; delete S.dew; })()")
+                marea("forge", "from_harbor")
+                st = T.ev("(() => { const G = window.__hm, c = G.ctx; return { bryony: !!c.npc('alchemist'), fx: G.alchemy.fx.length, zone: G.glow.zones().some((z) => z.src === 'still'), cauldron: c.scene.objects.some((o) => /cauldron_blue/.test(o.glb || '')) }; })()")
+                T.step("the Still: Bryony, Old Gurgle (kit cauldron + bubbling brew / fire / pool gamefx), a blue light zone", st["bryony"] and st["fx"] == 3 and st["zone"] and st["cauldron"], still=st)
+                br = T.ev("""(() => { const G = window.__hm, S = G.S, A = G.alchemy;
+                  A.bryony().then(G); const r0 = Object.keys(S.recipes).sort();
+                  Object.assign(S.inv, { redcap: 3, moonpetal: 4, tea: 1, coldpetal: 1, glowbell: 1, glowcap: 1, springwater: 0, loaf: 1 }); delete S.inv.dewdrop;
+                  const p = G.ctx.player; p.x = -9.2; p.z = -1.4; A.interact(); const dew1 = S.inv.dewdrop || 0; A.interact(); const dew2 = S.inv.dewdrop || 0;
+                  A.pot.length = 0; A.pot.push('redcap', 'moonpetal'); const fz = A.stir(); const hinted = Object.keys(S.hints || {}).length, keptCap = S.inv.redcap;
+                  const g = A.stir(['redcap', 'dewdrop']).pages[0], gc = S.inv.brew_glowcap || 0;
+                  const e = A.stir(['glowcap', 'redcap']); const ec = S.inv.brew_ember || 0;
+                  S.inv.dewdrop = 1; const ac0 = (S.factions || {}).gnome; const sec0 = !!(S.found || {}).brew_breadbroth; A.stir(['loaf', 'moonpetal', 'dewdrop']);
+                  const menu = A.bryony().choice.options.length;
+                  return { r0, dew1, dew2, fz: fz.pages[0], hinted, keptCap, g, gc, ember: ec, newEmber: !!S.recipes.ember, secret: !sec0 && !!S.found.brew_breadbroth, menu, eline: e.pages[0] }; })()""")
+                T.step("brewing: Bryony teaches 2 recipes, Bloop's pad gives 1 dew a day, a miss fizzles (nothing used, a hint), Glowcap x2, Ember discovered, the bread-broth secret",
+                       br["r0"] == ["glowcap", "moonmilk"] and br["dew1"] == 1 and br["dew2"] == 1 and "fizzles" in br["fz"] and br["hinted"] == 1 and br["keptCap"] == 3 and br["gc"] == 2 and br["ember"] == 1 and br["newEmber"] and br["secret"] and br["menu"] == 4, brew=br)
+                dk = T.ev("""(() => { const G = window.__hm, S = G.S, PR = G.PR;
+                  const m0 = PR.mods(S).meleeMul; G.drinkBrew('ember'); const m1 = PR.mods(S).meleeMul, b1 = S.brew && S.brew.id;
+                  G.alchemy.update(61); const m2 = PR.mods(S).meleeMul;
+                  S.hp = 10; G.drinkBrew('glowcap'); const hp = S.hp;
+                  document.querySelector('[data-item="brew_glowcap"]') && document.querySelector('[data-item="brew_glowcap"]').click(); const tap = S.inv.brew_glowcap || 0;
+                  return { up: +(m1 - m0).toFixed(3), b1, off: +(m2 - m0).toFixed(3), hp, tap, brew: S.brew }; })()""")
+                T.step("drinking: Ember Cap +15% melee for 60 s then off, Glowcap heals 120, tapping a potion in the bag drinks it",
+                       dk["up"] == 0.15 and dk["b1"] == "ember" and dk["off"] == 0 and dk["hp"] >= 120 and dk["tap"] == 0 and dk["brew"] is None, drink=dk)
+                hv = T.ev("""(async () => { const m = await import('./game/garden.js'); const s = await import('./game/shop.js');
+                  return { herbs: Object.values(m.PLANTS).map((p) => p.herb), still: s.SHOPS.still.goods }; })()""")
+                T.step("garden blooms give herbs (cold-fire petal, glowbell, glow-cap); Bryony sells dew, vials, red toadstools", hv["herbs"] == ["coldpetal", "glowbell", "glowcap"] and hv["still"] == ["dewdrop", "vial", "redcap"], herbs=hv)
+                T.ev("(() => { const G = window.__hm, p = G.ctx.player; G.ctx.clock.set(0.95); G.S.t = G.ctx.clock.t; p.x = -5.0; p.z = -2.2; })()"); T.frames(8)
+                T.ev("window.__hm.qaStill = true"); mp.wait_for_timeout(900)
+                rep["shots"]["stage6_alchemy"] = T.shot("stage6_alchemy"); T.ev("window.__hm.qaStill = false")
+                marea("hollows"); sw = T.ev("""(() => { const G = window.__hm, S = G.S, sp = G.ctx.scene.game.spring.pos, p = G.ctx.player; S.inv.vial = 1; delete S.inv.springwater; p.x = sp[0]; p.z = sp[1] + 1.0; G.alchemy.interact(); return { w: S.inv.springwater || 0, v: S.inv.vial || 0 }; })()""")
+                T.step("a vial fills with spring water at the Hollows spring", sw == {"w": 1, "v": 0}, spring=sw)
+                T.step("no JS errors (6.8 Glowfrog Still)", not errors and not T.ev("window.__hd2d.errors.length"), errors=errors[:5])
+                mc.close()
+                seg_done("M")
+            except Exception as e:  # noqa: BLE001
+                rep["pass"] = False
+                rep["error"] = f"still: {type(e).__name__}: {e}"[:400]
+                try:
+                    rep["shots"]["failure_M"] = T.shot("failure_M"); rep["state"] = T.S()
                 except Exception:  # noqa: BLE001
                     pass
         # every shard checks its own pages for JS errors even when the counted 'no JS errors' steps live in another shard

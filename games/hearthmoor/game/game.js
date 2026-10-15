@@ -17,6 +17,7 @@ import { Hollows } from './hollows.js';
 import { Garden } from './garden.js';
 import { Lanterns } from './lanterns.js';
 import { Forge, rioterOn } from './forge.js';
+import { Alchemy, drink as drinkBrew } from './alchemy.js';
 import { Weather, weatherAt } from './weather.js';
 import { Intro } from './intro.js';
 import { Rares, ELEMENTS as RARE_EL } from './rares.js';
@@ -67,6 +68,8 @@ G.garden = new Garden(G);
 G.lanterns = new Lanterns(G);   // 6.6 glow-fish orb lanterns
 G.forge = new Forge(G);   // 6.7 the Forge Quarter (Tova tempers, Orri rerolls)
 TALK.smith = () => G.forge.tova(); TALK.runesmith = () => G.forge.orri();
+G.alchemy = new Alchemy(G); G.ITEMS = ITEMS; G.drinkBrew = (id) => { const ok = drinkBrew(G, id); if (ok) save(); return ok; };   // 6.8 the Glowfrog Still
+TALK.alchemist = () => G.alchemy.bryony();
 for (const r of ['rioter1', 'rioter2', 'rioter3']) TALK[r] = () => G.forge.rioter(r);   // 6.7 Sparks in the Street
 G.weather = new Weather(G);
 G.intro = new Intro(G);
@@ -179,6 +182,7 @@ function drawBag(flash) {
   el.innerHTML = ids.length || gear ? ids.map((k) => `<span class="slot${k === flash ? ' new' : ''}" data-item="${k}" title="${ITEMS[k].name}: ${ITEMS[k].about}">${iconHTML(k)}<b>${G.S.inv[k]}</b></span>`).join('') + gear
                             : '<span class="empty">bag: empty</span>';
   const tn = el.querySelector('[data-item="tonic"]'); if (tn) tn.onclick = (e) => { e.stopPropagation(); G.drinkTonic(); };   // tap the tonic to drink it
+  el.querySelectorAll('[data-item^="brew_"]').forEach((b) => { b.onclick = (e) => { e.stopPropagation(); G.drinkBrew(b.dataset.item.slice(5)); }; });   // 6.8: tap a potion to drink it
   const rail = $('rail');
   if (rail) rail.innerHTML = '';   // the bag chip (top left) is the one inventory display; the pad rail stays empty
 }
@@ -337,12 +341,12 @@ async function loadArea(id, spawnKey, pos) {
   const old = $('view'); if (old) old.remove();
   const canvas = document.createElement('canvas'); canvas.id = 'view'; document.body.prepend(canvas);
   G.area = id; G.S.area = id; G.armed = false;
-  G.rifts.detach(); G.storms.detach(); G.rares.detach(); G.combat.detach(); G.glow.detach(); G.hollows.detach(); G.harbor.detach(); G.crossing.detach(); G.garden.detach(); G.lanterns.detach(); G.forge.detach(); G.weather.detach(); G.loot.detach(); G.shopUI.detach(); G.pets.detach(); G.temple.detach(); G.verdant.detach();
+  G.rifts.detach(); G.storms.detach(); G.rares.detach(); G.combat.detach(); G.glow.detach(); G.hollows.detach(); G.harbor.detach(); G.crossing.detach(); G.garden.detach(); G.lanterns.detach(); G.forge.detach(); G.alchemy.detach(); G.weather.detach(); G.loot.detach(); G.shopUI.detach(); G.pets.detach(); G.temple.detach(); G.verdant.detach();
   G.game = await boot({ base: AREAS[id], canvas, spawn: sp, startT: G.S.t, glowLights: glowCap(), clockSpeed: 1 / DAY_SECONDS, spellCycle: slots(),
                         player: { role: G.S.cls || G.preview || 'wildcaller' }, castAdvance: false,
                         keepTitle: true, padHandled: true, hooks, toast: (m, t) => toast(m, t) });
   const ctx = G.ctx = G.game.ctx;
-  G.storms.attach(ctx, id); G.combat.attach(ctx, id); G.rares.attach(ctx, id); G.rifts.attach(ctx, id); G.factions.attach(ctx, id); G.glow.attach(ctx, id); G.hollows.attach(ctx); G.harbor.attach(ctx, id); G.crossing.attach(ctx, id); G.temple.attach(ctx, id); G.verdant.attach(ctx, id); G.garden.attach(ctx); G.lanterns.attach(ctx, id); G.forge.attach(ctx, id); G.weather.attach(ctx, id); G.loot.attach(ctx); G.shopUI.attach(ctx, id); PR.ensure(G.S); G.loot.restorePurse(id);
+  G.storms.attach(ctx, id); G.combat.attach(ctx, id); G.rares.attach(ctx, id); G.rifts.attach(ctx, id); G.factions.attach(ctx, id); G.glow.attach(ctx, id); G.hollows.attach(ctx); G.harbor.attach(ctx, id); G.crossing.attach(ctx, id); G.temple.attach(ctx, id); G.verdant.attach(ctx, id); G.garden.attach(ctx); G.lanterns.attach(ctx, id); G.forge.attach(ctx, id); G.alchemy.attach(ctx, id); G.weather.attach(ctx, id); G.loot.attach(ctx); G.shopUI.attach(ctx, id); PR.ensure(G.S); G.loot.restorePurse(id);
   // portrait source: this area's actor atlas
   portraitImg = new Image(); portraitImg.src = AREAS[id] + ctx.scene.atlas.image;
   // pickups already taken stay gone
@@ -464,7 +468,7 @@ function onFrame(dt, ctx) {
   if (toastT > 0) { toastT -= dt; const el = $('toast'); if (toastT <= 0.35) el.classList.add('out'); if (toastT <= 0) { el.hidden = true; el.classList.remove('out'); toastPrio = false; if (toastQ.length) toastShow(toastQ.shift()); } }
   syncMarkers();
   padWheel();
-  G.hollows.update(dt); G.garden.update(dt); G.lanterns.update(dt); G.forge.update(dt); G.glow.update(dt); G.weather.update(dt); G.intro.update(dt);
+  G.hollows.update(dt); G.garden.update(dt); G.lanterns.update(dt); G.forge.update(dt); G.alchemy.update(dt); G.glow.update(dt); G.weather.update(dt); G.intro.update(dt);
   G.loot.update(dt); G.shopUI.update(dt); G.rares.update(dt); G.storms.update(dt); G.rifts.update(dt); G.pets.update(dt); G.temple.update(dt); G.verdant.update(dt);
   G.combat.update(dt, ctx);
   drawVitals(ctx);
@@ -532,14 +536,15 @@ const hooks = {
     if (G.dlg) { advanceDialogue(); return true; }
     if (G.log) { setLog(false); return true; }
     if (G.busy) return true;
+    if (kind !== 'tap' && G.alchemy.interact()) return true;   // 6.8: Old Gurgle, Bloop's pad, filling a vial at a spring
     if (kind !== 'tap' && G.hollows.interact()) return true;   // gnome doors
     if (kind !== 'tap' && sealedLook(ctx)) return true;        // sealed Rift gates + Ravenhold's district gates
     if (kind !== 'tap' && G.temple.interact()) return true;
     if (kind !== 'tap' && G.verdant.interact()) return true;    // 6.4: red caps, the spring, the roots, cages, riddle door, root bowls
     if (kind !== 'tap' && G.harbor.interact()) return true;    // waystones (Lane <-> Ravenhold <-> Bifrost) + the rift-skiff
     if (kind !== 'tap' && G.garden.interact()) return true;
-    if (kind !== 'tap' && G.lanterns.interact()) return true;
-    if (kind !== 'tap' && G.forge.interact()) return true;   // 6.7 First Temper: the forge bellows  // orb lanterns: place / take back; glow-fish catch spots
+    if (kind !== 'tap' && G.lanterns.interact()) return true;  // orb lanterns: place / take back; glow-fish catch spots
+    if (kind !== 'tap' && G.forge.interact()) return true;   // 6.7 First Temper: the forge bellows
     return false;
   },
   onTalk: (npc, ctx) => {
@@ -604,7 +609,7 @@ const hooks = {
     return true;
   },
   onFrame,
-  nearThing: (ctx) => !!nearPickup(ctx, 1.4) || G.hollows.nearThing(ctx) || G.garden.nearThing(ctx) || G.lanterns.nearThing(ctx) || G.forge.nearThing(ctx) || !!sealedNear(ctx) || G.temple.nearThing() || G.verdant.nearThing() || G.harbor.nearThing(),
+  nearThing: (ctx) => !!nearPickup(ctx, 1.4) || G.hollows.nearThing(ctx) || G.garden.nearThing(ctx) || G.lanterns.nearThing(ctx) || G.forge.nearThing(ctx) || G.alchemy.nearThing(ctx) || !!sealedNear(ctx) || G.temple.nearThing() || G.verdant.nearThing() || G.harbor.nearThing(),
 };
 
 // ------------------------------------------------------------------ touch action buttons + slow-time spell wheel

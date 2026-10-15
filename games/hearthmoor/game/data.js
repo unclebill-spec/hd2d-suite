@@ -5,6 +5,7 @@ import { clues, tmBraziers, TAMSIN_CLUE } from './temple.js';
 import { MERIT } from './factions.js';
 import { stormName, stormHere } from './storms.js';
 import { calmed } from './forge.js';
+import { BREWS } from './alchemy.js';
 
 export const ITEMS = {
   loaf:      { name: 'Hearthloaf', icon: 0, about: 'A round loaf, still warm. Smells like Tuesday mornings.' },
@@ -13,6 +14,12 @@ export const ITEMS = {
   acorn:     { name: "Tib's lucky acorn", icon: 3, about: 'Polished smooth by a very small thumb.' },
   tea:       { name: 'Moonpetal tea', icon: 4, about: 'A tin of Wren\'s tea. Calms storms, and also grandparents.' },
   tonic:     { name: 'Hearth tonic', px: 'tonic', about: 'Heals 60 HP. Drink: U, right-stick click, or tap it here.' },
+  dewdrop:   { name: 'Glow-dew', px: 'glowseed', about: "Dew from Bloop's lily pad. It glows faintly blue. Bloop seems proud." },
+  vial:      { name: 'Empty vial', px: 'tonic', about: 'Fill it at a hidden spring.' },
+  springwater: { name: 'Spring water', px: 'tonic', about: 'A stoppered vial of hidden-spring water. Still fizzing.' },
+  glowcap:   { name: 'Red glow-cap', px: 'glowseed', about: 'A garden glow toadstool, warm red. It hums when stirred.' },
+  coldpetal: { name: 'Cold-fire petal', px: 'glowseed', about: 'A petal from a cold-fire bloom. Chilly. Bright. Neon blue.' },
+  glowbell:  { name: 'Violet glowbell', px: 'glowseed', about: 'A violet glowbell flower. It rings very quietly in the dark.' },
   ironbit:   { name: 'Iron bits', px: 'tonic', about: "Scrap iron, sorted by size. Tova's forge eats it by the bucket." },
   coldsteel: { name: 'Cold-steel ingot', px: 'tonic', about: 'Iron quenched in cold fire. Blue at the edges. Needed for +4 and up.' },
   runestone: { name: 'Rune-stone', px: 'glowseed', about: 'A dwarven rune carved in river stone. Orri uses one to reroll a gear stat.' },
@@ -31,6 +38,8 @@ export const ITEMS = {
   greenheart_tine: { name: 'Greenheart tine', px: 'glowseed', key: true, about: 'A living tine from Hjortur\'s antlers, still in leaf. The forest knows your step.' },
   denbiscuit: { name: 'Den biscuit', px: 'denbiscuit', about: "Signe's oat-and-moonpetal biscuit. Feed your pet once a day (hero screen, Gear tab): bond grows, and its glow doubles for 60 s." },
 };
+// 6.8 potions: bag items brew_<id> (tap to drink)
+for (const [id, B] of Object.entries(BREWS)) ITEMS[`brew_${id}`] = { name: B.name, px: 'tonic', about: `${B.about} Tap to drink.` };
 // the Stray Den's three yard lanterns (Hollows brazier rule: S.found.den_l1..3)
 export const denLit = (S) => ['den_l1', 'den_l2', 'den_l3'].filter((k) => (S.found || {})[k]).length;
 

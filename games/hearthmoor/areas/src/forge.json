@@ -2,7 +2,7 @@
  "name": "Ravenhold: the Forge Quarter",
  "seed": 108,
  "biome": "cozy-village",
- "about": "The Forge Quarter on Ravenhold's east cliff (6.7): a dark stone yard of red forge mouths and neon-blue cold-fire quench tanks. Tova Anvilsong tempers gear +1 to +10; Orri Flintcog rerolls stats with rune-stones. Art: the forge pack (art/forge/, Art seat 2026-10-05).",
+ "about": "The Forge Quarter on Ravenhold's east cliff (6.7): a dark stone yard of red forge mouths and neon-blue cold-fire quench tanks. Tova Anvilsong tempers gear +1 to +10; Orri Flintcog rerolls stats with rune-stones. Art: the forge pack (art/forge/, Art seat 2026-10-05). The Glowfrog Still (6.8): Bryony's cauldron Old Gurgle on the lower yard (art/alchemy pack).",
  "time": {
   "start": "night",
   "speed": 0.0016
@@ -211,6 +211,41 @@
     4.6,
     -0.8
    ]
+  },
+  {
+   "piece": "cauldron_blue",
+   "pos": [
+    -6.0,
+    -3.4
+   ]
+  },
+  {
+   "piece": "alchemy_table",
+   "pos": [
+    -8.8,
+    -4.6
+   ]
+  },
+  {
+   "piece": "potion_shelf",
+   "pos": [
+    -6.6,
+    -5.7
+   ]
+  },
+  {
+   "piece": "herb_rack",
+   "pos": [
+    -4.0,
+    -5.8
+   ]
+  },
+  {
+   "piece": "barrel",
+   "pos": [
+    -9.8,
+    -2.6
+   ]
   }
  ],
  "hedges": [],
@@ -338,6 +373,21 @@
    "talkable": true,
    "say": [
     "Forges! Dwarves! Somebody do something!"
+   ]
+  },
+  {
+   "id": "alchemist",
+   "role": "lamplighter",
+   "name": "Bryony Glasswort, the Glowfrog Still",
+   "pos": [
+    -7.4,
+    -2.6
+   ],
+   "facing": "right",
+   "behavior": "idle",
+   "talkable": true,
+   "say": [
+    "Everything glows if you stir it long enough."
    ]
   }
  ],
