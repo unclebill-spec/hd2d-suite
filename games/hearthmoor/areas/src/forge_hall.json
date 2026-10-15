@@ -578,6 +578,17 @@
     "to": "svartalfheim",
     "spawn": "from_hall",
     "label": "the stair back up to Copper Row"
+   },
+   {
+    "rect": [
+     3.2,
+     -11.6,
+     5.0,
+     -10.4
+    ],
+    "to": "clockdeep",
+    "spawn": "from_forge",
+    "label": "the Deep's cog-cage lift behind the Great Forge"
    }
   ],
   "portals": [],
@@ -616,6 +627,11 @@
     0.0,
     0.0,
     "up"
+   ],
+   "from_deep": [
+    4.0,
+    -8.6,
+    "down"
    ]
   },
   "svfx": [
