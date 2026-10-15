@@ -22965,6 +22965,17 @@
    ],
    "desc": "Gorrak Ironmaw, the Bound Forge-Tyrant (boss, 6x; the ONLY plate-wearer): fire-demon bound in riveted black plate, horned maw helm, wrist chains, cold-blue rune seams, forge fire through the gaps. Phase 1 (chained).",
    "enemy": true
+  },
+  "pet_tick": {
+   "sheet": "tick",
+   "row": 0,
+   "kind": "creature",
+   "pet": true,
+   "anims": [
+    "idle",
+    "walk",
+    "follow"
+   ]
   }
  },
  "sheets": {
@@ -22995,6 +23006,10 @@
   "boss_gorrak": {
    "json": "boss_gorrak.json",
    "image": "boss_gorrak.png"
+  },
+  "tick": {
+   "json": "tick.json",
+   "image": "tick.png"
   }
  }
 }

@@ -6,7 +6,7 @@
  "cell": 32,
  "size": [
   256,
-  1952
+  2048
  ],
  "effects": {
   "sparkle_burst": {
@@ -4035,6 +4035,199 @@
    "combat": true,
    "duration": 1.2,
    "desc": "soft toxic-green ground pool under the moss-pup (NEON green)"
+  },
+  "pet_aura_tick": {
+   "row": 61,
+   "frames": 8,
+   "fps": 8,
+   "loop": true,
+   "loop_from": 0,
+   "loops": 1,
+   "kind": "billboard",
+   "pivot": [
+    16,
+    31
+   ],
+   "lift": 0.0,
+   "glow": true,
+   "light": null,
+   "speed": null,
+   "travel": null,
+   "then": null,
+   "frame_list": [
+    {
+     "x": 0,
+     "y": 1952,
+     "w": 32,
+     "h": 32
+    },
+    {
+     "x": 32,
+     "y": 1952,
+     "w": 32,
+     "h": 32
+    },
+    {
+     "x": 64,
+     "y": 1952,
+     "w": 32,
+     "h": 32
+    },
+    {
+     "x": 96,
+     "y": 1952,
+     "w": 32,
+     "h": 32
+    },
+    {
+     "x": 128,
+     "y": 1952,
+     "w": 32,
+     "h": 32
+    },
+    {
+     "x": 160,
+     "y": 1952,
+     "w": 32,
+     "h": 32
+    },
+    {
+     "x": 192,
+     "y": 1952,
+     "w": 32,
+     "h": 32
+    },
+    {
+     "x": 224,
+     "y": 1952,
+     "w": 32,
+     "h": 32
+    }
+   ],
+   "combat": true,
+   "duration": 1.0,
+   "desc": "neon-blue rune sparks orbiting Tick like clock ticks (NEON blue)",
+   "follow_lift": "hover"
+  },
+  "pet_pool_tick": {
+   "row": 62,
+   "frames": 6,
+   "fps": 6,
+   "loop": true,
+   "loop_from": 0,
+   "loops": 1,
+   "kind": "decal",
+   "pivot": [
+    16,
+    16
+   ],
+   "lift": 0.02,
+   "glow": true,
+   "light": null,
+   "speed": null,
+   "travel": null,
+   "then": null,
+   "frame_list": [
+    {
+     "x": 0,
+     "y": 1984,
+     "w": 32,
+     "h": 32
+    },
+    {
+     "x": 32,
+     "y": 1984,
+     "w": 32,
+     "h": 32
+    },
+    {
+     "x": 64,
+     "y": 1984,
+     "w": 32,
+     "h": 32
+    },
+    {
+     "x": 96,
+     "y": 1984,
+     "w": 32,
+     "h": 32
+    },
+    {
+     "x": 128,
+     "y": 1984,
+     "w": 32,
+     "h": 32
+    },
+    {
+     "x": 160,
+     "y": 1984,
+     "w": 32,
+     "h": 32
+    }
+   ],
+   "combat": true,
+   "duration": 1.0,
+   "desc": "cold-blue light pool under Tick (NEON blue)"
+  },
+  "pet_pool_tick_safe": {
+   "row": 63,
+   "frames": 6,
+   "fps": 6,
+   "loop": true,
+   "loop_from": 0,
+   "loops": 1,
+   "kind": "decal",
+   "pivot": [
+    16,
+    16
+   ],
+   "lift": 0.02,
+   "glow": true,
+   "light": null,
+   "speed": null,
+   "travel": null,
+   "then": null,
+   "frame_list": [
+    {
+     "x": 0,
+     "y": 2016,
+     "w": 32,
+     "h": 32
+    },
+    {
+     "x": 32,
+     "y": 2016,
+     "w": 32,
+     "h": 32
+    },
+    {
+     "x": 64,
+     "y": 2016,
+     "w": 32,
+     "h": 32
+    },
+    {
+     "x": 96,
+     "y": 2016,
+     "w": 32,
+     "h": 32
+    },
+    {
+     "x": 128,
+     "y": 2016,
+     "w": 32,
+     "h": 32
+    },
+    {
+     "x": 160,
+     "y": 2016,
+     "w": 32,
+     "h": 32
+    }
+   ],
+   "combat": true,
+   "duration": 1.0,
+   "desc": "palette-safe twin of the pool"
   }
  },
  "cast_sets": {

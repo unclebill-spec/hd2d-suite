@@ -22952,6 +22952,17 @@
     "attack"
    ],
    "desc": "Dagna Coalbeard (dwarf smith, companion): soot-black beard in two thick braids with copper rings, ruddy cheeks, red-brown work shirt with sleeves rolled to the elbow, leather bracers, leather apron tied at the waist over grey trousers, tan steel-toed boots, big square hammer on her back (head glows faint ember-orange). Attack = hammer swing (frame 14), cast = ember strike (sparks in lamp / gold)"
+  },
+  "pet_tick": {
+   "sheet": "tick",
+   "row": 0,
+   "kind": "creature",
+   "pet": true,
+   "anims": [
+    "idle",
+    "walk",
+    "follow"
+   ]
   }
  },
  "sheets": {
@@ -22978,6 +22989,10 @@
   "dagna_safe": {
    "json": "dagna_safe.json",
    "image": "dagna_safe.png"
+  },
+  "tick": {
+   "json": "tick.json",
+   "image": "tick.png"
   }
  }
 }

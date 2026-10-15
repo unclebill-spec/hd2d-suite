@@ -45,12 +45,24 @@ export const PETS = {
     about: 'A puppy of soft green moss with root legs and a red toadstool on its head. Smells water through stone.',
     names: ['Sprout', 'Clover', 'Bramble', 'Truffle', 'Fernly', 'Burdock', 'Tuft', 'Pebble', 'Chanterelle', 'Mossy'],
   },
+  // [SVARTALFHEIM] Tick the clockwork owl (story 9.5): a gift from Tansy after The Clockwork Deep (befriend). Own sheet, neon blue eyes + chest core.
+  // chestSense / goldMul are the story's new aura keys; the secretSense half works today, the chest glint + gold bonus hooks come later.
+  tick: {
+    name: 'Tick', species: 'clockwork owl', role: 'pet_tick', glow: '#2ab4ff', gift: 'svartalfheim',
+    hover: { lift: 0.7, bob: 0.05, hz: 1.0 },
+    light: { color: '#2ab4ff', intensity: 4.0, range: 3.2, lift: 0.9, pulse: { min: 0.8, max: 1.1, hz: 2.0, shape: 'tick' }, r: 1.6 },
+    fx: { aura: 'pet_aura_tick', pool: 'pet_pool_tick' },
+    aura: { id: 'clockwork_eye', name: 'Clockwork Eye', desc: 'Hidden doors, springs and chests glint within 6 m. Gold from pickups +6%. Bond 3: 8 m, +8%.',
+            mods: { secretSense: 6, chestSense: 6, goldMul: 0.06 }, bond3: { secretSense: 8, chestSense: 8, goldMul: 0.08 } },
+    about: 'A brass owl the size of a teacup, with cold-blue eyes and a gear that ticks in his chest. Hoots in clicks.',
+    names: ['Tick', 'Cogsworth', 'Sprocket', 'Brassy', 'Whirr', 'Pinion', 'Tock', 'Bolt'],
+  },
 };
 export const PET_IDS = Object.keys(PETS);
 export const DEN = { biscuit: 6, adopt: 40, fedBond2: 3, fedBond3: 7, glowBoost: 60 };
 const DARK = (t) => t > 0.75 || t < 0.25;   // dusk into night to dawn (the Hollows brazier window)
 const DIM = { hollows: true, rift: true, ravenhold: true, bifrost: true };   // the Rift's gloom: pet light at every hour
-const SECRET_SAY = { mosspup: ['({name} digs at the ground, ears up. Water down there?)', '({name} sits and stares at a wall. It hears fizzing.)'], glowmoth: ['({name} beats its wings at a blank wall. A hidden door?)', '({name} dusts the ground. Something fizzes below.)', '({name} hovers at a mushroom stem. Tiny door, tiny knock?)'] };
+const SECRET_SAY = { tick: ['({name} clicks twice and points his whole head at the wall.)', 'Tick! Tick-tick!'], mosspup: ['({name} digs at the ground, ears up. Water down there?)', '({name} sits and stares at a wall. It hears fizzing.)'], glowmoth: ['({name} beats its wings at a blank wall. A hidden door?)', '({name} dusts the ground. Something fizzes below.)', '({name} hovers at a mushroom stem. Tiny door, tiny knock?)'] };
 
 // the active pet's aura mods (bond 3 uses the bigger numbers); folded into progress.mods() like gear
 export function petAura(S) {

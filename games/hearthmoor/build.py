@@ -106,7 +106,8 @@ def copy_areas(areas=AREAS):
 # the hero everywhere, so every area gets: the pet sheet next to its actor atlas (meta.sheets.pets + stub roles, the
 # boss-sheet mechanism), the pet aura / pool effects appended under its spells atlas, and the pet particles appended
 # under its particles atlas. Idempotent: a re-run strips the previous pet rows first (`pets_from` remembers the cut).
-PET_ROLES = ("pet_wisp", "pet_moth", "pet_fox", "pet_mosspup")
+PET_ROLES = ("pet_wisp", "pet_moth", "pet_fox", "pet_mosspup", "pet_tick")
+TICK = GAME / "art" / "svartalfheim" / "tick"   # [SVARTALFHEIM] Tick the clockwork owl: own 240x128 sheet (NEON primary) + 3 fx rows stacked under pets_fx
 
 
 def _append_atlas(img_path, meta, add_img, add_meta, key, rows_key=None, mark="pets_from"):
@@ -143,6 +144,20 @@ def install_pets(areas=AREAS):
     pm = json.loads((P / "pets.json").read_text())
     fxm = json.loads((P / "pets_fx.json").read_text())
     ptm = json.loads((P / "pets_particles.json").read_text())
+    tm = json.loads((TICK / "tick.json").read_text())
+    tfx = json.loads((TICK / "tick_fx.json").read_text())
+    fx_img = P / "pets_fx.png"
+    if tfx:   # stack Tick's fx strip under the shared pet fx, so one appended block carries both
+        base = Image.open(P / "pets_fx.png").convert("RGBA"); add = Image.open(TICK / "tick_fx.png").convert("RGBA")
+        comb = Image.new("RGBA", (max(base.size[0], add.size[0]), base.size[1] + add.size[1]), (0, 0, 0, 0)); comb.paste(base, (0, 0)); comb.paste(add, (0, base.size[1]))
+        TMP.mkdir(parents=True, exist_ok=True); fx_img = TMP / "pets_fx_tick.png"; comb.save(fx_img)
+        row0, y0 = base.size[1] // fxm["cell"], base.size[1]
+        fxm = json.loads(json.dumps(fxm))
+        for k, v in tfx["effects"].items():
+            v = json.loads(json.dumps(v)); v["row"] += row0
+            for f in v.get("frame_list", []):
+                f["y"] += y0
+            fxm["effects"][k] = v
     for a in areas:
         root = GAME / "areas" / a
         scene = json.loads((root / "scene.json").read_text())
@@ -152,9 +167,15 @@ def install_pets(areas=AREAS):
         (sp.parent / "pets.json").write_text(json.dumps(pm, indent=1))
         am.setdefault("sheets", {})["pets"] = {"json": "pets.json", "image": "pets.png"}
         for r in PET_ROLES:
+            if r == "pet_tick":   # Tick rides its own sheet (tick_neon.png is the primary look; tick.png is the palette-safe fallback)
+                shutil.copy2(TICK / "tick_neon.png", sp.parent / "tick.png")
+                (sp.parent / "tick.json").write_text(json.dumps(tm, indent=1))
+                am["sheets"]["tick"] = {"json": "tick.json", "image": "tick.png"}
+                am["roles"][r] = {"sheet": "tick", "row": tm["roles"][r]["row"], "kind": "creature", "pet": True, "anims": ["idle", "walk", "follow"]}
+                continue
             am["roles"][r] = {"sheet": "pets", "row": pm["roles"][r]["row"], "kind": "creature", "pet": True, "anims": ["idle", "walk", "follow"]}
         sp.write_text(json.dumps(am, indent=1))
-        for k, add_img, add_meta, key, rows in (("spells", P / "pets_fx.png", fxm, "effects", None),
+        for k, add_img, add_meta, key, rows in (("spells", fx_img, fxm, "effects", None),
                                                  ("particles", P / "pets_particles.png", ptm, "presets", "rows")):
             jp = root / scene[k]["json"]; ip = root / scene[k]["image"]
             if k == "spells" and a in PET_FX_SKIP:   # sparse strip stays out of this area's atlas (check-scene effects_sharp); the pet keeps its dust particles

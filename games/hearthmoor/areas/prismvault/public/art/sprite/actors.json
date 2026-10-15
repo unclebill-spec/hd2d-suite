@@ -25658,6 +25658,17 @@
     "walk"
    ],
    "desc": "Thalion Prismwright, prism scholar: platinum hair, long ears, round glasses, periwinkle shirt under a deep-blue vest, dark belt, pale trousers, black boots, a ledger of light-runes"
+  },
+  "pet_tick": {
+   "sheet": "tick",
+   "row": 0,
+   "kind": "creature",
+   "pet": true,
+   "anims": [
+    "idle",
+    "walk",
+    "follow"
+   ]
   }
  },
  "sheets": {
@@ -25688,6 +25699,10 @@
   "alfenemy": {
    "json": "alfenemy.json",
    "image": "alfenemy.png"
+  },
+  "tick": {
+   "json": "tick.json",
+   "image": "tick.png"
   }
  }
 }

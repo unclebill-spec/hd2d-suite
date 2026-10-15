@@ -23042,6 +23042,17 @@
    ],
    "desc": "Hushed blade (conquer only, dark-elf assassin): ash-grey skin, silver hair, long ears, black wrap-top, grey sash, slate trousers bound at the shins, black shoes, two short blades (cold-blue edge). Attack = blade combo (frame 14); fades in / out with shadow_puff",
    "enemy": true
+  },
+  "pet_tick": {
+   "sheet": "tick",
+   "row": 0,
+   "kind": "creature",
+   "pet": true,
+   "anims": [
+    "idle",
+    "walk",
+    "follow"
+   ]
   }
  },
  "sheets": {
@@ -23068,6 +23079,10 @@
   "svenemy": {
    "json": "svenemy.json",
    "image": "svenemy.png"
+  },
+  "tick": {
+   "json": "tick.json",
+   "image": "tick.png"
   }
  }
 }

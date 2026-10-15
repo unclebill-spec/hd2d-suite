@@ -6,7 +6,7 @@
  "cell": 32,
  "size": [
   256,
-  1792
+  1760
  ],
  "effects": {
   "sparkle_burst": {
@@ -3000,6 +3000,310 @@
    ],
    "duration": 1.333
   },
+  "orb_large_blue": {
+   "row": 52,
+   "frames": 8,
+   "fps": 6,
+   "loop": true,
+   "loop_from": 0,
+   "loops": 1,
+   "kind": "billboard",
+   "pivot": [
+    16,
+    16
+   ],
+   "lift": 0.0,
+   "glow": true,
+   "light": {
+    "color": "#2ab4ff",
+    "intensity": 0.8,
+    "range": 5.0
+   },
+   "speed": null,
+   "travel": null,
+   "then": null,
+   "duration": 9999,
+   "strip": "strips/orb_large_blue.png",
+   "frame_list": [
+    {
+     "x": 0,
+     "y": 1664,
+     "w": 32,
+     "h": 32
+    },
+    {
+     "x": 32,
+     "y": 1664,
+     "w": 32,
+     "h": 32
+    },
+    {
+     "x": 64,
+     "y": 1664,
+     "w": 32,
+     "h": 32
+    },
+    {
+     "x": 96,
+     "y": 1664,
+     "w": 32,
+     "h": 32
+    },
+    {
+     "x": 128,
+     "y": 1664,
+     "w": 32,
+     "h": 32
+    },
+    {
+     "x": 160,
+     "y": 1664,
+     "w": 32,
+     "h": 32
+    },
+    {
+     "x": 192,
+     "y": 1664,
+     "w": 32,
+     "h": 32
+    },
+    {
+     "x": 224,
+     "y": 1664,
+     "w": 32,
+     "h": 32
+    }
+   ],
+   "notes": "orb_garden_* (orb centre = lamp marker)"
+  },
+  "orb_large_violet": {
+   "row": 53,
+   "frames": 8,
+   "fps": 6,
+   "loop": true,
+   "loop_from": 0,
+   "loops": 1,
+   "kind": "billboard",
+   "pivot": [
+    16,
+    16
+   ],
+   "lift": 0.0,
+   "glow": true,
+   "light": {
+    "color": "#a45cf0",
+    "intensity": 0.8,
+    "range": 5.0
+   },
+   "speed": null,
+   "travel": null,
+   "then": null,
+   "duration": 9999,
+   "strip": "strips/orb_large_violet.png",
+   "frame_list": [
+    {
+     "x": 0,
+     "y": 1696,
+     "w": 32,
+     "h": 32
+    },
+    {
+     "x": 32,
+     "y": 1696,
+     "w": 32,
+     "h": 32
+    },
+    {
+     "x": 64,
+     "y": 1696,
+     "w": 32,
+     "h": 32
+    },
+    {
+     "x": 96,
+     "y": 1696,
+     "w": 32,
+     "h": 32
+    },
+    {
+     "x": 128,
+     "y": 1696,
+     "w": 32,
+     "h": 32
+    },
+    {
+     "x": 160,
+     "y": 1696,
+     "w": 32,
+     "h": 32
+    },
+    {
+     "x": 192,
+     "y": 1696,
+     "w": 32,
+     "h": 32
+    },
+    {
+     "x": 224,
+     "y": 1696,
+     "w": 32,
+     "h": 32
+    }
+   ],
+   "notes": "orb_garden_* (orb centre = lamp marker)"
+  },
+  "orb_large_red": {
+   "row": 54,
+   "frames": 8,
+   "fps": 6,
+   "loop": true,
+   "loop_from": 0,
+   "loops": 1,
+   "kind": "billboard",
+   "pivot": [
+    16,
+    16
+   ],
+   "lift": 0.0,
+   "glow": true,
+   "light": {
+    "color": "#e0302a",
+    "intensity": 0.8,
+    "range": 5.0
+   },
+   "speed": null,
+   "travel": null,
+   "then": null,
+   "duration": 9999,
+   "strip": "strips/orb_large_red.png",
+   "frame_list": [
+    {
+     "x": 0,
+     "y": 1728,
+     "w": 32,
+     "h": 32
+    },
+    {
+     "x": 32,
+     "y": 1728,
+     "w": 32,
+     "h": 32
+    },
+    {
+     "x": 64,
+     "y": 1728,
+     "w": 32,
+     "h": 32
+    },
+    {
+     "x": 96,
+     "y": 1728,
+     "w": 32,
+     "h": 32
+    },
+    {
+     "x": 128,
+     "y": 1728,
+     "w": 32,
+     "h": 32
+    },
+    {
+     "x": 160,
+     "y": 1728,
+     "w": 32,
+     "h": 32
+    },
+    {
+     "x": 192,
+     "y": 1728,
+     "w": 32,
+     "h": 32
+    },
+    {
+     "x": 224,
+     "y": 1728,
+     "w": 32,
+     "h": 32
+    }
+   ],
+   "notes": "orb_garden_* (orb centre = lamp marker)"
+  },
+  "orb_grand_mix": {
+   "row": 55,
+   "frames": 8,
+   "fps": 6,
+   "loop": true,
+   "loop_from": 0,
+   "loops": 1,
+   "kind": "billboard",
+   "pivot": [
+    16,
+    16
+   ],
+   "lift": 0.0,
+   "glow": true,
+   "light": {
+    "color": "#7a8cff",
+    "intensity": 1.0,
+    "range": 7.0
+   },
+   "speed": null,
+   "travel": null,
+   "then": null,
+   "duration": 9999,
+   "strip": "strips/orb_grand_mix.png",
+   "frame_list": [
+    {
+     "x": 0,
+     "y": 1760,
+     "w": 32,
+     "h": 32
+    },
+    {
+     "x": 32,
+     "y": 1760,
+     "w": 32,
+     "h": 32
+    },
+    {
+     "x": 64,
+     "y": 1760,
+     "w": 32,
+     "h": 32
+    },
+    {
+     "x": 96,
+     "y": 1760,
+     "w": 32,
+     "h": 32
+    },
+    {
+     "x": 128,
+     "y": 1760,
+     "w": 32,
+     "h": 32
+    },
+    {
+     "x": 160,
+     "y": 1760,
+     "w": 32,
+     "h": 32
+    },
+    {
+     "x": 192,
+     "y": 1760,
+     "w": 32,
+     "h": 32
+    },
+    {
+     "x": 224,
+     "y": 1760,
+     "w": 32,
+     "h": 32
+    }
+   ],
+   "notes": "orb_grand (1.1 m orb = 20 px; this 30 px billboard is a touch larger: scale 0.66 or use as UI / close-up)"
+  },
   "pet_aura_wisp": {
    "row": 44,
    "frames": 8,
@@ -3530,30 +3834,24 @@
    "duration": 1.2,
    "desc": "soft toxic-green ground pool under the moss-pup (NEON green)"
   },
-  "orb_large_blue": {
+  "pet_aura_tick": {
    "row": 52,
    "frames": 8,
-   "fps": 6,
+   "fps": 8,
    "loop": true,
    "loop_from": 0,
    "loops": 1,
    "kind": "billboard",
    "pivot": [
     16,
-    16
+    31
    ],
    "lift": 0.0,
    "glow": true,
-   "light": {
-    "color": "#2ab4ff",
-    "intensity": 0.8,
-    "range": 5.0
-   },
+   "light": null,
    "speed": null,
    "travel": null,
    "then": null,
-   "duration": 9999,
-   "strip": "strips/orb_large_blue.png",
    "frame_list": [
     {
      "x": 0,
@@ -3604,32 +3902,29 @@
      "h": 32
     }
    ],
-   "notes": "orb_garden_* (orb centre = lamp marker)"
+   "combat": true,
+   "duration": 1.0,
+   "desc": "neon-blue rune sparks orbiting Tick like clock ticks (NEON blue)",
+   "follow_lift": "hover"
   },
-  "orb_large_violet": {
+  "pet_pool_tick": {
    "row": 53,
-   "frames": 8,
+   "frames": 6,
    "fps": 6,
    "loop": true,
    "loop_from": 0,
    "loops": 1,
-   "kind": "billboard",
+   "kind": "decal",
    "pivot": [
     16,
     16
    ],
-   "lift": 0.0,
+   "lift": 0.02,
    "glow": true,
-   "light": {
-    "color": "#a45cf0",
-    "intensity": 0.8,
-    "range": 5.0
-   },
+   "light": null,
    "speed": null,
    "travel": null,
    "then": null,
-   "duration": 9999,
-   "strip": "strips/orb_large_violet.png",
    "frame_list": [
     {
      "x": 0,
@@ -3666,46 +3961,30 @@
      "y": 1696,
      "w": 32,
      "h": 32
-    },
-    {
-     "x": 192,
-     "y": 1696,
-     "w": 32,
-     "h": 32
-    },
-    {
-     "x": 224,
-     "y": 1696,
-     "w": 32,
-     "h": 32
     }
    ],
-   "notes": "orb_garden_* (orb centre = lamp marker)"
+   "combat": true,
+   "duration": 1.0,
+   "desc": "cold-blue light pool under Tick (NEON blue)"
   },
-  "orb_large_red": {
+  "pet_pool_tick_safe": {
    "row": 54,
-   "frames": 8,
+   "frames": 6,
    "fps": 6,
    "loop": true,
    "loop_from": 0,
    "loops": 1,
-   "kind": "billboard",
+   "kind": "decal",
    "pivot": [
     16,
     16
    ],
-   "lift": 0.0,
+   "lift": 0.02,
    "glow": true,
-   "light": {
-    "color": "#e0302a",
-    "intensity": 0.8,
-    "range": 5.0
-   },
+   "light": null,
    "speed": null,
    "travel": null,
    "then": null,
-   "duration": 9999,
-   "strip": "strips/orb_large_red.png",
    "frame_list": [
     {
      "x": 0,
@@ -3742,97 +4021,11 @@
      "y": 1728,
      "w": 32,
      "h": 32
-    },
-    {
-     "x": 192,
-     "y": 1728,
-     "w": 32,
-     "h": 32
-    },
-    {
-     "x": 224,
-     "y": 1728,
-     "w": 32,
-     "h": 32
     }
    ],
-   "notes": "orb_garden_* (orb centre = lamp marker)"
-  },
-  "orb_grand_mix": {
-   "row": 55,
-   "frames": 8,
-   "fps": 6,
-   "loop": true,
-   "loop_from": 0,
-   "loops": 1,
-   "kind": "billboard",
-   "pivot": [
-    16,
-    16
-   ],
-   "lift": 0.0,
-   "glow": true,
-   "light": {
-    "color": "#7a8cff",
-    "intensity": 1.0,
-    "range": 7.0
-   },
-   "speed": null,
-   "travel": null,
-   "then": null,
-   "duration": 9999,
-   "strip": "strips/orb_grand_mix.png",
-   "frame_list": [
-    {
-     "x": 0,
-     "y": 1760,
-     "w": 32,
-     "h": 32
-    },
-    {
-     "x": 32,
-     "y": 1760,
-     "w": 32,
-     "h": 32
-    },
-    {
-     "x": 64,
-     "y": 1760,
-     "w": 32,
-     "h": 32
-    },
-    {
-     "x": 96,
-     "y": 1760,
-     "w": 32,
-     "h": 32
-    },
-    {
-     "x": 128,
-     "y": 1760,
-     "w": 32,
-     "h": 32
-    },
-    {
-     "x": 160,
-     "y": 1760,
-     "w": 32,
-     "h": 32
-    },
-    {
-     "x": 192,
-     "y": 1760,
-     "w": 32,
-     "h": 32
-    },
-    {
-     "x": 224,
-     "y": 1760,
-     "w": 32,
-     "h": 32
-    }
-   ],
-   "notes": "orb_grand (1.1 m orb = 20 px; this 30 px billboard is a touch larger: scale 0.66 or use as UI / close-up)"
+   "combat": true,
+   "duration": 1.0,
+   "desc": "palette-safe twin of the pool"
   }
  },
  "cast_sets": {
