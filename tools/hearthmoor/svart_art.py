@@ -30,11 +30,13 @@ SHEETS = {  # sheet name -> (staging json, {area role: staging role})
     "svenemy": (ST / "sprite" / "deep_enemies.json", {r: r for r in ("forgeconstruct", "sparkgolem", "sootling", "shadowsmith", "hushblade")}),
 }
 
+EXTRA = {"clockdeep2": {"boss_gorrak": (ST / "sprite" / "boss_gorrak.json", {"gorrak": "gorrak"})}}   # Gorrak's own 144x192 boss sheet, only where the fight is
+
 
 def sprites(area):
     d = GAME / "areas" / area / "public" / "art" / "sprite"
     mp = d / "actors.json"; m = json.loads(mp.read_text()); m.setdefault("sheets", {})
-    for nm, (src, roles) in SHEETS.items():
+    for nm, (src, roles) in {**SHEETS, **EXTRA.get(area, {})}.items():
         sm = json.loads(src.read_text())
         shutil.copy2(src.parent / sm["image"], d / f"{nm}.png")
         out = {k: sm[k] for k in ("tool", "biome", "frame", "pivot", "ground_row", "facings", "anims", "cols", "size")}

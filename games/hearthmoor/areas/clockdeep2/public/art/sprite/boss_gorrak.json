@@ -1,0 +1,141 @@
+{
+ "tool": "hd2d boss_sheet",
+ "biome": "cozy-village",
+ "frame": [
+  144,
+  192
+ ],
+ "pivot": [
+  72,
+  192
+ ],
+ "ground_row": 191,
+ "facings": [
+  "down",
+  "up",
+  "left",
+  "right"
+ ],
+ "anims": {
+  "idle": {
+   "start": 0,
+   "count": 4,
+   "fps": 3,
+   "loop": [
+    0,
+    1,
+    2,
+    1
+   ],
+   "blink": 3
+  },
+  "walk": {
+   "start": 4,
+   "count": 4,
+   "fps": 8
+  },
+  "cast": {
+   "start": 8,
+   "count": 4,
+   "fps": 6,
+   "loop": [
+    0,
+    1,
+    2,
+    2,
+    3,
+    3
+   ],
+   "casters_only": true
+  },
+  "attack": {
+   "start": 12,
+   "count": 4,
+   "fps": 10,
+   "loop": [
+    0,
+    1,
+    2,
+    2,
+    3
+   ],
+   "heroes_only": true
+  },
+  "defend": {
+   "start": 16,
+   "count": 4,
+   "fps": 6,
+   "loop": [
+    0,
+    1
+   ],
+   "hold": [
+    2,
+    3
+   ],
+   "heroes_only": true
+  },
+  "jump": {
+   "start": 20,
+   "count": 4,
+   "fps": 8,
+   "phases": [
+    "crouch",
+    "launch",
+    "airborne",
+    "land"
+   ],
+   "heroes_only": true
+  },
+  "die": {
+   "start": 24,
+   "count": 4,
+   "fps": 6,
+   "once": true,
+   "enemies_only": true
+  }
+ },
+ "cols": 28,
+ "size": [
+  4032,
+  1536
+ ],
+ "image": "boss_gorrak.png",
+ "roles": {
+  "gorrak": {
+   "row": 0,
+   "kind": "enemy",
+   "enemy": true,
+   "boss": true,
+   "scale": 6.0,
+   "desc": "Gorrak Ironmaw, the Bound Forge-Tyrant (boss, 6x; the ONLY plate-wearer): fire-demon bound in riveted black plate, horned maw helm, wrist chains, cold-blue rune seams, forge fire through the gaps. Phase 1 (chained).",
+   "anims": [
+    "idle",
+    "walk",
+    "attack",
+    "die"
+   ],
+   "size_bounds": [
+    [
+     12,
+     142
+    ],
+    [
+     12,
+     192
+    ]
+   ],
+   "caster": false,
+   "light": {
+    "color": "#e0302a",
+    "intensity": 1.0,
+    "range": 7.0
+   },
+   "stats_hint": {
+    "tier": "boss",
+    "height_x_player": 6.0,
+    "dungeon": "Clockwork Deep"
+   }
+  }
+ }
+}

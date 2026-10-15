@@ -77,6 +77,21 @@ def steps(b, url, T, size, errors, rep, stub=None, shots=None):
         shot("sv_glowmines")
         a = load("clockdeep", "&svq=seal")
         T.step("clockdeep loads from the lift", a["area"] == "clockdeep", qa=a)
+        a = load("clockdeep2", "&svq=gorrak", "boss"); pg.wait_for_timeout(1500); a = sv()
+        g = a["gorrak"]
+        T.step("Gorrak spawns at 6x on his own boss sheet, phase 1, no valves or anvils shown yet",
+               bool(g) and g["scale"] == 6 and g["phase"] == 1 and a["spots"] == 0
+               and T.ev("window.__hd2d.ctx.actors.meta.roles.gorrak.sheet === 'boss_gorrak'"), qa=a)
+        shot("sv_gorrak")
+        T.ev("(() => { const G = window.__hm; G.peace = false; window.__hd2d.ctx.player.iframes = 99; const e = G.combat.enemies.find((x) => x.id === 'gorrak'); e.hp = Math.round(e.D.hp * 0.6); })()")
+        pg.wait_for_timeout(1200); a = sv()
+        T.step("phase 2 at 65%: the 4 quench valves become usable", a["gorrak"]["phase"] == 2 and a["spots"] == 4, qa=a)
+        T.ev("(() => { window.__hd2d.ctx.player.iframes = 99; const e = window.__hm.combat.enemies.find((x) => x.id === 'gorrak'); e.hp = Math.round(e.D.hp * 0.25); })()")
+        pg.wait_for_timeout(1200); a = sv()
+        T.step("phase 3 at 30%: the 4 rune-anvils become usable", a["gorrak"]["phase"] == 3 and a["spots"] == 4, qa=a)
+        T.ev("(() => { const f = window.__hm.svart.fight; for (let i = 0; i < 4; i++) f.anvil(i); })()")
+        bind = T.ev("(() => { const e = window.__hm.combat.enemies.find((x) => x.id === 'gorrak'); return { bind: e.bind, kneel: e.kneelEnd > window.__hm.svart.fight.t }; })()")
+        T.step("all 4 rune-anvils struck: Gorrak kneels and takes x1.5", bool(bind["bind"]) and bind["kneel"], bind=bind)
         T.step("no JS errors in the Svartalfheim run", not errors, errors=errors[:5])
     finally:
         T.pg, T.out = old_pg, old_out

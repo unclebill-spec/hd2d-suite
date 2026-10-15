@@ -8,6 +8,7 @@ import { REALM, MERIT } from './factions.js';
 import { XP } from './progress.js';
 import { SHOPS } from './shop.js';
 import { WAYS } from './ravenhold.js';
+import { GorrakFight, PILLAR, ANVILS, VALVES } from './svartalfheim_bosses.js';
 
 export const AREAS_SV = { svartalfheim: 'areas/svartalfheim/', forge_hall: 'areas/forge_hall/', glowmines: 'areas/glowmines/', clockdeep: 'areas/clockdeep/', clockdeep2: 'areas/clockdeep2/' };
 export const AREA_NAMES_SV = { svartalfheim: 'Anvildeep: Copper Row', forge_hall: 'The Great Forge', glowmines: 'The Amethyst Mines', clockdeep: 'The Clockwork Deep', clockdeep2: 'The Clockwork Deep: the Binding Forge' };
@@ -26,9 +27,13 @@ Object.assign(ENEMIES, {
   sootling: { name: 'Sootling', hp: 34, dmg: 8, speed: 2.0, reach: 1.0, windup: 0.4, cd: 1.6, aggro: 6, r: 0.22, push: 0.7, float: true, popSmoke: 1.5 },
   shadowsmith: { name: 'Shadowsmith', hp: 100, dmg: 14, speed: 2.0, reach: 1.4, windup: 0.45, cd: 1.4, aggro: 7, r: 0.3, push: 0.5, elite: true, shadowStep: 8, hotHammer: 6 },
   hushblade: { name: 'Hushed blade', hp: 70, dmg: 11, speed: 2.2, reach: 1.3, windup: 0.4, cd: 1.4, aggro: 8, r: 0.28, push: 0.5, stealth: 4 },
+  gorrak: { name: 'Gorrak Ironmaw, the Bound Forge-Tyrant', scale: 6, hp: 1800, dmg: 26, speed: 1.1, reach: 3.2, windup: 0.85, cd: 2.1, aggro: 12, r: 1.5, push: 0.1,
+            heavy: true, slam: true, boss: true, minion: 'forgeconstruct', phases: [0.65, 0.3], chained: { r: 6 }, whip: { len: 9, dmg: 20 }, spray: { n: 5, dmg: 10 },
+            plates: { every: 12, open: 4, mul: 2 }, quench: { stagger: 6 }, molten: { life: 8, dps: 10 }, rain: { every: 10, dmg: 22 }, anvils: 4, bindMul: 1.5,
+            glow: '#e0602a', legendary: true, noRespawn: true },
   cavegolem: { ...ENEMIES.golem, name: 'Cave golem', glow: '#7a4ab0' },   // the stone golem's sprite (spawn { role: 'golem', def: 'cavegolem' }) with amethyst crusts
 });
-Object.assign(XP, { forgeconstruct: 50, sparkgolem: 60, sootling: 22, shadowsmith: 74, hushblade: 40, cavegolem: 56 });
+Object.assign(XP, { forgeconstruct: 50, sparkgolem: 60, sootling: 22, shadowsmith: 74, hushblade: 40, cavegolem: 56, gorrak: 900 });
 SPAWNS.glowmines = [   // story 2.5: sootling, forgeconstruct (strays), cavegolem in the crystal galleries (north half) and around the lake
   { id: 'gm_soot1', role: 'sootling', pos: [6.8, -9.4] }, { id: 'gm_soot2', role: 'sootling', pos: [-1.2, -10.6] },
   { id: 'gm_fc0', role: 'forgeconstruct', pos: [-8.0, -3.2] }, { id: 'gm_fc1', role: 'forgeconstruct', pos: [7.8, -1.6] },
@@ -72,7 +77,7 @@ const hasSeal = (S) => !!(S.inv || {}).forge_seal;
 const SV_AREAS = Object.keys(AREAS_SV);
 const SV_LIGHT = { pool_red: ['#ff5a4a', 7, 5.0], pool_blue: ['#2ab4ff', 5, 3.6], pool_violet: ['#a45cf0', 5, 4.0], water_glow: ['#3ac8b0', 4, 3.2] };
 export class Svartalfheim {
-  constructor(G) { this.G = G; this.ctx = null; this.area = null; this.fx = []; this.lights = []; this.spots = []; this.qaDone = false; this.wrap(); }
+  constructor(G) { this.G = G; this.ctx = null; this.area = null; this.fx = []; this.lights = []; this.spots = []; this.qaDone = false; this.fight = new GorrakFight(this); this.started = false; this.wrap(); }
   // E / A and tap try the realm's interactables first (same hook as Alfheim's, chained)
   wrap() {
     const G = this.G, me = this;
@@ -105,12 +110,14 @@ export class Svartalfheim {
     const c = this.ctx, gm = c ? (c.scene.game || {}) : {};
     return { area: this.area, seal: hasSeal(this.G.S), exits: (gm.exits || []).map((e) => e.to),
              foes: c ? c.actors.list.filter((a) => ['sootling', 'forgeconstruct', 'golem'].includes(a.role)).map((a) => a.role) : [],
-             spots: this.spots.filter((x) => x.show()).length };
+             spots: this.spots.filter((x) => x.show()).length,
+             gorrak: this.fight.e ? { hp: Math.round(this.fight.e.hp), max: this.fight.e.D.hp, scale: this.fight.e.D.scale, phase: this.fight.e.ph, state: this.fight.e.state, role: this.fight.e.a.role } : null };
   }
   qaPreset() {   // ?svq=seal gives the Forge-Seal (QA / smoke; the quests that hand it out come later)
     const q = (this.G.qs || new URLSearchParams(location.search)).get('svq'), S = this.G.S; if (!q || this.qaDone === q) return;
     this.qaDone = q;
-    if (q === 'seal') { S.inv = S.inv || {}; S.inv.forge_seal = 1; }
+    if (q === 'seal' || q === 'gorrak') { S.inv = S.inv || {}; S.inv.forge_seal = 1; }
+    if (q === 'gorrak') { S.inv.lesser_heart = 1; this.skipIntro = true; }
   }
   attach(ctx, area) {
     this.detach(); this.ctx = ctx; this.area = area;
@@ -123,6 +130,11 @@ export class Svartalfheim {
       this.spot({ pos: [4.1, -10.0], r: 2.0, label: 'the Deep\'s lift is sealed (E / A to look)', show: () => !hasSeal(S),
         act: () => this.look('deep_lift', 'The Deep\'s lift', ['A lift cage. A seal of copper and rune-light holds it shut.']) });
     }
+    this.started = false; this.fight.reset();
+    if (area === 'clockdeep2') {   // Gorrak's arena (C8): the quench valves (phase 2) and the rune-anvils (phase 3)
+      VALVES.forEach((v, i) => this.spot({ pos: v, r: 1.7, label: 'open the quench valve (E / A)', show: () => !!this.fight.e && this.fight.e.ph === 2 && this.fight.e.state !== 'dead', act: () => this.fight.valve(i) }));
+      ANVILS.forEach((v, i) => this.spot({ pos: v, r: 1.7, label: 'strike the rune-anvil (E / A)', show: () => !!this.fight.e && this.fight.e.ph === 3 && !this.fight.struck[i] && this.fight.e.state !== 'dead', act: () => this.fight.anvil(i) }));
+    }
     const still = !!this.G.qaStill;
     for (const f of gm.svfx || []) {
       const [x, , z] = f.pos, y = ctx.heightAt(x, z);
@@ -132,8 +144,31 @@ export class Svartalfheim {
     }
   }
   detach() { for (const f of this.fx) if (f) f.dur = f.t + 0.2; for (const l of this.lights) if (l) l.kill = true; this.fx = []; this.lights = []; this.spots = []; this.ctx = null; this.area = null; }
+  anvilsOn() {}
+  // the arena trigger: step into the Binding Forge and Gorrak wakes (intro dialogue, then the fight)
+  gorrakIntro() {
+    const G = this.G, S = G.S, conquer = ((flags(S).alliance || {}).svartalfheim) === 'conquer'; this.started = true;
+    const pages = conquer ? ['Gorrak: "Not a dwarf. A Midgarder. With no heart in your hands, only a sword."', 'Gorrak: "You did not come to bind me. You came for my fire. Ha! Then TAKE it. If you can."']
+      : ['(Chains groan. A shape the size of a house heaves against the anvil-pillar. Fire leaks through the seams of its plates.)', 'Gorrak: "SMALL ONES. Nine hundred years I burn for your pots and spoons. Now the cold comes, and the chains go slack."',
+         'Gorrak: "You bring a little heart. A LITTLE heart. To hold ME. Ha! Come. Let us see if it fits."'];
+    if (this.skipIntro || G.qaStill) { this.fight.spawn(); return; }
+    G.openDialogue({ id: 'gorrak', name: 'Gorrak Ironmaw' }, { pages, then: () => this.ctx && this.fight.spawn() });
+  }
+  onGorrak() {
+    const G = this.G, S = G.S, f = flags(S), conquer = ((f.alliance || {}).svartalfheim) === 'conquer';
+    f.cd_boss = 1; this.fight.reset(); if (this.ctx && this.ctx.framePull) this.ctx.framePull(1);
+    G.toast(conquer ? 'Gorrak falls. Something glows under rime in the flue.' : 'Gorrak sags against the chains. Set the Lesser Heart.', 3.2);
+    // story 6.7: conquer = he gutters out; else rebound with the Lesser Heart (the Dagna / bargain variant waits on the companions)
+    const pages = conquer ? ['(Gorrak falls to one knee. His plates split. The fire inside him has nothing left to hold it.)', 'Gorrak: "No little heart. No chains. Only a sword. ...So this is how a fire ends. Quietly."', '(The armour goes dark and cold. Above it, something glows under a shell of rime in the flue.)']
+      : ['(Gorrak sags against the chains. The Lesser Heart fits his chest-plate with a clank.)', 'Gorrak: "A hired hand. Not even a dwarf. They could not be bothered to come themselves."', '(The runes flare cold blue.)'];
+    G.openDialogue({ id: 'gorrak', name: 'Gorrak Ironmaw' }, { pages, then: (G2) => { const ff = flags(G2.S); if (conquer) ff.cd_taken = 1; else { ff.cd_bound = 1; if ((G2.S.inv || {}).lesser_heart) G2.take('lesser_heart', 1); } } });
+  }
   update() {
-    const c = this.ctx; if (!c || this.area !== 'forge_hall') return;
+    const c = this.ctx;
+    if (c && this.area === 'clockdeep2' && !this.started && !flags(this.G.S).cd_boss && !this.G.dlg) {
+      const p = c.player; if (Math.hypot(p.x - PILLAR[0], p.z - PILLAR[1]) < 9) this.gorrakIntro();
+    }
+    if (!c || this.area !== 'forge_hall') return;
     const gm = c.scene.game, S = this.G.S;
     if (hasSeal(S) && !gm.exits.some((e) => e.to === 'clockdeep')) { gm.exits.push({ ...LIFT }); this.G.toast && this.G.toast('The Forge-Seal glows. The lift cage unlocks.', 2.4); }   // the seal arrived while you stand here
   }

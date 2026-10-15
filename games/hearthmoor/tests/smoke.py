@@ -1767,6 +1767,15 @@ def run(out, simscale=4, size=(960, 540), segs=SEGS):
                 rep["pass"] = False
                 rep["error"] = f"alfheim: {e}"[:400]
         # [ALFHEIM] end
+        # [SVARTALFHEIM] begin: the Svartalfheim realm (tests/smoke_svartalfheim.py), own context again
+        if rep["pass"]:
+            try:
+                import smoke_svartalfheim  # noqa: E402
+                smoke_svartalfheim.steps(b, url, T, size, errors, rep, STUB, out)
+            except Exception as e:  # noqa: BLE001
+                rep["pass"] = False
+                rep["error"] = f"svartalfheim: {e}"[:400]
+        # [SVARTALFHEIM] end
         # ---------------------------------------------------------- v1 save migration (old saves still load)
         if rep["pass"] and "E" in segs:
             seg_mark("E")

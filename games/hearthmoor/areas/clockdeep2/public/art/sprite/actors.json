@@ -22940,6 +22940,19 @@
    ],
    "desc": "Hushed blade (conquer only, dark-elf assassin): ash-grey skin, silver hair, long ears, black wrap-top, grey sash, slate trousers bound at the shins, black shoes, two short blades (cold-blue edge). Attack = blade combo (frame 14); fades in / out with shadow_puff",
    "enemy": true
+  },
+  "gorrak": {
+   "sheet": "boss_gorrak",
+   "row": 0,
+   "kind": "enemy",
+   "anims": [
+    "idle",
+    "walk",
+    "attack",
+    "die"
+   ],
+   "desc": "Gorrak Ironmaw, the Bound Forge-Tyrant (boss, 6x; the ONLY plate-wearer): fire-demon bound in riveted black plate, horned maw helm, wrist chains, cold-blue rune seams, forge fire through the gaps. Phase 1 (chained).",
+   "enemy": true
   }
  },
  "sheets": {
@@ -22962,6 +22975,10 @@
   "svenemy": {
    "json": "svenemy.json",
    "image": "svenemy.png"
+  },
+  "boss_gorrak": {
+   "json": "boss_gorrak.json",
+   "image": "boss_gorrak.png"
   }
  }
 }
