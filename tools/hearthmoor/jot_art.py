@@ -42,6 +42,7 @@ SHEETS = {  # sheet name -> (staging json, {area role: staging role})
 }
 IMAGE = {"flurry": "flurry_neon.png", "flurry_safe": "flurry.png"}   # sheet -> staging png when it is not the json's own image
 EXTRA = {    # sheets only where the fight / scene is (their own frame size)
+    "jotunheim": {"jtgoat": (ST / "sprite" / "jt_goats.json", {"goat": "goat", "clatter": "clatter"})},   # Stonehollow's pen goats + Clatter (runtime actors, goat_gen.py)
     "barrow2": {"boss_hrimgard": (ST / "sprite" / "boss_hrimgard.json", {"hrimgard": "hrimgard", "hrimgard_p3": "hrimgard_p3"}),
                 "jtelite": (ST / "sprite" / "jt_elites.json", {"ormgar": "ormgar"})},
     "rimecaves": {"jtelite": (ST / "sprite" / "jt_elites.json", {"frostmother": "frostmother", "avalanche": "avalanche"})},

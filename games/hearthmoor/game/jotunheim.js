@@ -12,6 +12,7 @@ import { lockRival, moodUp } from './alfheim.js';
 import { BASES, RARE_AREAS, Rares } from './rares.js';
 import { RARITY, makeItem } from './loot.js';
 import { KINDS as WX_KINDS, WX_HOOK } from './weather.js';
+import { unlock as compUnlock, swap as compSwap, active as compActive } from './svartalfheim_companions.js';
 
 export const JOT_PLANNED = {   // id -> display name (story 2.1); `barrow` (B1-B4) + `barrow2` (B5-B9) are the dungeon, two areas like clockdeep
   jotunheim: 'Stonehollow', jt_hall: 'Hall of Hearthstones', rimecaves: 'The Rime Caves', barrow: "The Titan's Barrow", barrow2: "The Titan's Barrow: the Throne",
@@ -27,7 +28,7 @@ const ally = (S) => (flags(S).alliance = flags(S).alliance || {});
 const gold = (G, n) => { G.S.gold = (G.S.gold || 0) + n; G.toast(`+${n} gold`, 1.8); G.drawBag && G.drawBag(); };
 const met = (k) => (G) => { G.S.met = { ...(G.S.met || {}), [k]: 1 }; };
 Object.assign(REALM, { jotunheim: 'embassy', jt_hall: 'embassy', rimecaves: 'embassy', barrow: 'embassy', barrow2: 'embassy' });   // conquer / contract pay 'gate' with the alliance lock (later)
-Object.assign(MERIT, { tollstones: 60, barrow: 120, jt_gate: 60, jt_welcome: 40, jt_heart: 60, jt_rival: 20 });   // story 3.12 (the rest arrive with their quests)
+Object.assign(MERIT, { tollstones: 60, barrow: 120, jt_gate: 60, jt_welcome: 40, jt_heart: 60, jt_rival: 20, jt_ulfar: 80 });   // story 3.12 (the rest arrive with their quests)
 WAYS.jotunheim = ['Stonehollow', 'jotunheim', 'from_waystone'];
 WAYS.barrow2 = ["the Titan's Barrow, the Waystone Crypt", 'barrow2', 'from_waystone'];
 Object.assign(WAY_SAY, { jotunheim: 'Cold-fire runes glow along the waystone, and the snow around it is trodden flat by giant boots.', barrow2: "A waystone older than the Barrow. The first Jarl's people set it here so the dead would never be far from home." });
@@ -86,6 +87,7 @@ SPAWNS.barrow = [   // B1-B4: two frost trolls at the door hall, ice golems wake
 // ------------------------------------------------------------------ items + Grimsa's stall (story 5.5; prices are first guesses)
 Object.assign(ITEMS, {
   fur_mantle: { name: 'Fur cloak', px: 'tonic', about: "Grimsa's fur cloak, cut down for a small one. Frost resist +20%, and a cosmetic mantle over your tunic." },
+  oat_cake: { name: 'Oat-cake', px: 'denbiscuit', about: "Brynja's oat-cake, goat-sized. One a day, from the same hand, and a goat starts to trust it." },
   heart_ice: { name: 'Heart-ice', px: 'glowseed', about: 'A shard of ice that never melts and hums when you hold it. Solvi wants three for the Rimebreaker.' },
   barrow_key: { name: 'Barrow Key', px: 'tonic', about: "Three rune-iron keys wired into one. Hjordis Icejaw's. It opens the Titan's Barrow door, no questions asked." },
   coldfire_lantern: { name: 'Cold-fire lamp', px: 'glowseed', about: 'A lamp that burns the giants\' blue cold fire. It lights, it never burns. Light radius +2.' },
@@ -103,6 +105,16 @@ Object.assign(QUESTS, {
     1: (S) => { const n = Math.min(F(S).jw_lifts || 0, need(S)); return n < need(S) ? `Lift the Welcome stones (E / A on the glow). ${n}/${need(S)}` : 'Let the town cheer.'; },
     2: "Sit at the Jarl's fire.",
     3: 'Stonehollow has welcomed you. The goats are still suspicious.',
+  } },
+  jt_ulfar: { title: "Ulfar's Walk", giver: 'Ulfar Mossback', story: true, steps: {
+    1: (S) => { const f = S.found || {}, n = ['uw_goat', 'uw_song', 'uw_mitten'].filter((k) => f[k]).length; return `Spend the day with Ulfar. ${n}/3`; },
+    2: 'Walk Ulfar to the Barrow door.',
+    3: 'Ulfar walks with you now.',
+  } },
+  jt_goat: { title: 'The Goat Who Chose You', giver: 'Brynja Hornwise', ripple: true, steps: {
+    1: (S) => `Win Brynja's young goat's trust: an oat-cake a day, three days. ${Math.min(3, F(S).gt_cakes || 0)}/3`,
+    2: "Ride one lap of the lake. (Brynja is still stitching the saddle: the goat mount arrives with the mounts.)",
+    3: 'Your goat. Her name is Clatter.',
   } },
   jt_heart: { title: 'The Hollow Heart', giver: 'Jarl Thyra Stonebrow', story: true, steps: {
     1: (S) => { const f = F(S), n = ['jh_heart', 'jh_rime', 'jh_trail'].filter((k) => f[k]).length;
@@ -176,9 +188,27 @@ Object.assign(TALK, {
     if (f.jt_contract && !f.jw_terms) return { pages: ['The Jarl wants to hear your terms first. She is in the Hall. Goats wait. Goats are good at it.'] };
     return { pages: [f.jt_peace ? 'The war band turned back? Goats knew. Goats know everything.' : 'I know a goat-path. Goats know everything. Ask me when you have a reason to go sneaking.'] };
   },
-  goatwife(S) { return { pages: [q(S, 'jt_welcome') >= 3 ? 'She bit you? Good. That means she likes you.' : 'Mind the horns. Mind the whole goat, really. She has opinions.'] }; },
+  goatwife(S) {
+    const f = F(S), st = q(S, 'jt_goat'), al = (f.alliance || {}).jotunheim, day = S.day || 0, cakes = f.gt_cakes || 0, has = ((S.inv || {}).oat_cake || 0) > 0;
+    if (!st && al === 'befriend' && q(S, 'jt_welcome') >= 3)
+      return { pages: ['You are the small one the stones liked. Good. I have a young goat, Clatter, who likes nobody. She will like you or she will not, and I will not lie about which.', 'An oat-cake a day, from the same hand, three days running. Not two in one day: she is a goat, not a fool. Come back tomorrow for the next.'],
+               then: (G) => { G.setQuest('jt_goat', 1); G.toast('The Goat Who Chose You: an oat-cake a day, three days.', 3); G.give('oat_cake', 1); f.gt_given = day; } };
+    if (st === 1) {
+      if (has) return { pages: ['You have the cake. She is at the fence, the brown one with the bell. Hold it flat. Flat! She is not a cow.'] };
+      if ((f.gt_given ?? -1) < day && (f.gt_lastDay ?? -1) < day && cakes < 3) return { pages: ['Another day, another oat-cake. Hold it flat.'], then: (G) => { G.give('oat_cake', 1); flags(G.S).gt_given = day; } };
+      return { pages: [cakes < 3 ? 'One a day. She would get fat and then she would get opinions. Come back tomorrow.' : 'She is yours, near enough.'] };
+    }
+    if (st === 2) return { pages: ['She follows you around the pen like a cat with horns. When the saddle is stitched you can ride one lap of the lake. Goats are patient. I am less so.'] };
+    return { pages: [q(S, 'jt_welcome') >= 3 ? 'She bit you? Good. That means she likes you.' : 'Mind the horns. Mind the whole goat, really. She has opinions.'] };
+  },
   ulfar(S) {
-    const first = !(S.met || {}).ulfar;
+    const f = F(S), first = !(S.met || {}).ulfar, st = q(S, 'jt_ulfar'), n = ['uw_goat', 'uw_song', 'uw_mitten'].filter((k) => (S.found || {})[k]).length;
+    if (!st && (f.alliance || {}).jotunheim === 'befriend' && q(S, 'jt_welcome') >= 3)
+      return { pages: ['Small one. You lifted our stones. Will you spend a day with me? It is a long day. I have three small things to do and I am bad at remembering.', '(He holds up three huge fingers.) My goat Turnip is on the lake ice. I want to finish my song. I lost my mitten. That is all.'],
+               then: (G) => { met('ulfar')(G); G.setQuest('jt_ulfar', 1); G.toast("Ulfar's Walk: Turnip, the song, the mitten.", 3); } };
+    if (st === 1 && n < 3) return { pages: [`Turnip, the song, the mitten. ${n} of three. I counted on my fingers. Then I ran out of fingers.`] };
+    if (st === 1) return { pages: ['All three! The goat is back and the song has a next line. And my mitten is a bed for a small hare. It is a better mitten now.', 'Walk with me to the Barrow door. I want to see the big door. Then I will come with you. I am the big one. I go first.'],
+                           then: (G) => { G.setQuest('jt_ulfar', 2); flags(G.S).uw_walk = 1; G.jot.afterWalk(); } };
     return { pages: [first ? 'Oh. Hello. You are very small. I am Ulfar. I look at the lake. It does not look back.'
                             : 'Snow tastes like nothing. I eat it anyway.', 'Kolbrun says stay off the lake. Unless you are a goat.'], then: met('ulfar') };
   },
@@ -248,6 +278,8 @@ MARKER_HOOKS.push((id, S) => {
     if (f.jt_contract && !f.jw_terms) return 'quest_mark';
     if (q(S, 'barrow') === 2 && (S.found || {}).tb_slept && (al === 'befriend' || f.jt_contract)) return 'quest_mark';
   }
+  if (id === 'goatwife' && al === 'befriend' && ((!q(S, 'jt_goat') && q(S, 'jt_welcome') >= 3) || (q(S, 'jt_goat') === 1 && !((S.inv || {}).oat_cake) && (f.gt_given ?? -1) < (S.day || 0) && (f.gt_cakes || 0) < 3))) return 'quest_mark';
+  if (id === 'ulfar' && al === 'befriend' && ((!q(S, 'jt_ulfar') && q(S, 'jt_welcome') >= 3) || (q(S, 'jt_ulfar') === 1 && ['uw_goat', 'uw_song', 'uw_mitten'].every((k) => (S.found || {})[k])))) return 'quest_mark';
   if (id === 'rimewife' && al === 'befriend' && (q(S, 'jt_axe') === 2 || (f.sf_i && q(S, 'barrow') === 3 && !q(S, 'jt_axe')))) return 'quest_mark';
   if (id === 'rimewife' && al === 'befriend' && q(S, 'barrow') === 3 && !f.sf_i) return 'quest_mark';
   if (id === 'rimewife' && al === 'befriend' && q(S, 'jt_heart') === 1 && !f.jh_solvi) return 'quest_mark';
@@ -255,6 +287,8 @@ MARKER_HOOKS.push((id, S) => {
 
 // ------------------------------------------------------------------ the area's own look: cold fire on the braziers, rune pulses, the lake, a gloom light
 const COLD = ['#7fd4ff', 4.2, 4.2];   // colour, intensity, range
+// Stonehollow's pen goats + Clatter (runtime actors on the jt_goats sheet): inside the fence line at z 3.4, clear of Brynja (-9, 0.8)
+const GOATS = [['pen_goat1', [-10.3, 2.3], 0.7, 'goat', 'pen goat'], ['pen_goat2', [-7.3, 2.3], 0.7, 'goat', 'pen goat'], ['clatter', [-8.8, 2.4], 0.5, 'clatter', 'Clatter']];
 const JT_FX = {
   jotunheim: [['cold_flame', [-2.4, -5.0], 1.0, 1], ['cold_flame', [2.4, -5.0], 1.0, 1],
               ['rune_pulse', [0, -5.4], 0.8, 1], ['rune_pulse', [-5.4, 0.2], 0.8, 0], ['rune_pulse', [5.2, -0.4], 0.8, 0],
@@ -302,6 +336,64 @@ export class Jotunheim {
     }
     if (G.hollows) { const c0 = G.hollows.onCast.bind(G.hollows); G.hollows.onCast = (...a) => { const r = c0(...a); me.onCast(); return r; }; }
   }
+  // ---- the goat pens (story 2.3, 3.9): two pen goats and Clatter inside the fence line at z 3.4 (Brynja stands north of the goats, the goats' stand-in sheet is jt_goats). The mount stays deferred.
+  penGoats(ctx) {
+    const G = this.G, S = G.S, roles = ctx.actors.meta.roles;
+    for (const [id, pos, radius, role, name] of GOATS) {
+      if (!roles[role]) continue;
+      const a = ctx.actors.add({ role, id, name, pos: pos.slice(), behavior: 'wander', radius, talkable: false, turn: false }); a.home = pos.slice();
+    }
+    this.spot({ id: 'clatter', pos: [-8.7, 2.5], r: 2.0, label: () => (q(S, 'jt_goat') ? 'Clatter, the young brown goat (E / A)' : 'a young brown goat with a bell (E / A)'), act: () => this.clatter() });
+  }
+  clatter() {
+    const G = this.G, S = G.S, f = flags(S), st = q(S, 'jt_goat'), day = S.day || 0, i = S.inv || {};
+    const say = (pages, then) => this.look('clatter', 'Clatter', pages, then);
+    if (!st) return say(['A young brown goat with a gold bell. She looks at you like a creditor, and the bell goes clatter.']);
+    if (st >= 2) return say(['Clatter leans her whole weight on your knee. The bell goes clatter. The saddle is still Brynja\'s problem for later.']);
+    if ((f.gt_lastDay ?? -1) >= day) return say(['She has had her cake today. She looks at the empty hand with a very particular disappointment. Tomorrow.']);
+    if (!(i.oat_cake > 0)) return say(['She sniffs your pockets and finds nothing. Brynja keeps the oat-cakes.']);
+    return say(['(You hold the oat-cake flat. Clatter takes it with great dignity and no thanks.)'], () => {
+      i.oat_cake -= 1; f.gt_cakes = (f.gt_cakes || 0) + 1; f.gt_lastDay = day;
+      if (f.gt_cakes >= 3) { G.setQuest('jt_goat', 2); G.toast('Clatter trusts you. Ride one lap of the lake: once the saddle is stitched.', 3.6); }
+      else G.toast(`Clatter ate the oat-cake. ${f.gt_cakes}/3`, 2.4);
+      G.refreshMarkers && G.refreshMarkers(); G.save && G.save();
+    });
+  }
+  // ---- Ulfar's Walk (story 3.4): Turnip on the lake ice, the song at the cold fire, the mitten that is a hare's bed; then the Barrow door, and he joins
+  ulfarWalk(ctx) {
+    const G = this.G, S = G.S, mine = () => q(S, 'jt_ulfar') === 1, got = (k) => !!(S.found || {})[k];
+    const find = (k) => { S.found = { ...(S.found || {}), [k]: 1 }; G.save && G.save(); };
+    this.spot({ id: 'uw_goat', pos: [8.8, 3.6], r: 1.7, label: 'Turnip, stuck on the lake ice (E / A)', show: () => mine() && !got('uw_goat'), act: () =>
+      this.look('uw_goat', 'Turnip', ['A small goat stands very still in the middle of the thin ice, offended by the ice.', '(You coax Turnip back with a pinch of snow-moss. He leaves a hoofprint on your boot as a thank-you.)'], () => { find('uw_goat'); G.toast("Turnip is off the ice. Ulfar's Walk 1/3", 2.4); }) });
+    this.spot({ id: 'uw_song', pos: [2.4, -3.8], r: 1.7, label: "the cold fire: Ulfar's song (E / A)", show: () => mine() && !got('uw_song'), act: () =>
+      G.openDialogue({ id: 'uw_song', name: "Ulfar's song" }, { pages: ['(Ulfar hums by the cold fire. He is stuck on the next line.) "The snow came down on the goat, and the goat..."'], choice: { id: 'uw_song', options: [
+        { label: '"...said hello."', pick: (G2) => { find('uw_song'); flags(G2.S).uw_tune = 'hello'; return { pages: ['He sings it twice. It is a slow, kind song now.'] }; } },
+        { label: '"...ate the snow."', pick: (G2) => { find('uw_song'); flags(G2.S).uw_tune = 'snow'; return { pages: ['He laughs so hard the cold fire flickers. The song is faster now.'] }; } },
+        { label: '"...climbed the giant."', pick: (G2) => { find('uw_song'); flags(G2.S).uw_tune = 'giant'; return { pages: ['"Ha! The goat is the hero now." The song is a march.'] }; } },
+      ] } }) });
+    this.spot({ id: 'uw_mitten', pos: [-8.6, 5.0], r: 1.7, label: 'a huge mitten in the snow (E / A)', show: () => mine() && !got('uw_mitten'), act: () =>
+      this.look('uw_mitten', 'The mitten', ['A mitten the size of a sleeping bag. Something small and white is asleep in the thumb. It opens one pink eye, sneezes, and goes back to sleep.', '(A snow hare. Flurry, you will call her. She does not mind.)'], () => { find('uw_mitten'); G.toast("The mitten is a bed now. Ulfar's Walk 2/3", 2.4); }) });
+    this.hideUlfar();
+  }
+  hideUlfar() {   // while Ulfar walks with you (or is your companion) the town's Ulfar is not standing at the lake
+    const c = this.ctx, S = this.G.S; if (!c || !c.actors || this.area !== 'jotunheim') return;
+    if (!((F(S).uw_walk) || compActive(S) === 'ulfar')) return;
+    const a = c.actors.list.find((x) => x.id === 'ulfar'); if (a) c.actors.remove(a);
+  }
+  afterWalk() {   // Ulfar steps in beside you: the follower sprite appears (svartalfheim_follow.js reads flags.uw_walk)
+    this.hideUlfar();
+    const F2 = this.G.svart && this.G.svart.follow; if (F2 && F2.ctx) { try { F2.attach(F2.ctx, F2.area); } catch (e) { /* body only */ } }
+  }
+  ulfarFinish() {   // at the Barrow door: Ulfar joins for good (companions.ulfar), Flurry's mitten bed, the Frostbrute unlock
+    const G = this.G, S = G.S, f = flags(S);
+    this.look('uw_door', 'The Barrow door', ['A stone door six metres tall, sunk in the cliff. Ulfar puts one huge hand flat on it, the way you pat a horse.', '"Big door." He nods slowly. "Good door. I will come with you now. I go first. I am the big one."'], () => {
+      G.setQuest('jt_ulfar', 3); f.uw_walk = 0; G.factions.add('embassy', MERIT.jt_ulfar, 'jt_ulfar');
+      compUnlock(G, 'ulfar'); compSwap(G, 'ulfar');
+      S.pets = S.pets || {}; S.pets.flurry = S.pets.flurry || { name: 'Flurry', bond: 1, fed: 0, lastFed: null };
+      S.unlocks = { ...(S.unlocks || {}), frostbrute: 1 };
+      G.refreshMarkers && G.refreshMarkers(); G.save && G.save();
+    });
+  }
   // ---- weather: frost slow in a blizzard, the aurora on a clear night
   weatherTick(dt) {
     const c = this.ctx, G = this.G, p = c.player, kind = G.weather ? G.weather.kind : 'clear', out = this.area === 'jotunheim';
@@ -314,7 +406,7 @@ export class Jotunheim {
       if (warm) t = Math.max(0, t - dt * 12);
     } else t = Math.max(0, t - dt * 2);
     this.frostT = t;
-    const slow = Math.min(FROST_MAX, t / 5 * 0.01);
+    const slow = Math.min(FROST_MAX, t / 5 * 0.01) * (compActive(this.G.S) === 'ulfar' ? 0.5 : 1);   // Ulfar's aura: frostResist 0.5
     if (slow >= 0.01 && !this.frostSaid) { this.frostSaid = true; G.toast('The blizzard bites. Cold fire thaws you.', 2.4); }
     if (slow !== this.frostSlow) { this.frostSlow = slow; p.speed = BASE_SPEED * (1 - slow); }
   }
@@ -413,6 +505,8 @@ export class Jotunheim {
     // look-spots (story 2.3 / 4.2): the Hall door, the cave path and the frost prints (entry points for the Giant Footprints clues)
     this.spot({ pos: SPOTS.hall, r: 1.8, label: 'the Hall of Hearthstones (E / A)', show: () => !AREAS_JOT.jt_hall, act: () => this.look('jt_hall_door', 'The Hall door', ["The great doors of the Hall of Hearthstones, barred by a beam as thick as a tree. The Jarl's fire glows under them.", '(The Hall opens in the next chapter of the build.)']) });
     this.spot({ pos: SPOTS.caves, r: 1.8, label: 'the path to the Rime Caves (E / A)', show: () => !AREAS_JOT.rimecaves, act: () => this.look('jt_caves_stair', 'The cave path', ['A stair of piled stone climbs toward a crack in the cliff. Cold blue light breathes out of it.', '(The Rime Caves open in a later chapter of the build.)']) });
+    this.penGoats(ctx);
+    this.ulfarWalk(ctx);
     this.spot({ pos: SPOTS.prints, r: 1.8, label: 'giant frost prints (E / A)', act: () => this.prints() });
     if (!flags(S).jt_arrived && !still) { flags(S).jt_arrived = 1; G.toast('Snow drifts down; the cold fires gutter blue. A giant child stares, then waves.', 3.6); }
   }
@@ -498,6 +592,7 @@ export class Jotunheim {
   }
   barrowDoor() {
     const S = this.G.S, f = F(S), al = (f.alliance || {}).jotunheim;
+    if (q(S, 'jt_ulfar') === 2 && f.uw_walk) return this.ulfarFinish();
     if (this.barrowOpen()) {
       const how = f.jt_contract ? "Skuli's goat-path leads round the side of the door and in." : f.barrow_key ? 'The Barrow Key turns all three locks at once.' : 'Solvi stands at the door and hums. The three rune locks slide open, one above the other.';
       return this.look('jt_barrow_door', 'The Barrow door', ['A stone door six metres tall, sunk in the cliff.', how, 'Cold light and the smell of old iron breathe out of the dark.'], () => {
@@ -762,7 +857,10 @@ export class Jotunheim {
     const c = this.ctx, S = this.G.S, f = F(S), gm = c ? (c.scene.game || {}) : {};
     return { realm: 'jotunheim', built: Object.keys(AREAS_JOT), planned: JOT_AREAS, area: this.area, exits: (gm.exits || []).map((e) => e.to), portals: (gm.portals || []).map((p) => p.to),
              spots: this.spots.filter((x) => x.show()).length, lifts: f.jw_lifts || 0, need: need(S), quest: q(S, 'jt_welcome'), gate: this.gate.qa(), alliance: (f.alliance || {}).jotunheim || null,
-             actors: c ? c.actors.list.map((a) => a.id || a.role) : [], fx: this.fx.length, lights: this.lights.length, ring: !!this.ring, inCellar: !!this.inCellar, heart: q(S, 'jt_heart'), clues: ['jh_heart', 'jh_rime', 'jh_trail'].filter((k) => f[k]), peace: !!f.jt_peace, evidence: (S.evidence || {}).jotunheim || null, hire: q(S, 'jt_hire'), terms: !!f.jw_terms, skuli: !!f.jw_skuli, pos: c ? [c.player.x, c.player.z] : null, spring: !!(S.found || {}).rc_spring, quest_barrow: q(S, 'barrow'), foes: c ? c.actors.list.filter((a) => ['frost_troll', 'ice_golem', 'avalanche_golem', 'rime_berserker', 'hrimgard', 'ormgar'].includes(a.role)).map((a) => a.role) : [], shop: !!SHOPS.jt_trader, found: S.found || {}, gate_q: q(S, 'jt_gate'), take_q: q(S, 'jt_take'), hire_q: q(S, 'jt_hire'), key: !!f.barrow_key, spells: S.spells || [], unlocks: S.unlocks || {}, cb: Object.keys(this.cb), bridge: { falls: this.falls || 0, solved: !!(S.found || {}).tb_bridge, lit: BRIDGE.LIT, head: BRIDGE.head }, boss: { phase: this.boss ? this.boss.phaseN || 1 : 0, p2: !!(this.boss && this.boss.p2), p3: !!(this.boss && this.boss.p3), relit: this.relit ? this.relit.slice() : null, hp: this.boss ? this.boss.hp : null, max: this.boss ? this.boss.D.hp : null, slide: this.slideV ? this.slideV.slice() : null }, orm: { frenzy: !!(this.orm && this.orm.frenzy), speed: this.orm ? this.orm.D.speed : null, base: ENEMIES.ormgar.speed }, wx: { kind: this.G.weather ? this.G.weather.kind : null, frost: +(this.frostT || 0).toFixed(1), slow: this.frostSlow || 0, speed: c ? c.player.speed : null, aurora: !!(this.aurora && this.aurora.m) }, rimes: this.rimes || 0, axe: q(S, 'jt_axe'), bag: (S.bag || []).map((i) => i.unique || i.name), hice: (S.inv || {}).heart_ice || 0, gold: S.gold || 0, jg: [f.jg_asked, f.jg_horn, f.jg_troll].map((x) => !!x) };
+             actors: c ? c.actors.list.map((a) => a.id || a.role) : [], fx: this.fx.length, lights: this.lights.length, ring: !!this.ring, inCellar: !!this.inCellar, heart: q(S, 'jt_heart'), clues: ['jh_heart', 'jh_rime', 'jh_trail'].filter((k) => f[k]), peace: !!f.jt_peace, evidence: (S.evidence || {}).jotunheim || null, hire: q(S, 'jt_hire'), terms: !!f.jw_terms, skuli: !!f.jw_skuli, pos: c ? [c.player.x, c.player.z] : null, spring: !!(S.found || {}).rc_spring, quest_barrow: q(S, 'barrow'), foes: c ? c.actors.list.filter((a) => ['frost_troll', 'ice_golem', 'avalanche_golem', 'rime_berserker', 'hrimgard', 'ormgar'].includes(a.role)).map((a) => a.role) : [], shop: !!SHOPS.jt_trader, found: S.found || {}, gate_q: q(S, 'jt_gate'), take_q: q(S, 'jt_take'), hire_q: q(S, 'jt_hire'), key: !!f.barrow_key, spells: S.spells || [], unlocks: S.unlocks || {}, cb: Object.keys(this.cb), bridge: { falls: this.falls || 0, solved: !!(S.found || {}).tb_bridge, lit: BRIDGE.LIT, head: BRIDGE.head }, boss: { phase: this.boss ? this.boss.phaseN || 1 : 0, p2: !!(this.boss && this.boss.p2), p3: !!(this.boss && this.boss.p3), relit: this.relit ? this.relit.slice() : null, hp: this.boss ? this.boss.hp : null, max: this.boss ? this.boss.D.hp : null, slide: this.slideV ? this.slideV.slice() : null }, orm: { frenzy: !!(this.orm && this.orm.frenzy), speed: this.orm ? this.orm.D.speed : null, base: ENEMIES.ormgar.speed }, goats: c ? c.actors.list.filter((x) => /^(pen_goat|clatter)/.test(x.id)).map((x) => [x.id, x.role, +x.x.toFixed(2), +x.z.toFixed(2)]) : [],
+             goat: { q: q(S, 'jt_goat'), cakes: f.gt_cakes || 0, last: f.gt_lastDay ?? null, cake: (S.inv || {}).oat_cake || 0, mount: !!(S.mounts || {}).goat },
+             ulfar: { q: q(S, 'jt_ulfar'), walk: !!F(S).uw_walk, comp: compActive(S), found: ['uw_goat', 'uw_song', 'uw_mitten'].map((k) => (S.found || {})[k] ? 1 : 0), flurry: !!(S.pets || {}).flurry, brute: !!(S.unlocks || {}).frostbrute, town: c ? c.actors.list.some((x) => x.id === 'ulfar') : null },
+             wx: { kind: this.G.weather ? this.G.weather.kind : null, frost: +(this.frostT || 0).toFixed(1), slow: this.frostSlow || 0, speed: c ? c.player.speed : null, aurora: !!(this.aurora && this.aurora.m) }, rimes: this.rimes || 0, axe: q(S, 'jt_axe'), bag: (S.bag || []).map((i) => i.unique || i.name), hice: (S.inv || {}).heart_ice || 0, gold: S.gold || 0, jg: [f.jg_asked, f.jg_horn, f.jg_troll].map((x) => !!x) };
   }
 }
 

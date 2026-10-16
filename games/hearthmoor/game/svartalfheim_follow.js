@@ -4,21 +4,29 @@
 // Sheets: Dagna = role 'dagna' (exists in the 5 realm areas; she is not shown in forge_hall, where she is at her forge).
 // Tobble = role 'gnome' outside the realm areas; in the realm areas (which repaint 'gnome' as Dagna) he uses his own 'tobble' sheet (puzzles pack).
 // Elsewhere the companion is still "with you" (flag, swap, toast) but has no body. Deviations: no temper buff (+10% melee), Tobble has no kit.
-import { active } from './svartalfheim_companions.js';
+import { active, COMP } from './svartalfheim_companions.js';
 
 const SV = ['svartalfheim', 'forge_hall', 'glowmines', 'clockdeep', 'clockdeep2'];
 const KIT = {
   dagna: { role: 'dagna', dist: 1.2, speed: 2.8, brawl: { dmg: 10, reach: 1.2, cd: 1.6, knock: 0.6 }, mend: { below: 0.3, heal: 40 }, light: '#f2a63a',
     follow: ['Walk where I walk. The floor here bites.', 'Your boots are Midgard-made. I can tell. They squeak.'] },
+  // [JOTUNHEIM] Ulfar Mossback: story 5.4. combat_scale 2.4 (his sheet's meta; the engine draws one native-pixel size, so the scale shapes his reach and footprint), boulder-toss brawl,
+  // shield_hug (stands over you: -50% damage for 4 s, 20 s cooldown), aura frostResist 0.5 (jotunheim.js halves the blizzard slow). Faint: he sits down and is back at the next waystone / area change.
+  ulfar: { role: 'ulfar', dist: 2.0, speed: 3.0, scale: 2.4, brawl: { dmg: 20, reach: 2.6, cd: 2.4, knock: 0.9 }, hug: { below: 0.5, dur: 4, cd: 20, mul: 0.5 },
+    follow: ["Small one, wait. I'll go first. I'm the big one.", 'That troll was rude.', 'Snow tastes like nothing. I eat it anyway.', '(He hums, a little flat.)'] },
   tobble: { role: 'gnome', dist: 1.3, speed: 2.8, follow: ['Home is wherever the mushrooms are. Lead on!', 'Two of us means twice the gossip. Walk faster.'] },
 };
 
 export class Follow {
-  constructor(G) { this.G = G; this.ctx = null; this.on = false; this.id = null; this.sprite = null; this.t = 0; this.cd = 0; this.mended = false; this.idleT = 40; this.hits = 0; this.tmT = 0; this.tempT = 0; }
-  qa() { return { on: this.on, id: this.id, role: this.sprite && this.sprite.role, x: this.sprite && +this.sprite.x.toFixed(2), z: this.sprite && +this.sprite.z.toFixed(2), hits: this.hits, mended: this.mended }; }
+  constructor(G) { this.G = G; this.ctx = null; this.on = false; this.id = null; this.sprite = null; this.t = 0; this.cd = 0; this.mended = false; this.idleT = 40; this.hits = 0; this.tmT = 0; this.tempT = 0; this.fainted = null; this.hugT = 0; this.hugCd = 0; this.hugs = 0; }
+  qa() { return { on: this.on, id: this.id, role: this.sprite && this.sprite.role, x: this.sprite && +this.sprite.x.toFixed(2), z: this.sprite && +this.sprite.z.toFixed(2), hits: this.hits, mended: this.mended, scale: this.id && KIT[this.id] ? KIT[this.id].scale || 1 : null, fainted: !!this.fainted, hugT: +this.hugT.toFixed(1), hugs: this.hugs }; }
   attach(ctx, area) {
     this.detach(); this.ctx = ctx; this.area = area;
-    const id = active(this.G.S), k = KIT[id]; this.id = id || null;
+    const fl = this.G.S.flags || {};
+    if (this.fainted && this.fainted !== area) this.fainted = null;   // Ulfar is back once you have moved on (the waystone / any area change)
+    const id = fl.uw_walk ? 'ulfar' : active(this.G.S), k = KIT[id]; this.id = id || null;   // uw_walk: Ulfar's Walk (he walks with you before he has joined)
+    this.guardHook();
+    if (this.fainted) return;
     if (!k || !ctx.actors) return;
     if (id === 'dagna' && (area === 'forge_hall' || !SV.includes(area))) return;   // at her forge / no sheet in this atlas
     const role = id === 'tobble' && SV.includes(area) ? 'tobble' : k.role;           // 'gnome' is Dagna's sheet in the realm areas: Tobble has his own sheet there (puzzles pack)
@@ -36,8 +44,18 @@ export class Follow {
   }
   bark(line) {
     const el = document.getElementById('say'); if (!el) return;
-    el.innerHTML = `<b>${this.id === 'dagna' ? 'Dagna' : 'Tobble'}</b> — ${line}`; el.hidden = false;
+    el.innerHTML = `<b>${(COMP[this.id] || 'Tobble').split(' ')[0]}</b> — ${line}`; el.hidden = false;
     const tok = (this.tok = (this.tok || 0) + 1); setTimeout(() => { if (this.tok === tok) el.hidden = true; }, 4600);
+  }
+  guardHook() {   // Ulfar's shield_hug: one wrapper on hurtPlayer, active only while he is hugging
+    const C = this.G.combat; if (!C || C.__ulfarHug) return; C.__ulfarHug = true;
+    const hp = C.hurtPlayer.bind(C), F = this;
+    C.hurtPlayer = function (dmg, src, push) { return hp(F.hugT > 0 ? dmg * KIT.ulfar.hug.mul : dmg, src, push); };
+  }
+  faint() {
+    if (this.fainted || !this.sprite) return; const c = this.ctx; this.fainted = this.area;
+    this.bark('(Ulfar sits down in the snow. "Just a moment. I will catch up.")');
+    if (c && c.actors) c.actors.remove(this.sprite); this.sprite = null; if (this.light) this.light.kill = true; this.light = null; this.on = false;
   }
   mend() {
     const G = this.G, C = G.combat, k = KIT.dagna.mend; if (this.mended || !C || !C.maxHp) return false;
@@ -49,10 +67,10 @@ export class Follow {
     this.bark('Sharpened. Try not to dull it on the rock.');
   }
   brawl(foes) {
-    const a = this.sprite, C = this.G.combat, k = KIT.dagna.brawl; this.cd = k.cd;
+    const a = this.sprite, C = this.G.combat, K = KIT[this.id] || KIT.dagna, k = K.brawl; this.cd = k.cd;
     const tgt = foes.filter((e) => Math.hypot(e.a.x - a.x, e.a.z - a.z) < k.reach + (e.def && e.def.scale ? e.def.scale * 0.25 : 0.2)).sort((u, v) => Math.hypot(u.a.x - a.x, u.a.z - a.z) - Math.hypot(v.a.x - a.x, v.a.z - a.z))[0];
     if (!tgt) { this.cd = 0.3; return; }
-    this.hits++; C.damageEnemy(tgt, k.dmg, { x: a.x, z: a.z }, k.knock, KIT.dagna.light);
+    this.hits++; C.damageEnemy(tgt, k.dmg, { x: a.x, z: a.z }, k.knock, K.light || '#bfe0ff');
   }
   update(dt) {
     const c = this.ctx; if (!c || !this.on || !this.sprite) return;
@@ -61,7 +79,7 @@ export class Follow {
     const foes = C && C.alive ? C.alive().filter((e) => Math.hypot(e.a.x - p.x, e.a.z - p.z) < 6 && (e.state === 'chase' || e.state === 'attack')) : [];
     let tx, tz;
     const near = k.brawl && foes.length ? foes.sort((u, v) => Math.hypot(u.a.x - a.x, u.a.z - a.z) - Math.hypot(v.a.x - a.x, v.a.z - a.z))[0] : null;
-    if (near) { tx = near.a.x - 0.9 * Math.sign(near.a.x - a.x || 1); tz = near.a.z; }
+    if (near) { tx = near.a.x - (k.scale ? 1.5 : 0.9) * Math.sign(near.a.x - a.x || 1); tz = near.a.z; }
     else { const fv = { up: [0, 1], down: [0, -1], left: [1, 0], right: [-1, 0] }[p.facing] || [0, -1]; tx = p.x + fv[0] * k.dist + 0.5; tz = p.z + fv[1] * 0.5 + 0.3; }
     const dx = tx - a.x, dz = tz - a.z, d = Math.hypot(dx, dz);
     if (d > 9) { a.x = tx; a.z = tz; }
@@ -72,6 +90,12 @@ export class Follow {
     if (this.light) { this.light.pos.set(a.x, a.y, a.z); this.light.base = 2.0; }
     this.tmT -= dt; this.tempT -= dt;
     if (this.id === 'dagna' && foes.length && this.tmT <= 0) this.temperNow();
+    if (this.id === 'ulfar') {
+      this.hugT = Math.max(0, this.hugT - dt); this.hugCd -= dt;
+      if (G.downed) { this.faint(); return; }
+      const H = KIT.ulfar.hug;
+      if (foes.length && this.hugCd <= 0 && G.S.hp != null && C && C.maxHp && G.S.hp < C.maxHp() * H.below) { this.hugT = H.dur; this.hugCd = H.cd; this.hugs++; a.lift = 0; this.bark('Under me. Under me, small one.'); if (c.actors.cast) try { c.actors.cast(a); } catch (e) { /* anim only */ } }
+    }
     if (!C || !C.ctx || G.downed) return;
     if (near && this.cd <= 0) this.brawl(foes);
     if (this.id === 'dagna' && G.S.hp != null && C.maxHp && G.S.hp < C.maxHp() * KIT.dagna.mend.below && foes.length) this.mend();

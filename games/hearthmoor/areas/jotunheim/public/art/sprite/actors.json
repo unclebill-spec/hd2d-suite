@@ -23037,6 +23037,26 @@
     "follow"
    ],
    "desc": "Flurry, the snow hare (Jotunheim pet): a white hare with long ears whose tips glow cold blue, a glowing tail puff and a faint chest glint; scampers on the ground, ears flat when she bounds (speed aura, finds hidden snow paths)"
+  },
+  "goat": {
+   "sheet": "jtgoat",
+   "row": 0,
+   "kind": "creature",
+   "anims": [
+    "idle",
+    "walk"
+   ],
+   "desc": "a Stonehollow pen goat: cream coat, grey shading, swept-back horns, a small white beard (goat-size; the giants' goats are not tiny, but they are goats)"
+  },
+  "clatter": {
+   "sheet": "jtgoat",
+   "row": 4,
+   "kind": "creature",
+   "anims": [
+    "idle",
+    "walk"
+   ],
+   "desc": "Clatter, Brynja's young brown goat: a white blaze, short horns and a gold bell that clatters; the goat who chooses you (the mount comes later)"
   }
  },
  "sheets": {
@@ -23067,6 +23087,10 @@
   "flurry_safe": {
    "json": "flurry_safe.json",
    "image": "flurry_safe.png"
+  },
+  "jtgoat": {
+   "json": "jtgoat.json",
+   "image": "jtgoat.png"
   }
  }
 }

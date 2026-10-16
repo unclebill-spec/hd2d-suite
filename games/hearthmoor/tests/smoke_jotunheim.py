@@ -378,6 +378,69 @@ def steps(b, url, T, size, errors, rep, stub=None, shots=None):
         shot("jt_aurora")
         a = load("jotunheim", "&wx=clear")
         T.step("clear weather: no aurora, no slow", not sv()["wx"]["aurora"] and sv()["wx"]["slow"] == 0, wx=sv()["wx"])
+        # ---- Ulfar's Walk (jt_ulfar) and Ulfar as a companion (one at a time, combat_scale 2.4, shield hug, faint)
+        FOL = "window.__hm.svart.follow.qa()"
+        load("jotunheim", "&jtq=done")
+        T.step("Ulfar's Walk is offered once the Stone Welcome is done; the town's Ulfar stands at the lake", (sv()["ulfar"]["q"], sv()["ulfar"]["town"]) == (0, True), ulfar=sv()["ulfar"])
+        jt("qaTalk('ulfar')"); a = sv()["ulfar"]
+        T.step("Ulfar's offer starts jt_ulfar at stage 1 (goat, song, mitten)", a["q"] == 1 and a["found"] == [0, 0, 0], ulfar=a)
+        jt("qaSpot('uw_goat')"); fin(); jt("qaSpot('uw_mitten')"); fin()
+        T.ev("window.__hm.S.found = { ...window.__hm.S.found }"); jt("qaSpot('uw_song')")
+        T.ev("(() => { const G = window.__hm; G.dlg.choice.options[1].pick(G); G.dropDialogue(); })()"); a = sv()["ulfar"]
+        T.step("Turnip, the song (any choice works) and the mitten: 3/3", a["found"] == [1, 1, 1], ulfar=a)
+        T.step("the song changes his tune (uw_tune)", T.ev("window.__hm.S.flags.uw_tune") == "snow")
+        jt("qaTalk('ulfar')"); fin(); a = sv()["ulfar"]
+        T.step("with all three done he asks to be walked to the Barrow door (stage 2) and the town's Ulfar steps out of the snow", a["q"] == 2 and a["walk"] and not a["town"], ulfar=a)
+        T.step("Ulfar's follower body is up before he has joined (sheet role ulfar)", until(FOL + ".on && " + FOL + ".role === 'ulfar'", 20), fol=T.ev(FOL))
+        T.step("his combat_scale is 2.4 (follower scale; the sheet meta says the same)", T.ev(FOL)["scale"] == 2.4, fol=T.ev(FOL))
+        T.ev("window.__hm.loadArea('rimecaves', 'from_town')"); arrive("rimecaves")
+        T.step("he follows into the Rime Caves", until(FOL + ".on && " + FOL + ".role === 'ulfar'", 20), fol=T.ev(FOL))
+        m0 = T.ev("(window.__hm.S.merit || {}).embassy || 0"); jt("qaSpot('door')"); fin(); a = sv()["ulfar"]
+        T.step("at the Barrow door Ulfar joins: jt_ulfar 3, companion ulfar, Flurry, Frostbrute", a["q"] == 3 and a["comp"] == "ulfar" and a["flurry"] and a["brute"], ulfar=a)
+        m1 = T.ev("(window.__hm.S.merit || {}).embassy || 0")
+        T.step("+80 Realm Favor (Embassy merit) for Ulfar's Walk", m1 - m0 >= 80, merit=[m0, m1])
+        walk_to(0.0, 1.0)
+        T.ev("(() => { const C = window.__hm.combat, p = window.__hd2d.ctx.player; C.spawnEnemy({ id: 'ul_t', role: 'frost_troll', pos: [p.x + 2.0, p.z - 2.0], once: true }, false); })()"); frames(4)
+        r = T.ev("window.__hm.svart.follow.qaBrawl()")
+        T.step("Ulfar's boulder toss hits a foe for real damage (20)", r is not None and r >= 15, lost=r)
+        # the foes' AI is asleep under ?qa, so put one in the chase and let Ulfar's own update see it
+        T.ev("(() => { const G = window.__hm, C = G.combat, p = window.__hd2d.ctx.player; C.spawnEnemy({ id: 'ul_t2', role: 'frost_troll', pos: [p.x + 2.4, p.z - 1.0], once: true }, false); G.S.hp = 40; C.godT = 6; C.alive().forEach((e) => { e.state = 'chase'; }); G.svart.follow.update(0.02); })()"); frames(1)
+        T.step("shield hug: when you are hurt in a fight he stands over you (50% damage for 4 s)", T.ev(FOL)["hugs"] >= 1 and T.ev(FOL)["hugT"] > 0, fol=T.ev(FOL))
+        d0 = T.ev("(() => { const C = window.__hm.combat, p = window.__hd2d.ctx.player; const h = window.__hm.S.hp; p.iframes = 0; C.godT = 0; window.__hm.S.hp = 80; const h0 = 80; C.hurtPlayer(10, { x: p.x + 1, z: p.z }, 0); return h0 - window.__hm.S.hp; })()")
+        T.step("while hugged a 10-damage hit lands for 5 or less (mode multiplier included)", 0 < d0 <= 5, dmg=d0)
+        T.ev("window.__hm.loadArea('jotunheim', 'from_bifrost')"); arrive("jotunheim")
+        a = sv()["ulfar"]
+        T.step("as a companion he is no longer standing at the lake (he is with you)", not a["town"] and until(FOL + ".on && " + FOL + ".id === 'ulfar'", 20), ulfar=a)
+        T.ev("window.__hm.weather.force('blizzard')"); jt("qaFrost(750)"); frames(4)
+        T.step("Ulfar's aura halves the blizzard frost slow (frostResist 0.5: -15% instead of -30%)", abs(sv()["wx"]["slow"] - 0.15) < 1e-6, wx=sv()["wx"])
+        T.ev("window.__hm.weather.force(null)"); jt("qaFrost(0)"); frames(4)
+        T.ev("window.__hm.S.flags.companions = { ...window.__hm.S.flags.companions, dagna: 1 }; window.__hm.S.flags.companion_active = 'dagna'; window.__hm.loadArea('rimecaves', 'from_town')"); arrive("rimecaves")
+        T.ev("window.__hm.loadArea('jotunheim', 'from_bifrost')"); arrive("jotunheim")
+        T.step("one companion at a time: with Dagna active Ulfar is not in the party (no body) and stands at the lake again",
+               T.ev(FOL)["id"] == "dagna" and not T.ev(FOL)["on"] and sv()["ulfar"]["town"], fol=T.ev(FOL), ulfar=sv()["ulfar"])
+        T.ev("window.__hm.S.flags.companion_active = 'ulfar'; window.__hm.loadArea('jotunheim', 'from_bifrost')"); arrive("jotunheim")
+        T.ev("window.__hm.combat.spawnEnemy({ id: 'ul_f', role: 'frost_troll', pos: [-4, 3], once: true }, false)"); frames(3)
+        T.ev("window.__hm.downed = true"); frames(6); T.ev("window.__hm.downed = false")
+        T.step("faint: when you go down Ulfar sits down (his body leaves)", T.ev(FOL)["fainted"] and not T.ev(FOL)["on"], fol=T.ev(FOL))
+        T.ev("window.__hm.loadArea('rimecaves', 'from_town')"); arrive("rimecaves")
+        T.step("and he returns when you move on (waystone / next area)", until(FOL + ".on && !" + FOL + ".fainted", 20), fol=T.ev(FOL))
+        shot("jt_ulfar")
+        # ---- the goat pens: two pen goats and Clatter; jt_goat (an oat-cake a day, three days); the mount stays deferred
+        load("jotunheim", "&jtq=done"); gq = sv()
+        T.step("the pen has two pen goats and Clatter on the goat sheets", sorted((g[0], g[1]) for g in gq["goats"]) == [("clatter", "clatter"), ("pen_goat1", "goat"), ("pen_goat2", "goat")], goats=gq["goats"])
+        frames(40)
+        gg = sv()["goats"]
+        T.step("the goats stay inside the fence line (x -11.4..-6.2, z 1.2..3.1) and clear of Brynja", all(-11.4 <= g[2] <= -6.2 and 1.2 <= g[3] <= 3.1 and ((g[2] + 9.0) ** 2 + (g[3] - 0.8) ** 2) ** 0.5 > 1.0 for g in gg), goats=gg)
+        jt("qaTalk('goatwife')"); fin(); a = sv()["goat"]
+        T.step("Brynja offers The Goat Who Chose You (jt_goat 1) and hands over the first oat-cake", a["q"] == 1 and a["cake"] == 1, goat=a)
+        jt("qaSpot('clatter')"); fin(); a = sv()["goat"]
+        T.step("Clatter takes the first oat-cake (1/3)", a["cakes"] == 1 and a["cake"] == 0, goat=a)
+        jt("qaTalk('goatwife')"); fin(); jt("qaSpot('clatter')"); fin(); a = sv()["goat"]
+        T.step("one oat-cake a day: a second cake the same day is refused", a["cakes"] == 1 and a["cake"] == 0, goat=a)
+        for n in (2, 3):
+            T.ev("window.__hm.S.day = (window.__hm.S.day || 0) + 1"); jt("qaTalk('goatwife')"); fin(); jt("qaSpot('clatter')"); fin(); a = sv()["goat"]
+        T.step("after three days Clatter trusts you: jt_goat stage 2 (the lap of the lake waits for the saddle)", a["q"] == 2 and a["cakes"] == 3, goat=a)
+        T.step("the goat mount stays deferred (no S.mounts.goat, no quest 3)", not a["mount"] and a["q"] != 3, goat=a)
         T.step("no JS errors in the Jotunheim run", not [e for e in errors if "jotunheim" in e.lower() or "jotun" in e.lower()], errs=errors[-3:])
         shot("jt_ring")
         a = load("jotunheim"); T.ev("window.__hd2d.setTime(0.0)"); frames(6); shot("jt_night")

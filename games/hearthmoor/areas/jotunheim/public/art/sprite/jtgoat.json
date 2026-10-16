@@ -1,0 +1,86 @@
+{
+ "tool": "hearthmoor-art goat_gen (pets_gen layout)",
+ "biome": "cozy-village",
+ "frame": [
+  20,
+  32
+ ],
+ "pivot": [
+  10,
+  32
+ ],
+ "ground_row": 31,
+ "facings": [
+  "down",
+  "up",
+  "left",
+  "right"
+ ],
+ "anims": {
+  "idle": {
+   "start": 0,
+   "count": 4,
+   "fps": 3,
+   "loop": [
+    0,
+    1,
+    2,
+    1
+   ],
+   "blink": 3
+  },
+  "walk": {
+   "start": 4,
+   "count": 4,
+   "fps": 8
+  }
+ },
+ "cols": 8,
+ "size": [
+  160,
+  256
+ ],
+ "image": "jtgoat.png",
+ "roles": {
+  "goat": {
+   "row": 0,
+   "kind": "creature",
+   "desc": "a Stonehollow pen goat: cream coat, grey shading, swept-back horns, a small white beard (goat-size; the giants' goats are not tiny, but they are goats)",
+   "size_bounds": [
+    [
+     8,
+     20
+    ],
+    [
+     8,
+     28
+    ]
+   ],
+   "caster": false,
+   "anims": [
+    "idle",
+    "walk"
+   ]
+  },
+  "clatter": {
+   "row": 4,
+   "kind": "creature",
+   "desc": "Clatter, Brynja's young brown goat: a white blaze, short horns and a gold bell that clatters; the goat who chooses you (the mount comes later)",
+   "size_bounds": [
+    [
+     8,
+     20
+    ],
+    [
+     8,
+     28
+    ]
+   ],
+   "caster": false,
+   "anims": [
+    "idle",
+    "walk"
+   ]
+  }
+ }
+}

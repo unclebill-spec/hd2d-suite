@@ -6,7 +6,7 @@
 import { TALK } from './data.js';
 import { Lumi } from './alfheim_lumi.js';
 
-export const COMP = { lumi: 'Lumi', dagna: 'Dagna Coalbeard', tobble: 'Tobble Capwhistle' };
+export const COMP = { lumi: 'Lumi', dagna: 'Dagna Coalbeard', tobble: 'Tobble Capwhistle', ulfar: 'Ulfar Mossback' };   // [JOTUNHEIM] Ulfar joins in jt_ulfar (jotunheim.js); one active at a time like the rest
 const flags = (S) => (S.flags = S.flags || {});
 export const owned = (S) => Object.keys(COMP).filter((k) => ((S.flags || {}).companions || {})[k]);
 export const active = (S) => { const o = owned(S), a = (S.flags || {}).companion_active; return o.includes(a) ? a : o[0] || null; };
