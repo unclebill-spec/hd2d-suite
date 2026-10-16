@@ -879,9 +879,10 @@ def run(out, simscale=4, size=(960, 540), segs=SEGS):
                 # guard: a hit from the front is cut to a quarter; unguarded takes it all; a roll's i-frames take nothing
                 hurt = "(() => { const c = window.__hm.ctx, p = c.player, C = window.__hm.combat; p.iframes = 0; C.godT = 0; const h0 = window.__hm.S.hp; C.hurtPlayer(20, { x: p.x + 1, z: p.z }); return h0 - window.__hm.S.hp; })()"
                 T.ev("(() => { const c = window.__hm.ctx; c.player.facing = 'right'; window.__hm.S.hp = 100; window.__hm.peace = true; })()")
-                pg.keyboard.down("c"); pg.wait_for_timeout(500)
+                dfn = "(() => { const a = window.__hm.ctx.player.act; return !!(a && a.name === 'defend'); })()"
+                pg.keyboard.down("c"); T.until(dfn)   # game-time: the guard pose starts on a game frame (slow on a busy box)
                 guarded = T.ev(hurt)
-                pg.keyboard.up("c"); pg.wait_for_timeout(500)
+                pg.keyboard.up("c"); T.until("!" + dfn)
                 open_hit = T.ev(hurt)
                 T.step("guard (C) cuts a frontal hit to a quarter", guarded == 5 and open_hit == 20, guarded=guarded, unguarded=open_hit)
                 T.ev("window.__hm.combat.st = 100; window.__hm.ctx.player.iframes = 0")
