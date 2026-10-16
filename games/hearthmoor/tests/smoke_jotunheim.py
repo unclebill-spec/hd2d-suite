@@ -267,6 +267,67 @@ def steps(b, url, T, size, errors, rep, stub=None, shots=None):
         a = load("barrow2", "&jtq=deep"); walk_to(8.0, -36.4)
         T.ev("window.__hm.hollows && window.__hm.hollows.onCast()"); frames(2)
         T.step("a spell cast by the ice wall thaws the hidden spring (tb_spring)", sv()["found"].get("tb_spring") == 1, found=sv()["found"])
+        # ---- the Rune Bridge: solvable, resettable, never a softlock
+        a = load("barrow2", "&jtq=deep"); br = a["bridge"]
+        cen = lambda c, r: (-2.6 + (5.2 / 3) * (c + 0.5), -17.2 - 2.2 * (r + 0.5))  # noqa: E731
+        lit = {(c, r) for r, cols in enumerate(br["lit"]) for c in cols}
+        seen, todo = set(), [(c, 0) for c in br["lit"][0]]
+        while todo:
+            t = todo.pop()
+            if t in seen or t not in lit:
+                continue
+            seen.add(t); todo += [(t[0] + 1, t[1]), (t[0] - 1, t[1]), (t[0], t[1] + 1), (t[0], t[1] - 1)]
+        T.step("Rune Bridge: the lit runes form one connected path from the head to the far end", any(r == 5 for _, r in seen) and len(seen) == len(lit), lit=sorted(lit))
+        walk_to(0, -16.8)
+        x, z = cen(0, 0); walk_to(x, z)
+        T.step("an unlit tile cracks: you drop back at the bridge head (never off the bridge) and the fall is counted",
+               until("window.__hm.jot.qa().bridge.falls >= 1", 10) and sv()["pos"][1] > -17.2 and T.ev("window.__hd2d.ctx.player.y") >= 2.3, qa=sv()["bridge"], pos=sv()["pos"])
+        f1 = sv()["bridge"]["falls"]
+        for (c, r) in [(1, 0), (1, 1), (2, 1), (2, 2), (2, 3), (1, 3), (1, 4), (0, 4), (0, 5)]:
+            x, z = cen(c, r); walk_to(x, z)
+        T.step("walking the lit path costs no more falls", sv()["bridge"]["falls"] == f1 and not sv()["bridge"]["solved"], qa=sv()["bridge"])
+        walk_to(0, -31.0)
+        T.step("crossing sets tb_bridge and the way on stays open", until("window.__hm.jot.qa().bridge.solved", 10), qa=sv()["bridge"])
+        x, z = cen(0, 0); walk_to(x, z); frames(3)
+        T.step("once solved no tile cracks any more", sv()["bridge"]["falls"] == f1, qa=sv()["bridge"])
+        shot("jt_rune_bridge")
+        # ---- the Waystone Crypt: the waystone attunes and travels both ways
+        a = load("barrow2", "&jtq=deep"); T.ev("(() => { const f = window.__hm.S.flags = window.__hm.S.flags || {}; f.ways = { ...(f.ways || {}), jotunheim: 1 }; })()")
+        walk_to(-4.0, -35.2)
+        T.step("the waystone attunes on arrival and is in reach (E / A)", T.ev("!!(window.__hm.S.flags.ways && window.__hm.S.flags.ways.barrow2 && window.__hm.harbor.near())"))
+        T.ev("window.__hm.harbor.interact()"); frames(3)
+        opts = T.ev("(window.__hm.dlg && window.__hm.dlg.choice) ? window.__hm.dlg.choice.options.map((o) => o.label) : []")
+        T.step("it offers Stonehollow", any("Stonehollow" in o for o in opts), opts=opts)
+        T.ev("(() => { const G = window.__hm; G.dlg.choice.options.find((o) => o.label.includes('Stonehollow')).pick(); G.dropDialogue(); })()"); arrive("jotunheim")
+        T.step("Stonehollow's waystone lists the Throne Barrow crypt once attuned", T.ev("window.__hm.S.flags.ways.barrow2 === 1") and sv()["area"] == "jotunheim")
+        # ---- Ormgar's frenzy at 50%
+        a = load("barrow2", "&jtq=deep"); walk_to(0, -7.8)
+        T.step("Ormgar wakes in the Berserker Hall", until("window.__hm.jot.qa().cb.includes('ormgar')", 10))
+        jt("qaHp('ormgar', 0.6)"); frames(4); o0 = sv()["orm"]
+        T.step("above 50% HP Ormgar is not frenzied", not o0["frenzy"] and o0["speed"] == o0["base"], orm=o0)
+        jt("qaHp('ormgar', 0.4)")
+        T.step("below 50% HP Ormgar goes into a frenzy (faster)", until("window.__hm.jot.qa().orm.frenzy", 10) and sv()["orm"]["speed"] > o0["base"], orm=sv()["orm"])
+        # ---- Hrimgard: P2 frozen floor + golems, P3 relit braziers that mend him until snuffed
+        a = load("barrow2", "&jtq=deep"); walk_to(0, -46.0)
+        T.step("Hrimgard wakes (phase 1: no slide, no relit braziers)", until("window.__hm.jot.qa().cb.includes('hrimgard')", 10) and sv()["boss"]["phase"] <= 1 and not sv()["boss"]["slide"], boss=sv()["boss"])
+        jt("qaHp('hrimgard', 0.55)")
+        T.step("below 60% (P2): the floor freezes and two ice golems rise", until("window.__hm.jot.qa().boss.p2 && window.__hm.jot.qa().cb.includes('hr_m1') && window.__hm.jot.qa().cb.includes('hr_m2')", 15), boss=sv()["boss"], cb=sv()["cb"])
+        walk_to(-2.0, -46.0); x0 = T.ev("window.__hd2d.ctx.player.x"); jt("qaSlideKick(3.0, 0)"); frames(20); x1 = T.ev("window.__hd2d.ctx.player.x")
+        T.step("on the frozen dais you keep sliding after you stop", x1 > x0 + 0.3, x0=x0, x1=x1)
+        jt("qaHp('hrimgard', 0.2)")
+        T.step("below 25% (P3): the snuffed braziers relight one by one", until("window.__hm.jot.qa().boss.relit && window.__hm.jot.qa().boss.relit.every((x) => x)", 90), boss=sv()["boss"])
+        h0 = sv()["boss"]["hp"]
+        T.step("lit braziers mend him", until(f"window.__hm.jot.qa().boss.hp > {h0}", 60), boss=sv()["boss"])
+        for i in (1, 2, 3):
+            jt(f"qaSpot('tbt{i}')")
+        h1 = sv()["boss"]["hp"]; frames(60)
+        T.step("snuffing all three stops the healing (resettable: you can always snuff them)", sv()["boss"]["relit"] == [0, 0, 0] and sv()["boss"]["hp"] <= h1 + 0.01, boss=sv()["boss"])
+        shot("jt_hrimgard_p3")
+        # ---- cairn props use the existing kit (snow_mound)
+        a = load("rimecaves", "&jtq=conquer")
+        n = T.ev("window.__hd2d.ctx.scene.objects.filter((o) => /snow_mound/.test(o.glb)).length")
+        T.step("the three watch-cairns are standing stone-mounds in the Rime Caves", n >= 3, n=n)
+        shot("jt_cairns")
         T.step("no JS errors in the Jotunheim run", not [e for e in errors if "jotunheim" in e.lower() or "jotun" in e.lower()], errs=errors[-3:])
         shot("jt_ring")
         a = load("jotunheim"); T.ev("window.__hd2d.setTime(0.0)"); frames(6); shot("jt_night")

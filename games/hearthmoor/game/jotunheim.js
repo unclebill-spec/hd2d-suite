@@ -7,7 +7,7 @@ import { REALM, MERIT } from './factions.js';
 import { ENEMIES, SPAWNS, SPELLS } from './heroes.js';
 import { XP } from './progress.js';
 import { SHOPS, GOODS } from './shop.js';
-import { WAYS } from './ravenhold.js';
+import { WAYS, WAY_SAY } from './ravenhold.js';
 import { lockRival, moodUp } from './alfheim.js';
 
 export const JOT_PLANNED = {   // id -> display name (story 2.1); `barrow` (B1-B4) + `barrow2` (B5-B9) are the dungeon, two areas like clockdeep
@@ -26,6 +26,8 @@ const met = (k) => (G) => { G.S.met = { ...(G.S.met || {}), [k]: 1 }; };
 Object.assign(REALM, { jotunheim: 'embassy', jt_hall: 'embassy', rimecaves: 'embassy', barrow: 'embassy', barrow2: 'embassy' });   // conquer / contract pay 'gate' with the alliance lock (later)
 Object.assign(MERIT, { tollstones: 60, barrow: 120, jt_gate: 60, jt_welcome: 40, jt_heart: 60, jt_rival: 20 });   // story 3.12 (the rest arrive with their quests)
 WAYS.jotunheim = ['Stonehollow', 'jotunheim', 'from_waystone'];
+WAYS.barrow2 = ["the Titan's Barrow, the Waystone Crypt", 'barrow2', 'from_waystone'];
+Object.assign(WAY_SAY, { jotunheim: 'Cold-fire runes glow along the waystone, and the snow around it is trodden flat by giant boots.', barrow2: "A waystone older than the Barrow. The first Jarl's people set it here so the dead would never be far from home." });
 
 export const JT_ARCH = { rect: [4.25, -12.3, 5.75, -11.45], pos: [5.0, -11.9], spawn: [5.0, -10.1, 'down'] };   // the ice arch on Bifrost's north wall
 const HUB_GATE = { to: 'bifrost', spawn: 'from_jotunheim', rect: [-0.9, 10.1, 0.9, 11.1], label: 'the ice arch back to Bifrost Crossing' };
@@ -222,7 +224,13 @@ JT_FX.barrow = [['cold_flame', [-3.6, 7.0], 1.0, 1], ['cold_flame', [3.6, 7.0], 
   ['pool_teal', [-5.0, -17.0], 0, 0], ['pool_aurora', [5.0, -17.0], 0, 0], ['pool_teal', [0, -19.4], 0, 0], ['ice_sparkles', [0, -16.0], 0.5, 0]];
 JT_FX.barrow2 = [['cold_flame', [-3.6, 7.0], 1.0, 1], ['cold_flame', [3.6, 7.0], 1.0, 1], ['cold_flame', [0, -32.0], 1.0, 1], ['pool_teal', [-6.4, -21.0], 0, 0], ['pool_aurora', [6.4, -21.0], 0, 0],
   ['cold_flame', [-6.0, -47.0], 1.0, 1], ['cold_flame', [6.0, -47.0], 1.0, 1], ['cold_flame', [0, -52.4], 1.0, 1], ['ice_sparkles', [0, -2.0], 0.5, 0], ['rune_pulse', [0, -30.8], 0.8, 0]];
-const CAIRNS = [[-9.0, 5.0], [9.0, 5.0], [0.0, 1.0]];   // the Toll of Stones cairns (invisible spots; the ambush spawns at runtime)
+const CAIRNS = [[-10.2, 6.4], [10.2, 6.4], [3.0, -1.6]];   // the Toll of Stones cairns (invisible spots; the ambush spawns at runtime)
+// the Rune Bridge (story 7, B7): step on lit frost runes only; unlit tiles crack and drop you back at the bridge head. 3 columns x 6 rows; LIT[row] = lit columns.
+// The lit tiles form one orthogonally connected path from the head to the far end (the smoke checks that); a fall costs a little health, never position.
+const BRIDGE = { x0: -2.6, w: 5.2 / 3, z0: -17.2, h: 2.2, rows: 6, endZ: -30.4, head: [0, -16.8], LIT: [[1], [1, 2], [2], [2, 1], [1, 0], [0, 1]] };
+const bridgeTile = (x, z) => { const r = Math.floor((BRIDGE.z0 - z) / BRIDGE.h), c = Math.min(2, Math.max(0, Math.floor((x - BRIDGE.x0) / BRIDGE.w))); return r < 0 || r >= BRIDGE.rows ? null : [c, r]; };
+const bridgeCentre = (c, r) => [BRIDGE.x0 + BRIDGE.w * (c + 0.5), BRIDGE.z0 - BRIDGE.h * (r + 0.5)];
+const THRONE_BRAZ = [[-6.0, -47.0], [6.0, -47.0], [0.0, -52.4]];   // Hrimgard's three braziers: they relight in phase 3
 const SPOTS = {   // look-spots / interactables (Svartalfheim pattern): hall door, cave path, frost prints, Welcome Ring stones
   lifts: [[-1.4, 2.6], [0.0, 3.3], [1.4, 2.6]],
   hall: [0, -9.4], caves: [10.0, -0.2], prints: [-3.4, -1.6],
@@ -289,7 +297,7 @@ export class Jotunheim {
   detach() {
     for (const f of this.fx) if (f) f.dur = f.t + 0.2;
     for (const l of this.lights) if (l) l.kill = true;
-    this.fx = []; this.lights = []; this.spots = []; this.boss = null; this.cb = {}; this.clearRing(); this.ctx = null; this.area = null;
+    this.fx = []; this.lights = []; this.spots = []; this.boss = null; this.orm = null; this.relit = null; this.relitFx = []; this.slideV = null; this.falls = 0; this.cb = {}; this.clearRing(); this.ctx = null; this.area = null;
   }
   stonehollow(ctx) {
     const G = this.G, S = G.S, gm = ctx.scene.game || (ctx.scene.game = {}), still = !!G.qaStill;
@@ -419,6 +427,10 @@ export class Jotunheim {
     }
     const lab = (k) => () => ((this.G.S.found || {})[k] ? 'the snuffed brazier' : "Veyra's cold-fire brazier (E / A: snuff it)");
     this.spot({ id: 'tb3', pos: [0, -32.0], r: 1.8, label: lab('tb_b3'), act: () => this.snuff('tb_b3', 'three') });
+    BRIDGE.LIT.forEach((cols, r) => cols.forEach((c) => { const [x, z] = bridgeCentre(c, r), y = ctx.heightAt(x, z);
+      if (ctx.gamefx && ctx.gamefx.meta.effects.rune_pulse) this.fx.push(ctx.gamefx.spawn('rune_pulse', x, y + 0.25, z, { duration: Infinity, fadeIn: still ? 0 : 0.6 })); }));
+    this.spot({ id: 'bridgehint', pos: [3.6, -15.2], r: 1.6, label: 'a frost-rune tablet (E / A)', act: () => this.look('tb_bridge_hint', 'Rune tablet', ['"ONLY THE LIT RUNES WILL BEAR YOU. THE DARK ONES REMEMBER THE COLD."', '(Pale runes pulse in the ice ahead. The dark tiles between them look thin.)']) });
+    THRONE_BRAZ.forEach(([x, z], i) => this.spot({ id: 'tbt' + (i + 1), pos: [x, z], r: 1.8, label: 'the relit cold-fire brazier (E / A: snuff it)', show: () => !!(this.relit && this.relit[i]), act: () => this.snuffThrone(i) }));
     this.spot({ id: 'echo', pos: [0, 0.8], r: 2.0, label: 'a wall of black ice (E / A)', act: () => this.echo() });
     this.spot({ id: 'tablet1', pos: [-6.6, -38.0], r: 1.6, label: 'a rune tablet (E / A)', act: () => this.look('tb_t1', 'Rune tablet', ['"HRIMGARD STONEBROW, FIRST JARL. HE BUILT THE HALL WITH HIS HANDS AND HELD THE PASS WITH HIS BACK."', '"LET HIM SLEEP. A KING WHO WAKES IS HUNGRY."']) });
     this.spot({ id: 'tablet2', pos: [6.6, -38.0], r: 1.6, label: 'a rune tablet (E / A)', act: () => this.look('tb_t2', 'Rune tablet', ['"THREE FIRES LIT BY STRANGERS. THREE FIRES TO PUT OUT. THEN THE HALL IS QUIET AGAIN."', '(Someone has scratched a small bird beneath it. Veyra\'s mark.)']) });
@@ -434,12 +446,70 @@ export class Jotunheim {
     const G = this.G, S = G.S, f = F(S);
     if (which === 'ormgar') {
       if (this.cb.ormgar || (S.found || {}).tb_ormgar) return;
-      this.foe({ id: 'ormgar', role: 'ormgar', def: 'ormgar', pos: [0, -12.4] }, () => { S.found = { ...(S.found || {}), tb_ormgar: 1 }; G.toast('Ormgar falls. The hall goes quiet.', 2.4); G.save && G.save(); });
+      this.orm = this.foe({ id: 'ormgar', role: 'ormgar', def: 'ormgar', pos: [0, -12.4] }, () => { S.found = { ...(S.found || {}), tb_ormgar: 1 }; G.toast('Ormgar falls. The hall goes quiet.', 2.4); G.save && G.save(); });
     } else {
       if (this.cb.hrimgard || (S.found || {}).tb_boss) return;
       G.toast('"Who wakes the first Jarl?"', 3.0);
-      this.foe({ id: 'hrimgard', role: 'hrimgard', def: 'hrimgard', pos: [0, -50.0] }, () => this.tbDown());
+      this.boss = this.foe({ id: 'hrimgard', role: 'hrimgard', def: 'hrimgard', pos: [0, -50.0] }, () => this.tbDown());
     }
+  }
+  deepTick(dt) {
+    const c = this.ctx, p = c.player, G = this.G, S = G.S, f = S.found || (S.found = {});
+    // the Rune Bridge: an unlit tile cracks and drops you back at the head
+    if (p.y > 2.0 && p.x > BRIDGE.x0 && p.x < -BRIDGE.x0 && p.z < BRIDGE.z0 && p.z > -30.2 && !f.tb_bridge) {
+      const t = bridgeTile(p.x, p.z);
+      if (t && !BRIDGE.LIT[t[1]].includes(t[0])) this.crack(t);
+    }
+    if (!f.tb_bridge && p.y > 2.0 && p.z < BRIDGE.endZ + 0.1 && Math.abs(p.x) < 2.8) { f.tb_bridge = 1; G.toast('The runes hold. The far side is yours.', 2.6); G.save && G.save(); }
+    this.tickOrmgar();
+    this.tickHrimgard(dt);
+  }
+  crack(t) {
+    const c = this.ctx, p = c.player, G = this.G, [x, z] = bridgeCentre(t[0], t[1]);
+    this.falls = (this.falls || 0) + 1;
+    if (c.gamefx && c.gamefx.meta.effects.snow_puff) this.fx.push(c.gamefx.spawn('snow_puff', x, c.heightAt(x, z) + 0.4, z, { duration: 1.4 }));
+    G.toast('The dark ice cracks under you! Back to the bridge head. Only the lit runes hold.', 2.4);
+    p.x = BRIDGE.head[0]; p.z = BRIDGE.head[1]; p.y = c.heightAt(p.x, p.z);
+    if (G.combat && G.combat.hurtPlayer) G.combat.hurtPlayer(5, { x, z }, 0);
+  }
+  tickOrmgar() {   // frenzy at 50% HP: faster, quicker swings, harder hits
+    const e = this.orm; if (!e || e.state === 'dead' || e.state === 'gone' || e.frenzy || e.hp / e.D.hp >= 0.5) return;
+    e.frenzy = 1; e.D = { ...e.D, speed: e.D.speed * 1.35, cd: e.D.cd * 0.7, dmg: Math.round(e.D.dmg * 1.2) }; e.a.speed = e.D.speed;
+    this.G.toast('Ormgar howls: FRENZY!', 2.2);
+    if (this.ctx.effects) this.ctx.effects.spawn('frost_puff', e.a.x, e.a.y + 1.2, e.a.z + 0.05);
+  }
+  tickHrimgard(dt) {
+    const e = this.boss, c = this.ctx, p = c.player, G = this.G; if (!e || e.state === 'dead' || e.state === 'gone') { this.slideV = null; return; }
+    const fr = e.hp / e.D.hp, ph = fr < e.D.phases[1] ? 3 : fr < e.D.phases[0] ? 2 : 1; e.phaseN = ph;
+    if (ph >= 2 && !e.p2) {   // P2: the throne-room floor freezes (slide) and two ice golems rise
+      e.p2 = 1; this.slideV = [0, 0]; G.toast('The throne-room floor freezes over. Ice golems rise from the dais.', 3.0);
+      [[-5.5, -48.0], [5.5, -48.0]].forEach(([x, z], i) => this.foe({ id: 'hr_m' + (i + 1), role: 'ice_golem', pos: [x, z] }, () => {}));
+    }
+    if (ph >= 3 && !e.p3) { e.p3 = 1; e.p3t = 0; e.healT = 0; this.relit = [0, 0, 0]; this.snuffed = [0, 0, 0]; G.toast('The braziers you snuffed gutter back to life. Snuff them again!', 3.0); }
+    if (e.p3) {   // P3: the braziers relight one by one; each lit one mends him until you snuff it
+      e.p3t += dt;
+      THRONE_BRAZ.forEach(([x, z], i) => {
+        if (!this.relit[i] && !this.snuffed[i] && e.p3t > 3 + 4 * i) {
+          this.relit[i] = 1; const y = c.heightAt(x, z);
+          if (c.gamefx && c.gamefx.meta.effects.rune_pulse) this.relitFx[i] = c.gamefx.spawn('rune_pulse', x, y + 1.6, z, { duration: Infinity, fadeIn: 0.4 });
+          G.toast(`A brazier relights (${this.relit.filter(Boolean).length}/3). Snuff it, or he mends.`, 2.0);
+        }
+      });
+      e.healT += dt; const n = this.relit.filter(Boolean).length;
+      if (e.healT > 2) { e.healT = 0; if (n) e.hp = Math.min(e.hp + e.D.hp * 0.012 * n, e.D.hp * 0.3); }
+    }
+    // the frozen floor: you keep sliding for a moment after you stop (on the dais only)
+    if (this.slideV && p.y > 3.3 && p.z < -42.4) {
+      const prev = this.slidePrev, k = Math.min(1, 1.5 * dt);
+      if (prev && dt > 0) { const vx = (p.x - prev[0]) / dt, vz = (p.z - prev[1]) / dt; this.slideV[0] += (vx - this.slideV[0]) * k; this.slideV[1] += (vz - this.slideV[1]) * k; }
+      if (c.collide) { const [nx, nz, nh, ok] = c.collide.move(p.x, p.z, p.y, this.slideV[0] * dt * 0.9, this.slideV[1] * dt * 0.9, p.r); if (ok !== false) { p.x = nx; p.z = nz; p.y = nh; } }
+      this.slidePrev = [p.x, p.z];
+    } else { this.slidePrev = null; if (this.slideV) { this.slideV[0] *= 0.5; this.slideV[1] *= 0.5; } }
+  }
+  snuffThrone(i) {
+    const G = this.G; if (!this.relit || !this.relit[i]) return;
+    this.relit[i] = 0; this.snuffed[i] = 1; const f = this.relitFx[i]; if (f) f.dur = f.t + 0.2; this.relitFx[i] = null;
+    G.toast(`Brazier snuffed (${this.relit.filter(Boolean).length}/3 still burning).`, 2.0);
   }
   tbDown() {
     const G = this.G, S = G.S, f = flags(S), conq = (f.alliance || {}).jotunheim === 'conquer';
@@ -553,6 +623,7 @@ export class Jotunheim {
   update(dt) {
     if (!this.ctx) return;
     if (this.area === 'jotunheim' && !this.G.dlg && !this.G.busy && this.G.combat && F(this.G.S).jg_sounded && !F(this.G.S).jg_troll && !this.cb.jg_troll) this.gateTroll();
+    if (this.area === 'barrow2') this.deepTick(dt);
     if (this.area === 'barrow2' && !this.G.dlg && this.G.combat) { const z = this.ctx.player.z; if (z < -7.2) this.tbBoss('ormgar'); if (z < -45.0) this.tbBoss('hrimgard'); }
     if (this.ring) {
       this.ring.t += dt; const el = this.ring.el, fill = el && el.querySelector('#jt-ring-fill');
@@ -563,6 +634,8 @@ export class Jotunheim {
   // QA helpers for the smoke test
   qaTalk(id) { const e = TALK[id](this.G.S); if (e && e.then) e.then(this.G); return { pages: e ? e.pages.length : 0, choice: e && e.choice ? e.choice.options.map((o) => o.label) : null }; }
   qaPick(label, id = 'jarl') { const e = TALK[id](this.G.S), o = e.choice.options.find((x) => x.label === label), nx = o.pick(this.G); if (nx && nx.then) nx.then(this.G); return nx ? nx.pages.length : 0; }
+  qaHp(id, frac) { const e = this.G.combat.enemies.find((x) => x.id === id); if (!e) return false; e.hp = e.D.hp * frac; return true; }
+  qaSlideKick(vx, vz) { this.slideV = this.slideV || [0, 0]; this.slideV = [vx, vz]; this.slidePrev = null; return true; }
   qaKill(id) { const f = this.cb[id]; if (!f) return false; f(); return true; }
   qaBoss(w) { this.tbBoss(w); return !!this.cb[w]; }
   qaSpot(id) { const sp = this.spots.find((x) => x.id === id); if (!sp) return false; sp.act(); return true; }
@@ -571,7 +644,7 @@ export class Jotunheim {
     const c = this.ctx, S = this.G.S, f = F(S), gm = c ? (c.scene.game || {}) : {};
     return { realm: 'jotunheim', built: Object.keys(AREAS_JOT), planned: JOT_AREAS, area: this.area, exits: (gm.exits || []).map((e) => e.to), portals: (gm.portals || []).map((p) => p.to),
              spots: this.spots.filter((x) => x.show()).length, lifts: f.jw_lifts || 0, need: need(S), quest: q(S, 'jt_welcome'), gate: this.gate.qa(), alliance: (f.alliance || {}).jotunheim || null,
-             actors: c ? c.actors.list.map((a) => a.id || a.role) : [], fx: this.fx.length, lights: this.lights.length, ring: !!this.ring, inCellar: !!this.inCellar, heart: q(S, 'jt_heart'), clues: ['jh_heart', 'jh_rime', 'jh_trail'].filter((k) => f[k]), peace: !!f.jt_peace, evidence: (S.evidence || {}).jotunheim || null, hire: q(S, 'jt_hire'), terms: !!f.jw_terms, skuli: !!f.jw_skuli, pos: c ? [c.player.x, c.player.z] : null, spring: !!(S.found || {}).rc_spring, quest_barrow: q(S, 'barrow'), foes: c ? c.actors.list.filter((a) => ['frost_troll', 'ice_golem', 'avalanche_golem', 'rime_berserker', 'hrimgard', 'ormgar'].includes(a.role)).map((a) => a.role) : [], shop: !!SHOPS.jt_trader, found: S.found || {}, gate_q: q(S, 'jt_gate'), take_q: q(S, 'jt_take'), hire_q: q(S, 'jt_hire'), key: !!f.barrow_key, spells: S.spells || [], unlocks: S.unlocks || {}, cb: Object.keys(this.cb), gold: S.gold || 0, jg: [f.jg_asked, f.jg_horn, f.jg_troll].map((x) => !!x) };
+             actors: c ? c.actors.list.map((a) => a.id || a.role) : [], fx: this.fx.length, lights: this.lights.length, ring: !!this.ring, inCellar: !!this.inCellar, heart: q(S, 'jt_heart'), clues: ['jh_heart', 'jh_rime', 'jh_trail'].filter((k) => f[k]), peace: !!f.jt_peace, evidence: (S.evidence || {}).jotunheim || null, hire: q(S, 'jt_hire'), terms: !!f.jw_terms, skuli: !!f.jw_skuli, pos: c ? [c.player.x, c.player.z] : null, spring: !!(S.found || {}).rc_spring, quest_barrow: q(S, 'barrow'), foes: c ? c.actors.list.filter((a) => ['frost_troll', 'ice_golem', 'avalanche_golem', 'rime_berserker', 'hrimgard', 'ormgar'].includes(a.role)).map((a) => a.role) : [], shop: !!SHOPS.jt_trader, found: S.found || {}, gate_q: q(S, 'jt_gate'), take_q: q(S, 'jt_take'), hire_q: q(S, 'jt_hire'), key: !!f.barrow_key, spells: S.spells || [], unlocks: S.unlocks || {}, cb: Object.keys(this.cb), bridge: { falls: this.falls || 0, solved: !!(S.found || {}).tb_bridge, lit: BRIDGE.LIT, head: BRIDGE.head }, boss: { phase: this.boss ? this.boss.phaseN || 1 : 0, p2: !!(this.boss && this.boss.p2), p3: !!(this.boss && this.boss.p3), relit: this.relit ? this.relit.slice() : null, hp: this.boss ? this.boss.hp : null, max: this.boss ? this.boss.D.hp : null, slide: this.slideV ? this.slideV.slice() : null }, orm: { frenzy: !!(this.orm && this.orm.frenzy), speed: this.orm ? this.orm.D.speed : null, base: ENEMIES.ormgar.speed }, gold: S.gold || 0, jg: [f.jg_asked, f.jg_horn, f.jg_troll].map((x) => !!x) };
   }
 }
 

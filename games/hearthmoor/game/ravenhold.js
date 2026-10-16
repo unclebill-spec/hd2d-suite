@@ -11,7 +11,7 @@ export const WAYS = {   // where each attuned waystone sends you (area -> [label
   bifrost: ['Bifrost Crossing', 'bifrost', 'from_waystone'],
   temple: ['the Old Temple, Ravenhold', 'temple', 'from_waystone'],   // Stage 6.3
 };
-const WAY_SAY = {
+export const WAY_SAY = {
   ravenhold: 'Cold-fire runes glow along the waystone. Its twin stands at the west end of Bakery Lane.',
   lane: 'Cold-fire runes glow along the waystone. The west road runs from here to Ravenhold, at the foot of the Rainbow Rift.',
   temple: 'Cold-fire runes glow along the waystone. The Temple\'s old stones remember every pilgrim.',

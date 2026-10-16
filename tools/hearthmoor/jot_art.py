@@ -162,7 +162,8 @@ PLACE = {
                   ("frost_rune_pillar", [-7.4, -4.6], "fixed"), ("frost_rune_pillar", [7.4, -4.6], "fixed"), ("frost_rune_pillar", [-8.0, 3.0], "fixed"), ("frost_rune_pillar", [8.0, 3.0], "fixed"),
                   ("ice_crystal_cluster", [-11.0, 10.4], "fixed"), ("ice_crystal_cluster", [11.0, 10.4], "fixed"), ("ice_crystal_cluster", [-11.0, -3.0], "fixed"), ("ice_crystal_cluster", [11.0, -3.0], "fixed"),
                   ("glow_ice_pool", [-6.0, 5.2], "fixed"), ("glow_ice_pool", [6.0, 5.2], "fixed"), ("glow_ice_pool", [-7.4, -0.4], "fixed"), ("glow_ice_pool", [7.4, -0.4], "fixed"), ("glow_ice_pool", [0.0, 0.2], "fixed"),
-                  ("ice_wall", [8.0, -9.0], "fixed"), ("ice_wall", [10.0, -9.0], "fixed"), ("warm_lantern", [-2.8, 9.4], "fixed"), ("warm_lantern", [2.8, 9.4], "fixed"), ("warm_lantern", [-4.6, -3.0], "fixed")],
+                  ("ice_wall", [8.0, -9.0], "fixed"), ("ice_wall", [10.0, -9.0], "fixed"), ("warm_lantern", [-2.8, 9.4], "fixed"), ("warm_lantern", [2.8, 9.4], "fixed"), ("warm_lantern", [-4.6, -3.0], "fixed"),
+                  ("snow_mound", [-10.2, 6.4], "fixed"), ("snow_mound", [10.2, 6.4], "fixed"), ("snow_mound", [3.0, -1.6], "fixed")],
     "barrow": [("cold_brazier", [-3.6, 7.0], "fixed"), ("cold_brazier", [3.6, 7.0], "fixed"), ("shield_rack", [-9.4, -6.0], "fixed"), ("shield_rack", [9.4, -6.0], "fixed"),
                ("shield_rack", [-9.4, -10.0], "fixed"), ("shield_rack", [9.4, -10.0], "fixed"), ("cold_brazier", [0.0, -8.6], "fixed"),
                ("frost_rune_pillar", [-6.4, -4.8], "fixed"), ("frost_rune_pillar", [6.4, -4.8], "fixed"),
@@ -175,7 +176,7 @@ PLACE = {
                 ("glow_ice_pool", [-6.4, -21.0], "fixed"), ("glow_ice_pool", [6.4, -21.0], "fixed"), ("glow_ice_pool", [-6.4, -26.0], "fixed"), ("glow_ice_pool", [6.4, -26.0], "fixed"),
                 ("frost_rune_pillar", [-4.4, -19.0], "fixed"), ("frost_rune_pillar", [4.4, -19.0], "fixed"), ("frost_rune_pillar", [-4.4, -24.0], "fixed"), ("frost_rune_pillar", [4.4, -24.0], "fixed"),
                 ("cold_brazier", [0.0, -32.0], "fixed"), ("rune_standing_stone", [-9.0, -35.0], "fixed"), ("rune_standing_stone", [9.0, -35.0], "fixed"),
-                ("rune_standing_stone", [-9.0, -39.0], "fixed"), ("ice_wall", [8.0, -40.0], "fixed"), ("ice_crystal_cluster", [-10.4, -40.0], "fixed"),
+                ("rune_standing_stone", [-9.0, -39.0], "fixed"), ("rune_standing_stone", [-4.0, -37.2], "fixed"), ("ice_wall", [8.0, -40.0], "fixed"), ("ice_crystal_cluster", [-10.4, -40.0], "fixed"),
                 ("cold_brazier", [-6.0, -47.0], "fixed"), ("cold_brazier", [6.0, -47.0], "fixed"), ("frost_rune_pillar", [-9.4, -45.0], "fixed"), ("frost_rune_pillar", [9.4, -45.0], "fixed"),
                 ("cold_brazier", [0.0, -52.4], "fixed")],
 }
