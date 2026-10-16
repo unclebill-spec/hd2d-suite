@@ -2,6 +2,12 @@
 
 Dates are America/New_York. Newest first. Keep this current with every change you push.
 
+## 2026-10-16: Jotunheim-2 LIVE: rares, Rimebreaker, weather, Ulfar companion, goats, Hrimgard framing (merge of `realm-jotunheim-2` via `hearthmoor-jt2-merge`)
+- **Merge-check:** Master Builder's full sharded smoke on the branch (`/workspace/alf_qa/jot/sm4/`: A 114, B 311, C 29, DGM 39, FHK 39, IJLE 24) accepted (segment A started before the art-only Hrimgard sheet commit 67010d0, B to M ran after it; the last commit changes a test wait and docs only). Rerun here: `smoke_svartalfheim.py` 118/118, `smoke_jotunheim.py` 140/140, `check_all --lowres` PASS on jotunheim, barrow2, rimecaves, barrow, jt_hall and plaza.
+- **Hrimgard:** `combat.js` honours `framed: true` (the 7x boss keeps his head in view even with AI asleep) and the sheet's white grid (seam lines, beard strands, fist rings) is fixed at the source; phase 1 / 2 / 3 shots checked: head in frame, no grid.
+- **Screenshots:** `docs/screenshots/jotunheim_hrimgard_p3.png`, `docs/screenshots/jotunheim_blizzard.png`.
+- **Leftovers:** Dark Stonehollow after a conquer, the B3 slide puzzle, Stonefrost II / III (spell kinds + atlas art), real waystone and cairn models from Hearthmoor Art, the goat mount reward (needs the mounts system; Clatter's `jt_goat` reward is deferred).
+
 ## 2026-10-16: Jotunheim-2: rares, the Rimebreaker, weather, Ulfar, pen goats (branch `realm-jotunheim-2`; `realm-jotunheim` is with Cozy Builder for merge checks; main still 01c86b7)
 - **Rares (rimecaves):** `frostmother` (2.5x, `chill` 14, Summoner of frost-troll whelps) and `avalanche` (3x, Shielded, a quake `wave` every 4th slam) through `rares.js` `BASES` / `RARE_AREAS.rimecaves`, spots [5.2,-3.2] and [-4.6,2.6] (>= 3.5 m from every actor and each other). `?qa` suppresses rares, so `check_scene` never sees them.
 - **The Rimebreaker (`jt_axe`):** Solvi offers it after the Stonefrost lesson and `barrow` 3; three heart-ice shards (`hi_1` Glow Pools, `hi_2` behind Ormgar's seat, `hi_3` crypt crystals); legendary axe (`unique: rimebreaker`); every 3rd melee hit freezes the foe for 1.5 s plus a small ice wave. Deviation: the engine has no charged attack, so the wave rides on the 3rd hit.
