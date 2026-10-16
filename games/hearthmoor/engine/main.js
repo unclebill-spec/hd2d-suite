@@ -195,6 +195,7 @@ export async function boot(opts = {}) {
   // ---------------------------------------------------------------- world objects
   const slots = { windows: [], lamps: [] };
   const occluders = [];
+  const pzObjs = {};   // [SVARTALFHEIM] puzzle pieces (scene object field `pz`): the game moves / shows / hides them (cogs, levers, the cart, gates)
   await Promise.all(scene.objects.map(async (ob) => {
     const g = litify(await loadGLB(R(ob.glb)), slots);
     g.position.set(...ob.pos);
@@ -202,6 +203,7 @@ export async function boot(opts = {}) {
     if (ob.scale) g.scale.setScalar(ob.scale);
     g.traverse((o) => { if (o.isMesh) { o.castShadow = ob.cast !== false; o.receiveShadow = ob.receive !== false; } });
     if (ob.walkable) g.userData.walkable = true;
+    if (ob.pz) { g.userData.pz = ob.pz; pzObjs[ob.pz] = g; if (ob.hidden) g.visible = false; }
     if (ob.occluder) occluders.push(g);
     world.add(g);
   }));
@@ -860,7 +862,7 @@ export async function boot(opts = {}) {
     setTimeScale: (s) => { timeScale = Math.max(0, Math.min(1, s)); }, timeScale: () => timeScale,
     pixelK: () => actors.k, bufSize: () => [bufW, bufH], canvasRect: () => canvas.getBoundingClientRect(),
     nearestNpc: (d) => nearestNpc(d), blocked,
-    addGlow, glows, glowN: GLOW_N, lamps,
+    addGlow, glows, glowN: GLOW_N, lamps, pz: (id) => pzObjs[id] || null, pzIds: () => Object.keys(pzObjs),
   };
 
   // ---------------------------------------------------------------- debug / QA API

@@ -23002,6 +23002,19 @@
    ],
    "desc": "Soot Colossus (rare, 2.8x): soot elemental over a cracked forge grate.",
    "enemy": true
+  },
+  "tobble": {
+   "sheet": "tobble",
+   "row": 0,
+   "kind": "creature",
+   "anims": [
+    "idle",
+    "walk",
+    "follow"
+   ],
+   "desc": "Tobble (gnome follower): messy white hair and beard, tiny red white-spotted toadstool cap, green shirt under a gold vest, dark belt with buckle, blue trousers with red braces, striped socks, brown shoes. follow = walk cycle at 10 fps, offset one frame.",
+   "pet": true,
+   "follower": true
   }
  },
  "sheets": {
@@ -23044,6 +23057,10 @@
   "rare_sootcolossus": {
    "json": "rare_sootcolossus.json",
    "image": "rare_sootcolossus.png"
+  },
+  "tobble": {
+   "json": "tobble.json",
+   "image": "tobble.png"
   }
  }
 }

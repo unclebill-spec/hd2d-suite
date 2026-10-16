@@ -2,6 +2,12 @@
 
 Dates are America/New_York. Newest first. Keep this current with every change you push.
 
+## 2026-10-16: Svartalfheim gear and rail puzzles (`realm-svartalfheim-3`, from main 2de49ce)
+- **C2 The Drive Shaft, C4 The Assembly Line, C6 The Switchyard** are playable (`game/svartalfheim_puzzles.js`): cogs carried to pegs (meshed 0.8 m apart, drive pegs always turn, a spell thaws the frozen cog / switch within 2.6 m), C4's two drives and parity (odd route = anticlockwise = belts to the presses, even route = clockwise = belts to the exit, both = jam), C6 rails with 3 switches (switch 2 frozen) and the brake lever (3 m/s cart, 30 dmg to foes, buffer bump rolls back after 3 s). Solving sets `cd_cog1/2/3`, lifts the C2 shutter / breaks the C6 ram gate and unlocks their chests (45 g + 1 deep brass, 70 g + 2 deep brass). Reset lever per gear room; solved stays solved; QA `?cogs=solve` / `?rails=solve`.
+- Art: the puzzles pack (13 kit pieces, `cog_spin_*` fx, Tobble's 20x32 sheet) installed by `svart_art.py` (add / overwrite only). Tobble's follower uses his own sheet in the realm areas. Engine: `pz` tag on scene objects + `ctx.pz(id)`.
+- Moved: cd_sg2 / cd_sg6b spawns, the clockdeep2 east rune lamp and the decor cart + rails (made way for the puzzles).
+- Still not built: chest objects for Tick's chestSense, Forgefire day-shift gating + soot-smudge decal, Tova's discount, a real forge-construct sprite for the Bifrost runaway, the Council rift-seal shortcut, and a full `check_all --lowres`.
+
 ## 2026-10-16: Svartalfheim part 2 LIVE: merged Master Builder's `realm-svartalfheim-2` (12971cf, cut from main 72c930f) to main and published
 - **Forgefire Week** (`svartalfheim_festival.js`: festival day, Dagna's bounty, +40 Realm Favor), **The Masterwork** (`svartalfheim_master.js`: Tansy, Tinker's Heart + `wound_up`), **The Foreman** (`svartalfheim_foreman.js`: C4 mini-boss 2.8x with his own sheet, whistle + belly, drops the clock spring so the Masterwork can be finished), **rares** (`svartalfheim_rares.js`: Amethyst Basilisk, Soot Colossus), **companion followers** (`svartalfheim_follow.js`: Dagna brawls and mends, Tobble outside the realm; Dagna's temper buff), quest-mark glyphs in the realm gamefx atlases, Tick's `goldMul` (pickup gold) and `chestSense` hooks, conquer-only hushblades.
 - Checks: full sharded smoke (A-M with both realms' steps) and `check_all --lowres` on all 21 areas (21/21). Segments that stopped a shard were rerun alone (HIJ).

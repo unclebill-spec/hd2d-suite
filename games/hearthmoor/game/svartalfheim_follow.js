@@ -2,7 +2,7 @@
 // that trails the player, hops over when left far behind, and (Dagna) brawls / mends. Only the ACTIVE companion follows (see
 // svartalfheim_companions.js); Lumi keeps her own module and checks the same flag.
 // Sheets: Dagna = role 'dagna' (exists in the 5 realm areas; she is not shown in forge_hall, where she is at her forge).
-// Tobble = role 'gnome' in the areas where that is still his sheet (outside the realm areas, which repaint 'gnome' as Dagna).
+// Tobble = role 'gnome' outside the realm areas; in the realm areas (which repaint 'gnome' as Dagna) he uses his own 'tobble' sheet (puzzles pack).
 // Elsewhere the companion is still "with you" (flag, swap, toast) but has no body. Deviations: no temper buff (+10% melee), Tobble has no kit.
 import { active } from './svartalfheim_companions.js';
 
@@ -21,10 +21,10 @@ export class Follow {
     const id = active(this.G.S), k = KIT[id]; this.id = id || null;
     if (!k || !ctx.actors) return;
     if (id === 'dagna' && (area === 'forge_hall' || !SV.includes(area))) return;   // at her forge / no sheet in this atlas
-    if (id === 'tobble' && SV.includes(area)) return;                                 // 'gnome' is Dagna's sheet in the realm areas
-    if (!ctx.actors.meta.roles[k.role]) return;
+    const role = id === 'tobble' && SV.includes(area) ? 'tobble' : k.role;           // 'gnome' is Dagna's sheet in the realm areas: Tobble has his own sheet there (puzzles pack)
+    if (!ctx.actors.meta.roles[role]) return;
     const p = ctx.player, x = p.x + 0.8, z = p.z + 0.4;
-    this.sprite = ctx.actors.add({ role: k.role, id: 'comp_' + id, pos: [x, z], behavior: 'none', turn: false }); this.sprite.ai = true;
+    this.sprite = ctx.actors.add({ role, id: 'comp_' + id, pos: [x, z], behavior: 'none', turn: false }); this.sprite.ai = true;
     this.sprite.x = x; this.sprite.z = z; this.sprite.y = ctx.heightAt(x, z);
     if (k.light && ctx.addGlow) this.light = ctx.addGlow(x, this.sprite.y, z, { color: k.light, intensity: 2.0, range: 1.8, lift: 0.6, fadeIn: 0.4 });
     this.on = true; this.mended = false;

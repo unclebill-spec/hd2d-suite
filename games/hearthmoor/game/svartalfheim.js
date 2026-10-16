@@ -9,6 +9,7 @@ import { XP } from './progress.js';
 import { SHOPS } from './shop.js';
 import { WAYS } from './ravenhold.js';
 import { SvStory } from './svartalfheim_story.js';
+import { Puzzles } from './svartalfheim_puzzles.js';
 import { DeepRooms, ROOM_SPAWNS } from './svartalfheim_deep.js';
 import { SvGate } from './svartalfheim_gate.js';
 import { SvFest } from './svartalfheim_festival.js';
@@ -92,7 +93,7 @@ const SV_AREAS = Object.keys(AREAS_SV);
 const FLUE = [0, -31.2];   // the frozen flue, north rim of the Binding Forge (z -32 is the walk limit; the pillar stands at z -30)
 const SV_LIGHT = { pool_red: ['#ff5a4a', 7, 5.0], pool_blue: ['#2ab4ff', 5, 3.6], pool_violet: ['#a45cf0', 5, 4.0], water_glow: ['#3ac8b0', 4, 3.2] };
 export class Svartalfheim {
-  constructor(G) { this.G = G; this.ctx = null; this.area = null; this.fx = []; this.lights = []; this.spots = []; this.qaDone = false; this.fight = new GorrakFight(this); this.deep = new DeepRooms(this); this.story = new SvStory(this); this.gate = new SvGate(this); this.fest = new SvFest(this); installMaster(); this.master = new SvMaster(this); this.foreman = new Foreman(this); this.follow = new Follow(G); this.started = false; this.wrap(); }
+  constructor(G) { this.G = G; this.ctx = null; this.area = null; this.fx = []; this.lights = []; this.spots = []; this.qaDone = false; this.fight = new GorrakFight(this); this.deep = new DeepRooms(this); this.pz = new Puzzles(this); this.story = new SvStory(this); this.gate = new SvGate(this); this.fest = new SvFest(this); installMaster(); this.master = new SvMaster(this); this.foreman = new Foreman(this); this.follow = new Follow(G); this.started = false; this.wrap(); }
   // E / A and tap try the realm's interactables first (same hook as Alfheim's, chained)
   wrap() {
     const G = this.G, me = this;
@@ -103,7 +104,7 @@ export class Svartalfheim {
     G.harbor.onTap = (hit, ...a) => me.onTap(hit) || t0(hit, ...a);
     if (G.hollows) { const c0 = G.hollows.onCast.bind(G.hollows); G.hollows.onCast = (...a) => { const r = c0(...a); me.onCast(); return r; }; }
   }
-  spot(o) { this.spots.push({ r: 1.6, show: () => true, ...o }); }
+  spot(o) { this.spots.push(Object.defineProperties({ r: 1.6, show: () => true }, Object.getOwnPropertyDescriptors(o))); }   // (keeps getter labels live: the puzzle spots)
   nearSpot() {
     const c = this.ctx; if (!c || this.G.dlg) return null;
     let best = null, bd = 1e9;
@@ -124,10 +125,10 @@ export class Svartalfheim {
   look(id, name, pages) { this.G.openDialogue({ id, name }, { pages }); }
   qa() {   // read-only snapshot for the smoke test
     const c = this.ctx, gm = c ? (c.scene.game || {}) : {}, S0 = this.G.S;
-    return { area: this.area, seal: hasSeal(this.G.S), exits: (gm.exits || []).map((e) => e.to),
+    return { area: this.area, pz: this.pz ? this.pz.qa() : null, seal: hasSeal(this.G.S), exits: (gm.exits || []).map((e) => e.to),
              foes: c ? c.actors.list.filter((a) => ['sootling', 'forgeconstruct', 'golem', 'sparkgolem', 'shadowsmith', 'hushblade'].includes(a.role)).map((a) => a.role) : [],
              flue: { thawed: !!(this.G.S.flags || {}).cd_thawed, heart: !!(this.G.S.inv || {}).anvil_heart }, deep: { vents: this.deep.v.reduce((n, v) => n + (v.n || 0), 0), hits: this.deep.hits, gusts: this.deep.gust.n, pushed: this.deep.gust.pushed || 0 },
-             spots: this.spots.filter((x) => x.show()).length, gate: this.gate.qa(), fest: this.fest.qa(), master: this.master.qa(), foreman: this.foreman.qa(), comps: { owned: owned(this.G.S), active: active(this.G.S) },
+             spots: this.spots.filter((x) => !x.pz && x.show()).length, gate: this.gate.qa(), fest: this.fest.qa(), master: this.master.qa(), foreman: this.foreman.qa(), comps: { owned: owned(this.G.S), active: active(this.G.S) },
              quests: S0.quests || {}, alliance: ((S0.flags || {}).alliance || {}).svartalfheim || null, alfheim_alliance: ((S0.flags || {}).alliance || {}).alfheim || null, rivals: (S0.flags || {}).rivals || null, inv: S0.inv || {},
              gorrak: this.fight.e ? { hp: Math.round(this.fight.e.hp), max: this.fight.e.D.hp, scale: this.fight.e.D.scale, phase: this.fight.e.ph, state: this.fight.e.state, role: this.fight.e.a.role } : null };
   }
@@ -160,7 +161,7 @@ export class Svartalfheim {
       this.spot({ pos: [4.1, -10.0], r: 2.0, label: 'the Deep\'s lift is sealed (E / A to look)', show: () => !hasSeal(S),
         act: () => this.look('deep_lift', 'The Deep\'s lift', ['A lift cage. A seal of copper and rune-light holds it shut.']) });
     }
-    this.started = false; this.fight.reset(); this.deep.reset(); this.story.attach(area);
+    this.started = false; this.fight.reset(); this.deep.reset(); this.story.attach(area); this.pz.attach(ctx, area);
     this.thawFx = null;
     if (area === 'clockdeep2') this.flue();   // story 6.7: the frozen flue (spell thaws it, then E / A gives the Anvil-Heart)
     if (area === 'clockdeep2') {   // Gorrak's arena (C8): the quench valves (phase 2) and the rune-anvils (phase 3)
@@ -175,7 +176,7 @@ export class Svartalfheim {
       if (ctx.addGlow && L && f.light !== false) this.lights.push(ctx.addGlow(x, y, z, { color: L[0], intensity: L[1], range: L[2], lift: 0.6, fadeIn: still ? 0.01 : 0.8 }));
     }
   }
-  detach() { clearGaze(this.ctx); this.follow && this.follow.detach(); this.fest && this.fest.detach(); for (const f of this.fx) if (f) f.dur = f.t + 0.2; for (const l of this.lights) if (l) l.kill = true; this.fx = []; this.lights = []; this.spots = []; this.ctx = null; this.area = null; }
+  detach() { this.pz && this.pz.detach(); clearGaze(this.ctx); this.follow && this.follow.detach(); this.fest && this.fest.detach(); for (const f of this.fx) if (f) f.dur = f.t + 0.2; for (const l of this.lights) if (l) l.kill = true; this.fx = []; this.lights = []; this.spots = []; this.ctx = null; this.area = null; }
   // ---- the frozen flue (story 3.7 / 6.7): north rim of the Binding Forge. A spell within 2.6 m thaws it, E / A takes the Anvil-Heart.
   flue() {
     const G = this.G, S = G.S, f = () => flags(S), ctx = this.ctx, X = FLUE[0], Z = FLUE[1];
@@ -192,6 +193,7 @@ export class Svartalfheim {
   }
   // a cast near the flue thaws it (the Hollows brazier rule)
   onCast() {
+    if (this.pz) this.pz.onCast();
     const c = this.ctx, f = flags(this.G.S); if (!c || this.area !== 'clockdeep2' || f.cd_thawed || !f.cd_boss || !(f.cd_bound || f.cd_taken)) return;
     if (Math.hypot(c.player.x - FLUE[0], c.player.z - FLUE[1]) > 2.6) return;
     f.cd_thawed = 1; this.G.toast('The rime sweats and cracks. Something red-gold shows through.', 2.6);
@@ -239,7 +241,7 @@ export class Svartalfheim {
   update(dt) {
     const c = this.ctx;
     if (c && dt) { this.follow.update(dt); updateGaze(c, dt); this.watchHurt(c); }
-    if (c && dt) { this.deep.update(dt, this.area); this.story.update(dt, this.area); this.fest.update(dt); this.master.update(dt); }
+    if (c && dt) { this.deep.update(dt, this.area); this.pz.update(dt); this.story.update(dt, this.area); this.fest.update(dt); this.master.update(dt); }
     if (c && this.area === 'clockdeep2' && !this.started && !flags(this.G.S).cd_boss && !this.G.dlg) {
       const p = c.player; if (Math.hypot(p.x - PILLAR[0], p.z - PILLAR[1]) < 9) this.gorrakIntro();
     }

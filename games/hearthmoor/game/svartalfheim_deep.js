@@ -55,12 +55,12 @@ export const ROOM_SPAWNS = {
   clockdeep: [
     { id: 'cd_fc1a', role: 'forgeconstruct', pos: [-1.2, 30.4] }, { id: 'cd_fc1b', role: 'forgeconstruct', pos: [1.4, 23.6] },
     { id: 'cd_so1a', role: 'sootling', pos: [1.0, 27.8] }, { id: 'cd_so1b', role: 'sootling', pos: [-1.0, 21.0] },
-    { id: 'cd_fc2', role: 'forgeconstruct', pos: [-1.6, 9.0] }, { id: 'cd_sg2', role: 'sparkgolem', pos: [1.6, 5.0] },
+    { id: 'cd_fc2', role: 'forgeconstruct', pos: [-1.6, 9.0] }, { id: 'cd_sg2', role: 'sparkgolem', pos: [-1.4, 5.0] },
     { id: 'cd_so3a', role: 'sootling', pos: [1.6, -4.0] }, { id: 'cd_so3b', role: 'sootling', pos: [-1.6, -4.6] },
   ],
   clockdeep2: [
     { id: 'cd_sm5a', role: 'shadowsmith', pos: [-1.6, 17.6] }, { id: 'cd_sm5b', role: 'shadowsmith', pos: [1.6, 17.0] },
-    { id: 'cd_sg6a', role: 'sparkgolem', pos: [-1.6, 10.0] }, { id: 'cd_sg6b', role: 'sparkgolem', pos: [1.6, 4.0] }, { id: 'cd_fc6', role: 'forgeconstruct', pos: [-3.0, 7.0] },
+    { id: 'cd_sg6a', role: 'sparkgolem', pos: [-1.6, 10.0] }, { id: 'cd_sg6b', role: 'sparkgolem', pos: [-1.6, 3.0] }, { id: 'cd_fc6', role: 'forgeconstruct', pos: [-3.0, 7.0] },
     { id: 'cd_so7a', role: 'sootling', pos: [-1.2, -4.0] }, { id: 'cd_so7b', role: 'sootling', pos: [1.2, -12.0] }, { id: 'cd_sm7', role: 'shadowsmith', pos: [0.0, -2.0] },
   ],
 };
