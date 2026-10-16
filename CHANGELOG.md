@@ -2,6 +2,13 @@
 
 Dates are America/New_York. Newest first. Keep this current with every change you push.
 
+## 2026-10-16: Svartalfheim part 2 LIVE: merged Master Builder's `realm-svartalfheim-2` (12971cf, cut from main 72c930f) to main and published
+- **Forgefire Week** (`svartalfheim_festival.js`: festival day, Dagna's bounty, +40 Realm Favor), **The Masterwork** (`svartalfheim_master.js`: Tansy, Tinker's Heart + `wound_up`), **The Foreman** (`svartalfheim_foreman.js`: C4 mini-boss 2.8x with his own sheet, whistle + belly, drops the clock spring so the Masterwork can be finished), **rares** (`svartalfheim_rares.js`: Amethyst Basilisk, Soot Colossus), **companion followers** (`svartalfheim_follow.js`: Dagna brawls and mends, Tobble outside the realm; Dagna's temper buff), quest-mark glyphs in the realm gamefx atlases, Tick's `goldMul` (pickup gold) and `chestSense` hooks, conquer-only hushblades.
+- Checks: full sharded smoke (A-M with both realms' steps) and `check_all --lowres` on all 21 areas (21/21). Segments that stopped a shard were rerun alone (HIJ).
+- Smoke: the storm rift and sky-crack waits allow 150 s (game-time timers on a busy box).
+- Screenshots: `docs/screenshots/svartalfheim_foreman.png`, `svartalfheim_forgefire.png`.
+- Still not built: the C2 / C4 gear puzzles and C6 rails (no peg / cog / lever / rail-switch art), chest objects for Tick's chestSense, a real Tobble sheet for the realm, Forgefire day-shift gating + soot-smudge decal + Tova's discount, Giant Footprints clue scenes (Jotunheim), the Council's rift-seal shortcut (`sg_riftAfter`), a forge-construct sprite for the Bifrost runaway, the Soot Colossus's soot-fall growth / smother cloud, the Foreman's stamping charge.
+
 ## 2026-10-15: Svartalfheim realm LIVE: merged Master Builder's `realm-svartalfheim` (08ba6bb, cut from main 3b3fb0e) to main and published
 - Five new areas: Anvildeep: Copper Row (hub), the Great Forge, the Amethyst Mines, the Clockwork Deep (two areas, C0-C8, boss Gorrak Ironmaw 6x with his own aura). Gate at Bifrost: *A Word from the Council* (Bix, Council vouch, Halvard, copper key, runaway construct). The Thane's alliance choice (befriend / conquer / hire / pass) with the mirrored Alfheim lock, one active companion, Tick the clockwork owl (neon pet, stepped pulse), Dagna's recruit flag, Tansy's tinker shop, steam vents and bellows gusts in the Deep, the frozen flue and the Anvil-Heart. See `SVARTALFHEIM_PROGRESS.md`.
 - Checks: full sharded smoke (A-M with the Svartalfheim and Alfheim steps) and `check_all --lowres` on all 21 areas. Segments that stopped a shard were rerun alone.
