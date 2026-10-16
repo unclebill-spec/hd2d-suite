@@ -377,7 +377,8 @@ def steps(b, url, T, size, errors, rep, stub=None, shots=None):
         T.step("C4 The Assembly Line: 6 pegs, two drive cogs, belts idle, no gate", len(r["pegs"]) == 6 and r["dir"] == 0 and r["belt"] == 0 and not r["solved"], r=r)
         go(-0.6, 35.4); E(); go(2.4, 36.5); E(); go(0.6, 34.6); E(); go(3.2, 36.5); E(); r = pzr("c4")
         T.step("C4: the odd route (drive 1 -> a -> b -> winch) spins the winch anticlockwise: the belts run to the presses, no solve", r["pegs"]["a"] == "s1" and r["pegs"]["b"] == "m1" and r["dir"] == -1 and r["belt"] == 1 and not r["solved"], r=r)
-        go(0.0, 36.0); z0 = T.ev("window.__hd2d.ctx.player.z"); pg.wait_for_timeout(1500); z1 = T.ev("window.__hd2d.ctx.player.z")
+        go(0.0, 36.0); z0 = T.ev("window.__hd2d.ctx.player.z"); pg.wait_for_timeout(1500)
+        T.until(f"window.__hd2d.ctx.player.z - {z0} > 0.5", 60); z1 = T.ev("window.__hd2d.ctx.player.z")   # belts move you in game time
         T.step("C4: standing on the belts while they run anticlockwise, the belt carries you toward the presses (+z)", z1 - z0 > 0.5, z0=z0, z1=z1)
         go(-0.6, 33.8); E(); go(3.7, 34.4); E(); r = pzr("c4")
         T.step("C4: both drives reaching the winch (a, b and c) jam it: nothing turns past it, no solve", "W" in r["jam"] and r["dir"] == 0 and not r["solved"], r=r)
@@ -386,7 +387,8 @@ def steps(b, url, T, size, errors, rep, stub=None, shots=None):
         go(0.6, 34.6); E(); go(3.7, 34.4); E(); pg.wait_for_timeout(600); r = pzr("c4")
         T.step("C4: the even route (drive 2 -> c -> winch) spins it clockwise: cd_cog2, the belts run toward the exit",
                r["dir"] == 1 and r["solved"] and r["belt"] == -1 and T.ev("(window.__hm.S.found || {}).cd_cog2"), r=r)
-        go(0.0, 36.0); z0 = T.ev("window.__hd2d.ctx.player.z"); pg.wait_for_timeout(1500); z1 = T.ev("window.__hd2d.ctx.player.z")
+        go(0.0, 36.0); z0 = T.ev("window.__hd2d.ctx.player.z"); pg.wait_for_timeout(1500)
+        T.until(f"{z0} - window.__hd2d.ctx.player.z > 0.5", 60); z1 = T.ev("window.__hd2d.ctx.player.z")
         T.step("C4: solved, the belts carry you toward the exit (-z)", z0 - z1 > 0.5, z0=z0, z1=z1)
         shot("sv_c4_solved")
 
