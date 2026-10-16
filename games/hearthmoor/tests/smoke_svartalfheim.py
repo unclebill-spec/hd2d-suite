@@ -105,16 +105,14 @@ def steps(b, url, T, size, errors, rep, stub=None, shots=None):
         T.step("clockdeep C1-C3 foe pools spawn (forge constructs, sootlings, a spark golem)", {"forgeconstruct", "sootling", "sparkgolem"} <= set(a["foes"]), qa=a)
         T.ev("(() => { window.__hm.peace = false; window.__hd2d.ctx.player.iframes = 99; })()")
         pg.wait_for_timeout(6500)
-        try: T.wait("window.__hm.svart.qa().deep.vents >= 2", 60)   # game time runs slow on a busy box: wait for the cycle, not a fixed 6.5 s
-        except Exception: pass
+        T.until("window.__hm.svart.qa().deep.vents >= 2", 90)   # game-time timers: wait for the cycle, not a fixed 6.5 s
         a = sv()
         T.step("C1 steam vents cycle (puff tell, then blast)", a["deep"]["vents"] >= 2, deep=a["deep"])
         a = load("clockdeep2", "&svq=seal", "c7"); a = sv()
         T.step("clockdeep2 C4-C7 foe pools spawn (shadowsmiths, spark golems...)", {"shadowsmith", "sparkgolem", "sootling"} <= set(a["foes"]), qa=a)
         T.ev("(() => { window.__hm.peace = false; window.__hd2d.ctx.player.iframes = 99; })()")
         pg.wait_for_timeout(7000)
-        try: T.wait("window.__hm.svart.qa().deep.gusts >= 1 && window.__hm.svart.qa().deep.pushed >= 1", 90)   # the gust timer runs in game time (slow frames on a big area): wait for it
-        except Exception: pass
+        T.until("window.__hm.svart.qa().deep.gusts >= 1 && window.__hm.svart.qa().deep.pushed >= 1", 120)   # the gust timer runs in game time
         a = sv()
         T.step("C7 bellows gusts: one blows every 6 s and pushes you back off the bridge line", a["deep"]["gusts"] >= 1 and a["deep"]["pushed"] >= 1, deep=a["deep"])
         shot("sv_c7")
@@ -309,7 +307,9 @@ def steps(b, url, T, size, errors, rep, stub=None, shots=None):
         T.ev("window.__hm.svart.follow.attach(window.__hd2d.ctx, window.__hm.area)"); pg.wait_for_timeout(300)
         fo = tq("follow.qa()")
         T.step("Dagna follows in Copper Row on her own sheet (role dagna)", fo["on"] and fo["id"] == "dagna" and fo["role"] == "dagna", f=fo)
-        T.ev("(() => { const p = window.__hd2d.ctx.player; p.x += 6; })()"); pg.wait_for_timeout(2500); fo = tq("follow.qa()")
+        T.ev("(() => { const p = window.__hd2d.ctx.player; p.x += 6; })()")
+        T.until("(() => { const p = window.__hd2d.ctx.player, f = window.__hm.svart.follow.sprite; return f && Math.hypot(p.x - f.x, p.z - f.z) < 3; })()", 60)  # follow walks in game time (slow on a busy box)
+        fo = tq("follow.qa()")
         T.step("she catches up to the player (within 3 m after the player moves 6 m)",
                T.ev("(() => { const p = window.__hd2d.ctx.player, f = window.__hm.svart.follow.sprite; return Math.hypot(p.x - f.x, p.z - f.z) < 3; })()"), f=fo)
         T.step("Dagna's mend: once a fight, +40 HP below 30%", tq("follow.qaMend()") == [True, False, True])
