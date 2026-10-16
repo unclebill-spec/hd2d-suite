@@ -909,7 +909,7 @@ def run(out, simscale=4, size=(960, 540), segs=SEGS):
                 rep["shots"]["hollows"] = T.shot("hollows")
                 # Part 5 step 2: bounce toadstools spring you up to the hidden ledge, and back down
                 T.ev("(() => { const c = window.__hm.ctx, p = c.player; p.x = 6.2; p.z = -2.3; p.y = c.heightAt(p.x, p.z); c.stopWalk(); })()"); pg.wait_for_timeout(300)
-                y0 = T.ev("window.__hm.ctx.player.y"); pg.keyboard.press("z"); pg.wait_for_timeout(250)
+                y0 = T.ev("window.__hm.ctx.player.y"); pg.keyboard.press("z"); T.until("window.__hm.ctx.player.lift > 0.8", 20)   # the spring is a game-time animation: sample it when it is in the air
                 mid = T.ev("(() => { const p = window.__hm.ctx.player; return [window.__hm.hollows.busy(), p.lift]; })()")
                 T.wait("!window.__hm.hollows.busy()", 10); pg.wait_for_timeout(300)
                 up = T.ev("(() => { const p = window.__hm.ctx.player; return [p.x, p.z, p.y]; })()")
