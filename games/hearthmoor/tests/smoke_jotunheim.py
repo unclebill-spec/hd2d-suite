@@ -39,6 +39,8 @@ def steps(b, url, T, size, errors, rep, stub=None, shots=None):
     def shot(name):
         rep.setdefault("shots", {})[name] = T.shot(name)
 
+    frames = T.frames   # engine-frame waits, never fixed sleeps
+
     def sv():
         return T.ev("window.__hm.jot.qa()")
 
@@ -51,18 +53,18 @@ def steps(b, url, T, size, errors, rep, stub=None, shots=None):
         cdp.send("Input.dispatchTouchEvent", {"type": "touchEnd", "touchPoints": [], "timestamp": t + 0.05})
 
     def arrive(area, timeout=120):
-        T.wait(f"window.__hm.area === '{area}' && !window.__hm.busy", timeout); T.idle(); pg.wait_for_timeout(500)
+        T.wait(f"window.__hm.area === '{area}' && !window.__hm.busy", timeout); T.idle(); frames(6)
 
     def load(area, extra="", spawn="start"):
         pg.goto(url + f"&qa&combat&area={area}&spawn={spawn}{extra}")
         T.wait(f"window.__hm && window.__hm.area === '{area}' && window.__hd2d && window.__hd2d.ready && !window.__hm.busy", 150)
-        T.idle(); pg.wait_for_timeout(1500)
+        T.idle(); frames(10)
         return sv()
 
     FIN = "(() => { const G = window.__hm; if (G.dlg && G.dlg.then) { const t = G.dlg.then; G.dropDialogue(); t(G); } else G.dropDialogue && G.dropDialogue(); })()"
 
     def fin():
-        T.ev(FIN); pg.wait_for_timeout(150)
+        T.ev(FIN); frames(2)
 
     def jt(js):
         return T.ev("window.__hm.jot." + js)
@@ -86,7 +88,7 @@ def steps(b, url, T, size, errors, rep, stub=None, shots=None):
                a["fx"] >= 7 and a["lights"] >= 4 and "bifrost" in a["portals"], fx=a["fx"], lights=a["lights"], portals=a["portals"])
         hs = T.ev("(() => { const c = window.__hd2d.ctx; return { plateau: c.heightAt(-1.6, -8), ground: c.heightAt(0, 6), stair: c.heightAt(0, -2.4) }; })()")
         T.step("real height: the Jarl's plateau stands 1.34 m up with a walkable stair", hs["plateau"] >= 1.0 and hs["ground"] < 0.2 and 0.2 < hs["stair"] < hs["plateau"], hs=hs)
-        T.ev("window.__hd2d.setTime(0.5)"); pg.wait_for_timeout(600); shot("jt_day")
+        T.ev("window.__hd2d.setTime(0.5)"); frames(6); shot("jt_day")
         # ---- the Bifrost gate: sealed until open, then a portal; the Stonehollow return spawn exists
         load("bifrost"); b0 = T.ev("window.__hm.jot.qa().gate")
         T.step("Bifrost: Jotunheim's ice arch is sealed for a stranger", "jotunheim" in b0["sealed"] and "jotunheim" not in b0["portals"] and not b0["open"], gate=b0)
@@ -94,7 +96,7 @@ def steps(b, url, T, size, errors, rep, stub=None, shots=None):
         T.step("?jtq=open: the arch moves from sealed to portals and the return spawn is added", "jotunheim" not in b1["sealed"] and "jotunheim" in b1["portals"] and "from_jotunheim" in b1["spawns"], gate=b1)
         # ---- Grimsa's stall
         load("jotunheim"); t = T.ev("(() => { const G = window.__hm; return { goods: G.shopUI ? true : false, shop: !!window.__hm.jot.qa().shop }; })()")
-        T.ev("window.__hm.jot.qaTalk('jt_trader')"); pg.wait_for_timeout(300)
+        T.ev("window.__hm.jot.qaTalk('jt_trader')"); frames(3)
         so = T.ev("(() => { const G = window.__hm; return { open: G.shopUI.open || null }; })()")
         T.step("Grimsa opens her stall (fur cloak, tea, cold-fire lamp)", t["shop"] and so["open"] == "jt_trader", so=so)
         T.ev("(() => { const G = window.__hm; G.shopUI.close(); })()")
@@ -110,15 +112,15 @@ def steps(b, url, T, size, errors, rep, stub=None, shots=None):
         for i in range(3):
             T.ev(f"window.__hm.jot.qaLift({i})")
             T.ev("(() => { const G = window.__hm; if (G.dlg && G.dlg.then) { const t = G.dlg.then; G.dropDialogue(); t(G); } })()")
-        pg.wait_for_timeout(400); a = sv(); g1 = T.ev("window.__hm.S.gold || 0")
+        frames(3); a = sv(); g1 = T.ev("window.__hm.S.gold || 0")
         T.step("three lifts: the town cheers and the Jarl's fire waits (stage 2)", a["lifts"] == 3 and a["quest"] == 2, qa=[a["lifts"], a["quest"]])
         jt("qaTalk('jarl')"); a = sv(); g1 = T.ev("window.__hm.S.gold || 0")
         T.step("the Jarl's fire: The Stone Welcome completes (+20 gold, trusted) and The Hollow Heart starts", a["quest"] == 3 and g1 - g0 == 20 and a["heart"] == 1 and T.ev("window.__hm.S.flags.jt_trusted === 1"), qa=[a["quest"], a["heart"], g0, g1])
         # ---- the look-spots (Hall door, cave path, frost prints) and the Giant Footprints entry point
-        T.ev("(() => { const c = window.__hd2d.ctx; c.player.x = -3.4; c.player.z = -1.6; })()"); pg.wait_for_timeout(300)
+        T.ev("(() => { const c = window.__hd2d.ctx; c.player.x = -3.4; c.player.z = -1.6; })()"); frames(3)
         pr = T.ev("window.__hm.harbor.prompt()")
         T.step("the frost-prints look-spot prompts at the plateau foot", "frost prints" in (pr or ""), prompt=pr)
-        T.ev("(() => { window.__hm.harbor.interact(); })()"); pg.wait_for_timeout(300)
+        T.ev("(() => { window.__hm.harbor.interact(); })()"); frames(3)
         T.step("looking at the prints records the clue entry (S.found.jt_prints)", T.ev("window.__hm.S.found.jt_prints === 1"))
         T.ev("(() => { const G = window.__hm; G.dropDialogue && G.dropDialogue(); })()")
         # ---- jt_hall: the Hall of Hearthstones
@@ -126,7 +128,7 @@ def steps(b, url, T, size, errors, rep, stub=None, shots=None):
         T.step("the Hall loads: Jarl, Kolbrun, Solvi, guards and diners; cold fire lit; a door back to Stonehollow", all(i in a["actors"] for i in ("jarl", "envoy_jt", "rimewife", "jt_guard1", "jt_guard2")) and a["fx"] >= 8 and "jotunheim" in a["exits"], qa=a["actors"], exits=a["exits"])
         hs = T.ev("(() => { const c = window.__hd2d.ctx; return { dais: c.heightAt(-3, -9), floor: c.heightAt(-3, 4), stair: c.heightAt(0, -5.9) }; })()")
         T.step("real height: the high seat dais stands 1.2 m up with a walkable stair", hs["dais"] >= 1.0 and hs["floor"] < 0.2 and 0.2 < hs["stair"] < hs["dais"], hs=hs)
-        T.ev("window.__hd2d.setTime(0.0)"); pg.wait_for_timeout(600); shot("jt_hall_night")
+        T.ev("window.__hd2d.setTime(0.0)"); frames(6); shot("jt_hall_night")
         jt("qaSpot('trapdoor')"); fin(); a = sv()
         T.step("the Jarl's word opens the trapdoor: you stand in the ice cellar", a["inCellar"] and a["pos"][0] > 11, pos=a["pos"])
         shot("jt_cellar")
@@ -158,21 +160,43 @@ def steps(b, url, T, size, errors, rep, stub=None, shots=None):
                all(i in a["actors"] for i in ("solvi", "rc_skuli")) and len(set(a["foes"])) >= 3 and a["fx"] >= 5 and "jotunheim" in a["exits"], foes=a["foes"], fx=a["fx"], exits=a["exits"])
         hs = T.ev("(() => { const c = window.__hd2d.ctx; return { step: c.heightAt(-4.4, -7.0), floor: c.heightAt(-3, 3), stair: c.heightAt(0, -5.9) }; })()")
         T.step("real height: the Barrow step stands 1.2 m up with a walkable stair", hs["step"] >= 1.0 and hs["floor"] < 0.2 and 0.2 < hs["stair"] < hs["step"], hs=hs)
-        T.ev("window.__hd2d.setTime(0.0)"); pg.wait_for_timeout(600); shot("jt_caves_night")
-        T.ev("(() => { const c = window.__hd2d.ctx; c.player.x = 0; c.player.z = -7.0; })()"); pg.wait_for_timeout(300)
+        T.ev("window.__hd2d.setTime(0.0)"); frames(6); shot("jt_caves_night")
+        T.ev("(() => { const c = window.__hd2d.ctx; c.player.x = 0; c.player.z = -7.0; })()"); frames(3)
         pr = T.ev("window.__hm.harbor.prompt()")
         T.step("the Barrow door prompts at the foot of the step; looking at it explains the three rune locks", "Barrow door" in (pr or "") and jt("qaSpot('door')") and T.ev("!!window.__hm.dlg"), prompt=pr)
         fin()
-        T.ev("(() => { const c = window.__hd2d.ctx; c.player.x = 9.0; c.player.z = -6.2; })()"); pg.wait_for_timeout(300)
+        T.ev("(() => { const c = window.__hd2d.ctx; c.player.x = 9.0; c.player.z = -6.2; })()"); frames(3)
         T.ev("window.__hm.jot.onCast()"); a = sv()
         T.step("a spell cast by the frozen waterfall melts it: the hidden spring (rc_spring) is found", a["spring"], found=a["found"])
         a = load("rimecaves", "&jtq=conquer"); sol = jt("qaTalk('solvi')")
         T.step("conquer: Solvi says 'You know it's hollow' (2 pages)", sol["pages"] == 2, sol=sol)
         a = load("jotunheim"); 
         T.step("Stonehollow has a path to the Rime Caves (the 'not open yet' look-spot is gone)", "rimecaves" in a["exits"] and not any(False for _ in []), exits=a["exits"])
+        # ---- barrow: B1-B4 behind the Rime Caves' door
+        a = load("rimecaves"); jt("qaSpot('door')"); fin(); a = sv()
+        T.step("the Barrow door stays shut for a stranger (still in the Rime Caves)", a["area"] == "rimecaves", area=a["area"])
+        a = load("rimecaves", "&jtq=conquer"); jt("qaSpot('door')"); fin(); a = sv()
+        T.step("conquer without the Barrow Key: the door is still shut", a["area"] == "rimecaves", area=a["area"])
+        a = load("rimecaves", "&jtq=barrow"); jt("qaSpot('door')"); fin()
+        T.wait("window.__hm.area === 'barrow' && window.__hd2d && window.__hd2d.ready && !window.__hm.busy", 90); T.idle(); frames(10); a = sv()
+        T.step("the Jarl's trust opens the door: you stand in the Barrow (quest started, foes roam, cold fire lit, a path back)",
+               a["area"] == "barrow" and a["quest_barrow"] == 1 and len(set(a["foes"])) >= 3 and a["fx"] >= 6 and "rimecaves" in a["exits"], foes=a["foes"], fx=a["fx"], exits=a["exits"])
+        hs = T.ev("(() => { const c = window.__hd2d.ctx; return { ground: c.heightAt(-4, 4), b2: c.heightAt(-4, -12), stair: c.heightAt(0, -2.4), b4: c.heightAt(-4, -29.5) }; })()")
+        T.step("real height: the Hall of Shields 1.2 m up (stair), the Avalanche Run ledge 2.4 m up", hs["ground"] < 0.2 and 1.1 <= hs["b2"] <= 1.3 and 0.1 < hs["stair"] < 1.2 and hs["b4"] >= 2.3, hs=hs)
+        shot("jt_barrow_door")
+        T.ev("(() => { const c = window.__hd2d.ctx; c.player.x = 0; c.player.z = -7.0; c.player.y = c.heightAt(0, -7.0); })()"); frames(3)
+        jt("qaSpot('tb1')"); fin(); a = sv()
+        T.step("snuffing brazier 1 (E / A) records tb_b1", a["found"].get("tb_b1") == 1, found=a["found"])
+        T.ev("(() => { const c = window.__hd2d.ctx; c.player.x = 0; c.player.z = -27.0; c.player.y = c.heightAt(0, -27.0); })()"); frames(6)
+        shot("jt_barrow_run")
+        jt("qaSpot('tb2')"); fin(); a = sv()
+        T.step("snuffing brazier 2 at the top of the Avalanche Run records tb_b2", a["found"].get("tb_b2") == 1, found=a["found"])
+        a = load("rimecaves", "&jtq=contract"); jt("qaSpot('door')"); fin()
+        T.wait("window.__hm.area === 'barrow' && window.__hd2d && window.__hd2d.ready && !window.__hm.busy", 90)
+        T.step("contract: Skuli's goat-path gets you in too", sv()["area"] == "barrow")
         T.step("no JS errors in the Jotunheim run", not [e for e in errors if "jotunheim" in e.lower() or "jotun" in e.lower()], errs=errors[-3:])
         shot("jt_ring")
-        a = load("jotunheim"); T.ev("window.__hd2d.setTime(0.0)"); pg.wait_for_timeout(800); shot("jt_night")
+        a = load("jotunheim"); T.ev("window.__hd2d.setTime(0.0)"); frames(6); shot("jt_night")
     except Exception:
         shot("jt_fail")
         raise

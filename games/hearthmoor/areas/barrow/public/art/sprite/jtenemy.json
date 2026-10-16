@@ -1,0 +1,218 @@
+{
+ "tool": "hd2d boss_sheet (jotunheim big frames)",
+ "biome": "cozy-village",
+ "frame": [
+  56,
+  68
+ ],
+ "pivot": [
+  28,
+  68
+ ],
+ "ground_row": 67,
+ "facings": [
+  "down",
+  "up",
+  "left",
+  "right"
+ ],
+ "anims": {
+  "idle": {
+   "start": 0,
+   "count": 4,
+   "fps": 3,
+   "loop": [
+    0,
+    1,
+    2,
+    1
+   ],
+   "blink": 3
+  },
+  "walk": {
+   "start": 4,
+   "count": 4,
+   "fps": 8
+  },
+  "cast": {
+   "start": 8,
+   "count": 4,
+   "fps": 6,
+   "loop": [
+    0,
+    1,
+    2,
+    2,
+    3,
+    3
+   ],
+   "casters_only": true
+  },
+  "attack": {
+   "start": 12,
+   "count": 4,
+   "fps": 10,
+   "loop": [
+    0,
+    1,
+    2,
+    2,
+    3
+   ],
+   "heroes_only": true
+  },
+  "defend": {
+   "start": 16,
+   "count": 4,
+   "fps": 6,
+   "loop": [
+    0,
+    1
+   ],
+   "hold": [
+    2,
+    3
+   ],
+   "heroes_only": true
+  },
+  "jump": {
+   "start": 20,
+   "count": 4,
+   "fps": 8,
+   "phases": [
+    "crouch",
+    "launch",
+    "airborne",
+    "land"
+   ],
+   "heroes_only": true
+  },
+  "die": {
+   "start": 24,
+   "count": 4,
+   "fps": 6,
+   "once": true,
+   "enemies_only": true
+  }
+ },
+ "cols": 28,
+ "size": [
+  1568,
+  1088
+ ],
+ "image": "jtenemy.png",
+ "roles": {
+  "frost_troll": {
+   "row": 0,
+   "kind": "enemy",
+   "scale": 1.6,
+   "desc": "Frost troll (1.6x; gate foe at 2x): ice-blue hide, ragged tunic, belted rag trousers, tusks, throws ice chunks / swings an ice club.",
+   "anims": [
+    "idle",
+    "walk",
+    "attack",
+    "die"
+   ],
+   "size_bounds": [
+    [
+     10,
+     54
+    ],
+    [
+     10,
+     68
+    ]
+   ],
+   "caster": false,
+   "enemy": true,
+   "stats_hint": {
+    "tier": "enemy",
+    "height_x_player": 1.6
+   }
+  },
+  "ice_golem": {
+   "row": 4,
+   "kind": "enemy",
+   "scale": 1.5,
+   "desc": "Ice golem (1.5x): translucent ice blocks round a glowing rune heart.",
+   "anims": [
+    "idle",
+    "walk",
+    "attack",
+    "die"
+   ],
+   "size_bounds": [
+    [
+     10,
+     54
+    ],
+    [
+     10,
+     68
+    ]
+   ],
+   "caster": false,
+   "enemy": true,
+   "stats_hint": {
+    "tier": "enemy",
+    "height_x_player": 1.5
+   }
+  },
+  "avalanche_golem": {
+   "row": 8,
+   "kind": "enemy",
+   "scale": 1.8,
+   "desc": "Avalanche golem (1.8x): a snow-capped boulder that unfolds into a golem; attack = rolls as a ball.",
+   "anims": [
+    "idle",
+    "walk",
+    "attack",
+    "die"
+   ],
+   "size_bounds": [
+    [
+     10,
+     54
+    ],
+    [
+     10,
+     68
+    ]
+   ],
+   "caster": false,
+   "enemy": true,
+   "stats_hint": {
+    "tier": "enemy",
+    "height_x_player": 1.8
+   }
+  },
+  "rime_berserker": {
+   "row": 12,
+   "kind": "enemy",
+   "scale": 1.8,
+   "desc": "Rime Berserker (elite, 1.8x): fur over a belted tunic, belted trousers, two ice axes, wild braids.",
+   "anims": [
+    "idle",
+    "walk",
+    "attack",
+    "die"
+   ],
+   "size_bounds": [
+    [
+     10,
+     54
+    ],
+    [
+     10,
+     68
+    ]
+   ],
+   "caster": false,
+   "enemy": true,
+   "stats_hint": {
+    "tier": "elite",
+    "height_x_player": 1.8
+   }
+  }
+ }
+}

@@ -13,8 +13,8 @@ import { lockRival, moodUp } from './alfheim.js';
 export const JOT_PLANNED = {   // id -> display name (story 2.1); `barrow` (B1-B4) + `barrow2` (B5-B9) are the dungeon, two areas like clockdeep
   jotunheim: 'Stonehollow', jt_hall: 'Hall of Hearthstones', rimecaves: 'The Rime Caves', barrow: "The Titan's Barrow", barrow2: "The Titan's Barrow: the Throne",
 };
-export const AREAS_JOT = { jotunheim: 'areas/jotunheim/', jt_hall: 'areas/jt_hall/', rimecaves: 'areas/rimecaves/' };   // id -> 'areas/<id>/' (merged into game.js's area path map)
-export const AREA_NAMES_JOT = { jotunheim: 'Stonehollow', jt_hall: 'Hall of Hearthstones', rimecaves: 'The Rime Caves' };   // id -> display name (merged into game.js's AREA_NAME)
+export const AREAS_JOT = { jotunheim: 'areas/jotunheim/', jt_hall: 'areas/jt_hall/', rimecaves: 'areas/rimecaves/', barrow: 'areas/barrow/' };   // id -> 'areas/<id>/' (merged into game.js's area path map)
+export const AREA_NAMES_JOT = { jotunheim: 'Stonehollow', jt_hall: 'Hall of Hearthstones', rimecaves: 'The Rime Caves', barrow: "The Titan's Barrow" };   // id -> display name (merged into game.js's AREA_NAME)
 export const JOT_AREAS = Object.keys(JOT_PLANNED);
 
 const flags = (S) => (S.flags = S.flags || {});
@@ -47,6 +47,13 @@ SPAWNS.rimecaves = [   // giants are tall: day foes stand clear of the braziers 
   { id: 'rc_troll1', role: 'frost_troll', pos: [11.4, -11.3] },
 ];
 
+SPAWNS.barrow = [   // B1-B4: two frost trolls at the door hall, ice golems wake in the Hall of Shields / pools, avalanche golems at the top of the Run; none near the start view
+  { id: 'bw_troll0', role: 'frost_troll', pos: [-5.6, -9.4] }, { id: 'bw_troll1', role: 'frost_troll', pos: [5.6, -9.4] },
+  { id: 'bw_golem0', role: 'ice_golem', pos: [-4.0, -15.6] }, { id: 'bw_golem1', role: 'ice_golem', pos: [4.0, -15.6] }, { id: 'bw_golem2', role: 'ice_golem', pos: [0.0, -21.0] },
+  { id: 'bw_avl0', role: 'avalanche_golem', pos: [-4.4, -28.0] }, { id: 'bw_avl1', role: 'avalanche_golem', pos: [4.4, -28.0] },
+  { id: 'bw_zerk0', role: 'rime_berserker', pos: [-8.0, -12.0], night: true }, { id: 'bw_zerk1', role: 'rime_berserker', pos: [8.0, -12.0], night: true },
+];
+
 // ------------------------------------------------------------------ items + Grimsa's stall (story 5.5; prices are first guesses)
 Object.assign(ITEMS, {
   fur_mantle: { name: 'Fur cloak', px: 'tonic', about: "Grimsa's fur cloak, cut down for a small one. Frost resist +20%, and a cosmetic mantle over your tunic." },
@@ -73,6 +80,10 @@ Object.assign(QUESTS, {
     3: 'The Heart is a fake. Stonehollow was framed.',
   } },
   jt_hire: { title: 'Rime Wages', giver: 'Gatewright Halvard', story: true, steps: { 1: 'Hear the Jarl\'s terms, and meet Skuli at the goat pens.', 2: 'Lay Hrimgard back to sleep. (The Barrow comes in a later chapter.)', 3: 'Paid in full.' } },
+  barrow: { title: "The Titan's Barrow", giver: 'Rimewife Solvi', story: true, steps: {
+    1: (S) => { const n = ['tb_b1', 'tb_b2', 'tb_b3'].filter((k) => (S.found || {})[k]).length; return n < 3 ? `Snuff Veyra's cold-fire braziers. ${n}/3` : 'Face Hrimgard in the Throne Barrow.'; },
+    2: (S) => (F(S).alliance || {}).jotunheim === 'conquer' ? 'Leave with the crown.' : 'Tell the Jarl the king sleeps.',
+    3: 'Hrimgard is quiet again.' } },
   jt_take: { title: 'The Toll of Stones', giver: 'Envoy Kolbrun Hailstride', story: true, steps: { 1: 'Topple the watch-cairns. (The cairns come with the Rime Caves.)', 2: 'Open the Barrow.', 3: 'The Barrow Key is yours. Stonehollow will not forget.' } },
 });
 const need = (S) => (S.hero === 'runeguard' ? 2 : 3);
@@ -180,6 +191,8 @@ JT_FX.jt_hall = [['cold_flame', [-1.5, -2.0], 1.0, 1], ['cold_flame', [1.5, -2.0
   ['rune_pulse', [-7.0, -10.4], 0.8, 1], ['rune_pulse', [7.0, -10.4], 0.8, 1], ['cold_flame', [12.4, -3.0], 1.0, 1], ['cold_flame', [16.0, -3.0], 1.0, 1], ['ice_sparkles', [14.2, -5.4], 0.5, 0]];
 JT_FX.rimecaves = [['cold_flame', [-3.6, -8.4], 1.0, 1], ['cold_flame', [3.6, -8.4], 1.0, 1], ['pool_teal', [-6.0, 5.2], 0, 0], ['pool_aurora', [6.0, 5.2], 0, 0],
   ['pool_teal', [-7.4, -0.4], 0, 0], ['ice_sparkles', [0, 0.2], 0.5, 0], ['rune_pulse', [-9.8, -7.0], 0.8, 0]];
+JT_FX.barrow = [['cold_flame', [-3.6, 7.0], 1.0, 1], ['cold_flame', [3.6, 7.0], 1.0, 1], ['cold_flame', [0, -8.6], 1.0, 1], ['cold_flame', [0, -29.0], 1.0, 1],
+  ['pool_teal', [-5.0, -17.0], 0, 0], ['pool_aurora', [5.0, -17.0], 0, 0], ['pool_teal', [0, -19.4], 0, 0], ['ice_sparkles', [0, -16.0], 0.5, 0]];
 const SPOTS = {   // look-spots / interactables (Svartalfheim pattern): hall door, cave path, frost prints, Welcome Ring stones
   lifts: [[-1.4, 2.6], [0.0, 3.3], [1.4, 2.6]],
   hall: [0, -9.4], caves: [10.0, -0.2], prints: [-3.4, -1.6],
@@ -221,6 +234,7 @@ export class Jotunheim {
     const v = this.qs().get('jtq'), S = this.G.S; if (!v || this.qaDone === v) return;
     this.qaDone = v;
     if (v === 'befriend' || v === 'done') { ally(S).jotunheim = 'befriend'; flags(S).jt_gate_open = 1; if (!q(S, 'jt_welcome')) S.quests.jt_welcome = 1; }
+    if (v === 'barrow') { ally(S).jotunheim = 'befriend'; flags(S).jt_gate_open = 1; S.quests.jt_welcome = 3; flags(S).jt_trusted = 1; }
     if (v === 'heart' || v === 'decoy') { ally(S).jotunheim = 'befriend'; flags(S).jt_gate_open = 1; S.quests.jt_welcome = 3; flags(S).jt_trusted = 1; S.quests.jt_heart = 1; }
     if (v === 'decoy') { flags(S).sv_decoy = 1; flags(S).sv_cleared = 1; S.evidence = { ...(S.evidence || {}), svartalfheim: 'boot_mould' }; }
     if (v === 'fire') { ally(S).jotunheim = 'befriend'; flags(S).jt_gate_open = 1; S.quests.jt_welcome = 2; flags(S).jw_lifts = 3; }
@@ -236,6 +250,7 @@ export class Jotunheim {
     if (area === 'jotunheim') this.stonehollow(ctx);
     if (area === 'jt_hall') this.hall(ctx);
     if (area === 'rimecaves') this.caves(ctx);
+    if (area === 'barrow') this.barrowRooms(ctx);
   }
   detach() {
     for (const f of this.fx) if (f) f.dur = f.t + 0.2;
@@ -281,13 +296,39 @@ export class Jotunheim {
       if (ctx.gamefx && ctx.gamefx.meta.effects[name]) this.fx.push(ctx.gamefx.spawn(name, x, y + dy, z, { duration: Infinity, fadeIn: still ? 0 : 0.6 }));
       if (glow && ctx.addGlow) this.lights.push(ctx.addGlow(x, y, z, { color: COLD[0], intensity: COLD[1], range: COLD[2], lift: dy, fadeIn: still ? 0.01 : 0.8 }));
     }
-    this.spot({ id: 'door', pos: [0, -7.6], r: 2.2, label: 'the Barrow door (E / A)', show: () => !AREAS_JOT.barrow, act: () => this.barrowDoor() });
+    this.spot({ id: 'door', pos: [0, -7.6], r: 2.2, label: 'the Barrow door (E / A)', act: () => this.barrowDoor() });
     this.spot({ id: 'spring', pos: [9.0, -7.4], r: 2.0, label: 'the frozen waterfall (E / A)', act: () => this.springLook() });
   }
+  barrowOpen() { const f = F(this.G.S), al = (f.alliance || {}).jotunheim; return !!((al === 'befriend' && f.jt_trusted) || f.jt_contract || f.barrow_key || f.jt_barrow_open); }
+  // ---- the Titan's Barrow B1-B4 (story 7): the door hall, the Hall of Shields (brazier 1), the Glow Pools, the Avalanche Run (brazier 2; 2.4 m up)
+  barrowRooms(ctx) {
+    const still = !!this.G.qaStill;
+    for (const [name, [x, z], dy, glow] of JT_FX.barrow) {
+      const y = ctx.heightAt(x, z);
+      if (ctx.gamefx && ctx.gamefx.meta.effects[name]) this.fx.push(ctx.gamefx.spawn(name, x, y + dy, z, { duration: Infinity, fadeIn: still ? 0 : 0.6 }));
+      if (glow && ctx.addGlow) this.lights.push(ctx.addGlow(x, y, z, { color: COLD[0], intensity: COLD[1], range: COLD[2], lift: dy, fadeIn: still ? 0.01 : 0.8 }));
+    }
+    this.spot({ id: 'tb1', pos: [0, -7.4], r: 1.8, label: () => ((this.G.S.found || {}).tb_b1 ? 'the snuffed brazier' : "Veyra's cold-fire brazier (E / A: snuff it)"), act: () => this.snuff('tb_b1', 'one') });
+    this.spot({ id: 'tb2', pos: [0, -27.6], r: 1.8, label: () => ((this.G.S.found || {}).tb_b2 ? 'the snuffed brazier' : "Veyra's cold-fire brazier (E / A: snuff it)"), act: () => this.snuff('tb_b2', 'two') });
+  }
+  snuff(key, n) {
+    const S = this.G.S;
+    if ((S.found || {})[key]) return this.look('tb_done_' + key, 'The brazier', ['Only grey ash. The Titan is a little quieter.']);
+    this.look('tb_' + key, "Veyra's brazier", ['A cold-fire brazier, lit by someone who knew the Barrow. The flame leans toward you. You smother it, and the hall goes a little less blue.'], () => {
+      S.found = { ...(S.found || {}), [key]: 1 }; this.G.toast(`Brazier ${n} snuffed.`, 2.4); this.G.save && this.G.save();
+    });
+  }
   barrowDoor() {
-    const f = F(this.G.S), al = (f.alliance || {}).jotunheim;
-    const how = al === 'conquer' ? 'The Barrow Key would open them all at once.' : f.jt_contract ? "Skuli's goat-path runs round the side of the door." : al === 'befriend' ? 'Solvi can open them, when the Jarl says.' : 'Without the Jarl\'s word or a key, they stay locked.';
-    this.look('jt_barrow_door', 'The Barrow door', ['A stone door six metres tall, sunk in the cliff. Three rune locks glow dull blue across it, one above the other.', how, '(The Barrow itself opens in a later chapter of the build.)']);
+    const S = this.G.S, f = F(S), al = (f.alliance || {}).jotunheim;
+    if (this.barrowOpen()) {
+      const how = f.jt_contract ? "Skuli's goat-path leads round the side of the door and in." : f.barrow_key ? 'The Barrow Key turns all three locks at once.' : 'Solvi stands at the door and hums. The three rune locks slide open, one above the other.';
+      return this.look('jt_barrow_door', 'The Barrow door', ['A stone door six metres tall, sunk in the cliff.', how, 'Cold light and the smell of old iron breathe out of the dark.'], () => {
+        if (!(S.quests || {}).barrow) S.quests = { ...(S.quests || {}), barrow: 1 };
+        this.G.save && this.G.save(); this.G.loadArea('barrow', 'from_caves');
+      });
+    }
+    const how = al === 'conquer' ? 'The Barrow Key would open them all at once.' : al === 'befriend' ? 'Solvi can open them, when the Jarl trusts you with the Titan.' : "Without the Jarl's word or a key, they stay locked.";
+    this.look('jt_barrow_door', 'The Barrow door', ['A stone door six metres tall, sunk in the cliff. Three rune locks glow dull blue across it, one above the other.', how]);
   }
   springLook() {
     const S = this.G.S;
@@ -385,7 +426,7 @@ export class Jotunheim {
     const c = this.ctx, S = this.G.S, f = F(S), gm = c ? (c.scene.game || {}) : {};
     return { realm: 'jotunheim', built: Object.keys(AREAS_JOT), planned: JOT_AREAS, area: this.area, exits: (gm.exits || []).map((e) => e.to), portals: (gm.portals || []).map((p) => p.to),
              spots: this.spots.filter((x) => x.show()).length, lifts: f.jw_lifts || 0, need: need(S), quest: q(S, 'jt_welcome'), gate: this.gate.qa(), alliance: (f.alliance || {}).jotunheim || null,
-             actors: c ? c.actors.list.map((a) => a.id || a.role) : [], fx: this.fx.length, lights: this.lights.length, ring: !!this.ring, inCellar: !!this.inCellar, heart: q(S, 'jt_heart'), clues: ['jh_heart', 'jh_rime', 'jh_trail'].filter((k) => f[k]), peace: !!f.jt_peace, evidence: (S.evidence || {}).jotunheim || null, hire: q(S, 'jt_hire'), terms: !!f.jw_terms, skuli: !!f.jw_skuli, pos: c ? [c.player.x, c.player.z] : null, spring: !!(S.found || {}).rc_spring, foes: c ? c.actors.list.filter((a) => ['frost_troll', 'ice_golem', 'avalanche_golem', 'rime_berserker'].includes(a.role)).map((a) => a.role) : [], shop: !!SHOPS.jt_trader, found: S.found || {} };
+             actors: c ? c.actors.list.map((a) => a.id || a.role) : [], fx: this.fx.length, lights: this.lights.length, ring: !!this.ring, inCellar: !!this.inCellar, heart: q(S, 'jt_heart'), clues: ['jh_heart', 'jh_rime', 'jh_trail'].filter((k) => f[k]), peace: !!f.jt_peace, evidence: (S.evidence || {}).jotunheim || null, hire: q(S, 'jt_hire'), terms: !!f.jw_terms, skuli: !!f.jw_skuli, pos: c ? [c.player.x, c.player.z] : null, spring: !!(S.found || {}).rc_spring, quest_barrow: q(S, 'barrow'), foes: c ? c.actors.list.filter((a) => ['frost_troll', 'ice_golem', 'avalanche_golem', 'rime_berserker'].includes(a.role)).map((a) => a.role) : [], shop: !!SHOPS.jt_trader, found: S.found || {} };
   }
 }
 
