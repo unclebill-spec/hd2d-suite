@@ -380,11 +380,18 @@ def steps(b, url, T, size, errors, rep, stub=None, shots=None):
         go(0.0, 36.0); z0 = T.ev("window.__hd2d.ctx.player.z"); pg.wait_for_timeout(1500)
         T.until(f"window.__hd2d.ctx.player.z - {z0} > 0.5", 60); z1 = T.ev("window.__hd2d.ctx.player.z")   # belts move you in game time
         T.step("C4: standing on the belts while they run anticlockwise, the belt carries you toward the presses (+z)", z1 - z0 > 0.5, z0=z0, z1=z1)
-        go(-0.6, 33.8); E(); go(3.7, 34.4); E(); r = pzr("c4")
+        go(-0.6, 33.8); E(); go(3.7, 34.4); E()
+        # the chain is recomputed on a game frame (the clock crawls on a busy box): wait for the jam to register, then read the settled state
+        T.until("(() => { const r = (window.__hm.svart.pz.qa().rooms || []).find((x) => x.id === 'c4'); return !!(r && r.jam.includes('W')); })()", 90)
+        r = pzr("c4")
         T.step("C4: both drives reaching the winch (a, b and c) jam it: nothing turns past it, no solve", "W" in r["jam"] and r["dir"] == 0 and not r["solved"], r=r)
-        go(-1.0, 32.2); E(); r = pzr("c4")
+        go(-1.0, 32.2); E()
+        T.until("(() => { const r = (window.__hm.svart.pz.qa().rooms || []).find((x) => x.id === 'c4'); return !!(r && r.jam.length === 0); })()", 90)
+        r = pzr("c4")
         T.step("C4: reset returns the loose cogs (and the jam clears)", r["pegs"]["a"] is None and r["pegs"]["c"] is None and not r["jam"], r=r)
-        go(0.6, 34.6); E(); go(3.7, 34.4); E(); pg.wait_for_timeout(600); r = pzr("c4")
+        go(0.6, 34.6); E(); go(3.7, 34.4); E(); pg.wait_for_timeout(600)
+        T.until("(() => { const r = (window.__hm.svart.pz.qa().rooms || []).find((x) => x.id === 'c4'); return !!(r && r.dir === 1); })()", 90)
+        r = pzr("c4")
         T.step("C4: the even route (drive 2 -> c -> winch) spins it clockwise: cd_cog2, the belts run toward the exit",
                r["dir"] == 1 and r["solved"] and r["belt"] == -1 and T.ev("(window.__hm.S.found || {}).cd_cog2"), r=r)
         go(0.0, 36.0); z0 = T.ev("window.__hd2d.ctx.player.z"); pg.wait_for_timeout(1500)
