@@ -283,6 +283,17 @@
     "to": "rimecaves",
     "spawn": "from_barrow",
     "label": "back to the Rime Caves"
+   },
+   {
+    "rect": [
+     -1.5,
+     -30.9,
+     1.5,
+     -30.0
+    ],
+    "to": "barrow2",
+    "spawn": "from_barrow",
+    "label": "the Titan's Barrow, deeper"
    }
   ],
   "portals": [],
@@ -321,6 +332,11 @@
     0.0,
     -25.0,
     "up"
+   ],
+   "from_barrow2": [
+    3.4,
+    -29.6,
+    "down"
    ]
   }
  }

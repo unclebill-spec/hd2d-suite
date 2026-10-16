@@ -1,0 +1,626 @@
+{
+ "tool": "hd2d boss_sheet (jotunheim big frames)",
+ "biome": "cozy-village",
+ "frame": [
+  64,
+  100
+ ],
+ "pivot": [
+  32,
+  100
+ ],
+ "ground_row": 99,
+ "facings": [
+  "down",
+  "up",
+  "left",
+  "right"
+ ],
+ "anims": {
+  "idle": {
+   "start": 0,
+   "count": 4,
+   "fps": 3,
+   "loop": [
+    0,
+    1,
+    2,
+    1
+   ],
+   "blink": 3
+  },
+  "walk": {
+   "start": 4,
+   "count": 4,
+   "fps": 8
+  },
+  "cast": {
+   "start": 8,
+   "count": 4,
+   "fps": 6,
+   "loop": [
+    0,
+    1,
+    2,
+    2,
+    3,
+    3
+   ],
+   "casters_only": true
+  },
+  "attack": {
+   "start": 12,
+   "count": 4,
+   "fps": 10,
+   "loop": [
+    0,
+    1,
+    2,
+    2,
+    3
+   ],
+   "heroes_only": true
+  },
+  "defend": {
+   "start": 16,
+   "count": 4,
+   "fps": 6,
+   "loop": [
+    0,
+    1
+   ],
+   "hold": [
+    2,
+    3
+   ],
+   "heroes_only": true
+  },
+  "jump": {
+   "start": 20,
+   "count": 4,
+   "fps": 8,
+   "phases": [
+    "crouch",
+    "launch",
+    "airborne",
+    "land"
+   ],
+   "heroes_only": true
+  },
+  "die": {
+   "start": 24,
+   "count": 4,
+   "fps": 6,
+   "once": true,
+   "enemies_only": true
+  }
+ },
+ "cols": 12,
+ "size": [
+  768,
+  4000
+ ],
+ "image": "jtnpc.png",
+ "roles": {
+  "dwarftrader": {
+   "row": 24,
+   "kind": "human",
+   "scale": 3.0,
+   "desc": "Grimsa the trader (3x): layered wool tunics, a wide belt hung with pouches, a fur cap-less braid.",
+   "anims": [
+    "idle",
+    "walk"
+   ],
+   "size_bounds": [
+    [
+     10,
+     62
+    ],
+    [
+     10,
+     100
+    ]
+   ],
+   "caster": false,
+   "named": true,
+   "stats_hint": {
+    "tier": "npc",
+    "height_x_player": 3.0
+   }
+  },
+  "wispcatcher": {
+   "row": 16,
+   "kind": "human",
+   "scale": 2.0,
+   "desc": "Skuli (2x, a giant kid): oversized rust tunic, rope-belted trousers, a goatherd's crook.",
+   "anims": [
+    "idle",
+    "walk"
+   ],
+   "size_bounds": [
+    [
+     10,
+     62
+    ],
+    [
+     10,
+     100
+    ]
+   ],
+   "caster": false,
+   "named": true,
+   "stats_hint": {
+    "tier": "npc",
+    "height_x_player": 2.0
+   }
+  },
+  "poolkeeper": {
+   "row": 20,
+   "kind": "human",
+   "scale": 3.0,
+   "desc": "Brynja Hornwise (3x): leather apron over a tunic and belted trousers, rolled sleeves, hair in a bun.",
+   "anims": [
+    "idle",
+    "walk"
+   ],
+   "size_bounds": [
+    [
+     10,
+     62
+    ],
+    [
+     10,
+     100
+    ]
+   ],
+   "caster": false,
+   "named": true,
+   "stats_hint": {
+    "tier": "npc",
+    "height_x_player": 3.0
+   }
+  },
+  "gnome": {
+   "row": 8,
+   "kind": "human",
+   "scale": 3.0,
+   "desc": "Ulfar Mossback in town (3x): moss-green tunic, patched belted trousers, moss on his shoulders, shy and gentle.",
+   "anims": [
+    "idle",
+    "walk"
+   ],
+   "size_bounds": [
+    [
+     10,
+     62
+    ],
+    [
+     10,
+     100
+    ]
+   ],
+   "caster": false,
+   "named": true,
+   "stats_hint": {
+    "tier": "npc",
+    "height_x_player": 3.0
+   }
+  },
+  "elffolk": {
+   "row": 32,
+   "kind": "human",
+   "scale": 3.0,
+   "desc": "Stonehollow giant villager (3x): wool tunic, belted trousers, bushy braided beard.",
+   "anims": [
+    "idle",
+    "walk"
+   ],
+   "size_bounds": [
+    [
+     10,
+     62
+    ],
+    [
+     10,
+     100
+    ]
+   ],
+   "caster": false,
+   "named": false,
+   "stats_hint": {
+    "tier": "npc",
+    "height_x_player": 3.0
+   }
+  },
+  "elffolk2": {
+   "row": 36,
+   "kind": "human",
+   "scale": 2.9,
+   "desc": "Stonehollow giant villager (2.9x): moss tunic, belted trousers, fur mantle, long hair.",
+   "anims": [
+    "idle",
+    "walk"
+   ],
+   "size_bounds": [
+    [
+     10,
+     62
+    ],
+    [
+     10,
+     100
+    ]
+   ],
+   "caster": false,
+   "named": false,
+   "stats_hint": {
+    "tier": "npc",
+    "height_x_player": 2.9
+   }
+  },
+  "innkeeper": {
+   "row": 0,
+   "kind": "human",
+   "scale": 3.0,
+   "desc": "Envoy Kolbrun Hailstride (3x): slate wool tunic, belted grey trousers, white fur mantle, braided hair, Kolbrun's horn on a strap.",
+   "anims": [
+    "idle",
+    "walk"
+   ],
+   "size_bounds": [
+    [
+     10,
+     62
+    ],
+    [
+     10,
+     100
+    ]
+   ],
+   "caster": false,
+   "named": true,
+   "stats_hint": {
+    "tier": "npc",
+    "height_x_player": 3.0
+   }
+  },
+  "shopkeeper": {
+   "row": 4,
+   "kind": "human",
+   "scale": 3.2,
+   "desc": "Jarl Thyra Stonebrow (3.2x): rust tunic, belted trousers, bear-fur mantle, rune-iron circlet, long grey braids.",
+   "anims": [
+    "idle",
+    "walk"
+   ],
+   "size_bounds": [
+    [
+     10,
+     62
+    ],
+    [
+     10,
+     100
+    ]
+   ],
+   "caster": false,
+   "named": true,
+   "stats_hint": {
+    "tier": "npc",
+    "height_x_player": 3.2
+   }
+  },
+  "lanternseller": {
+   "row": 12,
+   "kind": "human",
+   "scale": 2.8,
+   "desc": "Rimewife Solvi (2.8x): blue-grey wrap tunic, belted skirt over leggings, rune-glow braids, rune staff.",
+   "anims": [
+    "idle",
+    "walk"
+   ],
+   "size_bounds": [
+    [
+     10,
+     62
+    ],
+    [
+     10,
+     100
+    ]
+   ],
+   "caster": false,
+   "named": true,
+   "stats_hint": {
+    "tier": "npc",
+    "height_x_player": 2.8
+   }
+  },
+  "nightmerchant": {
+   "row": 28,
+   "kind": "human",
+   "scale": 3.0,
+   "desc": "Rime-Captain Hjordis Icejaw (3x): leather jerkin over a belted tunic, belted trousers, round shield on her back, spear. No plate.",
+   "anims": [
+    "idle",
+    "walk"
+   ],
+   "size_bounds": [
+    [
+     10,
+     62
+    ],
+    [
+     10,
+     100
+    ]
+   ],
+   "caster": false,
+   "named": true,
+   "stats_hint": {
+    "tier": "npc",
+    "height_x_player": 3.0
+   }
+  },
+  "kolbrun": {
+   "row": 0,
+   "kind": "human",
+   "scale": 3.0,
+   "desc": "Envoy Kolbrun Hailstride (3x): slate wool tunic, belted grey trousers, white fur mantle, braided hair, Kolbrun's horn on a strap.",
+   "anims": [
+    "idle",
+    "walk"
+   ],
+   "size_bounds": [
+    [
+     10,
+     62
+    ],
+    [
+     10,
+     100
+    ]
+   ],
+   "caster": false,
+   "named": true,
+   "stats_hint": {
+    "tier": "npc",
+    "height_x_player": 3.0
+   }
+  },
+  "jarl": {
+   "row": 4,
+   "kind": "human",
+   "scale": 3.2,
+   "desc": "Jarl Thyra Stonebrow (3.2x): rust tunic, belted trousers, bear-fur mantle, rune-iron circlet, long grey braids.",
+   "anims": [
+    "idle",
+    "walk"
+   ],
+   "size_bounds": [
+    [
+     10,
+     62
+    ],
+    [
+     10,
+     100
+    ]
+   ],
+   "caster": false,
+   "named": true,
+   "stats_hint": {
+    "tier": "npc",
+    "height_x_player": 3.2
+   }
+  },
+  "ulfar_town": {
+   "row": 8,
+   "kind": "human",
+   "scale": 3.0,
+   "desc": "Ulfar Mossback in town (3x): moss-green tunic, patched belted trousers, moss on his shoulders, shy and gentle.",
+   "anims": [
+    "idle",
+    "walk"
+   ],
+   "size_bounds": [
+    [
+     10,
+     62
+    ],
+    [
+     10,
+     100
+    ]
+   ],
+   "caster": false,
+   "named": true,
+   "stats_hint": {
+    "tier": "npc",
+    "height_x_player": 3.0
+   }
+  },
+  "rimewife": {
+   "row": 12,
+   "kind": "human",
+   "scale": 2.8,
+   "desc": "Rimewife Solvi (2.8x): blue-grey wrap tunic, belted skirt over leggings, rune-glow braids, rune staff.",
+   "anims": [
+    "idle",
+    "walk"
+   ],
+   "size_bounds": [
+    [
+     10,
+     62
+    ],
+    [
+     10,
+     100
+    ]
+   ],
+   "caster": false,
+   "named": true,
+   "stats_hint": {
+    "tier": "npc",
+    "height_x_player": 2.8
+   }
+  },
+  "skuli": {
+   "row": 16,
+   "kind": "human",
+   "scale": 2.0,
+   "desc": "Skuli (2x, a giant kid): oversized rust tunic, rope-belted trousers, a goatherd's crook.",
+   "anims": [
+    "idle",
+    "walk"
+   ],
+   "size_bounds": [
+    [
+     10,
+     62
+    ],
+    [
+     10,
+     100
+    ]
+   ],
+   "caster": false,
+   "named": true,
+   "stats_hint": {
+    "tier": "npc",
+    "height_x_player": 2.0
+   }
+  },
+  "goatwife": {
+   "row": 20,
+   "kind": "human",
+   "scale": 3.0,
+   "desc": "Brynja Hornwise (3x): leather apron over a tunic and belted trousers, rolled sleeves, hair in a bun.",
+   "anims": [
+    "idle",
+    "walk"
+   ],
+   "size_bounds": [
+    [
+     10,
+     62
+    ],
+    [
+     10,
+     100
+    ]
+   ],
+   "caster": false,
+   "named": true,
+   "stats_hint": {
+    "tier": "npc",
+    "height_x_player": 3.0
+   }
+  },
+  "grimsa": {
+   "row": 24,
+   "kind": "human",
+   "scale": 3.0,
+   "desc": "Grimsa the trader (3x): layered wool tunics, a wide belt hung with pouches, a fur cap-less braid.",
+   "anims": [
+    "idle",
+    "walk"
+   ],
+   "size_bounds": [
+    [
+     10,
+     62
+    ],
+    [
+     10,
+     100
+    ]
+   ],
+   "caster": false,
+   "named": true,
+   "stats_hint": {
+    "tier": "npc",
+    "height_x_player": 3.0
+   }
+  },
+  "rimecaptain": {
+   "row": 28,
+   "kind": "human",
+   "scale": 3.0,
+   "desc": "Rime-Captain Hjordis Icejaw (3x): leather jerkin over a belted tunic, belted trousers, round shield on her back, spear. No plate.",
+   "anims": [
+    "idle",
+    "walk"
+   ],
+   "size_bounds": [
+    [
+     10,
+     62
+    ],
+    [
+     10,
+     100
+    ]
+   ],
+   "caster": false,
+   "named": true,
+   "stats_hint": {
+    "tier": "npc",
+    "height_x_player": 3.0
+   }
+  },
+  "gi_man": {
+   "row": 32,
+   "kind": "human",
+   "scale": 3.0,
+   "desc": "Stonehollow giant villager (3x): wool tunic, belted trousers, bushy braided beard.",
+   "anims": [
+    "idle",
+    "walk"
+   ],
+   "size_bounds": [
+    [
+     10,
+     62
+    ],
+    [
+     10,
+     100
+    ]
+   ],
+   "caster": false,
+   "named": false,
+   "stats_hint": {
+    "tier": "npc",
+    "height_x_player": 3.0
+   }
+  },
+  "gi_woman": {
+   "row": 36,
+   "kind": "human",
+   "scale": 2.9,
+   "desc": "Stonehollow giant villager (2.9x): moss tunic, belted trousers, fur mantle, long hair.",
+   "anims": [
+    "idle",
+    "walk"
+   ],
+   "size_bounds": [
+    [
+     10,
+     62
+    ],
+    [
+     10,
+     100
+    ]
+   ],
+   "caster": false,
+   "named": false,
+   "stats_hint": {
+    "tier": "npc",
+    "height_x_player": 2.9
+   }
+  }
+ }
+}
