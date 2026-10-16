@@ -39,7 +39,7 @@ def steps(b, url, T, size, errors, rep, stub=None, shots=None):
     def shot(name):
         rep.setdefault("shots", {})[name] = T.shot(name)
 
-    frames = T.frames   # engine-frame waits, never fixed sleeps
+    frames = lambda n=6, timeout=120: T.frames(n, timeout)   # engine-frame waits, never fixed sleeps (120 s: a loaded box in the full sharded run drew ~1 fps and tripped the 30 s default)
 
     def sv():
         return T.ev("window.__hm.jot.qa()")
