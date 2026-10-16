@@ -236,10 +236,10 @@
    "role": "wispcatcher",
    "name": "Skuli, goatherd",
    "pos": [
-    -11.2,
-    1.8
+    11.2,
+    6.2
    ],
-   "facing": "right",
+   "facing": "left",
    "behavior": "idle",
    "talkable": true,
    "say": [

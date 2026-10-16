@@ -158,7 +158,7 @@ PLACE = {
                 ("giant_stool", [8.0, -3.0], "fixed"), ("giant_stool", [8.0, 0.2], "fixed"), ("giant_stool", [8.0, 3.4], "fixed"),
                 ("glow_ice_pool", [14.2, -5.4], "fixed"), ("ice_crystal_cluster", [12.2, -10.8], "fixed"), ("ice_crystal_cluster", [16.2, -10.8], "fixed"),
                 ("frost_rune_pillar", [12.2, -7.0], "fixed"), ("frost_rune_pillar", [16.2, -7.0], "fixed"), ("cold_brazier", [12.4, -3.0], "fixed"), ("cold_brazier", [16.0, -3.0], "fixed")],
-    "rimecaves": [("barrow_door", [0.0, -11.3], "fixed"), ("cold_brazier", [-3.6, -8.4], "fixed"), ("cold_brazier", [3.6, -8.4], "fixed"), ("rune_standing_stone", [-9.8, -7.0], "fixed"), ("rune_standing_stone", [-9.8, -10.4], "fixed"),
+    "rimecaves": [("barrow_door", [0.0, -11.3], "fixed"), ("cold_brazier", [-3.6, -8.4], "fixed"), ("cold_brazier", [3.6, -8.4], "fixed"), ("rune_standing_stone", [-9.8, -7.0], "fixed"), ("rune_standing_stone", [-9.8, -8.8], "fixed"),
                   ("frost_rune_pillar", [-7.4, -4.6], "fixed"), ("frost_rune_pillar", [7.4, -4.6], "fixed"), ("frost_rune_pillar", [-8.0, 3.0], "fixed"), ("frost_rune_pillar", [8.0, 3.0], "fixed"),
                   ("ice_crystal_cluster", [-11.0, 10.4], "fixed"), ("ice_crystal_cluster", [11.0, 10.4], "fixed"), ("ice_crystal_cluster", [-11.0, -3.0], "fixed"), ("ice_crystal_cluster", [11.0, -3.0], "fixed"),
                   ("glow_ice_pool", [-6.0, 5.2], "fixed"), ("glow_ice_pool", [6.0, 5.2], "fixed"), ("glow_ice_pool", [-7.4, -0.4], "fixed"), ("glow_ice_pool", [7.4, -0.4], "fixed"), ("glow_ice_pool", [0.0, 0.2], "fixed"),
