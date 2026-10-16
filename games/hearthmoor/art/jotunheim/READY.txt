@@ -1,0 +1,3 @@
+READY: true
+Art complete: 5 character sheets (town giants, Ulfar, enemies, elites, Hrimgard 7x), Flurry pet (safe + neon twins), 27 kit pieces, 18 gamefx, 4 scenes, contact sheet, metadata, README.
+Not done: check-scene (needs the built game, so the lead runs it); optional extras (Hall of Hearthstones interior, Hjordis shield-wall pose, goat mount Clatter, Rimebreaker prop). Four questions are at the bottom of README.md.

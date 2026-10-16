@@ -1,0 +1,100 @@
+{
+ "tool": "hearthmoor-art flurry_gen (pets_gen layout)",
+ "biome": "cozy-village",
+ "frame": [
+  20,
+  32
+ ],
+ "pivot": [
+  10,
+  32
+ ],
+ "ground_row": 31,
+ "facings": [
+  "down",
+  "up",
+  "left",
+  "right"
+ ],
+ "anims": {
+  "idle": {
+   "start": 0,
+   "count": 4,
+   "fps": 3,
+   "loop": [
+    0,
+    1,
+    2,
+    1
+   ],
+   "blink": 3
+  },
+  "walk": {
+   "start": 4,
+   "count": 4,
+   "fps": 8
+  },
+  "follow": {
+   "start": 8,
+   "count": 4,
+   "fps": 10,
+   "pets_only": true
+  }
+ },
+ "cols": 12,
+ "size": [
+  240,
+  128
+ ],
+ "image": "flurry_safe.png",
+ "roles": {
+  "pet_flurry_safe": {
+   "row": 0,
+   "kind": "creature",
+   "pet": true,
+   "name": "Flurry",
+   "desc": "Flurry, the snow hare (Jotunheim pet): a white hare with long ears whose tips glow cold blue, a glowing tail puff and a faint chest glint; scampers on the ground, ears flat when she bounds (speed aura, finds hidden snow paths)",
+   "size_bounds": [
+    [
+     8,
+     20
+    ],
+    [
+     8,
+     28
+    ]
+   ],
+   "caster": false,
+   "anims": [
+    "idle",
+    "walk",
+    "follow"
+   ],
+   "petfx": {
+    "hover": {
+     "lift": 0.0,
+     "bob": 0.0,
+     "hz": 0.0
+    },
+    "light": {
+     "color": "#bfe8ff",
+     "intensity": 1.2,
+     "range": 3.0,
+     "lift": 0.35,
+     "fadeIn": 0.4,
+     "pulse": {
+      "min": 0.85,
+      "max": 1.1,
+      "hz": 0.7,
+      "shape": "sine"
+     }
+    },
+    "aura": "pet_aura_flurry",
+    "pool": "pet_pool_flurry",
+    "particles": null,
+    "speed": 2.6,
+    "look": "NEON blue ear tips / tail puff / chest in flurry_neon.png (primary); flurry.png is palette-safe (sky / flower_blue / cloth)"
+   }
+  }
+ }
+}

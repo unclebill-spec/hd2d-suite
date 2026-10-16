@@ -1,0 +1,961 @@
+{
+ "tool": "hd2d kit",
+ "biome": "cozy-village",
+ "seed": 1,
+ "sprite_height_m": 1.8,
+ "pieces": {
+  "warm_lantern": {
+   "file": "warm_lantern.glb",
+   "kind": "prop",
+   "tris": 96,
+   "size": [
+    0.8,
+    2.0,
+    0.4
+   ],
+   "markers": {
+    "lamps": [
+     [
+      0.35,
+      1.6,
+      0.0
+     ]
+    ],
+    "chimneys": [],
+    "windows": [],
+    "doors": [],
+    "lamp_color": "#ffc866",
+    "lamp_range": 5.0,
+    "lamp_fixed": 0.5,
+    "note": "warm accent against the cold glow (Bill: gloom and glow, not all blue)"
+   },
+   "blockers": [
+    [
+     -0.2,
+     -0.2,
+     0.2,
+     0.2
+    ]
+   ],
+   "placement": "warm accent every 6-8 m so grades never go all blue",
+   "fx": []
+  },
+  "snow_floor": {
+   "file": "snow_floor.glb",
+   "kind": "prop",
+   "tris": 132,
+   "size": [
+    2,
+    0.02,
+    2
+   ],
+   "markers": {
+    "lamps": [],
+    "chimneys": [],
+    "windows": [],
+    "doors": []
+   },
+   "blockers": [],
+   "placement": "2 m grid, ground of Stonehollow",
+   "fx": [
+    "ice_sparkles"
+   ]
+  },
+  "ice_lake": {
+   "file": "ice_lake.glb",
+   "kind": "prop",
+   "tris": 272,
+   "size": [
+    4,
+    0.04,
+    4
+   ],
+   "markers": {
+    "lamps": [
+     [
+      0,
+      0.5,
+      0
+     ]
+    ],
+    "chimneys": [],
+    "windows": [],
+    "doors": [],
+    "lamp_color": "#2fd0d0",
+    "lamp_range": 5.0,
+    "lamp_fixed": 0.5
+   },
+   "blockers": [],
+   "placement": "frozen lake [8,-3]; glow pools under the ice",
+   "fx": [
+    "pool_teal",
+    "ice_sparkles"
+   ]
+  },
+  "stone_ledge": {
+   "file": "stone_ledge.glb",
+   "kind": "prop",
+   "tris": 288,
+   "size": [
+    3.1,
+    1.34,
+    2.1
+   ],
+   "markers": {
+    "lamps": [
+     [
+      0,
+      0.6,
+      1.3
+     ]
+    ],
+    "chimneys": [],
+    "windows": [],
+    "doors": [],
+    "lamp_color": "#7fd4ff",
+    "lamp_range": 3.0,
+    "lamp_fixed": 0.5,
+    "height_m": 1.34,
+    "ledge_edge": [
+     [
+      -1.5,
+      1.0
+     ],
+     [
+      1.5,
+      1.0
+     ]
+    ],
+    "no_props_within_m": 0.8
+   },
+   "blockers": [
+    [
+     -1.5,
+     -1.0,
+     1.5,
+     1.0
+    ]
+   ],
+   "placement": "1.34 m plateau / ledge; chain along x. Props sit >= 1.5 m back from the front edge",
+   "fx": [
+    "pool_cold"
+   ],
+   "height_m": 1.34
+  },
+  "stone_stair": {
+   "file": "stone_stair.glb",
+   "kind": "stairs",
+   "tris": 384,
+   "size": [
+    2.6,
+    1.7,
+    3.0
+   ],
+   "markers": {
+    "lamps": [
+     [
+      -1.15,
+      1.1,
+      1.4
+     ],
+     [
+      1.15,
+      1.1,
+      1.4
+     ]
+    ],
+    "chimneys": [],
+    "windows": [],
+    "doors": [],
+    "lamp_color": "#3fb8ff",
+    "lamp_range": 3.0,
+    "lamp_fixed": 0.5,
+    "no_props_within_m": 1.0,
+    "note": "keep props, fx and spawns off the stair footprint (+1 m each end)"
+   },
+   "blockers": [],
+   "stairs": {
+    "width": 2.0,
+    "rise": 1.2,
+    "length": 3.0,
+    "steps": 6
+   },
+   "placement": "one per ledge, centred on it; top flush with the ledge front face; stairs climb toward -z",
+   "height_m": 1.2
+  },
+  "snow_mound": {
+   "file": "snow_mound.glb",
+   "kind": "prop",
+   "tris": 220,
+   "size": [
+    3.0,
+    1.3,
+    2.4
+   ],
+   "markers": {
+    "lamps": [],
+    "chimneys": [],
+    "windows": [],
+    "doors": [],
+    "height_m": 1.3
+   },
+   "blockers": [
+    [
+     -1.3,
+     -1.0,
+     1.3,
+     1.0
+    ]
+   ],
+   "placement": "1.3 m mound; stand actors and props on the flat only, never on the slope",
+   "height_m": 1.3
+  },
+  "longhouse": {
+   "file": "longhouse.glb",
+   "kind": "prop",
+   "tris": 884,
+   "size": [
+    8.8,
+    8.0,
+    6.0
+   ],
+   "markers": {
+    "lamps": [
+     [
+      -2.4,
+      2.0,
+      3.3
+     ],
+     [
+      2.4,
+      2.0,
+      3.3
+     ],
+     [
+      0,
+      3.6,
+      3.1
+     ]
+    ],
+    "chimneys": [],
+    "windows": [],
+    "doors": [
+     {
+      "pos": [
+       0,
+       0,
+       2.7
+      ],
+      "w": 3.2,
+      "h": 4.0
+     }
+    ],
+    "lamp_color": "#ffc866",
+    "lamp_range": 5.0,
+    "lamp_fixed": 0.5,
+    "spawn_clear_m": 2.5,
+    "note": "keep 2.5 m in front of the door clear (spawn / door point)"
+   },
+   "blockers": [
+    [
+     -4.0,
+     -2.5,
+     4.0,
+     2.5
+    ]
+   ],
+   "placement": "back row; door faces +z; keep 2.5 m in front of the door clear",
+   "fx": [
+    "pool_cold",
+    "ice_sparkles"
+   ]
+  },
+  "rune_standing_stone": {
+   "file": "rune_standing_stone.glb",
+   "kind": "prop",
+   "tris": 236,
+   "size": [
+    1.8,
+    4.7,
+    1.8
+   ],
+   "markers": {
+    "lamps": [
+     [
+      0,
+      2.4,
+      0.8
+     ]
+    ],
+    "chimneys": [],
+    "windows": [],
+    "doors": [],
+    "lamp_color": "#7fd4ff",
+    "lamp_range": 5.0,
+    "lamp_fixed": 0.5,
+    "rune_pulse_s": 3.0
+   },
+   "blockers": [
+    [
+     -0.7,
+     -0.7,
+     0.7,
+     0.7
+    ]
+   ],
+   "placement": "Welcome Ring / lake edge / plateau; rune_pulse decal under it",
+   "fx": [
+    "pool_cold",
+    "rune_pulse"
+   ]
+  },
+  "lift_stone": {
+   "file": "lift_stone.glb",
+   "kind": "prop",
+   "tris": 182,
+   "size": [
+    1.6,
+    1.1,
+    1.6
+   ],
+   "markers": {
+    "lamps": [
+     [
+      0,
+      0.7,
+      0.5
+     ]
+    ],
+    "chimneys": [],
+    "windows": [],
+    "doors": [],
+    "lamp_color": "#7fd4ff",
+    "lamp_range": 3.0,
+    "lamp_fixed": 0.5,
+    "interact": "lift (E / A on the glow): Welcome Ring"
+   },
+   "blockers": [
+    [
+     -0.6,
+     -0.6,
+     0.6,
+     0.6
+    ]
+   ],
+   "placement": "the three Welcome Ring stones at [0,4]",
+   "fx": [
+    "rune_pulse",
+    "pool_cold"
+   ]
+  },
+  "cold_brazier": {
+   "file": "cold_brazier.glb",
+   "kind": "prop",
+   "tris": 192,
+   "size": [
+    1.3,
+    3.4,
+    1.3
+   ],
+   "markers": {
+    "lamps": [
+     [
+      0,
+      2.66,
+      0.1
+     ]
+    ],
+    "chimneys": [],
+    "windows": [],
+    "doors": [],
+    "lamp_color": "#3fb8ff",
+    "lamp_range": 6.0,
+    "lamp_fixed": 0.5
+   },
+   "blockers": [
+    [
+     -0.4,
+     -0.4,
+     0.4,
+     0.4
+    ]
+   ],
+   "placement": "Welcome Ring corners, plateau back corners; cold_flame billboard at y 2.0 m, pool_cold under it",
+   "fx": [
+    "cold_flame",
+    "pool_cold"
+   ]
+  },
+  "goat_fence": {
+   "file": "goat_fence.glb",
+   "kind": "prop",
+   "tris": 156,
+   "size": [
+    2.2,
+    1.3,
+    0.2
+   ],
+   "markers": {
+    "lamps": [],
+    "chimneys": [],
+    "windows": [],
+    "doors": []
+   },
+   "blockers": [
+    [
+     -1.1,
+     -0.12,
+     1.1,
+     0.12
+    ]
+   ],
+   "placement": "goat pens [-8.5,-2]; chain end to end",
+   "fx": []
+  },
+  "giant_stool": {
+   "file": "giant_stool.glb",
+   "kind": "prop",
+   "tris": 160,
+   "size": [
+    1.1,
+    1.0,
+    1.1
+   ],
+   "markers": {
+    "lamps": [],
+    "chimneys": [],
+    "windows": [],
+    "doors": [],
+    "climbable": "the player climbs onto stools"
+   },
+   "blockers": [
+    [
+     -0.5,
+     -0.5,
+     0.5,
+     0.5
+    ]
+   ],
+   "placement": "longhouses and the Hall; the player can climb it",
+   "fx": []
+  },
+  "glow_orb_chain": {
+   "file": "glow_orb_chain.glb",
+   "kind": "prop",
+   "tris": 208,
+   "size": [
+    0.7,
+    3.0,
+    0.7
+   ],
+   "markers": {
+    "lamps": [
+     [
+      0,
+      1.6,
+      0
+     ]
+    ],
+    "chimneys": [],
+    "windows": [],
+    "doors": [],
+    "lamp_color": "#9fe8ff",
+    "lamp_range": 5.5,
+    "lamp_fixed": 0.0,
+    "hanging": "hang from roof beams at y = 3 m; still light (no flicker)"
+   },
+   "blockers": [],
+   "placement": "hang from roof beams in jt_hall at y 3 m",
+   "fx": [
+    "glow_orb_blue"
+   ]
+  },
+  "fur_stall": {
+   "file": "fur_stall.glb",
+   "kind": "prop",
+   "tris": 264,
+   "size": [
+    3.4,
+    2.8,
+    1.4
+   ],
+   "markers": {
+    "lamps": [
+     [
+      1.1,
+      1.5,
+      0.8
+     ]
+    ],
+    "chimneys": [],
+    "windows": [],
+    "doors": [],
+    "lamp_color": "#3fb8ff",
+    "lamp_range": 4.0,
+    "lamp_fixed": 0.5
+   },
+   "blockers": [
+    [
+     -1.5,
+     -0.2,
+     1.5,
+     1.0
+    ]
+   ],
+   "placement": "Grimsa's trader stall [-6,5.5]",
+   "fx": [
+    "pool_cold"
+   ]
+  },
+  "ice_floor": {
+   "file": "ice_floor.glb",
+   "kind": "prop",
+   "tris": 116,
+   "size": [
+    2,
+    0.02,
+    2
+   ],
+   "markers": {
+    "lamps": [],
+    "chimneys": [],
+    "windows": [],
+    "doors": []
+   },
+   "blockers": [],
+   "placement": "2 m grid, Rime Caves",
+   "fx": [
+    "ice_sparkles"
+   ]
+  },
+  "ice_wall": {
+   "file": "ice_wall.glb",
+   "kind": "prop",
+   "tris": 192,
+   "size": [
+    2,
+    3.4,
+    0.6
+   ],
+   "markers": {
+    "lamps": [
+     [
+      0,
+      1.6,
+      0.6
+     ]
+    ],
+    "chimneys": [],
+    "windows": [],
+    "doors": [],
+    "lamp_color": "#2fd0d0",
+    "lamp_range": 3.5,
+    "lamp_fixed": 0.5
+   },
+   "blockers": [
+    [
+     -1,
+     -0.3,
+     1,
+     0.3
+    ]
+   ],
+   "placement": "2 m modules; icicle glow tips",
+   "fx": [
+    "pool_teal"
+   ]
+  },
+  "glow_ice_pool": {
+   "file": "glow_ice_pool.glb",
+   "kind": "prop",
+   "tris": 272,
+   "size": [
+    3.4,
+    0.14,
+    2.4
+   ],
+   "markers": {
+    "lamps": [
+     [
+      0,
+      0.5,
+      0
+     ]
+    ],
+    "chimneys": [],
+    "windows": [],
+    "doors": [],
+    "lamp_color": "#2fd0d0",
+    "lamp_range": 5.0,
+    "lamp_fixed": 0.5,
+    "no_props_within_m": 0.5
+   },
+   "blockers": [
+    [
+     -1.5,
+     -1.0,
+     1.5,
+     1.0
+    ]
+   ],
+   "placement": "5 in the Rime Caves; keep 0.5 m clear of the rim",
+   "fx": [
+    "pool_teal",
+    "glow_fog",
+    "ice_sparkles"
+   ]
+  },
+  "icicle_cluster": {
+   "file": "icicle_cluster.glb",
+   "kind": "prop",
+   "tris": 192,
+   "size": [
+    1.6,
+    3.5,
+    0.9
+   ],
+   "markers": {
+    "lamps": [
+     [
+      0,
+      2.4,
+      0.3
+     ]
+    ],
+    "chimneys": [],
+    "windows": [],
+    "doors": [],
+    "lamp_color": "#a8fff0",
+    "lamp_range": 4.0,
+    "lamp_fixed": 0.5,
+    "hanging": "mount to the cave ceiling at y = 3.2 m; glow tips"
+   },
+   "blockers": [],
+   "placement": "hang from the cave ceiling (y 3.2 m)",
+   "fx": [
+    "glow_vines"
+   ]
+  },
+  "ice_crystal_cluster": {
+   "file": "ice_crystal_cluster.glb",
+   "kind": "prop",
+   "tris": 330,
+   "size": [
+    1.4,
+    1.9,
+    1.2
+   ],
+   "markers": {
+    "lamps": [
+     [
+      0,
+      1.0,
+      0.3
+     ]
+    ],
+    "chimneys": [],
+    "windows": [],
+    "doors": [],
+    "lamp_color": "#2fd0d0",
+    "lamp_range": 4.5,
+    "lamp_fixed": 0.5
+   },
+   "blockers": [
+    [
+     -0.6,
+     -0.5,
+     0.6,
+     0.5
+    ]
+   ],
+   "placement": "cave corners and pool edges",
+   "fx": [
+    "pool_teal",
+    "neon_fireflies_green"
+   ]
+  },
+  "frost_rune_pillar": {
+   "file": "frost_rune_pillar.glb",
+   "kind": "prop",
+   "tris": 176,
+   "size": [
+    1.3,
+    3.4,
+    1.3
+   ],
+   "markers": {
+    "lamps": [
+     [
+      0,
+      1.8,
+      0.7
+     ]
+    ],
+    "chimneys": [],
+    "windows": [],
+    "doors": [],
+    "lamp_color": "#7fd4ff",
+    "lamp_range": 4.5,
+    "lamp_fixed": 0.5
+   },
+   "blockers": [
+    [
+     -0.5,
+     -0.5,
+     0.5,
+     0.5
+    ]
+   ],
+   "placement": "every cave pillar",
+   "fx": [
+    "pool_cold",
+    "rune_pulse"
+   ]
+  },
+  "barrow_floor": {
+   "file": "barrow_floor.glb",
+   "kind": "prop",
+   "tris": 96,
+   "size": [
+    2,
+    0.02,
+    2
+   ],
+   "markers": {
+    "lamps": [],
+    "chimneys": [],
+    "windows": [],
+    "doors": []
+   },
+   "blockers": [],
+   "placement": "2 m grid, Titan's Barrow",
+   "fx": []
+  },
+  "barrow_wall": {
+   "file": "barrow_wall.glb",
+   "kind": "prop",
+   "tris": 144,
+   "size": [
+    2,
+    3.2,
+    0.5
+   ],
+   "markers": {
+    "lamps": [
+     [
+      0,
+      1.4,
+      0.5
+     ]
+    ],
+    "chimneys": [],
+    "windows": [],
+    "doors": [],
+    "lamp_color": "#3fb8ff",
+    "lamp_range": 3.2,
+    "lamp_fixed": 0.5
+   },
+   "blockers": [
+    [
+     -1,
+     -0.25,
+     1,
+     0.25
+    ]
+   ],
+   "placement": "2 m modules",
+   "fx": [
+    "pool_cold"
+   ]
+  },
+  "barrow_door": {
+   "file": "barrow_door.glb",
+   "kind": "prop",
+   "tris": 462,
+   "size": [
+    6.4,
+    6.9,
+    1.0
+   ],
+   "markers": {
+    "lamps": [
+     [
+      0,
+      3.2,
+      0.9
+     ]
+    ],
+    "chimneys": [],
+    "windows": [],
+    "doors": [],
+    "lamp_color": "#3fb8ff",
+    "lamp_range": 6.0,
+    "lamp_fixed": 0.5,
+    "rune_locks": 3,
+    "note": "Barrow mouth: three rune locks; keep 3 m clear in front"
+   },
+   "blockers": [
+    [
+     -3.2,
+     -0.5,
+     3.2,
+     0.5
+    ]
+   ],
+   "placement": "Barrow mouth [0,-7.5] (6 m, three rune locks); keep 3 m clear",
+   "fx": [
+    "pool_cold"
+   ]
+  },
+  "shield_rack": {
+   "file": "shield_rack.glb",
+   "kind": "prop",
+   "tris": 204,
+   "size": [
+    2.4,
+    2.5,
+    0.5
+   ],
+   "markers": {
+    "lamps": [
+     [
+      0,
+      1.3,
+      0.6
+     ]
+    ],
+    "chimneys": [],
+    "windows": [],
+    "doors": [],
+    "lamp_color": "#3fb8ff",
+    "lamp_range": 3.0,
+    "lamp_fixed": 0.5
+   },
+   "blockers": [
+    [
+     -1.1,
+     -0.2,
+     1.1,
+     0.2
+    ]
+   ],
+   "placement": "B2 Hall of Shields, against the wall",
+   "fx": [
+    "pool_cold"
+   ]
+  },
+  "ice_throne": {
+   "file": "ice_throne.glb",
+   "kind": "prop",
+   "tris": 222,
+   "size": [
+    5.0,
+    8.0,
+    5.0
+   ],
+   "markers": {
+    "lamps": [
+     [
+      0,
+      3.0,
+      0.4
+     ]
+    ],
+    "chimneys": [],
+    "windows": [],
+    "doors": [],
+    "lamp_color": "#3fb8ff",
+    "lamp_range": 7.0,
+    "lamp_fixed": 0.5,
+    "boss_stand": [
+     0,
+     0,
+     3.4
+    ],
+    "note": "Hrimgard's throne (boss_stand marker); floor round it freezes in phase 2"
+   },
+   "blockers": [
+    [
+     -2.4,
+     -1.5,
+     2.4,
+     1.5
+    ]
+   ],
+   "placement": "B9 Throne Barrow, back centre; boss_stand marker; Hrimgard stands in front (z +2.4)",
+   "fx": [
+    "pool_cold"
+   ]
+  },
+  "rune_bridge": {
+   "file": "rune_bridge.glb",
+   "kind": "prop",
+   "tris": 96,
+   "size": [
+    1.8,
+    0.8,
+    2.0
+   ],
+   "markers": {
+    "lamps": [
+     [
+      0,
+      0.5,
+      0
+     ]
+    ],
+    "chimneys": [],
+    "windows": [],
+    "doors": [],
+    "lamp_color": "#3fb8ff",
+    "lamp_range": 3.0,
+    "lamp_fixed": 0.5,
+    "note": "B7: step on lit runes only; every second plank is lit in this piece"
+   },
+   "blockers": [],
+   "placement": "B7 Rune Bridge: chain along z; lit planks safe, unlit crack",
+   "fx": [
+    "pool_cold"
+   ]
+  },
+  "rune_brazier": {
+   "file": "rune_brazier.glb",
+   "kind": "prop",
+   "tris": 192,
+   "size": [
+    1.69,
+    3.8,
+    1.69
+   ],
+   "markers": {
+    "lamps": [
+     [
+      0,
+      2.98,
+      0.1
+     ]
+    ],
+    "chimneys": [],
+    "windows": [],
+    "doors": [],
+    "lamp_color": "#3fb8ff",
+    "lamp_range": 7.800000000000001,
+    "lamp_fixed": 0.5,
+    "snuff": "tb_b1..3: snuff with a frost / water spell or E / A"
+   },
+   "blockers": [
+    [
+     -0.52,
+     -0.52,
+     0.52,
+     0.52
+    ]
+   ],
+   "placement": "B2 / B4 / B7 braziers tb_b1..3 (snuffable)",
+   "fx": [
+    "cold_flame",
+    "pool_cold"
+   ]
+  }
+ }
+}

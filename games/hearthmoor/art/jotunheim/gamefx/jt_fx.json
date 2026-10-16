@@ -1,0 +1,1259 @@
+{
+ "tool": "hd2d portal",
+ "biome": "cozy-village",
+ "seed": 104,
+ "image": "jt_fx.png",
+ "cell": 48,
+ "size": [
+  384,
+  864
+ ],
+ "cast_sets": {},
+ "cycle": [],
+ "effects": {
+  "pool_cold": {
+   "row": 0,
+   "frames": 6,
+   "fps": 4,
+   "loop": true,
+   "loop_from": 0,
+   "loops": 1,
+   "kind": "decal",
+   "pivot": [
+    24,
+    24
+   ],
+   "lift": 0.02,
+   "glow": true,
+   "light": null,
+   "speed": null,
+   "travel": null,
+   "then": null,
+   "duration": 9999,
+   "strip": "strips/pool_cold.png",
+   "frame_list": [
+    {
+     "x": 0,
+     "y": 0,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 48,
+     "y": 0,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 96,
+     "y": 0,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 144,
+     "y": 0,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 192,
+     "y": 0,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 240,
+     "y": 0,
+     "w": 48,
+     "h": 48
+    }
+   ],
+   "notes": "cold-blue pool under cold_brazier / rune stones / throne (x2-3 for Hrimgard)"
+  },
+  "pool_teal": {
+   "row": 1,
+   "frames": 6,
+   "fps": 4,
+   "loop": true,
+   "loop_from": 0,
+   "loops": 1,
+   "kind": "decal",
+   "pivot": [
+    24,
+    24
+   ],
+   "lift": 0.03,
+   "glow": true,
+   "light": null,
+   "speed": null,
+   "travel": null,
+   "then": null,
+   "duration": 9999,
+   "strip": "strips/pool_teal.png",
+   "frame_list": [
+    {
+     "x": 0,
+     "y": 48,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 48,
+     "y": 48,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 96,
+     "y": 48,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 144,
+     "y": 48,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 192,
+     "y": 48,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 240,
+     "y": 48,
+     "w": 48,
+     "h": 48
+    }
+   ],
+   "notes": "bioluminescent teal pool over glow_ice_pool / ice_lake"
+  },
+  "pool_aurora": {
+   "row": 2,
+   "frames": 6,
+   "fps": 3,
+   "loop": true,
+   "loop_from": 0,
+   "loops": 1,
+   "kind": "decal",
+   "pivot": [
+    24,
+    24
+   ],
+   "lift": 0.02,
+   "glow": true,
+   "light": null,
+   "speed": null,
+   "travel": null,
+   "then": null,
+   "duration": 9999,
+   "strip": "strips/pool_aurora.png",
+   "frame_list": [
+    {
+     "x": 0,
+     "y": 96,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 48,
+     "y": 96,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 96,
+     "y": 96,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 144,
+     "y": 96,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 192,
+     "y": 96,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 240,
+     "y": 96,
+     "w": 48,
+     "h": 48
+    }
+   ],
+   "notes": "aurora-green pool on the snow (night)"
+  },
+  "pool_violet": {
+   "row": 3,
+   "frames": 6,
+   "fps": 4,
+   "loop": true,
+   "loop_from": 0,
+   "loops": 1,
+   "kind": "decal",
+   "pivot": [
+    24,
+    24
+   ],
+   "lift": 0.02,
+   "glow": true,
+   "light": null,
+   "speed": null,
+   "travel": null,
+   "then": null,
+   "duration": 9999,
+   "strip": "strips/pool_violet.png",
+   "frame_list": [
+    {
+     "x": 0,
+     "y": 144,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 48,
+     "y": 144,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 96,
+     "y": 144,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 144,
+     "y": 144,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 192,
+     "y": 144,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 240,
+     "y": 144,
+     "w": 48,
+     "h": 48
+    }
+   ],
+   "notes": "violet pool, aurora spill"
+  },
+  "aurora_glow": {
+   "row": 4,
+   "frames": 8,
+   "fps": 4,
+   "loop": true,
+   "loop_from": 0,
+   "loops": 1,
+   "kind": "billboard",
+   "pivot": [
+    24,
+    24
+   ],
+   "lift": 5.0,
+   "glow": true,
+   "light": null,
+   "speed": null,
+   "travel": null,
+   "then": null,
+   "duration": 9999,
+   "strip": "strips/aurora_glow.png",
+   "frame_list": [
+    {
+     "x": 0,
+     "y": 192,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 48,
+     "y": 192,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 96,
+     "y": 192,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 144,
+     "y": 192,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 192,
+     "y": 192,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 240,
+     "y": 192,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 288,
+     "y": 192,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 336,
+     "y": 192,
+     "w": 48,
+     "h": 48
+    }
+   ],
+   "notes": "green-to-violet aurora curtain, 8-frame ribbon, night sky layer (tile horizontally)"
+  },
+  "cold_flame": {
+   "row": 5,
+   "frames": 8,
+   "fps": 10,
+   "loop": true,
+   "loop_from": 0,
+   "loops": 1,
+   "kind": "billboard",
+   "pivot": [
+    24,
+    44
+   ],
+   "lift": 0.1,
+   "glow": true,
+   "light": {
+    "color": "#2ab4ff",
+    "intensity": 1.0,
+    "range": 4.0,
+    "pool": "pool_cold"
+   },
+   "speed": null,
+   "travel": null,
+   "then": null,
+   "duration": 9999,
+   "strip": "strips/cold_flame.png",
+   "frame_list": [
+    {
+     "x": 0,
+     "y": 240,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 48,
+     "y": 240,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 96,
+     "y": 240,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 144,
+     "y": 240,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 192,
+     "y": 240,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 240,
+     "y": 240,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 288,
+     "y": 240,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 336,
+     "y": 240,
+     "w": 48,
+     "h": 48
+    }
+   ],
+   "notes": "cold-fire flame over braziers (no heat)"
+  },
+  "ice_sparkles": {
+   "row": 6,
+   "frames": 8,
+   "fps": 6,
+   "loop": true,
+   "loop_from": 0,
+   "loops": 1,
+   "kind": "billboard",
+   "pivot": [
+    24,
+    47
+   ],
+   "lift": 0.8,
+   "glow": true,
+   "light": null,
+   "speed": null,
+   "travel": null,
+   "then": null,
+   "duration": 9999,
+   "strip": "strips/ice_sparkles.png",
+   "frame_list": [
+    {
+     "x": 0,
+     "y": 288,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 48,
+     "y": 288,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 96,
+     "y": 288,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 144,
+     "y": 288,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 192,
+     "y": 288,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 240,
+     "y": 288,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 288,
+     "y": 288,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 336,
+     "y": 288,
+     "w": 48,
+     "h": 48
+    }
+   ],
+   "notes": "twinkling ice sparkles over snow, ice and crystals"
+  },
+  "neon_fireflies_blue": {
+   "row": 7,
+   "frames": 8,
+   "fps": 6,
+   "loop": true,
+   "loop_from": 0,
+   "loops": 1,
+   "kind": "billboard",
+   "pivot": [
+    24,
+    47
+   ],
+   "lift": 0.8,
+   "glow": true,
+   "light": null,
+   "speed": null,
+   "travel": null,
+   "then": null,
+   "duration": 9999,
+   "strip": "strips/neon_fireflies_blue.png",
+   "frame_list": [
+    {
+     "x": 0,
+     "y": 336,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 48,
+     "y": 336,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 96,
+     "y": 336,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 144,
+     "y": 336,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 192,
+     "y": 336,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 240,
+     "y": 336,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 288,
+     "y": 336,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 336,
+     "y": 336,
+     "w": 48,
+     "h": 48
+    }
+   ],
+   "notes": "cold-blue fireflies"
+  },
+  "neon_fireflies_green": {
+   "row": 8,
+   "frames": 8,
+   "fps": 6,
+   "loop": true,
+   "loop_from": 0,
+   "loops": 1,
+   "kind": "billboard",
+   "pivot": [
+    24,
+    47
+   ],
+   "lift": 0.8,
+   "glow": true,
+   "light": null,
+   "speed": null,
+   "travel": null,
+   "then": null,
+   "duration": 9999,
+   "strip": "strips/neon_fireflies_green.png",
+   "frame_list": [
+    {
+     "x": 0,
+     "y": 384,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 48,
+     "y": 384,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 96,
+     "y": 384,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 144,
+     "y": 384,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 192,
+     "y": 384,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 240,
+     "y": 384,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 288,
+     "y": 384,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 336,
+     "y": 384,
+     "w": 48,
+     "h": 48
+    }
+   ],
+   "notes": "green wisps in the Rime Caves"
+  },
+  "neon_fireflies_violet": {
+   "row": 9,
+   "frames": 8,
+   "fps": 6,
+   "loop": true,
+   "loop_from": 0,
+   "loops": 1,
+   "kind": "billboard",
+   "pivot": [
+    24,
+    47
+   ],
+   "lift": 0.8,
+   "glow": true,
+   "light": null,
+   "speed": null,
+   "travel": null,
+   "then": null,
+   "duration": 9999,
+   "strip": "strips/neon_fireflies_violet.png",
+   "frame_list": [
+    {
+     "x": 0,
+     "y": 432,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 48,
+     "y": 432,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 96,
+     "y": 432,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 144,
+     "y": 432,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 192,
+     "y": 432,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 240,
+     "y": 432,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 288,
+     "y": 432,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 336,
+     "y": 432,
+     "w": 48,
+     "h": 48
+    }
+   ],
+   "notes": "violet wisps at the aurora"
+  },
+  "glow_frog": {
+   "row": 10,
+   "frames": 8,
+   "fps": 6,
+   "loop": true,
+   "loop_from": 0,
+   "loops": 1,
+   "kind": "billboard",
+   "pivot": [
+    24,
+    44
+   ],
+   "lift": 0.0,
+   "glow": true,
+   "light": null,
+   "speed": null,
+   "travel": null,
+   "then": null,
+   "duration": 9999,
+   "strip": "strips/glow_frog.png",
+   "frame_list": [
+    {
+     "x": 0,
+     "y": 480,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 48,
+     "y": 480,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 96,
+     "y": 480,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 144,
+     "y": 480,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 192,
+     "y": 480,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 240,
+     "y": 480,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 288,
+     "y": 480,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 336,
+     "y": 480,
+     "w": 48,
+     "h": 48
+    }
+   ],
+   "notes": "glowing cave frog (hops by the pools; never gross)"
+  },
+  "glow_vines": {
+   "row": 11,
+   "frames": 8,
+   "fps": 4,
+   "loop": true,
+   "loop_from": 0,
+   "loops": 1,
+   "kind": "billboard",
+   "pivot": [
+    24,
+    0
+   ],
+   "lift": 3.0,
+   "glow": true,
+   "light": null,
+   "speed": null,
+   "travel": null,
+   "then": null,
+   "duration": 9999,
+   "strip": "strips/glow_vines.png",
+   "frame_list": [
+    {
+     "x": 0,
+     "y": 528,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 48,
+     "y": 528,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 96,
+     "y": 528,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 144,
+     "y": 528,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 192,
+     "y": 528,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 240,
+     "y": 528,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 288,
+     "y": 528,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 336,
+     "y": 528,
+     "w": 48,
+     "h": 48
+    }
+   ],
+   "notes": "hanging glowing vines + icicle drip, hang from the cave ceiling (pivot at top)"
+  },
+  "glow_fog": {
+   "row": 12,
+   "frames": 8,
+   "fps": 3,
+   "loop": true,
+   "loop_from": 0,
+   "loops": 1,
+   "kind": "decal",
+   "pivot": [
+    24,
+    24
+   ],
+   "lift": 0.05,
+   "glow": true,
+   "light": null,
+   "speed": null,
+   "travel": null,
+   "then": null,
+   "duration": 9999,
+   "strip": "strips/glow_fog.png",
+   "frame_list": [
+    {
+     "x": 0,
+     "y": 576,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 48,
+     "y": 576,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 96,
+     "y": 576,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 144,
+     "y": 576,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 192,
+     "y": 576,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 240,
+     "y": 576,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 288,
+     "y": 576,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 336,
+     "y": 576,
+     "w": 48,
+     "h": 48
+    }
+   ],
+   "notes": "surreal glowing ground fog (teal), drifting; one per 6-8 m, off stairs and spawns"
+  },
+  "rune_pulse": {
+   "row": 13,
+   "frames": 6,
+   "fps": 2,
+   "loop": true,
+   "loop_from": 0,
+   "loops": 1,
+   "kind": "decal",
+   "pivot": [
+    24,
+    24
+   ],
+   "lift": 0.03,
+   "glow": true,
+   "light": null,
+   "speed": null,
+   "travel": null,
+   "then": null,
+   "duration": 9999,
+   "strip": "strips/rune_pulse.png",
+   "frame_list": [
+    {
+     "x": 0,
+     "y": 624,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 48,
+     "y": 624,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 96,
+     "y": 624,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 144,
+     "y": 624,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 192,
+     "y": 624,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 240,
+     "y": 624,
+     "w": 48,
+     "h": 48
+    }
+   ],
+   "notes": "frost-rune ring pulse (every 3 s), brighter when the hero is near"
+  },
+  "snow_puff": {
+   "row": 14,
+   "frames": 6,
+   "fps": 8,
+   "loop": false,
+   "loop_from": 0,
+   "loops": 1,
+   "kind": "billboard",
+   "pivot": [
+    24,
+    44
+   ],
+   "lift": 0.0,
+   "glow": true,
+   "light": null,
+   "speed": null,
+   "travel": null,
+   "then": null,
+   "duration": 0.75,
+   "strip": "strips/snow_puff.png",
+   "frame_list": [
+    {
+     "x": 0,
+     "y": 672,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 48,
+     "y": 672,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 96,
+     "y": 672,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 144,
+     "y": 672,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 192,
+     "y": 672,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 240,
+     "y": 672,
+     "w": 48,
+     "h": 48
+    }
+   ],
+   "notes": "Flurry's fx id snow_puff (hare hops / stops)"
+  },
+  "glow_orb_blue": {
+   "row": 15,
+   "frames": 8,
+   "fps": 6,
+   "loop": true,
+   "loop_from": 0,
+   "loops": 1,
+   "kind": "billboard",
+   "pivot": [
+    24,
+    33
+   ],
+   "lift": 1.4,
+   "glow": true,
+   "light": {
+    "color": "#a6ecff",
+    "intensity": 0.7,
+    "range": 3.0,
+    "pool": "pool_cold"
+   },
+   "speed": null,
+   "travel": null,
+   "then": null,
+   "duration": 9999,
+   "strip": "strips/glow_orb_blue.png",
+   "frame_list": [
+    {
+     "x": 0,
+     "y": 720,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 48,
+     "y": 720,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 96,
+     "y": 720,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 144,
+     "y": 720,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 192,
+     "y": 720,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 240,
+     "y": 720,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 288,
+     "y": 720,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 336,
+     "y": 720,
+     "w": 48,
+     "h": 48
+    }
+   ],
+   "notes": "floating glow orb, hover 1.1-2.2 m"
+  },
+  "glow_orb_green": {
+   "row": 16,
+   "frames": 8,
+   "fps": 6,
+   "loop": true,
+   "loop_from": 0,
+   "loops": 1,
+   "kind": "billboard",
+   "pivot": [
+    24,
+    33
+   ],
+   "lift": 1.4,
+   "glow": true,
+   "light": {
+    "color": "#b8ffd4",
+    "intensity": 0.7,
+    "range": 3.0,
+    "pool": "pool_aurora"
+   },
+   "speed": null,
+   "travel": null,
+   "then": null,
+   "duration": 9999,
+   "strip": "strips/glow_orb_green.png",
+   "frame_list": [
+    {
+     "x": 0,
+     "y": 768,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 48,
+     "y": 768,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 96,
+     "y": 768,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 144,
+     "y": 768,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 192,
+     "y": 768,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 240,
+     "y": 768,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 288,
+     "y": 768,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 336,
+     "y": 768,
+     "w": 48,
+     "h": 48
+    }
+   ],
+   "notes": "floating glow orb, hover 1.1-2.2 m"
+  },
+  "glow_orb_violet": {
+   "row": 17,
+   "frames": 8,
+   "fps": 6,
+   "loop": true,
+   "loop_from": 0,
+   "loops": 1,
+   "kind": "billboard",
+   "pivot": [
+    24,
+    33
+   ],
+   "lift": 1.4,
+   "glow": true,
+   "light": {
+    "color": "#d4a8ff",
+    "intensity": 0.7,
+    "range": 3.0,
+    "pool": "pool_violet"
+   },
+   "speed": null,
+   "travel": null,
+   "then": null,
+   "duration": 9999,
+   "strip": "strips/glow_orb_violet.png",
+   "frame_list": [
+    {
+     "x": 0,
+     "y": 816,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 48,
+     "y": 816,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 96,
+     "y": 816,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 144,
+     "y": 816,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 192,
+     "y": 816,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 240,
+     "y": 816,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 288,
+     "y": 816,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 336,
+     "y": 816,
+     "w": 48,
+     "h": 48
+    }
+   ],
+   "notes": "floating glow orb, hover 1.1-2.2 m"
+  }
+ }
+}

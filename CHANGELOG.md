@@ -2,6 +2,13 @@
 
 Dates are America/New_York. Newest first. Keep this current with every change you push.
 
+## 2026-10-16: Jotunheim chunk 1: Stonehollow (`jotunheim`) built (branch `realm-jotunheim`)
+- **Art:** `tools/hearthmoor/jot_art.py` is the real installer (giant NPC sheet re-points the stock roles; Ulfar's own sheet; frost enemies; Flurry's neon twin as the main look with the palette-safe twin as `flurry_safe`; kit pieces; `jt_fx` gamefx rows + quest markers). The pack is copied to `games/hearthmoor/art/jotunheim/`.
+- **Area:** `areas/src/jotunheim.json` / `areas/jotunheim/`: a 1.34 m Jarl plateau with a stair (spec terrace, so the collision is the proven kind), snowfield, longhouses, cold-fire braziers, rune stones, the Welcome Ring lift stones, goat pens, Grimsa's fur stall, lake decal. Deviation from the art placement: the kit `stone_ledge` / `stone_stair` are not placed (the spec stair is the real one); the south wall is 1 m so the Bifrost arch does not hide the player.
+- **Game:** `game/jotunheim.js`: realm tables, the Bifrost ice arch (sealed -> portal by QA `?jtq=`, `jt_gate_open` or the alliance; Kolbrun's quest is next), Grimsa's shop, NPC talk, the Jarl's choice, *The Stone Welcome* (Welcome Ring timing beat, `?lift=auto`; +40 Realm Favor, 20 gold), Hall / cave / frost-print look-spots (the Giant Footprints entry points).
+- **check-sprite:** one scoped entry, `pet_flurry` (`#1c62d8`, `#2ab4ff`, `#a6ecff`), nothing else loosened. `tests/check_palette.py` (not part of smoke) still has only the neon pets in its own list, so Flurry shows up there next to the existing Tick / Lumi lines.
+- Tests: `tests/smoke_jotunheim.py` (16 steps, run from `smoke.py`).
+
 ## 2026-10-16: Jotunheim decisions (branch `realm-jotunheim`, scaffold only): the story's section 13 open questions, answered by Bill
 - **1. Asgard mirror: yes.** The lock and mood calls are mirrored with the same three paths (befriend, conquer, contract for locked players).
 - **2. "Vanaheim easier"** = more Realm Favor and one skipped step in Vanaheim. No discounts.

@@ -1,0 +1,185 @@
+{
+ "jt_giants": {
+  "atlas": "/workspace/hearthmoor-staging/art/jotunheim/sprite/jt_giants.png",
+  "biome": "cozy-village",
+  "roles": {
+   "kolbrun": {
+    "frames": 32,
+    "colors": 17,
+    "issues": []
+   },
+   "jarl": {
+    "frames": 32,
+    "colors": 18,
+    "issues": []
+   },
+   "ulfar_town": {
+    "frames": 32,
+    "colors": 13,
+    "issues": []
+   },
+   "rimewife": {
+    "frames": 32,
+    "colors": 18,
+    "issues": []
+   },
+   "skuli": {
+    "frames": 32,
+    "colors": 16,
+    "issues": []
+   },
+   "goatwife": {
+    "frames": 32,
+    "colors": 15,
+    "issues": []
+   },
+   "grimsa": {
+    "frames": 32,
+    "colors": 19,
+    "issues": []
+   },
+   "rimecaptain": {
+    "frames": 32,
+    "colors": 18,
+    "issues": []
+   },
+   "gi_man": {
+    "frames": 32,
+    "colors": 15,
+    "issues": []
+   },
+   "gi_woman": {
+    "frames": 32,
+    "colors": 19,
+    "issues": []
+   }
+  },
+  "summary": {
+   "roles": 10,
+   "failures": 0,
+   "semi_transparent": 0,
+   "pass": true
+  },
+  "failures": []
+ },
+ "ulfar": {
+  "atlas": "/workspace/hearthmoor-staging/art/jotunheim/sprite/ulfar.png",
+  "biome": "cozy-village",
+  "roles": {
+   "ulfar": {
+    "frames": 64,
+    "colors": 19,
+    "issues": []
+   }
+  },
+  "summary": {
+   "roles": 1,
+   "failures": 0,
+   "semi_transparent": 0,
+   "pass": true
+  },
+  "failures": []
+ },
+ "jt_enemies": {
+  "atlas": "/workspace/hearthmoor-staging/art/jotunheim/sprite/jt_enemies.png",
+  "biome": "cozy-village",
+  "roles": {
+   "frost_troll": {
+    "frames": 64,
+    "colors": 13,
+    "issues": []
+   },
+   "ice_golem": {
+    "frames": 64,
+    "colors": 6,
+    "issues": []
+   },
+   "avalanche_golem": {
+    "frames": 64,
+    "colors": 9,
+    "issues": []
+   },
+   "rime_berserker": {
+    "frames": 64,
+    "colors": 16,
+    "issues": []
+   }
+  },
+  "summary": {
+   "roles": 4,
+   "failures": 0,
+   "semi_transparent": 0,
+   "pass": true
+  },
+  "failures": []
+ },
+ "boss_hrimgard": {
+  "atlas": "/workspace/hearthmoor-staging/art/jotunheim/sprite/boss_hrimgard.png",
+  "biome": "cozy-village",
+  "roles": {
+   "hrimgard": {
+    "frames": 64,
+    "colors": 16,
+    "issues": []
+   },
+   "hrimgard_p3": {
+    "frames": 64,
+    "colors": 16,
+    "issues": []
+   }
+  },
+  "summary": {
+   "roles": 2,
+   "failures": 0,
+   "semi_transparent": 0,
+   "pass": true
+  },
+  "failures": []
+ },
+ "jt_elites": {
+  "atlas": "/workspace/hearthmoor-staging/art/jotunheim/sprite/jt_elites.png",
+  "biome": "cozy-village",
+  "roles": {
+   "frostmother": {
+    "frames": 64,
+    "colors": 18,
+    "issues": []
+   },
+   "avalanche": {
+    "frames": 64,
+    "colors": 9,
+    "issues": []
+   },
+   "ormgar": {
+    "frames": 64,
+    "colors": 14,
+    "issues": []
+   }
+  },
+  "summary": {
+   "roles": 3,
+   "failures": 0,
+   "semi_transparent": 0,
+   "pass": true
+  },
+  "failures": []
+ },
+ "flurry (safe)": {
+  "atlas": "/workspace/hearthmoor-staging/art/jotunheim/pets/flurry.png",
+  "biome": "cozy-village",
+  "roles": {
+   "pet_flurry": {
+    "frames": 48,
+    "colors": 8,
+    "issues": []
+   }
+  },
+  "summary": {
+   "roles": 1,
+   "failures": 0,
+   "semi_transparent": 0,
+   "pass": true
+  },
+  "failures": []
+ }
+}

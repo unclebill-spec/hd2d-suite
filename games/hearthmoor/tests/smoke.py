@@ -1781,6 +1781,15 @@ def run(out, simscale=4, size=(960, 540), segs=SEGS):
                 rep["pass"] = False
                 rep["error"] = f"svartalfheim: {e}"[:400]
         # [SVARTALFHEIM] end
+        # [JOTUNHEIM] begin: the Jotunheim realm (tests/smoke_jotunheim.py), own context again
+        if rep["pass"]:
+            try:
+                import smoke_jotunheim  # noqa: E402
+                smoke_jotunheim.steps(b, url, T, size, errors, rep, STUB, out)
+            except Exception as e:  # noqa: BLE001
+                rep["pass"] = False
+                rep["error"] = f"jotunheim: {e}"[:400]
+        # [JOTUNHEIM] end
         # ---------------------------------------------------------- v1 save migration (old saves still load)
         if rep["pass"] and "E" in segs:
             seg_mark("E")

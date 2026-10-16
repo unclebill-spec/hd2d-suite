@@ -28,23 +28,25 @@ FORCE = "--force" in sys.argv
 PLANNED = ["jotunheim", "jt_hall", "rimecaves", "barrow", "barrow2"]   # story 2.1; the Barrow is two areas (decision 8, like clockdeep / clockdeep2)
 AREAS = ARGS or PLANNED
 
-# PLACEHOLDER tables (fill from the art README). sheet name -> (staging json, {area role: staging role})
-NPC_ROLES = ["envoy_jt", "jarl", "ulfar", "rimewife", "goatherd", "goatwife", "jt_trader", "rimecaptain"]   # story 5 (giants, 2x-3.2x)
-SHEETS = {
-    "jtnpc": (ST / "sprite" / "jt_npcs.json", {r: r for r in NPC_ROLES}),
+GIANTS = ["kolbrun", "jarl", "ulfar_town", "rimewife", "skuli", "goatwife", "grimsa", "rimecaptain", "gi_man", "gi_woman"]   # jt_giants.json roles (2-3.2x)
+# base-atlas stand-in role -> jt_giants role (only roles the area has are re-pointed): Stonehollow's actors use the stock role names so the
+# area assembles; this repaints them as the giants. `gnome` = Ulfar's town look (the companion is the separate 3x / 2.4x `ulfar` sheet).
+TOWNS = {"dwarftrader": "grimsa", "wispcatcher": "skuli", "poolkeeper": "goatwife", "gnome": "ulfar_town", "elffolk": "gi_man", "elffolk2": "gi_woman",
+         "innkeeper": "kolbrun", "shopkeeper": "jarl", "lanternseller": "rimewife", "nightmerchant": "rimecaptain"}
+SHEETS = {  # sheet name -> (staging json, {area role: staging role})
+    "jtnpc": (ST / "sprite" / "jt_giants.json", {**TOWNS, **{r: r for r in GIANTS}}),
+    "ulfar": (ST / "sprite" / "ulfar.json", {"ulfar": "ulfar"}),   # 3x in town, 2.4x in combat (meta combat_scale; the engine scales him, no second sheet: Cozy Builder)
     "jtenemy": (ST / "sprite" / "jt_enemies.json", {r: r for r in ("frost_troll", "ice_golem", "avalanche_golem", "rime_berserker")}),
-    "flurry": (ST / "sprite" / "flurry.json", {"pet_flurry": "flurry"}),
+    "flurry": (ST / "pets" / "flurry.json", {"pet_flurry": "pet_flurry"}),   # the NEON twin is the main look (Cozy Builder); scoped check-sprite allow-list entry
+    "flurry_safe": (ST / "pets" / "flurry.json", {"pet_flurry_safe": "pet_flurry"}),   # palette-safe fallback (its own role, not placed)
 }
-IMAGE = {}   # sheet -> staging png when it is not the json's own image (Svartalfheim: the neon twin)
+IMAGE = {"flurry": "flurry_neon.png", "flurry_safe": "flurry.png"}   # sheet -> staging png when it is not the json's own image
 EXTRA = {    # sheets only where the fight / scene is (their own frame size)
-    "barrow2": {"boss_hrimgard": (ST / "sprite" / "boss_hrimgard.json", {"hrimgard": "hrimgard"}),
-               "miniboss_ormgar": (ST / "sprite" / "miniboss_ormgar.json", {"ormgar": "ormgar"})},
-    "rimecaves": {"rare_frostmother": (ST / "sprite" / "rare_frostmother.json", {"frostmother": "frostmother"}),
-                  "rare_avalanche": (ST / "sprite" / "rare_avalanche.json", {"avalanche": "avalanche"})},
+    "barrow2": {"boss_hrimgard": (ST / "sprite" / "boss_hrimgard.json", {"hrimgard": "hrimgard", "hrimgard_p3": "hrimgard_p3"}),
+                "jtelite": (ST / "sprite" / "jt_elites.json", {"ormgar": "ormgar"})},
+    "rimecaves": {"jtelite": (ST / "sprite" / "jt_elites.json", {"frostmother": "frostmother", "avalanche": "avalanche"})},
 }
-# stand-ins from the base atlas, re-pointed to the realm's own NPC sheet by the spec's role names (only roles the area has)
-TOWNS = {}
-FX_FILE = ("gamefx", "jot_fx.json")   # staging gamefx rows: ST / "gamefx" / "jot_fx.json"
+FX_FILE = ("gamefx", "jt_fx.json")   # staging gamefx rows: ST / "gamefx" / "jt_fx.json"
 
 
 def have(p):
@@ -73,7 +75,7 @@ def sprites(area):
         out = {k: sm[k] for k in ("tool", "biome", "frame", "pivot", "ground_row", "facings", "anims", "cols", "size")}
         out["image"] = f"{nm}.png"; out["roles"] = {}
         for ar, sr in roles.items():
-            if nm == "svnpc" and ar in TOWNS and ar not in m["roles"]:
+            if nm == "jtnpc" and ar in TOWNS and ar not in m["roles"]:
                 continue   # re-point only roles this area actually has
             if sr not in sm["roles"]: print(f"  {nm}: no staging role {sr}"); continue
             r = sm["roles"][sr]
@@ -81,7 +83,8 @@ def sprites(area):
             prev = m["roles"].get(ar, {})
             m["roles"][ar] = {"sheet": nm, "row": r["row"], "kind": r.get("kind", prev.get("kind", "creature")),
                               "anims": r.get("anims", ["idle", "walk"]), "desc": r.get("desc", ""),
-                              **({"enemy": True} if r.get("enemy") or prev.get("enemy") else {})}
+                              **({"enemy": True} if r.get("enemy") or prev.get("enemy") else {}),
+                              **({"pet": True, "follower": True} if nm == "flurry" else {})}
         (d / f"{nm}.json").write_text(json.dumps(out, indent=1))
         m["sheets"][nm] = {"json": f"{nm}.json", "image": f"{nm}.png"}
     mp.write_text(json.dumps(m, indent=1))
@@ -94,12 +97,12 @@ def kit(area):
 
 
 def gamefx(area):
-    if not have(ST / "gamefx" / "jot_fx.json"): return False
+    if not have(ST / "gamefx" / "jt_fx.json"): return False
     d = GAME / "areas" / area / "public" / "art" / "gamefx"
     if not (d / "gamefx.json").exists() and not (d / "gamefx.base.json").exists():
         # no atlas yet (wispwood): start from an empty base so the staging rows are the whole atlas, and point the scene at it
         d.mkdir(parents=True, exist_ok=True)
-        sj = json.loads((ST / "gamefx" / "jot_fx.json").read_text())
+        sj = json.loads((ST / "gamefx" / "jt_fx.json").read_text())
         (d / "gamefx.base.json").write_text(json.dumps({k: sj[k] for k in ("tool", "biome", "seed", "cell", "cast_sets", "cycle")} | {"image": "gamefx.png", "size": [0, 0], "effects": {}}))
         Image.new("RGBA", (sj["cell"], sj["cell"]), (0, 0, 0, 0)).save(d / "gamefx.base.png")   # one blank row
         sp = GAME / "areas" / area / "scene.json"; sc = json.loads(sp.read_text())
@@ -108,7 +111,7 @@ def gamefx(area):
     bj, bp = d / "gamefx.base.json", d / "gamefx.base.png"
     if not bj.exists():
         shutil.copy2(d / "gamefx.json", bj); shutil.copy2(d / "gamefx.png", bp)
-    base, sj = json.loads(bj.read_text()), json.loads((ST / "gamefx" / "jot_fx.json").read_text())
+    base, sj = json.loads(bj.read_text()), json.loads((ST / "gamefx" / "jt_fx.json").read_text())
     assert base["cell"] == sj["cell"], "cell size mismatch"
     bi, si = Image.open(bp).convert("RGBA"), Image.open(ST / "gamefx" / sj["image"]).convert("RGBA")
     # the ! / ? quest-marker glyphs (quest_mark, quest_turnin) copied from the plaza atlas (same 48 px cell): the realm areas' atlases had none,
@@ -133,15 +136,21 @@ def gamefx(area):
     return True
 
 
-# props placed per area: (piece, preferred [x, z]); the spot is searched outward from there on flat, walkable, uncrowded ground.
-# PLACEHOLDER: the kit pieces are unknown until the art README lands. Guesses from the story look section (2.2): cold-fire braziers,
-# frost-rune standing stones, rime-glass glow orbs, goat pens. Pieces missing from kit.json are skipped.
-WALK = set()
+# props placed per area: (piece, preferred [x, z], "fixed"?); the spot is searched outward on flat, walkable, uncrowded ground unless "fixed".
+# Coordinates are the art README's Stonehollow layout (metadata/jotunheim.json), moved where the area spec's own terrain (plateau + stair come
+# from the spec, so the kit's stone_ledge / stone_stair are not placed) or an actor stands. Keep-clear: nothing on the stair + 1 m, 2.5 m in
+# front of longhouse doors, 1.5 m around the from_bifrost spawn.
+WALK = {"snow_floor", "ice_floor", "ice_lake", "glow_ice_pool", "barrow_floor", "rune_bridge"}   # flat decals: walkable, no blocker
 PLACE = {
-    "jotunheim": [("coldfire_brazier", [-3.0, 4.0]), ("coldfire_brazier", [3.0, 4.0]), ("rune_stone", [0.0, 8.0])],   # Welcome Ring, near the arch
-    "jt_hall": [("coldfire_hearth", [0.0, -2.0], "fixed"), ("glow_orb", [-3.0, 0.0]), ("glow_orb", [3.0, 0.0])],
-    "rimecaves": [("ice_pool", [4.0, 2.0]), ("rune_stone", [-6.0, -4.0])],
-    "barrow": [], "barrow2": [],
+    "jotunheim": [("longhouse", [-7.8, -6.0], "fixed"), ("longhouse", [7.8, -6.2], "fixed"),
+                  ("cold_brazier", [-2.4, -5.0], "fixed"), ("cold_brazier", [2.4, -5.0], "fixed"), ("rune_standing_stone", [0.0, -5.4], "fixed"),
+                  ("rune_standing_stone", [10.6, -1.4], "fixed"), ("snow_mound", [-10.4, 4.4], "fixed"), ("ice_lake", [8.0, -3.2], "fixed"),
+                  ("lift_stone", [-1.4, 2.6], "fixed"), ("lift_stone", [0.0, 3.3], "fixed"), ("lift_stone", [1.4, 2.6], "fixed"),
+                  ("cold_brazier", [-3.6, 1.6], "fixed"), ("cold_brazier", [3.6, 1.6], "fixed"), ("cold_brazier", [-3.2, 4.8], "fixed"), ("cold_brazier", [3.2, 4.8], "fixed"),
+                  ("rune_standing_stone", [-5.4, 0.2], "fixed"), ("rune_standing_stone", [5.2, -0.4], "fixed"), ("warm_lantern", [-7.8, 7.4], "fixed"), ("warm_lantern", [4.8, 6.4], "fixed"),
+                  ("goat_fence", [-10.6, 1.7], "fixed"), ("goat_fence", [-8.6, 1.7], "fixed"), ("goat_fence", [-6.6, 1.7], "fixed"), ("fur_stall", [-6.0, 4.8], "fixed"),
+                  ("giant_stool", [-8.8, 5.2], "fixed")],
+    "jt_hall": [], "rimecaves": [], "barrow": [], "barrow2": [],
 }
 
 
@@ -236,7 +245,7 @@ def main():
         d = GAME / "areas" / a
         if not (d / "scene.json").exists():
             print(f"{a}: not built yet (areas/{a}/scene.json missing): skipped"); continue
-        if have(ST / "sprite"): sprites(a)
+        sprites(a)
         if (ST / "kit" / "kit.json").exists(): kit(a); place(a)
         fx = gamefx(a)
         print(f"{a}: sprites + kit + props{' + gamefx' if fx else ' (no gamefx atlas)'}")

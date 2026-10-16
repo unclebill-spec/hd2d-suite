@@ -1,15 +1,23 @@
 # Jotunheim (Stonehollow, the Rime Caves, the Titan's Barrow): build progress
 
-RESUME HERE (Oct 16 2026, branch `realm-jotunheim` from main 2de49ce, worktree /workspace/hd2d-jotunheim): SCAFFOLD ONLY; section 13 decisions answered below (Oct 16, 12:40 AM). Done: this file;
-`tools/hearthmoor/jot_art.py` (skeleton, placeholder tables, refuses to run without READY.txt); `game/jotunheim.js` (stub, registers
-`G.jot`, no areas, no quests); one-line hooks in `game/game.js` and `build.py` (tagged `[JOTUNHEIM]`); `sw.js` regenerated for the new module.
-**HOLD all area builds** until `/workspace/hearthmoor-staging/art/jotunheim/READY.txt` exists (at scaffold time the folder did not exist at
-all). Next, in order, once READY: (1) copy the pack to `games/hearthmoor/art/jotunheim/` and read its README, (2) fill the `jot_art.py`
-tables from the real file names, (3) write `areas/src/jotunheim.json` and build ONE area at a time into a private dir
-(`HM_BUILD_TMP=/tmp/jot_hmbuild python3 build.py --areas jotunheim --no-zip`), then `python3 tools/hearthmoor/jot_art.py jotunheim`, then
-`HM_BUILD_TMP=/tmp/jot_hmbuild python3 -c "import build; build.write_pwa()"`, (4) move the area into `AREAS_JOT` / `AREA_NAMES_JOT` in
-`game/jotunheim.js`, (5) quick-load, `check_scene --quick` under the browser lock, one area at a time. Then the quests (story 3), the
-Bifrost gate (3.1), the choice (5.2), the Barrow (7), Hrimgard (8.1).
+RESUME HERE (Oct 16 2026, branch `realm-jotunheim`, worktree /workspace/hd2d-jotunheim): **Area 1, Stonehollow (`jotunheim`), is BUILT.**
+Done in chunk 1: `jot_art.py` is the real installer (sheets `jtnpc` / `ulfar` / `jtenemy` / `flurry` (neon main) / `flurry_safe`, kit pieces, gamefx
+rows + the plaza `quest_mark` / `quest_turnin`; add / overwrite only; never touches `install_pets`); `areas/src/jotunheim.json` (seed 211, 1.34 m
+Jarl plateau + a spec stair, snowfield slab, 3.6 m side walls, a 1 m south wall so the arch does not hide the player); `game/jotunheim.js` (realm
+tables, Bifrost ice arch sealed -> portal with `?jtq=` / `flags.jt_gate_open` / `alliance.jotunheim`, return spawn `from_jotunheim`, Grimsa's stall
+`SHOPS.jt_trader`, TALK for all 6 Stonehollow NPCs + `TALK.jarl` choice (the Jarl is placed with the Hall), *The Stone Welcome* with the Welcome
+Ring timing beat (`?lift=auto`), look-spots: Hall door, cave path, frost prints (the Giant Footprints entry, `S.found.jt_prints`)); the scoped
+`pet_flurry` entry in `check_sprite.py` (`JOT_NEON_ALLOW`); `tests/smoke_jotunheim.py` (called from `smoke.py`).
+**NOT YET GREEN (stopped at the 40 min cap, 02:40): `check_scene --quick jotunheim` (run 4) passes 8 of 11 checks (colours, height, grades, camera, effects, gamefx, actions, no_errors) and fails three, all fixable by moving things, none by loosening:**
+(a) `sprites_sharp` / phone landscape: Skuli (`goatherd`, (-7.4, -0.4)) stands north of the camera's top edge, so his head is clipped (corr 0.80 / 0.84; the others are >= 0.99). Move the pens south: Skuli ~(-7.2, 1.0), Brynja ~(-10.0, -0.6), fences ~z 2.8 (keep >= 1.7 m in front of the actors so rails don't overlap them), mound to ~(-10.6, 5.6); (b) `no_bloom` day: `clipped_channel` 0.0233 (limit 0.02), the plaster snowfield is too bright at noon (day luma 101, README target 55-70): darken the slab (`mat` or the `day` grade sun / ambient) rather than touching the check; (c) phone landscape is (a) again.
+The full sharded smoke was NOT run in this chunk (only `smoke_jotunheim.py`, 16 / 16, standalone); run it (or `smoke.py --quick bifrost,pet` plus the realm steps) before merging. The start spawn is (-2.0, 5.8) on purpose: the realm arch (0, 10.6) hides anyone standing behind it (same as Copper Row), so the first view puts the player left of it.
+**Next, in order:** (1) `jt_hall` (spec from the README, Jarl Thyra at the high seat, `jh_heart` / `jh_rime` look points, ice cellar with `jh_trail`, the
+quick route through `flags.sv_decoy`), set `AREAS_JOT.jt_hall`, then re-point the Hall-door spot (it hides itself once `AREAS_JOT.jt_hall` exists) to a real exit
+(`from_hall` spawn is already in the spec at [0, -9.2]); (2) `rimecaves` (+ `from_caves` [9.6, -0.2]), (3) `barrow` + `barrow2` (Hrimgard 7x sheet is in `EXTRA`),
+(4) Kolbrun at Bifrost + *The Barred Gate* (3.1: horn from Halvard, 2x frost troll; today the arch opens only by QA / `jt_gate_open` / alliance),
+(5) Ulfar as a companion (`combat_scale` 2.4; extend `svartalfheim_companions.js` / `follow.js`), (6) blizzard / aurora weather, (7) Flurry in the other
+areas (needs a careful install_pets, see the pitfall below), (8) Grimsa's +25% prices on the conquer path (`factions.priceMul`), the other quests (3.3-3.10).
+Every built area gets `check_scene --quick` (Art's luma figures are only a proxy), one at a time under the browser lock.
 Rules carried over from Svartalfheim: private build folder, Bill's browser lock (`/workspace/.hm-logs/browser-mb.lock`,
 `HD2D_USER_DATA_DIR=/workspace/alf_qa/chrome-profile-cs`), never loosen a check, never push to main, secret-scan before every push, keep tall
 props off the characters and the spawn, one build or check at a time, stop servers by port.
