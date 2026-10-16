@@ -37,7 +37,8 @@ def plate(P3):
             ky = hip + Ht * .17
             cv.ell(lx, ky, lw * 1.1, Ht * .035, lambda u, v: "stone" if v < -.2 else "stone_lo")
             for y in range(int(hip + Ht * .26), int(G - Ht * .06), int(max(4, Ht * .06))):
-                cv.rect(lx - lw, y, lx + lw, y, "sky" if y % 2 == 0 else "stone")      # cold fire leaks at the lame seams
+                cv.rect(lx - lw, y, lx + lw, y, "ink")                                  # dark lame seam (a bright full-width line reads as a grid at 7x)
+                cv.set(lx - lw * .55, y, "sky")                                         # a single cold-fire glint leaks from the seam
         # cuirass
         x0, x1 = CX - hw * 1.02, CX + hw * 1.02
         top, bot = sh + 2, beltY - 1
@@ -52,9 +53,9 @@ def plate(P3):
                 cv.set(x, y, col)
         step = int(max(5, Ht * .07))
         for y in range(int(top) + step, int(bot), step):
-            cv.rect(x0 + 1, y, x1 - 1, y, "stone" if y % 2 == 0 else "stone_lo")
-            for x in range(int(x0 + 3), int(x1 - 2), int(max(4, Ht * .05))):
-                cv.set(x, y - 1, "sky")                            # leaking glow under each plate lip
+            cv.rect(x0 + 1, y, x1 - 1, y, "ink")                   # dark plate lip (a light full-width line reads as a white grid at 7x)
+            for x in range(int(x0 + 3), int(x1 - 2), int(max(8, Ht * .10))):
+                cv.set(x, y - 1, "sky")                            # leaking glow under the plate lip, sparse
         if not back and not side:
             cx_, cy_ = CX, top + (bot - top) * .38
             r = Ht * .06
@@ -68,7 +69,7 @@ def plate(P3):
             w_ = hw * (1.05 + j * .12)
             for y in range(int(y0), int(y0 + Ht * .05)):
                 for x in range(int(CX - w_), int(CX + w_) + 1):
-                    cv.set(x, y, shd((x - CX) / w_) if y > y0 else "stone_hi")
+                    cv.set(x, y, shd((x - CX) / w_) if y > y0 else "stone_lo")
             for x in range(int(CX - w_) + 2, int(CX + w_) - 1, int(max(5, Ht * .06))):
                 cv.set(x, y0 + Ht * .05, "sky")
         # pauldrons + spikes
@@ -83,7 +84,7 @@ def plate(P3):
         cv.ell(CX, sh, hw * .55, Ht * .03, lambda u, v: "stone" if v < 0 else "stone_lo")
         # gauntlets
         for hx, hy in c["hands"]:
-            cv.ell(hx, hy, Ht * .05, Ht * .06, lambda u, v: "stone" if (u < -.3 and v < 0) else "stone_lo" if u < .5 else "shadow")
+            cv.ell(hx, hy, Ht * .08, Ht * .085, lambda u, v: "stone" if (u < -.3 and v < 0) else "stone_lo" if u < .5 else "shadow")
             cv.rect(hx - Ht * .045, hy - Ht * .055, hx + Ht * .045, hy - Ht * .05, "sky")
         # cold fire licking from the shoulder joints (phase 3: a lot more)
         if P3 and not back:
@@ -117,7 +118,7 @@ def Ht_(c, f):
 
 
 def hrimgard(P3):
-    P = dict(skin="pale", hair="grey", hairstyle="long", beard="braids", beard_c=("white", "plaster_hi", "stone_hi"), tunic="slate", trousers="slate", mantle="snowfur",
+    P = dict(skin="pale", hair="grey", hairstyle="long", beard="short", beard_c=("white", "plaster_hi", "stone_hi"), tunic="slate", trousers="slate", mantle="snowfur",
              width=1.04, head=1.02, plate=plate(P3), extra=crown(P3), raise_=1.25, brow="stone_lo", belt=("stone_lo", "shadow"), buckle="sky",
              trim="sky", cheeks=False, hunch=.1, legs_w=1.15, arms_w=1.2, hem=.08)
     d = giant(P, 201)
