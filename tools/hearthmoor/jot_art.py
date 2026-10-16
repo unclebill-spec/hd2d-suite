@@ -163,7 +163,13 @@ PLACE = {
                   ("ice_crystal_cluster", [-11.0, 10.4], "fixed"), ("ice_crystal_cluster", [11.0, 10.4], "fixed"), ("ice_crystal_cluster", [-11.0, -3.0], "fixed"), ("ice_crystal_cluster", [11.0, -3.0], "fixed"),
                   ("glow_ice_pool", [-6.0, 5.2], "fixed"), ("glow_ice_pool", [6.0, 5.2], "fixed"), ("glow_ice_pool", [-7.4, -0.4], "fixed"), ("glow_ice_pool", [7.4, -0.4], "fixed"), ("glow_ice_pool", [0.0, 0.2], "fixed"),
                   ("ice_wall", [8.0, -9.0], "fixed"), ("ice_wall", [10.0, -9.0], "fixed"), ("warm_lantern", [-2.8, 9.4], "fixed"), ("warm_lantern", [2.8, 9.4], "fixed"), ("warm_lantern", [-4.6, -3.0], "fixed")],
-    "barrow": [], "barrow2": [],
+    "barrow": [("cold_brazier", [-3.6, 7.0], "fixed"), ("cold_brazier", [3.6, 7.0], "fixed"), ("shield_rack", [-9.4, -6.0], "fixed"), ("shield_rack", [9.4, -6.0], "fixed"),
+               ("shield_rack", [-9.4, -10.0], "fixed"), ("shield_rack", [9.4, -10.0], "fixed"), ("cold_brazier", [0.0, -8.6], "fixed"),
+               ("frost_rune_pillar", [-6.4, -4.8], "fixed"), ("frost_rune_pillar", [6.4, -4.8], "fixed"),
+               ("glow_ice_pool", [-5.0, -17.0], "fixed"), ("glow_ice_pool", [5.0, -17.0], "fixed"), ("glow_ice_pool", [0.0, -19.4], "fixed"), ("glow_ice_pool", [-6.4, -13.6], "fixed"), ("glow_ice_pool", [6.4, -13.6], "fixed"),
+               ("ice_crystal_cluster", [-10.4, -15.0], "fixed"), ("ice_crystal_cluster", [10.4, -15.0], "fixed"), ("ice_crystal_cluster", [-10.4, -20.6], "fixed"), ("ice_crystal_cluster", [10.4, -20.6], "fixed"),
+               ("cold_brazier", [0.0, -29.0], "fixed"), ("ice_wall", [-8.0, -27.0], "fixed"), ("ice_wall", [8.0, -27.0], "fixed"), ("warm_lantern", [-2.8, 9.4], "fixed"), ("warm_lantern", [2.8, 9.4], "fixed")],
+    "barrow2": [],
 }
 
 
@@ -171,7 +177,7 @@ PLACE = {
 # standing near them (check_scene colours: crop colours / source colours <= 2). The lights stay; only their reach shrinks.
 LAMP_CAP = {"longhouse": 3.0, "rune_standing_stone": 3.2, "cold_brazier": 4.5, "warm_lantern": 4.0, "fur_stall": 3.0, "ice_lake": 3.5, "glow_ice_pool": 2.0, "frost_rune_pillar": 3.0, "ice_crystal_cluster": 3.0}
 
-LAMP_CAP_AREA = {"jotunheim": LAMP_CAP, "rimecaves": LAMP_CAP, "jt_hall": {**LAMP_CAP, "warm_lantern": 3.0}}   # the hall: diner2 sits 3.2 m from a lantern
+LAMP_CAP_AREA = {"jotunheim": LAMP_CAP, "rimecaves": LAMP_CAP, "barrow": LAMP_CAP, "jt_hall": {**LAMP_CAP, "warm_lantern": 3.0}}   # the hall: diner2 sits 3.2 m from a lantern
 
 
 def place(area):
