@@ -324,8 +324,8 @@
    "role": "lanternseller",
    "name": "Rimewife Solvi",
    "pos": [
-    7.2,
-    -5.0
+    4.2,
+    -2.2
    ],
    "facing": "left",
    "behavior": "idle",
@@ -340,7 +340,7 @@
    "name": "Hall guard",
    "pos": [
     3.6,
-    -7.6
+    -9.6
    ],
    "facing": "down",
    "behavior": "idle",
@@ -354,8 +354,8 @@
    "role": "elffolk2",
    "name": "Hall guard",
    "pos": [
-    5.6,
-    -11.2
+    14.2,
+    -9.0
    ],
    "facing": "left",
    "behavior": "idle",

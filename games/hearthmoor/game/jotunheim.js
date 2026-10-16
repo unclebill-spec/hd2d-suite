@@ -4,6 +4,8 @@
 // carry a few marked hook lines. Planned and not built yet: see JOT_PLANNED + JOTUNHEIM_PROGRESS.md (RESUME HERE).
 import { TALK, ITEMS, QUESTS, MARKER_HOOKS } from './data.js';
 import { REALM, MERIT } from './factions.js';
+import { ENEMIES, SPAWNS } from './heroes.js';
+import { XP } from './progress.js';
 import { SHOPS, GOODS } from './shop.js';
 import { WAYS } from './ravenhold.js';
 import { lockRival, moodUp } from './alfheim.js';
@@ -11,8 +13,8 @@ import { lockRival, moodUp } from './alfheim.js';
 export const JOT_PLANNED = {   // id -> display name (story 2.1); `barrow` (B1-B4) + `barrow2` (B5-B9) are the dungeon, two areas like clockdeep
   jotunheim: 'Stonehollow', jt_hall: 'Hall of Hearthstones', rimecaves: 'The Rime Caves', barrow: "The Titan's Barrow", barrow2: "The Titan's Barrow: the Throne",
 };
-export const AREAS_JOT = { jotunheim: 'areas/jotunheim/', jt_hall: 'areas/jt_hall/' };   // id -> 'areas/<id>/' (merged into game.js's area path map)
-export const AREA_NAMES_JOT = { jotunheim: 'Stonehollow', jt_hall: 'Hall of Hearthstones' };   // id -> display name (merged into game.js's AREA_NAME)
+export const AREAS_JOT = { jotunheim: 'areas/jotunheim/', jt_hall: 'areas/jt_hall/', rimecaves: 'areas/rimecaves/' };   // id -> 'areas/<id>/' (merged into game.js's area path map)
+export const AREA_NAMES_JOT = { jotunheim: 'Stonehollow', jt_hall: 'Hall of Hearthstones', rimecaves: 'The Rime Caves' };   // id -> display name (merged into game.js's AREA_NAME)
 export const JOT_AREAS = Object.keys(JOT_PLANNED);
 
 const flags = (S) => (S.flags = S.flags || {});
@@ -28,6 +30,22 @@ WAYS.jotunheim = ['Stonehollow', 'jotunheim', 'from_waystone'];
 export const JT_ARCH = { rect: [4.25, -12.3, 5.75, -11.45], pos: [5.0, -11.9], spawn: [5.0, -10.1, 'down'] };   // the ice arch on Bifrost's north wall
 const HUB_GATE = { to: 'bifrost', spawn: 'from_jotunheim', rect: [-0.9, 10.1, 0.9, 11.1], label: 'the ice arch back to Bifrost Crossing' };
 export const gateOpen = (S, qs) => !!(F(S).jt_gate_open || (F(S).alliance || {}).jotunheim || (qs && qs.has('jtq')));   // QA: ?jtq=... (Kolbrun's jt_gate quest comes next chunk)
+
+
+// ------------------------------------------------------------------ foes (story 8.4) + the Rime Caves' pools (story 2.5; rares frostmother / avalanche come with the BASES hook)
+Object.assign(ENEMIES, {
+  frost_troll: { name: 'Frost troll', hp: 130, dmg: 15, speed: 1.0, reach: 1.8, windup: 0.7, cd: 2.0, aggro: 6.5, r: 0.5, push: 0.25, heavy: true },
+  ice_golem: { name: 'Ice golem', hp: 160, dmg: 16, speed: 0.9, reach: 1.7, windup: 0.8, cd: 2.2, aggro: 6, r: 0.5, push: 0.2, heavy: true, weakBelly: 1.4 },
+  avalanche_golem: { name: 'Avalanche golem', hp: 190, dmg: 20, speed: 0.9, reach: 2.0, windup: 1.0, cd: 2.4, aggro: 6, r: 0.6, push: 0.15, heavy: true },
+  rime_berserker: { name: 'Rime Berserker', hp: 90, dmg: 13, speed: 2.0, reach: 1.5, windup: 0.4, cd: 1.4, aggro: 7.5, r: 0.4, push: 0.5, elite: true },
+});
+Object.assign(XP, { frost_troll: 50, ice_golem: 60, avalanche_golem: 85, rime_berserker: 80 });
+SPAWNS.rimecaves = [   // giants are tall: every foe stands north of the camera's first view (fully off screen), never half in the frame
+  { id: 'rc_troll0', role: 'frost_troll', pos: [-8.4, -11.3] }, { id: 'rc_troll1', role: 'frost_troll', pos: [8.6, -11.3] },
+  { id: 'rc_golem0', role: 'ice_golem', pos: [5.6, -11.3] }, { id: 'rc_golem1', role: 'ice_golem', pos: [-5.6, -11.3] },
+  { id: 'rc_avl0', role: 'avalanche_golem', pos: [0.0, -9.6] },
+  { id: 'rc_zerk0', role: 'rime_berserker', pos: [-10.6, -11.3], night: true }, { id: 'rc_zerk1', role: 'rime_berserker', pos: [10.6, -11.3], night: true },
+];
 
 // ------------------------------------------------------------------ items + Grimsa's stall (story 5.5; prices are first guesses)
 Object.assign(ITEMS, {
@@ -129,6 +147,13 @@ Object.assign(TALK, {
     if (al === 'befriend' && q(S, 'jt_heart') === 1 && !f.jh_solvi) return { pages: ['The cellar Heart? Rime tells the truth if you give it good light. Take my rune-light.', '(Solvi lends you her rune-light. It hums, and shows rime for what it is.)'], then: (G) => { flags(G.S).jh_solvi = 1; } };
     return { pages: ['Cold fire is a gift. It lights. It never burns. Someone made it burn in a tomb.'] };
   },
+  solvi(S) {   // the rune-keeper in her own hall (story 5.3); the Stonefrost school comes after the Barrow (barrow = 3)
+    const f = F(S), al = (f.alliance || {}).jotunheim;
+    if (al === 'conquer') return { pages: ["You know it's hollow. Everyone can hear it.", 'The Barrow Key? It opens the door. It does not make the dead agree.'] };
+    if (al === 'befriend') return { pages: ['Cold fire is a gift. It lights. It never burns. Someone made it burn in a tomb.', 'The Barrow door has three rune locks. I can open them when the Jarl trusts you with the Titan. Soon.'] };
+    return { pages: ['Cold fire is a gift. It lights. It never burns. Someone made it burn in a tomb.'] };
+  },
+  rc_skuli(S) { return { pages: [F(S).jt_contract ? 'The goat-path goes round the side of the door. Goats do not need rune locks.' : 'Goats know the way round the side.'] }; },
   jt_guard1(S) { return { pages: [cellarOK(S) ? 'The Jarl says you may go down. Mind the plinth.' : "The cellar is the Jarl's."] }; },
   jt_guard2(S) { return { pages: [cellarOK(S) ? 'Down the trapdoor. Do not lick the Heart.' : 'Nobody goes down without the Jarl\'s word.'] }; },
   jt_diner1(S) { return { pages: ['The aurora sings if you are quiet.'] }; },
@@ -153,6 +178,8 @@ const JT_FX = {
 };
 JT_FX.jt_hall = [['cold_flame', [-1.5, -2.0], 1.0, 1], ['cold_flame', [1.5, -2.0], 1.0, 1], ['cold_flame', [0, -3.6], 1.0, 1], ['cold_flame', [0, -0.4], 1.0, 1],
   ['rune_pulse', [-7.0, -10.4], 0.8, 1], ['rune_pulse', [7.0, -10.4], 0.8, 1], ['cold_flame', [12.4, -3.0], 1.0, 1], ['cold_flame', [16.0, -3.0], 1.0, 1], ['ice_sparkles', [14.2, -5.4], 0.5, 0]];
+JT_FX.rimecaves = [['cold_flame', [-3.6, -8.4], 1.0, 1], ['cold_flame', [3.6, -8.4], 1.0, 1], ['pool_teal', [-6.0, 5.2], 0, 0], ['pool_aurora', [6.0, 5.2], 0, 0],
+  ['pool_teal', [-7.4, -0.4], 0, 0], ['ice_sparkles', [0, 0.2], 0.5, 0], ['rune_pulse', [-9.8, -7.0], 0.8, 0]];
 const SPOTS = {   // look-spots / interactables (Svartalfheim pattern): hall door, cave path, frost prints, Welcome Ring stones
   lifts: [[-1.4, 2.6], [0.0, 3.3], [1.4, 2.6]],
   hall: [0, -9.4], caves: [10.0, -0.2], prints: [-3.4, -1.6],
@@ -167,6 +194,7 @@ export class Jotunheim {
     G.harbor.prompt = (...a) => me.prompt() || p0(...a);
     G.harbor.interact = (...a) => me.interact() || i0(...a);
     G.harbor.onTap = (hit, ...a) => me.onTap(hit) || t0(hit, ...a);
+    if (G.hollows) { const c0 = G.hollows.onCast.bind(G.hollows); G.hollows.onCast = (...a) => { const r = c0(...a); me.onCast(); return r; }; }
   }
   spot(o) { this.spots.push({ r: 1.6, show: () => true, ...o }); }
   nearSpot() {
@@ -207,6 +235,7 @@ export class Jotunheim {
     this.qaPreset();
     if (area === 'jotunheim') this.stonehollow(ctx);
     if (area === 'jt_hall') this.hall(ctx);
+    if (area === 'rimecaves') this.caves(ctx);
   }
   detach() {
     for (const f of this.fx) if (f) f.dur = f.t + 0.2;
@@ -243,6 +272,34 @@ export class Jotunheim {
     this.spot({ id: 'plinth', pos: [14.2, -8.6], r: 2.0, label: 'the false Heart (E / A)', act: () => this.plinth() });
     this.spot({ id: 'rime', pos: [16.2, -9.0], r: 1.5, label: 'the rime on the plinth (E / A)', act: () => this.rime() });
     this.spot({ id: 'stair', pos: [14.2, -1.8], r: 1.6, label: 'the cellar stair (E / A)', act: () => this.cellarStair() });
+  }
+  // ---- the Rime Caves (story 2.5): Solvi's rune-hall, the Barrow mouth with its three rune locks, the frozen waterfall's hidden spring
+  caves(ctx) {
+    const G = this.G, still = !!G.qaStill;
+    for (const [name, [x, z], dy, glow] of JT_FX.rimecaves) {
+      const y = ctx.heightAt(x, z);
+      if (ctx.gamefx && ctx.gamefx.meta.effects[name]) this.fx.push(ctx.gamefx.spawn(name, x, y + dy, z, { duration: Infinity, fadeIn: still ? 0 : 0.6 }));
+      if (glow && ctx.addGlow) this.lights.push(ctx.addGlow(x, y, z, { color: COLD[0], intensity: COLD[1], range: COLD[2], lift: dy, fadeIn: still ? 0.01 : 0.8 }));
+    }
+    this.spot({ id: 'door', pos: [0, -7.6], r: 2.2, label: 'the Barrow door (E / A)', show: () => !AREAS_JOT.barrow, act: () => this.barrowDoor() });
+    this.spot({ id: 'spring', pos: [9.0, -7.4], r: 2.0, label: 'the frozen waterfall (E / A)', act: () => this.springLook() });
+  }
+  barrowDoor() {
+    const f = F(this.G.S), al = (f.alliance || {}).jotunheim;
+    const how = al === 'conquer' ? 'The Barrow Key would open them all at once.' : f.jt_contract ? "Skuli's goat-path runs round the side of the door." : al === 'befriend' ? 'Solvi can open them, when the Jarl says.' : 'Without the Jarl\'s word or a key, they stay locked.';
+    this.look('jt_barrow_door', 'The Barrow door', ['A stone door six metres tall, sunk in the cliff. Three rune locks glow dull blue across it, one above the other.', how, '(The Barrow itself opens in a later chapter of the build.)']);
+  }
+  springLook() {
+    const S = this.G.S;
+    if (!(S.found || {}).rc_spring) this.look('rc_waterfall', 'The frozen waterfall', ['A waterfall frozen mid-fall, thick as a tree. Something blue glints behind it.', '(Any fire spell cast close by would melt it.)']);
+    else this.look('rc_spring', 'The hidden spring', ['The thaw has uncovered a hidden spring behind the waterfall. The water is cold and very clear.']);
+  }
+  onCast() {   // a spell cast within 2.6 m of the waterfall melts it (the Hollows brazier / flue rule)
+    const c = this.ctx, S = this.G.S; if (!c || this.area !== 'rimecaves' || (S.found || {}).rc_spring) return;
+    if (Math.hypot(c.player.x - 9.0, c.player.z - -7.4) > 2.6) return;
+    S.found = { ...(S.found || {}), rc_spring: 1 }; this.G.toast('The ice sweats and cracks: a hidden spring.', 2.6);
+    if (c.gamefx && c.gamefx.meta.effects.snow_puff) this.fx.push(c.gamefx.spawn('snow_puff', 9.0, c.heightAt(9.0, -7.4) + 0.6, -7.4, { duration: 1.6 }));
+    this.G.save && this.G.save();
   }
   moveTo(x, z) { const c = this.ctx; if (!c) return; c.player.x = x; c.player.z = z; c.player.y = c.heightAt(x, z); }
   trapdoor() {
@@ -328,7 +385,7 @@ export class Jotunheim {
     const c = this.ctx, S = this.G.S, f = F(S), gm = c ? (c.scene.game || {}) : {};
     return { realm: 'jotunheim', built: Object.keys(AREAS_JOT), planned: JOT_AREAS, area: this.area, exits: (gm.exits || []).map((e) => e.to), portals: (gm.portals || []).map((p) => p.to),
              spots: this.spots.filter((x) => x.show()).length, lifts: f.jw_lifts || 0, need: need(S), quest: q(S, 'jt_welcome'), gate: this.gate.qa(), alliance: (f.alliance || {}).jotunheim || null,
-             actors: c ? c.actors.list.map((a) => a.id || a.role) : [], fx: this.fx.length, lights: this.lights.length, ring: !!this.ring, inCellar: !!this.inCellar, heart: q(S, 'jt_heart'), clues: ['jh_heart', 'jh_rime', 'jh_trail'].filter((k) => f[k]), peace: !!f.jt_peace, evidence: (S.evidence || {}).jotunheim || null, hire: q(S, 'jt_hire'), terms: !!f.jw_terms, skuli: !!f.jw_skuli, pos: c ? [c.player.x, c.player.z] : null, shop: !!SHOPS.jt_trader, found: S.found || {} };
+             actors: c ? c.actors.list.map((a) => a.id || a.role) : [], fx: this.fx.length, lights: this.lights.length, ring: !!this.ring, inCellar: !!this.inCellar, heart: q(S, 'jt_heart'), clues: ['jh_heart', 'jh_rime', 'jh_trail'].filter((k) => f[k]), peace: !!f.jt_peace, evidence: (S.evidence || {}).jotunheim || null, hire: q(S, 'jt_hire'), terms: !!f.jw_terms, skuli: !!f.jw_skuli, pos: c ? [c.player.x, c.player.z] : null, spring: !!(S.found || {}).rc_spring, foes: c ? c.actors.list.filter((a) => ['frost_troll', 'ice_golem', 'avalanche_golem', 'rime_berserker'].includes(a.role)).map((a) => a.role) : [], shop: !!SHOPS.jt_trader, found: S.found || {} };
   }
 }
 

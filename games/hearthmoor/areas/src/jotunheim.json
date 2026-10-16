@@ -367,6 +367,17 @@
     "to": "jt_hall",
     "spawn": "from_town",
     "label": "the Hall of Hearthstones"
+   },
+   {
+    "rect": [
+     10.8,
+     0.6,
+     11.9,
+     2.6
+    ],
+    "to": "rimecaves",
+    "spawn": "from_town",
+    "label": "the cave path to the Rime Caves"
    }
   ],
   "portals": [
@@ -426,9 +437,9 @@
     "down"
    ],
    "from_caves": [
-    9.6,
-    -0.2,
-    "down"
+    9.4,
+    1.6,
+    "left"
    ]
   },
   "waystone": {

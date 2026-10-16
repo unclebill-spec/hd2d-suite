@@ -2,6 +2,12 @@
 
 Dates are America/New_York. Newest first. Keep this current with every change you push.
 
+## 2026-10-16: Jotunheim chunk 3: the Rime Caves (`rimecaves`) + check_scene fixes (branch `realm-jotunheim`)
+- **Area:** `areas/src/rimecaves.json` / `areas/rimecaves/`: 1.2 m Barrow step with stair, cave walls, cold braziers, glow pools, the Barrow door (3 rune locks), a frozen waterfall hiding `rc_spring`; Stonehollow gets a second exit (cave path) and `from_caves`.
+- **Game:** `game/jotunheim.js` `caves()`: Barrow-door and waterfall look-spots, a cast near the waterfall thaws the spring, Solvi / Skuli talk, frost foes (`frost_troll`, `ice_golem`, `avalanche_golem`, `rime_berserker`: ENEMIES / XP / SPAWNS).
+- **Fixes:** Stonehollow `no_bloom` and `colours` now pass (neon flame fx removed at the Welcome Ring braziers, decor lamp reach dimmed by `LAMP_CAP` in `jot_art.py`); Hall guards / Solvi repositioned fully on or off screen. No check or allow-list loosened.
+- **Tests:** `smoke_jotunheim.py` 37 steps (6 new: caves load, height, Barrow door, spring, conquer talk, Stonehollow exit). `check_scene --quick` reruns pending (see RESUME HERE); the full sharded smoke not yet run.
+
 ## 2026-10-16: Jotunheim chunk 2: the Hall of Hearthstones (`jt_hall`) + Hollow Heart (branch `realm-jotunheim`; main 9795278 merged)
 - **Area:** `areas/src/jt_hall.json` / `areas/jt_hall/`: 1.2 m high-seat dais with a stair, cold-fire hearth pit, tables and stools, shield racks; the ice cellar is the walled pocket east of the hall (one scene; trapdoor and cellar stair move the player).
 - **Game:** Jarl Thyra's choice, the fire (*The Stone Welcome* now ends at the Jarl), *The Hollow Heart* (clues `jh_heart` / `jh_rime` / `jh_trail`, Solvi's rune-light, `sv_decoy` quick route, `jt_peace`), conquer and contract variants (*Rime Wages* terms + Skuli), Kolbrun, guards. Stonehollow's Hall door is a real exit now.

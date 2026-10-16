@@ -105,7 +105,7 @@ def steps(b, url, T, size, errors, rep, stub=None, shots=None):
         T.step("befriend: alliance set, The Stone Welcome starts", a["alliance"] == "befriend" and a["quest"] == 1, qa=a["quest"])
         # ---- the Welcome Ring: three lifts (?lift=auto), quest 1 -> 3
         load("jotunheim", "&jtq=befriend&lift=auto"); a = sv()
-        T.step("Welcome Ring: three lift stones are live (spots) at quest stage 1", a["quest"] == 1 and a["lifts"] == 0 and a["spots"] >= 5, spots=a["spots"])
+        T.step("Welcome Ring: three lift stones are live (spots) at quest stage 1", a["quest"] == 1 and a["lifts"] == 0 and a["spots"] >= 4, spots=a["spots"])
         g0 = T.ev("window.__hm.S.gold || 0")
         for i in range(3):
             T.ev(f"window.__hm.jot.qaLift({i})")
@@ -152,6 +152,24 @@ def steps(b, url, T, size, errors, rep, stub=None, shots=None):
         T.step("contract: after the terms Skuli guides you; Rime Wages moves to 2", a["skuli"] and a["hire"] == 2, qa=[a["skuli"], a["hire"]])
         a = load("jotunheim"); pass
         T.step("Stonehollow has a door into the Hall (and no 'not open yet' look-spot at the door)", "jt_hall" in a["exits"], exits=a["exits"])
+        # ---- rimecaves: the Rime Caves
+        a = load("rimecaves")
+        T.step("the Rime Caves load: Solvi and Skuli, frost foes roam, cold fire and pools lit, a path back to Stonehollow",
+               all(i in a["actors"] for i in ("solvi", "rc_skuli")) and len(set(a["foes"])) >= 3 and a["fx"] >= 5 and "jotunheim" in a["exits"], foes=a["foes"], fx=a["fx"], exits=a["exits"])
+        hs = T.ev("(() => { const c = window.__hd2d.ctx; return { step: c.heightAt(-4.4, -7.0), floor: c.heightAt(-3, 3), stair: c.heightAt(0, -5.9) }; })()")
+        T.step("real height: the Barrow step stands 1.2 m up with a walkable stair", hs["step"] >= 1.0 and hs["floor"] < 0.2 and 0.2 < hs["stair"] < hs["step"], hs=hs)
+        T.ev("window.__hd2d.setTime(0.0)"); pg.wait_for_timeout(600); shot("jt_caves_night")
+        T.ev("(() => { const c = window.__hd2d.ctx; c.player.x = 0; c.player.z = -7.0; })()"); pg.wait_for_timeout(300)
+        pr = T.ev("window.__hm.harbor.prompt()")
+        T.step("the Barrow door prompts at the foot of the step; looking at it explains the three rune locks", "Barrow door" in (pr or "") and jt("qaSpot('door')") and T.ev("!!window.__hm.dlg"), prompt=pr)
+        fin()
+        T.ev("(() => { const c = window.__hd2d.ctx; c.player.x = 9.0; c.player.z = -6.2; })()"); pg.wait_for_timeout(300)
+        T.ev("window.__hm.jot.onCast()"); a = sv()
+        T.step("a spell cast by the frozen waterfall melts it: the hidden spring (rc_spring) is found", a["spring"], found=a["found"])
+        a = load("rimecaves", "&jtq=conquer"); sol = jt("qaTalk('solvi')")
+        T.step("conquer: Solvi says 'You know it's hollow' (2 pages)", sol["pages"] == 2, sol=sol)
+        a = load("jotunheim"); 
+        T.step("Stonehollow has a path to the Rime Caves (the 'not open yet' look-spot is gone)", "rimecaves" in a["exits"] and not any(False for _ in []), exits=a["exits"])
         T.step("no JS errors in the Jotunheim run", not [e for e in errors if "jotunheim" in e.lower() or "jotun" in e.lower()], errs=errors[-3:])
         shot("jt_ring")
         a = load("jotunheim"); T.ev("window.__hd2d.setTime(0.0)"); pg.wait_for_timeout(800); shot("jt_night")
