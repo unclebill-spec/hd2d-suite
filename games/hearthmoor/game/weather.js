@@ -12,7 +12,7 @@ const MODES = ['on', 'light', 'off'];
 const SKY = { plaza: 'town', lane: 'town', mossglen: 'glen', hollows: 'hollow', rift: 'void', vanaheim: 'glen', bifrost: 'void', temple: 'town' };
 const NIGHT = (t) => t > 0.8 || t < 0.25;
 // kind -> particle emitters ({preset, rate}); rate scales the preset's own rate
-const KINDS = {
+export const KINDS = {
   clear: [],
   drizzle: [{ preset: 'rain', rate: 0.6 }],
   rain: [{ preset: 'rain', rate: 1.6 }],
@@ -27,8 +27,10 @@ const GLINT_RATE = 90;                            // glints / s at full wet near
 const COOL = { brazier: 1, lantern: 1, spring: 1 };
 const hash = (n) => { let x = (n | 0) * 374761393 + 668265263; x = (x ^ (x >>> 13)) * 1274126177; return ((x ^ (x >>> 16)) >>> 0) / 4294967296; };
 
+export const WX_HOOK = {};   // [JOTUNHEIM] area -> (day, t) => kind: a realm schedules its own weather without editing this table
 // the scheduled weather for an area at (day, clock t); pure, so smoke can check the calendar
 export function weatherAt(area, day, t) {
+  if (WX_HOOK[area]) return WX_HOOK[area](day, t);
   const sky = SKY[area];
   if (sky === 'town') {
     if (!day) return 'clear';   // day 0 is Lantern Eve: the festival opening stays clear (rain starts the next day)

@@ -9,6 +9,9 @@ import { XP } from './progress.js';
 import { SHOPS, GOODS } from './shop.js';
 import { WAYS, WAY_SAY } from './ravenhold.js';
 import { lockRival, moodUp } from './alfheim.js';
+import { BASES, RARE_AREAS, Rares } from './rares.js';
+import { RARITY, makeItem } from './loot.js';
+import { KINDS as WX_KINDS, WX_HOOK } from './weather.js';
 
 export const JOT_PLANNED = {   // id -> display name (story 2.1); `barrow` (B1-B4) + `barrow2` (B5-B9) are the dungeon, two areas like clockdeep
   jotunheim: 'Stonehollow', jt_hall: 'Hall of Hearthstones', rimecaves: 'The Rime Caves', barrow: "The Titan's Barrow", barrow2: "The Titan's Barrow: the Throne",
@@ -47,6 +50,20 @@ Object.assign(ENEMIES, {
   hjordis: { name: 'Rime-Captain Hjordis Icejaw', scale: 3, hp: 380, dmg: 17, speed: 1.2, reach: 2.4, windup: 0.6, cd: 1.8, aggro: 9, r: 0.8, push: 0.2, heavy: true, boss: true, trial: true, respawn: 1e9 },
 });
 Object.assign(XP, { frost_troll: 50, ice_golem: 60, avalanche_golem: 85, rime_berserker: 80, hrimgard: 900, ormgar: 220, hjordis: 0 });
+// the Rime Caves' two rares (story 8.3), on the procedural-rare system (rares.js): own sheets `frostmother` (2.5x) and `avalanche` (3x) from jot_art EXTRA.
+// Traits map onto the engine's: frostmother = frozen (a chill that saps stamina) + thick-hide (extra HP) + Summoner (calls frost trolls as whelps);
+// avalanche = stone-skin (always Shielded) + quake (a rune shockwave every 4th slam).
+Object.assign(BASES, {
+  frostmother: { name: 'Frostmother', scale: 2.5, hp: 340, dmg: 15, speed: 1.1, reach: 2.6, windup: 0.7, cd: 2.0, aggro: 8, r: 0.75, push: 0.2, heavy: true, chill: 14, minion: 'frost_troll', xp: 190 },
+  avalanche: { name: 'Avalanche', scale: 3, hp: 380, dmg: 18, speed: 0.95, reach: 2.8, windup: 0.85, cd: 2.2, aggro: 8, r: 0.85, push: 0.15, heavy: true, slam: true, wave: { every: 4, r: 3.4, dmg: 12 }, xp: 200 },
+});
+RARE_AREAS.rimecaves = { bases: ['frostmother', 'avalanche'], spots: [[5.2, -3.2], [-4.6, 2.6]] };   // clear of the braziers (+-3.6, -8.4), pools, pillars, Solvi (-8.2, -2.2) and the start view
+const spawnRare0 = Rares.prototype.spawn;
+Rares.prototype.spawn = function spawn(o = {}) {
+  if (!o.traits && o.base === 'frostmother') o = { ...o, traits: ['summoner'] };
+  if (!o.traits && o.base === 'avalanche') o = { ...o, traits: ['shielded'] };
+  return spawnRare0.call(this, o);
+};
 SPAWNS.rimecaves = [   // giants are tall: day foes stand clear of the braziers / ice walls (phone portrait shows them at the top), night foes anywhere north of the camera's first view (off screen) and >= 3.5 m apart (phone portrait shows them at the top; overlapping giants fail sprites_sharp)
   { id: 'rc_troll0', role: 'frost_troll', pos: [-10.5, -11.3] }, { id: 'rc_golem1', role: 'ice_golem', pos: [-7.0, -11.3] },
   { id: 'rc_golem0', role: 'ice_golem', pos: [-3.5, -11.3], night: true }, { id: 'rc_avl0', role: 'avalanche_golem', pos: [0.0, -9.6] },
@@ -69,6 +86,7 @@ SPAWNS.barrow = [   // B1-B4: two frost trolls at the door hall, ice golems wake
 // ------------------------------------------------------------------ items + Grimsa's stall (story 5.5; prices are first guesses)
 Object.assign(ITEMS, {
   fur_mantle: { name: 'Fur cloak', px: 'tonic', about: "Grimsa's fur cloak, cut down for a small one. Frost resist +20%, and a cosmetic mantle over your tunic." },
+  heart_ice: { name: 'Heart-ice', px: 'glowseed', about: 'A shard of ice that never melts and hums when you hold it. Solvi wants three for the Rimebreaker.' },
   barrow_key: { name: 'Barrow Key', px: 'tonic', about: "Three rune-iron keys wired into one. Hjordis Icejaw's. It opens the Titan's Barrow door, no questions asked." },
   coldfire_lantern: { name: 'Cold-fire lamp', px: 'glowseed', about: 'A lamp that burns the giants\' blue cold fire. It lights, it never burns. Light radius +2.' },
 });
@@ -100,6 +118,9 @@ Object.assign(QUESTS, {
   jt_gate: { title: 'The Barred Gate', giver: 'Envoy Kolbrun Hailstride', story: true, steps: {
     1: (S) => { const f = F(S); return !f.jg_asked ? "Ask the giants' envoy at Bifrost to lift the bar." : !f.jg_horn ? "Fetch Kolbrun's horn from Gatewright Halvard." : 'Sound the horn at the ice arch, and face what answers.'; },
     2: 'Tell Kolbrun the bar is lifted.', 3: "The giants' gate is open. Mind your head." } },
+  jt_axe: { title: 'The Rimebreaker', giver: 'Rimewife Solvi', ripple: true, steps: {
+    1: (S) => `Bring 3 heart-ice from the Barrow. ${['hi_1', 'hi_2', 'hi_3'].filter((k) => (S.found || {})[k]).length}/3`,
+    2: 'Take the heart-ice to Solvi in the Hall and watch her wake the axe.', 3: 'The Rimebreaker is yours.' } },
   jt_take: { title: 'The Toll of Stones', giver: 'Envoy Kolbrun Hailstride', story: true, steps: { 1: (S) => { const n = ['tt_c1', 'tt_c2', 'tt_c3'].filter((k) => (S.found || {})[k]).length; return n < 3 ? `Topple the watch-cairns in the Rime Caves. ${n}/3` : 'Beat the Rime-Captain in the caves.'; }, 2: 'Open the Barrow.', 3: 'The Barrow Key is yours. Stonehollow will not forget.' } },
 });
 // Solvi's Stonefrost school (story 4.2): tier I lessons are real casts built on the existing spell kinds (a thrown boulder = a projectile with the earth burst, a frost rune = a trap).
@@ -107,6 +128,24 @@ Object.assign(QUESTS, {
 SPELLS.boulder_toss = { name: 'Boulder Toss', cd: 2.2, dmg: 26, radius: 1.6, kind: 'projectile', fx: 'seed_bomb', burst: 'earth_burst' };
 SPELLS.frost_rune = { name: 'Frost Rune', cd: 3.2, dmg: 24, radius: 1.8, kind: 'trap', arm: 0.5, life: 6 };
 Object.assign(SPELL_NAMES, { boulder_toss: 'Boulder Toss', frost_rune: 'Frost Rune' });
+// ---- the Rimebreaker (story 3.8 / 9.1): a legendary weapon from Solvi after three heart-ice. Every 3rd melee hit with it freezes the foe for 1.5 s and rings a small ice wave.
+// Deviation: the engine has no charged attack yet, so the "charged hit throws an ice wave" half rides on the 3rd hit instead.
+export function RIMEBREAKER(S) {
+  const it = makeItem(Math.max(10, S.lv || 1), 4, 'weapon'), k = RARITY[4].mul * (1 + (it.lv - 1) * 0.06);
+  it.name = 'The Rimebreaker'; it.fixed = true; it.unique = 'rimebreaker'; it.crafted = true;
+  it.mods = { meleeMul: +(0.07 * k).toFixed(3), spellMul: +(0.03 * k).toFixed(3), crit: +(0.006 * k).toFixed(3) };
+  it.gems = [null, null];
+  it.about = 'A giant frost axe, cut down to your size by Solvi\'s runes. Cold blue fire runs along the edge. Every third hit freezes what it bites.';
+  return it;
+}
+export const HI = [['hi_1', 'barrow', [6.0, -22.0]], ['hi_2', 'barrow2', [6.0, -14.8]], ['hi_3', 'barrow2', [-9.2, -40.2]]];
+// ---- Jotunheim weather (story 2.6): Stonehollow's day is 70% snow / 15% blizzard / 15% clear per 6-hour block; clear nights show the aurora. Interiors stay clear.
+// Blizzard: frost slow of -1% speed per 5 s outdoors (max -30%); standing by cold fire thaws it quickly. (Flurry / Moonpetal tea thaw it too once those exist.)
+WX_KINDS.blizzard = [{ preset: 'snowfall', rate: 2.4 }, { preset: 'mist', rate: 0.9 }];
+WX_KINDS.aurora = [];
+const wxHash = (n) => { let x = (n | 0) * 374761393 + 668265263; x = (x ^ (x >>> 13)) * 1274126177; return ((x ^ (x >>> 16)) >>> 0) / 4294967296; };
+WX_HOOK.jotunheim = (day, t) => { const r = wxHash(day * 4 + Math.floor(t * 4) + 4242), night = t > 0.8 || t < 0.25; return r < 0.7 ? 'snow' : r < 0.85 ? 'blizzard' : night ? 'aurora' : 'clear'; };
+const BASE_SPEED = 2.6, FROST_MAX = 0.3;
 const need = (S) => (S.hero === 'runeguard' ? 2 : 3);
 
 // ------------------------------------------------------------------ shared quest steps (module level so TALK can use them)
@@ -178,6 +217,10 @@ Object.assign(TALK, {
   rimewife(S) {
     const f = F(S), al = (f.alliance || {}).jotunheim;
     if (al === 'conquer') return { pages: ["You know it's hollow. Everyone can hear it.", 'Cold fire is a gift. It lights. It never burns. Someone made it burn in a tomb.'] };
+    if (al === 'befriend' && q(S, 'jt_axe') === 2) return { pages: ['Three heart-ice. Good. They are the Titan\'s own cold, and the cold remembers what it was for.', '(Solvi sets the shards in an axe-head of black rune-iron. Ulfar hums a long low note. Blue fire runs along the edge.)', 'The Rimebreaker. It was a giant\'s axe once. It will fit your hand now.'],
+      then: (G) => { const i = G.S.inv; i.heart_ice = Math.max(0, (i.heart_ice || 0) - 3); (G.S.bag = G.S.bag || []).push(RIMEBREAKER(G.S)); G.setQuest('jt_axe', 3); G.toast('You are given The Rimebreaker (check your bag)', 3.0); G.refreshMarkers && G.refreshMarkers(); G.save && G.save(); } };
+    if (al === 'befriend' && q(S, 'jt_axe') === 1) return { pages: [`Heart-ice, small one: ${['hi_1', 'hi_2', 'hi_3'].filter((k) => (S.found || {})[k]).length} of 3. One in the Glow Pools, one behind the Berserker chief's seat, one in the crypt crystals.`] };
+    if (al === 'befriend' && f.sf_i && q(S, 'barrow') === 3 && !q(S, 'jt_axe')) return { pages: ['There is an axe I have wanted to wake for a hundred winters. It needs three shards of heart-ice from the Barrow.', 'Bring them, and I will cut it down to your size.'], then: (G) => { G.setQuest('jt_axe', 1); G.refreshMarkers && G.refreshMarkers(); } };
     if (al === 'befriend' && q(S, 'barrow') === 3 && !f.sf_i) return { pages: ['You laid the king down. Sit by my hearth, small one, and I will teach you what the stone teaches.', '(Solvi draws a rune in the soot. The stone in the hearth hums back.)', 'Stonefrost. Throw the boulder, then ask it to stay: two lessons for the first circle. Come back when you are older for the rest.'],
       then: (G) => { flags(G.S).sf_i = 1; G.S.unlocks = { ...(G.S.unlocks || {}), stonefrost: 1 }; G.learn('boulder_toss'); G.learn('frost_rune'); G.toast('Stonefrost school: first circle', 2.6); G.refreshMarkers && G.refreshMarkers(); } };
     if (al === 'befriend' && f.sf_i) return { pages: ['The first circle is yours: Boulder Toss, Frost Rune. Stone Skin, Cold Fire and the Stone Golem come later. The stone is patient, and so am I.'] };
@@ -205,6 +248,7 @@ MARKER_HOOKS.push((id, S) => {
     if (f.jt_contract && !f.jw_terms) return 'quest_mark';
     if (q(S, 'barrow') === 2 && (S.found || {}).tb_slept && (al === 'befriend' || f.jt_contract)) return 'quest_mark';
   }
+  if (id === 'rimewife' && al === 'befriend' && (q(S, 'jt_axe') === 2 || (f.sf_i && q(S, 'barrow') === 3 && !q(S, 'jt_axe')))) return 'quest_mark';
   if (id === 'rimewife' && al === 'befriend' && q(S, 'barrow') === 3 && !f.sf_i) return 'quest_mark';
   if (id === 'rimewife' && al === 'befriend' && q(S, 'jt_heart') === 1 && !f.jh_solvi) return 'quest_mark';
 });
@@ -245,7 +289,63 @@ export class Jotunheim {
     G.harbor.prompt = (...a) => me.prompt() || p0(...a);
     G.harbor.interact = (...a) => me.interact() || i0(...a);
     G.harbor.onTap = (hit, ...a) => me.onTap(hit) || t0(hit, ...a);
+    if (G.combat && !G.combat.__rime) {   // the Rimebreaker: every 3rd melee hit freezes the foe 1.5 s and rings a small ice wave
+      G.combat.__rime = 1; const d0 = G.combat.damageEnemy.bind(G.combat);
+      G.combat.damageEnemy = (e, dmg, src, push, color) => {
+        const r = d0(e, dmg, src, push, color), C = G.combat, wp = ((G.S.gear || {}).weapon) || {};
+        if (r && push === 0.45 && wp.unique === 'rimebreaker' && C.ctx && src === C.ctx.player) {
+          C.rimeN = (C.rimeN || 0) + 1;
+          if (C.rimeN % 3 === 0) me.rimeFreeze(e);
+        }
+        return r;
+      };
+    }
     if (G.hollows) { const c0 = G.hollows.onCast.bind(G.hollows); G.hollows.onCast = (...a) => { const r = c0(...a); me.onCast(); return r; }; }
+  }
+  // ---- weather: frost slow in a blizzard, the aurora on a clear night
+  weatherTick(dt) {
+    const c = this.ctx, G = this.G, p = c.player, kind = G.weather ? G.weather.kind : 'clear', out = this.area === 'jotunheim';
+    if (out && kind === 'aurora') this.auroraOn(); else if (this.aurora) this.dropAurora();
+    if (this.aurora && this.aurora.tex) this.aurora.tex.offset.x = (this.aurora.tex.offset.x + dt / 40) % 1;   // a 40 s loop
+    let t = this.frostT || 0;
+    if (out && kind === 'blizzard') {
+      t += dt;
+      const warm = JT_FX.jotunheim.some(([n, [x, z]]) => n === 'cold_flame' && Math.hypot(p.x - x, p.z - z) < 3.2);
+      if (warm) t = Math.max(0, t - dt * 12);
+    } else t = Math.max(0, t - dt * 2);
+    this.frostT = t;
+    const slow = Math.min(FROST_MAX, t / 5 * 0.01);
+    if (slow >= 0.01 && !this.frostSaid) { this.frostSaid = true; G.toast('The blizzard bites. Cold fire thaws you.', 2.4); }
+    if (slow !== this.frostSlow) { this.frostSlow = slow; p.speed = BASE_SPEED * (1 - slow); }
+  }
+  auroraOn() {
+    const ctx = this.ctx, sharp = ctx && ctx.effects && ctx.effects.sharp; if (!sharp || this.aurora) return;
+    this.aurora = { pending: true };
+    import('three').then((THREE) => {
+      if (this.ctx !== ctx || !this.aurora || !this.aurora.pending) return;
+      const cv = document.createElement('canvas'); cv.width = 96; cv.height = 24; const g = cv.getContext('2d'), cols = ['#3fe0a0', '#5ac8ff', '#a45cf0', '#d4a8ff'];
+      for (let x = 0; x < 96; x++) {
+        const h = 6 + Math.round(6 * Math.sin(x * 0.21) + 4 * Math.sin(x * 0.07 + 1.3)), top = 4 + Math.round(3 * Math.sin(x * 0.13));
+        for (let y = top; y < top + h; y++) { if ((x + y) % 2 && y > top + 1) continue; g.fillStyle = cols[(Math.floor(x / 9) + (y > top + h / 2 ? 1 : 0)) % cols.length]; g.fillRect(x, y, 1, 1); }
+      }
+      const tex = new THREE.CanvasTexture(cv); tex.magFilter = THREE.NearestFilter; tex.minFilter = THREE.NearestFilter; tex.wrapS = THREE.RepeatWrapping;
+      const m = new THREE.Mesh(new THREE.PlaneGeometry(64, 16), new THREE.MeshBasicMaterial({ map: tex, transparent: true, alphaTest: 0.5, depthWrite: false }));
+      const p = ctx.player; m.position.set(p.x, 14, p.z - 22); m.rotation.x = -0.15;
+      sharp.add(m); this.aurora = { m, tex };
+    });
+  }
+  dropAurora() {
+    const a = this.aurora; this.aurora = null; if (!a) return;
+    if (a.m) { if (a.m.parent) a.m.parent.remove(a.m); a.m.geometry.dispose(); a.m.material.dispose(); if (a.tex) a.tex.dispose(); } else a.pending = false;
+  }
+  rimeFreeze(e) {
+    const C = this.G.combat, ctx = C.ctx; if (!ctx) return;
+    const freeze = (en) => { if (en.state === 'dead' || en.state === 'gone' || en.rimeT > 0) return; const sp = en.D.speed, D0 = en.D; en.rimeT = 1.5; en.D = { ...en.D, speed: 0 }; en.a.speed = 0; en.cd = Math.max(en.cd || 0, 1.5);
+      if (ctx.effects) ctx.effects.spawn('frost_puff', en.a.x, en.a.y + 0.8, en.a.z + 0.05);
+      C.later.push({ t: 1.5, fn: () => { en.rimeT = 0; if (en.D !== D0) en.D = { ...en.D, speed: sp }; else en.D = D0; en.D.speed = sp; en.a.speed = sp; } }); };
+    freeze(e);
+    for (const o of C.alive()) if (o !== e && Math.hypot(o.a.x - e.a.x, o.a.z - e.a.z) < 1.8) { C.damageEnemy(o, Math.round(e.D.hp * 0.02) + 4, null, 0, '#bfe8ff'); freeze(o); }   // the small ice wave
+    this.rimes = (this.rimes || 0) + 1;
   }
   spot(o) { this.spots.push({ r: 1.6, show: () => true, ...o }); }
   nearSpot() {
@@ -297,7 +397,7 @@ export class Jotunheim {
   detach() {
     for (const f of this.fx) if (f) f.dur = f.t + 0.2;
     for (const l of this.lights) if (l) l.kill = true;
-    this.fx = []; this.lights = []; this.spots = []; this.boss = null; this.orm = null; this.relit = null; this.relitFx = []; this.slideV = null; this.falls = 0; this.cb = {}; this.clearRing(); this.ctx = null; this.area = null;
+    this.fx = []; this.lights = []; this.spots = []; this.dropAurora(); this.boss = null; this.orm = null; this.frostT = 0; this.frostSlow = 0; this.frostSaid = false; this.relit = null; this.relitFx = []; this.slideV = null; this.falls = 0; this.cb = {}; this.clearRing(); this.ctx = null; this.area = null;
   }
   stonehollow(ctx) {
     const G = this.G, S = G.S, gm = ctx.scene.game || (ctx.scene.game = {}), still = !!G.qaStill;
@@ -373,8 +473,21 @@ export class Jotunheim {
       if (ctx.gamefx && ctx.gamefx.meta.effects[name]) this.fx.push(ctx.gamefx.spawn(name, x, y + dy, z, { duration: Infinity, fadeIn: still ? 0 : 0.6 }));
       if (glow && ctx.addGlow) this.lights.push(ctx.addGlow(x, y, z, { color: COLD[0], intensity: COLD[1], range: COLD[2], lift: dy, fadeIn: still ? 0.01 : 0.8 }));
     }
+    this.hiSpots(ctx);
     this.spot({ id: 'tb1', pos: [0, -7.4], r: 1.8, label: () => ((this.G.S.found || {}).tb_b1 ? 'the snuffed brazier' : "Veyra's cold-fire brazier (E / A: snuff it)"), act: () => this.snuff('tb_b1', 'one') });
     this.spot({ id: 'tb2', pos: [0, -27.6], r: 1.8, label: () => ((this.G.S.found || {}).tb_b2 ? 'the snuffed brazier' : "Veyra's cold-fire brazier (E / A: snuff it)"), act: () => this.snuff('tb_b2', 'two') });
+  }
+  hiSpots(ctx) {   // heart-ice for the Rimebreaker (jt_axe): hi_1 in the Glow Pools, hi_2 behind Ormgar's seat, hi_3 in the crypt crystals
+    const S = this.G.S;
+    HI.filter(([, a]) => a === this.area).forEach(([k, , pos]) => {
+      const live = () => q(S, 'jt_axe') === 1 && !(S.found || {})[k];
+      if (live() && ctx.gamefx && ctx.gamefx.meta.effects.ice_sparkles) this.fx.push(ctx.gamefx.spawn('ice_sparkles', pos[0], ctx.heightAt(pos[0], pos[1]) + 0.5, pos[1], { duration: Infinity, fadeIn: this.G.qaStill ? 0 : 0.6 }));
+      this.spot({ id: k, pos, r: 1.6, label: 'a shard of heart-ice (E / A)', show: live, act: () => this.look(k, 'Heart-ice', ['A shard of heart-ice, humming in the cold. It is not melting.'], () => {
+        S.found = { ...(S.found || {}), [k]: 1 }; this.G.give('heart_ice', 1);
+        if (HI.every(([kk]) => S.found[kk])) { this.G.setQuest('jt_axe', 2); this.G.toast('Three heart-ice. Take them to Solvi in the Hall.', 2.8); }
+        this.G.refreshMarkers && this.G.refreshMarkers(); this.G.save && this.G.save();
+      }) });
+    });
   }
   snuff(key, n) {
     const S = this.G.S;
@@ -425,6 +538,7 @@ export class Jotunheim {
       if (ctx.gamefx && ctx.gamefx.meta.effects[name]) this.fx.push(ctx.gamefx.spawn(name, x, y + dy, z, { duration: Infinity, fadeIn: still ? 0 : 0.6 }));
       if (glow && ctx.addGlow) this.lights.push(ctx.addGlow(x, y, z, { color: COLD[0], intensity: COLD[1], range: COLD[2], lift: dy, fadeIn: still ? 0.01 : 0.8 }));
     }
+    this.hiSpots(ctx);
     const lab = (k) => () => ((this.G.S.found || {})[k] ? 'the snuffed brazier' : "Veyra's cold-fire brazier (E / A: snuff it)");
     this.spot({ id: 'tb3', pos: [0, -32.0], r: 1.8, label: lab('tb_b3'), act: () => this.snuff('tb_b3', 'three') });
     BRIDGE.LIT.forEach((cols, r) => cols.forEach((c) => { const [x, z] = bridgeCentre(c, r), y = ctx.heightAt(x, z);
@@ -623,6 +737,7 @@ export class Jotunheim {
   update(dt) {
     if (!this.ctx) return;
     if (this.area === 'jotunheim' && !this.G.dlg && !this.G.busy && this.G.combat && F(this.G.S).jg_sounded && !F(this.G.S).jg_troll && !this.cb.jg_troll) this.gateTroll();
+    this.weatherTick(dt);
     if (this.area === 'barrow2') this.deepTick(dt);
     if (this.area === 'barrow2' && !this.G.dlg && this.G.combat) { const z = this.ctx.player.z; if (z < -7.2) this.tbBoss('ormgar'); if (z < -45.0) this.tbBoss('hrimgard'); }
     if (this.ring) {
@@ -636,6 +751,9 @@ export class Jotunheim {
   qaPick(label, id = 'jarl') { const e = TALK[id](this.G.S), o = e.choice.options.find((x) => x.label === label), nx = o.pick(this.G); if (nx && nx.then) nx.then(this.G); return nx ? nx.pages.length : 0; }
   qaHp(id, frac) { const e = this.G.combat.enemies.find((x) => x.id === id); if (!e) return false; e.hp = e.D.hp * frac; return true; }
   qaSlideKick(vx, vz) { this.slideV = this.slideV || [0, 0]; this.slideV = [vx, vz]; this.slidePrev = null; return true; }
+  qaRares() { const c = this.ctx, sp = (RARE_AREAS[this.area] || { spots: [] }).spots, ac = c ? c.actors.list.filter((a) => !a.rare).map((a) => [a.x, a.z]) : []; return { spots: sp, clear: sp.map(([x, z]) => Math.min(...ac.map(([ax, az]) => Math.hypot(ax - x, az - z)))) }; }
+  qaFoe(id) { const e = this.G.combat.enemies.find((x) => x.id === id); return e ? { speed: e.D.speed, hp: e.hp, frozen: e.rimeT > 0 } : null; }
+  qaFrost(t) { this.frostT = t; this.frostSaid = false; return true; }
   qaKill(id) { const f = this.cb[id]; if (!f) return false; f(); return true; }
   qaBoss(w) { this.tbBoss(w); return !!this.cb[w]; }
   qaSpot(id) { const sp = this.spots.find((x) => x.id === id); if (!sp) return false; sp.act(); return true; }
@@ -644,7 +762,7 @@ export class Jotunheim {
     const c = this.ctx, S = this.G.S, f = F(S), gm = c ? (c.scene.game || {}) : {};
     return { realm: 'jotunheim', built: Object.keys(AREAS_JOT), planned: JOT_AREAS, area: this.area, exits: (gm.exits || []).map((e) => e.to), portals: (gm.portals || []).map((p) => p.to),
              spots: this.spots.filter((x) => x.show()).length, lifts: f.jw_lifts || 0, need: need(S), quest: q(S, 'jt_welcome'), gate: this.gate.qa(), alliance: (f.alliance || {}).jotunheim || null,
-             actors: c ? c.actors.list.map((a) => a.id || a.role) : [], fx: this.fx.length, lights: this.lights.length, ring: !!this.ring, inCellar: !!this.inCellar, heart: q(S, 'jt_heart'), clues: ['jh_heart', 'jh_rime', 'jh_trail'].filter((k) => f[k]), peace: !!f.jt_peace, evidence: (S.evidence || {}).jotunheim || null, hire: q(S, 'jt_hire'), terms: !!f.jw_terms, skuli: !!f.jw_skuli, pos: c ? [c.player.x, c.player.z] : null, spring: !!(S.found || {}).rc_spring, quest_barrow: q(S, 'barrow'), foes: c ? c.actors.list.filter((a) => ['frost_troll', 'ice_golem', 'avalanche_golem', 'rime_berserker', 'hrimgard', 'ormgar'].includes(a.role)).map((a) => a.role) : [], shop: !!SHOPS.jt_trader, found: S.found || {}, gate_q: q(S, 'jt_gate'), take_q: q(S, 'jt_take'), hire_q: q(S, 'jt_hire'), key: !!f.barrow_key, spells: S.spells || [], unlocks: S.unlocks || {}, cb: Object.keys(this.cb), bridge: { falls: this.falls || 0, solved: !!(S.found || {}).tb_bridge, lit: BRIDGE.LIT, head: BRIDGE.head }, boss: { phase: this.boss ? this.boss.phaseN || 1 : 0, p2: !!(this.boss && this.boss.p2), p3: !!(this.boss && this.boss.p3), relit: this.relit ? this.relit.slice() : null, hp: this.boss ? this.boss.hp : null, max: this.boss ? this.boss.D.hp : null, slide: this.slideV ? this.slideV.slice() : null }, orm: { frenzy: !!(this.orm && this.orm.frenzy), speed: this.orm ? this.orm.D.speed : null, base: ENEMIES.ormgar.speed }, gold: S.gold || 0, jg: [f.jg_asked, f.jg_horn, f.jg_troll].map((x) => !!x) };
+             actors: c ? c.actors.list.map((a) => a.id || a.role) : [], fx: this.fx.length, lights: this.lights.length, ring: !!this.ring, inCellar: !!this.inCellar, heart: q(S, 'jt_heart'), clues: ['jh_heart', 'jh_rime', 'jh_trail'].filter((k) => f[k]), peace: !!f.jt_peace, evidence: (S.evidence || {}).jotunheim || null, hire: q(S, 'jt_hire'), terms: !!f.jw_terms, skuli: !!f.jw_skuli, pos: c ? [c.player.x, c.player.z] : null, spring: !!(S.found || {}).rc_spring, quest_barrow: q(S, 'barrow'), foes: c ? c.actors.list.filter((a) => ['frost_troll', 'ice_golem', 'avalanche_golem', 'rime_berserker', 'hrimgard', 'ormgar'].includes(a.role)).map((a) => a.role) : [], shop: !!SHOPS.jt_trader, found: S.found || {}, gate_q: q(S, 'jt_gate'), take_q: q(S, 'jt_take'), hire_q: q(S, 'jt_hire'), key: !!f.barrow_key, spells: S.spells || [], unlocks: S.unlocks || {}, cb: Object.keys(this.cb), bridge: { falls: this.falls || 0, solved: !!(S.found || {}).tb_bridge, lit: BRIDGE.LIT, head: BRIDGE.head }, boss: { phase: this.boss ? this.boss.phaseN || 1 : 0, p2: !!(this.boss && this.boss.p2), p3: !!(this.boss && this.boss.p3), relit: this.relit ? this.relit.slice() : null, hp: this.boss ? this.boss.hp : null, max: this.boss ? this.boss.D.hp : null, slide: this.slideV ? this.slideV.slice() : null }, orm: { frenzy: !!(this.orm && this.orm.frenzy), speed: this.orm ? this.orm.D.speed : null, base: ENEMIES.ormgar.speed }, wx: { kind: this.G.weather ? this.G.weather.kind : null, frost: +(this.frostT || 0).toFixed(1), slow: this.frostSlow || 0, speed: c ? c.player.speed : null, aurora: !!(this.aurora && this.aurora.m) }, rimes: this.rimes || 0, axe: q(S, 'jt_axe'), bag: (S.bag || []).map((i) => i.unique || i.name), hice: (S.inv || {}).heart_ice || 0, gold: S.gold || 0, jg: [f.jg_asked, f.jg_horn, f.jg_troll].map((x) => !!x) };
   }
 }
 
