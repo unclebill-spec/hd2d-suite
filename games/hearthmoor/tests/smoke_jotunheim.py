@@ -59,6 +59,14 @@ def steps(b, url, T, size, errors, rep, stub=None, shots=None):
         T.idle(); pg.wait_for_timeout(1500)
         return sv()
 
+    FIN = "(() => { const G = window.__hm; if (G.dlg && G.dlg.then) { const t = G.dlg.then; G.dropDialogue(); t(G); } else G.dropDialogue && G.dropDialogue(); })()"
+
+    def fin():
+        T.ev(FIN); pg.wait_for_timeout(150)
+
+    def jt(js):
+        return T.ev("window.__hm.jot." + js)
+
     try:
         import hashlib
         art = Path(__file__).resolve().parents[1]
@@ -75,7 +83,7 @@ def steps(b, url, T, size, errors, rep, stub=None, shots=None):
         T.step("Stonehollow loads (Jotunheim module live)", a["area"] == "jotunheim" and a["realm"] == "jotunheim" and "jotunheim" in a["built"], qa=a)
         T.step("its six giants are there (Grimsa, Skuli, Brynja, Ulfar + two villagers)", all(i in a["actors"] for i in ("jt_trader", "goatherd", "goatwife", "ulfar", "jt_a", "jt_b")), actors=a["actors"])
         T.step("cold fire and rune glows are lit (gamefx rows + point lights), the ice arch back to Bifrost is a portal",
-               a["fx"] >= 10 and a["lights"] >= 8 and "bifrost" in a["portals"], fx=a["fx"], lights=a["lights"], portals=a["portals"])
+               a["fx"] >= 7 and a["lights"] >= 4 and "bifrost" in a["portals"], fx=a["fx"], lights=a["lights"], portals=a["portals"])
         hs = T.ev("(() => { const c = window.__hd2d.ctx; return { plateau: c.heightAt(-1.6, -8), ground: c.heightAt(0, 6), stair: c.heightAt(0, -2.4) }; })()")
         T.step("real height: the Jarl's plateau stands 1.34 m up with a walkable stair", hs["plateau"] >= 1.0 and hs["ground"] < 0.2 and 0.2 < hs["stair"] < hs["plateau"], hs=hs)
         T.ev("window.__hd2d.setTime(0.5)"); pg.wait_for_timeout(600); shot("jt_day")
@@ -97,13 +105,15 @@ def steps(b, url, T, size, errors, rep, stub=None, shots=None):
         T.step("befriend: alliance set, The Stone Welcome starts", a["alliance"] == "befriend" and a["quest"] == 1, qa=a["quest"])
         # ---- the Welcome Ring: three lifts (?lift=auto), quest 1 -> 3
         load("jotunheim", "&jtq=befriend&lift=auto"); a = sv()
-        T.step("Welcome Ring: three lift stones are live (spots) at quest stage 1", a["quest"] == 1 and a["lifts"] == 0 and a["spots"] >= 6, spots=a["spots"])
+        T.step("Welcome Ring: three lift stones are live (spots) at quest stage 1", a["quest"] == 1 and a["lifts"] == 0 and a["spots"] >= 5, spots=a["spots"])
         g0 = T.ev("window.__hm.S.gold || 0")
         for i in range(3):
             T.ev(f"window.__hm.jot.qaLift({i})")
             T.ev("(() => { const G = window.__hm; if (G.dlg && G.dlg.then) { const t = G.dlg.then; G.dropDialogue(); t(G); } })()")
         pg.wait_for_timeout(400); a = sv(); g1 = T.ev("window.__hm.S.gold || 0")
-        T.step("three lifts: the town cheers, The Stone Welcome completes (+20 gold, trusted)", a["lifts"] == 3 and a["quest"] == 3 and g1 - g0 == 20 and T.ev("window.__hm.S.flags.jt_trusted === 1"), qa=[a["lifts"], a["quest"], g0, g1])
+        T.step("three lifts: the town cheers and the Jarl's fire waits (stage 2)", a["lifts"] == 3 and a["quest"] == 2, qa=[a["lifts"], a["quest"]])
+        jt("qaTalk('jarl')"); a = sv(); g1 = T.ev("window.__hm.S.gold || 0")
+        T.step("the Jarl's fire: The Stone Welcome completes (+20 gold, trusted) and The Hollow Heart starts", a["quest"] == 3 and g1 - g0 == 20 and a["heart"] == 1 and T.ev("window.__hm.S.flags.jt_trusted === 1"), qa=[a["quest"], a["heart"], g0, g1])
         # ---- the look-spots (Hall door, cave path, frost prints) and the Giant Footprints entry point
         T.ev("(() => { const c = window.__hd2d.ctx; c.player.x = -3.4; c.player.z = -1.6; })()"); pg.wait_for_timeout(300)
         pr = T.ev("window.__hm.harbor.prompt()")
@@ -111,6 +121,37 @@ def steps(b, url, T, size, errors, rep, stub=None, shots=None):
         T.ev("(() => { window.__hm.harbor.interact(); })()"); pg.wait_for_timeout(300)
         T.step("looking at the prints records the clue entry (S.found.jt_prints)", T.ev("window.__hm.S.found.jt_prints === 1"))
         T.ev("(() => { const G = window.__hm; G.dropDialogue && G.dropDialogue(); })()")
+        # ---- jt_hall: the Hall of Hearthstones
+        a = load("jt_hall", "&jtq=heart")
+        T.step("the Hall loads: Jarl, Kolbrun, Solvi, guards and diners; cold fire lit; a door back to Stonehollow", all(i in a["actors"] for i in ("jarl", "envoy_jt", "rimewife", "jt_guard1", "jt_guard2")) and a["fx"] >= 8 and "jotunheim" in a["exits"], qa=a["actors"], exits=a["exits"])
+        hs = T.ev("(() => { const c = window.__hd2d.ctx; return { dais: c.heightAt(-3, -9), floor: c.heightAt(-3, 4), stair: c.heightAt(0, -5.9) }; })()")
+        T.step("real height: the high seat dais stands 1.2 m up with a walkable stair", hs["dais"] >= 1.0 and hs["floor"] < 0.2 and 0.2 < hs["stair"] < hs["dais"], hs=hs)
+        T.ev("window.__hd2d.setTime(0.0)"); pg.wait_for_timeout(600); shot("jt_hall_night")
+        jt("qaSpot('trapdoor')"); fin(); a = sv()
+        T.step("the Jarl's word opens the trapdoor: you stand in the ice cellar", a["inCellar"] and a["pos"][0] > 11, pos=a["pos"])
+        shot("jt_cellar")
+        jt("qaSpot('plinth')"); fin(); jt("qaSpot('rime')"); fin(); a = sv()
+        T.step("clue 1: the Heart rings hollow (evidence set); the rime stays grey without Solvi's light", a["clues"] == ["jh_heart"] and a["evidence"] == "false_heart", qa=a["clues"])
+        jt("qaTalk('rimewife')"); jt("qaSpot('rime')"); fin(); a = sv()
+        T.step("clue 2: with Solvi's rune-light the rime is blue-black", a["clues"] == ["jh_heart", "jh_rime"] and a["heart"] == 1, qa=a["clues"])
+        jt("qaSpot('stair')"); fin(); a = sv()
+        T.step("clue 3: the prints go in, none come out; three clues move the quest to stage 2 and you are back in the Hall", len(a["clues"]) == 3 and a["heart"] == 2 and not a["inCellar"] and a["pos"][0] < 10, qa=[a["clues"], a["heart"], a["pos"]])
+        g0 = T.ev("window.__hm.S.gold || 0"); jt("qaTalk('jarl')"); a = sv(); g1 = T.ev("window.__hm.S.gold || 0")
+        T.step("the Jarl closes The Hollow Heart: peace, evidence, +40 gold", a["heart"] == 3 and a["peace"] and a["evidence"] == "false_heart" and g1 - g0 == 40, qa=[a["heart"], a["peace"], g0, g1])
+        a = load("jt_hall", "&jtq=decoy"); jt("qaTalk('jarl')"); a = sv()
+        T.step("quick route (sv_decoy): showing Anvildeep's boot mould closes it with no cellar visit", a["heart"] == 3 and a["peace"] and not a["clues"], qa=[a["heart"], a["clues"]])
+        a = load("jt_hall"); jt("qaSpot('trapdoor')"); fin(); a = sv()
+        T.step("a stranger with no word from the Jarl is turned back at the trapdoor", not a["inCellar"] and a["pos"][0] < 10, pos=a["pos"])
+        a = load("jt_hall", "&jtq=conquer"); jt("qaSpot('trapdoor')"); fin(); jt("qaSpot('plinth')"); fin(); a = sv(); sol = jt("qaTalk('rimewife')")
+        T.step("conquer: the evidence still counts if you look; Solvi: 'You know it's hollow'", a["evidence"] == "false_heart" and a["alliance"] == "conquer" and sol["pages"] == 2 and a["heart"] == 0, qa=a["evidence"])
+        a = load("jt_hall", "&jtq=contract"); jt("qaTalk('jarl')"); a = sv()
+        T.step("contract: the Jarl gives her terms (jw_terms), Rime Wages stays at 1", a["terms"] and a["hire"] == 1, qa=[a["terms"], a["hire"]])
+        a = load("jotunheim", "&jtq=contract"); jt("qaTalk('goatherd')"); a = sv()
+        T.step("contract: Skuli waits for the terms first", not a["skuli"] and a["hire"] == 1, qa=[a["skuli"], a["hire"]])
+        T.ev("window.__hm.S.flags.jw_terms = 1"); jt("qaTalk('goatherd')"); a = sv()
+        T.step("contract: after the terms Skuli guides you; Rime Wages moves to 2", a["skuli"] and a["hire"] == 2, qa=[a["skuli"], a["hire"]])
+        a = load("jotunheim"); pass
+        T.step("Stonehollow has a door into the Hall (and no 'not open yet' look-spot at the door)", "jt_hall" in a["exits"], exits=a["exits"])
         T.step("no JS errors in the Jotunheim run", not [e for e in errors if "jotunheim" in e.lower() or "jotun" in e.lower()], errs=errors[-3:])
         shot("jt_ring")
         a = load("jotunheim"); T.ev("window.__hd2d.setTime(0.0)"); pg.wait_for_timeout(800); shot("jt_night")

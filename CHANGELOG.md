@@ -2,6 +2,11 @@
 
 Dates are America/New_York. Newest first. Keep this current with every change you push.
 
+## 2026-10-16: Jotunheim chunk 2: the Hall of Hearthstones (`jt_hall`) + Hollow Heart (branch `realm-jotunheim`; main 9795278 merged)
+- **Area:** `areas/src/jt_hall.json` / `areas/jt_hall/`: 1.2 m high-seat dais with a stair, cold-fire hearth pit, tables and stools, shield racks; the ice cellar is the walled pocket east of the hall (one scene; trapdoor and cellar stair move the player).
+- **Game:** Jarl Thyra's choice, the fire (*The Stone Welcome* now ends at the Jarl), *The Hollow Heart* (clues `jh_heart` / `jh_rime` / `jh_trail`, Solvi's rune-light, `sv_decoy` quick route, `jt_peace`), conquer and contract variants (*Rime Wages* terms + Skuli), Kolbrun, guards. Stonehollow's Hall door is a real exit now.
+- **Tests:** `smoke_jotunheim.py` 31 steps. `check_scene --quick` on both areas not yet green (see RESUME HERE). Day grade of Stonehollow darkened, pens moved south.
+
 ## 2026-10-16: Jotunheim chunk 1: Stonehollow (`jotunheim`) built (branch `realm-jotunheim`)
 - **Art:** `tools/hearthmoor/jot_art.py` is the real installer (giant NPC sheet re-points the stock roles; Ulfar's own sheet; frost enemies; Flurry's neon twin as the main look with the palette-safe twin as `flurry_safe`; kit pieces; `jt_fx` gamefx rows + quest markers). The pack is copied to `games/hearthmoor/art/jotunheim/`.
 - **Area:** `areas/src/jotunheim.json` / `areas/jotunheim/`: a 1.34 m Jarl plateau with a stair (spec terrace, so the collision is the proven kind), snowfield, longhouses, cold-fire braziers, rune stones, the Welcome Ring lift stones, goat pens, Grimsa's fur stall, lake decal. Deviation from the art placement: the kit `stone_ledge` / `stone_stair` are not placed (the spec stair is the real one); the south wall is 1 m so the Bifrost arch does not hide the player.

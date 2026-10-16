@@ -11,8 +11,8 @@ import { lockRival, moodUp } from './alfheim.js';
 export const JOT_PLANNED = {   // id -> display name (story 2.1); `barrow` (B1-B4) + `barrow2` (B5-B9) are the dungeon, two areas like clockdeep
   jotunheim: 'Stonehollow', jt_hall: 'Hall of Hearthstones', rimecaves: 'The Rime Caves', barrow: "The Titan's Barrow", barrow2: "The Titan's Barrow: the Throne",
 };
-export const AREAS_JOT = { jotunheim: 'areas/jotunheim/' };   // id -> 'areas/<id>/' (merged into game.js's area path map)
-export const AREA_NAMES_JOT = { jotunheim: 'Stonehollow' };   // id -> display name (merged into game.js's AREA_NAME)
+export const AREAS_JOT = { jotunheim: 'areas/jotunheim/', jt_hall: 'areas/jt_hall/' };   // id -> 'areas/<id>/' (merged into game.js's area path map)
+export const AREA_NAMES_JOT = { jotunheim: 'Stonehollow', jt_hall: 'Hall of Hearthstones' };   // id -> display name (merged into game.js's AREA_NAME)
 export const JOT_AREAS = Object.keys(JOT_PLANNED);
 
 const flags = (S) => (S.flags = S.flags || {});
@@ -22,7 +22,7 @@ const ally = (S) => (flags(S).alliance = flags(S).alliance || {});
 const gold = (G, n) => { G.S.gold = (G.S.gold || 0) + n; G.toast(`+${n} gold`, 1.8); G.drawBag && G.drawBag(); };
 const met = (k) => (G) => { G.S.met = { ...(G.S.met || {}), [k]: 1 }; };
 Object.assign(REALM, { jotunheim: 'embassy', jt_hall: 'embassy', rimecaves: 'embassy', barrow: 'embassy', barrow2: 'embassy' });   // conquer / contract pay 'gate' with the alliance lock (later)
-Object.assign(MERIT, { jt_gate: 60, jt_welcome: 40 });   // story 3.12 (the rest arrive with their quests)
+Object.assign(MERIT, { jt_gate: 60, jt_welcome: 40, jt_heart: 60, jt_rival: 20 });   // story 3.12 (the rest arrive with their quests)
 WAYS.jotunheim = ['Stonehollow', 'jotunheim', 'from_waystone'];
 
 export const JT_ARCH = { rect: [4.25, -12.3, 5.75, -11.45], pos: [5.0, -11.9], spawn: [5.0, -10.1, 'down'] };   // the ice arch on Bifrost's north wall
@@ -48,8 +48,29 @@ Object.assign(QUESTS, {
     2: "Sit at the Jarl's fire.",
     3: 'Stonehollow has welcomed you. The goats are still suspicious.',
   } },
+  jt_heart: { title: 'The Hollow Heart', giver: 'Jarl Thyra Stonebrow', story: true, steps: {
+    1: (S) => { const f = F(S), n = ['jh_heart', 'jh_rime', 'jh_trail'].filter((k) => f[k]).length;
+      return f.sv_decoy ? 'Show the Jarl the boot mould from Anvildeep.' : `Study the Heart in the ice cellar. ${n}/3`; },
+    2: 'Tell the Jarl what you found.',
+    3: 'The Heart is a fake. Stonehollow was framed.',
+  } },
+  jt_hire: { title: 'Rime Wages', giver: 'Gatewright Halvard', story: true, steps: { 1: 'Hear the Jarl\'s terms, and meet Skuli at the goat pens.', 2: 'Lay Hrimgard back to sleep. (The Barrow comes in a later chapter.)', 3: 'Paid in full.' } },
+  jt_take: { title: 'The Toll of Stones', giver: 'Envoy Kolbrun Hailstride', story: true, steps: { 1: 'Topple the watch-cairns. (The cairns come with the Rime Caves.)', 2: 'Open the Barrow.', 3: 'The Barrow Key is yours. Stonehollow will not forget.' } },
 });
 const need = (S) => (S.hero === 'runeguard' ? 2 : 3);
+
+// ------------------------------------------------------------------ shared quest steps (module level so TALK can use them)
+export const cellarOK = (S) => !!((F(S).alliance || {}).jotunheim || F(S).jt_contract || (typeof location !== 'undefined' && new URLSearchParams(location.search).has('jtq')));
+const clueN = (S) => ['jh_heart', 'jh_rime', 'jh_trail'].filter((k) => F(S)[k]).length;
+function finishWelcome(G) {
+  const f = flags(G.S); G.setQuest('jt_welcome', 3); f.jt_trusted = 1; G.factions.add('embassy', MERIT.jt_welcome, 'jt_welcome'); gold(G, 20);
+  f.realm_mood = { ...(f.realm_mood || {}), jotunheim: Math.max(3, (f.realm_mood || {}).jotunheim || 0) }; G.refreshMarkers && G.refreshMarkers();
+}
+function closeHeart(G) {   // The Hollow Heart done (story 3.3 / 4.3): the Heart is a fake, the war band turns back
+  const S = G.S, f = flags(S), mood = moodJot(S);
+  G.setQuest('jt_heart', 3); G.factions.add('embassy', MERIT.jt_heart + (mood ? MERIT.jt_rival : 0), 'jt_heart'); gold(G, 40);
+  f.jt_cleared = 1; f.jt_peace = 1; S.evidence = { ...(S.evidence || {}), jotunheim: 'false_heart' }; G.refreshMarkers && G.refreshMarkers();
+}
 
 // ------------------------------------------------------------------ talk (TALK is keyed by the actor id in the area spec)
 const moodJot = (S) => ((F(S).realm_mood || {}).jotunheim || 0) >= 1;
@@ -60,7 +81,12 @@ Object.assign(TALK, {
                            : 'Cloak, tea or lamp? The lamp burns blue. It will not burn you. We tested on a goat.'],
              then: (G) => { met('jt_trader')(G); G.shopUI.show('jt_trader'); } };
   },
-  goatherd(S) { return { pages: [F(S).jt_peace ? 'The war band turned back? Goats knew. Goats know everything.' : 'I know a goat-path. Goats know everything. Ask me when you have a reason to go sneaking.'] }; },
+  goatherd(S) {
+    const f = F(S);
+    if (f.jt_contract && f.jw_terms && !f.jw_skuli) return { pages: ['The Guild man! Skuli. I know a goat-path. Goats know everything. I will take you to the Barrow when it is time.', '(He whispers.) The Heart in the cellar rings hollow, you know. Look, if you like. Not my business.'], then: (G) => { flags(G.S).jw_skuli = 1; G.setQuest('jt_hire', 2); G.refreshMarkers && G.refreshMarkers(); } };
+    if (f.jt_contract && !f.jw_terms) return { pages: ['The Jarl wants to hear your terms first. She is in the Hall. Goats wait. Goats are good at it.'] };
+    return { pages: [f.jt_peace ? 'The war band turned back? Goats knew. Goats know everything.' : 'I know a goat-path. Goats know everything. Ask me when you have a reason to go sneaking.'] };
+  },
   goatwife(S) { return { pages: [q(S, 'jt_welcome') >= 3 ? 'She bit you? Good. That means she likes you.' : 'Mind the horns. Mind the whole goat, really. She has opinions.'] }; },
   ulfar(S) {
     const first = !(S.met || {}).ulfar;
@@ -69,29 +95,64 @@ Object.assign(TALK, {
   },
   jt_a(S) { return { pages: ['Mind the stools. They are for sitting, not climbing.'] }; },
   jt_b(S) { return { pages: [['The aurora sings if you are quiet.', 'Dwarves think we steal. We cannot even fit in their doors.'][(S.day || 0) % 2]] }; },
-  // the Jarl's choice (story 5.2). She sits in the Hall of Hearthstones (jt_hall, next chunk); the entry is here so the Hall only has to place her.
+  // the Jarl (story 5.2, 3.2 stage 2, 3.3, 3.6, 4.3): the choice, the fire, the Hollow Heart, the contract terms
   jarl(S) {
-    const f = F(S), mood = moodJot(S), locked = (f.rivals || {}).jotunheim === 'locked';
-    if ((f.alliance || {}).jotunheim === 'befriend') return { pages: ['Then lift our stones. We trust arms that work.'] };
-    if ((f.alliance || {}).jotunheim === 'conquer') return { pages: ['So. Midgard is a thief too. Take it, and go.'] };
+    const f = F(S), mood = moodJot(S), locked = (f.rivals || {}).jotunheim === 'locked', al = (f.alliance || {}).jotunheim;
+    if (f.jt_contract && !f.jw_terms) return { pages: ['An offer from the Guild? Hm. Terms, then: the Titan sleeps in the Barrow and his sleep is thinning.', 'Lay him back down, and the Guild may have its coin. Skuli at the goat pens will guide you. He is young. He is also right, mostly.'], then: (G) => { flags(G.S).jw_terms = 1; G.setQuest('jt_hire', 1); } };
+    if (al === 'befriend') {
+      if (q(S, 'jt_welcome') === 2) return { pages: ["(You sit at the Jarl's fire. The hall hums. Someone passes you a bone, politely.)", 'Arms that work, and a fire shared. Welcome, small one.', 'One more thing. The dwarves say we stole their Heart. There is a Heart in my cellar, and I am not proud of it. Go and look at it. Tell me what you see.'],
+        then: (G) => { finishWelcome(G); G.setQuest('jt_heart', 1); } };
+      if (q(S, 'jt_heart') === 1 && f.sv_decoy) return { pages: ['You carry a boot mould from Anvildeep? Show me.', '(The mould fits the frost-iron prints in the cellar, small straps and all.)', 'The dwarves sent a friend? Then the world is not all spears.', 'I will send a horn-message to their Thane. The war band turns back.'], then: (G) => closeHeart(G) };
+      if (q(S, 'jt_heart') === 2) return { pages: ['A shell. Blue-black rime, and big boots that went in and never came out. Someone small and cruel wanted two realms at each other\'s throats.', 'You have done Stonehollow a great kindness. I will send a horn-message to Anvildeep: the war band turns back.'], then: (G) => closeHeart(G) };
+      if (q(S, 'jt_heart') === 1) { const n = ['jh_heart', 'jh_rime', 'jh_trail'].filter((k) => f[k]).length; return { pages: [`The cellar trapdoor is by the north-east table. Tap the Heart, look at the rime, follow the prints. ${n}/3.`] }; }
+      if (q(S, 'jt_welcome') === 3 && !q(S, 'jt_heart')) return { pages: ['The town trusts you. So I will ask the hard thing: look at the Heart in my cellar.'], then: (G) => G.setQuest('jt_heart', 1) };
+      if (q(S, 'jt_welcome') === 1) return { pages: ['Then lift our stones. We trust arms that work.'] };
+      return { pages: ['The fire is for everyone. Sit.'] };
+    }
+    if (al === 'conquer') return { pages: ['So. Midgard is a thief too. Take it, and go.'] };
     const opts = [];
     if (!locked) opts.push({ label: 'A friend. Let me prove you innocent.', pick: () => ({ pages: ['Then lift our stones. We trust arms that work.'],
-      then: (G) => { ally(G.S).jotunheim = 'befriend'; lockRival(G.S, 'asgard'); moodUp(G.S, 'vanaheim'); G.setQuest(mood ? 'jt_heart' : 'jt_welcome', mood ? 1 : 1); G.toast('Jotunheim: befriended', 2.2); G.refreshMarkers && G.refreshMarkers(); } }) });
+      then: (G) => { ally(G.S).jotunheim = 'befriend'; lockRival(G.S, 'asgard'); moodUp(G.S, 'vanaheim'); G.setQuest(mood ? 'jt_heart' : 'jt_welcome', 1); G.toast('Jotunheim: befriended', 2.2); G.refreshMarkers && G.refreshMarkers(); } }) });
     opts.push({ label: "Midgard's. Hand over the Barrow Key.", pick: () => ({ pages: ['So. Midgard is a thief too. Take it, and go.'],
       then: (G) => { ally(G.S).jotunheim = 'conquer'; moodUp(G.S, 'asgard'); G.setQuest('jt_take', 1); G.toast('Jotunheim: conquered', 2.2); } }) });
-    if (locked) opts.push({ label: 'The Guild sent me with an offer.', pick: () => ({ pages: ['An offer. Hm. Skuli will show you the goat-path.'], then: (G) => { flags(G.S).jt_contract = 1; G.setQuest('jt_hire', 1); } }) });
+    if (locked) opts.push({ label: 'The Guild sent me with an offer.', pick: () => ({ pages: ['An offer. Hm. Hear my terms.'], then: (G) => { flags(G.S).jt_contract = 1; G.setQuest('jt_hire', 1); } }) });
     return { pages: [mood ? 'You humbled the thunder-folk? Sit by the fire, small one.' : locked ? "Asgard's friend, in my hall. Say it quick."
                            : 'Midgard comes to Stonehollow. Dwarves call us thieves. Asgard calls us raiders. What are you?'], choice: { id: 'jt_jarl', options: opts } };
   },
+  envoy_jt(S) {
+    const al = (F(S).alliance || {}).jotunheim;
+    return { pages: [al === 'conquer' ? 'So you took the Barrow Key by asking. Or by not asking. I keep the ledger either way.' : al === 'befriend' ? 'Stay off the lake. Unless you are a goat. The Jarl likes you; do not make her regret it.' : 'Stay off the lake. Unless you are a goat.'] };
+  },
+  rimewife(S) {
+    const f = F(S), al = (f.alliance || {}).jotunheim;
+    if (al === 'conquer') return { pages: ["You know it's hollow. Everyone can hear it.", 'Cold fire is a gift. It lights. It never burns. Someone made it burn in a tomb.'] };
+    if (al === 'befriend' && q(S, 'jt_heart') === 1 && !f.jh_solvi) return { pages: ['The cellar Heart? Rime tells the truth if you give it good light. Take my rune-light.', '(Solvi lends you her rune-light. It hums, and shows rime for what it is.)'], then: (G) => { flags(G.S).jh_solvi = 1; } };
+    return { pages: ['Cold fire is a gift. It lights. It never burns. Someone made it burn in a tomb.'] };
+  },
+  jt_guard1(S) { return { pages: [cellarOK(S) ? 'The Jarl says you may go down. Mind the plinth.' : "The cellar is the Jarl's."] }; },
+  jt_guard2(S) { return { pages: [cellarOK(S) ? 'Down the trapdoor. Do not lick the Heart.' : 'Nobody goes down without the Jarl\'s word.'] }; },
+  jt_diner1(S) { return { pages: ['The aurora sings if you are quiet.'] }; },
+  jt_diner2(S) { return { pages: ['Mind the stools. They are for sitting, not climbing.'] }; },
+});
+
+MARKER_HOOKS.push((id, S) => {
+  const f = F(S), al = f.alliance && f.alliance.jotunheim;
+  if (id === 'jarl') {
+    if (!al || (al === 'befriend' && (q(S, 'jt_welcome') === 2 || q(S, 'jt_heart') === 2 || (q(S, 'jt_heart') === 1 && f.sv_decoy) || (q(S, 'jt_welcome') === 3 && !q(S, 'jt_heart'))))) return 'quest_mark';
+    if (f.jt_contract && !f.jw_terms) return 'quest_mark';
+  }
+  if (id === 'rimewife' && al === 'befriend' && q(S, 'jt_heart') === 1 && !f.jh_solvi) return 'quest_mark';
 });
 
 // ------------------------------------------------------------------ the area's own look: cold fire on the braziers, rune pulses, the lake, a gloom light
 const COLD = ['#7fd4ff', 4.2, 4.2];   // colour, intensity, range
 const JT_FX = {
-  jotunheim: [['cold_flame', [-2.4, -5.0], 1.0, 1], ['cold_flame', [2.4, -5.0], 1.0, 1], ['cold_flame', [-3.6, 1.6], 1.0, 1], ['cold_flame', [3.6, 1.6], 1.0, 1],
-              ['cold_flame', [-3.2, 4.8], 1.0, 1], ['cold_flame', [3.2, 4.8], 1.0, 1], ['rune_pulse', [0, -5.4], 0.8, 1], ['rune_pulse', [-5.4, 0.2], 0.8, 1], ['rune_pulse', [5.2, -0.4], 0.8, 1],
+  jotunheim: [['cold_flame', [-2.4, -5.0], 1.0, 1], ['cold_flame', [2.4, -5.0], 1.0, 1],
+              ['rune_pulse', [0, -5.4], 0.8, 1], ['rune_pulse', [-5.4, 0.2], 0.8, 0], ['rune_pulse', [5.2, -0.4], 0.8, 0],
               ['rune_pulse', [10.6, -1.4], 0.8, 1], ['ice_sparkles', [8.0, -3.2], 0.5, 0]],
 };
+JT_FX.jt_hall = [['cold_flame', [-1.5, -2.0], 1.0, 1], ['cold_flame', [1.5, -2.0], 1.0, 1], ['cold_flame', [0, -3.6], 1.0, 1], ['cold_flame', [0, -0.4], 1.0, 1],
+  ['rune_pulse', [-7.0, -10.4], 0.8, 1], ['rune_pulse', [7.0, -10.4], 0.8, 1], ['cold_flame', [12.4, -3.0], 1.0, 1], ['cold_flame', [16.0, -3.0], 1.0, 1], ['ice_sparkles', [14.2, -5.4], 0.5, 0]];
 const SPOTS = {   // look-spots / interactables (Svartalfheim pattern): hall door, cave path, frost prints, Welcome Ring stones
   lifts: [[-1.4, 2.6], [0.0, 3.3], [1.4, 2.6]],
   hall: [0, -9.4], caves: [10.0, -0.2], prints: [-3.4, -1.6],
@@ -132,6 +193,11 @@ export class Jotunheim {
     const v = this.qs().get('jtq'), S = this.G.S; if (!v || this.qaDone === v) return;
     this.qaDone = v;
     if (v === 'befriend' || v === 'done') { ally(S).jotunheim = 'befriend'; flags(S).jt_gate_open = 1; if (!q(S, 'jt_welcome')) S.quests.jt_welcome = 1; }
+    if (v === 'heart' || v === 'decoy') { ally(S).jotunheim = 'befriend'; flags(S).jt_gate_open = 1; S.quests.jt_welcome = 3; flags(S).jt_trusted = 1; S.quests.jt_heart = 1; }
+    if (v === 'decoy') { flags(S).sv_decoy = 1; flags(S).sv_cleared = 1; S.evidence = { ...(S.evidence || {}), svartalfheim: 'boot_mould' }; }
+    if (v === 'fire') { ally(S).jotunheim = 'befriend'; flags(S).jt_gate_open = 1; S.quests.jt_welcome = 2; flags(S).jw_lifts = 3; }
+    if (v === 'conquer') { ally(S).jotunheim = 'conquer'; flags(S).jt_gate_open = 1; S.quests.jt_take = 1; }
+    if (v === 'contract') { flags(S).rivals = { ...(flags(S).rivals || {}), jotunheim: 'locked' }; flags(S).jt_contract = 1; flags(S).jt_gate_open = 1; S.quests.jt_hire = 1; }
     if (v === 'done') { S.quests.jt_welcome = 3; flags(S).jw_lifts = 3; flags(S).jt_trusted = 1; }
   }
   attach(ctx, area) {
@@ -140,6 +206,7 @@ export class Jotunheim {
     if (!AREAS_JOT[area]) return;
     this.qaPreset();
     if (area === 'jotunheim') this.stonehollow(ctx);
+    if (area === 'jt_hall') this.hall(ctx);
   }
   detach() {
     for (const f of this.fx) if (f) f.dur = f.t + 0.2;
@@ -162,6 +229,47 @@ export class Jotunheim {
     this.spot({ pos: SPOTS.caves, r: 1.8, label: 'the path to the Rime Caves (E / A)', show: () => !AREAS_JOT.rimecaves, act: () => this.look('jt_caves_stair', 'The cave path', ['A stair of piled stone climbs toward a crack in the cliff. Cold blue light breathes out of it.', '(The Rime Caves open in a later chapter of the build.)']) });
     this.spot({ pos: SPOTS.prints, r: 1.8, label: 'giant frost prints (E / A)', act: () => this.prints() });
     if (!flags(S).jt_arrived && !still) { flags(S).jt_arrived = 1; G.toast('Snow drifts down; the cold fires gutter blue. A giant child stares, then waves.', 3.6); }
+  }
+  // ---- the Hall of Hearthstones (story 2.4, 4): the Jarl, the ice cellar trapdoor and the false Heart's three clues. The cellar is the walled pocket
+  // east of the hall (spawn `cellar`); the trapdoor and the cellar stair move the player between the two (no loading, one scene).
+  hall(ctx) {
+    const G = this.G, still = !!G.qaStill; this.inCellar = false;
+    for (const [name, [x, z], dy, glow] of JT_FX.jt_hall) {
+      const y = ctx.heightAt(x, z);
+      if (ctx.gamefx && ctx.gamefx.meta.effects[name]) this.fx.push(ctx.gamefx.spawn(name, x, y + dy, z, { duration: Infinity, fadeIn: still ? 0 : 0.6 }));
+      if (glow && ctx.addGlow) this.lights.push(ctx.addGlow(x, y, z, { color: COLD[0], intensity: COLD[1], range: COLD[2], lift: dy, fadeIn: still ? 0.01 : 0.8 }));
+    }
+    this.spot({ id: 'trapdoor', pos: [5.0, -7.4], r: 1.7, label: 'the ice cellar trapdoor (E / A)', show: () => !this.inCellar, act: () => this.trapdoor() });
+    this.spot({ id: 'plinth', pos: [14.2, -8.6], r: 2.0, label: 'the false Heart (E / A)', act: () => this.plinth() });
+    this.spot({ id: 'rime', pos: [16.2, -9.0], r: 1.5, label: 'the rime on the plinth (E / A)', act: () => this.rime() });
+    this.spot({ id: 'stair', pos: [14.2, -1.8], r: 1.6, label: 'the cellar stair (E / A)', act: () => this.cellarStair() });
+  }
+  moveTo(x, z) { const c = this.ctx; if (!c) return; c.player.x = x; c.player.z = z; c.player.y = c.heightAt(x, z); }
+  trapdoor() {
+    const S = this.G.S;
+    if (!cellarOK(S)) { this.look('jt_trapdoor', 'The cellar trapdoor', ['A trapdoor of black oak, barred. A guard shifts to stand on it.', '"Nobody goes down without the Jarl\'s word."']); return; }
+    this.look('jt_trapdoor', 'The cellar trapdoor', ['(You heave the trapdoor up. Cold breathes out, and a blue light below.)'], () => { this.inCellar = true; this.moveTo(14.2, -3.4); });
+  }
+  clue(k, name) {
+    const G = this.G, S = G.S, f = flags(S); if (f[k]) return; f[k] = 1;
+    G.toast(`Clue: ${name} (${clueN(S)}/3)`, 2.2);
+    if (q(S, 'jt_heart') === 1 && !f.sv_decoy && clueN(S) >= 3) { G.setQuest('jt_heart', 2); G.refreshMarkers && G.refreshMarkers(); }
+    G.save && G.save();
+  }
+  plinth() {
+    const G = this.G, S = G.S, con = ((F(S).alliance || {}).jotunheim) === 'conquer';
+    S.evidence = { ...(S.evidence || {}), jotunheim: 'false_heart' };   // the evidence counts on every path, if you look (story 4.4)
+    const pages = ['(The false Heart sits on its plinth, a shell of frost-iron shaped like a heart. You tap it. It rings hollow, like a bucket.)', 'The real Anvil-Heart beats like a drum. This one is a shell.'];
+    if (con) pages.push('(You could say it is the real one. You could use it as your excuse. Everyone in the hall knows what it sounds like.)');
+    this.look('jh_heart', 'The false Heart', pages, () => this.clue('jh_heart', 'it rings hollow'));
+  }
+  rime() {
+    const f = F(this.G.S);
+    if (!f.jh_solvi) { this.look('jh_rime', 'The rime', ['The rime on the plinth looks grey in this gloom. Solvi\'s rune-light would show its true colour.']); return; }
+    this.look('jh_rime', 'The rime', ["(Solvi's rune-light washes the plinth. The rime is blue-black, like the Cold Altar tongs and the boot mould.)", 'Giant frost is white. This is not giant frost.'], () => this.clue('jh_rime', 'the rime is blue-black'));
+  }
+  cellarStair() {
+    this.look('jh_trail', 'The cellar stair', ['(Frost prints, huge ones, climb the stair. They go in. None come out.)', 'Someone small took off big boots right here, and went on in their socks.'], () => { this.clue('jh_trail', 'the prints go in, none come out'); this.inCellar = false; this.moveTo(4.6, -5.8); });
   }
   prints() {   // story 4: the footprints clue's entry point. The cellar clue (jh_trail) is in the Hall; here you learn the prints exist.
     const f = flags(this.G.S), decoy = !!f.sv_decoy;
@@ -202,10 +310,7 @@ export class Jotunheim {
       this.finishWelcome(G2);
     });
   }
-  finishWelcome(G) {
-    const f = flags(G.S); G.setQuest('jt_welcome', 3); f.jt_trusted = 1; G.factions.add('embassy', MERIT.jt_welcome, 'jt_welcome'); gold(G, 20);
-    f.realm_mood = { ...(f.realm_mood || {}), jotunheim: Math.max(3, (f.realm_mood || {}).jotunheim || 0) }; G.refreshMarkers && G.refreshMarkers();
-  }
+  finishWelcome(G) { finishWelcome(G); }
   update(dt) {
     if (!this.ctx) return;
     if (this.ring) {
@@ -217,12 +322,13 @@ export class Jotunheim {
   // QA helpers for the smoke test
   qaTalk(id) { const e = TALK[id](this.G.S); if (e && e.then) e.then(this.G); return { pages: e ? e.pages.length : 0, choice: e && e.choice ? e.choice.options.map((o) => o.label) : null }; }
   qaPick(label, id = 'jarl') { const e = TALK[id](this.G.S), o = e.choice.options.find((x) => x.label === label), nx = o.pick(this.G); if (nx && nx.then) nx.then(this.G); return nx ? nx.pages.length : 0; }
+  qaSpot(id) { const sp = this.spots.find((x) => x.id === id); if (!sp) return false; sp.act(); return true; }
   qaLift(i) { this.lifted(i, true); return this.qa(); }
   qa() {
     const c = this.ctx, S = this.G.S, f = F(S), gm = c ? (c.scene.game || {}) : {};
     return { realm: 'jotunheim', built: Object.keys(AREAS_JOT), planned: JOT_AREAS, area: this.area, exits: (gm.exits || []).map((e) => e.to), portals: (gm.portals || []).map((p) => p.to),
              spots: this.spots.filter((x) => x.show()).length, lifts: f.jw_lifts || 0, need: need(S), quest: q(S, 'jt_welcome'), gate: this.gate.qa(), alliance: (f.alliance || {}).jotunheim || null,
-             actors: c ? c.actors.list.map((a) => a.id || a.role) : [], fx: this.fx.length, lights: this.lights.length, ring: !!this.ring, shop: !!SHOPS.jt_trader, found: S.found || {} };
+             actors: c ? c.actors.list.map((a) => a.id || a.role) : [], fx: this.fx.length, lights: this.lights.length, ring: !!this.ring, inCellar: !!this.inCellar, heart: q(S, 'jt_heart'), clues: ['jh_heart', 'jh_rime', 'jh_trail'].filter((k) => f[k]), peace: !!f.jt_peace, evidence: (S.evidence || {}).jotunheim || null, hire: q(S, 'jt_hire'), terms: !!f.jw_terms, skuli: !!f.jw_skuli, pos: c ? [c.player.x, c.player.z] : null, shop: !!SHOPS.jt_trader, found: S.found || {} };
   }
 }
 

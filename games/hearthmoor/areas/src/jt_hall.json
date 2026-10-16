@@ -1,0 +1,504 @@
+{
+ "biome": "cozy-village",
+ "sprite_roles": [
+  "actors",
+  "heroes",
+  "combat",
+  "lanternseller",
+  "dwarftrader",
+  "poolkeeper",
+  "wispcatcher",
+  "elffolk",
+  "elffolk2",
+  "innkeeper",
+  "shopkeeper",
+  "nightmerchant",
+  "gnome"
+ ],
+ "spells": true,
+ "name": "Hall of Hearthstones",
+ "seed": 223,
+ "about": "The Jarl's long hall: a cold-fire hearth pit down the middle, tables left and right, the high seat on a dais at the north end, and in the north-east corner the trapdoor to the ice cellar where the false Heart sits on its plinth (the cellar is the walled pocket east of the hall).",
+ "time": {
+  "start": "night",
+  "speed": 0.0016
+ },
+ "camera": {
+  "fov": 24,
+  "pitch": 36,
+  "distance": 33,
+  "zoom": [
+   24,
+   44
+  ],
+  "look": [
+   0,
+   0,
+   -2.4
+  ],
+  "bounds": [
+   -9.4,
+   -9.6,
+   15.4,
+   12.0
+  ]
+ },
+ "ground": {
+  "size": [
+   90,
+   70
+  ],
+  "mat": "stone",
+  "walk": [
+   -9.6,
+   -11.6,
+   16.8,
+   12.4
+  ]
+ },
+ "slabs": [
+  {
+   "name": "entry",
+   "rect": [
+    -1.8,
+    6.5,
+    1.8,
+    11.6
+   ],
+   "mat": "cobble",
+   "h": 0.03
+  },
+  {
+   "name": "aisle",
+   "rect": [
+    -2.4,
+    -6.4,
+    2.4,
+    6.5
+   ],
+   "mat": "cobble",
+   "h": 0.03
+  },
+  {
+   "name": "cellar_floor",
+   "rect": [
+    11.6,
+    -11.6,
+    16.8,
+    -1.6
+   ],
+   "mat": "cobble",
+   "h": 0.03
+  }
+ ],
+ "terraces": [
+  {
+   "name": "high_dais",
+   "rect": [
+    -4.4,
+    -12.0,
+    4.4,
+    -6.4
+   ],
+   "h": 1.2,
+   "top": "plaster",
+   "gaps": [
+    [
+     -1.5,
+     1.5
+    ]
+   ]
+  },
+  {
+   "name": "wall_w",
+   "rect": [
+    -30,
+    -30,
+    -10.0,
+    13
+   ],
+   "h": 3.6,
+   "top": "stone",
+   "coping": true
+  },
+  {
+   "name": "wall_n",
+   "rect": [
+    -30,
+    -30,
+    30,
+    -12.0
+   ],
+   "h": 3.6,
+   "top": "stone",
+   "coping": true
+  },
+  {
+   "name": "divider",
+   "rect": [
+    10.2,
+    -12.0,
+    11.2,
+    13
+   ],
+   "h": 3.6,
+   "top": "stone",
+   "coping": true
+  },
+  {
+   "name": "wall_e",
+   "rect": [
+    17.2,
+    -30,
+    30,
+    13
+   ],
+   "h": 3.6,
+   "top": "stone",
+   "coping": true
+  },
+  {
+   "name": "cellar_s",
+   "rect": [
+    11.2,
+    -0.6,
+    17.2,
+    30
+   ],
+   "h": 1.0,
+   "top": "stone",
+   "coping": true
+  }
+ ],
+ "stairs": [
+  {
+   "name": "stair_dais",
+   "x": 0.0,
+   "z_top": -6.4,
+   "width": 3.0,
+   "rise": 1.2,
+   "base": 0.0
+  }
+ ],
+ "decks": [],
+ "blocks": [],
+ "buildings": [],
+ "hedges": [],
+ "trees": [],
+ "backdrop": {},
+ "props": [
+  {
+   "piece": "empty_throne",
+   "pos": [
+    0.0,
+    -10.8
+   ]
+  },
+  {
+   "piece": "bench",
+   "pos": [
+    -6.2,
+    -3.0
+   ]
+  },
+  {
+   "piece": "bench",
+   "pos": [
+    -6.2,
+    0.2
+   ]
+  },
+  {
+   "piece": "bench",
+   "pos": [
+    -6.2,
+    3.4
+   ]
+  },
+  {
+   "piece": "bench",
+   "pos": [
+    6.2,
+    -3.0
+   ]
+  },
+  {
+   "piece": "bench",
+   "pos": [
+    6.2,
+    0.2
+   ]
+  },
+  {
+   "piece": "bench",
+   "pos": [
+    6.2,
+    3.4
+   ]
+  },
+  {
+   "piece": "barrel",
+   "pos": [
+    -9.0,
+    6.6
+   ]
+  },
+  {
+   "piece": "barrel",
+   "pos": [
+    -9.0,
+    7.8
+   ]
+  },
+  {
+   "piece": "crate",
+   "pos": [
+    8.8,
+    7.2
+   ]
+  },
+  {
+   "piece": "frost_scar",
+   "pos": [
+    5.0,
+    -7.4
+   ]
+  },
+  {
+   "piece": "reliquary",
+   "pos": [
+    14.2,
+    -8.6
+   ]
+  }
+ ],
+ "emitters": [
+  {
+   "preset": "embers",
+   "pos": [
+    0,
+    1.8,
+    -2.0
+   ],
+   "area": [
+    4,
+    1.2,
+    6
+   ],
+   "min_gate": 0.0
+  }
+ ],
+ "actors": [
+  {
+   "id": "jarl",
+   "role": "shopkeeper",
+   "name": "Jarl Thyra Stonebrow",
+   "pos": [
+    0.0,
+    -8.4
+   ],
+   "facing": "down",
+   "behavior": "idle",
+   "talkable": true,
+   "say": [
+    "Sit. The fire is for everyone."
+   ]
+  },
+  {
+   "id": "envoy_jt",
+   "role": "innkeeper",
+   "name": "Envoy Kolbrun Hailstride",
+   "pos": [
+    -4.8,
+    8.2
+   ],
+   "facing": "right",
+   "behavior": "idle",
+   "talkable": true,
+   "say": [
+    "Stay off the lake. Unless you are a goat."
+   ]
+  },
+  {
+   "id": "rimewife",
+   "role": "lanternseller",
+   "name": "Rimewife Solvi",
+   "pos": [
+    7.2,
+    -5.0
+   ],
+   "facing": "left",
+   "behavior": "idle",
+   "talkable": true,
+   "say": [
+    "Cold fire is a gift. It lights. It never burns."
+   ]
+  },
+  {
+   "id": "jt_guard1",
+   "role": "elffolk",
+   "name": "Hall guard",
+   "pos": [
+    3.6,
+    -7.6
+   ],
+   "facing": "down",
+   "behavior": "idle",
+   "talkable": true,
+   "say": [
+    "The cellar is the Jarl's."
+   ]
+  },
+  {
+   "id": "jt_guard2",
+   "role": "elffolk2",
+   "name": "Hall guard",
+   "pos": [
+    5.6,
+    -11.2
+   ],
+   "facing": "left",
+   "behavior": "idle",
+   "talkable": true,
+   "say": [
+    "Nobody goes down without the Jarl's word."
+   ]
+  },
+  {
+   "id": "jt_diner1",
+   "role": "wispcatcher",
+   "name": "Hall giant",
+   "pos": [
+    -7.8,
+    -1.4
+   ],
+   "facing": "right",
+   "behavior": "idle",
+   "talkable": true,
+   "say": [
+    "The aurora sings if you are quiet."
+   ]
+  },
+  {
+   "id": "jt_diner2",
+   "role": "poolkeeper",
+   "name": "Hall giant",
+   "pos": [
+    7.8,
+    1.8
+   ],
+   "facing": "left",
+   "behavior": "idle",
+   "talkable": true,
+   "say": [
+    "Mind the stools. They are for sitting, not climbing."
+   ]
+  }
+ ],
+ "player": {
+  "role": "traveler",
+  "pos": [
+   0.0,
+   8.6
+  ],
+  "facing": "up"
+ },
+ "fx": [],
+ "grades": {
+  "day": {
+   "fog_color": "#6a7e9c",
+   "sky_top": "#3a4a6a",
+   "sky_bottom": "#a8bcd8",
+   "hemi_sky": "#d0dcf0",
+   "saturation": 0.95,
+   "bugs": 0.0,
+   "warmth": -0.04,
+   "exposure": 0.9,
+   "sun_intensity": 1.1,
+   "hemi_intensity": 0.75,
+   "sun_color": "#e8f0ff",
+   "lamp_intensity": 0.8
+  },
+  "dusk": {
+   "fog_color": "#1c2848",
+   "sky_top": "#0c1430",
+   "sky_bottom": "#34508c",
+   "exposure": 0.95,
+   "sun_intensity": 0.6,
+   "warmth": -0.1,
+   "sun_color": "#8cb0f0",
+   "bugs": 0.5
+  },
+  "night": {
+   "fog_color": "#101a34",
+   "sky_top": "#060c1e",
+   "sky_bottom": "#1c3a5c",
+   "hemi_sky": "#5c7cb0",
+   "bugs": 1.0,
+   "exposure": 1.0,
+   "sun_intensity": 0.4,
+   "hemi_intensity": 0.55,
+   "sun_color": "#7ea0e0"
+  }
+ },
+ "game": {
+  "id": "jt_hall",
+  "title": "Hall of Hearthstones",
+  "exits": [
+   {
+    "rect": [
+     -1.5,
+     10.4,
+     1.5,
+     11.4
+    ],
+    "to": "jotunheim",
+    "spawn": "from_hall",
+    "label": "the great doors out to Stonehollow"
+   }
+  ],
+  "portals": [],
+  "spawns": {
+   "start": [
+    0.0,
+    8.6,
+    "up"
+   ],
+   "from_town": [
+    0.0,
+    8.6,
+    "up"
+   ],
+   "qa": [
+    0.0,
+    8.0,
+    "up"
+   ],
+   "hearth": [
+    0.0,
+    1.0,
+    "up"
+   ],
+   "dais": [
+    0.0,
+    -5.2,
+    "up"
+   ],
+   "trapdoor": [
+    4.6,
+    -5.8,
+    "down"
+   ],
+   "cellar": [
+    14.2,
+    -3.4,
+    "up"
+   ],
+   "walk": [
+    0.0,
+    3.0,
+    "up"
+   ]
+  }
+ }
+}

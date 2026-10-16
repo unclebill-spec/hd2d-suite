@@ -1,0 +1,453 @@
+{
+ "tool": "hd2d portal",
+ "biome": "cozy-village",
+ "seed": 104,
+ "cell": 48,
+ "cast_sets": {},
+ "cycle": [],
+ "image": "gamefx.png",
+ "size": [
+  384,
+  1008
+ ],
+ "effects": {
+  "quest_mark": {
+   "row": 19,
+   "frames": 4,
+   "fps": 3,
+   "loop": true,
+   "loop_from": 0,
+   "loops": 1,
+   "kind": "billboard",
+   "pivot": [
+    24,
+    47
+   ],
+   "lift": 2.05,
+   "glow": true,
+   "light": null,
+   "speed": null,
+   "travel": null,
+   "then": null,
+   "duration": 9999
+  },
+  "quest_turnin": {
+   "row": 20,
+   "frames": 4,
+   "fps": 3,
+   "loop": true,
+   "loop_from": 0,
+   "loops": 1,
+   "kind": "billboard",
+   "pivot": [
+    24,
+    47
+   ],
+   "lift": 2.05,
+   "glow": true,
+   "light": null,
+   "speed": null,
+   "travel": null,
+   "then": null,
+   "duration": 9999
+  },
+  "pool_cold": {
+   "row": 1,
+   "frames": 6,
+   "fps": 4,
+   "loop": true,
+   "loop_from": 0,
+   "loops": 1,
+   "kind": "decal",
+   "pivot": [
+    24,
+    24
+   ],
+   "lift": 0.02,
+   "glow": true,
+   "light": null,
+   "speed": null,
+   "travel": null,
+   "then": null,
+   "duration": 9999,
+   "notes": "cold-blue pool under cold_brazier / rune stones / throne (x2-3 for Hrimgard)"
+  },
+  "pool_teal": {
+   "row": 2,
+   "frames": 6,
+   "fps": 4,
+   "loop": true,
+   "loop_from": 0,
+   "loops": 1,
+   "kind": "decal",
+   "pivot": [
+    24,
+    24
+   ],
+   "lift": 0.03,
+   "glow": true,
+   "light": null,
+   "speed": null,
+   "travel": null,
+   "then": null,
+   "duration": 9999,
+   "notes": "bioluminescent teal pool over glow_ice_pool / ice_lake"
+  },
+  "pool_aurora": {
+   "row": 3,
+   "frames": 6,
+   "fps": 3,
+   "loop": true,
+   "loop_from": 0,
+   "loops": 1,
+   "kind": "decal",
+   "pivot": [
+    24,
+    24
+   ],
+   "lift": 0.02,
+   "glow": true,
+   "light": null,
+   "speed": null,
+   "travel": null,
+   "then": null,
+   "duration": 9999,
+   "notes": "aurora-green pool on the snow (night)"
+  },
+  "pool_violet": {
+   "row": 4,
+   "frames": 6,
+   "fps": 4,
+   "loop": true,
+   "loop_from": 0,
+   "loops": 1,
+   "kind": "decal",
+   "pivot": [
+    24,
+    24
+   ],
+   "lift": 0.02,
+   "glow": true,
+   "light": null,
+   "speed": null,
+   "travel": null,
+   "then": null,
+   "duration": 9999,
+   "notes": "violet pool, aurora spill"
+  },
+  "aurora_glow": {
+   "row": 5,
+   "frames": 8,
+   "fps": 4,
+   "loop": true,
+   "loop_from": 0,
+   "loops": 1,
+   "kind": "billboard",
+   "pivot": [
+    24,
+    24
+   ],
+   "lift": 5.0,
+   "glow": true,
+   "light": null,
+   "speed": null,
+   "travel": null,
+   "then": null,
+   "duration": 9999,
+   "notes": "green-to-violet aurora curtain, 8-frame ribbon, night sky layer (tile horizontally)"
+  },
+  "cold_flame": {
+   "row": 6,
+   "frames": 8,
+   "fps": 10,
+   "loop": true,
+   "loop_from": 0,
+   "loops": 1,
+   "kind": "billboard",
+   "pivot": [
+    24,
+    44
+   ],
+   "lift": 0.1,
+   "glow": true,
+   "light": {
+    "color": "#2ab4ff",
+    "intensity": 1.0,
+    "range": 4.0,
+    "pool": "pool_cold"
+   },
+   "speed": null,
+   "travel": null,
+   "then": null,
+   "duration": 9999,
+   "notes": "cold-fire flame over braziers (no heat)"
+  },
+  "ice_sparkles": {
+   "row": 7,
+   "frames": 8,
+   "fps": 6,
+   "loop": true,
+   "loop_from": 0,
+   "loops": 1,
+   "kind": "billboard",
+   "pivot": [
+    24,
+    47
+   ],
+   "lift": 0.8,
+   "glow": true,
+   "light": null,
+   "speed": null,
+   "travel": null,
+   "then": null,
+   "duration": 9999,
+   "notes": "twinkling ice sparkles over snow, ice and crystals"
+  },
+  "neon_fireflies_blue": {
+   "row": 8,
+   "frames": 8,
+   "fps": 6,
+   "loop": true,
+   "loop_from": 0,
+   "loops": 1,
+   "kind": "billboard",
+   "pivot": [
+    24,
+    47
+   ],
+   "lift": 0.8,
+   "glow": true,
+   "light": null,
+   "speed": null,
+   "travel": null,
+   "then": null,
+   "duration": 9999,
+   "notes": "cold-blue fireflies"
+  },
+  "neon_fireflies_green": {
+   "row": 9,
+   "frames": 8,
+   "fps": 6,
+   "loop": true,
+   "loop_from": 0,
+   "loops": 1,
+   "kind": "billboard",
+   "pivot": [
+    24,
+    47
+   ],
+   "lift": 0.8,
+   "glow": true,
+   "light": null,
+   "speed": null,
+   "travel": null,
+   "then": null,
+   "duration": 9999,
+   "notes": "green wisps in the Rime Caves"
+  },
+  "neon_fireflies_violet": {
+   "row": 10,
+   "frames": 8,
+   "fps": 6,
+   "loop": true,
+   "loop_from": 0,
+   "loops": 1,
+   "kind": "billboard",
+   "pivot": [
+    24,
+    47
+   ],
+   "lift": 0.8,
+   "glow": true,
+   "light": null,
+   "speed": null,
+   "travel": null,
+   "then": null,
+   "duration": 9999,
+   "notes": "violet wisps at the aurora"
+  },
+  "glow_frog": {
+   "row": 11,
+   "frames": 8,
+   "fps": 6,
+   "loop": true,
+   "loop_from": 0,
+   "loops": 1,
+   "kind": "billboard",
+   "pivot": [
+    24,
+    44
+   ],
+   "lift": 0.0,
+   "glow": true,
+   "light": null,
+   "speed": null,
+   "travel": null,
+   "then": null,
+   "duration": 9999,
+   "notes": "glowing cave frog (hops by the pools; never gross)"
+  },
+  "glow_vines": {
+   "row": 12,
+   "frames": 8,
+   "fps": 4,
+   "loop": true,
+   "loop_from": 0,
+   "loops": 1,
+   "kind": "billboard",
+   "pivot": [
+    24,
+    0
+   ],
+   "lift": 3.0,
+   "glow": true,
+   "light": null,
+   "speed": null,
+   "travel": null,
+   "then": null,
+   "duration": 9999,
+   "notes": "hanging glowing vines + icicle drip, hang from the cave ceiling (pivot at top)"
+  },
+  "glow_fog": {
+   "row": 13,
+   "frames": 8,
+   "fps": 3,
+   "loop": true,
+   "loop_from": 0,
+   "loops": 1,
+   "kind": "decal",
+   "pivot": [
+    24,
+    24
+   ],
+   "lift": 0.05,
+   "glow": true,
+   "light": null,
+   "speed": null,
+   "travel": null,
+   "then": null,
+   "duration": 9999,
+   "notes": "surreal glowing ground fog (teal), drifting; one per 6-8 m, off stairs and spawns"
+  },
+  "rune_pulse": {
+   "row": 14,
+   "frames": 6,
+   "fps": 2,
+   "loop": true,
+   "loop_from": 0,
+   "loops": 1,
+   "kind": "decal",
+   "pivot": [
+    24,
+    24
+   ],
+   "lift": 0.03,
+   "glow": true,
+   "light": null,
+   "speed": null,
+   "travel": null,
+   "then": null,
+   "duration": 9999,
+   "notes": "frost-rune ring pulse (every 3 s), brighter when the hero is near"
+  },
+  "snow_puff": {
+   "row": 15,
+   "frames": 6,
+   "fps": 8,
+   "loop": false,
+   "loop_from": 0,
+   "loops": 1,
+   "kind": "billboard",
+   "pivot": [
+    24,
+    44
+   ],
+   "lift": 0.0,
+   "glow": true,
+   "light": null,
+   "speed": null,
+   "travel": null,
+   "then": null,
+   "duration": 0.75,
+   "notes": "Flurry's fx id snow_puff (hare hops / stops)"
+  },
+  "glow_orb_blue": {
+   "row": 16,
+   "frames": 8,
+   "fps": 6,
+   "loop": true,
+   "loop_from": 0,
+   "loops": 1,
+   "kind": "billboard",
+   "pivot": [
+    24,
+    33
+   ],
+   "lift": 1.4,
+   "glow": true,
+   "light": {
+    "color": "#a6ecff",
+    "intensity": 0.7,
+    "range": 3.0,
+    "pool": "pool_cold"
+   },
+   "speed": null,
+   "travel": null,
+   "then": null,
+   "duration": 9999,
+   "notes": "floating glow orb, hover 1.1-2.2 m"
+  },
+  "glow_orb_green": {
+   "row": 17,
+   "frames": 8,
+   "fps": 6,
+   "loop": true,
+   "loop_from": 0,
+   "loops": 1,
+   "kind": "billboard",
+   "pivot": [
+    24,
+    33
+   ],
+   "lift": 1.4,
+   "glow": true,
+   "light": {
+    "color": "#b8ffd4",
+    "intensity": 0.7,
+    "range": 3.0,
+    "pool": "pool_aurora"
+   },
+   "speed": null,
+   "travel": null,
+   "then": null,
+   "duration": 9999,
+   "notes": "floating glow orb, hover 1.1-2.2 m"
+  },
+  "glow_orb_violet": {
+   "row": 18,
+   "frames": 8,
+   "fps": 6,
+   "loop": true,
+   "loop_from": 0,
+   "loops": 1,
+   "kind": "billboard",
+   "pivot": [
+    24,
+    33
+   ],
+   "lift": 1.4,
+   "glow": true,
+   "light": {
+    "color": "#d4a8ff",
+    "intensity": 0.7,
+    "range": 3.0,
+    "pool": "pool_violet"
+   },
+   "speed": null,
+   "travel": null,
+   "then": null,
+   "duration": 9999,
+   "notes": "floating glow orb, hover 1.1-2.2 m"
+  }
+ }
+}
