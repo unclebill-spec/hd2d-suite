@@ -264,6 +264,7 @@ def steps(b, url, T, size, errors, rep, stub=None, shots=None):
         a = load("barrow2", "&jtq=deepc"); walk_to(0, -46.0); until("window.__hm.jot.qa().cb.includes('hrimgard')", 10)
         jt("qaKill('hrimgard')"); fin(); a = sv()
         T.step("conquer: taking the crown ends the barrow quest at once (tb_crown, barrow 3)", a["found"].get("tb_crown") == 1 and a["quest_barrow"] == 3 and not a["found"].get("tb_slept"), found=a["found"])
+        T.step("conquer: taking the crown sets jt_dark (Dark Stonehollow)", T.ev("window.__hm.S.flags.jt_dark") == 1, flags=T.ev("window.__hm.S.flags.jt_dark"))
         a = load("barrow2", "&jtq=deep"); walk_to(8.0, -36.4)
         T.ev("window.__hm.hollows && window.__hm.hollows.onCast()"); frames(2)
         T.step("a spell cast by the ice wall thaws the hidden spring (tb_spring)", sv()["found"].get("tb_spring") == 1, found=sv()["found"])
@@ -449,6 +450,99 @@ def steps(b, url, T, size, errors, rep, stub=None, shots=None):
             T.ev("window.__hm.S.day = (window.__hm.S.day || 0) + 1"); jt("qaTalk('goatwife')"); fin(); jt("qaSpot('clatter')"); fin(); a = sv()["goat"]
         T.step("after three days Clatter trusts you: jt_goat stage 2 (the lap of the lake waits for the saddle)", a["q"] == 2 and a["cakes"] == 3, goat=a)
         T.step("the goat mount stays deferred (no S.mounts.goat, no quest 3)", not a["mount"] and a["q"] != 3, goat=a)
+        # ---- Dark Stonehollow (story 9.7): conquer + the crown taken
+        PRICE = "(() => { const G = window.__hm; G.shopUI.show('jt_trader'); const r = G.shopUI.rows().find((x) => x.id === 'tea'); G.shopUI.close(); return r ? r.price : null; })()"
+        load("jotunheim", "&jtq=conquer"); d0 = sv()["dark"]; p0 = T.ev(PRICE); l0 = T.ev("window.__hm.jot.qaLine('jt_b')")
+        T.step("conquered but the crown not taken: the cold fires still burn, normal talk, normal prices", (not d0["on"]) and d0["flames"] == 2 and d0["pulses"] >= 3 and d0["orbs"] == 0 and d0["litCold"] > 0 and "No song" not in l0 and p0 == 14, dark=d0, price=p0, line=l0)
+        load("jotunheim", "&jtq=dark"); d1 = sv()["dark"]; p1 = T.ev(PRICE)
+        T.step("Dark Stonehollow: the cold fires and rune pulses are out, a glow orb marks each brazier, the cold lamps are off", d1["on"] and d1["flames"] == 0 and d1["pulses"] == 0 and d1["orbs"] == 2 and d1["cold"] > 0 and d1["litCold"] == 0, dark=d1)
+        T.step("the warm giant lanterns still light the town (it is dim, not black)", d1["litWarm"] > 0 and d1["glows"] >= 2, dark=d1)
+        ls = {k: T.ev(f"window.__hm.jot.qaLine('{k}')") for k in ("jt_trader", "goatherd", "goatwife", "ulfar", "jt_a", "jt_b", "jarl")}
+        T.step("the giants are curt: every talk line changes (no song, no Games)", len(set(ls.values())) == 7 and "No song" in ls["jt_b"] and "go" in ls["jarl"].lower(), lines=ls)
+        T.step("the trader charges +25% (tea 14 -> 18)", p1 == 18 and p0 == 14, base=p0, dark=p1)
+        T.ev("window.__hd2d.setTime(0.5)"); frames(6); shot("jt_dark_day")
+        T.ev("window.__hd2d.setTime(0.0)"); frames(6); shot("jt_dark_night")
+        a = load("jotunheim", "&jtq=befriend"); d2 = sv()["dark"]
+        T.step("a befriended Stonehollow is not dark (the flag is the conquer path only)", (not d2["on"]) and d2["flames"] == 2 and d2["litCold"] > 0, dark=d2)
+        # ---- B3 The Glow Pools slide puzzle: solvable, resettable, never a soft lock (the layout is searched here with the same rules as game/jotunheim.js pzSlide)
+        load("barrow", "&jtq=befriend", spawn="pools"); L = sv()["pz"]["layout"]
+        P = {tuple(x) for x in L["pillars"]}; NC, NR, DOOR = L["cols"], L["rows"], L["door"]
+
+        def pz_slide(c, r, d):
+            dc, dr = {"N": (0, 1), "S": (0, -1), "E": (1, 0), "W": (-1, 0)}[d]; k = 0
+            while True:
+                nc, nr = c + dc, r + dr
+                if nr >= NR: return "goal" if c == DOOR else ((c, r) if k else None)
+                if nr < 0: return None if r == -1 else (c, -1)
+                if nc < 0 or nc >= NC or (nc, nr) in P: return (c, r) if k else None
+                c, r, k = nc, nr, k + 1
+
+        def pz_moves(st):
+            if st == "bank": return [(("N", c), pz_slide(c, -1, "N")) for c in range(NC) if pz_slide(c, -1, "N")]
+            return [(d, t) for d in "NSEW" for t in [pz_slide(st[0], st[1], d)] if t]
+
+        def pz_norm(t): return "bank" if isinstance(t, tuple) and t[1] == -1 else t
+        dist, prev, q = {"bank": 0}, {}, ["bank"]
+        while q:
+            st = q.pop(0)
+            if st == "goal": continue
+            for m, t in pz_moves(st):
+                t = pz_norm(t)
+                if t not in dist: dist[t] = dist[st] + 1; prev[t] = (st, m); q.append(t)
+        rev = {}
+        for st in dist:
+            if st == "goal": continue
+            for m, t in pz_moves(st): rev.setdefault(pz_norm(t), set()).add(st)
+
+        def can_reach(target):
+            seen, stack = {target}, [target]
+            while stack:
+                for x in rev.get(stack.pop(), ()):
+                    if x not in seen: seen.add(x); stack.append(x)
+            return seen
+        cg, cb = can_reach("goal"), can_reach("bank")
+        dead = [st for st in dist if st != "goal" and (st not in cg or st not in cb)]
+        T.step("the slide puzzle is solvable in 5+ moves and has no dead end (every reachable stop reaches both the far door and the bank)", "goal" in dist and dist["goal"] >= 5 and not dead and len(dist) >= 12, moves=dist.get("goal"), dead=dead, stops=len(dist))
+        hx, hz = 7.2, -22.0
+        T.step("the heart-ice shard (hi_1) can be reached from a stop cell of the puzzle", any(st != "goal" and st != "bank" and st in dist and ((L["x0"] + st[0] * L["cell"] - hx) ** 2 + (L["z0"] - st[1] * L["cell"] - hz) ** 2) ** 0.5 < 1.6 for st in dist), hi=[hx, hz])
+        sol, st = [], "goal"
+        while st != "bank": st, m = prev[st]; sol.append(m)
+        sol.reverse()
+
+        def cell_xz(c, r): return L["x0"] + c * L["cell"], L["z0"] - r * L["cell"]
+
+        def pz_go(d, col=None):
+            if col is not None:
+                bx, bz = cell_xz(col, -1); walk_to(bx, bz)
+            ok = T.ev(f"window.__hm.jot.qaPzGo('{d}')")
+            until("window.__hm.jot.qa().pz.st === 'idle'", 30)
+            return ok, T.ev("(() => { const p = window.__hd2d.ctx.player; return [p.x, p.z, p.y]; })()")
+        ok, pos = pz_go("N", 4)
+        T.step("blocked: from the bank a pillar in front of the cell stops you (no slide)", not ok and sv()["pz"]["st"] == "idle" and sv()["pz"]["moves"] == 0, go=ok, pz=sv()["pz"]["moves"])
+        bad = None; cur = "bank"
+        for i, m in enumerate(sol):
+            d, col = (m[0], m[1]) if isinstance(m, tuple) else (m, None)
+            t = pz_slide(col, -1, "N") if col is not None else pz_slide(cur[0], cur[1], d)
+            ok, pos = pz_go(d, col)
+            ex = (0.0, -24.4) if t == "goal" else cell_xz(*t)
+            if not ok or abs(pos[0] - ex[0]) > 0.25 or abs(pos[1] - ex[1]) > 0.25: bad = (i, m, ok, pos, ex); break
+            cur = pz_norm(t) if t != "goal" else "goal"
+            if cur == "bank": cur = (t[0], -1)
+        T.step("walking the solution (" + " ".join(m if isinstance(m, str) else m[0] + str(m[1]) for m in sol) + ") ends up the far door's stair", bad is None and sv()["pz"]["solved"] and pos[1] < -23.6 and pos[2] > 2.0, bad=bad, pos=pos, pz=sv()["pz"])
+        T.step("solved: the pools are plain floor for good (no slide, +40 gold, found.tb_slide)", (not sv()["pz"]["on"]) and T.ev("window.__hm.S.found.tb_slide") == 1 and not T.ev("window.__hm.jot.qaPzGo('N')"), pz=sv()["pz"])
+        load("barrow", "&jtq=befriend", spawn="pools"); bx, bz = cell_xz(0, -1); walk_to(bx, bz); T.ev("window.__hm.jot.qaPzGo('N')"); until("window.__hm.jot.qa().pz.st === 'idle'", 30)
+        a1 = sv()["pz"]; p1 = T.ev("(() => { const p = window.__hd2d.ctx.player; return [p.x, p.z]; })()")
+        T.step("a first slide stops at the top of column 0 (a fresh save has the puzzle live)", a1["on"] and abs(p1[0] - cell_xz(0, 3)[0]) < 0.2 and abs(p1[1] - cell_xz(0, 3)[1]) < 0.2, pz=a1, pos=p1)
+        jt("qaSpot('pzreset')"); frames(3); p2 = T.ev("(() => { const p = window.__hd2d.ctx.player; return [p.x, p.z]; })()"); a2 = sv()["pz"]
+        T.step("reset: the ice runes pull you back to the bank", a2["resets"] == 1 and p2[1] > -12.2 and a2["st"] == "idle", pz=a2, pos=p2)
+        POS = "(() => { const p = window.__hd2d.ctx.player; return [p.x, p.z]; })()"
+        walk_to(cell_xz(0, -1)[0], -11.6); pg.keyboard.down("w")
+        got = until("window.__hm.jot.qa().pz.moves >= 2", 15); pg.keyboard.up("w"); until("window.__hm.jot.qa().pz.st === 'idle'", 30); p3 = T.ev(POS)
+        T.step("real input: pushing the stick north off the bank starts the slide to the top of column 0", got and abs(p3[0] - cell_xz(0, 3)[0]) < 0.25 and abs(p3[1] - cell_xz(0, 3)[1]) < 0.25, pos=p3)
+        pg.keyboard.down("d")
+        got = until("window.__hm.jot.qa().pz.moves >= 3", 15); pg.keyboard.up("d"); until("window.__hm.jot.qa().pz.st === 'idle'", 30); p4 = T.ev(POS)
+        T.step("real input: pushing east along the top row slides until the pillar stops you (cell 1, 3)", got and abs(p4[0] - cell_xz(1, 3)[0]) < 0.25 and abs(p4[1] - cell_xz(1, 3)[1]) < 0.25, pos=p4)
+        T.ev("window.__hd2d.setTime(0.5)"); walk_to(*cell_xz(3, -1)); ok, pos = pz_go("N"); T.ev("window.__hd2d.ctx.player.x = 0"); frames(3); shot("jt_slide_pools")
         T.step("no JS errors in the Jotunheim run", not [e for e in errors if "jotunheim" in e.lower() or "jotun" in e.lower()], errs=errors[-3:])
         shot("jt_ring")
         a = load("jotunheim"); T.ev("window.__hd2d.setTime(0.0)"); frames(6); shot("jt_night")
