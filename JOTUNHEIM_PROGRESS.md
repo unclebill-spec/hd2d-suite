@@ -62,7 +62,7 @@ New `MERIT` keys (3.12): `jt_gate 60, tollstones 60, jt_contract 60, barrow_c 12
 ## Bosses and rares (story 7, 8)
 | id | what | scale | notes |
 |---|---|---|---|
-| `hrimgard` | **Hrimgard the Unthawed** (boss, B9) | 6x (decision 4) | only plate in the arc; P1 ground slam rings + cold-fire breath cone; P2 (60%) 2 ice golems + the floor freezes (slide); P3 (25%) the snuffed braziers relight one by one, snuff them mid-fight to stop his heal. `plate: true, element: "ice"`, HP x10 base |
+| `hrimgard` | **Hrimgard the Unthawed** (boss, B9) | 7x (decision 4, Cozy Builder's ruling) | only plate in the arc; P1 ground slam rings + cold-fire breath cone; P2 (60%) 2 ice golems + the floor freezes (slide); P3 (25%) the snuffed braziers relight one by one, snuff them mid-fight to stop his heal. `plate: true, element: "ice"`, HP x10 base |
 | `ormgar` | Rime Berserker Chief Ormgar (mini-boss, B6) | 3x | two ice axes, frenzy at 50%; `hi_2` behind his seat |
 | `frost_troll` (gate foe) | The Barred Gate troll | 2x | throws ice chunks |
 | `rimecaptain` | Hjordis Icejaw (conquer) | 3x | shield wall, yields at 25% |
@@ -85,8 +85,8 @@ Same spirit as the Svartalfheim decisions: befriend vs conquer is the player's c
 1. **Asgard mirror: yes.** `lockRival(S,"asgard")` / `moodUp(S,"asgard")` are mirrored: Asgard's doc checks `rivals.asgard` / `realm_mood.asgard` the same way and gets the same three paths (befriend, conquer, contract for locked players).
 2. **Vanaheim swing:** `moodUp(S,"vanaheim")` means **more Realm Favor and one skipped step** in Vanaheim. **No discounts.** (Exact numbers and which step get picked when Vanaheim's hooks are written; keep it to those two things.)
 3. **Contract path: keep** *Rime Wages* (`jt_hire`).
-4. **Hrimgard is 6x**, to match Gorrak (`ENEMIES.hrimgard.scale = 6`; the story's 7x is superseded).
-5. **Ulfar is 2.4x in combat** (3x in town). Fine.
+4. **Hrimgard stays 7x**, as the story says (`ENEMIES.hrimgard.scale = 7`). Cozy Builder ruled this on Oct 16, overriding the earlier 6x-to-match-Gorrak call; the Big sheets list already has him at 7x.
+5. **Ulfar is 2.4x in combat** (3x in town), done with the engine's `combat_scale` 2.4 on his one sheet: no second combat sheet.
 6. **One active companion at a time**: Ulfar and Dagna don't both follow. They swap at the Bifrost Gatekeepers' Guild desk or at any inn (already built for Lumi / Dagna / Tobble in `svartalfheim_companions.js`: add `ulfar` to `COMP`).
 7. **Halvard does not lose Kolbrun's horn.** Only the copper key is lost (to avoid too many lost keys). *The Barred Gate*: Halvard hands the horn over straight (no "wrong drawer" step), stage 1 keeps `jg_asked` / `jg_troll`; `jg_horn` is set when he gives it.
 8. **The Barrow is two areas, `barrow` and `barrow2`**, like the Clockwork Deep (`barrow` B1-B4 with the Avalanche Run, `barrow2` B5-B9: Frozen Echo, Berserker Hall, Rune Bridge, Waystone Crypt, Throne Barrow with Hrimgard). The area list is now 5 areas.

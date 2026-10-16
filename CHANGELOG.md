@@ -6,8 +6,8 @@ Dates are America/New_York. Newest first. Keep this current with every change yo
 - **1. Asgard mirror: yes.** The lock and mood calls are mirrored with the same three paths (befriend, conquer, contract for locked players).
 - **2. "Vanaheim easier"** = more Realm Favor and one skipped step in Vanaheim. No discounts.
 - **3. Contract path kept:** *Rime Wages* stays.
-- **4. Hrimgard is 6x**, to match Gorrak (the story said 7x).
-- **5. Ulfar is 2.4x in combat** (3x in town).
+- **4. Hrimgard stays 7x**, as the story says (Cozy Builder's ruling, Oct 16; replaces the earlier 6x call).
+- **5. Ulfar is 2.4x in combat** (3x in town) via the engine's `combat_scale` 2.4, with no second sheet.
 - **6. One active companion at a time:** Ulfar and Dagna don't both follow; they swap at the Bifrost Gatekeepers' Guild desk or at any inn.
 - **7. Halvard does not lose the horn:** only the copper key is lost, to avoid too many lost keys.
 - **8. The Barrow is two areas, `barrow` and `barrow2`,** like the Clockwork Deep (area list is now 5).
