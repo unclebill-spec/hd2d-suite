@@ -83,6 +83,15 @@ class Smoke:
     def wait(self, js, timeout=90):
         self.pg.wait_for_function(js, timeout=timeout * 1000)
 
+    def until(self, js, timeout=150):
+        """wait for a condition that depends on GAME time (storm / rift / gust / vent timers, pad polls): the game clock runs slow on a
+        busy box (dt is clamped per frame), so a fixed pause flakes. Returns True / False and never raises: the step that follows reports the state."""
+        try:
+            self.pg.wait_for_function(js, timeout=timeout * 1000)
+            return True
+        except Exception:
+            return False
+
     def idle(self, timeout=90):
         self.wait("window.__hm.ctx && !window.__hm.busy && window.__hd2d && window.__hd2d.ready", timeout)
 
@@ -105,7 +114,9 @@ class Smoke:
         """walk up to an NPC and press E until the dialogue with that NPC has been read to the end"""
         for ti, off in enumerate(((0, 1.0), (1.0, 0), (-1.0, 0), (0, -1.0), (0.7, 0.7), (-0.7, 0.7), (0, 1.0), (1.0, 0), (-1.0, 0), (0, -1.0))):
             if ti == 6:   # every spot failed (a slow box, or a storm rift's foe in the way): let things settle, then try the spots once more
-                self.pg.wait_for_timeout(2500); self.idle()
+                self.pg.wait_for_timeout(2500); self.idle(); self.until("!window.__hm.dlg && !window.__hm.busy", 20)
+                # the player can be wedged inside a collider by an earlier teleport (a storm rift seal puts you 1.4 m off the rift): stand beside the NPC
+                self.ev(f"(() => {{ const c = window.__hm.ctx, a = c.npc('{npc_id}'), p = c.player; if (a) {{ p.x = a.x; p.z = a.z + 1.3; p.y = c.heightAt(p.x, p.z); c.stopWalk(); }} }})()")
             a = self.ev(f"(() => {{ const a = window.__hm.ctx.npc('{npc_id}'); return a ? [a.x, a.z] : null; }})()")
             if not a:
                 raise AssertionError(f"no npc {npc_id} in {self.ev('window.__hm.area')}")
@@ -1688,8 +1699,7 @@ def run(out, simscale=4, size=(960, 540), segs=SEGS):
                 q.tap("#btnOpts"); q.wait_for_timeout(300); q.tap("#btnHand"); q.wait_for_timeout(200); q.tap("#optsClose"); q.wait_for_timeout(200)
                 # controller on the phone: pad hides while it is used, a touch brings it back
                 T.ev("__padPlug(true)"); T.ev("__padAxes(0, 1)"); q.wait_for_timeout(800)
-                try: T.wait("getComputedStyle(document.getElementById('pad')).display === 'none'", 20)   # the next poll hides it; slow frames on a busy box need longer than a fixed pause
-                except Exception: pass
+                T.until("getComputedStyle(document.getElementById('pad')).display === 'none'", 30)   # the next poll hides it; slow frames on a busy box need longer than a fixed pause
                 T.ev("__padAxes(0, 0)"); q.wait_for_timeout(300)
                 hid = T.ev("getComputedStyle(document.getElementById('pad')).display === 'none'")
                 tap(195, 150); q.wait_for_timeout(300)
@@ -1945,7 +1955,7 @@ def run(out, simscale=4, size=(960, 540), segs=SEGS):
                 T.ev("window.__hm.storms.force('off'); window.__hm.peace = false; window.__hm.rifts.setTimer(10.5)")   # peace off would let the 6.5 storm calendar toast over the fox's warning: storms off for this step
                 T.wait("window.__hm.rifts.warned", 30)
                 wn = T.ev("({ warn: window.__hm.pets.state().warned, toast: document.getElementById('toast').innerText, next: window.__hm.rifts.nextPos, open: !!window.__hm.rifts.cur })")
-                T.ev("window.__hm.rifts.setTimer(0.01)"); T.wait("!!window.__hm.rifts.cur", 30)
+                T.ev("window.__hm.rifts.setTimer(0.01)"); T.until("!!window.__hm.rifts.cur", 60)
                 op = T.ev("window.__hm.rifts.state().rift")
                 T.ev("window.__hm.rifts.close(false, true); window.__hm.peace = true; window.__hm.storms.force(undefined)")
                 T.step("lantern-fox Rift-sense: the tail flares red with a direction ~10 s before a random rift opens, and the rift opens where it pointed",
@@ -2229,7 +2239,7 @@ def run(out, simscale=4, size=(960, 540), segs=SEGS):
                        and sp["wx"] == "riftstorm" and sp["auto"] and sp["timer"] <= 20.5, day=day_ok, storm=st, toast=toastq[:160], spots=sp)
                 T.step("storm-only rift spots at the Crossing (5) sit clear of the nine arches, the Vanaheim swirl, the Den yard, the skiff landing, the waystone and Halvard's kiosk (>= 2.5 m)",
                        sp["n"] == 5 and sp["md"] >= 2.5, spots=sp)
-                T.wait("!!window.__hm.rifts.cur", 150)
+                T.until("!!window.__hm.rifts.cur", 150)
                 rs = T.ev("window.__hm.rifts.state().rift"); ot = T.ev("document.getElementById('toast').innerText")
                 g0 = T.ev("window.__hm.S.merit.gate || 0"); mul = T.ev("window.__hm.combat.M.riftMarkMul || 0")
                 tier = rs["tier"]; ok1 = seal_cur()
@@ -2238,9 +2248,10 @@ def run(out, simscale=4, size=(960, 540), segs=SEGS):
                 T.step("a storm rift opens by itself within ~20 s at a storm spot ('The storm tears a rift open nearby!' family); sealing it pays Rift Marks x1.25 (on top of the fox) and counts 1 for the storm",
                        rs and rs["inStorm"] and any(abs(rs["pos"][0] - x) < 1.5 and abs(rs["pos"][1] - z) < 1.5 for x, z in T.ev("window.__hm.rifts.pool().spots"))
                        and ok1 and g1 - g0 == want and st1["run"]["sealed"] == 1, rift=rs, toast=ot[:80], marks=[g0, g1, want], storm=st1["run"])
-                T.wait("window.__hm.storms.state().cracks >= 1", 150)
+                T.until("window.__hm.storms.state().cracks >= 1", 150)
                 ck = T.ev("window.__hm.storms.state()")
                 T.step("storm sky: rift_tear_minor cracks high above, cold-fire motes and short violet / red point-light flashes every 6-10 s (no bloom, no screen flash)", ck["cracks"] >= 1, storm=ck)
+                T.idle(); T.until("!window.__hm.ctx.walking() && !window.__hm.busy", 30)  # settle after storm rift seal before talking (nav flake at talk-range edge)
                 pg_, fh = T.talk("gatewright", keep_open=True)
                 pages_h = T.ev("window.__hm.dlg.pages.slice(0, 2)")
                 ch = T.to_choice()
