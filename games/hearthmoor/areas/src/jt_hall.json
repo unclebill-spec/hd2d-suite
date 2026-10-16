@@ -370,7 +370,7 @@
    "name": "Hall giant",
    "pos": [
     -7.8,
-    -1.4
+    1.8
    ],
    "facing": "right",
    "behavior": "idle",

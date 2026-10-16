@@ -171,6 +171,8 @@ PLACE = {
 # standing near them (check_scene colours: crop colours / source colours <= 2). The lights stay; only their reach shrinks.
 LAMP_CAP = {"longhouse": 3.0, "rune_standing_stone": 3.2, "cold_brazier": 4.5, "warm_lantern": 4.0, "fur_stall": 3.0, "ice_lake": 3.5, "glow_ice_pool": 2.0, "frost_rune_pillar": 3.0, "ice_crystal_cluster": 3.0}
 
+LAMP_CAP_AREA = {"jotunheim": LAMP_CAP, "rimecaves": LAMP_CAP, "jt_hall": {**LAMP_CAP, "warm_lantern": 3.0}}   # the hall: diner2 sits 3.2 m from a lantern
+
 
 def place(area):
     import base64, math
@@ -245,7 +247,7 @@ def place(area):
             for i, j in cells(x, z, hw * 0.8, hd * 0.8): d[j * W + i] = -32768
         mk = pc["markers"]
         for lp in mk.get("lamps", []):
-            sc["lamps"].append({"pos": [x + lp[0], y + lp[1], z + lp[2]], "range": min(mk.get("lamp_range", 5.0), LAMP_CAP.get(name, 9.0)) if area in ("jotunheim", "rimecaves") else mk.get("lamp_range", 5.0), "kind": name,
+            sc["lamps"].append({"pos": [x + lp[0], y + lp[1], z + lp[2]], "range": min(mk.get("lamp_range", 5.0), LAMP_CAP_AREA[area].get(name, 9.0)) if area in LAMP_CAP_AREA else mk.get("lamp_range", 5.0), "kind": name,
                                 "color": mk.get("lamp_color", "#a45cf0"), "fixed": mk.get("lamp_fixed", 0.5), "jot_art": True})
         print(f"  {area}: {name} at ({x}, {z})")
     C["data"] = base64.b64encode(d.tobytes()).decode()

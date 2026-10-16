@@ -40,11 +40,11 @@ Object.assign(ENEMIES, {
   rime_berserker: { name: 'Rime Berserker', hp: 90, dmg: 13, speed: 2.0, reach: 1.5, windup: 0.4, cd: 1.4, aggro: 7.5, r: 0.4, push: 0.5, elite: true },
 });
 Object.assign(XP, { frost_troll: 50, ice_golem: 60, avalanche_golem: 85, rime_berserker: 80 });
-SPAWNS.rimecaves = [   // giants are tall: foes stand north of the camera's first view (off screen) and >= 3.5 m apart (phone portrait shows them at the top; overlapping giants fail sprites_sharp)
+SPAWNS.rimecaves = [   // giants are tall: day foes stand clear of the braziers / ice walls (phone portrait shows them at the top), night foes anywhere north of the camera's first view (off screen) and >= 3.5 m apart (phone portrait shows them at the top; overlapping giants fail sprites_sharp)
   { id: 'rc_troll0', role: 'frost_troll', pos: [-10.5, -11.3] }, { id: 'rc_golem1', role: 'ice_golem', pos: [-7.0, -11.3] },
-  { id: 'rc_zerk0', role: 'rime_berserker', pos: [-3.5, -11.3], night: true }, { id: 'rc_avl0', role: 'avalanche_golem', pos: [0.0, -9.6] },
-  { id: 'rc_zerk1', role: 'rime_berserker', pos: [3.5, -11.3], night: true }, { id: 'rc_golem0', role: 'ice_golem', pos: [7.0, -11.3] },
-  { id: 'rc_troll1', role: 'frost_troll', pos: [10.5, -11.3] },
+  { id: 'rc_golem0', role: 'ice_golem', pos: [-3.5, -11.3], night: true }, { id: 'rc_avl0', role: 'avalanche_golem', pos: [0.0, -9.6] },
+  { id: 'rc_zerk0', role: 'rime_berserker', pos: [3.5, -11.3], night: true }, { id: 'rc_zerk1', role: 'rime_berserker', pos: [7.0, -11.3], night: true },
+  { id: 'rc_troll1', role: 'frost_troll', pos: [11.4, -11.3] },
 ];
 
 // ------------------------------------------------------------------ items + Grimsa's stall (story 5.5; prices are first guesses)
