@@ -427,10 +427,10 @@ def steps(b, url, T, size, errors, rep, stub=None, shots=None):
         shot("jt_ulfar")
         # ---- the goat pens: two pen goats and Clatter; jt_goat (an oat-cake a day, three days); the mount stays deferred
         load("jotunheim", "&jtq=done"); gq = sv()
-        T.step("the pen has two pen goats and Clatter on the goat sheets", sorted((g[0], g[1]) for g in gq["goats"]) == [("clatter", "clatter"), ("pen_goat1", "goat"), ("pen_goat2", "goat")], goats=gq["goats"])
+        T.step("the pen has a pen goat and Clatter on the goat sheets (a second pen goat does not fit the phone / main views without hiding behind Brynja)", sorted((g[0], g[1]) for g in gq["goats"]) == [("clatter", "clatter"), ("pen_goat1", "goat")], goats=gq["goats"])
         frames(40)
         gg = sv()["goats"]
-        T.step("the goats stay inside the fence line (x -11.4..-6.2, z 1.2..3.1) and clear of Brynja", all(-11.4 <= g[2] <= -6.2 and 1.2 <= g[3] <= 3.1 and ((g[2] + 9.0) ** 2 + (g[3] - 0.8) ** 2) ** 0.5 > 1.0 for g in gg), goats=gg)
+        T.step("the goats stay in the pen's far-left column (x -12..-10.7, z -4.0..1.5), north of the fence and clear of Brynja", all(-11.7 <= g[2] <= -10.7 and -1.6 <= g[3] <= 1.5 and ((g[2] + 9.0) ** 2 + (g[3] - 0.8) ** 2) ** 0.5 > 1.5 for g in gg), goats=gg)
         jt("qaTalk('goatwife')"); fin(); a = sv()["goat"]
         T.step("Brynja offers The Goat Who Chose You (jt_goat 1) and hands over the first oat-cake", a["q"] == 1 and a["cake"] == 1, goat=a)
         jt("qaSpot('clatter')"); fin(); a = sv()["goat"]

@@ -287,8 +287,8 @@ MARKER_HOOKS.push((id, S) => {
 
 // ------------------------------------------------------------------ the area's own look: cold fire on the braziers, rune pulses, the lake, a gloom light
 const COLD = ['#7fd4ff', 4.2, 4.2];   // colour, intensity, range
-// Stonehollow's pen goats + Clatter (runtime actors on the jt_goats sheet): inside the fence line at z 3.4, clear of Brynja (-9, 0.8)
-const GOATS = [['pen_goat1', [-10.3, 2.3], 0.7, 'goat', 'pen goat'], ['pen_goat2', [-7.3, 2.3], 0.7, 'goat', 'pen goat'], ['clatter', [-8.8, 2.4], 0.5, 'clatter', 'Clatter']];
+// Stonehollow's pen goats + Clatter (runtime actors on the jt_goats sheet): north of the fence line (z 3.4) so the fence never hides them, in the far-left column (x -11.2) so they sit outside Brynja's sprite box and the fur stall / trader (they hide anything at x > -8.5)
+const GOATS = [['pen_goat1', [-11.2, -1.1], 0.25, 'goat', 'pen goat'], ['clatter', [-11.2, 1.1], 0.25, 'clatter', 'Clatter']];
 const JT_FX = {
   jotunheim: [['cold_flame', [-2.4, -5.0], 1.0, 1], ['cold_flame', [2.4, -5.0], 1.0, 1],
               ['rune_pulse', [0, -5.4], 0.8, 1], ['rune_pulse', [-5.4, 0.2], 0.8, 0], ['rune_pulse', [5.2, -0.4], 0.8, 0],
@@ -336,14 +336,14 @@ export class Jotunheim {
     }
     if (G.hollows) { const c0 = G.hollows.onCast.bind(G.hollows); G.hollows.onCast = (...a) => { const r = c0(...a); me.onCast(); return r; }; }
   }
-  // ---- the goat pens (story 2.3, 3.9): two pen goats and Clatter inside the fence line at z 3.4 (Brynja stands north of the goats, the goats' stand-in sheet is jt_goats). The mount stays deferred.
+  // ---- the goat pens (story 2.3, 3.9): a pen goat and Clatter inside the fence line at z 3.4 (Brynja stands north of the goats, the goats' stand-in sheet is jt_goats). The mount stays deferred.
   penGoats(ctx) {
     const G = this.G, S = G.S, roles = ctx.actors.meta.roles;
     for (const [id, pos, radius, role, name] of GOATS) {
       if (!roles[role]) continue;
       const a = ctx.actors.add({ role, id, name, pos: pos.slice(), behavior: 'wander', radius, talkable: false, turn: false }); a.home = pos.slice();
     }
-    this.spot({ id: 'clatter', pos: [-8.7, 2.5], r: 2.0, label: () => (q(S, 'jt_goat') ? 'Clatter, the young brown goat (E / A)' : 'a young brown goat with a bell (E / A)'), act: () => this.clatter() });
+    this.spot({ id: 'clatter', pos: [-10.8, 1.2], r: 1.8, label: () => (q(S, 'jt_goat') ? 'Clatter, the young brown goat (E / A)' : 'a young brown goat with a bell (E / A)'), act: () => this.clatter() });
   }
   clatter() {
     const G = this.G, S = G.S, f = flags(S), st = q(S, 'jt_goat'), day = S.day || 0, i = S.inv || {};
