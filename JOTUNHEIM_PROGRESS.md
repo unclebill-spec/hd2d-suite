@@ -1,6 +1,6 @@
 # Jotunheim (Stonehollow, the Rime Caves, the Titan's Barrow): build progress
 
-RESUME HERE (Oct 16 2026, branch `realm-jotunheim` from main 2de49ce, worktree /workspace/hd2d-jotunheim): SCAFFOLD ONLY. Done: this file;
+RESUME HERE (Oct 16 2026, branch `realm-jotunheim` from main 2de49ce, worktree /workspace/hd2d-jotunheim): SCAFFOLD ONLY; section 13 decisions answered below (Oct 16, 12:40 AM). Done: this file;
 `tools/hearthmoor/jot_art.py` (skeleton, placeholder tables, refuses to run without READY.txt); `game/jotunheim.js` (stub, registers
 `G.jot`, no areas, no quests); one-line hooks in `game/game.js` and `build.py` (tagged `[JOTUNHEIM]`); `sw.js` regenerated for the new module.
 **HOLD all area builds** until `/workspace/hearthmoor-staging/art/jotunheim/READY.txt` exists (at scaffold time the folder did not exist at
@@ -24,7 +24,8 @@ Source of truth: `/workspace/hearthmoor-staging/story/jotunheim.md` (594 lines).
 | `jotunheim` | Stonehollow (town hub) | 24 x 22 m | not built (holds for art). Welcome Ring `[0,4]`, ice arch to Bifrost `[0,10.6]` (spawn `from_bifrost` `[0,9.2,"up"]`), hall door `[0,-9.6]`, goat pens `[-8.5,-2]`, frozen lake `[8,-3]`, trader stall `[-6,5.5]`, cave stair `[10,-9]`, snow path `[-11,-8]`, hot spring `jt_spring` `[-10.5,-9.5]` |
 | `jt_hall` | Hall of Hearthstones | 14 x 18 m | not built. High seat `[0,-6.5]`, cold-fire hearth `[0,-2]`, ice-cellar trapdoor `[5,-7]` (the false Heart; clues `jh_heart`, `jh_rime`, `jh_trail`) |
 | `rimecaves` | The Rime Caves | 20 x 16 m | not built. Solvi's rune-hall `[-6,-4]`, Barrow mouth `[0,-7.5]` (3 rune locks), 5 glow pools, `rc_spring` behind a frozen waterfall (fire spell melts it), rares by the far pool |
-| `barrow` | The Titan's Barrow (dungeon, 9 rooms B1..B9) | 9 rooms | not built. Probably two areas like the Clockwork Deep (`barrow` B1-B4, `barrow2` B5-B9); decide when the layout is drawn (a spawn arch / phone view limit, one boss arena per area) |
+| `barrow` | The Titan's Barrow, part 1 (B1-B4) | 4 rooms | not built. Door, Hall of Shields, Glow Pools, Avalanche Run. Decision 8: two areas like the Clockwork Deep |
+| `barrow2` | The Titan's Barrow, part 2 (B5-B9) | 5 rooms | not built. Frozen Echo, Berserker Hall, Rune Bridge, Waystone Crypt, the Throne Barrow (Hrimgard's arena) |
 
 Also needed at Bifrost (no new area): the sealed arch `fx: "gate_jotunheim"` at `[5.0,-11.9]` moves from `game.sealed` to `game.portals`
 (rect `[4.25,-12.3,5.75,-11.45]`, `to: "jotunheim"`, spawn `from_bifrost`), `GATES.jotunheim` key `['embassy', 1]` (matches the story).
@@ -61,7 +62,7 @@ New `MERIT` keys (3.12): `jt_gate 60, tollstones 60, jt_contract 60, barrow_c 12
 ## Bosses and rares (story 7, 8)
 | id | what | scale | notes |
 |---|---|---|---|
-| `hrimgard` | **Hrimgard the Unthawed** (boss, B9) | 7x (open question 4) | only plate in the arc; P1 ground slam rings + cold-fire breath cone; P2 (60%) 2 ice golems + the floor freezes (slide); P3 (25%) the snuffed braziers relight one by one, snuff them mid-fight to stop his heal. `plate: true, element: "ice"`, HP x10 base |
+| `hrimgard` | **Hrimgard the Unthawed** (boss, B9) | 6x (decision 4) | only plate in the arc; P1 ground slam rings + cold-fire breath cone; P2 (60%) 2 ice golems + the floor freezes (slide); P3 (25%) the snuffed braziers relight one by one, snuff them mid-fight to stop his heal. `plate: true, element: "ice"`, HP x10 base |
 | `ormgar` | Rime Berserker Chief Ormgar (mini-boss, B6) | 3x | two ice axes, frenzy at 50%; `hi_2` behind his seat |
 | `frost_troll` (gate foe) | The Barred Gate troll | 2x | throws ice chunks |
 | `rimecaptain` | Hjordis Icejaw (conquer) | 3x | shield wall, yields at 25% |
@@ -79,15 +80,21 @@ Barrow rooms B1-B9 (7): Door (2 trolls) / Hall of Shields (brazier 1) / Glow Poo
 5. Conquer: you ignore the clues; Solvi says `"You know it's hollow. Everyone can hear it."` Contract: Skuli mentions it, no quest; `S.evidence.jotunheim` still counts if you look.
 Also from the Svartalfheim list: the **Frozen Echo** (B5, Veyra's `veyra_frost` voice, same reveal-queue timing as `alfheim.md` 6.10) and Veyra between realms (6.5, next area load after `jt_resolved`).
 
-## Open questions (story section 13; the user's "section 15" is Svartalfheim's, which Cozy Builder already answered)
-1. **Asgard doc mirror:** this doc calls `lockRival(S,"asgard")` / `moodUp(S,"asgard")`; Asgard's doc must check `rivals.asgard` / `realm_mood.asgard` the same way. OK to assume Asgard gets the same three paths?
-2. **Vanaheim swing:** `moodUp(S,"vanaheim")` on befriend, but Vanaheim is already built. What should "easier" mean (a discount, a skipped step, more Realm Favor, or replay only)?
-3. **Contract path:** *Rime Wages* mirrors *Hired Hammer*. Keep it or drop it now that two realms use the pattern?
-4. **Hrimgard at 7x:** bigger than Gorrak (6x). Fine, or 6x to match?
-5. **Ulfar's combat scale:** 3x in town, 2.4x in combat so he fits rooms. OK?
-6. **Companions at once:** Ulfar + Dagna possible. (Decided for Svartalfheim: one active at a time; this probably answers it, confirm.)
-7. **Halvard:** he "loses" Kolbrun's horn like the copper key. Too many lost keys before his betrayal?
-Not in the story's list but worth asking: the barrow split (one area or two), and the goat mount's scene support (mounts are not built anywhere yet).
+## Decisions on the story's section 13 open questions (Bill, Oct 16 2026: final, built in)
+Same spirit as the Svartalfheim decisions: befriend vs conquer is the player's choice, rival realm locks mirror both ways, one active companion at a time.
+1. **Asgard mirror: yes.** `lockRival(S,"asgard")` / `moodUp(S,"asgard")` are mirrored: Asgard's doc checks `rivals.asgard` / `realm_mood.asgard` the same way and gets the same three paths (befriend, conquer, contract for locked players).
+2. **Vanaheim swing:** `moodUp(S,"vanaheim")` means **more Realm Favor and one skipped step** in Vanaheim. **No discounts.** (Exact numbers and which step get picked when Vanaheim's hooks are written; keep it to those two things.)
+3. **Contract path: keep** *Rime Wages* (`jt_hire`).
+4. **Hrimgard is 6x**, to match Gorrak (`ENEMIES.hrimgard.scale = 6`; the story's 7x is superseded).
+5. **Ulfar is 2.4x in combat** (3x in town). Fine.
+6. **One active companion at a time**: Ulfar and Dagna don't both follow. They swap at the Bifrost Gatekeepers' Guild desk or at any inn (already built for Lumi / Dagna / Tobble in `svartalfheim_companions.js`: add `ulfar` to `COMP`).
+7. **Halvard does not lose Kolbrun's horn.** Only the copper key is lost (to avoid too many lost keys). *The Barred Gate*: Halvard hands the horn over straight (no "wrong drawer" step), stage 1 keeps `jg_asked` / `jg_troll`; `jg_horn` is set when he gives it.
+8. **The Barrow is two areas, `barrow` and `barrow2`**, like the Clockwork Deep (`barrow` B1-B4 with the Avalanche Run, `barrow2` B5-B9: Frozen Echo, Berserker Hall, Rune Bridge, Waystone Crypt, Throne Barrow with Hrimgard). The area list is now 5 areas.
+9. **The goat mount is deferred**: it goes on the leftovers list. `jt_goat` (*The Goat Who Chose You*) can still be built as a ripple quest whose reward waits for mounts; Clatter stays a pen goat for now.
+
+## Leftovers (deferred on purpose)
+- The goat mount (`S.mounts.goat`, climbing snow slopes): mounts are not built in the engine. Decision 9.
+- Everything in the RESUME HERE list that is blocked on art (READY.txt).
 
 ## Art the story needs (art pack: /workspace/hearthmoor-staging/art/jotunheim/, READY.txt = go)
 At scaffold time `/workspace/hearthmoor-staging/art/jotunheim/` did not exist, so everything below is from the story (2.2, 5, 8, 9), not from a README.

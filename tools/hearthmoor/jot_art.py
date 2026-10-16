@@ -25,7 +25,7 @@ STAGING = Path("/workspace/hearthmoor-staging/art/jotunheim")
 ST = GAME / "art" / "jotunheim"
 ARGS = [a for a in sys.argv[1:] if not a.startswith("--")]
 FORCE = "--force" in sys.argv
-PLANNED = ["jotunheim", "jt_hall", "rimecaves", "barrow"]   # story 2.1 (barrow is the 9-room dungeon, maybe split into barrow / barrow2 like clockdeep)
+PLANNED = ["jotunheim", "jt_hall", "rimecaves", "barrow", "barrow2"]   # story 2.1; the Barrow is two areas (decision 8, like clockdeep / clockdeep2)
 AREAS = ARGS or PLANNED
 
 # PLACEHOLDER tables (fill from the art README). sheet name -> (staging json, {area role: staging role})
@@ -37,7 +37,7 @@ SHEETS = {
 }
 IMAGE = {}   # sheet -> staging png when it is not the json's own image (Svartalfheim: the neon twin)
 EXTRA = {    # sheets only where the fight / scene is (their own frame size)
-    "barrow": {"boss_hrimgard": (ST / "sprite" / "boss_hrimgard.json", {"hrimgard": "hrimgard"}),
+    "barrow2": {"boss_hrimgard": (ST / "sprite" / "boss_hrimgard.json", {"hrimgard": "hrimgard"}),
                "miniboss_ormgar": (ST / "sprite" / "miniboss_ormgar.json", {"ormgar": "ormgar"})},
     "rimecaves": {"rare_frostmother": (ST / "sprite" / "rare_frostmother.json", {"frostmother": "frostmother"}),
                   "rare_avalanche": (ST / "sprite" / "rare_avalanche.json", {"avalanche": "avalanche"})},
@@ -141,7 +141,7 @@ PLACE = {
     "jotunheim": [("coldfire_brazier", [-3.0, 4.0]), ("coldfire_brazier", [3.0, 4.0]), ("rune_stone", [0.0, 8.0])],   # Welcome Ring, near the arch
     "jt_hall": [("coldfire_hearth", [0.0, -2.0], "fixed"), ("glow_orb", [-3.0, 0.0]), ("glow_orb", [3.0, 0.0])],
     "rimecaves": [("ice_pool", [4.0, 2.0]), ("rune_stone", [-6.0, -4.0])],
-    "barrow": [],
+    "barrow": [], "barrow2": [],
 }
 
 
