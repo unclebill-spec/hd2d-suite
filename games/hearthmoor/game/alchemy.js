@@ -4,7 +4,8 @@
 // Potions are bag items brew_<id>: tap one in the bag to drink. Timed brews: one at a time (S.brew = {id, left}), folded
 // into progress.mods() by brewMods. Ingredients: garden herbs (each bloom harvest gives one), moonpetals, red toadstools
 // (Bryony: 3 a day), Bloop's lily pad (1 glow-dew a day), spring water (fill a vial at a hidden spring).
-// Not built (yet): The Cold Cauldron intro quest (Bryony teaches Glowcap + Moonmilk on first talk instead), Bloop's sprite.
+// The Cold Cauldron intro (7.6): find Bloop at Tova's quench, clear+light the vent under Old Gurgle, gather caps+petals,
+// then brew Glowcap. Until then the Still is cold. Bloop's sprite is still pending.
 export const BREWS = {
   glowcap: { name: 'Glowcap Draught', col: '#ff4a3a', heal: 120, yield: 2, about: 'Heals 120 HP. Twice a tonic, half the taste.' },
   coldfire: { name: 'Cold-fire Tonic', col: '#5ab4f0', t: 90, mods: { spellMul: 0.15, spellCd: 0.10 }, about: '90 s: spells +15%, spell cooldowns 10% shorter. Glows neon blue.' },
@@ -46,7 +47,10 @@ const HINTS = {
   moonmilk: "Two moonpetals and a tin of Wren's tea. That's a nap.",
 };
 const NIGHT = (t) => t > 0.8 || t < 0.25;
-const OLD_GURGLE = [-6.0, -3.4], PAD = [-9.2, -2.4], REACH = 1.6;
+const OLD_GURGLE = [-6.0, -3.4], PAD = [-9.2, -2.4], QUENCH = [-1.8, -8.0], REACH = 1.6, VENT_REACH = 2.6;
+const flags = (S) => (S.flags = S.flags || {});
+const cauldronDone = (S) => ((S.quests || {}).cauldron || 0) === 3;
+export const stillLit = (S) => !!flags(S).cc_vent || cauldronDone(S) || !!(S.recipes || {}).glowcap;
 export function brewMods(S, m) {
   const b = S && S.brew, B = b && b.left > 0 && BREWS[b.id]; if (!B || !B.mods) return m;
   for (const [k, v] of Object.entries(B.mods)) { if (k === 'guardMul') m.guardMul = Math.max(0.4, m.guardMul + v); else m[k] = (m[k] || 0) + v; }
@@ -66,6 +70,11 @@ export function brew(G, ids) {
     S.found = S.found || {}; S.found.brew_breadbroth = 1; G.factions && G.factions.onSecret();
     G.toast && G.toast('A secret recipe! The Gnome Council will want to hear about this one.', 2.8);
   }
+  // Cold Cauldron stage 2 → 3: first Glowcap Draught proves Old Gurgle still works
+  if (id === 'glowcap' && (S.quests || {}).cauldron === 2) {
+    G.setQuest('cauldron', 3); S.gold = (S.gold || 0) + 30;
+    G.toast && G.toast("There it is! Glowing like a lighthouse. You're a natural. +30 gold.", 2.8);
+  }
   return { id, n, isNew };
 }
 export function drink(G, id) {
@@ -75,7 +84,7 @@ export function drink(G, id) {
   if (B.heal && C && C.ctx) C.heal(B.heal, true);
   if (B.t) { const was = S.brew && S.brew.left > 0 && BREWS[S.brew.id]; if (was && S.brew.id !== id) G.toast && G.toast(`The ${was.name} fades as the ${B.name} takes hold.`, 2.4); S.brew = { id, left: B.t }; }
   const ctx = C && C.ctx;
-  if (ctx) { if (ctx.effects) ctx.effects.spawn('sparkle_burst', ctx.player.x, ctx.player.y, ctx.player.z + 0.05); if (ctx.addGlow) { const l = ctx.addGlow(ctx.player.x, ctx.player.y, ctx.player.z, { color: B.col, intensity: 6, range: 3, lift: 0.8 }); setTimeout(() => { if (l) l.kill = true; }, 1000); } }
+  if (ctx) { if (ctx.effects) ctx.effects.spawn('sparkle_burst', ctx.player.x, ctx.player.y, ctx.player.z + 0.05); if (ctx.addGlow) { const l = ctx.addGlow(ctx.player.x, ctx.player.y, ctx.player.z, { color: B.col, intensity: 6, distance: 3, lift: 0.8 }); setTimeout(() => { if (l) l.kill = true; }, 1000); } }
   G.audio && G.audio.sfx('pickup'); return true;
 }
 export class Alchemy {
@@ -83,12 +92,27 @@ export class Alchemy {
   attach(ctx, area) {
     this.detach(); this.ctx = ctx; this.area = area; this.pot = [];
     if (area !== 'forge') return;
+    const S = this.G.S, R = S.recipes || {}, q = (S.quests = S.quests || {});
+    // migration: saves that already got free recipes skip the intro
+    if (R.glowcap && R.moonmilk && !q.cauldron) { q.cauldron = 3; const F = flags(S); F.cc_vent = 1; F.cc_bloop = 1; F.cc_coal = 1; }
+    this.relight();
+    // cast beside Old Gurgle lights the cleared vent (same reach as Hollows braziers)
+    if (this.G.hollows && !this._castHook) {
+      this._castHook = 1;
+      const me = this, c0 = this.G.hollows.onCast.bind(this.G.hollows);
+      this.G.hollows.onCast = (...a) => { const r = c0(...a); const p = me.ctx && me.ctx.player; if (p) me.spellAt(p.x, p.z); return r; };
+    }
+  }
+  relight() {
+    for (const f of this.fx) if (f) f.dur = f.t + 0.2; for (const l of this.lights) if (l) l.kill = true; this.fx = []; this.lights = [];
+    const ctx = this.ctx; if (!ctx || this.area !== 'forge') return;
+    if (!stillLit(this.G.S)) return;   // Cold Cauldron: vent blocked, no blue glow yet
     const [x, z] = OLD_GURGLE, y = ctx.heightAt(x, z), gf = ctx.gamefx, has = (n) => gf && gf.meta.effects[n];
     for (const [n, dz, yy] of [['cauldron_pool_blue', 0.05, 0], ['cauldron_fire', 0.3, 0], ['cauldron_brew_blue', 0.02, 0]]) if (has(n)) this.fx.push(gf.spawn(n, x, y + yy, z + dz, { duration: Infinity }));
-    if (ctx.addGlow) this.lights.push(ctx.addGlow(x, y, z, { color: '#2ab4ff', intensity: 6, range: 4.5, lift: 1.0, fadeIn: 0.5 }));
+    if (ctx.addGlow) this.lights.push(ctx.addGlow(x, y, z, { color: '#2ab4ff', intensity: 6, distance: 4.5, lift: 1.0, fadeIn: 0.5 }));
   }
   detach() { for (const f of this.fx) if (f) f.dur = f.t + 0.2; for (const l of this.lights) if (l) l.kill = true; this.fx = []; this.lights = []; this.ctx = null; }
-  zones() { return this.ctx && this.area === 'forge' ? [{ x: OLD_GURGLE[0], z: OLD_GURGLE[1], r: 2.2, src: 'still' }] : []; }
+  zones() { return this.ctx && this.area === 'forge' && stillLit(this.G.S) ? [{ x: OLD_GURGLE[0], z: OLD_GURGLE[1], r: 2.2, src: 'still' }] : []; }
   // timed brew countdown + a few motes in its colour drifting up from the hero
   update(dt) {
     const S = this.G.S, b = S && S.brew; if (!b || !(b.left > 0)) return;
@@ -96,27 +120,83 @@ export class Alchemy {
     const ctx = this.G.combat && this.G.combat.ctx;
     if (ctx && ctx.burst && (this.moteT -= dt) <= 0) { this.moteT = 1.2; ctx.burst('wet_glint_cool', ctx.player.x, (ctx.player.y || 0) + 0.9, ctx.player.z); }
   }
-  near(pt, ctx = this.ctx) { if (!ctx) return false; const p = ctx.player; return Math.hypot(p.x - pt[0], p.z - pt[1]) < REACH; }
+  near(pt, ctx = this.ctx, reach = REACH) { if (!ctx) return false; const p = ctx.player; return Math.hypot(p.x - pt[0], p.z - pt[1]) < reach; }
   springNear(ctx = this.ctx) { const sp = ctx && ctx.scene.game && ctx.scene.game.spring; return sp && sp.pos && this.near(sp.pos, ctx); }
-  nearThing(ctx) { return (this.area === 'forge' && (this.near(OLD_GURGLE, ctx) || this.near(PAD, ctx))) || (!!this.springNear(ctx) && ((this.G.S.inv || {}).vial > 0)); }
+  seekingBloop(S = this.G.S) { return (S.quests || {}).cauldron === 1 && !flags(S).cc_bloop; }
+  nearThing(ctx) {
+    const S = this.G.S;
+    if (this.area === 'forge' && (this.near(OLD_GURGLE, ctx) || this.near(PAD, ctx) || (this.seekingBloop(S) && this.near(QUENCH, ctx)))) return true;
+    return !!this.springNear(ctx) && ((S.inv || {}).vial > 0);
+  }
+  // Cold Cauldron: cast beside Old Gurgle after clearing coal lights the vent (Hollows brazier reach 2.6 m)
+  spellAt(x, z) {
+    const S = this.G.S, F = flags(S);
+    if (this.area !== 'forge' || (S.quests || {}).cauldron !== 1 || !F.cc_bloop || !F.cc_coal || F.cc_vent) return;
+    if (Math.hypot(x - OLD_GURGLE[0], z - OLD_GURGLE[1]) > VENT_REACH) return;
+    F.cc_vent = 1; this.relight();
+    this.G.toast && this.G.toast("(A red flare, then Old Gurgle's blue glow returns. The Still breathes again.)", 2.8);
+    this.G.audio && this.G.audio.sfx('spell'); this.G.drawLog && this.G.drawLog(); this.G.refreshMarkers && this.G.refreshMarkers(); this.G.save && this.G.save();
+  }
   interact() {
-    const G = this.G, S = G.S;
+    const G = this.G, S = G.S, F = flags(S), q = S.quests || {};
     if (this.springNear() && (S.inv.vial || 0) > 0) { G.take('vial', 1); G.give('springwater', 1); return true; }
     if (this.area !== 'forge') return false;
+    // find Bloop in Tova's quench tank
+    if (this.seekingBloop(S) && this.near(QUENCH)) {
+      F.cc_bloop = 1;
+      G.openDialogue({ id: 'smith', name: 'Tova Anvilsong' }, {
+        pages: ['(A blue frog surfaces in the cold fire, blinks at you, and climbs your sleeve.)',
+          "So that's what kept humming in my tank. Take it, take it. It was judging my work."],
+        then: (G2) => { G2.toast && G2.toast('Bloop hops onto your shoulder, spots pulsing violet.', 2.4); G2.drawLog && G2.drawLog(); G2.refreshMarkers && G2.refreshMarkers(); G2.save && G2.save(); },
+      });
+      return true;
+    }
     if (this.near(PAD)) {
+      if (!stillLit(S) || !F.cc_bloop) { G.toast && G.toast("Bloop's lily pad. Empty without the frog.", 2.0); return true; }
       if (S.dew === (S.day || 0)) { G.toast && G.toast("Bloop's lily pad. Tomorrow's dew is still forming.", 2.0); return true; }
       S.dew = S.day || 0; G.give('dewdrop', 1); G.save && G.save(); return true;
     }
-    if (this.near(OLD_GURGLE)) { const a = this.ctx.npc('alchemist'); G.openDialogue(a || { id: 'alchemist', name: 'Old Gurgle' }, this.brewMenu()); return true; }
+    if (this.near(OLD_GURGLE)) {
+      // clear coal from the vent (Cold Cauldron)
+      if (q.cauldron === 1 && F.cc_bloop && !F.cc_coal) {
+        F.cc_coal = 1; G.toast && G.toast('(You shovel the coal cart off the vent. Ash and a faint blue breath.)', 2.6);
+        G.drawLog && G.drawLog(); G.save && G.save(); return true;
+      }
+      if (!stillLit(S)) { G.toast && G.toast('Old Gurgle is cold and grey. The vent under it is choked.', 2.2); return true; }
+      const a = this.ctx.npc('alchemist'); G.openDialogue(a || { id: 'alchemist', name: 'Old Gurgle' }, this.brewMenu()); return true;
+    }
     return false;
   }
   // ---- Bryony (TALK.alchemist)
   bryony() {
-    const G = this.G, S = G.S, R = (S.recipes = S.recipes || {}), q = S.quests || {};
+    const G = this.G, S = G.S, R = (S.recipes = S.recipes || {}), q = S.quests || {}, F = flags(S);
     if (q.forge_riot !== 3) return { pages: ['(Bryony is crouched behind Old Gurgle with a ladle raised, waiting for the shouting to stop.)'] };
-    if (!R.glowcap) return { pages: ["Oh! A customer! Or a hero. Or both? I'm Bryony. This is the Glowfrog Still.", 'Two recipes to start you off: red cap and dew makes a Glowcap Draught. Two moonpetals and a tin of tea makes Moonmilk. Cauldron\'s yours.'],
-      then: () => { R.glowcap = 1; R.moonmilk = 1; G.toast && G.toast('Glowcap Draught and Moonmilk added to your recipe book.', 2.6); G.save && G.save(); } };
-    return { pages: [NIGHT(this.ctx ? this.ctx.clock.t : 0.5) ? "The frogs are up! Night's when the Still really shines. Literally. Mind your eyes." : 'Everything glows if you stir it long enough. Except soup. Soup resists.'],
+    // offer The Cold Cauldron
+    if (!q.cauldron) return {
+      pages: ["Oh! A customer! Or a hero. Or both? I'm Bryony. This is the Glowfrog Still. It's normally much glowier.",
+        "The riot tipped a coal cart over my vent. Old Gurgle's gone cold, and Bloop ran off. He hates shouting.",
+        'Find my frog, light my fire, and bring me one red toadstool and two moonpetals. I\'ll teach you to brew. Deal?'],
+      then: (G2) => { G2.setQuest('cauldron', 1); },
+    };
+    // stage 1: turn-in when ready, else reminder
+    if (q.cauldron === 1) {
+      const ready = F.cc_bloop && F.cc_vent && (S.inv.redcap || 0) >= 1 && (S.inv.moonpetal || 0) >= 2;
+      if (ready) return {
+        pages: ["Bloop! And you lit the vent! And you brought... perfect. Watch. Red cap, dew, stir. Your turn.",
+          "Here's dew, vials, and a tin of tea. Moonmilk is yours: two petals and the tea. Glowcap wants a red cap and dew."],
+        then: (G2) => {
+          G2.take('redcap', 1); G2.take('moonpetal', 2);
+          G2.give('dewdrop', 1); G2.give('vial', 3); G2.give('tea', 1);
+          R.moonmilk = 1; G2.setQuest('cauldron', 2);
+          G2.toast && G2.toast('Moonmilk added to your recipe book.', 2.4);
+        },
+      };
+      return { pages: ['Bloop likes warm and blue. So does everyone, really. Try the forges.'] };
+    }
+    // stage 2+: brew menu (Glowcap still to discover if stage 2)
+    return { pages: [NIGHT(this.ctx ? this.ctx.clock.t : 0.5) ? "The frogs are up! Night's when the Still really shines. Literally. Mind your eyes."
+      : q.cauldron === 2 ? 'Old Gurgle is warm again. Brew a Glowcap Draught: red toadstool and glow-dew. Prove it.'
+        : 'Everything glows if you stir it long enough. Except soup. Soup resists.'],
       choice: { id: 'bryony', options: [
         { label: 'Brew something.', pick: () => this.brewMenu() },
         { label: 'Brew a known recipe again.', pick: () => this.recipesMenu() },
@@ -125,6 +205,7 @@ export class Alchemy {
   }
   brewMenu() {
     const S = this.G.S, pot = this.pot;
+    if (!stillLit(S)) return { pages: ['Old Gurgle is cold. Clear the vent and light it before brewing.'] };
     const left = INGREDIENTS.filter((x) => have(S, x) - pot.filter((p) => p === x).length > 0);
     const name = (x) => (this.G.ITEMS && this.G.ITEMS[x] ? this.G.ITEMS[x].name : x.replace('_', ' '));
     const opts = [];
@@ -155,5 +236,5 @@ export class Alchemy {
     const opts = known.slice(0, 6).map((id) => ({ label: `${BREWS[id].name}: ${BREWS[id].about}`, pick: () => this.stir(keyOf(id)) }));
     return { pages: ['Your recipe book.'], choice: { id: 'still_book', options: [...opts, { label: 'Not now.', cancel: true, pick: () => null }] } };
   }
-  qa() { return { brew: this.G.S.brew, recipes: Object.keys(this.G.S.recipes || {}), fx: this.fx.length }; }
+  qa() { return { brew: this.G.S.brew, recipes: Object.keys(this.G.S.recipes || {}), fx: this.fx.length, lit: stillLit(this.G.S), q: (this.G.S.quests || {}).cauldron || 0 }; }
 }
