@@ -637,7 +637,7 @@ export class Combat {
     let pullF = 1;
     for (const e of this.enemies) {
       const k = e.D.scale || 1;
-      if (k > 1 && (e.state === 'chase' || e.state === 'attack') && dist(e.a, ctx.player) < (e.D.aggro || 6) + 3) pullF = Math.max(pullF, framePullFor(k));
+      if (k > 1 && (e.state === 'chase' || e.state === 'attack' || e.D.framed) && dist(e.a, ctx.player) < (e.D.aggro || 6) + 3) pullF = Math.max(pullF, framePullFor(k));
     }
     if (ctx.framePull) ctx.framePull(pullF);
     for (const e of this.enemies) {

@@ -45,7 +45,7 @@ Object.assign(ENEMIES, {
   avalanche_golem: { name: 'Avalanche golem', hp: 190, dmg: 20, speed: 0.9, reach: 2.0, windup: 1.0, cd: 2.4, aggro: 6, r: 0.6, push: 0.15, heavy: true },
   rime_berserker: { name: 'Rime Berserker', hp: 90, dmg: 13, speed: 2.0, reach: 1.5, windup: 0.4, cd: 1.4, aggro: 7.5, r: 0.4, push: 0.5, elite: true },
   // story 8: the Barrow's three named foes (own sheets via jot_art EXTRA: boss_hrimgard / jtelite). Hrimgard 7x, Ormgar and Hjordis 3x.
-  hrimgard: { name: 'Hrimgard the Unthawed', scale: 7, hp: 1900, dmg: 28, speed: 0.8, reach: 5.5, windup: 0.9, cd: 2.4, aggro: 12, r: 2.0, push: 0.05, heavy: true, slam: true, boss: true,
+  hrimgard: { name: 'Hrimgard the Unthawed', scale: 7, framed: true, hp: 1900, dmg: 28, speed: 0.8, reach: 5.5, windup: 0.9, cd: 2.4, aggro: 12, r: 2.0, push: 0.05, heavy: true, slam: true, boss: true,
               wave: { every: 3, r: 6.5, dmg: 22 }, minion: 'ice_golem', phases: [0.6, 0.25], glow: '#7fd4ff', legendary: true, respawn: 1e9 },
   ormgar: { name: 'Rime Berserker Chief Ormgar', scale: 3, hp: 420, dmg: 19, speed: 1.7, reach: 2.6, windup: 0.5, cd: 1.6, aggro: 9, r: 0.8, push: 0.2, heavy: true, boss: true, respawn: 1e9 },
   hjordis: { name: 'Rime-Captain Hjordis Icejaw', scale: 3, hp: 380, dmg: 17, speed: 1.2, reach: 2.4, windup: 0.6, cd: 1.8, aggro: 9, r: 0.8, push: 0.2, heavy: true, boss: true, trial: true, respawn: 1e9 },

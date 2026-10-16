@@ -307,11 +307,19 @@ def steps(b, url, T, size, errors, rep, stub=None, shots=None):
         T.step("above 50% HP Ormgar is not frenzied", not o0["frenzy"] and o0["speed"] == o0["base"], orm=o0)
         jt("qaHp('ormgar', 0.4)")
         T.step("below 50% HP Ormgar goes into a frenzy (faster)", until("window.__hm.jot.qa().orm.frenzy", 10) and sv()["orm"]["speed"] > o0["base"], orm=sv()["orm"])
+        HEAD = "(() => { const c = window.__hd2d.ctx, a = c.actors.list.find((x) => x.id === 'hrimgard'); if (!a) return null; const p = c.project(a.x, a.y + c.actors.heightM * a.tall, a.z), f = c.project(a.x, a.y, a.z); return { head: Math.round(p.y), feet: Math.round(f.y), top: Math.round(document.querySelector('canvas').getBoundingClientRect().top), pull: +c.pull().toFixed(2) }; })()"
+
+        def framed(tag):
+            until("window.__hd2d.ctx.pull() >= 1.9", 60); h = T.ev(HEAD)
+            T.step(f"Hrimgard {tag}: the camera pulls out for the 7x boss and his head is in frame", h is not None and h["pull"] >= 1.9 and h["head"] >= h["top"] + 4 and h["feet"] > h["head"] + 120, frame=h)
+            shot("jt_hrimgard_" + tag)
         # ---- Hrimgard: P2 frozen floor + golems, P3 relit braziers that mend him until snuffed
         a = load("barrow2", "&jtq=deep"); walk_to(0, -46.0)
         T.step("Hrimgard wakes (phase 1: no slide, no relit braziers)", until("window.__hm.jot.qa().cb.includes('hrimgard')", 10) and sv()["boss"]["phase"] <= 1 and not sv()["boss"]["slide"], boss=sv()["boss"])
+        framed("p1")
         jt("qaHp('hrimgard', 0.55)")
         T.step("below 60% (P2): the floor freezes and two ice golems rise", until("window.__hm.jot.qa().boss.p2 && window.__hm.jot.qa().cb.includes('hr_m1') && window.__hm.jot.qa().cb.includes('hr_m2')", 15), boss=sv()["boss"], cb=sv()["cb"])
+        framed("p2")
         walk_to(-2.0, -46.0); x0 = T.ev("window.__hd2d.ctx.player.x"); jt("qaSlideKick(3.0, 0)"); frames(20); x1 = T.ev("window.__hd2d.ctx.player.x")
         T.step("on the frozen dais you keep sliding after you stop", x1 > x0 + 0.3, x0=x0, x1=x1)
         jt("qaHp('hrimgard', 0.2)")
@@ -322,7 +330,7 @@ def steps(b, url, T, size, errors, rep, stub=None, shots=None):
             jt(f"qaSpot('tbt{i}')")
         h1 = sv()["boss"]["hp"]; frames(60)
         T.step("snuffing all three stops the healing (resettable: you can always snuff them)", sv()["boss"]["relit"] == [0, 0, 0] and sv()["boss"]["hp"] <= h1 + 0.01, boss=sv()["boss"])
-        shot("jt_hrimgard_p3")
+        framed("p3")
         # ---- cairn props use the existing kit (snow_mound)
         a = load("rimecaves", "&jtq=conquer")
         n = T.ev("window.__hd2d.ctx.scene.objects.filter((o) => /snow_mound/.test(o.glb)).length")
