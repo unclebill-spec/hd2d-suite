@@ -120,6 +120,22 @@ export const QUESTS = {
              2: 'Show Orri Flintcog your tempered gear.',
              3: "Tova's forge and Orri's bench are open to you now." },
   },
+  // 6.8 The Cold Cauldron (forge_alchemy.md 7.6): Bryony's Still intro; flags cc_bloop / cc_coal / cc_vent
+  cauldron: {
+    title: 'The Cold Cauldron',
+    giver: 'Bryony Glasswort',
+    side: true,
+    steps: { 1: (S) => { const F = S.flags || {}, inv = S.inv || {};
+               if (!F.cc_bloop) return "Find Bloop, Bryony's glowing frog. Try somewhere warm and blue in the Forge Quarter.";
+               if (!F.cc_vent) return F.cc_coal
+                 ? 'Cast a spell near Old Gurgle to light the cleared vent.'
+                 : 'Clear the coal from the vent under Old Gurgle (E / A), then cast a spell to light it.';
+               const red = Math.min(1, inv.redcap || 0), moon = Math.min(2, inv.moonpetal || 0);
+               if (red < 1 || moon < 2) return `Gather a red toadstool (Hollows) ${red}/1 and moonpetals (Mossglen) ${moon}/2.`;
+               return 'Bring the ingredients back to Bryony at the Glowfrog Still.'; },
+             2: 'Brew a Glowcap Draught at Old Gurgle: red toadstool + glow-dew.',
+             3: 'Old Gurgle bubbles again. Bryony taught you Glowcap Draught and Moonmilk.' },
+  },
   strays: {
     title: 'Strays of the Rift',
     giver: 'Signe Larkspur',
@@ -990,5 +1006,9 @@ export function markerFor(id, S) {
   if (id === 'denkeeper' && q.strays === 1 && F.den_rift) return 'quest_turnin';
   if (id === 'denkeeper' && q.strays === 2 && !F.den_seed && ((S.inv.glowseed || 0) + (S.inv.moonpetal || 0)) > 0) return 'quest_turnin';
   if (id === 'denkeeper' && q.strays === 2 && F.den_seed) return 'quest_turnin';
+  // 6.8 The Cold Cauldron
+  if (id === 'alchemist' && (q.forge_riot || 0) === 3 && !q.cauldron) return 'quest_mark';
+  if (id === 'alchemist' && q.cauldron === 1 && F.cc_bloop && F.cc_vent && (inv.redcap || 0) >= 1 && (inv.moonpetal || 0) >= 2) return 'quest_turnin';
+  if (id === 'alchemist' && q.cauldron === 2) return 'quest_mark';
   return null;
 }

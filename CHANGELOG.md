@@ -2,6 +2,11 @@
 
 Dates are America/New_York. Newest first. Keep this current with every change you push.
 
+## 2026-10-16 — The Cold Cauldron + Bryony's 3/day toadstools
+- **The Cold Cauldron** (`game/alchemy.js`, `QUESTS.cauldron`): after Sparks in the Street, Bryony offers the intro instead of free recipes. Find Bloop in Tova's quench, clear the coal under Old Gurgle, cast to light the vent (Still cold until then), bring a redcap + 2 moonpetals; she teaches Moonmilk. Brewing Glowcap finishes the quest (+30 gold, errand merit). Saves that already knew both recipes migrate to done.
+- **Still stock:** Bryony sells 3 red toadstools per in-game day (`S.stillStock`), then "Out of caps till tomorrow."
+- Smoke segment M covers the quest path, brewing, and the daily cap limit.
+
 ## 2026-10-16: Svartalfheim part 2 LIVE: merged Master Builder's `realm-svartalfheim-2` (12971cf, cut from main 72c930f) to main and published
 - **Forgefire Week** (`svartalfheim_festival.js`: festival day, Dagna's bounty, +40 Realm Favor), **The Masterwork** (`svartalfheim_master.js`: Tansy, Tinker's Heart + `wound_up`), **The Foreman** (`svartalfheim_foreman.js`: C4 mini-boss 2.8x with his own sheet, whistle + belly, drops the clock spring so the Masterwork can be finished), **rares** (`svartalfheim_rares.js`: Amethyst Basilisk, Soot Colossus), **companion followers** (`svartalfheim_follow.js`: Dagna brawls and mends, Tobble outside the realm; Dagna's temper buff), quest-mark glyphs in the realm gamefx atlases, Tick's `goldMul` (pickup gold) and `chestSense` hooks, conquer-only hushblades.
 - Checks: full sharded smoke (A-M with both realms' steps) and `check_all --lowres` on all 21 areas (21/21). Segments that stopped a shard were rerun alone (HIJ).
