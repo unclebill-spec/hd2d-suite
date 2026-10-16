@@ -8,6 +8,7 @@ import { Harbor } from './ravenhold.js';
 import { Crossing } from './bifrost.js';
 import { Alfheim, AREAS_ALF, AREA_NAMES_ALF } from './alfheim.js';   // [ALFHEIM]
 import { Svartalfheim, AREAS_SV, AREA_NAMES_SV } from './svartalfheim.js';   // [SVARTALFHEIM]
+import { Jotunheim, AREAS_JOT, AREA_NAMES_JOT } from './jotunheim.js';   // [JOTUNHEIM] stub
 import { Temple } from './temple.js';
 import { Verdant } from './verdant.js';
 import { Ambient } from './audio.js';
@@ -45,7 +46,7 @@ const V1_DONE = 'hearthmoor-v1-migrated';     // set when slot 1 is deleted, so 
 const LAST_SLOT = 'hearthmoor-lastslot';
 const QA = Q.has('qa');                       // check-scene / screenshots: straight into ?area=, fresh state, no title, no saving
 const AREAS = { plaza: 'areas/plaza/', lane: 'areas/lane/', mossglen: 'areas/mossglen/', hollows: 'areas/hollows/',
-                rift: 'areas/rift/', vanaheim: 'areas/vanaheim/', ravenhold: 'areas/ravenhold/', bifrost: 'areas/bifrost/', temple: 'areas/temple/', rotwood: 'areas/rotwood/', verdant: 'areas/verdant/', forge: 'areas/forge/', ...AREAS_ALF, ...AREAS_SV };   // [ALFHEIM] + alfheim, lumen_court, wispwood, prismvault
+                rift: 'areas/rift/', vanaheim: 'areas/vanaheim/', ravenhold: 'areas/ravenhold/', bifrost: 'areas/bifrost/', temple: 'areas/temple/', rotwood: 'areas/rotwood/', verdant: 'areas/verdant/', forge: 'areas/forge/', ...AREAS_ALF, ...AREAS_SV, ...AREAS_JOT };   // [ALFHEIM] + alfheim, lumen_court, wispwood, prismvault
 const DAY_SECONDS = Number(Q.get('day') || 1440);  // one whole day = 24 real minutes (day, dusk, night, dawn)
 const $ = (id) => document.getElementById(id);
 
@@ -67,6 +68,7 @@ G.verdant = new Verdant(G);   // Stage 6.4: the Violet Spring, the Rotwood Hollo
 G.temple = new Temple(G);   // Stage 6.3: the Old Temple (Harbor gate, clues, altar, Rift-gate, Midgard's arch)
 G.crossing = new Crossing(G);   // Bifrost Crossing: the realm gates' looks (alliance / merit keys)
 G.svart = new Svartalfheim(G);   // [SVARTALFHEIM]
+G.jot = new Jotunheim(G);   // [JOTUNHEIM] stub
 G.alfheim = new Alfheim(G);   // [ALFHEIM] Lumenvale + the Prism Vault + the Frozen Gate at Bifrost. Wraps (alfheim.js): harbor.prompt / interact / onTap, glow.zones, hollows.onCast, crossing.look, combat.out
 G.garden = new Garden(G);
 G.lanterns = new Lanterns(G);   // 6.6 glow-fish orb lanterns
@@ -350,12 +352,12 @@ async function loadArea(id, spawnKey, pos) {
   const old = $('view'); if (old) old.remove();
   const canvas = document.createElement('canvas'); canvas.id = 'view'; document.body.prepend(canvas);
   G.area = id; G.S.area = id; G.armed = false;
-  G.rifts.detach(); G.storms.detach(); G.rares.detach(); G.combat.detach(); G.glow.detach(); G.hollows.detach(); G.harbor.detach(); G.crossing.detach(); G.alfheim.detach(); G.svart.detach(); G.garden.detach(); G.lanterns.detach(); G.forge.detach(); G.alchemy.detach(); G.weather.detach(); G.loot.detach(); G.shopUI.detach(); G.pets.detach(); G.temple.detach(); G.verdant.detach();
+  G.rifts.detach(); G.storms.detach(); G.rares.detach(); G.combat.detach(); G.glow.detach(); G.hollows.detach(); G.harbor.detach(); G.crossing.detach(); G.alfheim.detach(); G.svart.detach(); G.jot.detach(); G.garden.detach(); G.lanterns.detach(); G.forge.detach(); G.alchemy.detach(); G.weather.detach(); G.loot.detach(); G.shopUI.detach(); G.pets.detach(); G.temple.detach(); G.verdant.detach();
   G.game = await boot({ base: AREAS[id], canvas, spawn: sp, startT: G.S.t, glowLights: glowCap(), clockSpeed: 1 / DAY_SECONDS, spellCycle: slots(),
                         player: { role: G.S.cls || G.preview || 'wildcaller' }, castAdvance: false,
                         keepTitle: true, padHandled: true, hooks, toast: (m, t) => toast(m, t) });
   const ctx = G.ctx = G.game.ctx;
-  G.storms.attach(ctx, id); G.combat.attach(ctx, id); G.rares.attach(ctx, id); G.rifts.attach(ctx, id); G.factions.attach(ctx, id); G.glow.attach(ctx, id); G.hollows.attach(ctx); G.harbor.attach(ctx, id); G.crossing.attach(ctx, id); G.alfheim.attach(ctx, id); G.svart.attach(ctx, id); G.temple.attach(ctx, id); G.verdant.attach(ctx, id); G.garden.attach(ctx); G.lanterns.attach(ctx, id); G.forge.attach(ctx, id); G.alchemy.attach(ctx, id); G.weather.attach(ctx, id); G.loot.attach(ctx); G.shopUI.attach(ctx, id); PR.ensure(G.S); G.loot.restorePurse(id);
+  G.storms.attach(ctx, id); G.combat.attach(ctx, id); G.rares.attach(ctx, id); G.rifts.attach(ctx, id); G.factions.attach(ctx, id); G.glow.attach(ctx, id); G.hollows.attach(ctx); G.harbor.attach(ctx, id); G.crossing.attach(ctx, id); G.alfheim.attach(ctx, id); G.svart.attach(ctx, id); G.jot.attach(ctx, id); G.temple.attach(ctx, id); G.verdant.attach(ctx, id); G.garden.attach(ctx); G.lanterns.attach(ctx, id); G.forge.attach(ctx, id); G.alchemy.attach(ctx, id); G.weather.attach(ctx, id); G.loot.attach(ctx); G.shopUI.attach(ctx, id); PR.ensure(G.S); G.loot.restorePurse(id);
   // portrait source: this area's actor atlas
   portraitImg = new Image(); portraitImg.src = AREAS[id] + ctx.scene.atlas.image;
   // pickups already taken stay gone
@@ -478,7 +480,7 @@ function onFrame(dt, ctx) {
   syncMarkers();
   padWheel();
   G.hollows.update(dt); G.garden.update(dt); G.lanterns.update(dt); G.forge.update(dt); G.alchemy.update(dt); G.glow.update(dt); G.weather.update(dt); G.intro.update(dt);
-  G.loot.update(dt); G.shopUI.update(dt); G.rares.update(dt); G.storms.update(dt); G.rifts.update(dt); G.pets.update(dt); G.temple.update(dt); G.verdant.update(dt); G.alfheim.update(dt); G.svart.update(dt);   // [ALFHEIM]
+  G.loot.update(dt); G.shopUI.update(dt); G.rares.update(dt); G.storms.update(dt); G.rifts.update(dt); G.pets.update(dt); G.temple.update(dt); G.verdant.update(dt); G.alfheim.update(dt); G.svart.update(dt); G.jot.update(dt);   // [ALFHEIM]
   G.combat.update(dt, ctx);
   drawVitals(ctx);
   if (G.title || G.busy) return;
@@ -918,7 +920,7 @@ function wire() {
   $('btnDel').onclick = () => slotDelete();
 }
 // ------------------------------------------------------------------ save slots on the title (3 cards: pixel hero, level, area, play time)
-const AREA_NAME = { plaza: 'Hearthmoor Plaza', lane: 'Bakery Lane', mossglen: 'Mossglen', hollows: 'Toadstool Hollows', ...AREA_NAMES_ALF, ...AREA_NAMES_SV };   // [ALFHEIM] + realm names
+const AREA_NAME = { plaza: 'Hearthmoor Plaza', lane: 'Bakery Lane', mossglen: 'Mossglen', hollows: 'Toadstool Hollows', ...AREA_NAMES_ALF, ...AREA_NAMES_SV, ...AREA_NAMES_JOT };   // [ALFHEIM] + realm names
 const HERO_ATLAS = 'areas/plaza/public/art/sprite/';   // the plaza sheet carries all six heroes
 let heroSheet = null, heroMeta = null;
 function loadHeroSheet() {

@@ -23,6 +23,8 @@ from hd2d_common import load_biome  # noqa: E402
 AREAS = ["plaza", "lane", "mossglen", "hollows", "rift", "vanaheim", "ravenhold", "bifrost", "temple", "rotwood", "verdant", "forge",
          "alfheim", "lumen_court", "wispwood", "prismvault",
          "svartalfheim", "forge_hall", "glowmines", "clockdeep", "clockdeep2"]   # [ALFHEIM] Lumenvale (Glimmer Steps, Lumen Court, Wispwood) + the Prism Vault
+# [JOTUNHEIM] the realm's areas join the build only once their specs exist (hold until art/jotunheim/READY.txt): no spec, no change
+AREAS += [a for a in ("jotunheim", "jt_hall", "rimecaves", "barrow") if (Path(__file__).resolve().parent / "areas" / "src" / f"{a}.json").exists()]
 TMP = Path(os.environ.get("HM_BUILD_TMP", "/tmp/hearthmoor_build"))   # [ALFHEIM] private build dir per worker
 
 
