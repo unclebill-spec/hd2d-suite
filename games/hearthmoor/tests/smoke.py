@@ -221,7 +221,7 @@ SEG_INFO = {
     "J": "Stage 6.4: the Violet Spring, the Rotwood Hollow (8 rooms, root-door brazier order, the Blight Regent 5.5x: phases + frost-iron spike weak point), the Verdant Heart (6 rooms, Thornmother 2.4x, Hjortur 6x trial / corrupted) (continues cp3)",
     "K": "Stage 6.6: glow-fish orb lanterns (buy, night catch, place at home + garden, night pools + light zones, day off, take back; continues cp3)",
     "L": "Stage 6.7: the Forge Quarter (gate after the Cold Altar, red forges + blue quench glow, Tova +1..+10 temper with caps / fail heat, Orri rune rerolls; continues cp3)",
-    "M": "Stage 6.8: the Glowfrog Still (Bryony, Old Gurgle glow, recipes, fizzle hint, yields, secret broth, timed brew mods, drink from the bag, Bloop's dew, spring vial, garden herbs; continues cp3)",
+    "M": "Stage 6.8: the Glowfrog Still + Cold Cauldron (Bryony quest, vent light, recipes, fizzle hint, yields, secret broth, timed brew mods, drink from the bag, Bloop's dew, 3/day caps, spring vial, garden herbs; continues cp3)",
     "I": "Stage 6.4 groundwork: Glenheart rename, trial-mode yield, 5-6x boss camera pull, Vanaheim conquer merit -> Rift Marks, heartwood sale to Sable (continues cp3)",
 }
 # --quick <area>: the segments that cover an area / feature (a per-change check; the batch still runs everything)
@@ -2660,22 +2660,36 @@ def run(out, simscale=4, size=(960, 540), segs=SEGS):
 
                 def marea(a, spawn="start"):
                     T.ev(f"window.__hm.loadArea('{a}', '{spawn}')"); T.wait(f"window.__hm.area === '{a}' && window.__hm.ctx && !window.__hm.busy", 120); T.idle(); mp.wait_for_timeout(300)
-                T.ev("(() => { const G = window.__hm, S = G.S; G.peace = true; S.quests.altar = 3; S.quests.forge_riot = 3; S.recipes = {}; S.brew = null; delete S.dew; })()")
+                T.ev("(() => { const G = window.__hm, S = G.S; G.peace = true; S.quests.altar = 3; S.quests.forge_riot = 3; delete S.quests.cauldron; S.recipes = {}; S.brew = null; delete S.dew; const F = (S.flags = S.flags || {}); delete F.cc_bloop; delete F.cc_coal; delete F.cc_vent; delete S.stillStock; })()")
                 marea("forge", "from_harbor")
-                st = T.ev("(() => { const G = window.__hm, c = G.ctx; return { bryony: !!c.npc('alchemist'), fx: G.alchemy.fx.length, zone: G.glow.zones().some((z) => z.src === 'still'), cauldron: c.scene.objects.some((o) => /cauldron_blue/.test(o.glb || '')) }; })()")
-                T.step("the Still: Bryony, Old Gurgle (kit cauldron + bubbling brew / fire / pool gamefx), a blue light zone", st["bryony"] and st["fx"] == 3 and st["zone"] and st["cauldron"], still=st)
+                cold = T.ev("(() => { const G = window.__hm, c = G.ctx; return { bryony: !!c.npc('alchemist'), fx: G.alchemy.fx.length, zone: G.glow.zones().some((z) => z.src === 'still'), lit: G.alchemy.qa().lit, cauldron: c.scene.objects.some((o) => /cauldron_blue/.test(o.glb || '')) }; })()")
+                T.step("the Still starts cold after the riot (Bryony + kit cauldron, no blue fx / zone until the vent is lit)", cold["bryony"] and cold["fx"] == 0 and not cold["zone"] and not cold["lit"] and cold["cauldron"], still=cold)
+                cc = T.ev("""(() => { const G = window.__hm, S = G.S, A = G.alchemy, F = (S.flags = S.flags || {}), p = G.ctx.player;
+                  A.bryony().then(G); const q1 = S.quests.cauldron;
+                  p.x = -1.8; p.z = -8.0; A.interact(); const bloop = !!F.cc_bloop;
+                  p.x = -6.0; p.z = -3.4; A.interact(); const coal = !!F.cc_coal;
+                  A.spellAt(-6.0, -3.4); const vent = !!F.cc_vent, fx = A.fx.length, zone = G.glow.zones().some((z) => z.src === 'still');
+                  Object.assign(S.inv, { redcap: 2, moonpetal: 3 }); A.bryony().then(G);
+                  const q2 = S.quests.cauldron, moon = !!S.recipes.moonmilk, dew = S.inv.dewdrop || 0, vials = S.inv.vial || 0, tea = S.inv.tea || 0;
+                  return { q1, bloop, coal, vent, fx, zone, q2, moon, dew, vials, tea, gold: S.gold || 0 }; })()""")
+                T.step("Cold Cauldron: offer → Bloop at the quench → clear coal → cast lights vent (blue fx) → turn-in teaches Moonmilk + dew/vials/tea",
+                       cc["q1"] == 1 and cc["bloop"] and cc["coal"] and cc["vent"] and cc["fx"] == 3 and cc["zone"] and cc["q2"] == 2 and cc["moon"] and cc["dew"] == 1 and cc["vials"] == 3 and cc["tea"] >= 1, cc=cc)
                 br = T.ev("""(() => { const G = window.__hm, S = G.S, A = G.alchemy;
-                  A.bryony().then(G); const r0 = Object.keys(S.recipes).sort();
-                  Object.assign(S.inv, { redcap: 3, moonpetal: 4, tea: 1, coldpetal: 1, glowbell: 1, glowcap: 1, springwater: 0, loaf: 1 }); delete S.inv.dewdrop;
-                  const p = G.ctx.player; p.x = -9.2; p.z = -1.4; A.interact(); const dew1 = S.inv.dewdrop || 0; A.interact(); const dew2 = S.inv.dewdrop || 0;
+                  Object.assign(S.inv, { redcap: 3, moonpetal: 4, tea: 1, coldpetal: 1, glowbell: 1, glowcap: 1, springwater: 0, loaf: 1, dewdrop: 1 });
+                  const p = G.ctx.player; p.x = -9.2; p.z = -1.4; delete S.dew; A.interact(); const dew1 = S.inv.dewdrop || 0; A.interact(); const dew2 = S.inv.dewdrop || 0;
                   A.pot.length = 0; A.pot.push('redcap', 'moonpetal'); const fz = A.stir(); const hinted = Object.keys(S.hints || {}).length, keptCap = S.inv.redcap;
-                  const g = A.stir(['redcap', 'dewdrop']).pages[0], gc = S.inv.brew_glowcap || 0;
+                  const g0 = S.gold || 0; const g = A.stir(['redcap', 'dewdrop']).pages[0], gc = S.inv.brew_glowcap || 0, q3 = S.quests.cauldron, gold = (S.gold || 0) - g0;
+                  const r0 = Object.keys(S.recipes).sort();
                   const e = A.stir(['glowcap', 'redcap']); const ec = S.inv.brew_ember || 0;
-                  S.inv.dewdrop = 1; const ac0 = (S.factions || {}).gnome; const sec0 = !!(S.found || {}).brew_breadbroth; A.stir(['loaf', 'moonpetal', 'dewdrop']);
+                  S.inv.dewdrop = 1; const sec0 = !!(S.found || {}).brew_breadbroth; A.stir(['loaf', 'moonpetal', 'dewdrop']);
                   const menu = A.bryony().choice.options.length;
-                  return { r0, dew1, dew2, fz: fz.pages[0], hinted, keptCap, g, gc, ember: ec, newEmber: !!S.recipes.ember, secret: !sec0 && !!S.found.brew_breadbroth, menu, eline: e.pages[0] }; })()""")
-                T.step("brewing: Bryony teaches 2 recipes, Bloop's pad gives 1 dew a day, a miss fizzles (nothing used, a hint), Glowcap x2, Ember discovered, the bread-broth secret",
-                       br["r0"] == ["glowcap", "moonmilk"] and br["dew1"] == 1 and br["dew2"] == 1 and "fizzles" in br["fz"] and br["hinted"] == 1 and br["keptCap"] == 3 and br["gc"] == 2 and br["ember"] == 1 and br["newEmber"] and br["secret"] and br["menu"] == 4, brew=br)
+                  // 3 redcap / day at the Still
+                  const shop = G.shopUI; S.gold = (S.gold || 0) + 50; shop.show('still');
+                  let bought = 0; for (let i = 0; i < 5; i++) { const rows = shop.rows(), r = rows.find((x) => x.id === 'redcap'); if (!r || r.cant) break; shop.i = rows.indexOf(r); if (shop.act()) bought++; }
+                  const sold = shop.rows().find((x) => x.id === 'redcap'); shop.close();
+                  return { r0, dew1, dew2, fz: fz.pages[0], hinted, keptCap, g, gc, q3, gold, ember: ec, newEmber: !!S.recipes.ember, secret: !sec0 && !!S.found.brew_breadbroth, menu, bought, soldOut: !!(sold && sold.cant) }; })()""")
+                T.step("brewing: Glowcap finishes Cold Cauldron (+30g), Bloop dew 1/day, miss fizzles, Glowcap x2, Ember + bread-broth secret; Bryony sells 3 redcaps/day then sold out",
+                       br["r0"] == ["ember", "glowcap", "moonmilk"] and br["q3"] == 3 and br["gold"] == 30 and br["dew1"] == 2 and br["dew2"] == 2 and "fizzles" in br["fz"] and br["hinted"] == 1 and br["gc"] == 2 and br["ember"] == 1 and br["newEmber"] and br["secret"] and br["menu"] == 4 and br["bought"] == 3 and br["soldOut"], brew=br)
                 dk = T.ev("""(() => { const G = window.__hm, S = G.S, PR = G.PR;
                   const m0 = PR.mods(S).meleeMul; G.drinkBrew('ember'); const m1 = PR.mods(S).meleeMul, b1 = S.brew && S.brew.id;
                   G.alchemy.update(61); const m2 = PR.mods(S).meleeMul;
