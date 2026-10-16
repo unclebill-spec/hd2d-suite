@@ -79,7 +79,7 @@ SPAWNS.barrow2 = [   // B5-B9: the Frozen Echo is quiet; berserkers in the Berse
 ];
 SPAWNS.barrow = [   // B1-B4: two frost trolls at the door hall, ice golems wake in the Hall of Shields / pools, avalanche golems at the top of the Run; none near the start view
   { id: 'bw_troll0', role: 'frost_troll', pos: [-5.6, -9.4] }, { id: 'bw_troll1', role: 'frost_troll', pos: [5.6, -9.4] },
-  { id: 'bw_golem0', role: 'ice_golem', pos: [-3.6, -10.6] }, { id: 'bw_golem1', role: 'ice_golem', pos: [3.6, -10.6] }, { id: 'bw_golem2', role: 'ice_golem', pos: [0.0, -26.0] },   // the golems stand on the bank / the Run's foot, off the slide puzzle's ice
+  { id: 'bw_golem0', role: 'ice_golem', pos: [-2.0, -10.6] }, { id: 'bw_golem1', role: 'ice_golem', pos: [2.0, -10.6] }, { id: 'bw_golem2', role: 'ice_golem', pos: [0.0, -26.0] },   // the golems stand on the bank / the Run's foot, off the slide puzzle's ice
   { id: 'bw_avl0', role: 'avalanche_golem', pos: [-4.4, -28.0] }, { id: 'bw_avl1', role: 'avalanche_golem', pos: [4.4, -28.0] },
   { id: 'bw_zerk0', role: 'rime_berserker', pos: [-8.0, -12.0], night: true }, { id: 'bw_zerk1', role: 'rime_berserker', pos: [8.0, -12.0], night: true },
 ];
