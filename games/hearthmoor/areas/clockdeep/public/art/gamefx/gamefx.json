@@ -8,7 +8,7 @@
  "image": "gamefx.png",
  "size": [
   384,
-  624
+  768
  ],
  "effects": {
   "quest_mark": {
@@ -275,6 +275,69 @@
    "then": null,
    "duration": 9999,
    "notes": "floating glow orb, hover 1.1-2.2 m"
+  },
+  "cog_spin_small": {
+   "row": 13,
+   "frames": 8,
+   "fps": 10,
+   "loop": true,
+   "loop_from": 0,
+   "loops": 1,
+   "kind": "decal",
+   "pivot": [
+    24,
+    24
+   ],
+   "lift": 0.09,
+   "glow": true,
+   "light": null,
+   "speed": null,
+   "travel": null,
+   "then": null,
+   "duration": 9999,
+   "notes": "spinning small cog (decal over cog_small; swap for the static glb while turning; reverse by playing backwards)"
+  },
+  "cog_spin_medium": {
+   "row": 14,
+   "frames": 8,
+   "fps": 10,
+   "loop": true,
+   "loop_from": 0,
+   "loops": 1,
+   "kind": "decal",
+   "pivot": [
+    24,
+    24
+   ],
+   "lift": 0.09,
+   "glow": true,
+   "light": null,
+   "speed": null,
+   "travel": null,
+   "then": null,
+   "duration": 9999,
+   "notes": "spinning medium cog (decal over cog_medium; swap for the static glb while turning; reverse by playing backwards)"
+  },
+  "cog_spin_large": {
+   "row": 15,
+   "frames": 8,
+   "fps": 10,
+   "loop": true,
+   "loop_from": 0,
+   "loops": 1,
+   "kind": "decal",
+   "pivot": [
+    24,
+    24
+   ],
+   "lift": 0.09,
+   "glow": true,
+   "light": null,
+   "speed": null,
+   "travel": null,
+   "then": null,
+   "duration": 9999,
+   "notes": "spinning large cog (decal over cog_large; swap for the static glb while turning; reverse by playing backwards)"
   }
  }
 }

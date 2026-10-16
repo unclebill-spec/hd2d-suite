@@ -2,6 +2,11 @@
 
 Dates are America/New_York. Newest first. Keep this current with every change you push.
 
+## 2026-10-16: Jotunheim chunk 4: the Titan's Barrow part 1 (`barrow`, rooms B1-B4) (branch `realm-jotunheim`; main 01c86b7 merged)
+- **Area:** `areas/src/barrow.json` / `areas/barrow/`: Barrow Door hall at 0 m, Hall of Shields + Glow Pools at 1.2 m (stair), the Avalanche Run ledge at 2.4 m (second stair), shield racks, glow pools, ice walls, braziers 1 and 2.
+- **Game:** the Rime Caves door now opens (befriend + `jt_trusted`, contract goat-path, or `barrow_key`) and starts `barrow`; `barrowRooms()` brazier spots set `tb_b1` / `tb_b2`; frost trolls, ice golems, avalanche golems, night berserkers; `?jtq=barrow` QA preset. B5-B9 (`barrow2`), brazier 3, Ormgar and Hrimgard are not built.
+- **Tests:** `smoke_jotunheim.py` 44 steps (engine-frame waits, no fixed sleeps). `check_scene --quick` 11/11 on `jotunheim`, `jt_hall`, `rimecaves` and `barrow`. Full sharded smoke passed before the main merge; rerun after it, see RESUME HERE.
+
 ## 2026-10-16: Jotunheim chunk 3: the Rime Caves (`rimecaves`) + check_scene fixes (branch `realm-jotunheim`)
 - **Area:** `areas/src/rimecaves.json` / `areas/rimecaves/`: 1.2 m Barrow step with stair, cave walls, cold braziers, glow pools, the Barrow door (3 rune locks), a frozen waterfall hiding `rc_spring`; Stonehollow gets a second exit (cave path) and `from_caves`.
 - **Game:** `game/jotunheim.js` `caves()`: Barrow-door and waterfall look-spots, a cast near the waterfall thaws the spring, Solvi / Skuli talk, frost foes (`frost_troll`, `ice_golem`, `avalanche_golem`, `rime_berserker`: ENEMIES / XP / SPAWNS).
@@ -30,6 +35,19 @@ Dates are America/New_York. Newest first. Keep this current with every change yo
 - **7. Halvard does not lose the horn:** only the copper key is lost, to avoid too many lost keys.
 - **8. The Barrow is two areas, `barrow` and `barrow2`,** like the Clockwork Deep (area list is now 5).
 - **9. The goat mount is deferred** (leftovers list); mounts are not built in the engine yet.
+
+## 2026-10-16: Svartalfheim gear and rail puzzles (`realm-svartalfheim-3`, from main 2de49ce)
+- **C2 The Drive Shaft, C4 The Assembly Line, C6 The Switchyard** are playable (`game/svartalfheim_puzzles.js`): cogs carried to pegs (meshed 0.8 m apart, drive pegs always turn, a spell thaws the frozen cog / switch within 2.6 m), C4's two drives and parity (odd route = anticlockwise = belts to the presses, even route = clockwise = belts to the exit, both = jam), C6 rails with 3 switches (switch 2 frozen) and the brake lever (3 m/s cart, 30 dmg to foes, buffer bump rolls back after 3 s). Solving sets `cd_cog1/2/3`, lifts the C2 shutter / breaks the C6 ram gate and unlocks their chests (45 g + 1 deep brass, 70 g + 2 deep brass). Reset lever per gear room; solved stays solved; QA `?cogs=solve` / `?rails=solve`.
+- Art: the puzzles pack (13 kit pieces, `cog_spin_*` fx, Tobble's 20x32 sheet) installed by `svart_art.py` (add / overwrite only). Tobble's follower uses his own sheet in the realm areas. Engine: `pz` tag on scene objects + `ctx.pz(id)`.
+- Moved: cd_sg2 / cd_sg6b spawns, the clockdeep2 east rune lamp and the decor cart + rails (made way for the puzzles).
+- Still not built: chest objects for Tick's chestSense, Forgefire day-shift gating + soot-smudge decal, Tova's discount, a real forge-construct sprite for the Bifrost runaway, the Council rift-seal shortcut, and a full `check_all --lowres`.
+
+## 2026-10-16: Svartalfheim part 3 LIVE: the gear and rail puzzles and Tobble's own sheet (merged Master Builder's `realm-svartalfheim-3`, dce7e3b)
+- `game/svartalfheim_puzzles.js`: **C2 The Drive Shaft** (clockdeep: pegs, a frozen cog to thaw, 2 loose cogs, one chain, the shutter on the chest), **C4 The Assembly Line** (clockdeep2: two drives, the odd route runs the belts to the presses, the even route solves it, a, b and c together jam the winch) and **C6 The Switchyard** (rails, three switch levers, a brake lever and the cart). Every puzzle has a reset; solved stays solved (`S.found.cd_cogN`). New puzzle kit (13 glb), cog fx rows in the clockdeep atlases, `pz`-tagged scene objects (`engine/main.js`: `ctx.pz(id)` / `ctx.pzIds()`), and **Tobble's own sheet** in all 5 realm areas (he no longer borrows Dagna's).
+- Checks: full sharded smoke (A-M) and `check_all --lowres` on the changed areas (clockdeep, clockdeep2, forge_hall, glowmines, svartalfheim) plus plaza as an engine sanity check; failing segments were rerun alone.
+- Smoke fixes (waits on game-time conditions via `T.until`): the C4 belt steps, the bounce-toadstool step samples the spring while the lift is up.
+- Screenshot: `docs/screenshots/svartalfheim_gear_puzzle.png` (C4 solved: the winch turns true, the belts run toward the exit).
+- Still not built (Svartalfheim): chest objects for Tick's chestSense, Forgefire day-shift gating + soot-smudge decal + Tova's discount, Giant Footprints clue scenes (Jotunheim), the Council's rift-seal shortcut, a forge-construct sprite for the Bifrost runaway, the Soot Colossus's soot-fall growth / smother cloud, the Foreman's stamping charge, soot / tremor weather.
 
 ## 2026-10-16: Svartalfheim part 2 LIVE: merged Master Builder's `realm-svartalfheim-2` (12971cf, cut from main 72c930f) to main and published
 - **Forgefire Week** (`svartalfheim_festival.js`: festival day, Dagna's bounty, +40 Realm Favor), **The Masterwork** (`svartalfheim_master.js`: Tansy, Tinker's Heart + `wound_up`), **The Foreman** (`svartalfheim_foreman.js`: C4 mini-boss 2.8x with his own sheet, whistle + belly, drops the clock spring so the Masterwork can be finished), **rares** (`svartalfheim_rares.js`: Amethyst Basilisk, Soot Colossus), **companion followers** (`svartalfheim_follow.js`: Dagna brawls and mends, Tobble outside the realm; Dagna's temper buff), quest-mark glyphs in the realm gamefx atlases, Tick's `goldMul` (pickup gold) and `chestSense` hooks, conquer-only hushblades.

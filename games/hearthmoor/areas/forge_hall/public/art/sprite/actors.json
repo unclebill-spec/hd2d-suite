@@ -23053,6 +23053,19 @@
     "walk",
     "follow"
    ]
+  },
+  "tobble": {
+   "sheet": "tobble",
+   "row": 0,
+   "kind": "creature",
+   "anims": [
+    "idle",
+    "walk",
+    "follow"
+   ],
+   "desc": "Tobble (gnome follower): messy white hair and beard, tiny red white-spotted toadstool cap, green shirt under a gold vest, dark belt with buckle, blue trousers with red braces, striped socks, brown shoes. follow = walk cycle at 10 fps, offset one frame.",
+   "pet": true,
+   "follower": true
   }
  },
  "sheets": {
@@ -23083,6 +23096,10 @@
   "tick": {
    "json": "tick.json",
    "image": "tick.png"
+  },
+  "tobble": {
+   "json": "tobble.json",
+   "image": "tobble.png"
   }
  }
 }

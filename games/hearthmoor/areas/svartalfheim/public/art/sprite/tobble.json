@@ -1,0 +1,76 @@
+{
+ "tool": "hd2d sprite (pets layout)",
+ "biome": "cozy-village",
+ "frame": [
+  20,
+  32
+ ],
+ "pivot": [
+  10,
+  32
+ ],
+ "ground_row": 31,
+ "facings": [
+  "down",
+  "up",
+  "left",
+  "right"
+ ],
+ "anims": {
+  "idle": {
+   "start": 0,
+   "count": 4,
+   "fps": 3,
+   "loop": [
+    0,
+    1,
+    2,
+    1
+   ],
+   "blink": 3
+  },
+  "walk": {
+   "start": 4,
+   "count": 4,
+   "fps": 8
+  },
+  "follow": {
+   "start": 8,
+   "count": 4,
+   "fps": 10,
+   "pets_only": true
+  }
+ },
+ "cols": 12,
+ "size": [
+  240,
+  128
+ ],
+ "image": "tobble.png",
+ "roles": {
+  "tobble": {
+   "row": 0,
+   "kind": "creature",
+   "pet": true,
+   "named": true,
+   "follower": true,
+   "size_bounds": [
+    [
+     10,
+     24
+    ],
+    [
+     10,
+     40
+    ]
+   ],
+   "caster": false,
+   "anims": [
+    "idle",
+    "walk",
+    "follow"
+   ],
+   "desc": "Tobble (gnome follower): messy white hair and beard, tiny red white-spotted toadstool cap, green shirt under a gold vest, dark belt with buckle, blue trousers with red braces, striped socks, brown shoes. follow = walk cycle at 10 fps, offset one frame."
+  }
+ }
+}

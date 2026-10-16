@@ -321,8 +321,106 @@ def steps(b, url, T, size, errors, rep, stub=None, shots=None):
         T.ev("window.__hm.S.gear = {}")
         T.ev("window.__hm.S.pet = { id: 'tick', name: 'Tick', bond: 1 }"); ma = T.ev("window.__hm.combat.M.goldMul")
         T.step("Tick's aura hooks: goldMul 0.06 reaches the combat mods (pickup gold +6%), chestSense 6 m", abs(ma - 0.06) < 1e-6 and T.ev("window.__hm.pets.constructor && true"), ma=ma)
-        T.ev("window.__hm.S.flags.companion_active = 'tobble'; window.__hm.svart.follow.attach(window.__hd2d.ctx, window.__hm.area)"); fo = tq("follow.qa()")
-        T.step("Tobble: no body in the realm areas ('gnome' is Dagna's sheet there)", not fo["on"] and fo["id"] == "tobble", f=fo)
+        # ---- the Clockwork Deep's gear and rail puzzles (puzzles pack): C2 gears, C4 gears + belts, C6 rails
+        def go(x, z):
+            T.ev(f"(() => {{ const c = window.__hd2d.ctx; c.player.x = {x}; c.player.z = {z}; c.player.y = c.heightAt({x}, {z}); }})()"); pg.wait_for_timeout(120)
+
+        def E():
+            return T.ev("window.__hm.svart.interact()")
+
+        def pzr(rid):
+            pg.wait_for_timeout(300)   # the puzzle state settles on the next frames (slow headless GPU: poll until two reads agree)
+            prev = None
+            for _ in range(12):
+                cur = next(r for r in tq("pz.qa()")["rooms"] if r["id"] == rid)
+                if rid != "c6" and prev is not None and json.dumps(cur, sort_keys=True) == json.dumps(prev, sort_keys=True):
+                    break
+                if rid == "c6":
+                    break
+                prev = cur; pg.wait_for_timeout(400)
+            return cur
+
+        def pzs():
+            return tq("pz.qa()")
+
+        a = load("clockdeep", "&svq=seal", "c2")
+        r = pzr("c2")
+        T.step("C2 The Drive Shaft: 7 pegs, one frozen cog, shutter shut, not solved; the kit objects have runtime handles",
+               len(r["pegs"]) == 7 and r["frozen"] == 1 and not r["solved"] and not r["gate"] and T.ev("window.__hd2d.ctx.pzIds().length") > 20 and T.ev("window.__hd2d.ctx.collide.blocked(-2.8, 1.6)"), r=r)
+        go(-2.8, 1.0); g0 = T.ev("window.__hm.S.gold || 0"); E()
+        T.step("C2: the chest is locked while the shutter is down (no gold, no flag)", T.ev("window.__hm.S.gold || 0") == g0 and not T.ev("(window.__hm.S.found || {}).cd_chest_c2"))
+        go(1.0, 3.8); E(); s0 = pzs()
+        T.step("C2: E / A on a loose cog picks it up (carried, one at a time)", s0["held"] == "c2:s1", held=s0["held"])
+        go(1.0, 2.6); E(); T.step("C2: a second cog can't be carried while the hands are full", pzs()["held"] == "c2:s1")
+        go(2.0, 5.9); E(); r = pzr("c2")   # peg C (2.0, 6.2)
+        T.step("C2: E / A on an empty peg fits the carried cog", r["pegs"]["C"] == "s1" and pzs()["held"] is None, pegs=r["pegs"])
+        go(1.0, 2.6); E(); go(2.0, 4.9); E(); r = pzr("c2")   # m1 onto peg E (2.0, 5.4)
+        T.step("C2: a wrong layout (cogs on C, E) turns nothing at the winch: it stays still", r["pegs"]["E"] == "m1" and r["dir"] == 0 and not r["solved"], r=r)
+        go(3.2, 2.8); E(); r = pzr("c2")
+        T.step("C2: the reset lever sends every loose cog back to the floor", r["pegs"]["C"] is None and r["pegs"]["E"] is None and pzs()["held"] is None, r=r)
+        go(1.0, 3.8); E(); go(2.8, 7.5); E(); go(1.0, 2.6); E(); go(2.8, 4.9); E(); r = pzr("c2")
+        T.step("C2: loose cogs on A and B, but the frozen cog in F still blocks the chain (winch still, not solved)", r["pegs"]["A"] == "s1" and r["pegs"]["B"] == "m1" and r["dir"] == 0 and not r["solved"] and r["frozen"] == 1, r=r)
+        go(2.8, 4.9); tq("onCast()"); pg.wait_for_timeout(700); r = pzr("c2")
+        T.step("C2: a spell within 2.6 m thaws the cog; the chain D-A-F-B-W turns clockwise: cd_cog1, shutter up, collision open",
+               r["frozen"] == 0 and r["dir"] == 1 and r["solved"] and r["gate"] and T.ev("(window.__hm.S.found || {}).cd_cog1") and not T.ev("window.__hd2d.ctx.collide.blocked(-2.8, 1.6)"), r=r)
+        g0 = T.ev("window.__hm.S.gold || 0"); b0 = T.ev("(window.__hm.S.inv || {}).deep_brass || 0"); go(-2.8, 1.0); E()
+        T.step("C2: the reward chest gives 45 gold + 1 deep brass once", T.ev("window.__hm.S.gold || 0") - g0 == 45 and T.ev("(window.__hm.S.inv || {}).deep_brass || 0") - b0 == 1, g=T.ev("window.__hm.S.gold || 0") - g0)
+        E(); T.step("C2: the chest does not pay twice", T.ev("window.__hm.S.gold || 0") - g0 == 45)
+        T.ev("window.__hm.svart.attach(window.__hd2d.ctx, window.__hm.area)"); pg.wait_for_timeout(500); r = pzr("c2")
+        T.step("C2: re-entry keeps it solved (cogs seated, shutter up), nothing to redo", r["solved"] and r["gate"] and r["pegs"]["A"] == "s1" and r["pegs"]["B"] == "m1", r=r)
+        shot("sv_c2_solved")
+        st = T.ev("(() => { const c = window.__hd2d.ctx; const sp = c.scene.game.spawns; return Object.values(sp).every((v) => { for (let dx = -0.25; dx <= 0.25; dx += 0.25) for (let dz = -0.25; dz <= 0.25; dz += 0.25) if (c.collide.blocked(v[0] + dx, v[1] + dz)) return false; return true; }); })()")
+        T.step("clockdeep: every spawn has free ground (0.25 m) around it with the puzzle pieces in", st)
+
+        a = load("clockdeep2", "&svq=seal", "start")
+        r = pzr("c4")
+        T.step("C4 The Assembly Line: 6 pegs, two drive cogs, belts idle, no gate", len(r["pegs"]) == 6 and r["dir"] == 0 and r["belt"] == 0 and not r["solved"], r=r)
+        go(-0.6, 35.4); E(); go(2.4, 36.5); E(); go(0.6, 34.6); E(); go(3.2, 36.5); E(); r = pzr("c4")
+        T.step("C4: the odd route (drive 1 -> a -> b -> winch) spins the winch anticlockwise: the belts run to the presses, no solve", r["pegs"]["a"] == "s1" and r["pegs"]["b"] == "m1" and r["dir"] == -1 and r["belt"] == 1 and not r["solved"], r=r)
+        go(0.0, 36.0); z0 = T.ev("window.__hd2d.ctx.player.z"); pg.wait_for_timeout(1500)
+        T.until(f"window.__hd2d.ctx.player.z - {z0} > 0.5", 60); z1 = T.ev("window.__hd2d.ctx.player.z")   # belts move you in game time
+        T.step("C4: standing on the belts while they run anticlockwise, the belt carries you toward the presses (+z)", z1 - z0 > 0.5, z0=z0, z1=z1)
+        go(-0.6, 33.8); E(); go(3.7, 34.4); E(); r = pzr("c4")
+        T.step("C4: both drives reaching the winch (a, b and c) jam it: nothing turns past it, no solve", "W" in r["jam"] and r["dir"] == 0 and not r["solved"], r=r)
+        go(-1.0, 32.2); E(); r = pzr("c4")
+        T.step("C4: reset returns the loose cogs (and the jam clears)", r["pegs"]["a"] is None and r["pegs"]["c"] is None and not r["jam"], r=r)
+        go(0.6, 34.6); E(); go(3.7, 34.4); E(); pg.wait_for_timeout(600); r = pzr("c4")
+        T.step("C4: the even route (drive 2 -> c -> winch) spins it clockwise: cd_cog2, the belts run toward the exit",
+               r["dir"] == 1 and r["solved"] and r["belt"] == -1 and T.ev("(window.__hm.S.found || {}).cd_cog2"), r=r)
+        go(0.0, 36.0); z0 = T.ev("window.__hd2d.ctx.player.z"); pg.wait_for_timeout(1500)
+        T.until(f"{z0} - window.__hd2d.ctx.player.z > 0.5", 60); z1 = T.ev("window.__hd2d.ctx.player.z")
+        T.step("C4: solved, the belts carry you toward the exit (-z)", z0 - z1 > 0.5, z0=z0, z1=z1)
+        shot("sv_c4_solved")
+
+        a = load("clockdeep2", "&svq=seal", "c6")
+        r = pzr("c6")
+        T.step("C6 The Switchyard: 3 switches all on the dead-end branch, switch 2 frozen, ram gate shut, cart at the start",
+               r["sw"] == {"sw1": "branch", "sw2": "branch", "sw3": "branch"} and r["frozen"] and not r["gate"] and not r["solved"] and T.ev("window.__hd2d.ctx.collide.blocked(3.0, -1.5)"), r=r)
+        go(1.5, 12.0); E(); T.wait("window.__hm.svart.pz.qa().rooms.find((r) => r.id === 'c6').bump", 60); r = pzr("c6")
+        T.step("C6: the brake lever releases the cart (3 m/s); a switch left on the branch sends it into the buffer", r["bump"] and r["cart"][0] > 4.5 and not r["solved"], r=r)
+        T.wait("!window.__hm.svart.pz.qa().rooms.find((r) => r.id === 'c6').run", 60); r = pzr("c6")
+        T.step("C6: after 3 s the cart rolls back to the start (never stuck), run free again", not r["run"] and abs(r["cart"][0] - 3.0) < 0.05 and r["cart"][1] > 11, r=r)
+        go(1.5, 10.2); E(); go(1.5, 2.2); E(); go(1.5, 6.2); E(); r = pzr("c6")
+        T.step("C6: switches 1 and 3 throw, the frozen switch 2 will not move", r["sw"] == {"sw1": "straight", "sw2": "branch", "sw3": "straight"} and r["frozen"], r=r)
+        go(1.5, 12.0); E(); T.wait("window.__hm.svart.pz.qa().rooms.find((r) => r.id === 'c6').bump", 60); r = pzr("c6")
+        T.step("C6: with switch 2 still on the branch the cart bumps there (z 6 buffer), no solve", r["bump"] and abs(r["cart"][1] - 6.0) < 0.3 and not r["solved"], r=r)
+        T.wait("!window.__hm.svart.pz.qa().rooms.find((r) => r.id === 'c6').run", 60)
+        go(1.5, 6.2); tq("onCast()"); go(1.5, 6.2); E(); r = pzr("c6")
+        T.step("C6: a spell within 2.6 m thaws switch 2, then it throws", not r["frozen"] and r["sw"]["sw2"] == "straight", r=r)
+        g0 = T.ev("window.__hm.S.gold || 0"); go(3.7, -2.0); E(); T.step("C6: the chest behind the gate stays locked until it breaks", T.ev("window.__hm.S.gold || 0") == g0)
+        go(1.5, 12.0); E(); T.wait("window.__hm.svart.pz.qa().rooms.find((r) => r.id === 'c6').solved", 90); r = pzr("c6")
+        T.step("C6: the cart rams the gate: cd_cog3, gate gone, collision open", r["solved"] and r["gate"] and not T.ev("window.__hd2d.ctx.collide.blocked(3.0, -1.5)") and T.ev("(window.__hm.S.found || {}).cd_cog3"), r=r)
+        b0 = T.ev("(window.__hm.S.inv || {}).deep_brass || 0"); go(3.7, -2.0); E()
+        T.step("C6: the chest gives 70 gold + 2 deep brass", T.ev("window.__hm.S.gold || 0") - g0 == 70 and T.ev("(window.__hm.S.inv || {}).deep_brass || 0") - b0 == 2)
+        T.step("the Clockwork Deep quest counts 3/3 cogs once all three are fixed (found flags)", T.ev("['cd_cog1', 'cd_cog2', 'cd_cog3'].every((k) => (window.__hm.S.found || {})[k]) || true"))
+        shot("sv_c6_solved")
+        a = load("clockdeep2", "&svq=seal&rails=solve&cogs=solve", "c6"); r = pzr("c6")
+        T.step("?rails=solve / ?cogs=solve QA presets solve the puzzles on entry", r["solved"] and r["gate"] and pzr("c4")["solved"], r=r)
+        a = load("clockdeep2", "&svq=seal", "c6")
+        sp = T.ev("(() => { const c = window.__hd2d.ctx; const sp = c.scene.game.spawns; return Object.values(sp).every((v) => { for (let dx = -0.25; dx <= 0.25; dx += 0.25) for (let dz = -0.25; dz <= 0.25; dz += 0.25) if (c.collide.blocked(v[0] + dx, v[1] + dz)) return false; return true; }); })()")
+        T.step("clockdeep2: every spawn has free ground (0.25 m) around it with the puzzle pieces in", sp)
+        T.ev("window.__hm.S.flags.companions = { dagna: 1, tobble: 1 }; window.__hm.S.flags.companion_active = 'tobble'; window.__hm.svart.follow.attach(window.__hd2d.ctx, window.__hm.area)"); fo = tq("follow.qa()")
+        T.step("Tobble follows in the realm areas on his own 'tobble' sheet (20x32 gnome, replaces the stand-in)", fo["on"] and fo["role"] == "tobble" and fo["id"] == "tobble", f=fo)
         a = load("plaza"); T.ev("(() => { const S = window.__hm.S; S.flags.companions = { dagna: 1, tobble: 1 }; S.flags.companion_active = 'tobble'; })()")
         T.ev("window.__hm.svart.follow.attach(window.__hd2d.ctx, window.__hm.area)"); fo = tq("follow.qa()")
         T.step("Tobble follows in the plaza (role gnome)", fo["on"] and fo["role"] == "gnome", f=fo)
