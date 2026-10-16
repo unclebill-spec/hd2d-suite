@@ -2,6 +2,15 @@
 
 Dates are America/New_York. Newest first. Keep this current with every change you push.
 
+## 2026-10-16: Jotunheim chunk 6: boss mechanics, Rune Bridge, waystone, cairn props (branch `realm-jotunheim`; main still 01c86b7)
+- **Build fix:** `tools/runtime/web/engine/main.js` now carries main's `pzObjs` / `pz` handle lines, so `build.py` (which copies the runtime over `games/hearthmoor/engine/`) no longer drops them. No `git checkout engine/main.js` needed after a build any more.
+- **Rune Bridge (B7):** 3 x 6 tiles, lit frost runes (rune_pulse fx) form one connected path; an unlit tile cracks, drops you back at the bridge head with a small hit, never off the bridge; `tb_bridge` is set on crossing and tiles stay safe after. A tablet at the bridge head hints at it. Smoke checks the path is connected by BFS.
+- **Hrimgard:** P2 (< 60%): the dais freezes (you keep sliding after you stop) and two ice golems rise; P3 (< 25%): his three braziers relight one by one and each lit one mends him (+1.2% per 2 s, capped at 30%) until you snuff it (E / A spots `tbt1..3`). **Ormgar:** frenzy at 50% (x1.35 speed, x0.7 swing cooldown, +20% damage).
+- **Waystone:** barrow2's waystone (B8) is attuned on arrival and travels to and from Stonehollow (`WAYS.barrow2`, spawn `from_waystone`, a rune-stone marks it); `WAY_SAY` is exported from `ravenhold.js` for the two Jotunheim waystone lines.
+- **Cairns:** three `snow_mound` kit pieces at the Toll of Stones cairn spots in the Rime Caves (`CAIRNS` moved clear of the pools and pillars).
+- **Tests:** `smoke_jotunheim.py` 94 steps (T.until / engine-frame waits). `check_scene --quick` 11/11 on `barrow2` and `rimecaves` (rimecaves changed too, for the cairns).
+- **Leftovers for Hearthmoor Art:** Stonefrost tiers II / III (Stone Skin, Cold Fire, Stone Golem) need new spell kinds and spell-atlas art.
+
 ## 2026-10-16: Jotunheim chunk 5: the Throne Barrow (`barrow2`, B5-B9), The Barred Gate, the Toll of Stones, Stonefrost lessons (branch `realm-jotunheim`)
 - **Decision:** Solvi teaches the Stonefrost school in the Hall (the Hall's `rimewife` actor, after `barrow` = 3, befriend). In the Rime Caves she only has talk lines (they point to the Hall). Tier I (Boulder Toss, Frost Rune) are real casts on existing spell kinds (projectile / trap); tiers II / III (Stone Skin, Cold Fire, Stone Golem) are recorded as a design note, not built (no matching spell kinds or spell-atlas art yet).
 - **Area:** `areas/src/barrow2.json` / `areas/barrow2/`: B5 Frozen Echo (0 m), B6 Berserker Hall (1.2 m, stair), B7 Rune Bridge (2.4 m, stair), B8 Waystone Crypt (2.4 m), B9 Throne Barrow (3.6 m, stair) with Hrimgard's dais; walls 7 m, kit footprint rules kept, actors fully on or off screen. `barrow.json` gets the passage at the north end of the Avalanche Run (exit to `barrow2`, spawn `from_barrow2`); `jot_art.py` PLACE list for `barrow2` (`LAMP_CAP_AREA` entry).

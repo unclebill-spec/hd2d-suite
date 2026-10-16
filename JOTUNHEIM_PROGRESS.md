@@ -92,6 +92,7 @@ Same spirit as the Svartalfheim decisions: befriend vs conquer is the player's c
 ## Leftovers (deferred on purpose)
 - The goat mount (`S.mounts.goat`, climbing snow slopes): mounts are not built in the engine. Decision 9.
 - Everything in the RESUME HERE list that is blocked on art (READY.txt).
+- **For Hearthmoor Art:** Stonefrost tiers II / III (Stone Skin, Cold Fire, Stone Golem). Tier I (Boulder Toss, Frost Rune) is in; II / III need new spell kinds (a buff, a ground-fire patch, a summon) plus spell-atlas art. Also nice to have: a real waystone glb for barrow2 (a `rune_standing_stone` marks it now) and cairn glbs (`snow_mound` stands in).
 
 ## Art the story needs (art pack: /workspace/hearthmoor-staging/art/jotunheim/, READY.txt = go)
 At scaffold time `/workspace/hearthmoor-staging/art/jotunheim/` did not exist, so everything below is from the story (2.2, 5, 8, 9), not from a README.
