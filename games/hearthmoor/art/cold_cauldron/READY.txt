@@ -1,0 +1,2 @@
+READY: true
+Bloop: bloop_neon.png (primary) + bloop.png (safe twin, passes check-sprite), bloop.json, bloop_fx (aura, pools, vent steam), contact_sheet.png, README, generator in src/. Neon twin needs a scoped pet_bloop allow-list entry (neon blue hexes) in check-sprite.

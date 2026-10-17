@@ -5,7 +5,7 @@
 // into progress.mods() by brewMods. Ingredients: garden herbs (each bloom harvest gives one), moonpetals, red toadstools
 // (Bryony: 3 a day), Bloop's lily pad (1 glow-dew a day), spring water (fill a vial at a hidden spring).
 // The Cold Cauldron intro (7.6): find Bloop at Tova's quench, clear+light the vent under Old Gurgle, gather caps+petals,
-// then brew Glowcap. Until then the Still is cold. Bloop's sprite is still pending.
+// then brew Glowcap. Until then the Still is cold. Bloop (role pet_bloop, art/cold_cauldron/) sits in the quench tank while you look for him, then on his lily pad.
 export const BREWS = {
   glowcap: { name: 'Glowcap Draught', col: '#ff4a3a', heal: 120, yield: 2, about: 'Heals 120 HP. Twice a tonic, half the taste.' },
   coldfire: { name: 'Cold-fire Tonic', col: '#5ab4f0', t: 90, mods: { spellMul: 0.15, spellCd: 0.10 }, about: '90 s: spells +15%, spell cooldowns 10% shorter. Glows neon blue.' },
@@ -47,7 +47,7 @@ const HINTS = {
   moonmilk: "Two moonpetals and a tin of Wren's tea. That's a nap.",
 };
 const NIGHT = (t) => t > 0.8 || t < 0.25;
-const OLD_GURGLE = [-6.0, -3.4], PAD = [-9.2, -2.4], QUENCH = [-1.8, -8.0], REACH = 1.6, VENT_REACH = 2.6;
+const OLD_GURGLE = [-6.0, -3.4], PAD = [-9.2, -2.4], QUENCH = [-1.8, -8.0], BLOOP_TANK = [-1.8, -7.3], REACH = 1.6, VENT_REACH = 2.6;
 const flags = (S) => (S.flags = S.flags || {});
 const cauldronDone = (S) => ((S.quests || {}).cauldron || 0) === 3;
 export const stillLit = (S) => !!flags(S).cc_vent || cauldronDone(S) || !!(S.recipes || {}).glowcap;
@@ -84,7 +84,7 @@ export function drink(G, id) {
   if (B.heal && C && C.ctx) C.heal(B.heal, true);
   if (B.t) { const was = S.brew && S.brew.left > 0 && BREWS[S.brew.id]; if (was && S.brew.id !== id) G.toast && G.toast(`The ${was.name} fades as the ${B.name} takes hold.`, 2.4); S.brew = { id, left: B.t }; }
   const ctx = C && C.ctx;
-  if (ctx) { if (ctx.effects) ctx.effects.spawn('sparkle_burst', ctx.player.x, ctx.player.y, ctx.player.z + 0.05); if (ctx.addGlow) { const l = ctx.addGlow(ctx.player.x, ctx.player.y, ctx.player.z, { color: B.col, intensity: 6, distance: 3, lift: 0.8 }); setTimeout(() => { if (l) l.kill = true; }, 1000); } }
+  if (ctx) { if (ctx.effects) ctx.effects.spawn('sparkle_burst', ctx.player.x, ctx.player.y, ctx.player.z + 0.05); if (ctx.addGlow) { const l = ctx.addGlow(ctx.player.x, ctx.player.y, ctx.player.z, { color: B.col, intensity: 6, range: 3, lift: 0.8 }); setTimeout(() => { if (l) l.kill = true; }, 1000); } }
   G.audio && G.audio.sfx('pickup'); return true;
 }
 export class Alchemy {
@@ -95,7 +95,7 @@ export class Alchemy {
     const S = this.G.S, R = S.recipes || {}, q = (S.quests = S.quests || {});
     // migration: saves that already got free recipes skip the intro
     if (R.glowcap && R.moonmilk && !q.cauldron) { q.cauldron = 3; const F = flags(S); F.cc_vent = 1; F.cc_bloop = 1; F.cc_coal = 1; }
-    this.relight();
+    this.relight(); this.syncBloop();
     // cast beside Old Gurgle lights the cleared vent (same reach as Hollows braziers)
     if (this.G.hollows && !this._castHook) {
       this._castHook = 1;
@@ -103,13 +103,25 @@ export class Alchemy {
       this.G.hollows.onCast = (...a) => { const r = c0(...a); const p = me.ctx && me.ctx.player; if (p) me.spellAt(p.x, p.z); return r; };
     }
   }
+  // Bloop (Cold Cauldron): in Tova's quench tank while you look for him (stage 1, not found yet), on his lily pad once found (and for saves
+  // that already finished the quest); gone before Bryony asks. A runtime actor on the pet_bloop role (a build without the sheet just skips him).
+  syncBloop() {
+    const ctx = this.ctx; if (!ctx || this.area !== 'forge' || !ctx.addNpc) return;
+    const S = this.G.S, q = (S.quests || {}).cauldron || 0, F = flags(S);
+    const at = q === 1 && !F.cc_bloop ? BLOOP_TANK : (F.cc_bloop || q >= 2) ? PAD : null;
+    const cur = ctx.npc('bloop');
+    if (cur && at && Math.abs(cur.x - at[0]) < 0.05 && Math.abs(cur.z - at[1]) < 0.05) return;
+    if (cur) ctx.removeNpc(cur);
+    if (!at || !(ctx.actors && ctx.actors.meta.roles.pet_bloop)) return;
+    const a = ctx.addNpc({ id: 'bloop', role: 'pet_bloop', name: 'Bloop', pos: at.slice(), facing: 'down', behavior: 'idle', talkable: true }); a.facing = 'down';
+  }
   relight() {
     for (const f of this.fx) if (f) f.dur = f.t + 0.2; for (const l of this.lights) if (l) l.kill = true; this.fx = []; this.lights = [];
     const ctx = this.ctx; if (!ctx || this.area !== 'forge') return;
     if (!stillLit(this.G.S)) return;   // Cold Cauldron: vent blocked, no blue glow yet
     const [x, z] = OLD_GURGLE, y = ctx.heightAt(x, z), gf = ctx.gamefx, has = (n) => gf && gf.meta.effects[n];
     for (const [n, dz, yy] of [['cauldron_pool_blue', 0.05, 0], ['cauldron_fire', 0.3, 0], ['cauldron_brew_blue', 0.02, 0]]) if (has(n)) this.fx.push(gf.spawn(n, x, y + yy, z + dz, { duration: Infinity }));
-    if (ctx.addGlow) this.lights.push(ctx.addGlow(x, y, z, { color: '#2ab4ff', intensity: 6, distance: 4.5, lift: 1.0, fadeIn: 0.5 }));
+    if (ctx.addGlow) this.lights.push(ctx.addGlow(x, y, z, { color: '#2ab4ff', intensity: 6, range: 4.5, lift: 1.0, fadeIn: 0.5 }));
   }
   detach() { for (const f of this.fx) if (f) f.dur = f.t + 0.2; for (const l of this.lights) if (l) l.kill = true; this.fx = []; this.lights = []; this.ctx = null; }
   zones() { return this.ctx && this.area === 'forge' && stillLit(this.G.S) ? [{ x: OLD_GURGLE[0], z: OLD_GURGLE[1], r: 2.2, src: 'still' }] : []; }
@@ -147,7 +159,7 @@ export class Alchemy {
       G.openDialogue({ id: 'smith', name: 'Tova Anvilsong' }, {
         pages: ['(A blue frog surfaces in the cold fire, blinks at you, and climbs your sleeve.)',
           "So that's what kept humming in my tank. Take it, take it. It was judging my work."],
-        then: (G2) => { G2.toast && G2.toast('Bloop hops onto your shoulder, spots pulsing violet.', 2.4); G2.drawLog && G2.drawLog(); G2.refreshMarkers && G2.refreshMarkers(); G2.save && G2.save(); },
+        then: (G2) => { this.syncBloop(); G2.toast && G2.toast('Bloop hops onto your shoulder, spots pulsing violet.', 2.4); G2.drawLog && G2.drawLog(); G2.refreshMarkers && G2.refreshMarkers(); G2.save && G2.save(); },
       });
       return true;
     }
@@ -167,6 +179,12 @@ export class Alchemy {
     }
     return false;
   }
+  // ---- Bloop (TALK.bloop)
+  bloop() {
+    const S = this.G.S, F = flags(S);
+    if (!F.cc_bloop && (S.quests || {}).cauldron === 1) return { pages: ['(A blue frog surfaces in the cold fire, blinks at you, and climbs your sleeve.)'] };
+    return { pages: ["(Bloop blinks. Bloop's spots pulse violet. Bloop says nothing, wisely.)"] };
+  }
   // ---- Bryony (TALK.alchemist)
   bryony() {
     const G = this.G, S = G.S, R = (S.recipes = S.recipes || {}), q = S.quests || {}, F = flags(S);
@@ -176,7 +194,7 @@ export class Alchemy {
       pages: ["Oh! A customer! Or a hero. Or both? I'm Bryony. This is the Glowfrog Still. It's normally much glowier.",
         "The riot tipped a coal cart over my vent. Old Gurgle's gone cold, and Bloop ran off. He hates shouting.",
         'Find my frog, light my fire, and bring me one red toadstool and two moonpetals. I\'ll teach you to brew. Deal?'],
-      then: (G2) => { G2.setQuest('cauldron', 1); },
+      then: (G2) => { G2.setQuest('cauldron', 1); this.syncBloop(); },
     };
     // stage 1: turn-in when ready, else reminder
     if (q.cauldron === 1) {

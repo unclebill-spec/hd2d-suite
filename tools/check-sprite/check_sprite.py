@@ -53,6 +53,9 @@ SVART_NEON_ALLOW = {"pet_tick": {"#1c62d8", "#2ab4ff", "#a6ecff"}, "dagna": {"#e
 # tail puff and chest glint, flurry_neon.png is her main look; flurry.png is the palette-safe fallback twin). Any other role and any other
 # off-palette colour on this one still fails.
 JOT_NEON_ALLOW = {"pet_flurry": {"#1c62d8", "#2ab4ff", "#a6ecff"}}
+# [COLD CAULDRON] Scoped palette exception (lead ruling 2026-10-16; art README "Neon flag"): only Bloop (role "pet_bloop": a fully blue glowing frog,
+# bloop_neon.png is his main look; bloop.png is the palette-safe fallback twin). Any other role and any other off-palette colour still fails.
+CC_NEON_ALLOW = {"pet_bloop": {"#1c62d8", "#2ab4ff", "#a6ecff"}}
 
 
 def check(atlas_path, json_path=None, biome=None, max_colors=20, project=None):
@@ -94,7 +97,7 @@ def check(atlas_path, json_path=None, biome=None, max_colors=20, project=None):
                         opaque.append((x, y))
                         c = _hex(p)
                         colors.add(c)
-                        if c not in palette and c not in LUMI_NEON_ALLOW.get(role, ()) and c not in SVART_NEON_ALLOW.get(role, ()) and c not in JOT_NEON_ALLOW.get(role, ()) and c not in NEON_PETS_ALLOW.get(role, ()) and not (role.startswith(("orb_", "glow_orb")) and c in ORB_NEON):  # [ALFHEIM] + LUMI_NEON_ALLOW
+                        if c not in palette and c not in LUMI_NEON_ALLOW.get(role, ()) and c not in SVART_NEON_ALLOW.get(role, ()) and c not in JOT_NEON_ALLOW.get(role, ()) and c not in CC_NEON_ALLOW.get(role, ()) and c not in NEON_PETS_ALLOW.get(role, ()) and not (role.startswith(("orb_", "glow_orb")) and c in ORB_NEON):  # [ALFHEIM] + LUMI_NEON_ALLOW
                             rr["issues"].append(f"{fr['name']}: colour {c} not in {biome}")
             if not opaque:
                 rr["issues"].append(f"{fr['name']}: empty frame")

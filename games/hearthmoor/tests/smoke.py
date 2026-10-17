@@ -2665,15 +2665,15 @@ def run(out, simscale=4, size=(960, 540), segs=SEGS):
                 cold = T.ev("(() => { const G = window.__hm, c = G.ctx; return { bryony: !!c.npc('alchemist'), fx: G.alchemy.fx.length, zone: G.glow.zones().some((z) => z.src === 'still'), lit: G.alchemy.qa().lit, cauldron: c.scene.objects.some((o) => /cauldron_blue/.test(o.glb || '')) }; })()")
                 T.step("the Still starts cold after the riot (Bryony + kit cauldron, no blue fx / zone until the vent is lit)", cold["bryony"] and cold["fx"] == 0 and not cold["zone"] and not cold["lit"] and cold["cauldron"], still=cold)
                 cc = T.ev("""(() => { const G = window.__hm, S = G.S, A = G.alchemy, F = (S.flags = S.flags || {}), p = G.ctx.player;
-                  A.bryony().then(G); const q1 = S.quests.cauldron;
-                  p.x = -1.8; p.z = -8.0; A.interact(); const bloop = !!F.cc_bloop;
+                  A.bryony().then(G); const q1 = S.quests.cauldron; const nb = G.ctx.npc('bloop'), tank = nb ? [nb.x, nb.z] : null;
+                  p.x = -1.8; p.z = -8.0; A.interact(); const bloop = !!F.cc_bloop; G.dropDialogue && G.dropDialogue(); A.syncBloop(); const np = G.ctx.npc('bloop'), pad = np ? [np.x, np.z] : null;
                   p.x = -6.0; p.z = -3.4; A.interact(); const coal = !!F.cc_coal;
                   A.spellAt(-6.0, -3.4); const vent = !!F.cc_vent, fx = A.fx.length, zone = G.glow.zones().some((z) => z.src === 'still');
                   Object.assign(S.inv, { redcap: 2, moonpetal: 3 }); A.bryony().then(G);
                   const q2 = S.quests.cauldron, moon = !!S.recipes.moonmilk, dew = S.inv.dewdrop || 0, vials = S.inv.vial || 0, tea = S.inv.tea || 0;
-                  return { q1, bloop, coal, vent, fx, zone, q2, moon, dew, vials, tea, gold: S.gold || 0 }; })()""")
-                T.step("Cold Cauldron: offer → Bloop at the quench → clear coal → cast lights vent (blue fx) → turn-in teaches Moonmilk + dew/vials/tea",
-                       cc["q1"] == 1 and cc["bloop"] and cc["coal"] and cc["vent"] and cc["fx"] == 3 and cc["zone"] and cc["q2"] == 2 and cc["moon"] and cc["dew"] == 1 and cc["vials"] == 3 and cc["tea"] >= 1, cc=cc)
+                  return { q1, tank, pad, bloop, coal, vent, fx, zone, q2, moon, dew, vials, tea, gold: S.gold || 0 }; })()""")
+                T.step("Cold Cauldron: offer → Bloop (own sprite) sits in the quench tank → find him → clear coal → cast lights vent (blue fx) → turn-in teaches Moonmilk + dew/vials/tea",
+                       cc["q1"] == 1 and cc["tank"] == [-1.8, -7.3] and cc["pad"] == [-9.2, -2.4] and cc["bloop"] and cc["coal"] and cc["vent"] and cc["fx"] == 3 and cc["zone"] and cc["q2"] == 2 and cc["moon"] and cc["dew"] == 1 and cc["vials"] == 3 and cc["tea"] >= 1, cc=cc)
                 br = T.ev("""(() => { const G = window.__hm, S = G.S, A = G.alchemy;
                   Object.assign(S.inv, { redcap: 3, moonpetal: 4, tea: 1, coldpetal: 1, glowbell: 1, glowcap: 1, springwater: 0, loaf: 1, dewdrop: 1 });
                   const p = G.ctx.player; p.x = -9.2; p.z = -1.4; delete S.dew; A.interact(); const dew1 = S.inv.dewdrop || 0; A.interact(); const dew2 = S.inv.dewdrop || 0;
@@ -2689,7 +2689,7 @@ def run(out, simscale=4, size=(960, 540), segs=SEGS):
                   const sold = shop.rows().find((x) => x.id === 'redcap'); shop.close();
                   return { r0, dew1, dew2, fz: fz.pages[0], hinted, keptCap, g, gc, q3, gold, ember: ec, newEmber: !!S.recipes.ember, secret: !sec0 && !!S.found.brew_breadbroth, menu, bought, soldOut: !!(sold && sold.cant) }; })()""")
                 T.step("brewing: Glowcap finishes Cold Cauldron (+30g), Bloop dew 1/day, miss fizzles, Glowcap x2, Ember + bread-broth secret; Bryony sells 3 redcaps/day then sold out",
-                       br["r0"] == ["ember", "glowcap", "moonmilk"] and br["q3"] == 3 and br["gold"] == 30 and br["dew1"] == 2 and br["dew2"] == 2 and "fizzles" in br["fz"] and br["hinted"] == 1 and br["gc"] == 2 and br["ember"] == 1 and br["newEmber"] and br["secret"] and br["menu"] == 4 and br["bought"] == 3 and br["soldOut"], brew=br)
+                       br["r0"] == ["glowcap", "moonmilk"] and br["q3"] == 3 and br["gold"] == 30 and br["dew1"] == 2 and br["dew2"] == 2 and "fizzles" in br["fz"] and br["hinted"] == 1 and br["gc"] == 2 and br["ember"] == 1 and br["newEmber"] and br["secret"] and br["menu"] == 4 and br["bought"] == 3 and br["soldOut"], brew=br)
                 dk = T.ev("""(() => { const G = window.__hm, S = G.S, PR = G.PR;
                   const m0 = PR.mods(S).meleeMul; G.drinkBrew('ember'); const m1 = PR.mods(S).meleeMul, b1 = S.brew && S.brew.id;
                   G.alchemy.update(61); const m2 = PR.mods(S).meleeMul;
