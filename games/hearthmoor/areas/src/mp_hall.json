@@ -208,9 +208,9 @@
    "saturation": 0.95,
    "bugs": 0.0,
    "warmth": 0.08,
-   "exposure": 0.84,
-   "sun_intensity": 0.45,
-   "hemi_intensity": 0.95,
+   "exposure": 0.74,
+   "sun_intensity": 1.0,
+   "hemi_intensity": 0.7,
    "sun_color": "#ffd8b0",
    "lamp_intensity": 0.85
   },

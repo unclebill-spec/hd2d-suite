@@ -193,7 +193,7 @@ def steps(b, url, T, size, errors, rep, stub=None, shots=None):
             T.step("Warden's Walk: a wrong stone hisses and resets the run", w0 == 0 and sv()["quests"]["mp_walk"] == 1, w0=w0)
             for x in (1.6, 0.8, 0, -0.8, -1.6): stone(x)
             s1 = sv()
-            T.step("Warden's Walk: five stones in order (from the east end) complete it, quest stage 2", s1["flags"].get("mw_stones") and s1["quests"]["mp_walk"] == 2, qa=[s1["quests"]["mp_walk"], s1["flags"].get("mw_stones")])
+            T.step("Warden's Walk: five stones in order (from the east end) complete it, quest stage 2", s1["flags"].get("stones") and s1["quests"]["mp_walk"] == 2, qa=[s1["quests"]["mp_walk"], s1["flags"].get("stones")])
             # the Sigil Forge
             a = load("mp_hall", "&muq=sigil")
             hs = {"gallery": H(4.6, -5.0), "floor": H(0, 4), "stair": H(4.6, -1.6)}

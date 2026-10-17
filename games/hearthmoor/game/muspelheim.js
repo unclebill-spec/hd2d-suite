@@ -85,7 +85,7 @@ Object.assign(BASES, {
   ashalpha: { name: 'Ash Alpha', scale: 2, hp: 300, dmg: 16, speed: 2.1, reach: 2.0, windup: 0.5, cd: 1.7, aggro: 8.5, r: 0.7, push: 0.2, heavy: true, minion: 'magma_hound', xp: 180 },
   pyreling: { name: 'Pyreling', scale: 3, hp: 360, dmg: 18, speed: 1.3, reach: 2.6, windup: 0.7, cd: 2.0, aggro: 8, r: 0.8, push: 0.2, float: true, xp: 210 },
 });
-RARE_AREAS.lavafalls = { bases: ['ashalpha', 'pyreling'], spots: [[6.0, -1.2], [1.6, -2.4]] };   // spots are chosen with the area (fall-pool; clear of braziers, glass walks, actors and the start view)
+RARE_AREAS.lavafalls = { bases: ['ashalpha', 'pyreling'], spots: [[5.6, 1.6], [1.6, -2.4]] };   // spots are chosen with the area (fall-pool; clear of braziers, glass walks, actors and the start view)
 const spawnRare0 = Rares.prototype.spawn;
 Rares.prototype.spawn = function spawn(o = {}) {   // Ash Alpha = blazing + quick (enraged + summoner: calls 2 hounds), Pyreling = flicker-step (blinking)
   if (!o.traits && o.base === 'ashalpha') o = { ...o, traits: ['enraged', 'summoner'] };
@@ -93,7 +93,7 @@ Rares.prototype.spawn = function spawn(o = {}) {   // Ash Alpha = blazing + quic
   return spawnRare0.call(this, o);
 };
 SPAWNS.lavafalls = [   // 1.4x / 1.5x foes read fully on screen; clear of the braziers (+-1.6, -5.4), cold braziers (+-3.6, 1), lava pools (+-6.4, -4.4), the channel at z 3 and Torka (-4.8, -2.4)
-  { id: 'lf_hound0', role: 'magma_hound', pos: [5.4, -2.6] }, { id: 'lf_hound1', role: 'magma_hound', pos: [8.0, -1.4] },
+  { id: 'lf_hound0', role: 'magma_hound', pos: [4.0, -5.0] }, { id: 'lf_hound1', role: 'magma_hound', pos: [8.0, -1.4] },
   { id: 'lf_elem0', role: 'flame_elemental', pos: [-1.0, -1.4], night: true }, { id: 'lf_hound2', role: 'magma_hound', pos: [-1.6, 6.4], night: true },
 ];
 const MP_FX = {   // [effect, [x, z], dy]: the pack's animated pools / flames / motes (art metadata layout; the Caldera rooms from the placed pieces)
@@ -791,7 +791,7 @@ export class Muspelheim {
              spots: this.spots.filter((x) => x.show()).length, gate: this.gate.qa(), alliance: (f.alliance || {}).muspelheim || null, rival: (f.rivals || {}).muspelheim || null, rivals: { ...(f.rivals || {}) }, moods: { ...(f.realm_mood || {}) }, dlg: this.G.dlg ? this.G.dlg.npc.id : null, mood: (f.realm_mood || {}).muspelheim || 0,
              contract: !!f.mp_contract, allies: allyCount(S), sigil: sigil(S), evidence: (S.evidence || {}).muspelheim || null, companions: Object.keys(f.companions || {}),
              quests: Object.fromEntries(['mp_gate', 'mp_walk', 'mp_sigil', 'mp_kindle', 'mp_take', 'mp_hire', 'caldera', 'mp_sword', 'mp_lizard', 'emberfall'].map((k) => [k, q(S, k)])),
-             flags: { aud: !!f.mg_aud, key: !!f.mg_key, hound: !!f.mg_hound, open: !!f.mp_gate_open, trusted: !!f.mp_trusted, cleared: !!f.mp_cleared, peace: !!f.mp_peace },
+             flags: { aud: !!f.mg_aud, key: !!f.mg_key, hound: !!f.mg_hound, open: !!f.mp_gate_open, trusted: !!f.mp_trusted, cleared: !!f.mp_cleared, peace: !!f.mp_peace, stones: !!f.mw_stones },
              actors: c ? c.actors.list.map((a) => a.id || a.role) : [], fx: this.fx.length, lights: this.lights.length, gold: S.gold || 0 };
   }
 }
