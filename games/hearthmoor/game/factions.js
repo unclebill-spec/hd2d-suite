@@ -114,7 +114,7 @@ export class Factions {
   onRiddle() { this.add('gnome', MERIT.riddle, 'riddle'); }
   onSmuggle() { this.add('corsair', MERIT.smuggle, 'smuggle'); this.add('hearth', -MERIT.rival, 'rival'); }
   // rewards usable now (Friend rank)
-  priceMul(shop) { return shop === 'hearthmoor' && this.has('hearth') ? 0.9 : shop === 'night' && this.has('corsair') ? 0.85 : 1; }
+  priceMul(shop) { return shop === 'jt_trader' && this.S.flags && this.S.flags.jt_dark ? 1.25 : shop === 'hearthmoor' && this.has('hearth') ? 0.9 : shop === 'night' && this.has('corsair') ? 0.85 : 1; }
   riftGoldMul() { return this.has('gate') ? 1.25 : 1; }
   pickupGoldMul() { return this.has('gnome') ? 1.1 : 1; }
   xpMul() { return this.G.area === 'vanaheim' && this.has('embassy') ? 1.1 : 1; }

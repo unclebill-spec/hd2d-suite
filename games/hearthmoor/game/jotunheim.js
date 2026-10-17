@@ -80,7 +80,7 @@ SPAWNS.barrow2 = [   // B5-B9: the Frozen Echo is quiet; berserkers in the Berse
 ];
 SPAWNS.barrow = [   // B1-B4: two frost trolls at the door hall, ice golems wake in the Hall of Shields / pools, avalanche golems at the top of the Run; none near the start view
   { id: 'bw_troll0', role: 'frost_troll', pos: [-5.6, -9.4] }, { id: 'bw_troll1', role: 'frost_troll', pos: [5.6, -9.4] },
-  { id: 'bw_golem0', role: 'ice_golem', pos: [-4.0, -15.6] }, { id: 'bw_golem1', role: 'ice_golem', pos: [4.0, -15.6] }, { id: 'bw_golem2', role: 'ice_golem', pos: [0.0, -21.0] },
+  { id: 'bw_golem0', role: 'ice_golem', pos: [-2.0, -10.6] }, { id: 'bw_golem1', role: 'ice_golem', pos: [2.0, -10.6] }, { id: 'bw_golem2', role: 'ice_golem', pos: [0.0, -26.0] },   // the golems stand on the bank / the Run's foot, off the slide puzzle's ice
   { id: 'bw_avl0', role: 'avalanche_golem', pos: [-4.4, -28.0] }, { id: 'bw_avl1', role: 'avalanche_golem', pos: [4.4, -28.0] },
   { id: 'bw_zerk0', role: 'rime_berserker', pos: [-8.0, -12.0], night: true }, { id: 'bw_zerk1', role: 'rime_berserker', pos: [8.0, -12.0], night: true },
 ];
@@ -155,7 +155,7 @@ export function RIMEBREAKER(S) {
   it.about = 'A giant frost axe, cut down to your size by Solvi\'s runes. Cold blue fire runs along the edge. Every third hit freezes what it bites.';
   return it;
 }
-export const HI = [['hi_1', 'barrow', [6.0, -22.0]], ['hi_2', 'barrow2', [6.0, -14.8]], ['hi_3', 'barrow2', [-9.2, -40.2]]];
+export const HI = [['hi_1', 'barrow', [7.2, -22.0]], ['hi_2', 'barrow2', [6.0, -14.8]], ['hi_3', 'barrow2', [-9.2, -40.2]]];
 // ---- Jotunheim weather (story 2.6): Stonehollow's day is 70% snow / 15% blizzard / 15% clear per 6-hour block; clear nights show the aurora. Interiors stay clear.
 // Blizzard: frost slow of -1% speed per 5 s outdoors (max -30%); standing by cold fire thaws it quickly. (Flurry / Moonpetal tea thaw it too once those exist.)
 WX_KINDS.blizzard = [{ preset: 'snowfall', rate: 2.4 }, { preset: 'mist', rate: 0.9 }];
@@ -298,8 +298,23 @@ MARKER_HOOKS.push((id, S) => {
   if (id === 'rimewife' && al === 'befriend' && q(S, 'jt_heart') === 1 && !f.jh_solvi) return 'quest_mark';
 });
 
+// ------------------------------------------------------------------ Dark Stonehollow (story 9.7, flags.jt_dark = 1: you took Hrimgard's crown)
+// The cold fires are out, only glow orbs remain; the giants are curt, no song, no Games, and the trader charges +25% (factions.js priceMul).
+export const isDark = (S) => !!F(S).jt_dark;
+const DARK_TALK = {
+  jt_trader: () => ({ pages: ['Prices are up a quarter. Cold fire kept the stall warm. Orbs do not.'], then: (G) => { met('jt_trader')(G); G.shopUI.show('jt_trader'); } }),
+  goatherd: () => ({ pages: ['Goats are quiet now. Goats know why.'] }),
+  goatwife: () => ({ pages: ['The goats do not like the dark. Neither do I. Move along.'] }),
+  ulfar: () => ({ pages: ['(Ulfar looks at the lake. He does not wave.)', 'The fires went out. I am not sure who to be angry at.'] }),
+  jt_a: () => ({ pages: ['Quiet. Please.'] }),
+  jt_b: () => ({ pages: ['No song tonight. No Games this year either. Nobody has the heart.'] }),
+  jarl: () => ({ pages: ['The fires are out. You have the crown. Take what you came for, and go.'] }),
+  envoy_jt: () => ({ pages: ['A dark town keeps the ledger too. You are in it.'] }),
+};
+for (const id of Object.keys(DARK_TALK)) { const base = TALK[id]; TALK[id] = (S) => (isDark(S) && ((F(S).alliance || {}).jotunheim === 'conquer') ? DARK_TALK[id](S) : base(S)); }
 // ------------------------------------------------------------------ the area's own look: cold fire on the braziers, rune pulses, the lake, a gloom light
-const COLD = ['#7fd4ff', 4.2, 4.2];   // colour, intensity, range
+const COLD = ['#7fd4ff', 4.2, 4.2];
+const DARK_GLOW = [1.1, 3.4];   // Dark Stonehollow: the glow orbs' point light (intensity, range)   // colour, intensity, range
 // Stonehollow's pen goats + Clatter (runtime actors on the jt_goats sheet): north of the fence line (z 3.4) so the fence never hides them, in the far-left column (x -11.2) so they sit outside Brynja's sprite box and the fur stall / trader (they hide anything at x > -8.5)
 const GOATS = [['pen_goat1', [-11.2, -1.1], 0.25, 'goat', 'pen goat'], ['clatter', [-11.2, 1.1], 0.25, 'clatter', 'Clatter']];
 const JT_FX = {
@@ -316,6 +331,25 @@ JT_FX.barrow = [['cold_flame', [-3.6, 7.0], 1.0, 1], ['cold_flame', [3.6, 7.0], 
 JT_FX.barrow2 = [['cold_flame', [-3.6, 7.0], 1.0, 1], ['cold_flame', [3.6, 7.0], 1.0, 1], ['cold_flame', [0, -32.0], 1.0, 1], ['pool_teal', [-6.4, -21.0], 0, 0], ['pool_aurora', [6.4, -21.0], 0, 0],
   ['cold_flame', [-6.0, -47.0], 1.0, 1], ['cold_flame', [6.0, -47.0], 1.0, 1], ['cold_flame', [0, -52.4], 1.0, 1], ['ice_sparkles', [0, -2.0], 0.5, 0], ['rune_pulse', [0, -30.8], 0.8, 0],
   ['pool_cold', [-4.0, -36.4], 0, 0], ['rune_pulse', [-4.0, -36.4], 0.8, 0], ['ice_sparkles', [-4.0, -36.4], 0.5, 0]];   // the real rune_waystone's kit fx (pool_cold r 3 m under it, rune_pulse, sparkles)
+// ---- B3 The Glow Pools slide puzzle (story 7): the pool floor is ice. You slide in one direction until a frost-rune pillar or the wall stops you;
+// the far door is the stair at the north end of column 3. Stateless (so it cannot soft-lock: the layout is checked by BFS in the smoke: every stop cell
+// reaches both the door and the bank), the bank is the way back, the ice runes under your feet slide you back to the bank on E / A, and once solved the
+// pools are ordinary (walkable) floor for good (found.tb_slide).
+export const PZ = { cols: 7, rows: 4, cell: 2.4, x0: -7.2, z0: -13.4, door: 3, zS: -12.2, zN: -22.9, speed: 7.0, pillars: [[1, 1], [2, 3], [3, 1], [4, 0], [5, 0], [5, 3], [6, 0]] };
+export const pzXZ = (c, r) => [PZ.x0 + c * PZ.cell, PZ.z0 - r * PZ.cell];
+// where a slide from cell (c, r) in direction d ends: [c, r] (a cell; r = -1 is the bank), 'goal' (up the far door's stair) or null (blocked)
+export function pzSlide(c, r, d) {
+  const [dx, dr] = { N: [0, 1], S: [0, -1], E: [1, 0], W: [-1, 0] }[d];
+  const P = (cc, rr) => PZ.pillars.some(([a, b]) => a === cc && b === rr);
+  let k = 0;
+  for (;;) {
+    const nc = c + dx, nr = r + dr;
+    if (nr >= PZ.rows) return c === PZ.door ? 'goal' : (k ? [c, r] : null);
+    if (nr < 0) return r === -1 ? null : [c, -1];
+    if (nc < 0 || nc >= PZ.cols || P(nc, nr)) return k ? [c, r] : null;
+    c = nc; r = nr; k++;
+  }
+}
 const CAIRNS = [[-10.2, 6.4], [10.2, 6.4], [3.0, -1.6]];   // the Toll of Stones cairns (invisible spots; the ambush spawns at runtime)
 // the Rune Bridge (story 7, B7): step on lit frost runes only; unlit tiles crack and drop you back at the bridge head. 3 columns x 6 rows; LIT[row] = lit columns.
 // The lit tiles form one orthogonally connected path from the head to the far end (the smoke checks that); a fall costs a little health, never position.
@@ -486,6 +520,7 @@ export class Jotunheim {
     if (v === 'deepc') { ally(S).jotunheim = 'conquer'; flags(S).jt_gate_open = 1; S.quests.barrow = 1; S.quests.jt_take = 2; flags(S).barrow_key = 1; }
     if (v === 'lessons') { ally(S).jotunheim = 'befriend'; flags(S).jt_gate_open = 1; S.quests.jt_welcome = 3; flags(S).jt_trusted = 1; S.quests.barrow = 3; }
     if (v === 'conquer') { ally(S).jotunheim = 'conquer'; flags(S).jt_gate_open = 1; S.quests.jt_take = 1; }
+    if (v === 'dark') { ally(S).jotunheim = 'conquer'; flags(S).jt_gate_open = 1; S.quests.jt_take = 2; S.quests.barrow = 3; flags(S).barrow_key = 1; flags(S).jt_dark = 1; S.found = { ...(S.found || {}), tb_crown: 1 }; }   // Dark Stonehollow (crown taken)
     if (v === 'contract') { flags(S).rivals = { ...(flags(S).rivals || {}), jotunheim: 'locked' }; flags(S).jt_contract = 1; flags(S).jt_gate_open = 1; S.quests.jt_hire = 1; }
     if (v === 'done') { S.quests.jt_welcome = 3; flags(S).jw_lifts = 3; flags(S).jt_trusted = 1; }
   }
@@ -508,8 +543,13 @@ export class Jotunheim {
   stonehollow(ctx) {
     const G = this.G, S = G.S, gm = ctx.scene.game || (ctx.scene.game = {}), still = !!G.qaStill;
     this.gate.atHub(ctx);
-    for (const [name, [x, z], dy, glow] of JT_FX.jotunheim) {   // gamefx decals / flames + a cold point light where the fx glows
+    const dark = isDark(S);
+    if (dark) this.darken(ctx);
+    for (const [name0, [x, z], dy, glow0] of JT_FX.jotunheim) {   // gamefx decals / flames + a cold point light where the fx glows
+      if (dark && name0 === 'rune_pulse') continue;   // the runes are dead
+      const orb = dark && name0 === 'cold_flame', name = orb ? 'glow_orb_blue' : name0, glow = glow0;   // Dark Stonehollow: a pale glow orb where each cold fire was
       const y = ctx.heightAt(x, z);
+      if (orb) { if (ctx.gamefx && ctx.gamefx.meta.effects[name]) this.fx.push(ctx.gamefx.spawn(name, x, y + dy, z, { duration: Infinity, fadeIn: still ? 0 : 0.6 })); if (ctx.addGlow) this.lights.push(ctx.addGlow(x, y, z, { color: '#86a4c8', intensity: DARK_GLOW[0], range: DARK_GLOW[1], lift: dy, fadeIn: still ? 0.01 : 0.8 })); continue; }
       if (ctx.gamefx && ctx.gamefx.meta.effects[name]) this.fx.push(ctx.gamefx.spawn(name, x, y + dy, z, { duration: Infinity, fadeIn: still ? 0 : 0.6 }));
       if (glow && ctx.addGlow) this.lights.push(ctx.addGlow(x, y, z, { color: COLD[0], intensity: COLD[1], range: COLD[2], lift: dy, fadeIn: still ? 0.01 : 0.8 }));
     }
@@ -522,7 +562,85 @@ export class Jotunheim {
     this.penGoats(ctx);
     this.ulfarWalk(ctx);
     this.spot({ pos: SPOTS.prints, r: 1.8, label: 'giant frost prints (E / A)', act: () => this.prints() });
-    if (!flags(S).jt_arrived && !still) { flags(S).jt_arrived = 1; G.toast('Snow drifts down; the cold fires gutter blue. A giant child stares, then waves.', 3.6); }
+    if (dark && !flags(S).jt_dark_seen && !still) { flags(S).jt_dark_seen = 1; G.toast('The cold fires are out. Only the glow orbs are left. Stonehollow is quiet.', 3.6); }
+    if (!dark && !flags(S).jt_arrived && !still) { flags(S).jt_arrived = 1; G.toast('Snow drifts down; the cold fires gutter blue. A giant child stares, then waves.', 3.6); }
+  }
+  // ---- the Glow Pools slide (see PZ above)
+  pzOn() { return this.area === 'barrow' && !((this.G.S.found || {}).tb_slide); }
+  pzCell() {   // the free cell nearest the player (r = -1: on the bank)
+    const p = this.ctx.player; if (p.z >= PZ.zS) return [Math.max(0, Math.min(PZ.cols - 1, Math.round((p.x - PZ.x0) / PZ.cell))), -1];
+    const c0 = Math.max(0, Math.min(PZ.cols - 1, Math.round((p.x - PZ.x0) / PZ.cell))), r0 = Math.max(0, Math.min(PZ.rows - 1, Math.round((PZ.z0 - p.z) / PZ.cell)));
+    let best = null, bd = 1e9;
+    for (let c = 0; c < PZ.cols; c++) for (let r = 0; r < PZ.rows; r++) {
+      if (PZ.pillars.some(([a, b]) => a === c && b === r)) continue;
+      const d = Math.hypot(c - c0, r - r0); if (d < bd) { bd = d; best = [c, r]; }
+    }
+    return best;
+  }
+  pzStart(d, fromBank) {   // begin a slide from where you stand (fromBank: you just stepped off the bank); false when the way is blocked
+    const c = this.ctx, p = c.player, st = this.pz; if (!c || st.st !== 'idle' || !this.pzOn()) return false;
+    const [cc, rr] = fromBank ? [Math.max(0, Math.min(PZ.cols - 1, Math.round((p.x - PZ.x0) / PZ.cell))), -1] : this.pzCell(), end = pzSlide(cc, rr, d); if (!end) return false;
+    const a = pzXZ(cc, rr), b = end === 'goal' ? [0, -24.4] : pzXZ(end[0], end[1]);
+    c.stopWalk && c.stopWalk();
+    Object.assign(st, { st: 'slide', d, t: 0, lock: 0.1, from: [p.x, p.z], a, b, end, len: Math.hypot(b[0] - a[0], b[1] - a[1]), cell: [cc, rr] });
+    st.moves++; return true;
+  }
+  pzTick(dt) {
+    const c = this.ctx, p = c.player, st = this.pz, G = this.G;
+    if (!this.pzOn()) { st.st = 'idle'; return; }
+    if (st.st === 'slide') {
+      let x, z;
+      if (st.lock > 0) { st.lock = Math.max(0, st.lock - dt); const k = 1 - st.lock / 0.1; x = st.from[0] + (st.a[0] - st.from[0]) * k; z = st.from[1] + (st.a[1] - st.from[1]) * k; }
+      else { st.t = Math.min(1, st.t + dt * PZ.speed / Math.max(0.1, st.len)); x = st.a[0] + (st.b[0] - st.a[0]) * st.t; z = st.a[1] + (st.b[1] - st.a[1]) * st.t; }
+      p.x = x; p.z = z; p.y = c.heightAt(x, z);
+      if (st.lock <= 0 && st.t >= 1) {
+        st.st = 'idle'; st.pos = null; this.pzPrev = null; st.at = st.end === 'goal' ? 'goal' : st.end;
+        if (st.end === 'goal') this.pzSolved();
+        else if (st.end[1] === -1) st.at = 'bank';
+      }
+      return;
+    }
+    // idle: standing on the ice, a push of the stick starts a slide
+    const prev = this.pzPrev; this.pzPrev = [p.x, p.z];
+    const onIce = p.z < PZ.zS && p.z > PZ.zN - 1.0 && Math.abs(p.x) < 11.9;
+    if (!prev || dt <= 0 || G.dlg || G.busy || G.title) return;
+    const dx = p.x - prev[0], dz = p.z - prev[1], sp = Math.hypot(dx, dz) / dt;
+    if (!onIce || sp < 1.2) return;
+    const d = Math.abs(dx) > Math.abs(dz) ? (dx > 0 ? 'E' : 'W') : (dz < 0 ? 'N' : 'S');
+    const wasBank = prev[1] >= PZ.zS;
+    if (wasBank && d !== 'N') return;   // from the bank the only slide is north onto the ice
+    if (!this.pzStart(d, wasBank)) { const [cc, rr] = this.pzCell(); if (!wasBank && rr >= 0) { const q2 = pzXZ(cc, rr); p.x = q2[0]; p.z = q2[1]; } }
+  }
+  pzSolved() {
+    const S = this.G.S; S.found = { ...(S.found || {}), tb_slide: 1 }; gold(this.G, 40);
+    this.G.toast('The far door grinds open. The pools go quiet, plain ice underfoot now.', 3.2); this.G.save && this.G.save();
+  }
+  pzReset() {   // the ice runes pull you back to the bank, from anywhere on the pools
+    const c = this.ctx, p = c.player, st = this.pz; if (!this.pzOn() || st.st !== 'idle') return;
+    const [cc] = this.pzCell(), b = pzXZ(Math.max(0, Math.min(PZ.cols - 1, cc)), -1);
+    c.stopWalk && c.stopWalk(); p.x = 0; p.z = b[1]; p.y = c.heightAt(p.x, p.z); st.at = 'bank'; st.resets++; this.pzPrev = null;
+    this.G.toast('The ice runes pull you back to the bank.', 1.8);
+  }
+  // Dark Stonehollow: switch off the scene's cold-fire lamps (the blue / teal ones; the warm giant lanterns stay) so only the glow orbs and lanterns light the town
+  darken(ctx) {
+    this.coldLamps = 0; this.coldMeshes = 0;
+    const cold = (ctx.lamps || []).filter((L) => L.tint && L.tint.r <= L.tint.b);
+    const w0 = (ctx.lamps || []).find((L) => L.light && L.light.parent); const world = w0 && w0.light.parent;
+    if (world) { world.updateMatrixWorld(true); const v = ctx.camera.position.clone();
+      world.traverse((o) => {   // the braziers' / rune stones' / lake's blue 'glow' meshes (vertex-coloured) sit under a cold lamp: they go dark; warm lantern and window glows stay
+        if (!o.isMesh) return;
+        const ms = Array.isArray(o.material) ? o.material : [o.material];
+        if (!ms.some((m) => m && m.name === 'glow')) return;
+        o.getWorldPosition(v);
+        if (!cold.some((L) => Math.hypot(L.pos.x - v.x, L.pos.z - v.z) < 1.0)) return;
+        for (const m of ms) if (m && m.name === 'glow') { m.visible = false; this.coldMeshes++; }
+      }); }
+    for (const L of ctx.lamps || []) {
+      // warm lanterns are #ffc866 (red-heavy), cold fire is blue / teal
+      if (!L.tint || L.tint.r > L.tint.b) continue;
+      if (L.light) { if (L.light.parent) L.light.parent.remove(L.light); L.light = null; }
+      L.glow = false; L.fixed = null; this.coldLamps++;
+    }
   }
   // ---- the Hall of Hearthstones (story 2.4, 4): the Jarl, the ice cellar trapdoor and the false Heart's three clues. The cellar is the walled pocket
   // east of the hall (spawn `cellar`); the trapdoor and the cellar stair move the player between the two (no loading, one scene).
@@ -602,6 +720,14 @@ export class Jotunheim {
       if (ctx.gamefx && ctx.gamefx.meta.effects[name]) this.fx.push(ctx.gamefx.spawn(name, x, y + dy, z, { duration: Infinity, fadeIn: still ? 0 : 0.6 }));
       if (glow && ctx.addGlow) this.lights.push(ctx.addGlow(x, y, z, { color: COLD[0], intensity: COLD[1], range: COLD[2], lift: dy, fadeIn: still ? 0.01 : 0.8 }));
     }
+    this.pz = { st: 'idle', moves: 0, resets: 0, at: 'bank' }; this.pzPrev = null;
+    const follow = [0, 0];   // the reset spot follows you over the ice (and gives way to the heart-ice shard)
+    this.spot({ id: 'pzreset', pos: follow, r: 0.6, label: 'the ice runes hum (E / A: they slide you back to the bank)', show: () => {
+      const c = this.ctx; if (!c || !this.pzOn() || this.pz.st !== 'idle') return false;
+      const p = c.player; if (p.z >= PZ.zS || p.z < PZ.zN) return false;
+      follow[0] = p.x; follow[1] = p.z;
+      return !HI.some(([k, a, pos]) => a === 'barrow' && q(this.G.S, 'jt_axe') === 1 && !(this.G.S.found || {})[k] && Math.hypot(p.x - pos[0], p.z - pos[1]) < 1.6);
+    }, act: () => this.pzReset() });
     this.hiSpots(ctx);
     this.spot({ id: 'tb1', pos: [0, -7.4], r: 1.8, label: () => ((this.G.S.found || {}).tb_b1 ? 'the snuffed brazier' : "Veyra's cold-fire brazier (E / A: snuff it)"), act: () => this.snuff('tb_b1', 'one') });
     this.spot({ id: 'tb2', pos: [0, -27.6], r: 1.8, label: () => ((this.G.S.found || {}).tb_b2 ? 'the snuffed brazier' : "Veyra's cold-fire brazier (E / A: snuff it)"), act: () => this.snuff('tb_b2', 'two') });
@@ -869,6 +995,7 @@ export class Jotunheim {
     if (this.area === 'jotunheim' && !this.G.dlg && !this.G.busy && this.G.combat && F(this.G.S).jg_sounded && !F(this.G.S).jg_troll && !this.cb.jg_troll) this.gateTroll();
     this.weatherTick(dt);
     if (this.area === 'barrow2') this.deepTick(dt);
+    if (this.area === 'barrow') this.pzTick(dt);
     if (this.area === 'barrow2' && !this.G.dlg && this.G.combat) { const z = this.ctx.player.z; if (z < -7.2) this.tbBoss('ormgar'); if (z < -45.0) this.tbBoss('hrimgard'); }
     if (this.ring) {
       this.ring.t += dt; const el = this.ring.el, fill = el && el.querySelector('#jt-ring-fill');
@@ -877,6 +1004,9 @@ export class Jotunheim {
     }
   }
   // QA helpers for the smoke test
+  qaPzGo(d) { return this.pzStart(d); }
+  qaPzSolve() { this.pzSolved(); }
+  qaLine(id) { const e = TALK[id](this.G.S); return e && e.pages ? e.pages[0] : null; }
   qaTalk(id) { const e = TALK[id](this.G.S); if (e && e.then) e.then(this.G); return { pages: e ? e.pages.length : 0, choice: e && e.choice ? e.choice.options.map((o) => o.label) : null }; }
   qaPick(label, id = 'jarl') { const e = TALK[id](this.G.S), o = e.choice.options.find((x) => x.label === label), nx = o.pick(this.G); if (nx && nx.then) nx.then(this.G); return nx ? nx.pages.length : 0; }
   qaHp(id, frac) { const e = this.G.combat.enemies.find((x) => x.id === id); if (!e) return false; e.hp = e.D.hp * frac; return true; }
@@ -895,6 +1025,8 @@ export class Jotunheim {
              actors: c ? c.actors.list.map((a) => a.id || a.role) : [], fx: this.fx.length, lights: this.lights.length, ring: !!this.ring, inCellar: !!this.inCellar, heart: q(S, 'jt_heart'), clues: ['jh_heart', 'jh_rime', 'jh_trail'].filter((k) => f[k]), peace: !!f.jt_peace, evidence: (S.evidence || {}).jotunheim || null, hire: q(S, 'jt_hire'), terms: !!f.jw_terms, skuli: !!f.jw_skuli, pos: c ? [c.player.x, c.player.z] : null, spring: !!(S.found || {}).rc_spring, quest_barrow: q(S, 'barrow'), foes: c ? c.actors.list.filter((a) => ['frost_troll', 'ice_golem', 'avalanche_golem', 'rime_berserker', 'hrimgard', 'ormgar'].includes(a.role)).map((a) => a.role) : [], shop: !!SHOPS.jt_trader, found: S.found || {}, gate_q: q(S, 'jt_gate'), take_q: q(S, 'jt_take'), hire_q: q(S, 'jt_hire'), key: !!f.barrow_key, spells: S.spells || [], unlocks: S.unlocks || {}, cb: Object.keys(this.cb), bridge: { falls: this.falls || 0, solved: !!(S.found || {}).tb_bridge, lit: BRIDGE.LIT, head: BRIDGE.head }, boss: { phase: this.boss ? this.boss.phaseN || 1 : 0, p2: !!(this.boss && this.boss.p2), p3: !!(this.boss && this.boss.p3), relit: this.relit ? this.relit.slice() : null, hp: this.boss ? this.boss.hp : null, max: this.boss ? this.boss.D.hp : null, slide: this.slideV ? this.slideV.slice() : null }, orm: { frenzy: !!(this.orm && this.orm.frenzy), speed: this.orm ? this.orm.D.speed : null, base: ENEMIES.ormgar.speed }, goats: c ? c.actors.list.filter((x) => /^(pen_goat|clatter)/.test(x.id)).map((x) => [x.id, x.role, +x.x.toFixed(2), +x.z.toFixed(2)]) : [],
              goat: { q: q(S, 'jt_goat'), cakes: f.gt_cakes || 0, last: f.gt_lastDay ?? null, cake: (S.inv || {}).oat_cake || 0, mount: !!(S.mounts || {}).goat },
              ulfar: { q: q(S, 'jt_ulfar'), walk: !!F(S).uw_walk, comp: compActive(S), found: ['uw_goat', 'uw_song', 'uw_mitten'].map((k) => (S.found || {})[k] ? 1 : 0), flurry: !!(S.pets || {}).flurry, brute: !!(S.unlocks || {}).frostbrute, town: c ? c.actors.list.some((x) => x.id === 'ulfar') : null },
+             pz: { on: this.pzOn ? this.pzOn() : false, st: this.pz ? this.pz.st : null, at: this.pz ? this.pz.at : null, moves: this.pz ? this.pz.moves : 0, resets: this.pz ? this.pz.resets : 0, solved: !!(S.found || {}).tb_slide, layout: { ...PZ } },
+             dark: { on: isDark(S), cold: this.coldLamps || 0, meshes: this.coldMeshes || 0, litCold: c ? c.lamps.filter((L) => L.tint && L.tint.r <= L.tint.b && (L.light || L.glow)).length : null, litWarm: c ? c.lamps.filter((L) => L.tint && L.tint.r > L.tint.b && L.light).length : null, orbs: this.fx.filter((f) => f && f.name === 'glow_orb_blue').length, flames: this.fx.filter((f) => f && f.name === 'cold_flame').length, pulses: this.fx.filter((f) => f && f.name === 'rune_pulse').length, glows: this.lights.filter(Boolean).length },
              wx: { kind: this.G.weather ? this.G.weather.kind : null, frost: +(this.frostT || 0).toFixed(1), slow: this.frostSlow || 0, speed: c ? c.player.speed : null, aurora: !!(this.aurora && this.aurora.m) }, rimes: this.rimes || 0, axe: q(S, 'jt_axe'), bag: (S.bag || []).map((i) => i.unique || i.name), hice: (S.inv || {}).heart_ice || 0, gold: S.gold || 0, jg: [f.jg_asked, f.jg_horn, f.jg_troll].map((x) => !!x) };
   }
 }

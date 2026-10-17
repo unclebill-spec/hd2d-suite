@@ -182,7 +182,10 @@ PLACE = {
                ("frost_rune_pillar", [-6.4, -4.8], "fixed"), ("frost_rune_pillar", [6.4, -4.8], "fixed"),
                ("glow_ice_pool", [-5.0, -17.0], "fixed"), ("glow_ice_pool", [5.0, -17.0], "fixed"), ("glow_ice_pool", [0.0, -19.4], "fixed"), ("glow_ice_pool", [-6.4, -13.6], "fixed"), ("glow_ice_pool", [6.4, -13.6], "fixed"),
                ("ice_crystal_cluster", [-10.4, -15.0], "fixed"), ("ice_crystal_cluster", [10.4, -15.0], "fixed"), ("ice_crystal_cluster", [-10.4, -20.6], "fixed"), ("ice_crystal_cluster", [10.4, -20.6], "fixed"),
-               ("cold_brazier", [0.0, -29.0], "fixed"), ("ice_wall", [-8.0, -27.0], "fixed"), ("ice_wall", [8.0, -27.0], "fixed"), ("warm_lantern", [-2.8, 9.4], "fixed"), ("warm_lantern", [2.8, 9.4], "fixed")],
+               ("cold_brazier", [0.0, -29.0], "fixed"), ("ice_wall", [-8.0, -27.0], "fixed"), ("ice_wall", [8.0, -27.0], "fixed"), ("warm_lantern", [-2.8, 9.4], "fixed"), ("warm_lantern", [2.8, 9.4], "fixed"),
+               # B3 slide puzzle stoppers (game/jotunheim.js PZ.pillars: cell (c, r) -> x = -7.2 + 2.4 c, z = -13.4 - 2.4 r)
+               ("frost_rune_pillar", [-4.8, -15.8], "fixed"), ("frost_rune_pillar", [-2.4, -20.6], "fixed"), ("frost_rune_pillar", [0.0, -15.8], "fixed"), ("frost_rune_pillar", [2.4, -13.4], "fixed"),
+               ("frost_rune_pillar", [4.8, -13.4], "fixed"), ("frost_rune_pillar", [4.8, -20.6], "fixed"), ("frost_rune_pillar", [7.2, -13.4], "fixed")],
     "barrow2": [("ice_crystal_cluster", [-10.4, 4.0], "fixed"), ("ice_crystal_cluster", [10.4, 4.0], "fixed"), ("glow_ice_pool", [-5.6, 0.0], "fixed"), ("glow_ice_pool", [5.6, 0.0], "fixed"),
                 ("ice_wall", [-7.0, -3.0], "fixed"), ("ice_wall", [7.0, -3.0], "fixed"), ("warm_lantern", [-2.8, 9.4], "fixed"), ("warm_lantern", [2.8, 9.4], "fixed"),
                 ("shield_rack", [-9.4, -8.0], "fixed"), ("shield_rack", [9.4, -8.0], "fixed"), ("shield_rack", [-9.4, -13.0], "fixed"), ("shield_rack", [9.4, -13.0], "fixed"),
