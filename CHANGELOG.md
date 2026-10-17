@@ -2,6 +2,13 @@
 
 Dates are America/New_York. Newest first. Keep this current with every change you push.
 
+## 2026-10-16: Jotunheim-3 LIVE: Dark Stonehollow after a conquer, the B3 Glow Pools slide puzzle (merge of `realm-jotunheim-3` via `hearthmoor-jt3-merge`)
+- **Dark Stonehollow:** after a conquer (`jt_dark`) the cold fires and rune pulses go out, only the glow orbs are left, the townsfolk talk curtly and Grimsa's trader prices are +25% (`factions.js` `priceMul('jt_trader')`); `?jtq=dark` QA preset. **B3 Glow Pools slide puzzle** in `barrow` (seven frost-rune stoppers, `jot_art.py` PLACE), and the barrow golems moved to (+-2.0, -10.6) so phone portrait `sprites_sharp` passes.
+- **Merge-check:** Master Builder's full sharded smoke (`/workspace/alf_qa/jot/sm5/`: A 114, B 334, C 29, DGM 39, FHK 39, IJLE 24) ran after the last commit `d4c44ec` and is accepted. Rerun here: `smoke_jotunheim.py` 156/156; `check_all --lowres` PASS on barrow and plaza, and on jotunheim after one failed try (see below).
+- **jotunheim lowres note:** the first try failed `colours` (night crop of `goatwife`, crop / source colour ratio 2.53 against the 2.0 limit); an identical rerun alone passed at 1.67. The metric moves between 1.0 and 3.4 across runs of the same build (noise from lights over the crop); the limit was not changed. A second rerun hit a browser-context protocol error, a third passed.
+- **Screenshot:** `docs/screenshots/jotunheim_dark_stonehollow.png`.
+- **Leftovers:** Stonefrost II / III (new spell kinds + spell-atlas art), real waystone and cairn models from Hearthmoor Art, the goat mount reward (needs mounts). The Cold Cauldron quest is on `origin/hearthmoor-leftovers-wip` (8b42f34), untested.
+
 ## 2026-10-16: Jotunheim-2 LIVE: rares, Rimebreaker, weather, Ulfar companion, goats, Hrimgard framing (merge of `realm-jotunheim-2` via `hearthmoor-jt2-merge`)
 - **Merge-check:** Master Builder's full sharded smoke on the branch (`/workspace/alf_qa/jot/sm4/`: A 114, B 311, C 29, DGM 39, FHK 39, IJLE 24) accepted (segment A started before the art-only Hrimgard sheet commit 67010d0, B to M ran after it; the last commit changes a test wait and docs only). Rerun here: `smoke_svartalfheim.py` 118/118, `smoke_jotunheim.py` 140/140, `check_all --lowres` PASS on jotunheim, barrow2, rimecaves, barrow, jt_hall and plaza.
 - **Hrimgard:** `combat.js` honours `framed: true` (the 7x boss keeps his head in view even with AI asleep) and the sheet's white grid (seam lines, beard strands, fist rings) is fixed at the source; phase 1 / 2 / 3 shots checked: head in frame, no grid.
