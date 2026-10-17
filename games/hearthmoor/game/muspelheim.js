@@ -93,7 +93,7 @@ Rares.prototype.spawn = function spawn(o = {}) {   // Ash Alpha = blazing + quic
   return spawnRare0.call(this, o);
 };
 SPAWNS.lavafalls = [   // 1.4x / 1.5x foes read fully on screen; clear of the braziers (+-1.6, -5.4), cold braziers (+-3.6, 1), lava pools (+-6.4, -4.4), the channel at z 3 and Torka (-4.8, -2.4)
-  { id: 'lf_hound0', role: 'magma_hound', pos: [4.0, -5.0] }, { id: 'lf_hound1', role: 'magma_hound', pos: [8.0, -1.4] },
+  { id: 'lf_hound0', role: 'magma_hound', pos: [5.0, -5.0] }, { id: 'lf_hound1', role: 'magma_hound', pos: [8.0, -1.4] },
   { id: 'lf_elem0', role: 'flame_elemental', pos: [-1.0, -1.4], night: true }, { id: 'lf_hound2', role: 'magma_hound', pos: [-1.6, 6.4], night: true },
 ];
 const MP_FX = {   // [effect, [x, z], dy]: the pack's animated pools / flames / motes (art metadata layout; the Caldera rooms from the placed pieces)
