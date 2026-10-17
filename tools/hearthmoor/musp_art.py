@@ -244,7 +244,7 @@ def caldera_place(area):
 
 
 NOCAST = {("mp_hall", "wardens_seat")}
-PIECE_MOVE_AT = {("lavafalls", "amber_orb_chain", 0.0, 2.0): (-1.2, 5.8)}
+PIECE_MOVE_AT = {("mp_hall", "shrine_lamp", -2.8, -5.2): (-2.0, -5.2), ("mp_hall", "shrine_lamp", 2.8, -5.2): (2.0, -5.2), ("lavafalls", "amber_orb_chain", 0.0, 2.0): (-1.2, 5.8)}
 PIECE_MOVE = {("mp_hall", "obsidian_pillar"): (-5.8, 2.2)}
 
 

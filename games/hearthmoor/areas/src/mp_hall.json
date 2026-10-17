@@ -218,7 +218,7 @@
    "fog_color": "#2c1418",
    "sky_top": "#14080c",
    "sky_bottom": "#7a3018",
-   "exposure": 0.86,
+   "exposure": 0.84,
    "sun_intensity": 0.6,
    "warmth": 0.1,
    "sun_color": "#ff9a60",
@@ -230,7 +230,7 @@
    "sky_bottom": "#4a1c14",
    "hemi_sky": "#8a5a50",
    "bugs": 1.0,
-   "exposure": 0.9,
+   "exposure": 0.86,
    "sun_intensity": 0.4,
    "hemi_intensity": 0.55,
    "sun_color": "#d08060"

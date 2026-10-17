@@ -186,7 +186,7 @@ def steps(b, url, T, size, errors, rep, stub=None, shots=None):
             rep.setdefault("shots", {})["mp_day"] = T.shot("mp_day")
             T.ev("window.__hd2d.setTime(0.0)"); frames(6); rep["shots"]["mp_night"] = T.shot("mp_night")
             # the Warden's Walk: five stones in order from either end; a wrong stone resets
-            load("muspelheim", "&muq=walk")
+            load("muspelheim", "&muq=walk&mwalk=steady")   # the 1.5 s cool cycle is timing-based: QA keeps the stones cool
             stone = lambda x: (mp(f"moveTo({x}, 3.0)"), frames(3))
             for x in (-1.6, 0.8): stone(x)
             w0 = mp("walk.next")

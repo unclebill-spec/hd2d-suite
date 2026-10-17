@@ -441,6 +441,8 @@ async function go(to, spawnKey, how) {
 G.go = go;
 
 // ------------------------------------------------------------------ quest tags over heads
+// a realm's giant NPCs (5 m sprites) carry their tag above the head, not on the chest: modules set G.markLifts = { actorId: metres }
+const markLift = (id) => (G.markLifts && G.markLifts[id]) || 0;
 function refreshMarkers() {
   const ctx = G.ctx; if (!ctx || !ctx.gamefx) return;
   for (const a of ctx.actors.list) {
@@ -448,11 +450,11 @@ function refreshMarkers() {
     const want = markerFor(a.id, G.S);
     const have = G.markers[a.id];
     if (have && have.name !== want) { ctx.gamefx.remove(have); delete G.markers[a.id]; }
-    if (want && !G.markers[a.id]) { const m = ctx.gamefx.spawn(want, a.x, a.y, a.z, { duration: Infinity }); if (m) G.markers[a.id] = m; }   // [SVARTALFHEIM] areas without the marker glyphs (the realm areas' gamefx atlases) just show none
+    if (want && !G.markers[a.id]) { const m = ctx.gamefx.spawn(want, a.x, a.y + markLift(a.id), a.z, { duration: Infinity }); if (m) G.markers[a.id] = m; }   // [SVARTALFHEIM] areas without the marker glyphs (the realm areas' gamefx atlases) just show none
   }
 }
 function syncMarkers() {
-  for (const [id, f] of Object.entries(G.markers)) { const a = G.ctx.npc(id); if (a) { f.x = a.x; f.y = a.y; f.z = a.z; } }
+  for (const [id, f] of Object.entries(G.markers)) { const a = G.ctx.npc(id); if (a) { f.x = a.x; f.y = a.y + markLift(id); f.z = a.z; } }
 }
 
 // ------------------------------------------------------------------ per-frame game logic
