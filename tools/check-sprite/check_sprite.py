@@ -56,10 +56,9 @@ JOT_NEON_ALLOW = {"pet_flurry": {"#1c62d8", "#2ab4ff", "#a6ecff"}}
 # [COLD CAULDRON] Scoped palette exception (lead ruling 2026-10-16; art README "Neon flag"): only Bloop (role "pet_bloop": a fully blue glowing frog,
 # bloop_neon.png is his main look; bloop.png is the palette-safe fallback twin). Any other role and any other off-palette colour still fails.
 CC_NEON_ALLOW = {"pet_bloop": {"#1c62d8", "#2ab4ff", "#a6ecff"}}
-# [MUSPELHEIM] Scoped palette exception, EMPTY until Hearthmoor Art's README names it (expected: only the companion role "kindle", her glowing back-spots / scarf glints,
-# and only the NEON red / orange hexes of spells.py NEON). An empty table allows nothing: any off-palette colour on any role still fails. Fill it in with Kindle's exact hexes
-# (and ruling) when the pack lands; never widen it to another role.
-MUSP_NEON_ALLOW = {}
+# [MUSPELHEIM] Scoped palette exception (lead ruling 2026-10-17; art README "Neon flag"): only Kindle (role "pet_kindle": neon-red back spots, eye glint and tail coal,
+# kindle_neon.png is her main look; kindle.png is the palette-safe fallback twin). Any other role and any other off-palette colour on this one still fails.
+MUSP_NEON_ALLOW = {"pet_kindle": {"#a81c22", "#e0302a", "#ff5a4a"}}
 
 
 def check(atlas_path, json_path=None, biome=None, max_colors=20, project=None):

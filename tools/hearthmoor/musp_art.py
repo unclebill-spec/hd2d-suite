@@ -15,11 +15,11 @@ installed: off-palette (neon) colours are allowed only for the roles and hexes i
 "Neon flag" + a ruling, expected: Kindle only). A role outside the scope that carries off-palette colours is NOT installed (its palette-safe `_safe` twin is installed instead
 when the pack ships one; otherwise the sheet is skipped with a message).
 
-STATUS: SKELETON. The art pack is not ready. Nothing runs until /workspace/hearthmoor-staging/art/muspelheim/READY.txt exists (--force overrides, for a dry look).
-Every table below is a placeholder to be filled from the art README when the pack lands: the sheet names, the staging role names and the PLACE coordinates are guesses
-from the story doc (areas / NPCs / bosses), not from real files. Missing staging files are SKIPPED with a message, never an error, so a partial pack can be wired in
-stages. (Unlike jot_art.py there is no Stonefrost step: the Caldera school's spell rows arrive as their own staging fx file; add a `school()` step modelled on jot_art.stonefrost
-when the README names it, and run it LAST: build.py's install_forge / install_alchemy re-crop a gamefx atlas at their own marks.)
+STATUS: WIRED to the real pack (art README, Oct 17 2026). The sheet / role / kit names below are the pack's. Missing staging files are SKIPPED with a message, never an error.
+Not in the pack (stand-ins / later): item icons, the Emberfang prop, Orm's mount lizard, Vharzul cast frames, Caldera rooms C1-C8 scenes, a Hall of Wardens interior, Kindle's fx rows
+(pets/kindle_fx is copied to art/muspelheim/ but no area atlas carries it yet, like Flurry's). Dagny: the pack has her as the 2.5x NPC role `cindercaptain` (idle / walk only).
+Decisions on the README's four questions (Cozy Builder's spirit, Oct 17): (1) Dagny 2.5x (the roster, and the pack); (2) ember-kin stay on the 40x44 frame at 1x; (3) Vharzul 144x256 with
+folded wings is fine; (4) the Red arch keeps its warm cream pane (the hub stays warm).
 
 usage: python3 tools/hearthmoor/musp_art.py [--force] [area ...]      (then: cd games/hearthmoor && python3 -c "import build; build.write_pwa()")
 """
@@ -35,26 +35,34 @@ FORCE = "--force" in sys.argv
 PLANNED = ["muspelheim", "mp_hall", "lavafalls", "caldera", "caldera2"]   # story 2.1; the Caldera is two areas (like clockdeep / barrow), see MUSPELHEIM_PROGRESS.md
 AREAS = ARGS or PLANNED
 
-EMBERKIN = ["envoy_mp", "warden_mp", "forgejudge", "springkeeper", "lizardman", "mp_trader", "cindercaptain", "mp_guide", "mp_a", "mp_b"]   # mp_npcs.json roles (ember-kin 1x, fire-giants 2.5-2.6x)
-# base-atlas stand-in role -> mp_npcs role (only roles the area has are re-pointed): the area specs use stock role names so they assemble; this repaints them.
-TOWNS = {"dwarftrader": "mp_trader", "wispcatcher": "lizardman", "poolkeeper": "springkeeper", "shopkeeper": "envoy_mp", "innkeeper": "warden_mp",
-         "elffolk": "mp_a", "elffolk2": "mp_b", "nightmerchant": "cindercaptain", "lanternseller": "mp_guide", "gnome": "mp_a"}
-SHEETS = {  # sheet name -> (staging json, {area role: staging role})
-    "mpnpc": (ST / "sprite" / "mp_npcs.json", {**TOWNS, **{r: r for r in EMBERKIN}}),
-    "kindle": (ST / "sprite" / "kindle.json", {"kindle": "kindle"}),   # the companion: hound-sized salamander (neon back-spots: scoped allow-list, see NEON above)
-    "kindle_safe": (ST / "sprite" / "kindle.json", {"kindle_safe": "kindle"}),   # palette-safe fallback twin (its own role, not placed) if the pack ships one
-    "mpenemy": (ST / "sprite" / "mp_enemies.json", {r: r for r in ("magma_hound", "flame_elemental", "fire_golem", "ashen_cultist")}),
+# stock actor role (what the area spec's actors use) -> the pack's role, per area (re-pointed only if the area's actors.json has that stock role)
+TOWNS = {
+    "muspelheim": {"dwarftrader": "mp_trader", "wispcatcher": "lizardman", "lanternseller": "mp_guide"},
+    "mp_hall": {"shopkeeper": "envoy_mp", "innkeeper": "warden_mp"},
+    "lavafalls": {"nightmerchant": "forgejudge", "poolkeeper": "springkeeper"},
+    "caldera": {}, "caldera2": {},
 }
-IMAGE = {"kindle": "kindle_neon.png", "kindle_safe": "kindle.png"}   # sheet -> staging png when it is not the json's own image (guess: Flurry's pattern)
+FOLK = ["envoy_mp", "springkeeper", "lizardman", "mp_trader", "mp_guide"]   # mp_folk (40x44, 1x ember-kin)
+GIANTS = ["warden_mp", "forgejudge", "cindercaptain"]                        # mp_giants (64x100, 2.5-2.6x)
+FOES = ["ashen_cultist", "magma_hound", "flame_elemental", "fire_golem"]     # mp_enemies (56x68)
+SHEETS = {  # sheet name -> (staging json, {area role: staging role}); every area gets the folk / giant / foe sheets (their own role names are added too)
+    "mpfolk": (ST / "sprite" / "mp_folk.json", {r: r for r in FOLK}),
+    "mpgiant": (ST / "sprite" / "mp_giants.json", {r: r for r in GIANTS}),
+    "mpenemy": (ST / "sprite" / "mp_enemies.json", {r: r for r in FOES}),
+    "kindle": (ST / "pets" / "kindle.json", {"pet_kindle": "pet_kindle"}),   # the companion: kindle_neon.png is her main look (scoped allow-list, see NEON above)
+    "kindle_safe": (ST / "pets" / "kindle.json", {"pet_kindle_safe": "pet_kindle"}),   # palette-safe fallback twin (its own role, not placed)
+}
+IMAGE = {"kindle": "kindle_neon.png", "kindle_safe": "kindle.png"}   # sheet -> staging png when it is not the json's own image
 EXTRA = {    # sheets only where the fight / scene is (their own frame size)
-    "muspelheim": {"mpelite": (ST / "sprite" / "mp_elites.json", {"dagny": "dagny"})},   # Cinder-Captain Dagny Flameguard (conquer), 3x
+    "muspelheim": {"mpelite": (ST / "sprite" / "mp_elites.json", {"magma_hound_gate": "magma_hound_gate"})},   # the Armed Crossing's 2x hound
     "lavafalls": {"mpelite": (ST / "sprite" / "mp_elites.json", {"ashalpha": "ashalpha", "pyreling": "pyreling"})},   # the two rares
     "caldera2": {"boss_vharzul": (ST / "sprite" / "boss_vharzul.json", {"vharzul": "vharzul", "vharzul_p3": "vharzul_p3"}),   # 8x, black-iron plate, crown of fire
                  "mpelite": (ST / "sprite" / "mp_elites.json", {"kilnmother": "kilnmother"})},
 }
-# Scoped neon: role -> the exact off-palette hexes it may carry. EMPTY until the README + a ruling name them (mirror MUSP_NEON_ALLOW in check_sprite.py, never wider).
-MUSP_NEON_SCOPE = {}
-FX_FILE = ("gamefx", "mu_fx.json")   # staging gamefx rows: ST / "gamefx" / "mu_fx.json"
+# Scoped neon (art README "Neon flag", lead ruling): Kindle only, her three neon-red hexes. Mirrors MUSP_NEON_ALLOW in check_sprite.py, never wider.
+MUSP_NEON_SCOPE = {"pet_kindle": {"#a81c22", "#e0302a", "#ff5a4a"}}
+FX_SKIP = {"heat_shimmer"}   # check_scene gamefx_sharp: its crop never matches the atlas frame (a near-transparent distortion strip); the pack keeps it, the area atlases do not list it (the row stays unused)
+FX_FILE = ("gamefx", "mp_fx.json")   # staging gamefx rows: ST / "gamefx" / "mp_fx.json"
 
 
 def neon_audit(src, sm, img_name, roles):
@@ -106,16 +114,17 @@ def sprites(area):
         shutil.copy2(src.parent / IMAGE.get(nm, sm["image"]), d / f"{nm}.png")
         out = {k: sm[k] for k in ("tool", "biome", "frame", "pivot", "ground_row", "facings", "anims", "cols", "size")}
         out["image"] = f"{nm}.png"; out["roles"] = {}
+        if nm in ("mpfolk", "mpgiant"):   # stock stand-in roles of this area point at the pack's roles (only roles the area's actors.json has)
+            roles = {**roles, **{k: v for k, v in TOWNS.get(area, {}).items() if v in sm["roles"] and k in m["roles"]}}
         for ar, sr in roles.items():
-            if nm == "mpnpc" and ar in TOWNS and ar not in m["roles"]:
-                continue   # re-point only roles this area actually has
             if sr not in sm["roles"]: print(f"  {nm}: no staging role {sr}"); continue
             r = sm["roles"][sr]
             out["roles"][ar] = {k: v for k, v in r.items() if k != "frames"}
             prev = m["roles"].get(ar, {})
             m["roles"][ar] = {"sheet": nm, "row": r["row"], "kind": r.get("kind", prev.get("kind", "creature")),
                               "anims": r.get("anims", ["idle", "walk"]), "desc": r.get("desc", ""),
-                              **({"enemy": True} if r.get("enemy") or prev.get("enemy") else {})}
+                              **({"enemy": True} if r.get("enemy") or prev.get("enemy") else {}),
+                              **({"pet": True, "follower": True} if nm == "kindle" else {})}
         (d / f"{nm}.json").write_text(json.dumps(out, indent=1))
         m["sheets"][nm] = {"json": f"{nm}.json", "image": f"{nm}.png"}
     mp.write_text(json.dumps(m, indent=1))
@@ -128,12 +137,12 @@ def kit(area):
 
 
 def gamefx(area):
-    if not have(ST / "gamefx" / "mu_fx.json"): return False
+    if not have(ST / "gamefx" / "mp_fx.json"): return False
     d = GAME / "areas" / area / "public" / "art" / "gamefx"
     if not (d / "gamefx.json").exists() and not (d / "gamefx.base.json").exists():
         # no atlas yet (wispwood): start from an empty base so the staging rows are the whole atlas, and point the scene at it
         d.mkdir(parents=True, exist_ok=True)
-        sj = json.loads((ST / "gamefx" / "mu_fx.json").read_text())
+        sj = json.loads((ST / "gamefx" / "mp_fx.json").read_text())
         (d / "gamefx.base.json").write_text(json.dumps({k: sj[k] for k in ("tool", "biome", "seed", "cell", "cast_sets", "cycle")} | {"image": "gamefx.png", "size": [0, 0], "effects": {}}))
         Image.new("RGBA", (sj["cell"], sj["cell"]), (0, 0, 0, 0)).save(d / "gamefx.base.png")   # one blank row
         sp = GAME / "areas" / area / "scene.json"; sc = json.loads(sp.read_text())
@@ -142,7 +151,7 @@ def gamefx(area):
     bj, bp = d / "gamefx.base.json", d / "gamefx.base.png"
     if not bj.exists():
         shutil.copy2(d / "gamefx.json", bj); shutil.copy2(d / "gamefx.png", bp)
-    base, sj = json.loads(bj.read_text()), json.loads((ST / "gamefx" / "mu_fx.json").read_text())
+    base, sj = json.loads(bj.read_text()), json.loads((ST / "gamefx" / "mp_fx.json").read_text())
     assert base["cell"] == sj["cell"], "cell size mismatch"
     bi, si = Image.open(bp).convert("RGBA"), Image.open(ST / "gamefx" / sj["image"]).convert("RGBA")
     # the ! / ? quest-marker glyphs (quest_mark, quest_turnin) copied from the plaza atlas (same 48 px cell): the realm areas' atlases had none,
@@ -159,6 +168,7 @@ def gamefx(area):
     for i, (k, e) in enumerate(mk):
         base["effects"][k] = {**{kk: vv for kk, vv in e.items() if kk != "frame_list"}, "row": off + si.height // c + i}
     for k, e in sj["effects"].items():
+        if k in FX_SKIP: continue
         e = {kk: vv for kk, vv in e.items() if kk not in ("frame_list", "strip")}
         e["row"] = e["row"] + off
         base["effects"][k] = e
@@ -172,21 +182,39 @@ def gamefx(area):
 # from the spec, so the kit's stone_ledge / stone_stair are not placed) or an actor stands. Keep-clear: nothing on the stair + 1 m, 2.5 m in
 # front of longhouse doors, 1.5 m around the from_bifrost spawn.
 
-NOBLOCK = set()   # walkable rubble: no blocker (kit.json blockers [])
-WALK = {"lava_channel", "glass_bridge", "stepping_stone"}   # flat decals: walkable, no blocker (guess names: set from the README)
-# props placed per area: (piece, preferred [x, z], "fixed" to hand-place). PLACEHOLDER: the kit pieces are unknown until the art README lands. Guesses from the story look
-# section (2.2): basalt houses with copper roofs, lava channels (emissive tiles, a point light each), glass bridges, molten-glass orbs on chains, forge-glow doorways, the
-# Warden's Flame lamps, frost-vein cracks (cold blue), the Caldera mouth (6 m basalt arch with three seal-doors), frost wedges. Pieces missing from kit.json are skipped.
-PLACE = {
-    "muspelheim": [("lava_channel", [0.0, 2.0], "fixed"), ("basalt_house", [-8.0, -8.0]), ("basalt_house", [8.0, -8.0]), ("glass_orb", [-3.0, 4.0]), ("glass_orb", [3.0, 4.0])],
-    "mp_hall": [("shrine_lamp_violet", [-3.0, -6.4], "fixed"), ("shrine_lamp_violet", [3.0, -6.4], "fixed"), ("sigil_mould_wall", [-6.0, -3.0], "fixed")],
-    "lavafalls": [("lava_fall", [-4.0, -8.0], "fixed"), ("lava_fall", [4.0, -8.0], "fixed"), ("caldera_mouth", [0.0, -7.5], "fixed")],
-    "caldera": [], "caldera2": [],
-}
+NOBLOCK = {"amber_orb_chain", "hanging_crystals", "warden_stones", "glass_bridge", "dance_ring", "basalt_floor", "forge_floor", "glass_terrace", "basalt_stair"}   # kit.json blockers [] (walkable / hanging): no blocker
+WALK = {"warden_stones", "glass_bridge", "dance_ring", "basalt_floor", "forge_floor"}   # flat, walkable, never cast shadows
+# The real props come from the art README's layout (metadata/muspelheim_layout.json), area spec <- layout area. The spec owns the terrain (its terrace + stair, 1.34 m, replace the kit's
+# basalt_ledge / basalt_stair / glass_terrace, like Jotunheim's plateau), so those three are not placed; floor tiles are laid only on flat ground (not over a terrace or stair).
+LAYOUT_AREA = {"muspelheim": "cinderhold", "mp_hall": "sigil_forge", "lavafalls": "lavafalls"}   # caldera / caldera2: later (only the throne room has a layout: caldera_throne)
+SPEC_TERRAIN = {"basalt_ledge", "basalt_stair", "glass_terrace"}
+NO_TILE = {"muspelheim": (-3.4, -9.8, 3.4, -1.6), "mp_hall": (2.8, -7.6, 6.4, 0.6), "lavafalls": (-9.2, -1.2, -5.6, 4.8)}   # terrace + stair footprints (+ a margin): no floor tiles over them
+EXTRA_PLACE = {}   # area -> [(piece, [x, z], flags...)] added after the layout (hand-placed extras)
 
-# Cinderhold and the Lavafalls: decor lamps (lava, forge windows, braziers, glass orbs) are dimmed in reach so they do not tint the few-colour ember-kin sprites standing
-# near them (check_scene colours: crop colours / source colours <= 2). The lights stay; only their reach shrinks. Piece names are guesses until the README lands.
-LAMP_CAP = {"basalt_house": 3.0, "lava_channel": 3.0, "lava_fall": 3.5, "glass_orb": 3.2, "forge_brazier": 4.5, "shrine_lamp_violet": 3.0, "caldera_mouth": 4.0, "frost_wedge": 2.5}
+
+def layout_place(area):
+    la = LAYOUT_AREA.get(area)
+    lp = ST / "metadata" / "muspelheim_layout.json"
+    if not la or not lp.exists(): return []
+    out = []
+    nt = NO_TILE.get(area)
+    for p in json.loads(lp.read_text())[la]["pieces"]:
+        name, (x, y, z) = p[0], p[1]; rot = p[2] if len(p) > 2 else 0
+        if name in SPEC_TERRAIN: continue
+        if name in ("basalt_floor", "forge_floor") and nt and nt[0] <= x <= nt[2] and nt[1] <= z <= nt[3]: continue
+        ex = {}
+        if rot: ex["rot"] = rot
+        if name in ("amber_orb_chain", "hanging_crystals"): ex["y"] = y   # hanging pieces keep the layout height
+        out.append((name, [x, z], "fixed", ex))
+    return out + EXTRA_PLACE.get(area, [])
+
+
+# Decor lamps (lava, forge windows, braziers, glass orbs) are dimmed in reach so they do not tint the few-colour ember-kin sprites standing near them (check_scene colours:
+# crop colours / source colours <= 2). The lights stay; only their reach shrinks. Tune from check_scene's colour check (add a piece when it names it).
+LAMP_CAP = {"basalt_house": 3.0, "forge_hall": 3.5, "lava_channel": 3.0, "lava_pool": 3.0, "red_arch": 3.2, "spice_stall": 3.0, "brazier_stand": 2.8, "cold_brazier": 2.4,
+            "shrine_lamp": 2.6, "glass_bridge": 3.0, "lizard_stable": 3.0, "emberfall_anvil": 2.4, "obsidian_pillar": 2.5, "amber_orb_chain": 2.4, "spring_pool": 3.0,
+            "muspel_waystone": 3.5, "cinder_cairn": 2.0, "warm_lantern": 2.6, "forge_wall": 3.0, "wardens_seat": 3.0, "warden_stones": 3.5, "lava_fall_cliff": 4.0,
+            "caldera_mouth_arch": 4.0, "seal_cast_bed": 3.0, "stamp_press": 2.6, "ledger_desk": 2.4, "sigil_mould_wall": 3.0}
 LAMP_CAP_AREA = {a: dict(LAMP_CAP) for a in PLANNED}
 
 
@@ -195,7 +223,6 @@ def place(area):
     from array import array
     sp = GAME / "areas" / area / "scene.json"; sc = json.loads(sp.read_text())
     pieces = json.loads((ST / "kit" / "kit.json").read_text())["pieces"]
-    if not any(n in pieces for n, *_ in PLACE.get(area, [])): pass
     C = sc["collision"]; C.setdefault("base_data", C["data"])
     d = array("h"); d.frombytes(base64.b64decode(C["base_data"]))
     ox, oz, cl, W, H = C["origin"][0], C["origin"][1], C["cell"], C["w"], C["h"]
@@ -238,16 +265,18 @@ def place(area):
         if any(math.hypot(x - kx, z - kz) < kr + max(hw, hd) for kx, kz, kr in keep): return None
         return hs[len(hs) // 2] / 100
 
-    for name, (px, pz), *fixed in PLACE.get(area, []):
+    for name, (px, pz), *fixed in layout_place(area):
         extra = next((f for f in fixed if isinstance(f, dict)), {}); fixed = [f for f in fixed if not isinstance(f, dict)]
         if name not in pieces: print(f"  {area}: no kit piece {name} yet"); continue
         pc = pieces[name]; hw, hd = pc["size"][0] / 2, pc["size"][2] / 2
-        if name == "elf_archway": hw *= 0.6   # a thin open arch: its posts need room, the span does not
+        rot = extra.get("rot", 0)
+        if abs(abs(rot) - math.pi / 2) < 0.1: hw, hd = hd, hw   # a quarter turn swaps the footprint
         nonlocal_tall[0] = pc["size"][1] > 1.2
         spot = None
         if fixed:   # hand-placed against the side walls (the vault corridor is too narrow for the search)
             i_, j_ = int((px - ox) / cl), int((pz - oz) / cl)
-            spot = (px, max(0, d[j_ * W + i_]) / 100, pz)
+            gy = max(0, d[j_ * W + i_]) / 100 if (0 <= i_ < W and 0 <= j_ < H) else 0.0   # pieces on the wall line may sit off the collision grid
+            spot = (px, extra["y"] if "y" in extra else gy, pz)
         for r in ([] if spot else [0] + [x * 0.5 for x in range(1, 30)]):
             for k in range(max(1, int(r * 8))):
                 a = 2 * math.pi * k / max(1, int(r * 8)); x, z = round(px + r * math.cos(a), 2), round(pz + r * math.sin(a), 2)
@@ -256,14 +285,15 @@ def place(area):
             if spot: break
         if not spot: print(f"  {area}: no spot for {name}"); continue
         x, y, z = spot
-        o = {"glb": f"public/art/kit/{pc['file']}", "pos": [x, y, z], "rot": 0, "musp_art": True}
+        o = {"glb": f"public/art/kit/{pc['file']}", "pos": [x, y, z], "rot": rot, "musp_art": True}
         if name in WALK: o.update(walkable=True, cast=False)
         if extra.get("pz"): o["pz"] = extra["pz"]
         if extra.get("hidden"): o["hidden"] = True
         sc["objects"].append(o)
         keep.append((x, z, max(hw, hd) + 0.6))
         if name not in WALK and name not in NOBLOCK:
-            for i, j in cells(x, z, hw * 0.8, hd * 0.8): d[j * W + i] = -32768
+            for i, j in cells(x, z, hw * 0.8, hd * 0.8):
+                if 0 <= i < W and 0 <= j < H: d[j * W + i] = -32768   # off-grid cells (the wall line) are already solid
         mk = pc["markers"]
         for lp in ([] if extra.get("hidden") else mk.get("lamps", [])):   # a hidden piece (cairn_toppled) is lit at runtime when the game shows it
             sc["lamps"].append({"pos": [x + lp[0], y + lp[1], z + lp[2]], "range": min(mk.get("lamp_range", 5.0), LAMP_CAP_AREA[area].get(name, 9.0)) if area in LAMP_CAP_AREA else mk.get("lamp_range", 5.0), "kind": name,

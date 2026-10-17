@@ -1,0 +1,38 @@
+{
+ "kindle (safe)": {
+  "atlas": "/workspace/hearthmoor-staging/art/muspelheim/pets/kindle.png",
+  "biome": "cozy-village",
+  "roles": {
+   "pet_kindle": {
+    "frames": 48,
+    "colors": 9,
+    "issues": []
+   }
+  },
+  "summary": {
+   "roles": 1,
+   "failures": 0,
+   "semi_transparent": 0,
+   "pass": true
+  },
+  "failures": []
+ },
+ "kindle_neon": {
+  "atlas": "/workspace/hearthmoor-staging/art/muspelheim/pets/kindle_neon.png",
+  "biome": "cozy-village",
+  "roles": {
+   "pet_kindle": {
+    "frames": 48,
+    "colors": 11,
+    "issues": []
+   }
+  },
+  "summary": {
+   "roles": 1,
+   "failures": 0,
+   "semi_transparent": 0,
+   "pass": true
+  },
+  "failures": []
+ }
+}

@@ -160,7 +160,7 @@ def steps(b, url, T, size, errors, rep, stub=None, shots=None):
         S("S.evidence = {}; S.flags.sf_cast = 0; S.hero = 'runeguard'; return 1;"); c2 = sv()["sigil"]
         S("S.hero = 'wildcaller'; return 1;")
         T.step("a Rune-reader's mirror clue is free (one free, nothing read yet)", c2 == {"read": 0, "free": 1, "n": 1, "done": False}, c2=c2)
-        S("S.flags.sf_cast = 1; S.flags.sf_ledger = 1; S.flags.sf_mirror = 1; return 1;")
+        S("S.flags.sf_cast = 1; S.flags.sf_ledger = 1; S.flags.sf_mirror = 1; S.quests.mp_sigil = 2; return 1;")
         m0, g0 = merit(), T.ev("window.__hm.S.gold || 0")
         mp("qaTalk('warden_mp')"); s1 = sv()
         T.step("the Sigil turn-in: quest 3, cleared, Hearthmoor's rider (mp_peace), evidence mirror_sigil, +60 Realm Favor", s1["quests"]["mp_sigil"] == 3 and s1["flags"]["cleared"] and s1["flags"]["peace"] and s1["evidence"] == "mirror_sigil" and merit() - m0 == 60 and T.ev("window.__hm.S.gold || 0") - g0 == 40, qa=[s1["quests"], s1["evidence"], merit() - m0])
@@ -176,12 +176,42 @@ def steps(b, url, T, size, errors, rep, stub=None, shots=None):
         # ---- built areas (only once the art pack and the builds exist)
         built = sv()["built"]
         if built:
+            H = lambda x, z: T.ev(f"window.__hd2d.ctx.heightAt({x}, {z})")
             a = load("muspelheim"); T.ev("window.__hd2d.setTime(0.5)"); frames(6)
             T.step("Cinderhold loads (Muspelheim module live)", a["area"] == "muspelheim" and "bifrost" in a["portals"] and "mp_hall" in a["exits"], qa=a)
-            hs = T.ev("(() => { const c = window.__hd2d.ctx; return { terrace: c.heightAt(-6, -7), ground: c.heightAt(0, 6), stair: c.heightAt(0, -2.4) }; })()")
-            T.step("real height: the Warden's terrace stands 1.2 m up with a walkable stair", hs["terrace"] >= 1.0 and hs["ground"] < 0.2 and 0.2 < hs["stair"] < hs["terrace"], hs=hs)
+            hs = {"terrace": H(0, -7), "ground": H(0, 6), "stair": H(0, -3.6)}
+            T.step("real height: the Warden's terrace stands 1.34 m up with a walkable stair", hs["terrace"] >= 1.2 and hs["ground"] < 0.2 and 0.2 < hs["stair"] < hs["terrace"], hs=hs)
+            acts = T.ev("window.__hd2d.ctx.actors.list.map((a) => a.id || a.role)")
+            T.step("Cinderhold's folk are on stage (Svala, Orm, Grettir) with the pack's sheets", all(k in acts for k in ("mp_trader", "lizardman", "mp_guide")), acts=acts)
             rep.setdefault("shots", {})["mp_day"] = T.shot("mp_day")
             T.ev("window.__hd2d.setTime(0.0)"); frames(6); rep["shots"]["mp_night"] = T.shot("mp_night")
+            # the Warden's Walk: five stones in order from either end; a wrong stone resets
+            load("muspelheim", "&muq=walk")
+            stone = lambda x: (mp(f"moveTo({x}, 3.0)"), frames(3))
+            for x in (-1.6, 0.8): stone(x)
+            w0 = mp("walk.next")
+            T.step("Warden's Walk: a wrong stone hisses and resets the run", w0 == 0 and sv()["quests"]["mp_walk"] == 1, w0=w0)
+            for x in (1.6, 0.8, 0, -0.8, -1.6): stone(x)
+            s1 = sv()
+            T.step("Warden's Walk: five stones in order (from the east end) complete it, quest stage 2", s1["flags"].get("mw_stones") and s1["quests"]["mp_walk"] == 2, qa=[s1["quests"]["mp_walk"], s1["flags"].get("mw_stones")])
+            # the Sigil Forge
+            a = load("mp_hall", "&muq=sigil")
+            hs = {"gallery": H(4.6, -5.0), "floor": H(0, 4), "stair": H(4.6, -1.6)}
+            T.step("real height: the Sigil Forge gallery stands 1.34 m up with a walkable stair", hs["gallery"] >= 1.2 and hs["floor"] < 0.2 and 0.2 < hs["stair"] < hs["gallery"], hs=hs)
+            for k in ("sf_cast", "sf_ledger", "sf_mirror"):
+                mp(f"qaSpot('{k}')"); frames(2); fin()
+            s1 = sv()
+            T.step("Sigil Forge: reading the three clues moves The Mirror Sigil to stage 2", s1["sigil"]["n"] == 3 and s1["quests"]["mp_sigil"] == 2, sg=s1["sigil"], q=s1["quests"]["mp_sigil"])
+            rep["shots"]["mp_hall"] = T.shot("mp_hall")
+            # the Lavafalls
+            a = load("lavafalls")
+            hs = {"terrace": H(-7.4, 0.2), "ground": H(0, 5), "stair": H(-7.4, 2.4)}
+            T.step("real height: the Lavafalls glass terrace stands 1.34 m up with a walkable stair", hs["terrace"] >= 1.2 and hs["ground"] < 0.2 and 0.2 < hs["stair"] < hs["terrace"], hs=hs)
+            far = T.ev("(() => { const c = window.__hd2d.ctx, sp = window.__hm.musp.qaRares().spots, ac = c.actors.list.filter((a) => !a.rare && a.role !== 'traveler').map((a) => [a.x, a.z]); return sp.map(([x, z]) => Math.min(...ac.map(([ax, az]) => Math.hypot(ax - x, az - z)))); })()")
+            T.step("rare spots are 3.5 m clear of every actor (giants are tall)", far and min(far) >= 3.5, far=far)
+            mp("qaSpot('caldera_mouth')"); frames(2); d1 = sv()["dlg"]; fin()
+            T.step("Caldera mouth: shut for a stranger (no door yet)", d1 == "cm_shut", d1=d1)
+            rep["shots"]["mp_falls"] = T.shot("mp_falls")
         T.step("no JS errors in the Muspelheim run", not [e for e in errors if "muspelheim" in e.lower()], errs=errors[-3:])
     except Exception:
         try:

@@ -1,0 +1,193 @@
+{
+ "mp_folk": {
+  "atlas": "/workspace/hearthmoor-staging/art/muspelheim/sprite/mp_folk.png",
+  "biome": "cozy-village",
+  "roles": {
+   "envoy_mp": {
+    "frames": 32,
+    "colors": 16,
+    "issues": []
+   },
+   "springkeeper": {
+    "frames": 32,
+    "colors": 13,
+    "issues": []
+   },
+   "lizardman": {
+    "frames": 32,
+    "colors": 15,
+    "issues": []
+   },
+   "mp_trader": {
+    "frames": 32,
+    "colors": 17,
+    "issues": []
+   },
+   "mp_guide": {
+    "frames": 32,
+    "colors": 14,
+    "issues": []
+   }
+  },
+  "summary": {
+   "roles": 5,
+   "failures": 0,
+   "semi_transparent": 0,
+   "pass": true
+  },
+  "failures": []
+ },
+ "mp_giants": {
+  "atlas": "/workspace/hearthmoor-staging/art/muspelheim/sprite/mp_giants.png",
+  "biome": "cozy-village",
+  "roles": {
+   "warden_mp": {
+    "frames": 32,
+    "colors": 16,
+    "issues": []
+   },
+   "forgejudge": {
+    "frames": 32,
+    "colors": 17,
+    "issues": []
+   },
+   "cindercaptain": {
+    "frames": 32,
+    "colors": 17,
+    "issues": []
+   }
+  },
+  "summary": {
+   "roles": 3,
+   "failures": 0,
+   "semi_transparent": 0,
+   "pass": true
+  },
+  "failures": []
+ },
+ "mp_enemies": {
+  "atlas": "/workspace/hearthmoor-staging/art/muspelheim/sprite/mp_enemies.png",
+  "biome": "cozy-village",
+  "roles": {
+   "ashen_cultist": {
+    "frames": 64,
+    "colors": 11,
+    "issues": []
+   },
+   "magma_hound": {
+    "frames": 64,
+    "colors": 7,
+    "issues": []
+   },
+   "flame_elemental": {
+    "frames": 64,
+    "colors": 7,
+    "issues": []
+   },
+   "fire_golem": {
+    "frames": 64,
+    "colors": 7,
+    "issues": []
+   }
+  },
+  "summary": {
+   "roles": 4,
+   "failures": 0,
+   "semi_transparent": 0,
+   "pass": true
+  },
+  "failures": []
+ },
+ "boss_vharzul": {
+  "atlas": "/workspace/hearthmoor-staging/art/muspelheim/sprite/boss_vharzul.png",
+  "biome": "cozy-village",
+  "roles": {
+   "vharzul": {
+    "frames": 64,
+    "colors": 15,
+    "issues": []
+   },
+   "vharzul_p3": {
+    "frames": 64,
+    "colors": 15,
+    "issues": []
+   }
+  },
+  "summary": {
+   "roles": 2,
+   "failures": 0,
+   "semi_transparent": 0,
+   "pass": true
+  },
+  "failures": []
+ },
+ "mp_elites": {
+  "atlas": "/workspace/hearthmoor-staging/art/muspelheim/sprite/mp_elites.png",
+  "biome": "cozy-village",
+  "roles": {
+   "magma_hound_gate": {
+    "frames": 64,
+    "colors": 7,
+    "issues": []
+   },
+   "ashalpha": {
+    "frames": 64,
+    "colors": 7,
+    "issues": []
+   },
+   "pyreling": {
+    "frames": 64,
+    "colors": 9,
+    "issues": []
+   },
+   "kilnmother": {
+    "frames": 64,
+    "colors": 8,
+    "issues": []
+   }
+  },
+  "summary": {
+   "roles": 4,
+   "failures": 0,
+   "semi_transparent": 0,
+   "pass": true
+  },
+  "failures": []
+ },
+ "kindle (safe)": {
+  "atlas": "/workspace/hearthmoor-staging/art/muspelheim/pets/kindle.png",
+  "biome": "cozy-village",
+  "roles": {
+   "pet_kindle": {
+    "frames": 48,
+    "colors": 9,
+    "issues": []
+   }
+  },
+  "summary": {
+   "roles": 1,
+   "failures": 0,
+   "semi_transparent": 0,
+   "pass": true
+  },
+  "failures": []
+ },
+ "kindle_neon (needs scoped pet_kindle allow-list)": {
+  "atlas": "/workspace/hearthmoor-staging/art/muspelheim/pets/kindle_neon.png",
+  "biome": "cozy-village",
+  "roles": {
+   "pet_kindle": {
+    "frames": 48,
+    "colors": 11,
+    "issues": []
+   }
+  },
+  "summary": {
+   "roles": 1,
+   "failures": 0,
+   "semi_transparent": 0,
+   "pass": true
+  },
+  "failures": []
+ }
+}

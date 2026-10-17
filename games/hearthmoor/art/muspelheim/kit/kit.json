@@ -1,0 +1,1622 @@
+{
+ "tool": "hd2d kit",
+ "biome": "cozy-village",
+ "seed": 1,
+ "sprite_height_m": 1.8,
+ "pieces": {
+  "warm_lantern": {
+   "file": "warm_lantern.glb",
+   "kind": "prop",
+   "tris": 96,
+   "size": [
+    0.8,
+    2.0,
+    0.4
+   ],
+   "markers": {
+    "lamps": [
+     [
+      0.35,
+      1.6,
+      0.0
+     ]
+    ],
+    "chimneys": [],
+    "windows": [],
+    "doors": [],
+    "lamp_color": "#ffb066",
+    "lamp_range": 5.0,
+    "lamp_fixed": 0.5,
+    "note": "warm street lantern every 6-8 m: the grade stays amber-warm with blue/violet accents, never all red or all blue"
+   },
+   "blockers": [
+    [
+     -0.2,
+     -0.2,
+     0.2,
+     0.2
+    ]
+   ],
+   "placement": "warm accent every 6-8 m so grades never go all red or all blue",
+   "fx": [
+    "pool_forge"
+   ]
+  },
+  "basalt_floor": {
+   "file": "basalt_floor.glb",
+   "kind": "prop",
+   "tris": 152,
+   "size": [
+    2,
+    0.02,
+    2
+   ],
+   "markers": {
+    "lamps": [],
+    "chimneys": [],
+    "windows": [],
+    "doors": []
+   },
+   "blockers": [],
+   "placement": "2 m grid ground of Cinderhold / Lavafalls",
+   "fx": [
+    "ember_motes",
+    "ash_fall"
+   ]
+  },
+  "lava_channel": {
+   "file": "lava_channel.glb",
+   "kind": "prop",
+   "tris": 432,
+   "size": [
+    2.0,
+    0.3,
+    4.0
+   ],
+   "markers": {
+    "lamps": [
+     [
+      0,
+      0.5,
+      0
+     ]
+    ],
+    "chimneys": [],
+    "windows": [],
+    "doors": [],
+    "lamp_color": "#ff7a1a",
+    "lamp_range": 4.0,
+    "lamp_fixed": 0.0,
+    "hazard": "lava: damage; bridge with glass_bridge / warden_stones",
+    "keep_clear": {
+     "footprint_m": [
+      -1.0,
+      -2.0,
+      1.0,
+      2.0
+     ],
+     "radius_m": 1.0,
+     "note": "nothing spawns within 1 m of lava; chain end to end along z; glow pool_lava + lava_crawl decal over the channel"
+    }
+   },
+   "blockers": [
+    [
+     -0.6,
+     -2.0,
+     0.6,
+     2.0
+    ]
+   ],
+   "placement": "2 x 4 m glowing channel; chain end to end (rot pi/2 to run along x); 1 m clear of spawns",
+   "fx": [
+    "pool_lava",
+    "lava_crawl",
+    "neon_embers"
+   ]
+  },
+  "lava_pool": {
+   "file": "lava_pool.glb",
+   "kind": "prop",
+   "tris": 368,
+   "size": [
+    4.0,
+    0.4,
+    4.0
+   ],
+   "markers": {
+    "lamps": [
+     [
+      0,
+      0.6,
+      0
+     ]
+    ],
+    "chimneys": [],
+    "windows": [],
+    "doors": [],
+    "lamp_color": "#ff7a1a",
+    "lamp_range": 5.0,
+    "lamp_fixed": 0.0,
+    "keep_clear": {
+     "footprint_m": [
+      -2.2,
+      -2.2,
+      2.2,
+      2.2
+     ],
+     "radius_m": 2.4,
+     "note": "fall-pool (rares spawn here at runtime); keep props 2.4 m away"
+    }
+   },
+   "blockers": [
+    [
+     -1.8,
+     -1.8,
+     1.8,
+     1.8
+    ]
+   ],
+   "placement": "round lava pool (fall-pool, hub corner); keep props 2.4 m away",
+   "fx": [
+    "pool_lava",
+    "neon_embers"
+   ]
+  },
+  "basalt_ledge": {
+   "file": "basalt_ledge.glb",
+   "kind": "prop",
+   "tris": 240,
+   "size": [
+    3.1,
+    1.34,
+    2.1
+   ],
+   "markers": {
+    "lamps": [
+     [
+      0,
+      0.6,
+      1.3
+     ]
+    ],
+    "chimneys": [],
+    "windows": [],
+    "doors": [],
+    "lamp_color": "#ff7a1a",
+    "lamp_range": 3.0,
+    "lamp_fixed": 0.5,
+    "height_m": 1.34,
+    "ledge_edge": [
+     [
+      -1.5,
+      1.0
+     ],
+     [
+      1.5,
+      1.0
+     ]
+    ],
+    "no_props_within_m": 0.8
+   },
+   "blockers": [
+    [
+     -1.5,
+     -1.0,
+     1.5,
+     1.0
+    ]
+   ],
+   "placement": "1.34 m plateau / ledge (chain along x); props sit >= 1.5 m back from the front edge",
+   "fx": [
+    "pool_forge"
+   ]
+  },
+  "basalt_stair": {
+   "file": "basalt_stair.glb",
+   "kind": "prop",
+   "tris": 288,
+   "size": [
+    2.9,
+    1.3,
+    3.0
+   ],
+   "markers": {
+    "lamps": [
+     [
+      0,
+      1.2,
+      1.6
+     ]
+    ],
+    "chimneys": [],
+    "windows": [],
+    "doors": [],
+    "lamp_color": "#ff7a1a",
+    "lamp_range": 3.5,
+    "lamp_fixed": 0.5,
+    "stairs": {
+     "rise_m": 1.2,
+     "steps": 6,
+     "run_m": 0.5,
+     "width_m": 2.0,
+     "climbs_toward": "-z"
+    },
+    "note": "one per ledge, centred; top flush with the ledge front face; keep 1 m clear at each end"
+   },
+   "blockers": [],
+   "placement": "one per ledge, centred, top flush with the ledge front face; climbs toward -z (rot pi to climb toward +z)",
+   "fx": []
+  },
+  "warden_stones": {
+   "file": "warden_stones.glb",
+   "kind": "prop",
+   "tris": 436,
+   "size": [
+    4.0,
+    0.3,
+    2.0
+   ],
+   "markers": {
+    "lamps": [
+     [
+      0,
+      0.5,
+      0
+     ]
+    ],
+    "chimneys": [],
+    "windows": [],
+    "doors": [],
+    "lamp_color": "#ff7a1a",
+    "lamp_range": 4.5,
+    "lamp_fixed": 0.0,
+    "note": "the Warden's Walk [0,3.0] (The Cinder Walk): 5 stepping-stones 0.28 m high over lava; place 2 pieces end to end",
+    "keep_clear": {
+     "footprint_m": [
+      -2.0,
+      -1.0,
+      2.0,
+      1.0
+     ],
+     "radius_m": 1.5,
+     "note": "quest route: no props or spawns on or within 1.5 m"
+    }
+   },
+   "blockers": [],
+   "placement": "the Warden's Walk [0,3.0]: five 0.28 m stepping-stones over lava; quest route, keep clear",
+   "fx": [
+    "pool_lava",
+    "neon_embers"
+   ]
+  },
+  "basalt_house": {
+   "file": "basalt_house.glb",
+   "kind": "prop",
+   "tris": 272,
+   "size": [
+    5.8,
+    5.2,
+    4.8
+   ],
+   "markers": {
+    "lamps": [
+     [
+      0,
+      1.5,
+      2.9000000000000004
+     ],
+     [
+      1.6,
+      5.2,
+      -1.0
+     ]
+    ],
+    "chimneys": [],
+    "windows": [],
+    "doors": [
+     {
+      "pos": [
+       0,
+       0,
+       2.3000000000000003
+      ],
+      "w": 1.0,
+      "h": 2.1
+     }
+    ],
+    "lamp_color": "#ff7a1a",
+    "lamp_range": 3.0,
+    "lamp_fixed": 0.5,
+    "spawn_clear_m": 1.8,
+    "note": "ember-kin house; every window and door gets a warm pool_forge under it; 1.8 m clear in front of the door"
+   },
+   "blockers": [
+    [
+     -2.6,
+     -2.1,
+     2.6,
+     2.1
+    ]
+   ],
+   "placement": "ember-kin house, door faces +z, warm window pools; 1.8 m clear in front of the door",
+   "fx": [
+    "pool_forge",
+    "ember_motes"
+   ]
+  },
+  "forge_hall": {
+   "file": "forge_hall.glb",
+   "kind": "prop",
+   "tris": 340,
+   "size": [
+    8.8,
+    8.7,
+    6.0
+   ],
+   "markers": {
+    "lamps": [
+     [
+      0,
+      2.2,
+      3.3
+     ],
+     [
+      2.6,
+      8.8,
+      -1.2
+     ]
+    ],
+    "chimneys": [],
+    "windows": [],
+    "doors": [
+     {
+      "pos": [
+       0,
+       0,
+       2.7
+      ],
+      "w": 3.2,
+      "h": 4.0
+     }
+    ],
+    "lamp_color": "#ff7a1a",
+    "lamp_range": 4.0,
+    "lamp_fixed": 0.5,
+    "spawn_clear_m": 2.5,
+    "note": "fire-giant forge (2.5x doors); 2.5 m clear in front; ember_motes over the chimneys"
+   },
+   "blockers": [
+    [
+     -4.0,
+     -2.5,
+     4.0,
+     2.5
+    ]
+   ],
+   "placement": "fire-giant forge, 3.2 x 4 m door; 2.5 m clear in front of it",
+   "fx": [
+    "pool_forge",
+    "forge_flame",
+    "ember_motes"
+   ]
+  },
+  "red_arch": {
+   "file": "red_arch.glb",
+   "kind": "prop",
+   "tris": 204,
+   "size": [
+    6.0,
+    6.8,
+    1.4
+   ],
+   "markers": {
+    "lamps": [
+     [
+      0,
+      3.0,
+      1.2
+     ],
+     [
+      0,
+      2.5,
+      -0.6
+     ]
+    ],
+    "chimneys": [],
+    "windows": [],
+    "doors": [],
+    "lamp_color": "#ffd9a0",
+    "lamp_range": 4.0,
+    "lamp_fixed": 0.5,
+    "spawn": {
+     "from_bifrost": [
+      0,
+      0,
+      0.0
+     ],
+     "note": "Red arch [0,10.6]; arrival 1.4 m in front [0,9.2,'up']; nothing within 1.5 m"
+    },
+    "keep_clear": {
+     "footprint_m": [
+      -2.8,
+      -1.0,
+      2.8,
+      2.6
+     ],
+     "radius_m": 2.6,
+     "note": "arrival point: no props, spawns or decals within 2.6 m (heat_shimmer billboard above the opening is fine)"
+    }
+   },
+   "blockers": [
+    [
+     -2.8,
+     -0.6,
+     -1.7,
+     0.6
+    ],
+    [
+     1.7,
+     -0.6,
+     2.8,
+     0.6
+    ]
+   ],
+   "placement": "Cinderhold's Red arch to Bifrost [0,10.6]; arrival [0,9.2,'up']; nothing within 2.6 m",
+   "fx": [
+    "heat_shimmer",
+    "pool_lava"
+   ]
+  },
+  "spice_stall": {
+   "file": "spice_stall.glb",
+   "kind": "prop",
+   "tris": 316,
+   "size": [
+    3.8,
+    2.8,
+    1.6
+   ],
+   "markers": {
+    "lamps": [
+     [
+      1.9,
+      0.8,
+      0.9
+     ],
+     [
+      0,
+      1.6,
+      0.9
+     ]
+    ],
+    "chimneys": [],
+    "windows": [],
+    "doors": [],
+    "lamp_color": "#ffb066",
+    "lamp_range": 3.0,
+    "lamp_fixed": 0.5,
+    "note": "Svala's spice-brazier stall [-7.0,5.0]; counter faces +z, 1.5 m clear in front"
+   },
+   "blockers": [
+    [
+     -1.5,
+     -0.2,
+     1.5,
+     1.0
+    ]
+   ],
+   "placement": "Svala's spice-brazier stall [-7.0,5.0]; counter faces +z",
+   "fx": [
+    "pool_forge",
+    "forge_flame"
+   ]
+  },
+  "brazier_stand": {
+   "file": "brazier_stand.glb",
+   "kind": "prop",
+   "tris": 168,
+   "size": [
+    1.3,
+    3.2,
+    1.3
+   ],
+   "markers": {
+    "lamps": [
+     [
+      0,
+      2.5,
+      0.1
+     ]
+    ],
+    "chimneys": [],
+    "windows": [],
+    "doors": [],
+    "lamp_color": "#ff7a1a",
+    "lamp_range": 6.0,
+    "lamp_fixed": 0.5,
+    "note": "warm forge brazier: forge_flame billboard at y 2.0 m + pool_forge; Kindle lights it"
+   },
+   "blockers": [
+    [
+     -0.4,
+     -0.4,
+     0.4,
+     0.4
+    ]
+   ],
+   "placement": "forge brazier; forge_flame billboard at y 1.9 m + pool_forge",
+   "fx": [
+    "forge_flame",
+    "pool_forge"
+   ]
+  },
+  "cold_brazier": {
+   "file": "cold_brazier.glb",
+   "kind": "prop",
+   "tris": 168,
+   "size": [
+    1.3,
+    3.2,
+    1.3
+   ],
+   "markers": {
+    "lamps": [
+     [
+      0,
+      2.5,
+      0.1
+     ]
+    ],
+    "chimneys": [],
+    "windows": [],
+    "doors": [],
+    "lamp_color": "#3fb8ff",
+    "lamp_range": 6.0,
+    "lamp_fixed": 0.5,
+    "note": "cold-fire brazier (neon blue): cold_flame billboard + pool_cold; wedges / Cold Seam / the quiet corners"
+   },
+   "blockers": [
+    [
+     -0.4,
+     -0.4,
+     0.4,
+     0.4
+    ]
+   ],
+   "placement": "cold-fire brazier (neon blue); cold_flame billboard at y 1.9 m + pool_cold",
+   "fx": [
+    "cold_flame",
+    "pool_cold"
+   ]
+  },
+  "shrine_lamp": {
+   "file": "shrine_lamp.glb",
+   "kind": "prop",
+   "tris": 176,
+   "size": [
+    0.9,
+    3.0,
+    0.9
+   ],
+   "markers": {
+    "lamps": [
+     [
+      0,
+      2.3,
+      0
+     ]
+    ],
+    "chimneys": [],
+    "windows": [],
+    "doors": [],
+    "lamp_color": "#a45cf0",
+    "lamp_range": 4.5,
+    "lamp_fixed": 0.5,
+    "note": "violet shrine-lamp (Warden's hall: one either side of the seat; spring grotto): violet_flame billboard + pool_violet"
+   },
+   "blockers": [
+    [
+     -0.3,
+     -0.3,
+     0.3,
+     0.3
+    ]
+   ],
+   "placement": "violet shrine-lamp: Warden's seat (one either side) and spring grotto; violet_flame at y 2.1 m",
+   "fx": [
+    "violet_flame",
+    "pool_violet"
+   ]
+  },
+  "glass_bridge": {
+   "file": "glass_bridge.glb",
+   "kind": "prop",
+   "tris": 480,
+   "size": [
+    2.4,
+    1.2,
+    4.0
+   ],
+   "markers": {
+    "lamps": [
+     [
+      0,
+      0.6,
+      0
+     ]
+    ],
+    "chimneys": [],
+    "windows": [],
+    "doors": [],
+    "lamp_color": "#ff7a1a",
+    "lamp_range": 4.0,
+    "lamp_fixed": 0.5,
+    "note": "Cinderhold -> Lavafalls bridge [10,-9]; chain along z; in the Caldera (C3) the lit panels are safe, the dark ones crack"
+   },
+   "blockers": [],
+   "placement": "glass walkway 2 x 4 m; Cinderhold -> Lavafalls [10,-9]; Caldera C3 (lit panels safe)",
+   "fx": [
+    "pool_lava"
+   ]
+  },
+  "lizard_stable": {
+   "file": "lizard_stable.glb",
+   "kind": "prop",
+   "tris": 252,
+   "size": [
+    5.4,
+    2.1,
+    3.4
+   ],
+   "markers": {
+    "lamps": [
+     [
+      2.1,
+      0.9,
+      1.2
+     ],
+     [
+      0,
+      1.4,
+      1.7
+     ]
+    ],
+    "chimneys": [],
+    "windows": [],
+    "doors": [],
+    "lamp_color": "#ffb066",
+    "lamp_range": 3.5,
+    "lamp_fixed": 0.5,
+    "note": "Orm's lizard stables [-9,-3]; open side faces +z; 1.5 m clear in front"
+   },
+   "blockers": [
+    [
+     -2.6,
+     -1.6,
+     2.6,
+     0.0
+    ]
+   ],
+   "placement": "Orm's lizard stables [-9,-3]; open side +z; 1.5 m clear in front",
+   "fx": [
+    "pool_forge"
+   ]
+  },
+  "emberfall_anvil": {
+   "file": "emberfall_anvil.glb",
+   "kind": "prop",
+   "tris": 88,
+   "size": [
+    2.0,
+    1.1,
+    1.1
+   ],
+   "markers": {
+    "lamps": [
+     [
+      0,
+      1.0,
+      0
+     ]
+    ],
+    "chimneys": [],
+    "windows": [],
+    "doors": [],
+    "lamp_color": "#ff7a1a",
+    "lamp_range": 3.5,
+    "lamp_fixed": 0.5,
+    "note": "Emberfall contest anvils [8,-2] and Torka's school anvils [-6,-4] (lavafalls): 1.5 m clear around for the heat-timing beat",
+    "keep_clear": {
+     "footprint_m": [
+      -1.0,
+      -1.0,
+      1.0,
+      1.0
+     ],
+     "radius_m": 1.5,
+     "note": "keep the anvil circle free for the festival beat"
+    }
+   },
+   "blockers": [
+    [
+     -0.6,
+     -0.4,
+     0.6,
+     0.4
+    ]
+   ],
+   "placement": "Emberfall contest anvils [8,-2] and Torka's school anvils [-6,-4]; 1.5 m clear",
+   "fx": [
+    "pool_forge",
+    "neon_embers"
+   ]
+  },
+  "dance_ring": {
+   "file": "dance_ring.glb",
+   "kind": "prop",
+   "tris": 448,
+   "size": [
+    6.0,
+    0.08,
+    6.0
+   ],
+   "markers": {
+    "lamps": [
+     [
+      0,
+      0.4,
+      0
+     ]
+    ],
+    "chimneys": [],
+    "windows": [],
+    "doors": [],
+    "lamp_color": "#ff7a1a",
+    "lamp_range": 4.5,
+    "lamp_fixed": 0.0,
+    "note": "Emberfall fire-dance ring at [8,-2]; flat, walkable; pool_forge over it on festival days",
+    "keep_clear": {
+     "footprint_m": [
+      -3.0,
+      -3.0,
+      3.0,
+      3.0
+     ],
+     "radius_m": 3.0,
+     "note": "festival ground: no props / spawns"
+    }
+   },
+   "blockers": [],
+   "placement": "Emberfall fire-dance ring [8,-2], flat, festival ground",
+   "fx": [
+    "pool_forge"
+   ]
+  },
+  "obsidian_pillar": {
+   "file": "obsidian_pillar.glb",
+   "kind": "prop",
+   "tris": 156,
+   "size": [
+    1.8,
+    4.4,
+    1.8
+   ],
+   "markers": {
+    "lamps": [
+     [
+      0,
+      2.0,
+      0.9
+     ]
+    ],
+    "chimneys": [],
+    "windows": [],
+    "doors": [],
+    "lamp_color": "#3fb8ff",
+    "lamp_range": 3.0,
+    "lamp_fixed": 0.5,
+    "note": "basalt pillar with frost-vein cracks; the hidden spring [-11,-8.5] sits behind one"
+   },
+   "blockers": [
+    [
+     -0.7,
+     -0.7,
+     0.7,
+     0.7
+    ]
+   ],
+   "placement": "basalt pillar with frost-vein cracks; the hidden spring sits behind one [-11,-8.5]",
+   "fx": [
+    "pool_cold",
+    "frost_vein"
+   ]
+  },
+  "amber_orb_chain": {
+   "file": "amber_orb_chain.glb",
+   "kind": "prop",
+   "tris": 208,
+   "size": [
+    0.7,
+    3.0,
+    0.7
+   ],
+   "markers": {
+    "lamps": [
+     [
+      0,
+      1.6,
+      0
+     ]
+    ],
+    "chimneys": [],
+    "windows": [],
+    "doors": [],
+    "lamp_color": "#ffb066",
+    "lamp_range": 5.5,
+    "lamp_fixed": 0.0,
+    "hanging": "molten-glass globe on a chain over streets, y 3 m; steady light (no flicker)"
+   },
+   "blockers": [],
+   "placement": "molten-glass globe on a chain over streets and halls (y 3 m); steady",
+   "fx": [
+    "glow_orb_amber"
+   ]
+  },
+  "spring_pool": {
+   "file": "spring_pool.glb",
+   "kind": "prop",
+   "tris": 320,
+   "size": [
+    3.4,
+    0.5,
+    3.4
+   ],
+   "markers": {
+    "lamps": [
+     [
+      0,
+      0.8,
+      0
+     ]
+    ],
+    "chimneys": [],
+    "windows": [],
+    "doors": [],
+    "lamp_color": "#2fd0d0",
+    "lamp_range": 4.0,
+    "lamp_fixed": 0.5,
+    "note": "hidden bubbly spring (mp_spring / lf_spring / cd_spring): clear teal water; spring_bubbles billboard + pool_teal + two shrine_lamps; restores HP, +2 s fire-resist per drink",
+    "keep_clear": {
+     "footprint_m": [
+      -1.8,
+      -1.8,
+      1.8,
+      1.8
+     ],
+     "radius_m": 2.0,
+     "note": "drink radius; nothing else within 2 m"
+    }
+   },
+   "blockers": [
+    [
+     -1.5,
+     -1.5,
+     1.5,
+     1.5
+    ]
+   ],
+   "placement": "hidden bubbly spring (clear teal): spring_bubbles + pool_teal + two shrine_lamps; 2 m clear",
+   "fx": [
+    "spring_bubbles",
+    "pool_teal",
+    "steam_puff"
+   ]
+  },
+  "muspel_waystone": {
+   "file": "muspel_waystone.glb",
+   "kind": "prop",
+   "tris": 298,
+   "size": [
+    3.4,
+    4.1,
+    3.4
+   ],
+   "markers": {
+    "lamps": [
+     [
+      0,
+      1.2,
+      0.9
+     ],
+     [
+      0,
+      3.8,
+      0
+     ]
+    ],
+    "chimneys": [],
+    "windows": [],
+    "doors": [],
+    "lamp_color": "#3fb8ff",
+    "lamp_range": 4.0,
+    "lamp_fixed": 0.5,
+    "keep_clear": {
+     "footprint_m": [
+      -1.8,
+      -1.8,
+      1.8,
+      1.8
+     ],
+     "radius_m": 2.6,
+     "note": "no props, spawns or fx within 2.6 m of the plinth; arrival point 2 m in front (+z); off stairs and ledge edges (Caldera C8 landing)"
+    },
+    "note": "Cinderhold waystone: warm runes + a cold-fire crown; pool_lava r 3 m under it"
+   },
+   "blockers": [
+    [
+     -1.0,
+     -1.0,
+     1.0,
+     1.0
+    ]
+   ],
+   "placement": "Cinderhold waystone: Lavafalls arrival, Caldera C8 landing; 2.6 m clear; pool_lava r 3 m",
+   "fx": [
+    "pool_lava",
+    "neon_embers"
+   ]
+  },
+  "cinder_cairn": {
+   "file": "cinder_cairn.glb",
+   "kind": "prop",
+   "tris": 216,
+   "size": [
+    1.4,
+    1.435,
+    1.4
+   ],
+   "markers": {
+    "lamps": [
+     [
+      0.04,
+      1.28475,
+      0.1
+     ]
+    ],
+    "chimneys": [],
+    "windows": [],
+    "doors": [],
+    "lamp_color": "#ff7a1a",
+    "lamp_range": 2.4,
+    "lamp_fixed": 0.5,
+    "keep_clear": {
+     "footprint_m": [
+      -0.9,
+      -0.9,
+      0.9,
+      0.9
+     ],
+     "radius_m": 1.2,
+     "note": "trail marker; 1.2 m clear of spawns, stairs, ledge edges"
+    }
+   },
+   "blockers": [
+    [
+     -0.45,
+     -0.45,
+     0.45,
+     0.45
+    ]
+   ],
+   "placement": "trail marker on paths; 1.2 m clear",
+   "fx": [
+    "ember_motes"
+   ]
+  },
+  "forge_floor": {
+   "file": "forge_floor.glb",
+   "kind": "prop",
+   "tris": 92,
+   "size": [
+    2,
+    0.02,
+    2
+   ],
+   "markers": {
+    "lamps": [],
+    "chimneys": [],
+    "windows": [],
+    "doors": []
+   },
+   "blockers": [],
+   "placement": "2 m grid, Sigil Forge and the Caldera throne room (copper inlay)",
+   "fx": []
+  },
+  "forge_wall": {
+   "file": "forge_wall.glb",
+   "kind": "prop",
+   "tris": 84,
+   "size": [
+    2.0,
+    4.4,
+    0.6
+   ],
+   "markers": {
+    "lamps": [
+     [
+      0,
+      1.9,
+      0.9
+     ]
+    ],
+    "chimneys": [],
+    "windows": [],
+    "doors": [],
+    "lamp_color": "#ff7a1a",
+    "lamp_range": 3.5,
+    "lamp_fixed": 0.5,
+    "note": "2 m wall module with a furnace window (warm pool on the floor in front)"
+   },
+   "blockers": [
+    [
+     -1.0,
+     -0.3,
+     1.0,
+     0.3
+    ]
+   ],
+   "placement": "2 m wall module with a furnace window (warm pool on the floor in front)",
+   "fx": [
+    "pool_forge"
+   ]
+  },
+  "wardens_seat": {
+   "file": "wardens_seat.glb",
+   "kind": "prop",
+   "tris": 164,
+   "size": [
+    4.0,
+    3.4,
+    4.0
+   ],
+   "markers": {
+    "lamps": [
+     [
+      0,
+      2.0,
+      0.6
+     ]
+    ],
+    "chimneys": [],
+    "windows": [],
+    "doors": [],
+    "lamp_color": "#ffb066",
+    "lamp_range": 5.0,
+    "lamp_fixed": 0.5,
+    "note": "the Warden's seat [0,-6.5]; a shrine_lamp 1.6 m either side; Aska stands in front"
+   },
+   "blockers": [
+    [
+     -1.3,
+     -1.0,
+     1.3,
+     1.0
+    ]
+   ],
+   "placement": "the Warden's seat [0,-6.5]; a shrine_lamp 1.6 m either side",
+   "fx": [
+    "pool_forge"
+   ]
+  },
+  "seal_cast_bed": {
+   "file": "seal_cast_bed.glb",
+   "kind": "prop",
+   "tris": 288,
+   "size": [
+    3.2,
+    0.7,
+    1.8
+   ],
+   "markers": {
+    "lamps": [
+     [
+      0,
+      0.8,
+      0.2
+     ]
+    ],
+    "chimneys": [],
+    "windows": [],
+    "doors": [],
+    "lamp_color": "#ff7a1a",
+    "lamp_range": 3.5,
+    "lamp_fixed": 0.5,
+    "clue": "sf_cast: the cooling cast-bed (the fake sigil was poured here) [-5.5,-3.0]"
+   },
+   "blockers": [
+    [
+     -1.5,
+     -0.8,
+     1.5,
+     0.8
+    ]
+   ],
+   "placement": "sf_cast clue point [-5.5,-3.0]",
+   "fx": [
+    "pool_forge",
+    "neon_embers"
+   ]
+  },
+  "stamp_press": {
+   "file": "stamp_press.glb",
+   "kind": "prop",
+   "tris": 136,
+   "size": [
+    1.8,
+    2.4,
+    1.2
+   ],
+   "markers": {
+    "lamps": [
+     [
+      0,
+      0.9,
+      0.3
+     ]
+    ],
+    "chimneys": [],
+    "windows": [],
+    "doors": [],
+    "lamp_color": "#ff7a1a",
+    "lamp_range": 3.0,
+    "lamp_fixed": 0.5,
+    "clue": "sf_mirror group: the stamp-press (foundry)"
+   },
+   "blockers": [
+    [
+     -0.7,
+     -0.5,
+     0.7,
+     0.5
+    ]
+   ],
+   "placement": "sf_mirror group, seal foundry",
+   "fx": [
+    "pool_forge"
+   ]
+  },
+  "ledger_desk": {
+   "file": "ledger_desk.glb",
+   "kind": "prop",
+   "tris": 156,
+   "size": [
+    1.9,
+    1.1,
+    1.0
+   ],
+   "markers": {
+    "lamps": [
+     [
+      0.7,
+      1.2,
+      -0.3
+     ]
+    ],
+    "chimneys": [],
+    "windows": [],
+    "doors": [],
+    "lamp_color": "#ffb066",
+    "lamp_range": 2.5,
+    "lamp_fixed": 0.5,
+    "clue": "sf_ledger: the ledger desk"
+   },
+   "blockers": [
+    [
+     -0.9,
+     -0.45,
+     0.9,
+     0.45
+    ]
+   ],
+   "placement": "sf_ledger clue point",
+   "fx": []
+  },
+  "sigil_mould_wall": {
+   "file": "sigil_mould_wall.glb",
+   "kind": "prop",
+   "tris": 464,
+   "size": [
+    5.2,
+    3.7,
+    0.7
+   ],
+   "markers": {
+    "lamps": [
+     [
+      0,
+      1.8,
+      1.0
+     ]
+    ],
+    "chimneys": [],
+    "windows": [],
+    "doors": [],
+    "lamp_color": "#ff7a1a",
+    "lamp_range": 4.0,
+    "lamp_fixed": 0.5,
+    "clue": "sf_mirror: the sigil mould wall, where real sigils are cast (one mould is cold and unused)"
+   },
+   "blockers": [
+    [
+     -2.5,
+     -0.25,
+     2.5,
+     0.25
+    ]
+   ],
+   "placement": "sf_mirror: the sigil mould wall, west wall of mp_hall",
+   "fx": [
+    "pool_forge"
+   ]
+  },
+  "lava_fall_cliff": {
+   "file": "lava_fall_cliff.glb",
+   "kind": "prop",
+   "tris": 240,
+   "size": [
+    4.2,
+    5.7,
+    2.4
+   ],
+   "markers": {
+    "lamps": [
+     [
+      0,
+      1.0,
+      1.4
+     ]
+    ],
+    "chimneys": [],
+    "windows": [],
+    "doors": [],
+    "lamp_color": "#ff7a1a",
+    "lamp_range": 6.0,
+    "lamp_fixed": 0.0,
+    "note": "molten falls cliff (4 m wide): lava_fall billboard tiles over each glow ribbon; pool_lava + lava_crawl at the foot (the fall-pool)",
+    "keep_clear": {
+     "footprint_m": [
+      -2.2,
+      -0.8,
+      2.2,
+      2.0
+     ],
+     "radius_m": 2.0,
+     "note": "fall foot: 2 m of lava, no props or spawns"
+    }
+   },
+   "blockers": [
+    [
+     -2.0,
+     -0.8,
+     2.0,
+     0.4
+    ]
+   ],
+   "placement": "molten falls cliff, 4 m wide; lava_fall billboards over each ribbon; pool_lava at the foot (fall-pool)",
+   "fx": [
+    "lava_fall",
+    "pool_lava",
+    "neon_embers"
+   ]
+  },
+  "glass_terrace": {
+   "file": "glass_terrace.glb",
+   "kind": "prop",
+   "tris": 224,
+   "size": [
+    3.1,
+    1.34,
+    2.1
+   ],
+   "markers": {
+    "lamps": [
+     [
+      0,
+      1.5,
+      0.6
+     ]
+    ],
+    "chimneys": [],
+    "windows": [],
+    "doors": [],
+    "lamp_color": "#ff7a1a",
+    "lamp_range": 3.5,
+    "lamp_fixed": 0.5,
+    "height_m": 1.34,
+    "ledge_edge": [
+     [
+      -1.5,
+      1.0
+     ],
+     [
+      1.5,
+      1.0
+     ]
+    ],
+    "no_props_within_m": 0.8,
+    "note": "glass terrace (1.34 m, like basalt_ledge): add one basalt_stair"
+   },
+   "blockers": [
+    [
+     -1.5,
+     -1.0,
+     1.5,
+     1.0
+    ]
+   ],
+   "placement": "1.34 m glass terrace (like basalt_ledge) + basalt_stair",
+   "fx": [
+    "pool_lava"
+   ]
+  },
+  "caldera_mouth_arch": {
+   "file": "caldera_mouth_arch.glb",
+   "kind": "prop",
+   "tris": 546,
+   "size": [
+    6.8,
+    7.4,
+    1.6
+   ],
+   "markers": {
+    "lamps": [
+     [
+      0,
+      3.2,
+      1.0
+     ],
+     [
+      0,
+      4.6,
+      0.8
+     ]
+    ],
+    "chimneys": [],
+    "windows": [],
+    "doors": [],
+    "lamp_color": "#3fb8ff",
+    "lamp_range": 4.0,
+    "lamp_fixed": 0.5,
+    "seal_doors": 3,
+    "note": "Caldera mouth [0,-7.5]: 6 m basalt arch sealed by three seal-doors (Warden's Flame / key-fire / Grettir's tunnel); keep 3 m clear in front",
+    "keep_clear": {
+     "footprint_m": [
+      -3.4,
+      -1.0,
+      3.4,
+      3.0
+     ],
+     "radius_m": 3.0,
+     "note": "3 m clear in front of the seal-doors"
+    }
+   },
+   "blockers": [
+    [
+     -3.3,
+     -0.6,
+     3.3,
+     0.6
+    ]
+   ],
+   "placement": "Caldera mouth [0,-7.5]: 6 m arch, three seal-doors; keep 3 m clear",
+   "fx": [
+    "pool_lava",
+    "pool_cold"
+   ]
+  },
+  "ember_throne": {
+   "file": "ember_throne.glb",
+   "kind": "prop",
+   "tris": 298,
+   "size": [
+    5.4,
+    8.0,
+    5.2
+   ],
+   "markers": {
+    "lamps": [
+     [
+      0,
+      3.0,
+      0.6
+     ]
+    ],
+    "chimneys": [],
+    "windows": [],
+    "doors": [],
+    "lamp_color": "#ff7a1a",
+    "lamp_range": 7.0,
+    "lamp_fixed": 0.5,
+    "boss_stand": [
+     0,
+     0,
+     3.6
+    ],
+    "note": "C9 Ember Throne, back centre; Vharzul (8x) stands in front (boss_stand z +3.6); lava_crawl ring on the arena edge rises in phase 2"
+   },
+   "blockers": [
+    [
+     -2.4,
+     -1.5,
+     2.4,
+     1.5
+    ]
+   ],
+   "placement": "C9 Ember Throne, back centre; boss_stand marker z +3.6 (Vharzul 8x)",
+   "fx": [
+    "pool_lava",
+    "lava_crawl"
+   ]
+  },
+  "warden_lamp_stand": {
+   "file": "warden_lamp_stand.glb",
+   "kind": "prop",
+   "tris": 212,
+   "size": [
+    1.2,
+    3.8,
+    1.2
+   ],
+   "markers": {
+    "lamps": [
+     [
+      0,
+      2.9,
+      0
+     ]
+    ],
+    "chimneys": [],
+    "windows": [],
+    "doors": [],
+    "lamp_color": "#a45cf0",
+    "lamp_range": 5.5,
+    "lamp_fixed": 0.5,
+    "note": "one of the three Warden's lamps (Vharzul P3): violet until relit; warden_lamp fx over it; place on the arena ring at 120 degrees, outside the safe ring"
+   },
+   "blockers": [
+    [
+     -0.4,
+     -0.4,
+     0.4,
+     0.4
+    ]
+   ],
+   "placement": "the three Warden's lamps (Vharzul P3), 120 degrees apart on the arena ring",
+   "fx": [
+    "warden_lamp",
+    "pool_violet"
+   ]
+  },
+  "furnace": {
+   "file": "furnace.glb",
+   "kind": "prop",
+   "tris": 128,
+   "size": [
+    4.2,
+    6.2,
+    2.7
+   ],
+   "markers": {
+    "lamps": [
+     [
+      0,
+      1.2,
+      1.9
+     ]
+    ],
+    "chimneys": [],
+    "windows": [],
+    "doors": [],
+    "lamp_color": "#ff7a1a",
+    "lamp_range": 6.0,
+    "lamp_fixed": 0.5,
+    "note": "C4 Furnace Hall: fire golems wake from the walls around it; heart-coal hc_1 sits in the mouth; heat_shimmer over the chimney",
+    "keep_clear": {
+     "footprint_m": [
+      -2.2,
+      -1.3,
+      2.2,
+      3.2
+     ],
+     "radius_m": 3.0,
+     "note": "3 m clear in front of the mouth"
+    }
+   },
+   "blockers": [
+    [
+     -2.0,
+     -1.2,
+     2.0,
+     1.2
+    ]
+   ],
+   "placement": "C4 Furnace Hall furnace; 3 m clear in front of the mouth",
+   "fx": [
+    "heat_shimmer",
+    "pool_lava",
+    "forge_flame"
+   ]
+  },
+  "hanging_crystals": {
+   "file": "hanging_crystals.glb",
+   "kind": "prop",
+   "tris": 108,
+   "size": [
+    2.0,
+    3.3,
+    1.2
+   ],
+   "markers": {
+    "lamps": [
+     [
+      0,
+      2.0,
+      0.3
+     ]
+    ],
+    "chimneys": [],
+    "windows": [],
+    "doors": [],
+    "lamp_color": "#3fb8ff",
+    "lamp_range": 5.0,
+    "lamp_fixed": 0.5,
+    "hanging": "ceiling piece: hangs at y 3.0 m (cavern ceilings, Cold Seam, springs of glass); glow_crystals_blue/violet billboards add the twinkle"
+   },
+   "blockers": [],
+   "placement": "ceiling piece, hangs at y 3 m (Cold Seam, springs of glass)",
+   "fx": [
+    "glow_crystals_blue",
+    "glow_crystals_violet"
+   ]
+  },
+  "cold_seam_wall": {
+   "file": "cold_seam_wall.glb",
+   "kind": "prop",
+   "tris": 252,
+   "size": [
+    2.0,
+    4.4,
+    0.6
+   ],
+   "markers": {
+    "lamps": [
+     [
+      0,
+      2.2,
+      0.9
+     ]
+    ],
+    "chimneys": [],
+    "windows": [],
+    "doors": [],
+    "lamp_color": "#3fb8ff",
+    "lamp_range": 5.0,
+    "lamp_fixed": 0.5,
+    "note": "C5 Cold Seam: a frost vein bright blue against orange rock (Veyra's beat); pool_cold in front, frost_vein decal on the floor, wedge 2 nearby"
+   },
+   "blockers": [
+    [
+     -1.0,
+     -0.3,
+     1.0,
+     0.3
+    ]
+   ],
+   "placement": "C5 Cold Seam frost-vein wall (Veyra's beat); pool_cold in front",
+   "fx": [
+    "pool_cold",
+    "frost_vein"
+   ]
+  }
+ }
+}

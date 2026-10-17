@@ -34,7 +34,7 @@
  "blocks": [],
  "buildings": [],
  "name": "The Lavafalls",
- "about": "Molten falls pour into glowing channels under glass walkways; ember-kin pilgrims, Torka's contest anvils, a cool spring grotto with violet lamps and, at the north end on a raised terrace, the Caldera mouth: a 6 m basalt arch sealed by three seal-doors (the Caldera itself is a later area). SKELETON (stand-in kit).",
+ "about": "Molten falls pour into glowing channels under glass walkways; ember-kin pilgrims, Torka's contest anvils, a cool spring grotto with violet lamps and, at the north end, the Caldera mouth: a 6 m basalt arch sealed by three seal-doors (the Caldera itself is a later area).",
  "sprite_roles": [
   "actors",
   "heroes",
@@ -63,45 +63,22 @@
    8.4
   ]
  },
- "slabs": [
-  {
-   "name": "glass_walk",
-   "rect": [
-    -9.8,
-    -4.2,
-    9.8,
-    8.2
-   ],
-   "mat": "cobble",
-   "h": 0.03
-  },
-  {
-   "name": "entry",
-   "rect": [
-    -9.8,
-    1.8,
-    -6.0,
-    5.2
-   ],
-   "mat": "plaster",
-   "h": 0.04
-  }
- ],
+ "slabs": [],
  "terraces": [
   {
-   "name": "mouth_terrace",
+   "name": "glass_terrace",
    "rect": [
-    -10.0,
-    -8.4,
-    10.0,
-    -4.4
+    -9.0,
+    -0.9,
+    -5.8,
+    1.25
    ],
-   "h": 1.2,
+   "h": 1.34,
    "top": "plaster",
    "gaps": [
     [
-     -1.5,
-     1.5
+     -8.85,
+     -5.95
     ]
    ]
   },
@@ -156,140 +133,15 @@
  ],
  "stairs": [
   {
-   "name": "stair_mouth",
-   "x": 0.0,
-   "z_top": -4.4,
-   "width": 3.0,
-   "rise": 1.2,
+   "name": "stair_glass",
+   "x": -7.4,
+   "z_top": 1.25,
+   "width": 2.9,
+   "rise": 1.34,
    "base": 0.0
   }
  ],
- "props": [
-  {
-   "piece": "waterfall",
-   "pos": [
-    -4.0,
-    -8.0
-   ]
-  },
-  {
-   "piece": "waterfall",
-   "pos": [
-    4.0,
-    -8.0
-   ]
-  },
-  {
-   "piece": "riftgate_arch",
-   "pos": [
-    0.0,
-    -7.6
-   ]
-  },
-  {
-   "piece": "rift_brazier_red",
-   "pos": [
-    -3.0,
-    -5.4
-   ]
-  },
-  {
-   "piece": "rift_brazier_red",
-   "pos": [
-    3.0,
-    -5.4
-   ]
-  },
-  {
-   "piece": "forge_anvil",
-   "pos": [
-    -6.0,
-    -3.6
-   ]
-  },
-  {
-   "piece": "forge_anvil",
-   "pos": [
-    -7.4,
-    -2.4
-   ]
-  },
-  {
-   "piece": "grindstone",
-   "pos": [
-    -5.0,
-    -2.4
-   ]
-  },
-  {
-   "piece": "spring_basin",
-   "pos": [
-    8.4,
-    4.6
-   ]
-  },
-  {
-   "piece": "orb_standing_violet",
-   "pos": [
-    7.4,
-    3.2
-   ]
-  },
-  {
-   "piece": "orb_standing_violet",
-   "pos": [
-    9.2,
-    3.2
-   ]
-  },
-  {
-   "piece": "standing_stone",
-   "pos": [
-    8.0,
-    2.0
-   ]
-  },
-  {
-   "piece": "orb_hanging_red",
-   "pos": [
-    -5.0,
-    3.4
-   ]
-  },
-  {
-   "piece": "orb_hanging_red",
-   "pos": [
-    4.6,
-    0.4
-   ]
-  },
-  {
-   "piece": "lamp_post",
-   "pos": [
-    -8.4,
-    6.4
-   ],
-   "glow": {
-    "color": "#ff7a1a",
-    "range": 5.0,
-    "fixed": 0.8
-   }
-  },
-  {
-   "piece": "bench",
-   "pos": [
-    2.6,
-    5.4
-   ]
-  },
-  {
-   "piece": "barrel",
-   "pos": [
-    -2.8,
-    6.8
-   ]
-  }
- ],
+ "props": [],
  "emitters": [
   {
    "preset": "embers",
@@ -323,11 +175,11 @@
  "actors": [
   {
    "id": "forgejudge",
-   "role": "shopkeeper",
+   "role": "nightmerchant",
    "name": "Torka Ashgrip",
    "pos": [
-    -6.6,
-    -1.2
+    -4.8,
+    -1.0
    ],
    "facing": "right",
    "behavior": "idle",
@@ -341,39 +193,24 @@
    "role": "poolkeeper",
    "name": "Yrsa Brightwell",
    "pos": [
-    6.4,
-    4.4
-   ],
-   "facing": "left",
-   "behavior": "idle",
-   "talkable": true,
-   "say": [
-    "Springs are shy. Whistle, and they bubble."
-   ]
-  },
-  {
-   "id": "mp_b",
-   "role": "elffolk",
-   "name": "Cinderhold pilgrim",
-   "pos": [
-    1.0,
-    3.0
+    -6.0,
+    7.4
    ],
    "facing": "right",
    "behavior": "idle",
    "talkable": true,
    "say": [
-    "Frost-witches blame us. We blame the weather."
+    "Springs are shy. Whistle, and they bubble."
    ]
   }
  ],
  "player": {
   "role": "traveler",
   "pos": [
-   -8.0,
-   3.6
+   0.0,
+   5.4
   ],
-  "facing": "right"
+  "facing": "up"
  },
  "fx": [],
  "grades": {
@@ -420,9 +257,9 @@
    {
     "rect": [
      -10.9,
-     1.6,
-     -9.6,
-     4.6
+     -2.8,
+     -9.7,
+     -0.8
     ],
     "to": "muspelheim",
     "spawn": "from_falls",
@@ -432,23 +269,23 @@
   "portals": [],
   "spawns": {
    "start": [
-    -8.0,
-    3.6,
-    "right"
+    0.0,
+    5.4,
+    "up"
    ],
    "from_town": [
-    -8.0,
-    3.6,
+    -9.2,
+    -1.8,
     "right"
    ],
    "qa": [
-    -7.0,
-    3.6,
-    "right"
+    0.0,
+    5.4,
+    "up"
    ],
    "anvils": [
     -5.0,
-    -1.0,
+    0.2,
     "left"
    ],
    "mouth": [
@@ -457,15 +294,20 @@
     "up"
    ],
    "grotto": [
-    6.0,
-    4.0,
+    -5.0,
+    5.0,
     "left"
+   ],
+   "terrace": [
+    -7.4,
+    -0.2,
+    "down"
    ]
   },
   "spring": {
    "pos": [
-    8.4,
-    4.6
+    -7.4,
+    6.0
    ],
    "r": 1.6,
    "secret": "lf_spring"

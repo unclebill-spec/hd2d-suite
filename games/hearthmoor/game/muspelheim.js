@@ -23,7 +23,7 @@ import { KIT as FOLLOW_KIT } from './svartalfheim_follow.js';
 export const MUSP_PLANNED = {
   muspelheim: 'Cinderhold', mp_hall: 'The Sigil Forge', lavafalls: 'The Lavafalls', caldera: 'The Ember Caldera', caldera2: 'The Ember Caldera: the Throne',
 };
-export const MUSP_BUILT = [];   // ids of areas whose built output is in areas/<id>/ (the live list; empty until READY.txt + builds)
+export const MUSP_BUILT = ['muspelheim', 'mp_hall', 'lavafalls'];   // ids of areas whose built output is in areas/<id>/ (the live list; caldera + caldera2 are not built yet)
 export const AREAS_MUSP = Object.fromEntries(MUSP_BUILT.map((a) => [a, `areas/${a}/`]));        // id -> 'areas/<id>/' (merged into game.js's area path map)
 export const AREA_NAMES_MUSP = Object.fromEntries(MUSP_BUILT.map((a) => [a, MUSP_PLANNED[a]]));   // id -> display name (merged into game.js's AREA_NAME)
 export const MUSP_AREAS = Object.keys(MUSP_PLANNED);
@@ -72,7 +72,7 @@ Object.assign(ENEMIES, {
   fire_golem: { name: 'Fire golem', scale: 2, hp: 240, dmg: 20, speed: 0.8, reach: 2.2, windup: 1.0, cd: 2.4, aggro: 6, r: 0.7, push: 0.15, heavy: true, element: 'fire' },
   ashen_cultist: { name: 'Ashen Cultist', hp: 90, dmg: 13, speed: 1.9, reach: 1.5, windup: 0.4, cd: 1.5, aggro: 7.5, r: 0.4, push: 0.5, elite: true, element: 'fire' },   // elite, 1x: ash-grey hooded tunic, no plate
   kilnmother: { name: 'Kilnmother', scale: 3, hp: 460, dmg: 22, speed: 0.9, reach: 3.0, windup: 1.0, cd: 2.4, aggro: 9, r: 0.9, push: 0.1, heavy: true, boss: true, minion: 'flame_elemental', respawn: 1e9, element: 'fire' },   // C6 mini-boss: molten fist telegraph, calls 2 elementals at 50%
-  dagny: { name: 'Cinder-Captain Dagny Flameguard', scale: 3, hp: 380, dmg: 17, speed: 1.2, reach: 2.4, windup: 0.6, cd: 1.8, aggro: 9, r: 0.8, push: 0.2, heavy: true, boss: true, trial: true, respawn: 1e9 },   // conquer path: yields at 25%
+  dagny: { name: 'Cinder-Captain Dagny Flameguard', scale: 2.5, hp: 380, dmg: 17, speed: 1.2, reach: 2.4, windup: 0.6, cd: 1.8, aggro: 9, r: 0.8, push: 0.2, heavy: true, boss: true, trial: true, respawn: 1e9 },   // conquer path: yields at 25%
   // C9. 8x: framed:true pulls the camera back from the first frame (combat.js reads D.framed); the sheet is a boss sheet (boss_roles) with black-iron plate (the arc's only plate).
   // P1 blade arcs + telegraphed fire pillars, P2 (60%) two flame elementals + lava edge, P3 (25%) the three Warden's lamps relight (snuff / break them to stop his heal).
   vharzul: { name: 'Vharzul the Ember Throne', scale: 8, framed: true, plate: true, element: 'fire', hp: 2300, dmg: 30, speed: 0.8, reach: 6.2, windup: 0.95, cd: 2.4, aggro: 13, r: 2.3, push: 0.05, heavy: true, slam: true, boss: true,
@@ -84,13 +84,17 @@ Object.assign(BASES, {
   ashalpha: { name: 'Ash Alpha', scale: 2, hp: 300, dmg: 16, speed: 2.1, reach: 2.0, windup: 0.5, cd: 1.7, aggro: 8.5, r: 0.7, push: 0.2, heavy: true, minion: 'magma_hound', xp: 180 },
   pyreling: { name: 'Pyreling', scale: 3, hp: 360, dmg: 18, speed: 1.3, reach: 2.6, windup: 0.7, cd: 2.0, aggro: 8, r: 0.8, push: 0.2, float: true, xp: 210 },
 });
-RARE_AREAS.lavafalls = { bases: ['ashalpha', 'pyreling'], spots: [] };   // spots are chosen with the area (fall-pool; clear of braziers, glass walks, actors and the start view)
+RARE_AREAS.lavafalls = { bases: ['ashalpha', 'pyreling'], spots: [[6.0, -1.2], [1.6, -2.4]] };   // spots are chosen with the area (fall-pool; clear of braziers, glass walks, actors and the start view)
 const spawnRare0 = Rares.prototype.spawn;
 Rares.prototype.spawn = function spawn(o = {}) {   // Ash Alpha = blazing + quick (enraged + summoner: calls 2 hounds), Pyreling = flicker-step (blinking)
   if (!o.traits && o.base === 'ashalpha') o = { ...o, traits: ['enraged', 'summoner'] };
   if (!o.traits && o.base === 'pyreling') o = { ...o, traits: ['blinking'] };
   return spawnRare0.call(this, o);
 };
+SPAWNS.lavafalls = [   // 1.4x / 1.5x foes read fully on screen; clear of the braziers (+-1.6, -5.4), cold braziers (+-3.6, 1), lava pools (+-6.4, -4.4), the channel at z 3 and Torka (-4.8, -2.4)
+  { id: 'lf_hound0', role: 'magma_hound', pos: [2.4, -0.6] }, { id: 'lf_hound1', role: 'magma_hound', pos: [8.0, -1.4] },
+  { id: 'lf_elem0', role: 'flame_elemental', pos: [-1.0, -1.4], night: true }, { id: 'lf_hound2', role: 'magma_hound', pos: [-1.6, 6.4], night: true },
+];
 // SPAWNS.<area> are authored with each area (phone portrait shows the north strip: giants / 8x actors fully on or fully off screen; see JOTUNHEIM_PROGRESS placement lessons)
 
 // ------------------------------------------------------------------ weather (story 2.7): ash fall 60 %, clear glow 25 %, ember storm 15 %
@@ -190,7 +194,7 @@ export const KINDLE = { name: 'Kindle', scale: 1.0, follow: 1.4, hp: 150, skills
   aura: { fireResist: 1.0, frostSlowImmune: true, lightsTorches: true }, lines: 'kindle',
   say: { first: "I'll go first. I'm warm. You're squishy.", rude: "That one's rude. Burn it.", bead: 'Cold bead. Keep it. It\'s nice.', emberBorn: 'You smell like home.', faint: '(Kindle curls into a coal. She will be back at the waystone.)' } };
 Object.assign(COMP, { kindle: 'Kindle' });   // one active companion at a time (swap at the Guild desk or any inn)
-Object.assign(FOLLOW_KIT, { kindle: { role: 'kindle', dist: 1.3, speed: 3.2, scale: KINDLE.scale, brawl: { dmg: 14, reach: 1.4, cd: 1.8, knock: 0.5 }, light: '#ff7a1a',
+Object.assign(FOLLOW_KIT, { kindle: { role: 'pet_kindle', dist: 1.3, speed: 3.2, scale: KINDLE.scale, brawl: { dmg: 14, reach: 1.4, cd: 1.8, knock: 0.5 }, light: '#ff7a1a',
   follow: [KINDLE.say.first, KINDLE.say.rude, KINDLE.say.bead] } });   // warm_ring (heal ring) + ember_dash burn patch arrive with the Caldera build
 
 // ------------------------------------------------------------------ shared quest steps (module level so TALK can use them)
@@ -363,9 +367,46 @@ export class Muspelheim {
     this.fx = []; this.lights = []; this.spots = []; this.cb = {}; this.ctx = null; this.area = null;
   }
   // ---- area hooks. Skeleton: only the hub's gate wiring is real; the rest are filled in with their area builds (see MUSPELHEIM_PROGRESS.md)
-  hub(ctx) { this.gate.atHub(ctx); /* TODO area build: lava point lights + ember fx rows (MP_FX), the Warden's Walk stones (mp_walk), brazier stalls, spring */ }
-  hall(ctx) { /* TODO area build: the Sigil Forge clue spots sf_cast / sf_ledger / sf_mirror (SIGIL_TEXT), the Warden's seat */ }
-  falls(ctx) { /* TODO area build: Torka's anvils, the Caldera mouth seal-doors, hidden spring lf_spring, rares at the fall-pool */ }
+  // The Warden's Walk (story 3.2): five stones over the lava channel at z 3 (warden_stones at [0, 3]). Step on all five in order from either end; a wrong stone hisses and you start again.
+  // (The 1.5 s cool cycle of each stone is not built: the stones are steady for now, see MUSPELHEIM_PROGRESS.md.)
+  hub(ctx) {
+    this.gate.atHub(ctx); this.walk = { next: 0, dir: 0, last: -1 };
+    this.spot({ id: 'mp_stones', pos: [0, 4.4], r: 1.6, label: "the Warden's Stones (E / A)", show: () => q(this.G.S, 'mp_walk') === 1 && !F(this.G.S).mw_stones,
+               act: () => this.look('mw_hint', "The Warden's Stones", ['(Five black stones over the lava channel, hissing. Step on each in turn, end to end. A wrong step and the stone sulks.)']) });
+  }
+  walkTick() {
+    const c = this.ctx, G = this.G, S = G.S, w = this.walk; if (!c || !w || this.area !== 'muspelheim' || G.dlg || q(S, 'mp_walk') !== 1 || F(S).mw_stones) return;
+    const XS = [-1.6, -0.8, 0, 0.8, 1.6];
+    const i = XS.findIndex((x) => Math.hypot(c.player.x - x, c.player.z - 3.0) < 0.42);
+    if (i < 0 || i === w.last) return;
+    w.last = i;
+    if (w.next === 0 && (i === 0 || i === 4)) { w.dir = i === 0 ? 1 : -1; w.next = 1; return; }
+    if (w.next > 0 && i === (w.dir > 0 ? w.next : 4 - w.next)) { w.next++; if (w.next >= 5) { flags(S).mw_stones = 1; G.setQuest('mp_walk', 2); G.toast('The last stone cools under you. Back to Aska.', 3.0); mark(G); } return; }
+    w.next = 0; w.dir = 0; G.toast('The stone hisses. Start again.', 1.6);
+  }
+  // The Sigil Forge clues (story 4.2): cooling bed, ledger, mould wall; the quest moves to stage 2 once enough are in (free clues from the cleared realms count, one must be read here)
+  hall(ctx) {
+    const G = this.G, S = G.S, f = F(S);
+    const read = (k, name) => () => {
+      const first = !F(S)[k];
+      this.look(k, name, SIGIL_TEXT[k], () => { flags(S)[k] = 1; if (q(S, 'mp_sigil') === 1 && sigil(S).done) { G.setQuest('mp_sigil', 2); G.toast('That is enough. Show Aska.', 3.0); } mark(G); });
+      return first;
+    };
+    this.spot({ id: 'sf_cast', pos: [-3.0, -3.0], r: 1.5, label: 'the cooling bed (E / A)', show: () => q(S, 'mp_sigil') >= 1 && !f.sf_cast, act: read('sf_cast', 'The cooling bed') });
+    this.spot({ id: 'sf_ledger', pos: [-3.2, -0.4], r: 1.4, label: 'the seal ledger (E / A)', show: () => q(S, 'mp_sigil') >= 1 && !F(S).sf_ledger, act: read('sf_ledger', 'The seal ledger') });
+    this.spot({ id: 'sf_mirror', pos: [-5.8, -1.4], r: 1.5, label: 'the sigil mould wall (E / A)', show: () => q(S, 'mp_sigil') >= 1 && !F(S).sf_mirror, act: read('sf_mirror', 'The sigil mould wall') });
+  }
+  // The Caldera mouth (story 2.5, 4.4): three seal-doors, one per path. The Caldera areas open with their builds; until then the doors only speak.
+  falls(ctx) {
+    const G = this.G, S = G.S, f = F(S), al = (f.alliance || {}).muspelheim;
+    const door = () => al === 'befriend' && q(S, 'mp_sigil') >= 3 ? 'flame' : al === 'conquer' && (S.inv || {}).caldera_key ? 'key' : f.mp_contract ? 'tunnel' : null;
+    this.spot({ id: 'caldera_mouth', pos: [0, -6.0], r: 2.0, label: 'the Caldera mouth (E / A)', show: () => true, act: () => {
+      const d = door();
+      if (!d) return this.look('cm_shut', 'The Caldera mouth', ['(Three seal-doors under a six-metre arch. The left bears a flame, the middle a lock, the right a crack no wider than a man.)', 'None of them will open for you yet. The Warden\'s Flame, the Caldera Key, or Grettir\'s tunnel: one of them has to be yours.']);
+      if (!MUSP_BUILT.includes('caldera')) return this.look('cm_wait', 'The Caldera mouth', [d === 'flame' ? '(The Warden\'s Flame lights the left door. It swings in on heat, and then on darkness.)' : d === 'key' ? '(The key-fire burns the lock open.)' : "(Grettir's tunnel mouth breathes cold ash.)", '(The Caldera itself is not open yet. It comes with the next build.)']);
+      this.look('cm_open', 'The Caldera mouth', ['(The seal-door opens.)'], () => { G.loadArea('caldera', 'start'); });
+    } });
+  }
   caldera(ctx) { /* TODO area build: C1-C4 */ }
   caldera2(ctx) { /* TODO area build: C5-C9, Vharzul (framed, 8x) */ }
   // ---- Bifrost: The Armed Crossing look-spots (story 3.1). Hidden while no Muspelheim area is built.
@@ -405,12 +446,14 @@ export class Muspelheim {
     if (!this.ctx) return;
     const S = this.G.S;
     if (this.area === 'muspelheim' && !this.G.dlg && !this.G.busy && this.G.combat && F(S).mg_opened && !F(S).mg_hound && !this.cb.mg_hound) this.gateHound();
+    this.walkTick();
     if (this.noSprint > 0) this.noSprint = Math.max(0, this.noSprint - dt);   // the tongs: story 3.1 (the 10 s no-sprint rule is enforced with the hub build)
   }
   // QA helpers for the smoke test
   qaLine(id) { const e = TALK[id](this.G.S); return e && e.pages ? e.pages[0] : null; }
   qaTalk(id) { const e = TALK[id](this.G.S); if (e && e.then) e.then(this.G); return { pages: e ? e.pages.length : 0, choice: e && e.choice ? e.choice.options.map((o) => o.label) : null, locked: e && e.choice ? e.choice.options.filter((o) => o.locked).map((o) => o.label) : null }; }
   qaPick(label, id = 'warden_mp') { const e = TALK[id](this.G.S), o = e.choice.options.find((x) => x.label === label), nx = o.pick(this.G); if (nx && nx.then) nx.then(this.G); return nx ? nx.pages.length : 0; }
+  qaRares() { const c = this.ctx, sp = (RARE_AREAS[this.area] || { spots: [] }).spots; return { spots: sp }; }
   qaSpot(id) { const sp = this.spots.find((x) => x.id === id); if (!sp) return false; sp.act(); return true; }
   qaDefs() {   // the realm's shared-table registrations, for the smoke
     const E = ENEMIES.vharzul;

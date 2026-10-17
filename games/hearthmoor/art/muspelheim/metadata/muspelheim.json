@@ -1,0 +1,1433 @@
+{
+ "pack": "muspelheim",
+ "story": "story/muspelheim.md",
+ "frame_convention": "boss_sheet layout (native big frames, pivot bottom centre, idle 0-3 walk 4-7 cast 8-11 attack 12-15 die 24-27)",
+ "sheets": {
+  "mp_folk": {
+   "frame": [
+    40,
+    44
+   ],
+   "pivot": [
+    20,
+    44
+   ],
+   "ground_row": 43,
+   "roles": {
+    "envoy_mp": {
+     "scale": 1.0,
+     "anims": [
+      "idle",
+      "walk"
+     ],
+     "tier": "npc"
+    },
+    "springkeeper": {
+     "scale": 1.0,
+     "anims": [
+      "idle",
+      "walk"
+     ],
+     "tier": "npc"
+    },
+    "lizardman": {
+     "scale": 1.0,
+     "anims": [
+      "idle",
+      "walk"
+     ],
+     "tier": "npc"
+    },
+    "mp_trader": {
+     "scale": 1.0,
+     "anims": [
+      "idle",
+      "walk"
+     ],
+     "tier": "npc"
+    },
+    "mp_guide": {
+     "scale": 1.0,
+     "anims": [
+      "idle",
+      "walk"
+     ],
+     "tier": "npc"
+    }
+   }
+  },
+  "mp_giants": {
+   "frame": [
+    64,
+    100
+   ],
+   "pivot": [
+    32,
+    100
+   ],
+   "ground_row": 99,
+   "roles": {
+    "warden_mp": {
+     "scale": 2.6,
+     "anims": [
+      "idle",
+      "walk"
+     ],
+     "tier": "npc"
+    },
+    "forgejudge": {
+     "scale": 2.5,
+     "anims": [
+      "idle",
+      "walk"
+     ],
+     "tier": "npc"
+    },
+    "cindercaptain": {
+     "scale": 2.5,
+     "anims": [
+      "idle",
+      "walk"
+     ],
+     "tier": "npc"
+    }
+   }
+  },
+  "mp_enemies": {
+   "frame": [
+    56,
+    68
+   ],
+   "pivot": [
+    28,
+    68
+   ],
+   "ground_row": 67,
+   "roles": {
+    "ashen_cultist": {
+     "scale": 1.0,
+     "anims": [
+      "idle",
+      "walk",
+      "attack",
+      "die"
+     ],
+     "tier": "elite"
+    },
+    "magma_hound": {
+     "scale": 1.4,
+     "anims": [
+      "idle",
+      "walk",
+      "attack",
+      "die"
+     ],
+     "tier": "enemy"
+    },
+    "flame_elemental": {
+     "scale": 1.5,
+     "anims": [
+      "idle",
+      "walk",
+      "attack",
+      "die"
+     ],
+     "tier": "enemy"
+    },
+    "fire_golem": {
+     "scale": 2.0,
+     "anims": [
+      "idle",
+      "walk",
+      "attack",
+      "die"
+     ],
+     "tier": "enemy"
+    }
+   }
+  },
+  "mp_elites": {
+   "frame": [
+    88,
+    100
+   ],
+   "pivot": [
+    44,
+    100
+   ],
+   "ground_row": 99,
+   "roles": {
+    "magma_hound_gate": {
+     "scale": 2.0,
+     "anims": [
+      "idle",
+      "walk",
+      "attack",
+      "die"
+     ],
+     "tier": "gate"
+    },
+    "ashalpha": {
+     "scale": 2.0,
+     "anims": [
+      "idle",
+      "walk",
+      "attack",
+      "die"
+     ],
+     "tier": "rare"
+    },
+    "pyreling": {
+     "scale": 3.0,
+     "anims": [
+      "idle",
+      "walk",
+      "attack",
+      "die"
+     ],
+     "tier": "rare"
+    },
+    "kilnmother": {
+     "scale": 3.0,
+     "anims": [
+      "idle",
+      "walk",
+      "attack",
+      "die"
+     ],
+     "tier": "miniboss"
+    }
+   }
+  },
+  "boss_vharzul": {
+   "frame": [
+    144,
+    256
+   ],
+   "pivot": [
+    72,
+    256
+   ],
+   "ground_row": 255,
+   "roles": {
+    "vharzul": {
+     "scale": 8.0,
+     "anims": [
+      "idle",
+      "walk",
+      "attack",
+      "die"
+     ],
+     "tier": "boss"
+    },
+    "vharzul_p3": {
+     "scale": 8.0,
+     "anims": [
+      "idle",
+      "walk",
+      "attack",
+      "die"
+     ],
+     "tier": "boss"
+    }
+   }
+  }
+ },
+ "companion": {
+  "kindle": "pets/kindle.json (pets layout 20x32, pivot [10,32], idle 0-3 walk 4-7 follow 8-11); primary kindle_neon.png, fallback kindle.png; fx pets/kindle_fx.*"
+ },
+ "areas": {
+  "cinderhold": {
+   "pieces": [
+    {
+     "piece": "lava_channel",
+     "pos": [
+      -8,
+      0,
+      3.0
+     ],
+     "rot": 1.5707963267948966
+    },
+    {
+     "piece": "lava_channel",
+     "pos": [
+      -4,
+      0,
+      3.0
+     ],
+     "rot": 1.5707963267948966
+    },
+    {
+     "piece": "warden_stones",
+     "pos": [
+      0,
+      0,
+      3.0
+     ]
+    },
+    {
+     "piece": "lava_channel",
+     "pos": [
+      4,
+      0,
+      3.0
+     ],
+     "rot": 1.5707963267948966
+    },
+    {
+     "piece": "lava_channel",
+     "pos": [
+      8,
+      0,
+      3.0
+     ],
+     "rot": 1.5707963267948966
+    },
+    {
+     "piece": "red_arch",
+     "pos": [
+      0,
+      0,
+      10.6
+     ]
+    },
+    {
+     "piece": "forge_hall",
+     "pos": [
+      -7.2,
+      0,
+      -6.2
+     ]
+    },
+    {
+     "piece": "basalt_house",
+     "pos": [
+      6.6,
+      0,
+      -7.4
+     ]
+    },
+    {
+     "piece": "basalt_ledge",
+     "pos": [
+      -1.55,
+      0,
+      -6.2
+     ]
+    },
+    {
+     "piece": "basalt_ledge",
+     "pos": [
+      1.55,
+      0,
+      -6.2
+     ]
+    },
+    {
+     "piece": "basalt_ledge",
+     "pos": [
+      -1.55,
+      0,
+      -8.2
+     ]
+    },
+    {
+     "piece": "basalt_ledge",
+     "pos": [
+      1.55,
+      0,
+      -8.2
+     ]
+    },
+    {
+     "piece": "basalt_stair",
+     "pos": [
+      0,
+      0,
+      -3.7
+     ]
+    },
+    {
+     "piece": "forge_wall",
+     "pos": [
+      -4.0,
+      0.0,
+      -9.9
+     ]
+    },
+    {
+     "piece": "forge_wall",
+     "pos": [
+      -2.0,
+      0,
+      -9.9
+     ]
+    },
+    {
+     "piece": "forge_wall",
+     "pos": [
+      2.0,
+      0,
+      -9.9
+     ]
+    },
+    {
+     "piece": "forge_wall",
+     "pos": [
+      4.0,
+      0,
+      -9.9
+     ]
+    },
+    {
+     "piece": "shrine_lamp",
+     "pos": [
+      -1.3,
+      1.34,
+      -9.2
+     ]
+    },
+    {
+     "piece": "shrine_lamp",
+     "pos": [
+      1.3,
+      1.34,
+      -9.2
+     ]
+    },
+    {
+     "piece": "spice_stall",
+     "pos": [
+      -7.0,
+      0,
+      5.6
+     ]
+    },
+    {
+     "piece": "lizard_stable",
+     "pos": [
+      -9.0,
+      0,
+      -2.4
+     ]
+    },
+    {
+     "piece": "dance_ring",
+     "pos": [
+      8.0,
+      0,
+      -2.0
+     ]
+    },
+    {
+     "piece": "emberfall_anvil",
+     "pos": [
+      6.2,
+      0,
+      -3.4
+     ]
+    },
+    {
+     "piece": "emberfall_anvil",
+     "pos": [
+      9.8,
+      0,
+      -3.4
+     ]
+    },
+    {
+     "piece": "emberfall_anvil",
+     "pos": [
+      8.0,
+      0,
+      0.0
+     ]
+    },
+    {
+     "piece": "lava_pool",
+     "pos": [
+      9.6,
+      0,
+      7.0
+     ]
+    },
+    {
+     "piece": "glass_bridge",
+     "pos": [
+      10.6,
+      0,
+      -9.8
+     ]
+    },
+    {
+     "piece": "obsidian_pillar",
+     "pos": [
+      -10.0,
+      0,
+      -7.0
+     ]
+    },
+    {
+     "piece": "spring_pool",
+     "pos": [
+      -11.0,
+      0,
+      -9.2
+     ]
+    },
+    {
+     "piece": "shrine_lamp",
+     "pos": [
+      -9.4,
+      0,
+      -9.0
+     ]
+    },
+    {
+     "piece": "obsidian_pillar",
+     "pos": [
+      -5.2,
+      0,
+      0.6
+     ]
+    },
+    {
+     "piece": "obsidian_pillar",
+     "pos": [
+      5.4,
+      0,
+      0.4
+     ]
+    },
+    {
+     "piece": "brazier_stand",
+     "pos": [
+      -3.4,
+      0,
+      -1.8
+     ]
+    },
+    {
+     "piece": "brazier_stand",
+     "pos": [
+      3.4,
+      0,
+      -1.8
+     ]
+    },
+    {
+     "piece": "brazier_stand",
+     "pos": [
+      -3.6,
+      0,
+      7.0
+     ]
+    },
+    {
+     "piece": "brazier_stand",
+     "pos": [
+      3.6,
+      0,
+      7.0
+     ]
+    },
+    {
+     "piece": "cold_brazier",
+     "pos": [
+      -1.6,
+      0,
+      5.8
+     ]
+    },
+    {
+     "piece": "cold_brazier",
+     "pos": [
+      1.6,
+      0,
+      5.8
+     ]
+    },
+    {
+     "piece": "warm_lantern",
+     "pos": [
+      -4.8,
+      0,
+      8.4
+     ]
+    },
+    {
+     "piece": "warm_lantern",
+     "pos": [
+      4.8,
+      0,
+      8.2
+     ]
+    },
+    {
+     "piece": "warm_lantern",
+     "pos": [
+      -6.0,
+      0,
+      -0.6
+     ]
+    },
+    {
+     "piece": "warm_lantern",
+     "pos": [
+      6.6,
+      0,
+      6.0
+     ]
+    },
+    {
+     "piece": "cinder_cairn",
+     "pos": [
+      10.2,
+      0,
+      0.8
+     ]
+    },
+    {
+     "piece": "amber_orb_chain",
+     "pos": [
+      -5.0,
+      1.2,
+      2.0
+     ]
+    },
+    {
+     "piece": "amber_orb_chain",
+     "pos": [
+      5.0,
+      1.2,
+      1.6
+     ]
+    },
+    {
+     "piece": "amber_orb_chain",
+     "pos": [
+      -3.0,
+      1.2,
+      -4.0
+     ]
+    },
+    {
+     "piece": "amber_orb_chain",
+     "pos": [
+      3.4,
+      1.2,
+      8.6
+     ]
+    }
+   ]
+  },
+  "sigil_forge": {
+   "pieces": [
+    {
+     "piece": "forge_wall",
+     "pos": [
+      -6,
+      0,
+      -9.0
+     ]
+    },
+    {
+     "piece": "forge_wall",
+     "pos": [
+      -4,
+      0,
+      -9.0
+     ]
+    },
+    {
+     "piece": "forge_wall",
+     "pos": [
+      -2,
+      0,
+      -9.0
+     ]
+    },
+    {
+     "piece": "forge_wall",
+     "pos": [
+      2,
+      0,
+      -9.0
+     ]
+    },
+    {
+     "piece": "forge_wall",
+     "pos": [
+      4,
+      0,
+      -9.0
+     ]
+    },
+    {
+     "piece": "forge_wall",
+     "pos": [
+      6,
+      0,
+      -9.0
+     ]
+    },
+    {
+     "piece": "forge_wall",
+     "pos": [
+      -6,
+      0,
+      9.0
+     ]
+    },
+    {
+     "piece": "forge_wall",
+     "pos": [
+      -4,
+      0,
+      9.0
+     ]
+    },
+    {
+     "piece": "forge_wall",
+     "pos": [
+      4,
+      0,
+      9.0
+     ]
+    },
+    {
+     "piece": "forge_wall",
+     "pos": [
+      6,
+      0,
+      9.0
+     ]
+    },
+    {
+     "piece": "sigil_mould_wall",
+     "pos": [
+      -6.8,
+      0,
+      -3.0
+     ],
+     "rot": 1.5707963267948966
+    },
+    {
+     "piece": "forge_wall",
+     "pos": [
+      -6.9,
+      0,
+      1.0
+     ],
+     "rot": 1.5707963267948966
+    },
+    {
+     "piece": "forge_wall",
+     "pos": [
+      -6.9,
+      0,
+      3.0
+     ],
+     "rot": 1.5707963267948966
+    },
+    {
+     "piece": "forge_wall",
+     "pos": [
+      -6.9,
+      0,
+      5.0
+     ],
+     "rot": 1.5707963267948966
+    },
+    {
+     "piece": "forge_wall",
+     "pos": [
+      -6.9,
+      0,
+      7.0
+     ],
+     "rot": 1.5707963267948966
+    },
+    {
+     "piece": "forge_wall",
+     "pos": [
+      6.9,
+      0,
+      -7.0
+     ],
+     "rot": -1.5707963267948966
+    },
+    {
+     "piece": "forge_wall",
+     "pos": [
+      6.9,
+      0,
+      -5.0
+     ],
+     "rot": -1.5707963267948966
+    },
+    {
+     "piece": "forge_wall",
+     "pos": [
+      6.9,
+      0,
+      -3.0
+     ],
+     "rot": -1.5707963267948966
+    },
+    {
+     "piece": "forge_wall",
+     "pos": [
+      6.9,
+      0,
+      -1.0
+     ],
+     "rot": -1.5707963267948966
+    },
+    {
+     "piece": "forge_wall",
+     "pos": [
+      6.9,
+      0,
+      1.0
+     ],
+     "rot": -1.5707963267948966
+    },
+    {
+     "piece": "forge_wall",
+     "pos": [
+      6.9,
+      0,
+      3.0
+     ],
+     "rot": -1.5707963267948966
+    },
+    {
+     "piece": "forge_wall",
+     "pos": [
+      6.9,
+      0,
+      5.0
+     ],
+     "rot": -1.5707963267948966
+    },
+    {
+     "piece": "forge_wall",
+     "pos": [
+      6.9,
+      0,
+      7.0
+     ],
+     "rot": -1.5707963267948966
+    },
+    {
+     "piece": "wardens_seat",
+     "pos": [
+      0,
+      0,
+      -6.4
+     ]
+    },
+    {
+     "piece": "shrine_lamp",
+     "pos": [
+      -2.8,
+      0,
+      -5.2
+     ]
+    },
+    {
+     "piece": "shrine_lamp",
+     "pos": [
+      2.8,
+      0,
+      -5.2
+     ]
+    },
+    {
+     "piece": "seal_cast_bed",
+     "pos": [
+      -4.6,
+      0,
+      -3.0
+     ],
+     "rot": 1.5707963267948966
+    },
+    {
+     "piece": "stamp_press",
+     "pos": [
+      -4.8,
+      0,
+      -5.6
+     ]
+    },
+    {
+     "piece": "ledger_desk",
+     "pos": [
+      -4.6,
+      0,
+      -0.4
+     ],
+     "rot": 1.5707963267948966
+    },
+    {
+     "piece": "basalt_ledge",
+     "pos": [
+      4.6,
+      0,
+      -6.2
+     ]
+    },
+    {
+     "piece": "basalt_ledge",
+     "pos": [
+      4.6,
+      0,
+      -4.2
+     ]
+    },
+    {
+     "piece": "basalt_stair",
+     "pos": [
+      4.6,
+      0,
+      -0.7
+     ],
+     "rot": 3.141592653589793
+    },
+    {
+     "piece": "cold_brazier",
+     "pos": [
+      4.6,
+      1.34,
+      -6.6
+     ]
+    },
+    {
+     "piece": "brazier_stand",
+     "pos": [
+      -2.6,
+      0,
+      3.4
+     ]
+    },
+    {
+     "piece": "brazier_stand",
+     "pos": [
+      2.6,
+      0,
+      3.4
+     ]
+    },
+    {
+     "piece": "amber_orb_chain",
+     "pos": [
+      -2.0,
+      1.2,
+      -1.0
+     ]
+    },
+    {
+     "piece": "amber_orb_chain",
+     "pos": [
+      2.0,
+      1.2,
+      -1.0
+     ]
+    },
+    {
+     "piece": "amber_orb_chain",
+     "pos": [
+      0,
+      1.2,
+      4.6
+     ]
+    },
+    {
+     "piece": "warm_lantern",
+     "pos": [
+      -5.4,
+      0,
+      7.4
+     ]
+    },
+    {
+     "piece": "warm_lantern",
+     "pos": [
+      5.4,
+      0,
+      7.4
+     ]
+    },
+    {
+     "piece": "obsidian_pillar",
+     "pos": [
+      -1.6,
+      0,
+      1.6
+     ]
+    }
+   ]
+  },
+  "lavafalls": {
+   "pieces": [
+    {
+     "piece": "lava_fall_cliff",
+     "pos": [
+      -6.4,
+      0,
+      -7.6
+     ]
+    },
+    {
+     "piece": "lava_fall_cliff",
+     "pos": [
+      6.4,
+      0,
+      -7.6
+     ]
+    },
+    {
+     "piece": "caldera_mouth_arch",
+     "pos": [
+      0,
+      0,
+      -7.6
+     ]
+    },
+    {
+     "piece": "lava_channel",
+     "pos": [
+      4,
+      0,
+      3.0
+     ],
+     "rot": 1.5707963267948966
+    },
+    {
+     "piece": "glass_bridge",
+     "pos": [
+      6,
+      0,
+      3.0
+     ],
+     "rot": 1.5707963267948966
+    },
+    {
+     "piece": "lava_channel",
+     "pos": [
+      8,
+      0,
+      3.0
+     ],
+     "rot": 1.5707963267948966
+    },
+    {
+     "piece": "lava_pool",
+     "pos": [
+      -6.4,
+      0,
+      -4.4
+     ]
+    },
+    {
+     "piece": "lava_pool",
+     "pos": [
+      6.4,
+      0,
+      -4.4
+     ]
+    },
+    {
+     "piece": "glass_terrace",
+     "pos": [
+      -7.4,
+      0,
+      0.2
+     ]
+    },
+    {
+     "piece": "basalt_stair",
+     "pos": [
+      -7.4,
+      0,
+      2.7
+     ]
+    },
+    {
+     "piece": "spring_pool",
+     "pos": [
+      -7.4,
+      0,
+      6.0
+     ]
+    },
+    {
+     "piece": "shrine_lamp",
+     "pos": [
+      -5.4,
+      0,
+      6.4
+     ]
+    },
+    {
+     "piece": "shrine_lamp",
+     "pos": [
+      -9.2,
+      0,
+      4.2
+     ]
+    },
+    {
+     "piece": "obsidian_pillar",
+     "pos": [
+      -5.0,
+      0,
+      3.8
+     ]
+    },
+    {
+     "piece": "emberfall_anvil",
+     "pos": [
+      -6.0,
+      0,
+      -4.0
+     ]
+    },
+    {
+     "piece": "emberfall_anvil",
+     "pos": [
+      -3.6,
+      0,
+      -4.0
+     ]
+    },
+    {
+     "piece": "muspel_waystone",
+     "pos": [
+      7.6,
+      0,
+      6.4
+     ]
+    },
+    {
+     "piece": "brazier_stand",
+     "pos": [
+      -1.6,
+      0,
+      -5.4
+     ]
+    },
+    {
+     "piece": "brazier_stand",
+     "pos": [
+      1.6,
+      0,
+      -5.4
+     ]
+    },
+    {
+     "piece": "cold_brazier",
+     "pos": [
+      -3.6,
+      0,
+      1.0
+     ]
+    },
+    {
+     "piece": "cold_brazier",
+     "pos": [
+      3.6,
+      0,
+      1.0
+     ]
+    },
+    {
+     "piece": "amber_orb_chain",
+     "pos": [
+      0,
+      1.2,
+      2.0
+     ]
+    },
+    {
+     "piece": "amber_orb_chain",
+     "pos": [
+      -3.0,
+      1.2,
+      4.6
+     ]
+    },
+    {
+     "piece": "warm_lantern",
+     "pos": [
+      3.0,
+      0,
+      6.6
+     ]
+    },
+    {
+     "piece": "warm_lantern",
+     "pos": [
+      -2.6,
+      0,
+      6.6
+     ]
+    },
+    {
+     "piece": "cinder_cairn",
+     "pos": [
+      4.6,
+      0,
+      6.2
+     ]
+    }
+   ]
+  },
+  "caldera_throne": {
+   "pieces": [
+    {
+     "piece": "forge_wall",
+     "pos": [
+      -8,
+      0,
+      -7.2
+     ]
+    },
+    {
+     "piece": "forge_wall",
+     "pos": [
+      -6,
+      0,
+      -7.2
+     ]
+    },
+    {
+     "piece": "forge_wall",
+     "pos": [
+      6,
+      0,
+      -7.2
+     ]
+    },
+    {
+     "piece": "forge_wall",
+     "pos": [
+      8,
+      0,
+      -7.2
+     ]
+    },
+    {
+     "piece": "ember_throne",
+     "pos": [
+      0,
+      0,
+      -5.6
+     ]
+    },
+    {
+     "piece": "lava_channel",
+     "pos": [
+      -9.4,
+      0,
+      -4
+     ]
+    },
+    {
+     "piece": "lava_channel",
+     "pos": [
+      -9.4,
+      0,
+      0
+     ]
+    },
+    {
+     "piece": "lava_channel",
+     "pos": [
+      -9.4,
+      0,
+      4
+     ]
+    },
+    {
+     "piece": "lava_channel",
+     "pos": [
+      9.4,
+      0,
+      -4
+     ]
+    },
+    {
+     "piece": "lava_channel",
+     "pos": [
+      9.4,
+      0,
+      0
+     ]
+    },
+    {
+     "piece": "lava_channel",
+     "pos": [
+      9.4,
+      0,
+      4
+     ]
+    },
+    {
+     "piece": "warden_lamp_stand",
+     "pos": [
+      3.1840816777831187e-16,
+      0,
+      4.8
+     ]
+    },
+    {
+     "piece": "warden_lamp_stand",
+     "pos": [
+      -4.503332099679082,
+      0,
+      -2.9999999999999987
+     ]
+    },
+    {
+     "piece": "warden_lamp_stand",
+     "pos": [
+      4.5033320996790795,
+      0,
+      -3.000000000000002
+     ]
+    },
+    {
+     "piece": "cold_brazier",
+     "pos": [
+      -5.4,
+      0,
+      6.6
+     ]
+    },
+    {
+     "piece": "cold_brazier",
+     "pos": [
+      5.4,
+      0,
+      6.6
+     ]
+    },
+    {
+     "piece": "hanging_crystals",
+     "pos": [
+      -6.0,
+      0,
+      -2.0
+     ]
+    },
+    {
+     "piece": "hanging_crystals",
+     "pos": [
+      6.0,
+      0,
+      -2.0
+     ]
+    },
+    {
+     "piece": "hanging_crystals",
+     "pos": [
+      0,
+      0,
+      6.0
+     ]
+    },
+    {
+     "piece": "basalt_ledge",
+     "pos": [
+      -7.0,
+      0,
+      6.4
+     ]
+    },
+    {
+     "piece": "basalt_stair",
+     "pos": [
+      -7.0,
+      0,
+      3.9
+     ],
+     "rot": 3.141592653589793
+    }
+   ]
+  }
+ },
+ "placement_notes": {
+  "height": "every area has real height: ledges / terraces >= 1.2 m and a stair (6 steps, 0.2 m rise, 0.5 m run, 2 m wide); Cinderhold Warden's terrace 1.34 m, Sigil Forge east gallery 1.34 m, Lavafalls glass terrace 1.34 m, Caldera ledge 1.34 m",
+  "lighting": "day luma 55-70, night 20-30 with glow pools (lava, forge, cold fire, violet); night ambient is lifted warm grey (0.34, 0.30, 0.34) so the grade is neither all red nor all blue: forge amber + lava orange carry the warmth, cold-blue and violet are accents",
+  "keep_clear": [
+   "no props, fx decals or spawns on a stair footprint plus 1 m at each end",
+   "ledge edges: props >= 1.5 m behind the front edge (marker ledge_edge, no_props_within_m 0.8 for fx)",
+   "Red arch arrival [0,9.2]: nothing within 2.6 m",
+   "forge_hall door: 2.5 m clear; basalt_house door 1.8 m; Caldera mouth 3 m",
+   "lava: nothing spawns within 1 m of a channel; warden_stones route clear",
+   "burn_patch decals only on open ground away from spawns and stairs"
+  ]
+ },
+ "luma_measured_on_renders": {
+  "cinderhold_night": 24.9,
+  "cinderhold_day": 60.4,
+  "sigil_forge_night": 26.0,
+  "lavafalls_night": 26.8,
+  "lavafalls_day": 59.0,
+  "caldera_throne_night": 25.1
+ },
+ "neon": {
+  "sprites": [
+   "pets/kindle_neon.png (primary; needs scoped allow-list pet_kindle: #a81c22 #e0302a #ff5a4a)"
+  ],
+  "fx": "all gamefx/mp_fx and pets/kindle_fx",
+  "kit": "glow material"
+ },
+ "check_sprite": {
+  "mp_folk": {
+   "roles": 5,
+   "failures": 0,
+   "semi_transparent": 0,
+   "pass": true
+  },
+  "mp_giants": {
+   "roles": 3,
+   "failures": 0,
+   "semi_transparent": 0,
+   "pass": true
+  },
+  "mp_enemies": {
+   "roles": 4,
+   "failures": 0,
+   "semi_transparent": 0,
+   "pass": true
+  },
+  "boss_vharzul": {
+   "roles": 2,
+   "failures": 0,
+   "semi_transparent": 0,
+   "pass": true
+  },
+  "mp_elites": {
+   "roles": 4,
+   "failures": 0,
+   "semi_transparent": 0,
+   "pass": true
+  },
+  "kindle (safe)": {
+   "roles": 1,
+   "failures": 0,
+   "semi_transparent": 0,
+   "pass": true
+  },
+  "kindle_neon (needs scoped pet_kindle allow-list)": {
+   "roles": 1,
+   "failures": 0,
+   "semi_transparent": 0,
+   "pass": true
+  }
+ },
+ "kit_pieces": 38
+}

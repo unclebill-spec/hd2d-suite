@@ -1,0 +1,787 @@
+{
+ "tool": "hearthmoor-art kindle_gen (pets_gen layout)",
+ "biome": "cozy-village",
+ "frame": [
+  20,
+  32
+ ],
+ "pivot": [
+  10,
+  32
+ ],
+ "ground_row": 31,
+ "facings": [
+  "down",
+  "up",
+  "left",
+  "right"
+ ],
+ "anims": {
+  "idle": {
+   "start": 0,
+   "count": 4,
+   "fps": 3,
+   "loop": [
+    0,
+    1,
+    2,
+    1
+   ],
+   "blink": 3
+  },
+  "walk": {
+   "start": 4,
+   "count": 4,
+   "fps": 8
+  },
+  "follow": {
+   "start": 8,
+   "count": 4,
+   "fps": 10,
+   "pets_only": true
+  }
+ },
+ "cols": 12,
+ "image": "kindle_neon.png",
+ "image_neon": "kindle_neon.png",
+ "image_lock_safe": "kindle.png",
+ "primary": "kindle_neon.png",
+ "fallback": "kindle.png",
+ "fallback_note": "primary is the neon twin; kindle.png (palette only) passes check-sprite; the neon twin passes via a scoped pet_kindle allow-list entry (neon red #a81c22 #e0302a #ff5a4a, same hexes as the lantern-fox)",
+ "neon_accents": {
+  "neon_red_hi": "#ff5a4a",
+  "neon_red": "#e0302a",
+  "neon_red_lo": "#a81c22"
+ },
+ "size": [
+  240,
+  128
+ ],
+ "fx": "kindle_fx.json",
+ "roles": {
+  "pet_kindle": {
+   "row": 0,
+   "kind": "creature",
+   "pet": true,
+   "name": "Kindle",
+   "desc": "Kindle, the ember salamander (Cinderhold companion, ~0.5x player): charcoal-red hide, amber belly, a gold scarf, red-gold back spots that pulse like coals and a glowing coal at the tail tip; curls into a coal when she faints",
+   "size_bounds": [
+    [
+     8,
+     20
+    ],
+    [
+     7,
+     24
+    ]
+   ],
+   "caster": false,
+   "anims": [
+    "idle",
+    "walk",
+    "follow"
+   ],
+   "frames": [
+    {
+     "name": "pet_kindle_down_idle0",
+     "facing": "down",
+     "anim": "idle",
+     "i": 0,
+     "x": 0,
+     "y": 0,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      10,
+      32
+     ]
+    },
+    {
+     "name": "pet_kindle_down_idle1",
+     "facing": "down",
+     "anim": "idle",
+     "i": 1,
+     "x": 20,
+     "y": 0,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      30,
+      32
+     ]
+    },
+    {
+     "name": "pet_kindle_down_idle2",
+     "facing": "down",
+     "anim": "idle",
+     "i": 2,
+     "x": 40,
+     "y": 0,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      50,
+      32
+     ]
+    },
+    {
+     "name": "pet_kindle_down_idle3",
+     "facing": "down",
+     "anim": "idle",
+     "i": 3,
+     "x": 60,
+     "y": 0,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      70,
+      32
+     ]
+    },
+    {
+     "name": "pet_kindle_down_walk0",
+     "facing": "down",
+     "anim": "walk",
+     "i": 0,
+     "x": 80,
+     "y": 0,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      90,
+      32
+     ]
+    },
+    {
+     "name": "pet_kindle_down_walk1",
+     "facing": "down",
+     "anim": "walk",
+     "i": 1,
+     "x": 100,
+     "y": 0,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      110,
+      32
+     ]
+    },
+    {
+     "name": "pet_kindle_down_walk2",
+     "facing": "down",
+     "anim": "walk",
+     "i": 2,
+     "x": 120,
+     "y": 0,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      130,
+      32
+     ]
+    },
+    {
+     "name": "pet_kindle_down_walk3",
+     "facing": "down",
+     "anim": "walk",
+     "i": 3,
+     "x": 140,
+     "y": 0,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      150,
+      32
+     ]
+    },
+    {
+     "name": "pet_kindle_down_follow0",
+     "facing": "down",
+     "anim": "follow",
+     "i": 0,
+     "x": 160,
+     "y": 0,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      170,
+      32
+     ]
+    },
+    {
+     "name": "pet_kindle_down_follow1",
+     "facing": "down",
+     "anim": "follow",
+     "i": 1,
+     "x": 180,
+     "y": 0,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      190,
+      32
+     ]
+    },
+    {
+     "name": "pet_kindle_down_follow2",
+     "facing": "down",
+     "anim": "follow",
+     "i": 2,
+     "x": 200,
+     "y": 0,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      210,
+      32
+     ]
+    },
+    {
+     "name": "pet_kindle_down_follow3",
+     "facing": "down",
+     "anim": "follow",
+     "i": 3,
+     "x": 220,
+     "y": 0,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      230,
+      32
+     ]
+    },
+    {
+     "name": "pet_kindle_up_idle0",
+     "facing": "up",
+     "anim": "idle",
+     "i": 0,
+     "x": 0,
+     "y": 32,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      10,
+      64
+     ]
+    },
+    {
+     "name": "pet_kindle_up_idle1",
+     "facing": "up",
+     "anim": "idle",
+     "i": 1,
+     "x": 20,
+     "y": 32,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      30,
+      64
+     ]
+    },
+    {
+     "name": "pet_kindle_up_idle2",
+     "facing": "up",
+     "anim": "idle",
+     "i": 2,
+     "x": 40,
+     "y": 32,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      50,
+      64
+     ]
+    },
+    {
+     "name": "pet_kindle_up_idle3",
+     "facing": "up",
+     "anim": "idle",
+     "i": 3,
+     "x": 60,
+     "y": 32,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      70,
+      64
+     ]
+    },
+    {
+     "name": "pet_kindle_up_walk0",
+     "facing": "up",
+     "anim": "walk",
+     "i": 0,
+     "x": 80,
+     "y": 32,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      90,
+      64
+     ]
+    },
+    {
+     "name": "pet_kindle_up_walk1",
+     "facing": "up",
+     "anim": "walk",
+     "i": 1,
+     "x": 100,
+     "y": 32,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      110,
+      64
+     ]
+    },
+    {
+     "name": "pet_kindle_up_walk2",
+     "facing": "up",
+     "anim": "walk",
+     "i": 2,
+     "x": 120,
+     "y": 32,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      130,
+      64
+     ]
+    },
+    {
+     "name": "pet_kindle_up_walk3",
+     "facing": "up",
+     "anim": "walk",
+     "i": 3,
+     "x": 140,
+     "y": 32,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      150,
+      64
+     ]
+    },
+    {
+     "name": "pet_kindle_up_follow0",
+     "facing": "up",
+     "anim": "follow",
+     "i": 0,
+     "x": 160,
+     "y": 32,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      170,
+      64
+     ]
+    },
+    {
+     "name": "pet_kindle_up_follow1",
+     "facing": "up",
+     "anim": "follow",
+     "i": 1,
+     "x": 180,
+     "y": 32,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      190,
+      64
+     ]
+    },
+    {
+     "name": "pet_kindle_up_follow2",
+     "facing": "up",
+     "anim": "follow",
+     "i": 2,
+     "x": 200,
+     "y": 32,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      210,
+      64
+     ]
+    },
+    {
+     "name": "pet_kindle_up_follow3",
+     "facing": "up",
+     "anim": "follow",
+     "i": 3,
+     "x": 220,
+     "y": 32,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      230,
+      64
+     ]
+    },
+    {
+     "name": "pet_kindle_left_idle0",
+     "facing": "left",
+     "anim": "idle",
+     "i": 0,
+     "x": 0,
+     "y": 64,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      10,
+      96
+     ]
+    },
+    {
+     "name": "pet_kindle_left_idle1",
+     "facing": "left",
+     "anim": "idle",
+     "i": 1,
+     "x": 20,
+     "y": 64,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      30,
+      96
+     ]
+    },
+    {
+     "name": "pet_kindle_left_idle2",
+     "facing": "left",
+     "anim": "idle",
+     "i": 2,
+     "x": 40,
+     "y": 64,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      50,
+      96
+     ]
+    },
+    {
+     "name": "pet_kindle_left_idle3",
+     "facing": "left",
+     "anim": "idle",
+     "i": 3,
+     "x": 60,
+     "y": 64,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      70,
+      96
+     ]
+    },
+    {
+     "name": "pet_kindle_left_walk0",
+     "facing": "left",
+     "anim": "walk",
+     "i": 0,
+     "x": 80,
+     "y": 64,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      90,
+      96
+     ]
+    },
+    {
+     "name": "pet_kindle_left_walk1",
+     "facing": "left",
+     "anim": "walk",
+     "i": 1,
+     "x": 100,
+     "y": 64,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      110,
+      96
+     ]
+    },
+    {
+     "name": "pet_kindle_left_walk2",
+     "facing": "left",
+     "anim": "walk",
+     "i": 2,
+     "x": 120,
+     "y": 64,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      130,
+      96
+     ]
+    },
+    {
+     "name": "pet_kindle_left_walk3",
+     "facing": "left",
+     "anim": "walk",
+     "i": 3,
+     "x": 140,
+     "y": 64,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      150,
+      96
+     ]
+    },
+    {
+     "name": "pet_kindle_left_follow0",
+     "facing": "left",
+     "anim": "follow",
+     "i": 0,
+     "x": 160,
+     "y": 64,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      170,
+      96
+     ]
+    },
+    {
+     "name": "pet_kindle_left_follow1",
+     "facing": "left",
+     "anim": "follow",
+     "i": 1,
+     "x": 180,
+     "y": 64,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      190,
+      96
+     ]
+    },
+    {
+     "name": "pet_kindle_left_follow2",
+     "facing": "left",
+     "anim": "follow",
+     "i": 2,
+     "x": 200,
+     "y": 64,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      210,
+      96
+     ]
+    },
+    {
+     "name": "pet_kindle_left_follow3",
+     "facing": "left",
+     "anim": "follow",
+     "i": 3,
+     "x": 220,
+     "y": 64,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      230,
+      96
+     ]
+    },
+    {
+     "name": "pet_kindle_right_idle0",
+     "facing": "right",
+     "anim": "idle",
+     "i": 0,
+     "x": 0,
+     "y": 96,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      10,
+      128
+     ]
+    },
+    {
+     "name": "pet_kindle_right_idle1",
+     "facing": "right",
+     "anim": "idle",
+     "i": 1,
+     "x": 20,
+     "y": 96,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      30,
+      128
+     ]
+    },
+    {
+     "name": "pet_kindle_right_idle2",
+     "facing": "right",
+     "anim": "idle",
+     "i": 2,
+     "x": 40,
+     "y": 96,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      50,
+      128
+     ]
+    },
+    {
+     "name": "pet_kindle_right_idle3",
+     "facing": "right",
+     "anim": "idle",
+     "i": 3,
+     "x": 60,
+     "y": 96,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      70,
+      128
+     ]
+    },
+    {
+     "name": "pet_kindle_right_walk0",
+     "facing": "right",
+     "anim": "walk",
+     "i": 0,
+     "x": 80,
+     "y": 96,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      90,
+      128
+     ]
+    },
+    {
+     "name": "pet_kindle_right_walk1",
+     "facing": "right",
+     "anim": "walk",
+     "i": 1,
+     "x": 100,
+     "y": 96,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      110,
+      128
+     ]
+    },
+    {
+     "name": "pet_kindle_right_walk2",
+     "facing": "right",
+     "anim": "walk",
+     "i": 2,
+     "x": 120,
+     "y": 96,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      130,
+      128
+     ]
+    },
+    {
+     "name": "pet_kindle_right_walk3",
+     "facing": "right",
+     "anim": "walk",
+     "i": 3,
+     "x": 140,
+     "y": 96,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      150,
+      128
+     ]
+    },
+    {
+     "name": "pet_kindle_right_follow0",
+     "facing": "right",
+     "anim": "follow",
+     "i": 0,
+     "x": 160,
+     "y": 96,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      170,
+      128
+     ]
+    },
+    {
+     "name": "pet_kindle_right_follow1",
+     "facing": "right",
+     "anim": "follow",
+     "i": 1,
+     "x": 180,
+     "y": 96,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      190,
+      128
+     ]
+    },
+    {
+     "name": "pet_kindle_right_follow2",
+     "facing": "right",
+     "anim": "follow",
+     "i": 2,
+     "x": 200,
+     "y": 96,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      210,
+      128
+     ]
+    },
+    {
+     "name": "pet_kindle_right_follow3",
+     "facing": "right",
+     "anim": "follow",
+     "i": 3,
+     "x": 220,
+     "y": 96,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      230,
+      128
+     ]
+    }
+   ],
+   "petfx": {
+    "hover": {
+     "lift": 0.0,
+     "bob": 0.0,
+     "hz": 0.0
+    },
+    "light": {
+     "color": "#ff7a1a",
+     "intensity": 1.6,
+     "range": 4.0,
+     "lift": 0.3,
+     "fadeIn": 0.4,
+     "pulse": {
+      "min": 0.75,
+      "max": 1.2,
+      "hz": 0.7,
+      "shape": "sine"
+     }
+    },
+    "aura": "pet_aura_kindle",
+    "pool": "pet_pool_kindle",
+    "particles": null,
+    "speed": 1.4,
+    "look": "NEON red glow spots / tail coal in kindle_neon.png (primary); kindle.png is palette-safe (lamp / flower_gold / white coals), same layout"
+   },
+   "story": "muspelheim.md 5.4: companion (befriend); ember_dash, warm_ring; lights torches; faint = curls into a coal, returns at the waystone",
+   "scale": 1.0
+  }
+ }
+}

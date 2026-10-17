@@ -1,0 +1,989 @@
+{
+ "tool": "hd2d portal",
+ "biome": "cozy-village",
+ "seed": 104,
+ "cell": 48,
+ "cast_sets": {},
+ "cycle": [],
+ "image": "gamefx.png",
+ "size": [
+  384,
+  2208
+ ],
+ "effects": {
+  "quest_mark": {
+   "row": 44,
+   "frames": 4,
+   "fps": 3,
+   "loop": true,
+   "loop_from": 0,
+   "loops": 1,
+   "kind": "billboard",
+   "pivot": [
+    24,
+    47
+   ],
+   "lift": 2.05,
+   "glow": true,
+   "light": null,
+   "speed": null,
+   "travel": null,
+   "then": null,
+   "duration": 9999
+  },
+  "quest_turnin": {
+   "row": 45,
+   "frames": 4,
+   "fps": 3,
+   "loop": true,
+   "loop_from": 0,
+   "loops": 1,
+   "kind": "billboard",
+   "pivot": [
+    24,
+    47
+   ],
+   "lift": 2.05,
+   "glow": true,
+   "light": null,
+   "speed": null,
+   "travel": null,
+   "then": null,
+   "duration": 9999
+  },
+  "pool_lava": {
+   "row": 1,
+   "frames": 6,
+   "fps": 4,
+   "loop": true,
+   "loop_from": 0,
+   "loops": 1,
+   "kind": "decal",
+   "pivot": [
+    24,
+    24
+   ],
+   "lift": 0.02,
+   "glow": true,
+   "light": null,
+   "speed": null,
+   "travel": null,
+   "then": null,
+   "duration": 9999,
+   "notes": "lava glow pool (radius ~4 m) along lava channels / falls; warm flicker"
+  },
+  "pool_forge": {
+   "row": 2,
+   "frames": 6,
+   "fps": 4,
+   "loop": true,
+   "loop_from": 0,
+   "loops": 1,
+   "kind": "decal",
+   "pivot": [
+    24,
+    24
+   ],
+   "lift": 0.02,
+   "glow": true,
+   "light": null,
+   "speed": null,
+   "travel": null,
+   "then": null,
+   "duration": 9999,
+   "notes": "warm orange pool under every window and doorway; off stairs and spawns"
+  },
+  "pool_cold": {
+   "row": 3,
+   "frames": 6,
+   "fps": 4,
+   "loop": true,
+   "loop_from": 0,
+   "loops": 1,
+   "kind": "decal",
+   "pivot": [
+    24,
+    24
+   ],
+   "lift": 0.02,
+   "glow": true,
+   "light": null,
+   "speed": null,
+   "travel": null,
+   "then": null,
+   "duration": 9999,
+   "notes": "neon cold-fire pool (Cold Seam, cold braziers)"
+  },
+  "pool_violet": {
+   "row": 4,
+   "frames": 6,
+   "fps": 4,
+   "loop": true,
+   "loop_from": 0,
+   "loops": 1,
+   "kind": "decal",
+   "pivot": [
+    24,
+    24
+   ],
+   "lift": 0.02,
+   "glow": true,
+   "light": null,
+   "speed": null,
+   "travel": null,
+   "then": null,
+   "duration": 9999,
+   "notes": "violet pool under shrine-lamps (Sigil Forge, spring grotto)"
+  },
+  "pool_teal": {
+   "row": 5,
+   "frames": 6,
+   "fps": 4,
+   "loop": true,
+   "loop_from": 0,
+   "loops": 1,
+   "kind": "decal",
+   "pivot": [
+    24,
+    24
+   ],
+   "lift": 0.03,
+   "glow": true,
+   "light": null,
+   "speed": null,
+   "travel": null,
+   "then": null,
+   "duration": 9999,
+   "notes": "clear teal glow over the hidden bubbly springs"
+  },
+  "lava_crawl": {
+   "row": 6,
+   "frames": 4,
+   "fps": 3,
+   "loop": true,
+   "loop_from": 0,
+   "loops": 1,
+   "kind": "decal",
+   "pivot": [
+    24,
+    24
+   ],
+   "lift": 0.03,
+   "glow": true,
+   "light": null,
+   "speed": null,
+   "travel": null,
+   "then": null,
+   "duration": 9999,
+   "notes": "48 px emissive lava tile, 4-frame slow crawl; tile over lava channels / rivers (2 m per tile)"
+  },
+  "burn_patch": {
+   "row": 7,
+   "frames": 6,
+   "fps": 6,
+   "loop": true,
+   "loop_from": 0,
+   "loops": 1,
+   "kind": "decal",
+   "pivot": [
+    24,
+    24
+   ],
+   "lift": 0.02,
+   "glow": true,
+   "light": null,
+   "speed": null,
+   "travel": null,
+   "then": null,
+   "duration": 9999,
+   "notes": "ember-storm burn patch (2 dmg/s) and Kindle's ember_dash scorch; read as a hazard, keep off spawns and stairs"
+  },
+  "frost_vein": {
+   "row": 8,
+   "frames": 6,
+   "fps": 2,
+   "loop": true,
+   "loop_from": 0,
+   "loops": 1,
+   "kind": "decal",
+   "pivot": [
+    24,
+    24
+   ],
+   "lift": 0.03,
+   "glow": true,
+   "light": null,
+   "speed": null,
+   "travel": null,
+   "then": null,
+   "duration": 9999,
+   "notes": "Cold Seam frost-vein crack, pulses slowly (neon blue on orange rock)"
+  },
+  "ember_motes": {
+   "row": 9,
+   "frames": 8,
+   "fps": 6,
+   "loop": true,
+   "loop_from": 0,
+   "loops": 1,
+   "kind": "billboard",
+   "pivot": [
+    24,
+    47
+   ],
+   "lift": 0.4,
+   "glow": true,
+   "light": null,
+   "speed": null,
+   "travel": null,
+   "then": null,
+   "duration": 9999,
+   "notes": "ember motes drifting up (20 per screen), heavier in ash fall"
+  },
+  "neon_embers": {
+   "row": 10,
+   "frames": 8,
+   "fps": 6,
+   "loop": true,
+   "loop_from": 0,
+   "loops": 1,
+   "kind": "billboard",
+   "pivot": [
+    24,
+    47
+   ],
+   "lift": 0.5,
+   "glow": true,
+   "light": null,
+   "speed": null,
+   "travel": null,
+   "then": null,
+   "duration": 9999,
+   "notes": "neon red embers rising off forges / lava falls"
+  },
+  "ash_fall": {
+   "row": 11,
+   "frames": 8,
+   "fps": 6,
+   "loop": true,
+   "loop_from": 0,
+   "loops": 1,
+   "kind": "billboard",
+   "pivot": [
+    24,
+    47
+   ],
+   "lift": 0.0,
+   "glow": true,
+   "light": null,
+   "speed": null,
+   "travel": null,
+   "then": null,
+   "duration": 9999,
+   "notes": "ash fall weather layer (tile / overlay), a few glowing flakes"
+  },
+  "ember_storm": {
+   "row": 12,
+   "frames": 8,
+   "fps": 8,
+   "loop": true,
+   "loop_from": 0,
+   "loops": 1,
+   "kind": "billboard",
+   "pivot": [
+    24,
+    47
+   ],
+   "lift": 0.0,
+   "glow": true,
+   "light": null,
+   "speed": null,
+   "travel": null,
+   "then": null,
+   "duration": 9999,
+   "notes": "ember storm weather layer: wind-driven streaks; spawn burn_patch decals under it"
+  },
+  "forge_flame": {
+   "row": 14,
+   "frames": 8,
+   "fps": 10,
+   "loop": true,
+   "loop_from": 0,
+   "loops": 1,
+   "kind": "billboard",
+   "pivot": [
+    24,
+    44
+   ],
+   "lift": 0.1,
+   "glow": true,
+   "light": {
+    "color": "#ff7a1a",
+    "intensity": 1.1,
+    "range": 4.0,
+    "pool": "pool_forge"
+   },
+   "speed": null,
+   "travel": null,
+   "then": null,
+   "duration": 9999,
+   "notes": "forge / brazier flame (warm), the Spice-brazier stalls and furnace hall"
+  },
+  "cold_flame": {
+   "row": 15,
+   "frames": 8,
+   "fps": 10,
+   "loop": true,
+   "loop_from": 0,
+   "loops": 1,
+   "kind": "billboard",
+   "pivot": [
+    24,
+    44
+   ],
+   "lift": 0.1,
+   "glow": true,
+   "light": {
+    "color": "#2ab4ff",
+    "intensity": 1.0,
+    "range": 4.0,
+    "pool": "pool_cold"
+   },
+   "speed": null,
+   "travel": null,
+   "then": null,
+   "duration": 9999,
+   "notes": "cold-fire flame (no heat): wedges, cold braziers, the Cold Seam"
+  },
+  "violet_flame": {
+   "row": 16,
+   "frames": 8,
+   "fps": 10,
+   "loop": true,
+   "loop_from": 0,
+   "loops": 1,
+   "kind": "billboard",
+   "pivot": [
+    24,
+    44
+   ],
+   "lift": 0.1,
+   "glow": true,
+   "light": {
+    "color": "#a45cf0",
+    "intensity": 0.9,
+    "range": 3.5,
+    "pool": "pool_violet"
+   },
+   "speed": null,
+   "travel": null,
+   "then": null,
+   "duration": 9999,
+   "notes": "violet shrine-lamp flame (Warden's hall, spring grotto)"
+  },
+  "lava_fall": {
+   "row": 17,
+   "frames": 8,
+   "fps": 8,
+   "loop": true,
+   "loop_from": 0,
+   "loops": 1,
+   "kind": "billboard",
+   "pivot": [
+    24,
+    47
+   ],
+   "lift": 0.0,
+   "glow": true,
+   "light": {
+    "color": "#ff7a1a",
+    "intensity": 1.2,
+    "range": 4.0,
+    "pool": "pool_lava"
+   },
+   "speed": null,
+   "travel": null,
+   "then": null,
+   "duration": 9999,
+   "notes": "molten fall ribbon (16 px wide, tile vertically down the Lavafalls cliffs), splash at the foot"
+  },
+  "steam_puff": {
+   "row": 18,
+   "frames": 8,
+   "fps": 6,
+   "loop": true,
+   "loop_from": 0,
+   "loops": 1,
+   "kind": "billboard",
+   "pivot": [
+    24,
+    47
+   ],
+   "lift": 0.0,
+   "glow": true,
+   "light": null,
+   "speed": null,
+   "travel": null,
+   "then": null,
+   "duration": 9999,
+   "notes": "steam puffs: spring edges, quench tanks, vents"
+  },
+  "spring_bubbles": {
+   "row": 19,
+   "frames": 8,
+   "fps": 6,
+   "loop": true,
+   "loop_from": 0,
+   "loops": 1,
+   "kind": "billboard",
+   "pivot": [
+    24,
+    44
+   ],
+   "lift": 0.0,
+   "glow": true,
+   "light": null,
+   "speed": null,
+   "travel": null,
+   "then": null,
+   "duration": 9999,
+   "notes": "clear bubbling spring: fizz + steam over a teal pool (mp_spring / lf_spring / cd_spring; never murky)"
+  },
+  "neon_fireflies_blue": {
+   "row": 20,
+   "frames": 8,
+   "fps": 6,
+   "loop": true,
+   "loop_from": 0,
+   "loops": 1,
+   "kind": "billboard",
+   "pivot": [
+    24,
+    47
+   ],
+   "lift": 0.8,
+   "glow": true,
+   "light": null,
+   "speed": null,
+   "travel": null,
+   "then": null,
+   "duration": 9999,
+   "notes": "cold-blue fireflies"
+  },
+  "neon_fireflies_violet": {
+   "row": 21,
+   "frames": 8,
+   "fps": 6,
+   "loop": true,
+   "loop_from": 0,
+   "loops": 1,
+   "kind": "billboard",
+   "pivot": [
+    24,
+    47
+   ],
+   "lift": 0.8,
+   "glow": true,
+   "light": null,
+   "speed": null,
+   "travel": null,
+   "then": null,
+   "duration": 9999,
+   "notes": "violet fireflies (spring grotto, Sigil Forge)"
+  },
+  "neon_fireflies_red": {
+   "row": 22,
+   "frames": 8,
+   "fps": 6,
+   "loop": true,
+   "loop_from": 0,
+   "loops": 1,
+   "kind": "billboard",
+   "pivot": [
+    24,
+    47
+   ],
+   "lift": 0.8,
+   "glow": true,
+   "light": null,
+   "speed": null,
+   "travel": null,
+   "then": null,
+   "duration": 9999,
+   "notes": "red-gold fire motes that wander (not rising)"
+  },
+  "glow_frog_blue": {
+   "row": 23,
+   "frames": 8,
+   "fps": 6,
+   "loop": true,
+   "loop_from": 0,
+   "loops": 1,
+   "kind": "billboard",
+   "pivot": [
+    24,
+    44
+   ],
+   "lift": 0.0,
+   "glow": true,
+   "light": null,
+   "speed": null,
+   "travel": null,
+   "then": null,
+   "duration": 9999,
+   "notes": "glowing frog, cold-fire blue spots (sits by springs and the Cold Seam; never gross)"
+  },
+  "glow_frog_violet": {
+   "row": 24,
+   "frames": 8,
+   "fps": 6,
+   "loop": true,
+   "loop_from": 0,
+   "loops": 1,
+   "kind": "billboard",
+   "pivot": [
+    24,
+    44
+   ],
+   "lift": 0.0,
+   "glow": true,
+   "light": null,
+   "speed": null,
+   "travel": null,
+   "then": null,
+   "duration": 9999,
+   "notes": "glowing frog, violet spots (spring grotto)"
+  },
+  "glow_vines_blue": {
+   "row": 25,
+   "frames": 8,
+   "fps": 4,
+   "loop": true,
+   "loop_from": 0,
+   "loops": 1,
+   "kind": "billboard",
+   "pivot": [
+    24,
+    0
+   ],
+   "lift": 3.0,
+   "glow": true,
+   "light": null,
+   "speed": null,
+   "travel": null,
+   "then": null,
+   "duration": 9999,
+   "notes": "hanging ash-vines with blue glow beads, hang from cave / arch ceilings (pivot at top)"
+  },
+  "glow_vines_violet": {
+   "row": 26,
+   "frames": 8,
+   "fps": 4,
+   "loop": true,
+   "loop_from": 0,
+   "loops": 1,
+   "kind": "billboard",
+   "pivot": [
+    24,
+    0
+   ],
+   "lift": 3.0,
+   "glow": true,
+   "light": null,
+   "speed": null,
+   "travel": null,
+   "then": null,
+   "duration": 9999,
+   "notes": "hanging vines with violet glow beads"
+  },
+  "glow_crystals_blue": {
+   "row": 27,
+   "frames": 8,
+   "fps": 4,
+   "loop": true,
+   "loop_from": 0,
+   "loops": 1,
+   "kind": "billboard",
+   "pivot": [
+    24,
+    0
+   ],
+   "lift": 3.0,
+   "glow": true,
+   "light": null,
+   "speed": null,
+   "travel": null,
+   "then": null,
+   "duration": 9999,
+   "notes": "hanging cold-blue glow crystals (Cold Seam, Caldera ceilings)"
+  },
+  "glow_crystals_violet": {
+   "row": 28,
+   "frames": 8,
+   "fps": 4,
+   "loop": true,
+   "loop_from": 0,
+   "loops": 1,
+   "kind": "billboard",
+   "pivot": [
+    24,
+    0
+   ],
+   "lift": 3.0,
+   "glow": true,
+   "light": null,
+   "speed": null,
+   "travel": null,
+   "then": null,
+   "duration": 9999,
+   "notes": "hanging violet crystals (springs of glass)"
+  },
+  "glow_orb_amber": {
+   "row": 29,
+   "frames": 8,
+   "fps": 6,
+   "loop": true,
+   "loop_from": 0,
+   "loops": 1,
+   "kind": "billboard",
+   "pivot": [
+    24,
+    22
+   ],
+   "lift": 2.6,
+   "glow": true,
+   "light": {
+    "color": "#ffb066",
+    "intensity": 0.8,
+    "range": 3.5,
+    "pool": "pool_forge"
+   },
+   "speed": null,
+   "travel": null,
+   "then": null,
+   "duration": 9999,
+   "notes": "molten-glass globe on a chain over streets (#ffb066, steady); pivot at the globe centre"
+  },
+  "fire_wave": {
+   "row": 30,
+   "frames": 8,
+   "fps": 12,
+   "loop": false,
+   "loop_from": 0,
+   "loops": 1,
+   "kind": "billboard",
+   "pivot": [
+    24,
+    40
+   ],
+   "lift": 0.4,
+   "glow": true,
+   "light": null,
+   "speed": null,
+   "travel": null,
+   "then": null,
+   "duration": 0.667,
+   "notes": "Fire Wave (crescent of flame, sweeps right; flip for left)"
+  },
+  "magma_pool": {
+   "row": 31,
+   "frames": 6,
+   "fps": 6,
+   "loop": true,
+   "loop_from": 0,
+   "loops": 1,
+   "kind": "decal",
+   "pivot": [
+    24,
+    24
+   ],
+   "lift": 0.03,
+   "glow": true,
+   "light": {
+    "color": "#ff7a1a",
+    "intensity": 1.0,
+    "range": 3.0
+   },
+   "speed": null,
+   "travel": null,
+   "then": null,
+   "duration": 9999,
+   "notes": "Magma Pool (damaging ground pool, r ~ 2-3 m; also Vharzul's rising lava edge when tiled)"
+  },
+  "ember_swarm": {
+   "row": 32,
+   "frames": 8,
+   "fps": 12,
+   "loop": true,
+   "loop_from": 0,
+   "loops": 1,
+   "kind": "billboard",
+   "pivot": [
+    24,
+    30
+   ],
+   "lift": 0.8,
+   "glow": true,
+   "light": null,
+   "speed": null,
+   "travel": null,
+   "then": null,
+   "duration": 9999,
+   "notes": "Ember Swarm: a cloud of orbiting embers"
+  },
+  "flame_ward": {
+   "row": 33,
+   "frames": 8,
+   "fps": 10,
+   "loop": true,
+   "loop_from": 0,
+   "loops": 1,
+   "kind": "billboard",
+   "pivot": [
+    24,
+    38
+   ],
+   "lift": 0.0,
+   "glow": true,
+   "light": null,
+   "speed": null,
+   "travel": null,
+   "then": null,
+   "duration": 9999,
+   "notes": "Flame Ward: a ring of small flames around the caster (shield)"
+  },
+  "hound_summon": {
+   "row": 34,
+   "frames": 8,
+   "fps": 10,
+   "loop": false,
+   "loop_from": 0,
+   "loops": 1,
+   "kind": "billboard",
+   "pivot": [
+    24,
+    30
+   ],
+   "lift": 0.0,
+   "glow": true,
+   "light": null,
+   "speed": null,
+   "travel": null,
+   "then": null,
+   "duration": 0.8,
+   "notes": "Magma Hound summon / alpha's call: a lava ring with a column rising"
+  },
+  "warm_ring_orange": {
+   "row": 35,
+   "frames": 8,
+   "fps": 8,
+   "loop": false,
+   "loop_from": 0,
+   "loops": 1,
+   "kind": "decal",
+   "pivot": [
+    24,
+    24
+   ],
+   "lift": 0.03,
+   "glow": true,
+   "light": null,
+   "speed": null,
+   "travel": null,
+   "then": null,
+   "duration": 1.0,
+   "notes": "generic heat / heal ring (Kindle also has her own in pets/kindle_fx)"
+  },
+  "pillar_telegraph": {
+   "row": 36,
+   "frames": 6,
+   "fps": 8,
+   "loop": true,
+   "loop_from": 0,
+   "loops": 1,
+   "kind": "decal",
+   "pivot": [
+    24,
+    24
+   ],
+   "lift": 0.03,
+   "glow": true,
+   "light": null,
+   "speed": null,
+   "travel": null,
+   "then": null,
+   "duration": 9999,
+   "notes": "Vharzul P1: the floor ring shown before a fire pillar (2 s), then fire_pillar"
+  },
+  "fire_pillar": {
+   "row": 37,
+   "frames": 8,
+   "fps": 12,
+   "loop": false,
+   "loop_from": 0,
+   "loops": 1,
+   "kind": "billboard",
+   "pivot": [
+    24,
+    44
+   ],
+   "lift": 0.0,
+   "glow": true,
+   "light": {
+    "color": "#ff7a1a",
+    "intensity": 1.4,
+    "range": 4.0
+   },
+   "speed": null,
+   "travel": null,
+   "then": null,
+   "duration": 0.667,
+   "notes": "Vharzul fire pillar erupting (damage frames 4-6)"
+  },
+  "crown_flare": {
+   "row": 38,
+   "frames": 6,
+   "fps": 10,
+   "loop": false,
+   "loop_from": 0,
+   "loops": 1,
+   "kind": "billboard",
+   "pivot": [
+    24,
+    36
+   ],
+   "lift": 0.0,
+   "glow": true,
+   "light": null,
+   "speed": null,
+   "travel": null,
+   "then": null,
+   "duration": 0.6,
+   "notes": "Vharzul P3 crown flare, put over his head (scale with 8x)"
+  },
+  "molten_fist": {
+   "row": 39,
+   "frames": 6,
+   "fps": 8,
+   "loop": false,
+   "loop_from": 0,
+   "loops": 1,
+   "kind": "decal",
+   "pivot": [
+    24,
+    24
+   ],
+   "lift": 0.03,
+   "glow": true,
+   "light": null,
+   "speed": null,
+   "travel": null,
+   "then": null,
+   "duration": 0.75,
+   "notes": "Kilnmother molten-fist telegraph: a shrinking ring converging on the impact point"
+  },
+  "warden_lamp": {
+   "row": 40,
+   "frames": 8,
+   "fps": 8,
+   "loop": false,
+   "loop_from": 0,
+   "loops": 1,
+   "kind": "billboard",
+   "pivot": [
+    24,
+    44
+   ],
+   "lift": 0.0,
+   "glow": true,
+   "light": {
+    "color": "#ffb066",
+    "intensity": 1.0,
+    "range": 4.0
+   },
+   "speed": null,
+   "travel": null,
+   "then": null,
+   "duration": 1.0,
+   "notes": "Vharzul P3: a Warden's lamp relighting (violet shrine flame turns warm gold); put over each of the three lamps"
+  },
+  "glow_orb_blue": {
+   "row": 41,
+   "frames": 8,
+   "fps": 6,
+   "loop": true,
+   "loop_from": 0,
+   "loops": 1,
+   "kind": "billboard",
+   "pivot": [
+    24,
+    33
+   ],
+   "lift": 1.4,
+   "glow": true,
+   "light": {
+    "color": "#a6ecff",
+    "intensity": 0.7,
+    "range": 3.0,
+    "pool": "pool_cold"
+   },
+   "speed": null,
+   "travel": null,
+   "then": null,
+   "duration": 9999,
+   "notes": "floating glow orb, hover 1.1-2.2 m"
+  },
+  "glow_orb_violet": {
+   "row": 42,
+   "frames": 8,
+   "fps": 6,
+   "loop": true,
+   "loop_from": 0,
+   "loops": 1,
+   "kind": "billboard",
+   "pivot": [
+    24,
+    33
+   ],
+   "lift": 1.4,
+   "glow": true,
+   "light": {
+    "color": "#d4a8ff",
+    "intensity": 0.7,
+    "range": 3.0,
+    "pool": "pool_violet"
+   },
+   "speed": null,
+   "travel": null,
+   "then": null,
+   "duration": 9999,
+   "notes": "floating glow orb, hover 1.1-2.2 m"
+  },
+  "glow_orb_red": {
+   "row": 43,
+   "frames": 8,
+   "fps": 6,
+   "loop": true,
+   "loop_from": 0,
+   "loops": 1,
+   "kind": "billboard",
+   "pivot": [
+    24,
+    33
+   ],
+   "lift": 1.4,
+   "glow": true,
+   "light": {
+    "color": "#ff5a4a",
+    "intensity": 0.7,
+    "range": 3.0,
+    "pool": "pool_lava"
+   },
+   "speed": null,
+   "travel": null,
+   "then": null,
+   "duration": 9999,
+   "notes": "floating glow orb, hover 1.1-2.2 m"
+  }
+ }
+}

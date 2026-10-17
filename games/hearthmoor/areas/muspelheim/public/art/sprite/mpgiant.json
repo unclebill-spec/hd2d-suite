@@ -1,0 +1,184 @@
+{
+ "tool": "hd2d boss_sheet (muspelheim big frames)",
+ "biome": "cozy-village",
+ "frame": [
+  64,
+  100
+ ],
+ "pivot": [
+  32,
+  100
+ ],
+ "ground_row": 99,
+ "facings": [
+  "down",
+  "up",
+  "left",
+  "right"
+ ],
+ "anims": {
+  "idle": {
+   "start": 0,
+   "count": 4,
+   "fps": 3,
+   "loop": [
+    0,
+    1,
+    2,
+    1
+   ],
+   "blink": 3
+  },
+  "walk": {
+   "start": 4,
+   "count": 4,
+   "fps": 8
+  },
+  "cast": {
+   "start": 8,
+   "count": 4,
+   "fps": 6,
+   "loop": [
+    0,
+    1,
+    2,
+    2,
+    3,
+    3
+   ],
+   "casters_only": true
+  },
+  "attack": {
+   "start": 12,
+   "count": 4,
+   "fps": 10,
+   "loop": [
+    0,
+    1,
+    2,
+    2,
+    3
+   ],
+   "heroes_only": true
+  },
+  "defend": {
+   "start": 16,
+   "count": 4,
+   "fps": 6,
+   "loop": [
+    0,
+    1
+   ],
+   "hold": [
+    2,
+    3
+   ],
+   "heroes_only": true
+  },
+  "jump": {
+   "start": 20,
+   "count": 4,
+   "fps": 8,
+   "phases": [
+    "crouch",
+    "launch",
+    "airborne",
+    "land"
+   ],
+   "heroes_only": true
+  },
+  "die": {
+   "start": 24,
+   "count": 4,
+   "fps": 6,
+   "once": true,
+   "enemies_only": true
+  }
+ },
+ "cols": 12,
+ "size": [
+  768,
+  1200
+ ],
+ "image": "mpgiant.png",
+ "roles": {
+  "warden_mp": {
+   "row": 0,
+   "kind": "human",
+   "scale": 2.6,
+   "desc": "Ember-Warden Aska Cindervane (fire-giant, 2.6x): rust leather tunic, belted kilt-trousers, copper circlet, long grey braids.",
+   "anims": [
+    "idle",
+    "walk"
+   ],
+   "size_bounds": [
+    [
+     10,
+     62
+    ],
+    [
+     8,
+     100
+    ]
+   ],
+   "caster": false,
+   "named": true,
+   "stats_hint": {
+    "tier": "npc",
+    "height_x_player": 2.6
+   }
+  },
+  "forgejudge": {
+   "row": 4,
+   "kind": "human",
+   "scale": 2.5,
+   "desc": "Torka Ashgrip (fire-giant forge-judge, 2.5x): leather apron over a sand tunic, belted trousers, rolled sleeves, contest hammer, tongs.",
+   "anims": [
+    "idle",
+    "walk"
+   ],
+   "size_bounds": [
+    [
+     10,
+     62
+    ],
+    [
+     8,
+     100
+    ]
+   ],
+   "caster": false,
+   "named": true,
+   "stats_hint": {
+    "tier": "npc",
+    "height_x_player": 2.5
+   }
+  },
+  "cindercaptain": {
+   "row": 8,
+   "kind": "human",
+   "scale": 2.5,
+   "desc": "Cinder-Captain Dagny Flameguard (fire-giant, 2.5x): leather jerkin over a belted tunic, belted trousers, round shield and short spear. No plate.",
+   "anims": [
+    "idle",
+    "walk"
+   ],
+   "size_bounds": [
+    [
+     10,
+     62
+    ],
+    [
+     8,
+     100
+    ]
+   ],
+   "caster": false,
+   "named": true,
+   "stats_hint": {
+    "tier": "npc",
+    "height_x_player": 2.5
+   }
+  }
+ }
+}

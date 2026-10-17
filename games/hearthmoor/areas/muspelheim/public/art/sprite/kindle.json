@@ -1,0 +1,102 @@
+{
+ "tool": "hearthmoor-art kindle_gen (pets_gen layout)",
+ "biome": "cozy-village",
+ "frame": [
+  20,
+  32
+ ],
+ "pivot": [
+  10,
+  32
+ ],
+ "ground_row": 31,
+ "facings": [
+  "down",
+  "up",
+  "left",
+  "right"
+ ],
+ "anims": {
+  "idle": {
+   "start": 0,
+   "count": 4,
+   "fps": 3,
+   "loop": [
+    0,
+    1,
+    2,
+    1
+   ],
+   "blink": 3
+  },
+  "walk": {
+   "start": 4,
+   "count": 4,
+   "fps": 8
+  },
+  "follow": {
+   "start": 8,
+   "count": 4,
+   "fps": 10,
+   "pets_only": true
+  }
+ },
+ "cols": 12,
+ "size": [
+  240,
+  128
+ ],
+ "image": "kindle.png",
+ "roles": {
+  "pet_kindle": {
+   "row": 0,
+   "kind": "creature",
+   "pet": true,
+   "name": "Kindle",
+   "desc": "Kindle, the ember salamander (Cinderhold companion, ~0.5x player): charcoal-red hide, amber belly, a gold scarf, red-gold back spots that pulse like coals and a glowing coal at the tail tip; curls into a coal when she faints",
+   "size_bounds": [
+    [
+     8,
+     20
+    ],
+    [
+     7,
+     24
+    ]
+   ],
+   "caster": false,
+   "anims": [
+    "idle",
+    "walk",
+    "follow"
+   ],
+   "petfx": {
+    "hover": {
+     "lift": 0.0,
+     "bob": 0.0,
+     "hz": 0.0
+    },
+    "light": {
+     "color": "#ff7a1a",
+     "intensity": 1.6,
+     "range": 4.0,
+     "lift": 0.3,
+     "fadeIn": 0.4,
+     "pulse": {
+      "min": 0.75,
+      "max": 1.2,
+      "hz": 0.7,
+      "shape": "sine"
+     }
+    },
+    "aura": "pet_aura_kindle",
+    "pool": "pet_pool_kindle",
+    "particles": null,
+    "speed": 1.4,
+    "look": "NEON red glow spots / tail coal in kindle_neon.png (primary); kindle.png is palette-safe (lamp / flower_gold / white coals), same layout"
+   },
+   "story": "muspelheim.md 5.4: companion (befriend); ember_dash, warm_ring; lights torches; faint = curls into a coal, returns at the waystone",
+   "scale": 1.0
+  }
+ }
+}

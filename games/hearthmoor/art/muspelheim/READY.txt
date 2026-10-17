@@ -1,0 +1,9 @@
+READY: true
+Muspelheim pack, 2026-10-17 (America/New_York). Everything in the doc's art priority list is delivered:
+ folk 1x (5) + fire-giants 2.5-2.6x (3), Kindle (pets layout, neon primary + palette-safe twin, fx), enemies / gate foe / rares / Kilnmother (8 roles),
+ Vharzul 8x (2 roles, only plate), gamefx 43 effects (environment + spells / boss), 38 kit pieces (.glb + kit.json markers), scenes
+ (Cinderhold night+day, Sigil Forge, Lavafalls night+day, Caldera throne), contact_sheet.png, metadata/, README.md.
+check-sprite: all 5 big sheets PASS, kindle.png PASS; kindle_neon.png PASSES only with the scoped allow-list entry pet_kindle -> #a81c22 #e0302a #ff5a4a (lead to add; simulated in-process).
+Luma (my renders): night 24.9-26.8, day 59.0-60.4.
+Not blocking (optional extras): section 11 item icons, Emberfang prop, mount lizard, Vharzul cast frames, per-room Caldera C1-C8 scenes, Hall of Wardens interior.
+check-scene still needs the built game.

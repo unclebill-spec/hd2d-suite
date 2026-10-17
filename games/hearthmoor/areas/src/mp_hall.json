@@ -34,7 +34,7 @@
  "blocks": [],
  "buildings": [],
  "name": "The Sigil Forge",
- "about": "The Ember-Warden's hall and the seal foundry of Cinderhold. The Warden's seat on a basalt dais with a violet shrine-lamp either side; the seal foundry (cooling bed, stamp-press, ledger desk, the sigil mould wall) along the west wall. SKELETON (stand-in kit).",
+ "about": "The Ember-Warden's hall and the seal foundry of Cinderhold. The Warden's seat before the north wall with a violet shrine-lamp either side; the seal foundry (cooling bed, stamp-press, ledger desk, the sigil mould wall) along the west wall; a raised gallery with a cold brazier to the east.",
  "sprite_roles": [
   "actors",
   "heroes",
@@ -63,45 +63,22 @@
    9.0
   ]
  },
- "slabs": [
-  {
-   "name": "entry",
-   "rect": [
-    -1.8,
-    4.5,
-    1.8,
-    9.0
-   ],
-   "mat": "cobble",
-   "h": 0.03
-  },
-  {
-   "name": "aisle",
-   "rect": [
-    -2.4,
-    -5.0,
-    2.4,
-    4.5
-   ],
-   "mat": "cobble",
-   "h": 0.03
-  }
- ],
+ "slabs": [],
  "terraces": [
   {
-   "name": "warden_dais",
+   "name": "east_gallery",
    "rect": [
-    -4.0,
-    -9.0,
-    4.0,
-    -5.0
+    3.0,
+    -7.3,
+    6.2,
+    -3.15
    ],
-   "h": 1.2,
+   "h": 1.34,
    "top": "plaster",
    "gaps": [
     [
-     -1.5,
-     1.5
+     3.15,
+     6.05
     ]
    ]
   },
@@ -156,93 +133,15 @@
  ],
  "stairs": [
   {
-   "name": "stair_dais",
-   "x": 0.0,
-   "z_top": -5.0,
-   "width": 3.0,
-   "rise": 1.2,
+   "name": "stair_gallery",
+   "x": 4.6,
+   "z_top": -3.15,
+   "width": 2.9,
+   "rise": 1.34,
    "base": 0.0
   }
  ],
- "props": [
-  {
-   "piece": "empty_throne",
-   "pos": [
-    0.0,
-    -8.0
-   ]
-  },
-  {
-   "piece": "stone_lantern",
-   "pos": [
-    -3.0,
-    -6.2
-   ]
-  },
-  {
-   "piece": "stone_lantern",
-   "pos": [
-    3.0,
-    -6.2
-   ]
-  },
-  {
-   "piece": "forge_hearth",
-   "pos": [
-    -6.0,
-    -3.0
-   ]
-  },
-  {
-   "piece": "forge_anvil",
-   "pos": [
-    -5.2,
-    -0.4
-   ]
-  },
-  {
-   "piece": "tool_rack",
-   "pos": [
-    -6.6,
-    2.0
-   ]
-  },
-  {
-   "piece": "coal_bin",
-   "pos": [
-    -5.6,
-    4.0
-   ]
-  },
-  {
-   "piece": "lens_table",
-   "pos": [
-    5.2,
-    -2.6
-   ]
-  },
-  {
-   "piece": "bench",
-   "pos": [
-    5.6,
-    1.0
-   ]
-  },
-  {
-   "piece": "reliquary",
-   "pos": [
-    5.6,
-    3.6
-   ]
-  },
-  {
-   "piece": "barrel",
-   "pos": [
-    5.8,
-    7.0
-   ]
-  }
- ],
+ "props": [],
  "emitters": [
   {
    "preset": "embers",
@@ -265,8 +164,8 @@
    "role": "shopkeeper",
    "name": "Envoy Sunndis Embervane",
    "pos": [
-    3.4,
-    6.2
+    2.6,
+    6.4
    ],
    "facing": "left",
    "behavior": "idle",
@@ -281,7 +180,7 @@
    "name": "Ember-Warden Aska Cindervane",
    "pos": [
     0.0,
-    -6.8
+    -1.0
    ],
    "facing": "down",
    "behavior": "idle",
@@ -295,7 +194,7 @@
   "role": "traveler",
   "pos": [
    0.0,
-   7.4
+   5.2
   ],
   "facing": "up"
  },
@@ -357,7 +256,7 @@
   "spawns": {
    "start": [
     0.0,
-    7.4,
+    5.2,
     "up"
    ],
    "from_town": [
@@ -367,7 +266,7 @@
    ],
    "qa": [
     0.0,
-    7.0,
+    5.2,
     "up"
    ],
    "hearth": [
@@ -377,13 +276,18 @@
    ],
    "dais": [
     0.0,
-    -4.2,
+    -2.0,
     "up"
    ],
    "foundry": [
-    -3.4,
+    -3.0,
     -1.6,
     "left"
+   ],
+   "gallery": [
+    4.6,
+    -4.8,
+    "down"
    ]
   }
  }

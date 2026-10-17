@@ -1,0 +1,1534 @@
+{
+ "tool": "hd2d boss_sheet (muspelheim big frames)",
+ "biome": "cozy-village",
+ "frame": [
+  64,
+  100
+ ],
+ "pivot": [
+  32,
+  100
+ ],
+ "ground_row": 99,
+ "facings": [
+  "down",
+  "up",
+  "left",
+  "right"
+ ],
+ "anims": {
+  "idle": {
+   "start": 0,
+   "count": 4,
+   "fps": 3,
+   "loop": [
+    0,
+    1,
+    2,
+    1
+   ],
+   "blink": 3
+  },
+  "walk": {
+   "start": 4,
+   "count": 4,
+   "fps": 8
+  },
+  "cast": {
+   "start": 8,
+   "count": 4,
+   "fps": 6,
+   "loop": [
+    0,
+    1,
+    2,
+    2,
+    3,
+    3
+   ],
+   "casters_only": true
+  },
+  "attack": {
+   "start": 12,
+   "count": 4,
+   "fps": 10,
+   "loop": [
+    0,
+    1,
+    2,
+    2,
+    3
+   ],
+   "heroes_only": true
+  },
+  "defend": {
+   "start": 16,
+   "count": 4,
+   "fps": 6,
+   "loop": [
+    0,
+    1
+   ],
+   "hold": [
+    2,
+    3
+   ],
+   "heroes_only": true
+  },
+  "jump": {
+   "start": 20,
+   "count": 4,
+   "fps": 8,
+   "phases": [
+    "crouch",
+    "launch",
+    "airborne",
+    "land"
+   ],
+   "heroes_only": true
+  },
+  "die": {
+   "start": 24,
+   "count": 4,
+   "fps": 6,
+   "once": true,
+   "enemies_only": true
+  }
+ },
+ "cols": 12,
+ "image": "mp_giants.png",
+ "size": [
+  768,
+  1200
+ ],
+ "roles": {
+  "warden_mp": {
+   "row": 0,
+   "kind": "human",
+   "scale": 2.6,
+   "desc": "Ember-Warden Aska Cindervane (fire-giant, 2.6x): rust leather tunic, belted kilt-trousers, copper circlet, long grey braids.",
+   "anims": [
+    "idle",
+    "walk"
+   ],
+   "size_bounds": [
+    [
+     10,
+     62
+    ],
+    [
+     8,
+     100
+    ]
+   ],
+   "caster": false,
+   "frames": [
+    {
+     "name": "warden_mp_down_idle0",
+     "facing": "down",
+     "anim": "idle",
+     "i": 0,
+     "x": 0,
+     "y": 0,
+     "w": 64,
+     "h": 100,
+     "pivot": [
+      32,
+      100
+     ]
+    },
+    {
+     "name": "warden_mp_down_idle1",
+     "facing": "down",
+     "anim": "idle",
+     "i": 1,
+     "x": 64,
+     "y": 0,
+     "w": 64,
+     "h": 100,
+     "pivot": [
+      96,
+      100
+     ]
+    },
+    {
+     "name": "warden_mp_down_idle2",
+     "facing": "down",
+     "anim": "idle",
+     "i": 2,
+     "x": 128,
+     "y": 0,
+     "w": 64,
+     "h": 100,
+     "pivot": [
+      160,
+      100
+     ]
+    },
+    {
+     "name": "warden_mp_down_idle3",
+     "facing": "down",
+     "anim": "idle",
+     "i": 3,
+     "x": 192,
+     "y": 0,
+     "w": 64,
+     "h": 100,
+     "pivot": [
+      224,
+      100
+     ]
+    },
+    {
+     "name": "warden_mp_down_walk0",
+     "facing": "down",
+     "anim": "walk",
+     "i": 0,
+     "x": 256,
+     "y": 0,
+     "w": 64,
+     "h": 100,
+     "pivot": [
+      288,
+      100
+     ]
+    },
+    {
+     "name": "warden_mp_down_walk1",
+     "facing": "down",
+     "anim": "walk",
+     "i": 1,
+     "x": 320,
+     "y": 0,
+     "w": 64,
+     "h": 100,
+     "pivot": [
+      352,
+      100
+     ]
+    },
+    {
+     "name": "warden_mp_down_walk2",
+     "facing": "down",
+     "anim": "walk",
+     "i": 2,
+     "x": 384,
+     "y": 0,
+     "w": 64,
+     "h": 100,
+     "pivot": [
+      416,
+      100
+     ]
+    },
+    {
+     "name": "warden_mp_down_walk3",
+     "facing": "down",
+     "anim": "walk",
+     "i": 3,
+     "x": 448,
+     "y": 0,
+     "w": 64,
+     "h": 100,
+     "pivot": [
+      480,
+      100
+     ]
+    },
+    {
+     "name": "warden_mp_up_idle0",
+     "facing": "up",
+     "anim": "idle",
+     "i": 0,
+     "x": 0,
+     "y": 100,
+     "w": 64,
+     "h": 100,
+     "pivot": [
+      32,
+      200
+     ]
+    },
+    {
+     "name": "warden_mp_up_idle1",
+     "facing": "up",
+     "anim": "idle",
+     "i": 1,
+     "x": 64,
+     "y": 100,
+     "w": 64,
+     "h": 100,
+     "pivot": [
+      96,
+      200
+     ]
+    },
+    {
+     "name": "warden_mp_up_idle2",
+     "facing": "up",
+     "anim": "idle",
+     "i": 2,
+     "x": 128,
+     "y": 100,
+     "w": 64,
+     "h": 100,
+     "pivot": [
+      160,
+      200
+     ]
+    },
+    {
+     "name": "warden_mp_up_idle3",
+     "facing": "up",
+     "anim": "idle",
+     "i": 3,
+     "x": 192,
+     "y": 100,
+     "w": 64,
+     "h": 100,
+     "pivot": [
+      224,
+      200
+     ]
+    },
+    {
+     "name": "warden_mp_up_walk0",
+     "facing": "up",
+     "anim": "walk",
+     "i": 0,
+     "x": 256,
+     "y": 100,
+     "w": 64,
+     "h": 100,
+     "pivot": [
+      288,
+      200
+     ]
+    },
+    {
+     "name": "warden_mp_up_walk1",
+     "facing": "up",
+     "anim": "walk",
+     "i": 1,
+     "x": 320,
+     "y": 100,
+     "w": 64,
+     "h": 100,
+     "pivot": [
+      352,
+      200
+     ]
+    },
+    {
+     "name": "warden_mp_up_walk2",
+     "facing": "up",
+     "anim": "walk",
+     "i": 2,
+     "x": 384,
+     "y": 100,
+     "w": 64,
+     "h": 100,
+     "pivot": [
+      416,
+      200
+     ]
+    },
+    {
+     "name": "warden_mp_up_walk3",
+     "facing": "up",
+     "anim": "walk",
+     "i": 3,
+     "x": 448,
+     "y": 100,
+     "w": 64,
+     "h": 100,
+     "pivot": [
+      480,
+      200
+     ]
+    },
+    {
+     "name": "warden_mp_left_idle0",
+     "facing": "left",
+     "anim": "idle",
+     "i": 0,
+     "x": 0,
+     "y": 200,
+     "w": 64,
+     "h": 100,
+     "pivot": [
+      32,
+      300
+     ]
+    },
+    {
+     "name": "warden_mp_left_idle1",
+     "facing": "left",
+     "anim": "idle",
+     "i": 1,
+     "x": 64,
+     "y": 200,
+     "w": 64,
+     "h": 100,
+     "pivot": [
+      96,
+      300
+     ]
+    },
+    {
+     "name": "warden_mp_left_idle2",
+     "facing": "left",
+     "anim": "idle",
+     "i": 2,
+     "x": 128,
+     "y": 200,
+     "w": 64,
+     "h": 100,
+     "pivot": [
+      160,
+      300
+     ]
+    },
+    {
+     "name": "warden_mp_left_idle3",
+     "facing": "left",
+     "anim": "idle",
+     "i": 3,
+     "x": 192,
+     "y": 200,
+     "w": 64,
+     "h": 100,
+     "pivot": [
+      224,
+      300
+     ]
+    },
+    {
+     "name": "warden_mp_left_walk0",
+     "facing": "left",
+     "anim": "walk",
+     "i": 0,
+     "x": 256,
+     "y": 200,
+     "w": 64,
+     "h": 100,
+     "pivot": [
+      288,
+      300
+     ]
+    },
+    {
+     "name": "warden_mp_left_walk1",
+     "facing": "left",
+     "anim": "walk",
+     "i": 1,
+     "x": 320,
+     "y": 200,
+     "w": 64,
+     "h": 100,
+     "pivot": [
+      352,
+      300
+     ]
+    },
+    {
+     "name": "warden_mp_left_walk2",
+     "facing": "left",
+     "anim": "walk",
+     "i": 2,
+     "x": 384,
+     "y": 200,
+     "w": 64,
+     "h": 100,
+     "pivot": [
+      416,
+      300
+     ]
+    },
+    {
+     "name": "warden_mp_left_walk3",
+     "facing": "left",
+     "anim": "walk",
+     "i": 3,
+     "x": 448,
+     "y": 200,
+     "w": 64,
+     "h": 100,
+     "pivot": [
+      480,
+      300
+     ]
+    },
+    {
+     "name": "warden_mp_right_idle0",
+     "facing": "right",
+     "anim": "idle",
+     "i": 0,
+     "x": 0,
+     "y": 300,
+     "w": 64,
+     "h": 100,
+     "pivot": [
+      32,
+      400
+     ]
+    },
+    {
+     "name": "warden_mp_right_idle1",
+     "facing": "right",
+     "anim": "idle",
+     "i": 1,
+     "x": 64,
+     "y": 300,
+     "w": 64,
+     "h": 100,
+     "pivot": [
+      96,
+      400
+     ]
+    },
+    {
+     "name": "warden_mp_right_idle2",
+     "facing": "right",
+     "anim": "idle",
+     "i": 2,
+     "x": 128,
+     "y": 300,
+     "w": 64,
+     "h": 100,
+     "pivot": [
+      160,
+      400
+     ]
+    },
+    {
+     "name": "warden_mp_right_idle3",
+     "facing": "right",
+     "anim": "idle",
+     "i": 3,
+     "x": 192,
+     "y": 300,
+     "w": 64,
+     "h": 100,
+     "pivot": [
+      224,
+      400
+     ]
+    },
+    {
+     "name": "warden_mp_right_walk0",
+     "facing": "right",
+     "anim": "walk",
+     "i": 0,
+     "x": 256,
+     "y": 300,
+     "w": 64,
+     "h": 100,
+     "pivot": [
+      288,
+      400
+     ]
+    },
+    {
+     "name": "warden_mp_right_walk1",
+     "facing": "right",
+     "anim": "walk",
+     "i": 1,
+     "x": 320,
+     "y": 300,
+     "w": 64,
+     "h": 100,
+     "pivot": [
+      352,
+      400
+     ]
+    },
+    {
+     "name": "warden_mp_right_walk2",
+     "facing": "right",
+     "anim": "walk",
+     "i": 2,
+     "x": 384,
+     "y": 300,
+     "w": 64,
+     "h": 100,
+     "pivot": [
+      416,
+      400
+     ]
+    },
+    {
+     "name": "warden_mp_right_walk3",
+     "facing": "right",
+     "anim": "walk",
+     "i": 3,
+     "x": 448,
+     "y": 300,
+     "w": 64,
+     "h": 100,
+     "pivot": [
+      480,
+      400
+     ]
+    }
+   ],
+   "named": true,
+   "stats_hint": {
+    "tier": "npc",
+    "height_x_player": 2.6
+   }
+  },
+  "forgejudge": {
+   "row": 4,
+   "kind": "human",
+   "scale": 2.5,
+   "desc": "Torka Ashgrip (fire-giant forge-judge, 2.5x): leather apron over a sand tunic, belted trousers, rolled sleeves, contest hammer, tongs.",
+   "anims": [
+    "idle",
+    "walk"
+   ],
+   "size_bounds": [
+    [
+     10,
+     62
+    ],
+    [
+     8,
+     100
+    ]
+   ],
+   "caster": false,
+   "frames": [
+    {
+     "name": "forgejudge_down_idle0",
+     "facing": "down",
+     "anim": "idle",
+     "i": 0,
+     "x": 0,
+     "y": 400,
+     "w": 64,
+     "h": 100,
+     "pivot": [
+      32,
+      500
+     ]
+    },
+    {
+     "name": "forgejudge_down_idle1",
+     "facing": "down",
+     "anim": "idle",
+     "i": 1,
+     "x": 64,
+     "y": 400,
+     "w": 64,
+     "h": 100,
+     "pivot": [
+      96,
+      500
+     ]
+    },
+    {
+     "name": "forgejudge_down_idle2",
+     "facing": "down",
+     "anim": "idle",
+     "i": 2,
+     "x": 128,
+     "y": 400,
+     "w": 64,
+     "h": 100,
+     "pivot": [
+      160,
+      500
+     ]
+    },
+    {
+     "name": "forgejudge_down_idle3",
+     "facing": "down",
+     "anim": "idle",
+     "i": 3,
+     "x": 192,
+     "y": 400,
+     "w": 64,
+     "h": 100,
+     "pivot": [
+      224,
+      500
+     ]
+    },
+    {
+     "name": "forgejudge_down_walk0",
+     "facing": "down",
+     "anim": "walk",
+     "i": 0,
+     "x": 256,
+     "y": 400,
+     "w": 64,
+     "h": 100,
+     "pivot": [
+      288,
+      500
+     ]
+    },
+    {
+     "name": "forgejudge_down_walk1",
+     "facing": "down",
+     "anim": "walk",
+     "i": 1,
+     "x": 320,
+     "y": 400,
+     "w": 64,
+     "h": 100,
+     "pivot": [
+      352,
+      500
+     ]
+    },
+    {
+     "name": "forgejudge_down_walk2",
+     "facing": "down",
+     "anim": "walk",
+     "i": 2,
+     "x": 384,
+     "y": 400,
+     "w": 64,
+     "h": 100,
+     "pivot": [
+      416,
+      500
+     ]
+    },
+    {
+     "name": "forgejudge_down_walk3",
+     "facing": "down",
+     "anim": "walk",
+     "i": 3,
+     "x": 448,
+     "y": 400,
+     "w": 64,
+     "h": 100,
+     "pivot": [
+      480,
+      500
+     ]
+    },
+    {
+     "name": "forgejudge_up_idle0",
+     "facing": "up",
+     "anim": "idle",
+     "i": 0,
+     "x": 0,
+     "y": 500,
+     "w": 64,
+     "h": 100,
+     "pivot": [
+      32,
+      600
+     ]
+    },
+    {
+     "name": "forgejudge_up_idle1",
+     "facing": "up",
+     "anim": "idle",
+     "i": 1,
+     "x": 64,
+     "y": 500,
+     "w": 64,
+     "h": 100,
+     "pivot": [
+      96,
+      600
+     ]
+    },
+    {
+     "name": "forgejudge_up_idle2",
+     "facing": "up",
+     "anim": "idle",
+     "i": 2,
+     "x": 128,
+     "y": 500,
+     "w": 64,
+     "h": 100,
+     "pivot": [
+      160,
+      600
+     ]
+    },
+    {
+     "name": "forgejudge_up_idle3",
+     "facing": "up",
+     "anim": "idle",
+     "i": 3,
+     "x": 192,
+     "y": 500,
+     "w": 64,
+     "h": 100,
+     "pivot": [
+      224,
+      600
+     ]
+    },
+    {
+     "name": "forgejudge_up_walk0",
+     "facing": "up",
+     "anim": "walk",
+     "i": 0,
+     "x": 256,
+     "y": 500,
+     "w": 64,
+     "h": 100,
+     "pivot": [
+      288,
+      600
+     ]
+    },
+    {
+     "name": "forgejudge_up_walk1",
+     "facing": "up",
+     "anim": "walk",
+     "i": 1,
+     "x": 320,
+     "y": 500,
+     "w": 64,
+     "h": 100,
+     "pivot": [
+      352,
+      600
+     ]
+    },
+    {
+     "name": "forgejudge_up_walk2",
+     "facing": "up",
+     "anim": "walk",
+     "i": 2,
+     "x": 384,
+     "y": 500,
+     "w": 64,
+     "h": 100,
+     "pivot": [
+      416,
+      600
+     ]
+    },
+    {
+     "name": "forgejudge_up_walk3",
+     "facing": "up",
+     "anim": "walk",
+     "i": 3,
+     "x": 448,
+     "y": 500,
+     "w": 64,
+     "h": 100,
+     "pivot": [
+      480,
+      600
+     ]
+    },
+    {
+     "name": "forgejudge_left_idle0",
+     "facing": "left",
+     "anim": "idle",
+     "i": 0,
+     "x": 0,
+     "y": 600,
+     "w": 64,
+     "h": 100,
+     "pivot": [
+      32,
+      700
+     ]
+    },
+    {
+     "name": "forgejudge_left_idle1",
+     "facing": "left",
+     "anim": "idle",
+     "i": 1,
+     "x": 64,
+     "y": 600,
+     "w": 64,
+     "h": 100,
+     "pivot": [
+      96,
+      700
+     ]
+    },
+    {
+     "name": "forgejudge_left_idle2",
+     "facing": "left",
+     "anim": "idle",
+     "i": 2,
+     "x": 128,
+     "y": 600,
+     "w": 64,
+     "h": 100,
+     "pivot": [
+      160,
+      700
+     ]
+    },
+    {
+     "name": "forgejudge_left_idle3",
+     "facing": "left",
+     "anim": "idle",
+     "i": 3,
+     "x": 192,
+     "y": 600,
+     "w": 64,
+     "h": 100,
+     "pivot": [
+      224,
+      700
+     ]
+    },
+    {
+     "name": "forgejudge_left_walk0",
+     "facing": "left",
+     "anim": "walk",
+     "i": 0,
+     "x": 256,
+     "y": 600,
+     "w": 64,
+     "h": 100,
+     "pivot": [
+      288,
+      700
+     ]
+    },
+    {
+     "name": "forgejudge_left_walk1",
+     "facing": "left",
+     "anim": "walk",
+     "i": 1,
+     "x": 320,
+     "y": 600,
+     "w": 64,
+     "h": 100,
+     "pivot": [
+      352,
+      700
+     ]
+    },
+    {
+     "name": "forgejudge_left_walk2",
+     "facing": "left",
+     "anim": "walk",
+     "i": 2,
+     "x": 384,
+     "y": 600,
+     "w": 64,
+     "h": 100,
+     "pivot": [
+      416,
+      700
+     ]
+    },
+    {
+     "name": "forgejudge_left_walk3",
+     "facing": "left",
+     "anim": "walk",
+     "i": 3,
+     "x": 448,
+     "y": 600,
+     "w": 64,
+     "h": 100,
+     "pivot": [
+      480,
+      700
+     ]
+    },
+    {
+     "name": "forgejudge_right_idle0",
+     "facing": "right",
+     "anim": "idle",
+     "i": 0,
+     "x": 0,
+     "y": 700,
+     "w": 64,
+     "h": 100,
+     "pivot": [
+      32,
+      800
+     ]
+    },
+    {
+     "name": "forgejudge_right_idle1",
+     "facing": "right",
+     "anim": "idle",
+     "i": 1,
+     "x": 64,
+     "y": 700,
+     "w": 64,
+     "h": 100,
+     "pivot": [
+      96,
+      800
+     ]
+    },
+    {
+     "name": "forgejudge_right_idle2",
+     "facing": "right",
+     "anim": "idle",
+     "i": 2,
+     "x": 128,
+     "y": 700,
+     "w": 64,
+     "h": 100,
+     "pivot": [
+      160,
+      800
+     ]
+    },
+    {
+     "name": "forgejudge_right_idle3",
+     "facing": "right",
+     "anim": "idle",
+     "i": 3,
+     "x": 192,
+     "y": 700,
+     "w": 64,
+     "h": 100,
+     "pivot": [
+      224,
+      800
+     ]
+    },
+    {
+     "name": "forgejudge_right_walk0",
+     "facing": "right",
+     "anim": "walk",
+     "i": 0,
+     "x": 256,
+     "y": 700,
+     "w": 64,
+     "h": 100,
+     "pivot": [
+      288,
+      800
+     ]
+    },
+    {
+     "name": "forgejudge_right_walk1",
+     "facing": "right",
+     "anim": "walk",
+     "i": 1,
+     "x": 320,
+     "y": 700,
+     "w": 64,
+     "h": 100,
+     "pivot": [
+      352,
+      800
+     ]
+    },
+    {
+     "name": "forgejudge_right_walk2",
+     "facing": "right",
+     "anim": "walk",
+     "i": 2,
+     "x": 384,
+     "y": 700,
+     "w": 64,
+     "h": 100,
+     "pivot": [
+      416,
+      800
+     ]
+    },
+    {
+     "name": "forgejudge_right_walk3",
+     "facing": "right",
+     "anim": "walk",
+     "i": 3,
+     "x": 448,
+     "y": 700,
+     "w": 64,
+     "h": 100,
+     "pivot": [
+      480,
+      800
+     ]
+    }
+   ],
+   "named": true,
+   "stats_hint": {
+    "tier": "npc",
+    "height_x_player": 2.5
+   }
+  },
+  "cindercaptain": {
+   "row": 8,
+   "kind": "human",
+   "scale": 2.5,
+   "desc": "Cinder-Captain Dagny Flameguard (fire-giant, 2.5x): leather jerkin over a belted tunic, belted trousers, round shield and short spear. No plate.",
+   "anims": [
+    "idle",
+    "walk"
+   ],
+   "size_bounds": [
+    [
+     10,
+     62
+    ],
+    [
+     8,
+     100
+    ]
+   ],
+   "caster": false,
+   "frames": [
+    {
+     "name": "cindercaptain_down_idle0",
+     "facing": "down",
+     "anim": "idle",
+     "i": 0,
+     "x": 0,
+     "y": 800,
+     "w": 64,
+     "h": 100,
+     "pivot": [
+      32,
+      900
+     ]
+    },
+    {
+     "name": "cindercaptain_down_idle1",
+     "facing": "down",
+     "anim": "idle",
+     "i": 1,
+     "x": 64,
+     "y": 800,
+     "w": 64,
+     "h": 100,
+     "pivot": [
+      96,
+      900
+     ]
+    },
+    {
+     "name": "cindercaptain_down_idle2",
+     "facing": "down",
+     "anim": "idle",
+     "i": 2,
+     "x": 128,
+     "y": 800,
+     "w": 64,
+     "h": 100,
+     "pivot": [
+      160,
+      900
+     ]
+    },
+    {
+     "name": "cindercaptain_down_idle3",
+     "facing": "down",
+     "anim": "idle",
+     "i": 3,
+     "x": 192,
+     "y": 800,
+     "w": 64,
+     "h": 100,
+     "pivot": [
+      224,
+      900
+     ]
+    },
+    {
+     "name": "cindercaptain_down_walk0",
+     "facing": "down",
+     "anim": "walk",
+     "i": 0,
+     "x": 256,
+     "y": 800,
+     "w": 64,
+     "h": 100,
+     "pivot": [
+      288,
+      900
+     ]
+    },
+    {
+     "name": "cindercaptain_down_walk1",
+     "facing": "down",
+     "anim": "walk",
+     "i": 1,
+     "x": 320,
+     "y": 800,
+     "w": 64,
+     "h": 100,
+     "pivot": [
+      352,
+      900
+     ]
+    },
+    {
+     "name": "cindercaptain_down_walk2",
+     "facing": "down",
+     "anim": "walk",
+     "i": 2,
+     "x": 384,
+     "y": 800,
+     "w": 64,
+     "h": 100,
+     "pivot": [
+      416,
+      900
+     ]
+    },
+    {
+     "name": "cindercaptain_down_walk3",
+     "facing": "down",
+     "anim": "walk",
+     "i": 3,
+     "x": 448,
+     "y": 800,
+     "w": 64,
+     "h": 100,
+     "pivot": [
+      480,
+      900
+     ]
+    },
+    {
+     "name": "cindercaptain_up_idle0",
+     "facing": "up",
+     "anim": "idle",
+     "i": 0,
+     "x": 0,
+     "y": 900,
+     "w": 64,
+     "h": 100,
+     "pivot": [
+      32,
+      1000
+     ]
+    },
+    {
+     "name": "cindercaptain_up_idle1",
+     "facing": "up",
+     "anim": "idle",
+     "i": 1,
+     "x": 64,
+     "y": 900,
+     "w": 64,
+     "h": 100,
+     "pivot": [
+      96,
+      1000
+     ]
+    },
+    {
+     "name": "cindercaptain_up_idle2",
+     "facing": "up",
+     "anim": "idle",
+     "i": 2,
+     "x": 128,
+     "y": 900,
+     "w": 64,
+     "h": 100,
+     "pivot": [
+      160,
+      1000
+     ]
+    },
+    {
+     "name": "cindercaptain_up_idle3",
+     "facing": "up",
+     "anim": "idle",
+     "i": 3,
+     "x": 192,
+     "y": 900,
+     "w": 64,
+     "h": 100,
+     "pivot": [
+      224,
+      1000
+     ]
+    },
+    {
+     "name": "cindercaptain_up_walk0",
+     "facing": "up",
+     "anim": "walk",
+     "i": 0,
+     "x": 256,
+     "y": 900,
+     "w": 64,
+     "h": 100,
+     "pivot": [
+      288,
+      1000
+     ]
+    },
+    {
+     "name": "cindercaptain_up_walk1",
+     "facing": "up",
+     "anim": "walk",
+     "i": 1,
+     "x": 320,
+     "y": 900,
+     "w": 64,
+     "h": 100,
+     "pivot": [
+      352,
+      1000
+     ]
+    },
+    {
+     "name": "cindercaptain_up_walk2",
+     "facing": "up",
+     "anim": "walk",
+     "i": 2,
+     "x": 384,
+     "y": 900,
+     "w": 64,
+     "h": 100,
+     "pivot": [
+      416,
+      1000
+     ]
+    },
+    {
+     "name": "cindercaptain_up_walk3",
+     "facing": "up",
+     "anim": "walk",
+     "i": 3,
+     "x": 448,
+     "y": 900,
+     "w": 64,
+     "h": 100,
+     "pivot": [
+      480,
+      1000
+     ]
+    },
+    {
+     "name": "cindercaptain_left_idle0",
+     "facing": "left",
+     "anim": "idle",
+     "i": 0,
+     "x": 0,
+     "y": 1000,
+     "w": 64,
+     "h": 100,
+     "pivot": [
+      32,
+      1100
+     ]
+    },
+    {
+     "name": "cindercaptain_left_idle1",
+     "facing": "left",
+     "anim": "idle",
+     "i": 1,
+     "x": 64,
+     "y": 1000,
+     "w": 64,
+     "h": 100,
+     "pivot": [
+      96,
+      1100
+     ]
+    },
+    {
+     "name": "cindercaptain_left_idle2",
+     "facing": "left",
+     "anim": "idle",
+     "i": 2,
+     "x": 128,
+     "y": 1000,
+     "w": 64,
+     "h": 100,
+     "pivot": [
+      160,
+      1100
+     ]
+    },
+    {
+     "name": "cindercaptain_left_idle3",
+     "facing": "left",
+     "anim": "idle",
+     "i": 3,
+     "x": 192,
+     "y": 1000,
+     "w": 64,
+     "h": 100,
+     "pivot": [
+      224,
+      1100
+     ]
+    },
+    {
+     "name": "cindercaptain_left_walk0",
+     "facing": "left",
+     "anim": "walk",
+     "i": 0,
+     "x": 256,
+     "y": 1000,
+     "w": 64,
+     "h": 100,
+     "pivot": [
+      288,
+      1100
+     ]
+    },
+    {
+     "name": "cindercaptain_left_walk1",
+     "facing": "left",
+     "anim": "walk",
+     "i": 1,
+     "x": 320,
+     "y": 1000,
+     "w": 64,
+     "h": 100,
+     "pivot": [
+      352,
+      1100
+     ]
+    },
+    {
+     "name": "cindercaptain_left_walk2",
+     "facing": "left",
+     "anim": "walk",
+     "i": 2,
+     "x": 384,
+     "y": 1000,
+     "w": 64,
+     "h": 100,
+     "pivot": [
+      416,
+      1100
+     ]
+    },
+    {
+     "name": "cindercaptain_left_walk3",
+     "facing": "left",
+     "anim": "walk",
+     "i": 3,
+     "x": 448,
+     "y": 1000,
+     "w": 64,
+     "h": 100,
+     "pivot": [
+      480,
+      1100
+     ]
+    },
+    {
+     "name": "cindercaptain_right_idle0",
+     "facing": "right",
+     "anim": "idle",
+     "i": 0,
+     "x": 0,
+     "y": 1100,
+     "w": 64,
+     "h": 100,
+     "pivot": [
+      32,
+      1200
+     ]
+    },
+    {
+     "name": "cindercaptain_right_idle1",
+     "facing": "right",
+     "anim": "idle",
+     "i": 1,
+     "x": 64,
+     "y": 1100,
+     "w": 64,
+     "h": 100,
+     "pivot": [
+      96,
+      1200
+     ]
+    },
+    {
+     "name": "cindercaptain_right_idle2",
+     "facing": "right",
+     "anim": "idle",
+     "i": 2,
+     "x": 128,
+     "y": 1100,
+     "w": 64,
+     "h": 100,
+     "pivot": [
+      160,
+      1200
+     ]
+    },
+    {
+     "name": "cindercaptain_right_idle3",
+     "facing": "right",
+     "anim": "idle",
+     "i": 3,
+     "x": 192,
+     "y": 1100,
+     "w": 64,
+     "h": 100,
+     "pivot": [
+      224,
+      1200
+     ]
+    },
+    {
+     "name": "cindercaptain_right_walk0",
+     "facing": "right",
+     "anim": "walk",
+     "i": 0,
+     "x": 256,
+     "y": 1100,
+     "w": 64,
+     "h": 100,
+     "pivot": [
+      288,
+      1200
+     ]
+    },
+    {
+     "name": "cindercaptain_right_walk1",
+     "facing": "right",
+     "anim": "walk",
+     "i": 1,
+     "x": 320,
+     "y": 1100,
+     "w": 64,
+     "h": 100,
+     "pivot": [
+      352,
+      1200
+     ]
+    },
+    {
+     "name": "cindercaptain_right_walk2",
+     "facing": "right",
+     "anim": "walk",
+     "i": 2,
+     "x": 384,
+     "y": 1100,
+     "w": 64,
+     "h": 100,
+     "pivot": [
+      416,
+      1200
+     ]
+    },
+    {
+     "name": "cindercaptain_right_walk3",
+     "facing": "right",
+     "anim": "walk",
+     "i": 3,
+     "x": 448,
+     "y": 1100,
+     "w": 64,
+     "h": 100,
+     "pivot": [
+      480,
+      1200
+     ]
+    }
+   ],
+   "named": true,
+   "stats_hint": {
+    "tier": "npc",
+    "height_x_player": 2.5
+   }
+  }
+ }
+}
