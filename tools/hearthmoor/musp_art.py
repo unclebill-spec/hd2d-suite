@@ -243,6 +243,8 @@ def caldera_place(area):
     return out
 
 
+NOCAST = {("mp_hall", "wardens_seat")}
+PIECE_MOVE_AT = {("lavafalls", "amber_orb_chain", 0.0, 2.0): (-1.2, 5.8)}
 PIECE_MOVE = {("mp_hall", "obsidian_pillar"): (-5.8, 2.2)}
 
 
@@ -255,7 +257,8 @@ def layout_place(area):
     for p in json.loads(lp.read_text())[la]["pieces"]:
         name, (x, y, z) = p[0], p[1]; rot = p[2] if len(p) > 2 else 0
         if name in SPEC_TERRAIN: continue
-        if (area, name) in PIECE_MOVE: x, z = PIECE_MOVE[(area, name)]   # the pillar's shadow fell across Aska (check_scene atlas corr): moved clear
+        if (area, name) in PIECE_MOVE: x, z = PIECE_MOVE[(area, name)]
+        if (area, name, round(x, 1), round(z, 1)) in PIECE_MOVE_AT: x, z = PIECE_MOVE_AT[(area, name, round(x, 1), round(z, 1))]   # one chain of orbs hung beside the spawn (check_scene player corr)   # the pillar's shadow fell across Aska (check_scene atlas corr): moved clear
         if name in ("basalt_floor", "forge_floor") and nt and nt[0] <= x <= nt[2] and nt[1] <= z <= nt[3]: continue
         ex = {}
         if rot: ex["rot"] = rot
@@ -345,6 +348,7 @@ def place(area):
         x, y, z = spot
         o = {"glb": f"public/art/kit/{pc['file']}", "pos": [x, y, z], "rot": rot, "musp_art": True}
         if name in WALK: o.update(walkable=True, cast=False)
+        if (area, name) in NOCAST: o["cast"] = False   # its shadow fell across the NPC in front of it (check_scene atlas corr)
         if extra.get("pz"): o["pz"] = extra["pz"]
         if extra.get("hidden"): o["hidden"] = True
         sc["objects"].append(o)

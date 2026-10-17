@@ -93,7 +93,7 @@ Rares.prototype.spawn = function spawn(o = {}) {   // Ash Alpha = blazing + quic
   return spawnRare0.call(this, o);
 };
 SPAWNS.lavafalls = [   // 1.4x / 1.5x foes read fully on screen; clear of the braziers (+-1.6, -5.4), cold braziers (+-3.6, 1), lava pools (+-6.4, -4.4), the channel at z 3 and Torka (-4.8, -2.4)
-  { id: 'lf_hound0', role: 'magma_hound', pos: [4.6, -1.6] }, { id: 'lf_hound1', role: 'magma_hound', pos: [8.0, -1.4] },
+  { id: 'lf_hound0', role: 'magma_hound', pos: [5.4, -2.6] }, { id: 'lf_hound1', role: 'magma_hound', pos: [8.0, -1.4] },
   { id: 'lf_elem0', role: 'flame_elemental', pos: [-1.0, -1.4], night: true }, { id: 'lf_hound2', role: 'magma_hound', pos: [-1.6, 6.4], night: true },
 ];
 const MP_FX = {   // [effect, [x, z], dy]: the pack's animated pools / flames / motes (art metadata layout; the Caldera rooms from the placed pieces)
@@ -105,8 +105,7 @@ const MP_FX = {   // [effect, [x, z], dy]: the pack's animated pools / flames / 
 };
 
 WAYS.caldera2 = ['the Ember Caldera, the Waystone Landing', 'caldera2', 'from_waystone'];
-SPAWNS.caldera = [   // C1 (two hounds) is an ambush on the way in (calderaRooms); C2 cultists, C3's far bank + C4 golems. Nothing in the start view (z > -9).
-  { id: 'cd_cult0', role: 'ashen_cultist', pos: [-4.6, -10.4] }, { id: 'cd_cult1', role: 'ashen_cultist', pos: [4.6, -10.4] },
+SPAWNS.caldera = [   // C1 (two hounds) is an ambush on the way in (calderaRooms); C2 cultists step out when you pass z -3 (caldera2c; a phone-portrait view reaches z -10, under the HUD), C3's far bank + C4 golems. Nothing in the start view (z > -9).
   { id: 'cd_golem0', role: 'fire_golem', pos: [4.4, -34.4] }, { id: 'cd_golem1', role: 'fire_golem', pos: [-1.0, -41.0], night: true }, { id: 'cd_cult2', role: 'ashen_cultist', pos: [-3.0, -32.4], night: true },
 ];
 SPAWNS.caldera2 = [   // C5 is quiet (Veyra's seam); C6 Kilnmother is scripted; C7 elementals + a golem; C9 is Vharzul
@@ -238,7 +237,7 @@ function finishWalk(G) {
 }
 function closeSigil(G) {   // The Mirror Sigil done (story 3.3 / 4.3): the sigil is a fake, a rider carries the real seal to Hearthmoor
   const S = G.S, f = flags(S);
-  G.setQuest('mp_sigil', 3); G.factions.add('embassy', MERIT.mp_sigil + (f.mp_prior ? MERIT.mp_rival : 0), 'mp_sigil')   // the +20 is for a Niflheim conqueror (mood set before the Walk; the Walk itself raises the mood to 3); gold(G, 40);
+  G.setQuest('mp_sigil', 3); G.factions.add('embassy', MERIT.mp_sigil + (f.mp_prior ? MERIT.mp_rival : 0), 'mp_sigil'); gold(G, 40);   // the +20 is for a Niflheim conqueror (mood set before the Walk; the Walk itself raises the mood to 3)
   f.mp_cleared = 1; f.mp_peace = 1; S.evidence = { ...(S.evidence || {}), muspelheim: 'mirror_sigil' }; mark(G);
 }
 const WARDEN_OPTIONS = (S) => {   // Aska's choice (story 5.2). The befriend option is greyed (a locked label) when Niflheim is befriended or four realms already stand with you
@@ -393,7 +392,7 @@ export class Muspelheim {
   detach() {
     for (const f of this.fx) if (f) f.dur = f.t + 0.2;
     for (const l of this.lights) if (l) l.kill = true;
-    this.fx = []; this.lights = []; this.spots = []; this.cb = {}; this.pend = []; this.wfx = {}; this.relit = null; this.relitFx = []; this.relitLt = []; this.boss = null; this.kiln = null; this.ambushed = false; this.burnT = 0; this.ctx = null; this.area = null;
+    this.fx = []; this.lights = []; this.spots = []; this.cb = {}; this.pend = []; this.wfx = {}; this.relit = null; this.relitFx = []; this.relitLt = []; this.boss = null; this.kiln = null; this.ambushed = false; this.cults = false; this.burnT = 0; this.ctx = null; this.area = null;
   }
   // ---- area hooks. Skeleton: only the hub's gate wiring is real; the rest are filled in with their area builds (see MUSPELHEIM_PROGRESS.md)
   // The Warden's Walk (story 3.2): five stones over the lava channel at z 3 (warden_stones at [0, 3]). Step on all five in order from either end; a wrong stone hisses and you start again.
@@ -596,6 +595,11 @@ export class Muspelheim {
     G.toast('Hounds drop off the wall!', 2.0);
     [[-5.2, -1.8], [5.2, -1.8]].forEach(([x, z], i) => this.foe({ id: 'cd_h' + i, role: 'magma_hound', pos: [x, z] }, dead));
   }
+  caldera2c() {   // C2: two ashen cultists step out of the dark beside the seal tablet once you are past the stair
+    const G = this.G, S = G.S; if (this.cults || (S.found || {}).cd_c2) return; this.cults = true;
+    let left = 2; const dead = () => { if (--left > 0) return; this.find('cd_c2'); delete this.cb.cd_cult0; delete this.cb.cd_cult1; };
+    [-4.6, 4.6].forEach((x, i) => this.foe({ id: 'cd_cult' + i, role: 'ashen_cultist', pos: [x, -10.4] }, dead));
+  }
   // ---- the Throne rooms C5-C9: Veyra's seam, the Kilnmother, springs + waystone, Vharzul
   deepRooms(ctx) {
     const G = this.G, S = G.S;
@@ -736,6 +740,7 @@ export class Muspelheim {
     if (this.teaT > 0) this.teaT -= dt;
     if (this.area === 'caldera2') { this.caldera2Tick(); this.tickKiln(dt); this.tickVharzul(dt); }
     if (this.area === 'caldera' && !this.G.dlg && !this.G.busy && this.G.combat && this.ctx.player.z < 3.0) this.caldera1();
+    if (this.area === 'caldera' && !this.G.dlg && !this.G.busy && this.G.combat && this.ctx.player.z < -3.0) this.caldera2c();
     if (this.area === 'caldera' && this.ctx.player.y > 1.9 && this.ctx.player.z < GLASS.z0 && this.ctx.player.z > GLASS.endZ && !(S.found || {}).cd_glass) this.glassTick();
     if (this.noSprint > 0) this.noSprint = Math.max(0, this.noSprint - dt);   // the tongs: story 3.1 (the 10 s no-sprint rule is enforced with the hub build)
   }

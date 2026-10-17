@@ -65,7 +65,7 @@ def steps(b, url, T, size, errors, rep, stub=None, shots=None):
         return T.ev(f"(window.__hm.factions.qa().merit.{k}) || 0")
 
     def reset_state():   # a clean realm state between talk scenarios (same page: no reload)
-        S("S.flags = { ...(S.flags || {}), alliance: {}, rivals: {}, realm_mood: {}, mp_contract: 0, mh_terms: 0 }; S.quests.mp_walk = 0; S.quests.mp_sigil = 0; S.quests.mp_take = 0; S.quests.mp_hire = 0; S.hero = 'wildcaller'; return 1;")
+        S("S.flags = { ...(S.flags || {}), alliance: {}, rivals: {}, realm_mood: {}, mp_contract: 0, mh_terms: 0, mp_prior: 0 }; S.quests.mp_walk = 0; S.quests.mp_sigil = 0; S.quests.mp_take = 0; S.quests.mp_hire = 0; S.hero = 'wildcaller'; return 1;")
 
     try:
         # ---- file-level: the skeleton specs and the installer / build gate wait on READY.txt
