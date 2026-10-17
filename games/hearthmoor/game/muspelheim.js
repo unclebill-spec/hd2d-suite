@@ -85,7 +85,7 @@ Object.assign(BASES, {
   ashalpha: { name: 'Ash Alpha', scale: 2, hp: 300, dmg: 16, speed: 2.1, reach: 2.0, windup: 0.5, cd: 1.7, aggro: 8.5, r: 0.7, push: 0.2, heavy: true, minion: 'magma_hound', xp: 180 },
   pyreling: { name: 'Pyreling', scale: 3, hp: 360, dmg: 18, speed: 1.3, reach: 2.6, windup: 0.7, cd: 2.0, aggro: 8, r: 0.8, push: 0.2, float: true, xp: 210 },
 });
-RARE_AREAS.lavafalls = { bases: ['ashalpha', 'pyreling'], spots: [[5.6, 1.6], [1.6, -2.4]] };   // spots are chosen with the area (fall-pool; clear of braziers, glass walks, actors and the start view)
+RARE_AREAS.lavafalls = { bases: ['ashalpha', 'pyreling'], spots: [[5.6, 1.6], [2.4, -2.4]] };   // spots are chosen with the area (fall-pool; clear of braziers, glass walks, actors and the start view)
 const spawnRare0 = Rares.prototype.spawn;
 Rares.prototype.spawn = function spawn(o = {}) {   // Ash Alpha = blazing + quick (enraged + summoner: calls 2 hounds), Pyreling = flicker-step (blinking)
   if (!o.traits && o.base === 'ashalpha') o = { ...o, traits: ['enraged', 'summoner'] };
