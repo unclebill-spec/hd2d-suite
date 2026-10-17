@@ -54,7 +54,7 @@ def steps(b, url, T, size, errors, rep, stub=None, shots=None):
         T.wait(f"window.__hm.area === '{area}' && !window.__hm.busy", timeout); T.idle(); pg.wait_for_timeout(500)
 
     def load(area, extra="", spawn="start"):
-        pg.goto(url + f"&qa&combat&area={area}&spawn={spawn}{extra}")
+        pg.goto(url + f"&qa&combat&area={area}&spawn={spawn}{extra}", timeout=150000)   # a busy box can take over 30 s to load a scene
         T.wait(f"window.__hm && window.__hm.area === '{area}' && window.__hd2d && window.__hd2d.ready && !window.__hm.busy", 150)
         T.idle(); pg.wait_for_timeout(1500)
         return alf()
