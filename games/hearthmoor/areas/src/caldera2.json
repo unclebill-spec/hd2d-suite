@@ -1,0 +1,339 @@
+{
+ "seed": 322,
+ "biome": "cozy-village",
+ "time": {
+  "start": "night",
+  "speed": 0.0016
+ },
+ "spells": true,
+ "boss_roles": [],
+ "camera": {
+  "fov": 24,
+  "pitch": 36,
+  "distance": 33,
+  "zoom": [
+   24,
+   44
+  ],
+  "look": [
+   0,
+   0,
+   -2.4
+  ],
+  "bounds": [
+   -10.4,
+   -56.0,
+   10.4,
+   12.0
+  ]
+ },
+ "hedges": [],
+ "trees": [],
+ "backdrop": {},
+ "decks": [],
+ "blocks": [],
+ "buildings": [],
+ "name": "The Ember Caldera: the Throne",
+ "about": "Muspelheim's dungeon, rooms C5-C9 (story 7): the Cold Seam, the Cantor's Chapel, the Springs of Glass, the Waystone Landing and the Ember Throne where Vharzul waits.",
+ "sprite_roles": [
+  "actors",
+  "heroes",
+  "combat",
+  "lanternseller",
+  "dwarftrader",
+  "poolkeeper",
+  "wispcatcher",
+  "elffolk",
+  "elffolk2",
+  "innkeeper",
+  "shopkeeper",
+  "nightmerchant",
+  "gnome"
+ ],
+ "ground": {
+  "size": [
+   80,
+   150
+  ],
+  "mat": "stone",
+  "walk": [
+   -11.6,
+   -58.8,
+   11.6,
+   12.4
+  ]
+ },
+ "slabs": [],
+ "terraces": [
+  {
+   "name": "plat_c6",
+   "rect": [
+    -11.9,
+    -17.0,
+    11.9,
+    -4.2
+   ],
+   "h": 1.2,
+   "top": "plaster",
+   "gaps": [
+    [
+     -1.5,
+     1.5
+    ]
+   ]
+  },
+  {
+   "name": "plat_c7",
+   "rect": [
+    -11.9,
+    -42.0,
+    11.9,
+    -17.4
+   ],
+   "h": 2.4,
+   "top": "plaster",
+   "gaps": [
+    [
+     -1.5,
+     1.5
+    ]
+   ]
+  },
+  {
+   "name": "plat_c9",
+   "rect": [
+    -11.9,
+    -58.0,
+    11.9,
+    -42.4
+   ],
+   "h": 3.6,
+   "top": "plaster",
+   "gaps": [
+    [
+     -1.5,
+     1.5
+    ]
+   ]
+  },
+  {
+   "name": "wall_w",
+   "rect": [
+    -30,
+    -84.0,
+    -12.0,
+    13
+   ],
+   "h": 4.8,
+   "top": "stone",
+   "coping": true
+  },
+  {
+   "name": "wall_e",
+   "rect": [
+    12.0,
+    -84.0,
+    30,
+    13
+   ],
+   "h": 4.8,
+   "top": "stone",
+   "coping": true
+  },
+  {
+   "name": "wall_n",
+   "rect": [
+    -30,
+    -84.0,
+    30,
+    -58.2
+   ],
+   "h": 4.8,
+   "top": "stone",
+   "coping": true
+  }
+ ],
+ "stairs": [
+  {
+   "name": "stair_c6",
+   "x": 0.0,
+   "z_top": -4.2,
+   "width": 3.0,
+   "rise": 1.2,
+   "base": 0.0
+  },
+  {
+   "name": "stair_c7",
+   "x": 0.0,
+   "z_top": -17.4,
+   "width": 3.0,
+   "rise": 1.2,
+   "base": 1.2
+  },
+  {
+   "name": "stair_c9",
+   "x": 0.0,
+   "z_top": -42.4,
+   "width": 3.0,
+   "rise": 1.2,
+   "base": 2.4
+  }
+ ],
+ "props": [],
+ "emitters": [
+  {
+   "preset": "embers",
+   "pos": [
+    0,
+    2.0,
+    2.0
+   ],
+   "area": [
+    20,
+    2.0,
+    10
+   ],
+   "min_gate": 0.0
+  },
+  {
+   "preset": "embers",
+   "pos": [
+    0,
+    2.0,
+    -34.0
+   ],
+   "area": [
+    14,
+    2.0,
+    12
+   ],
+   "min_gate": 0.0
+  }
+ ],
+ "actors": [],
+ "player": {
+  "role": "traveler",
+  "pos": [
+   0.0,
+   8.4
+  ],
+  "facing": "up"
+ },
+ "fx": [],
+ "grades": {
+  "day": {
+   "fog_color": "#5a3030",
+   "sky_top": "#2a1418",
+   "sky_bottom": "#c8783a",
+   "hemi_sky": "#f0c8a0",
+   "saturation": 0.95,
+   "bugs": 0.0,
+   "warmth": 0.08,
+   "exposure": 0.9,
+   "sun_intensity": 0.9,
+   "hemi_intensity": 0.75,
+   "sun_color": "#ffd8b0",
+   "lamp_intensity": 0.85
+  },
+  "dusk": {
+   "fog_color": "#2c1418",
+   "sky_top": "#14080c",
+   "sky_bottom": "#7a3018",
+   "exposure": 0.95,
+   "sun_intensity": 0.6,
+   "warmth": 0.1,
+   "sun_color": "#ff9a60",
+   "bugs": 0.5
+  },
+  "night": {
+   "fog_color": "#180c10",
+   "sky_top": "#08040a",
+   "sky_bottom": "#4a1c14",
+   "hemi_sky": "#8a5a50",
+   "bugs": 1.0,
+   "exposure": 1.0,
+   "sun_intensity": 0.4,
+   "hemi_intensity": 0.55,
+   "sun_color": "#d08060"
+  }
+ },
+ "game": {
+  "id": "caldera2",
+  "title": "The Ember Caldera: the Throne",
+  "exits": [
+   {
+    "rect": [
+     -1.5,
+     10.4,
+     1.5,
+     11.4
+    ],
+    "to": "caldera",
+    "spawn": "from_caldera2",
+    "label": "back up the Furnace Hall"
+   }
+  ],
+  "portals": [],
+  "spawns": {
+   "start": [
+    0.0,
+    8.4,
+    "up"
+   ],
+   "from_caldera": [
+    0.0,
+    8.4,
+    "up"
+   ],
+   "qa": [
+    0.0,
+    8.0,
+    "up"
+   ],
+   "walk": [
+    0.0,
+    3.0,
+    "up"
+   ],
+   "chapel": [
+    0.0,
+    -5.6,
+    "up"
+   ],
+   "springs": [
+    0.0,
+    -18.8,
+    "up"
+   ],
+   "landing": [
+    0.0,
+    -32.0,
+    "up"
+   ],
+   "throne": [
+    0.0,
+    -43.6,
+    "up"
+   ],
+   "from_waystone": [
+    -3.6,
+    -34.8,
+    "down"
+   ]
+  },
+  "spring": {
+   "pos": [
+    -6.0,
+    -24.0
+   ],
+   "r": 1.8,
+   "secret": "cd_spring"
+  },
+  "waystone": {
+   "pos": [
+    -3.6,
+    -37.0
+   ]
+  }
+ }
+}

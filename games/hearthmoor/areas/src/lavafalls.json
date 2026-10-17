@@ -178,8 +178,8 @@
    "role": "nightmerchant",
    "name": "Torka Ashgrip",
    "pos": [
-    -4.8,
-    -1.0
+    -1.6,
+    -1.6
    ],
    "facing": "right",
    "behavior": "idle",
@@ -193,8 +193,8 @@
    "role": "poolkeeper",
    "name": "Yrsa Brightwell",
    "pos": [
-    -6.0,
-    7.4
+    1.6,
+    4.8
    ],
    "facing": "right",
    "behavior": "idle",
@@ -207,8 +207,8 @@
  "player": {
   "role": "traveler",
   "pos": [
-   0.0,
-   5.4
+   0.4,
+   1.2
   ],
   "facing": "up"
  },
@@ -269,8 +269,8 @@
   "portals": [],
   "spawns": {
    "start": [
-    0.0,
-    5.4,
+    0.4,
+    1.2,
     "up"
    ],
    "from_town": [
@@ -279,8 +279,8 @@
     "right"
    ],
    "qa": [
-    0.0,
-    5.4,
+    0.4,
+    1.2,
     "up"
    ],
    "anvils": [

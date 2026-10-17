@@ -164,8 +164,8 @@
    "role": "shopkeeper",
    "name": "Envoy Sunndis Embervane",
    "pos": [
-    2.6,
-    6.4
+    3.8,
+    1.4
    ],
    "facing": "left",
    "behavior": "idle",
@@ -180,7 +180,7 @@
    "name": "Ember-Warden Aska Cindervane",
    "pos": [
     0.0,
-    -1.0
+    -3.6
    ],
    "facing": "down",
    "behavior": "idle",
@@ -194,7 +194,7 @@
   "role": "traveler",
   "pos": [
    0.0,
-   5.2
+   -1.4
   ],
   "facing": "up"
  },
@@ -256,7 +256,7 @@
   "spawns": {
    "start": [
     0.0,
-    5.2,
+    -1.4,
     "up"
    ],
    "from_town": [
@@ -266,7 +266,7 @@
    ],
    "qa": [
     0.0,
-    5.2,
+    -1.4,
     "up"
    ],
    "hearth": [

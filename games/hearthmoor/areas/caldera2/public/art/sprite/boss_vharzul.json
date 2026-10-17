@@ -1,0 +1,177 @@
+{
+ "tool": "hd2d boss_sheet (muspelheim big frames)",
+ "biome": "cozy-village",
+ "frame": [
+  144,
+  256
+ ],
+ "pivot": [
+  72,
+  256
+ ],
+ "ground_row": 255,
+ "facings": [
+  "down",
+  "up",
+  "left",
+  "right"
+ ],
+ "anims": {
+  "idle": {
+   "start": 0,
+   "count": 4,
+   "fps": 3,
+   "loop": [
+    0,
+    1,
+    2,
+    1
+   ],
+   "blink": 3
+  },
+  "walk": {
+   "start": 4,
+   "count": 4,
+   "fps": 8
+  },
+  "cast": {
+   "start": 8,
+   "count": 4,
+   "fps": 6,
+   "loop": [
+    0,
+    1,
+    2,
+    2,
+    3,
+    3
+   ],
+   "casters_only": true
+  },
+  "attack": {
+   "start": 12,
+   "count": 4,
+   "fps": 10,
+   "loop": [
+    0,
+    1,
+    2,
+    2,
+    3
+   ],
+   "heroes_only": true
+  },
+  "defend": {
+   "start": 16,
+   "count": 4,
+   "fps": 6,
+   "loop": [
+    0,
+    1
+   ],
+   "hold": [
+    2,
+    3
+   ],
+   "heroes_only": true
+  },
+  "jump": {
+   "start": 20,
+   "count": 4,
+   "fps": 8,
+   "phases": [
+    "crouch",
+    "launch",
+    "airborne",
+    "land"
+   ],
+   "heroes_only": true
+  },
+  "die": {
+   "start": 24,
+   "count": 4,
+   "fps": 6,
+   "once": true,
+   "enemies_only": true
+  }
+ },
+ "cols": 28,
+ "size": [
+  4032,
+  2048
+ ],
+ "image": "boss_vharzul.png",
+ "roles": {
+  "vharzul": {
+   "row": 0,
+   "kind": "enemy",
+   "scale": 8.0,
+   "desc": "Vharzul the Ember Throne (boss, 8x; the ONLY plate in Muspelheim): horned overlord demon in black-iron plate, crown of fire, wings of ember-smoke, red-lit eyes, broken-throne greatsword. Phases 1-2. die = collapses into an ash heap with a last ember.",
+   "anims": [
+    "idle",
+    "walk",
+    "attack",
+    "die"
+   ],
+   "size_bounds": [
+    [
+     10,
+     142
+    ],
+    [
+     8,
+     256
+    ]
+   ],
+   "caster": false,
+   "enemy": true,
+   "boss": true,
+   "light": {
+    "color": "#ff7a1a",
+    "intensity": 1.3,
+    "range": 10.0
+   },
+   "stats_hint": {
+    "tier": "boss",
+    "height_x_player": 8.0,
+    "dungeon": "The Ember Caldera",
+    "plate": true,
+    "element": "fire"
+   }
+  },
+  "vharzul_p3": {
+   "row": 4,
+   "kind": "enemy",
+   "scale": 8.0,
+   "desc": "Vharzul phase 3 (25%): the crown flares into a tall blaze, the three Warden's lamps relight, wings stream embers.",
+   "anims": [
+    "idle",
+    "walk",
+    "attack",
+    "die"
+   ],
+   "size_bounds": [
+    [
+     10,
+     142
+    ],
+    [
+     8,
+     256
+    ]
+   ],
+   "caster": false,
+   "enemy": true,
+   "boss": true,
+   "light": {
+    "color": "#ffb066",
+    "intensity": 1.7,
+    "range": 12.0
+   },
+   "stats_hint": {
+    "tier": "boss",
+    "height_x_player": 8.0
+   }
+  }
+ }
+}

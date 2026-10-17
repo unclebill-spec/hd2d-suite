@@ -189,13 +189,64 @@ WALK = {"warden_stones", "glass_bridge", "dance_ring", "basalt_floor", "forge_fl
 LAYOUT_AREA = {"muspelheim": "cinderhold", "mp_hall": "sigil_forge", "lavafalls": "lavafalls"}   # caldera / caldera2: later (only the throne room has a layout: caldera_throne)
 SPEC_TERRAIN = {"basalt_ledge", "basalt_stair", "glass_terrace"}
 NO_TILE = {"muspelheim": (-3.4, -9.8, 3.4, -1.6), "mp_hall": (2.8, -7.6, 6.4, 0.6), "lavafalls": (-9.2, -1.2, -5.6, 4.8)}   # terrace + stair footprints (+ a margin): no floor tiles over them
-EXTRA_PLACE = {}   # area -> [(piece, [x, z], flags...)] added after the layout (hand-placed extras)
+EXTRA_PLACE = {}   # area -> [(piece, [x, z], "fixed", {rot, y})] added after the layout (hand-placed extras)
+# ---- the Ember Caldera (no layout in the pack except the throne render): hand-placed from the kit's own notes (keep_clear, blockers, hanging heights). x, z, optional quarter turn.
+Q = 1.5707963267948966
+CALDERA = {
+    "caldera": [   # C1 Mouth (ember-lamps down to the stair, lava sunk along both walls), C2 Ashen Stair, C3 Glass Bridge (lava either side), C4 Furnace Hall (furnace in the west alcove, exit north stays open)
+        ("brazier_stand", -3.4, 7.0), ("brazier_stand", 3.4, 7.0), ("warm_lantern", -5.4, 2.0), ("warm_lantern", 5.4, 2.0), ("warm_lantern", -2.8, -2.0), ("warm_lantern", 2.8, -2.0),
+        ("lava_channel", -9.0, 6.0), ("lava_channel", -9.0, 2.0), ("lava_channel", 9.0, 6.0), ("lava_channel", 9.0, 2.0), ("obsidian_pillar", -7.6, -1.6), ("obsidian_pillar", 7.6, -1.6),
+        ("brazier_stand", -4.6, -6.6), ("brazier_stand", 4.6, -6.6), ("warm_lantern", -3.0, -10.0), ("warm_lantern", 3.0, -10.0), ("obsidian_pillar", -8.0, -9.6), ("obsidian_pillar", 8.0, -12.6),
+        ("cinder_cairn", -9.6, -13.6), ("lava_channel", -9.4, -7.0), ("lava_channel", 9.4, -7.0),
+        ("glass_bridge", 0.0, -18.4), ("glass_bridge", 0.0, -22.4), ("glass_bridge", 0.0, -26.4),
+        ("lava_channel", -3.7, -18.4), ("lava_channel", -3.7, -22.4), ("lava_channel", -3.7, -26.4), ("lava_channel", 3.7, -18.4), ("lava_channel", 3.7, -22.4), ("lava_channel", 3.7, -26.4),
+        ("lava_pool", -7.6, -22.4), ("lava_pool", 7.6, -22.4), ("cold_brazier", -2.4, -29.6), ("warm_lantern", 2.4, -29.6),
+        ("furnace", -6.4, -37.4), ("brazier_stand", 5.6, -33.6), ("brazier_stand", -8.6, -32.4), ("warm_lantern", 4.0, -40.6), ("obsidian_pillar", 8.6, -38.0), ("cinder_cairn", 8.0, -42.0),
+    ],
+    "caldera2": [   # C5 Cold Seam, C6 Cantor's Chapel, C7 Springs of Glass, C8 Waystone Landing, C9 Ember Throne
+        ("cold_seam_wall", -8.0, -2.4), ("cold_seam_wall", -6.0, -2.4), ("cold_seam_wall", -4.0, -2.4), ("cold_seam_wall", 4.0, -2.4), ("cold_seam_wall", 6.0, -2.4), ("cold_seam_wall", 8.0, -2.4),
+        ("cold_brazier", -2.8, 3.0), ("cold_brazier", 2.8, 3.0), ("hanging_crystals", -5.0, 0.0, 0, 3.0), ("hanging_crystals", 5.0, 0.0, 0, 3.0), ("warm_lantern", -6.2, 7.0), ("warm_lantern", 6.2, 7.0),
+        ("brazier_stand", -5.6, -6.6), ("brazier_stand", 5.6, -6.6), ("shrine_lamp", -3.6, -13.4), ("shrine_lamp", 3.6, -13.4), ("wardens_seat", 0.0, -15.2), ("obsidian_pillar", -9.0, -11.0), ("obsidian_pillar", 9.0, -11.0),
+        ("warm_lantern", -8.0, -8.0), ("warm_lantern", 8.0, -8.0),
+        ("spring_pool", -6.0, -24.0), ("shrine_lamp", -8.8, -22.4), ("shrine_lamp", -3.4, -22.4), ("hanging_crystals", -4.0, -21.0, 0, 3.0), ("hanging_crystals", 5.0, -23.0, 0, 3.0),
+        ("cold_brazier", 6.0, -24.6), ("obsidian_pillar", 9.2, -20.6), ("warm_lantern", 3.4, -19.8), ("cinder_cairn", 9.0, -28.6),
+        ("muspel_waystone", -3.6, -37.0), ("brazier_stand", -7.2, -32.4), ("brazier_stand", 7.2, -32.4), ("cinder_cairn", 5.0, -36.0), ("cinder_cairn", 7.6, -34.0), ("warm_lantern", 3.0, -32.8),
+        ("ember_throne", 0.0, -55.6), ("warden_lamp_stand", 0.0, -45.2), ("warden_lamp_stand", -4.5, -53.0), ("warden_lamp_stand", 4.5, -53.0),   # the pack's throne scene: arena centre (0, -50), Vharzul at (0, -51.8)
+        ("lava_channel", -9.4, -54.0), ("lava_channel", -9.4, -50.0), ("lava_channel", -9.4, -46.0), ("lava_channel", 9.4, -54.0), ("lava_channel", 9.4, -50.0), ("lava_channel", 9.4, -46.0),
+        ("cold_brazier", -5.4, -43.4), ("cold_brazier", 5.4, -43.4), ("hanging_crystals", -6.0, -52.0, 0, 3.0), ("hanging_crystals", 6.0, -52.0, 0, 3.0), ("hanging_crystals", 0.0, -44.0, 0, 3.0),
+    ],
+}
+TILE_ZONES = {   # flat zones (z range, [x0, x1]) of the caldera areas that get basalt floor tiles; stair strips are skipped
+    "caldera": [(11.0, -3.2), (-5.2, -15.0), (-31.2, -43.0)],
+    "caldera2": [(11.0, -3.2), (-5.2, -16.0), (-18.4, -41.0), (-43.4, -57.0)],
+}
+STAIR_Z = {"caldera": [-4.2, -16.4], "caldera2": [-4.2, -17.4, -42.4]}
+
+
+def caldera_place(area):
+    out = []
+    for e in CALDERA.get(area, []):
+        name, x, z = e[:3]; ex = {}
+        if len(e) > 3 and e[3]: ex["rot"] = e[3]
+        if len(e) > 4: ex["y"] = e[4]
+        out.append((name, [x, z], "fixed", ex))
+    sz = STAIR_Z.get(area, [])
+    for z0, z1 in TILE_ZONES.get(area, []):
+        z = z0
+        while z >= z1:
+            for xi in range(-11, 12, 2):
+                if any(-1.0 <= z - st <= 3.6 and abs(xi) <= 2.5 for st in sz): continue
+                if area == "caldera" and -30.2 < z < -16.4 and abs(xi) > 2.8: continue   # lava either side of the bridge
+                if area == "caldera" and -30.2 < z < -16.4: continue                       # the glass bridge is its own piece
+                out.append(("basalt_floor", [float(xi), z], "fixed", {}))
+            z -= 2.0
+    return out
 
 
 def layout_place(area):
     la = LAYOUT_AREA.get(area)
     lp = ST / "metadata" / "muspelheim_layout.json"
-    if not la or not lp.exists(): return []
+    if not la or not lp.exists(): return caldera_place(area) + EXTRA_PLACE.get(area, [])
     out = []
     nt = NO_TILE.get(area)
     for p in json.loads(lp.read_text())[la]["pieces"]:
@@ -206,7 +257,7 @@ def layout_place(area):
         if rot: ex["rot"] = rot
         if name in ("amber_orb_chain", "hanging_crystals"): ex["y"] = y   # hanging pieces keep the layout height
         out.append((name, [x, z], "fixed", ex))
-    return out + EXTRA_PLACE.get(area, [])
+    return out + EXTRA_PLACE.get(area, []) + caldera_place(area)
 
 
 # Decor lamps (lava, forge windows, braziers, glass orbs) are dimmed in reach so they do not tint the few-colour ember-kin sprites standing near them (check_scene colours:
@@ -214,8 +265,11 @@ def layout_place(area):
 LAMP_CAP = {"basalt_house": 3.0, "forge_hall": 3.5, "lava_channel": 3.0, "lava_pool": 3.0, "red_arch": 3.2, "spice_stall": 3.0, "brazier_stand": 2.8, "cold_brazier": 2.4,
             "shrine_lamp": 2.6, "glass_bridge": 3.0, "lizard_stable": 3.0, "emberfall_anvil": 2.4, "obsidian_pillar": 2.5, "amber_orb_chain": 2.4, "spring_pool": 3.0,
             "muspel_waystone": 3.5, "cinder_cairn": 2.0, "warm_lantern": 2.6, "forge_wall": 3.0, "wardens_seat": 3.0, "warden_stones": 3.5, "lava_fall_cliff": 4.0,
-            "caldera_mouth_arch": 4.0, "seal_cast_bed": 3.0, "stamp_press": 2.6, "ledger_desk": 2.4, "sigil_mould_wall": 3.0}
+            "caldera_mouth_arch": 4.0, "furnace": 4.0, "ember_throne": 5.0, "warden_lamp_stand": 3.5, "hanging_crystals": 4.0, "cold_seam_wall": 3.5, "seal_cast_bed": 3.0, "stamp_press": 2.6, "ledger_desk": 2.4, "sigil_mould_wall": 3.0}
 LAMP_CAP_AREA = {a: dict(LAMP_CAP) for a in PLANNED}
+# per-area tightening where a tall giant stands near decor lamps (check_scene colours: crop colours / source colours <= 2): Aska by the seat lamps, Torka by her anvils and the fall pools
+LAMP_CAP_AREA["mp_hall"].update({"wardens_seat": 1.4, "shrine_lamp": 1.6, "amber_orb_chain": 1.6})
+LAMP_CAP_AREA["lavafalls"].update({"emberfall_anvil": 1.2, "lava_pool": 2.0, "cold_brazier": 2.0})
 
 
 def place(area):
