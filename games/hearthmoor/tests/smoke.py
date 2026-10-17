@@ -1648,7 +1648,8 @@ def run(out, simscale=4, size=(960, 540), segs=SEGS):
                     idle_act()
                     x, y, _w = bc(sel); q.wait_for_timeout(300)
                     TS[0] = max(TS[0], time.time()); touch("touchStart", [(x, y)]); touch("touchEnd", [])
-                    q.wait_for_timeout(120 if name == "jump" else 60)
+                    # the action starts on a game frame (slow, capped game time on a busy box): wait for it instead of sampling at a fixed 60 / 120 ms
+                    T.until(f"window.__hd2d.actorState().act === '{want}'", 20)
                     acts[name] = T.ev("window.__hd2d.actorState().act")
                     q.wait_for_timeout(700)
                 idle_act()
