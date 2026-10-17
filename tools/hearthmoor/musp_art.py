@@ -243,6 +243,9 @@ def caldera_place(area):
     return out
 
 
+PIECE_MOVE = {("mp_hall", "obsidian_pillar"): (-5.8, 2.2)}
+
+
 def layout_place(area):
     la = LAYOUT_AREA.get(area)
     lp = ST / "metadata" / "muspelheim_layout.json"
@@ -252,6 +255,7 @@ def layout_place(area):
     for p in json.loads(lp.read_text())[la]["pieces"]:
         name, (x, y, z) = p[0], p[1]; rot = p[2] if len(p) > 2 else 0
         if name in SPEC_TERRAIN: continue
+        if (area, name) in PIECE_MOVE: x, z = PIECE_MOVE[(area, name)]   # the pillar's shadow fell across Aska (check_scene atlas corr): moved clear
         if name in ("basalt_floor", "forge_floor") and nt and nt[0] <= x <= nt[2] and nt[1] <= z <= nt[3]: continue
         ex = {}
         if rot: ex["rot"] = rot
@@ -268,7 +272,7 @@ LAMP_CAP = {"basalt_house": 3.0, "forge_hall": 3.5, "lava_channel": 3.0, "lava_p
             "caldera_mouth_arch": 4.0, "furnace": 4.0, "ember_throne": 5.0, "warden_lamp_stand": 3.5, "hanging_crystals": 4.0, "cold_seam_wall": 3.5, "seal_cast_bed": 3.0, "stamp_press": 2.6, "ledger_desk": 2.4, "sigil_mould_wall": 3.0}
 LAMP_CAP_AREA = {a: dict(LAMP_CAP) for a in PLANNED}
 # per-area tightening where a tall giant stands near decor lamps (check_scene colours: crop colours / source colours <= 2): Aska by the seat lamps, Torka by her anvils and the fall pools
-LAMP_CAP_AREA["mp_hall"].update({"wardens_seat": 1.4, "shrine_lamp": 1.6, "amber_orb_chain": 1.6})
+LAMP_CAP_AREA["mp_hall"].update({"wardens_seat": 0.7, "shrine_lamp": 1.0, "amber_orb_chain": 1.6})
 LAMP_CAP_AREA["lavafalls"].update({"emberfall_anvil": 1.2, "lava_pool": 2.0, "cold_brazier": 2.0})
 
 

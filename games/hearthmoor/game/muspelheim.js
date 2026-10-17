@@ -446,11 +446,14 @@ export class Muspelheim {
     const f = ctx.gamefx.spawn(name, x, y, z, { duration: Infinity, fadeIn: this.G.qaStill ? 0 : 0.6, ...o }); this.fx.push(f); return f;
   }
   dropFx(f) { if (f) f.dur = f.t + 0.2; }
-  mpfx(ctx, area) {   // effects that would sit on a standing actor (or the start spot) are left out: a billboard over a sprite breaks its pixel grid (check_scene sprites_sharp)
-    const near = [[ctx.player.x, ctx.player.z], ...(ctx.actors && ctx.actors.list ? ctx.actors.list.map((a) => [a.x, a.z]) : [])];
+  mpfx(ctx, area) {   // effects that would sit on a standing actor (or the start spot) are left out: a billboard over a sprite breaks its pixel grid (check_scene sprites_sharp).
+    // A billboard at height y reads on screen like a ground point 1.9 m * y further north, so its footprint is tested against each actor's sprite column (height in m: giants 5, foes 3.4, folk 2.2)
+    if (this.qs().get('mpfx') === '0') return;   // QA: ?mpfx=0 leaves the pack's fx out (isolates what a check_scene failure comes from)
+    const H = (role) => (['warden_mp', 'forgejudge', 'cindercaptain', 'fire_golem', 'kilnmother'].includes(role) ? 5.0 : ['magma_hound', 'flame_elemental', 'ashalpha', 'pyreling'].includes(role) ? 3.4 : 2.2);
+    const near = [[ctx.player.x, ctx.player.z, 1.6], ...(ctx.actors && ctx.actors.list ? ctx.actors.list.map((a) => [a.x, a.z, H(a.role)]) : []), ...(SPAWNS[area] || []).map((sp) => [sp.pos[0], sp.pos[1], H(sp.role)])];
     for (const [name, [x, z], dy] of MP_FX[area] || []) {
-      const e = ctx.gamefx && ctx.gamefx.meta.effects[name], R = e && e.kind === 'decal' ? 1.5 : 2.2;
-      if (near.some(([ax, az]) => Math.hypot(ax - x, az - z) < R)) continue;
+      const e = ctx.gamefx && ctx.gamefx.meta.effects[name], decal = e && e.kind === 'decal', ez = z - 1.9 * dy;
+      if (near.some(([ax, az, h]) => (decal ? Math.hypot(ax - x, az - z) < 1.5 : Math.abs(ax - x) < 1.5 && ez > az - 1.9 * h - 0.3 && ez < az + 0.8))) continue;
       this.fxAt(ctx, name, x, ctx.heightAt(x, z) + dy, z);
     }
   }

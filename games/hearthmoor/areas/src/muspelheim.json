@@ -208,10 +208,10 @@
    "role": "lanternseller",
    "name": "Grettir Ashmarch",
    "pos": [
-    -6.2,
+    5.0,
     -2.8
    ],
-   "facing": "right",
+   "facing": "left",
    "behavior": "idle",
    "talkable": true,
    "say": [
