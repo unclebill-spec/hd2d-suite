@@ -181,5 +181,23 @@
    "pass": true
   },
   "failures": []
+ },
+ "flurry_neon": {
+  "atlas": "/workspace/hearthmoor-staging/art/jotunheim/pets/flurry_neon.png",
+  "biome": "cozy-village",
+  "roles": {
+   "pet_flurry": {
+    "frames": 48,
+    "colors": 8,
+    "issues": []
+   }
+  },
+  "summary": {
+   "roles": 1,
+   "failures": 0,
+   "semi_transparent": 0,
+   "pass": true
+  },
+  "failures": []
  }
 }

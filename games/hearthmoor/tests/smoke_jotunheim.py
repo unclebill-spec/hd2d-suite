@@ -221,10 +221,16 @@ def steps(b, url, T, size, errors, rep, stub=None, shots=None):
         T.step("rimecaves: three cairn spots wait for a conquering player", jt("qaSpot('tt3')") is True and (fin() or True))
         a = load("rimecaves", "&jtq=conquer")
         for n in (1, 2, 3):
+            cx_, cz_ = ((-10.2, 6.4), (10.2, 6.4), (3.0, -1.6))[n - 1]
+            cstate = lambda: T.ev(f"(() => {{ const c = window.__hd2d.ctx, u = c.pz('tt_cairn{n}'), d = c.pz('tt_cairn{n}_t'); return {{ up: !!u && u.visible, dn: !!d && d.visible, blocked: c.collide.blocked({cx_}, {cz_}) }}; }})()")
+            c0 = cstate()
+            T.step(f"cairn {n}: the real watch_cairn stands (blocking), its toppled rubble is hidden", c0["up"] and not c0["dn"] and c0["blocked"], c=c0)
             jt(f"qaSpot('tt{n}')"); fin()
             T.step(f"cairn {n}: two Rime Berserkers wake", until(f"window.__hm.jot.qa().cb.includes('tt{n}a') && window.__hm.jot.qa().cb.includes('tt{n}b')", 10), cb=sv()["cb"])
             jt(f"qaKill('tt{n}a')"); jt(f"qaKill('tt{n}b')"); frames(2)
             T.step(f"cairn {n} toppled (tt_c{n})", sv()["found"].get(f"tt_c{n}") == 1, found=sv()["found"])
+            c1 = cstate()
+            T.step(f"cairn {n}: toppled rubble replaces the watch_cairn and its blocker is lifted (walkable)", not c1["up"] and c1["dn"] and not c1["blocked"], c=c1)
         T.step("after three cairns the Rime-Captain's post opens", jt("qaSpot('captain')") is True)
         fin(); T.step("Hjordis Icejaw takes the field (a trial foe)", until("window.__hm.jot.qa().cb.includes('hjordis')", 10), cb=sv()["cb"])
         jt("qaKill('hjordis')"); fin(); a = sv()
@@ -237,6 +243,57 @@ def steps(b, url, T, size, errors, rep, stub=None, shots=None):
         T.step("Solvi teaches the first Stonefrost circle in the Hall: Boulder Toss and Frost Rune are learned", "boulder_toss" in a["spells"] and "frost_rune" in a["spells"] and a["unlocks"].get("stonefrost") == 1, spells=a["spells"])
         a = load("rimecaves", "&jtq=lessons"); jt("qaTalk('solvi')"); a = sv()
         T.step("in the caves Solvi only talks (no spells learned)", "boulder_toss" not in a["spells"], spells=a["spells"])
+        # ---- Stonefrost II / III: Solvi's later lessons gate on the skill tiers (Lv 5 / Lv 10); the spells are real casts
+        a = load("jt_hall", "&jtq=lessons"); T.ev("window.__hm.S.lv = 1"); jt("qaTalk('rimewife')"); frames(2); jt("qaTalk('rimewife')"); frames(2); a = sv()
+        T.step("at Lv 1 Solvi teaches only the first circle (no Stone Skin, Cold Fire or Stone Golem yet)",
+               "boulder_toss" in a["spells"] and not any(n in a["spells"] for n in ("stone_skin", "cold_fire", "stone_golem")), spells=a["spells"])
+        T.ev("window.__hm.S.lv = 5"); jt("qaTalk('rimewife')"); frames(2); a = sv(); fl = T.ev("window.__hm.S.flags")
+        T.step("at Lv 5 the second circle: Stone Skin and Cold Fire are learned (sf_ii)", "stone_skin" in a["spells"] and "cold_fire" in a["spells"] and fl.get("sf_ii") == 1 and "stone_golem" not in a["spells"], spells=a["spells"])
+        jt("qaTalk('rimewife')"); frames(2); a = sv()
+        T.step("the third circle still waits at Lv 5", "stone_golem" not in a["spells"] and not T.ev("window.__hm.S.flags.sf_iii"))
+        T.ev("window.__hm.S.lv = 10"); jt("qaTalk('rimewife')"); frames(2); a = sv()
+        T.step("at Lv 10 the third circle: the Stone Golem is learned (sf_iii)", "stone_golem" in a["spells"] and T.ev("window.__hm.S.flags.sf_iii") == 1, spells=a["spells"])
+        T.step("all five Stonefrost spells are known", all(n in T.ev("window.__hm.knownSpells()") for n in ("boulder_toss", "frost_rune", "stone_skin", "cold_fire", "stone_golem")))
+        a = load("rimecaves", "&jtq=lessons")
+        CAST = "(n) => { const C = window.__hm.combat; C.cd.spell = 0; for (const k of ['skin', 'cold', 'golem']) C.cd[k] = 0; C.cast(n); }"
+        T.ev("(() => { const G = window.__hm, S = G.S; S.lv = 12; S.flags = S.flags || {}; for (const n of ['boulder_toss', 'frost_rune', 'stone_skin', 'cold_fire', 'stone_golem']) G.learn(n); S.slots = ['boulder_toss', 'frost_rune', 'stone_skin', 'cold_fire']; G.ctx.setSpellCycle(G.slots()); })()")
+        cyc = T.ev("window.__hm.ctx.spellCycle()")
+        T.step("tier I Boulder Toss and Frost Rune are in the spell cycle (the engine lets game-drawn spells through) with Stone Skin and Cold Fire", cyc == ["boulder_toss", "frost_rune", "stone_skin", "cold_fire"], cyc=cyc)
+        T.ev("(() => { const G = window.__hm; G.S.slots = ['stone_golem', 'boulder_toss']; G.ctx.setSpellCycle(G.slots()); })()")
+        cyc = T.ev("window.__hm.ctx.spellCycle()")
+        T.step("the Stone Golem is castable from the cycle too", cyc == ["stone_golem", "boulder_toss"], cyc=cyc)
+        for tier, flags_, bolt, rune in ((1, {}, "seed_bomb", "rune_trap"), (2, {"sf_ii": 1}, "stonefrost_bolt_ii", "stonefrost_rune_ii"), (3, {"sf_ii": 1, "sf_iii": 1}, "stonefrost_bolt_iii", "stonefrost_rune_iii")):
+            T.ev(f"(() => {{ const f = window.__hm.S.flags; delete f.sf_ii; delete f.sf_iii; Object.assign(f, {json.dumps(flags_)}); const C = window.__hm.combat; C.projs = []; C.traps = []; ({CAST})('boulder_toss'); C.cd.spell = 0; ({CAST})('frost_rune'); }})()")
+            r = T.ev("(() => { const C = window.__hm.combat, c = window.__hd2d.ctx, pr = C.projs[C.projs.length - 1], tr = C.traps[C.traps.length - 1]; return { tier: C.stoneTier(), bolt: pr && pr.f.name, gfx: !!pr && pr.fxo === c.gamefx, mul: pr && pr.mul, rune: !!tr && (tr.T ? tr.T.rune : 'rune_trap') }; })()")
+            T.step(f"Stonefrost tier {tier}: Boulder Toss flies as {bolt} (x{[1, 1.3, 1.6][tier - 1]} damage) and Frost Rune lays {rune}",
+                   r["tier"] == tier and r["bolt"] == bolt and r["gfx"] == (tier > 1) and abs(r["mul"] - [1, 1.3, 1.6][tier - 1]) < 1e-6 and r["rune"] == rune, r=r)
+            T.step(f"tier {tier}: the rune arms, then bursts on its own timer",
+                   until("window.__hm.combat.traps.some((t) => t.armed)", 40) and T.ev("(() => { const C = window.__hm.combat; for (const t of C.traps) t.t = t.S.life + 1; return true; })()")
+                   and until("window.__hm.combat.traps.length === 0", 40))
+        # Stone Skin: -40 % damage, -20 % speed (re-based when the blizzard's frost slow writes p.speed), ends on its own
+        T.ev("(() => { const G = window.__hm, C = G.combat, p = G.ctx.player; C.godT = 0; p.iframes = 0; G.S.hp = C.maxHp(); window.__sp0 = p.speed; window.__hp0 = G.S.hp; C.hurtPlayer(20, { x: p.x + 1, z: p.z }, 0); window.__loss0 = window.__hp0 - G.S.hp; })()")
+        T.ev(f"({CAST})('stone_skin')")
+        T.step("Stone Skin: -20 % speed while it lasts", abs(T.ev("window.__hm.ctx.player.speed") - T.ev("window.__sp0") * 0.8) < 1e-6 and T.ev("!!window.__hm.combat.skin"))
+        T.ev("(() => { const G = window.__hm, C = G.combat, p = G.ctx.player; C.godT = 0; p.iframes = 0; G.S.hp = C.maxHp(); const h = G.S.hp; C.hurtPlayer(20, { x: p.x + 1, z: p.z }, 0); window.__loss1 = h - G.S.hp; })()")
+        l0, l1 = T.ev("window.__loss0"), T.ev("window.__loss1")
+        T.step("Stone Skin: -40 % damage taken (the same hit costs 60 %)", l0 > 1 and abs(l1 / l0 - 0.6) < 0.1, plain=l0, skin=l1)
+        T.ev("window.__hm.ctx.player.speed = 2.0")
+        T.step("a frost slow written over it is re-based (x0.8 of the new speed)", until("Math.abs(window.__hm.ctx.player.speed - 1.6) < 1e-6", 30), speed=T.ev("window.__hm.ctx.player.speed"))
+        T.ev("window.__hm.combat.skin.t = 0.02")
+        T.step("Stone Skin ends on its own and gives the speed back", until("!window.__hm.combat.skin && Math.abs(window.__hm.ctx.player.speed - 2.0) < 1e-6", 40), speed=T.ev("window.__hm.ctx.player.speed"))
+        # Cold Fire: a lit patch that slows foes, then gone
+        g0 = T.ev("window.__hd2d.ctx.gamefx.list.length")
+        T.ev(f"({CAST})('cold_fire')")
+        cf = T.ev("(() => { const C = window.__hm.combat, G = window.__hm, c = C.patches[0]; return c ? { n: C.patches.length, slow: C.coldAt(c.x, c.z), far: C.coldAt(c.x + 9, c.z), lit: G.glow.litAt(c.x, c.z), r: c.r, life: c.t } : null; })()")
+        T.step("Cold Fire: a patch at the player's feet slows foes inside it (not outside), is a lit zone and lasts 8 s", bool(cf) and cf["n"] == 1 and cf["slow"] and not cf["far"] and cf["lit"] and 7.5 < cf["life"] <= 8, cf=cf)
+        T.ev("window.__hm.combat.patches.forEach((c) => { c.t = 0.02; })")
+        T.step("the Cold Fire patch burns out and its decals are removed", until("window.__hm.combat.patches.length === 0 && window.__hd2d.ctx.gamefx.list.length <= " + str(g0), 40), g0=g0, now=T.ev("window.__hd2d.ctx.gamefx.list.length"))
+        # Stone Golem: 20 s, the golem role, takes the place of a summon
+        T.ev(f"({CAST})('stone_golem')")
+        gl = T.ev("(() => { const s = window.__hm.combat.summon; return s ? { golem: !!s.golem, role: s.a.role, life: s.life, cd: window.__hm.combat.cd.golem } : null; })()")
+        T.step("Stone Golem: a golem fights for 20 s and the spell cools down for 40 s", bool(gl) and gl["golem"] and "golem" in gl["role"] and 19 < gl["life"] <= 20 and gl["cd"] > 38, gl=gl)
+        T.ev("window.__hm.combat.summon.life = 0.02")
+        T.step("the Stone Golem crumbles when its time is up", until("!window.__hm.combat.summon", 40))
         # barrow -> barrow2: the passage at the north end of the Avalanche Run
         a = load("barrow", "&jtq=barrow", "qa")
         T.step("the Avalanche Run has a passage north into the Throne Barrow", "barrow2" in a["exits"], exits=a["exits"])
@@ -245,9 +302,16 @@ def steps(b, url, T, size, errors, rep, stub=None, shots=None):
         T.step("walking through it lands you in B5 with a way back", a["area"] == "barrow2" and "barrow" in a["exits"], area=a["area"], exits=a["exits"])
         a = load("barrow2", "&jtq=deep")
         T.step("the Throne Barrow loads: foes, cold fire and lights", len(set(a["foes"])) >= 2 and a["fx"] >= 8 and a["lights"] >= 4, foes=a["foes"], fx=a["fx"], lights=a["lights"])
-        hs = T.ev("(() => { const c = window.__hd2d.ctx; return { g: c.heightAt(0, 6), b6: c.heightAt(-4, -10), s6: c.heightAt(0, -2.4), br: c.heightAt(0, -22), b8: c.heightAt(-4, -36), b9: c.heightAt(-4, -48) }; })()")
+        hs = T.ev("(() => { const c = window.__hd2d.ctx; return { g: c.heightAt(0, 6), b6: c.heightAt(-4, -10), s6: c.heightAt(0, -2.4), br: c.heightAt(0, -22), b8: c.heightAt(-4, -34.2), b9: c.heightAt(-4, -48) }; })()")
         T.step("real height climbs: hall 1.2 m, bridge and crypt 2.4 m, throne dais 3.6 m", hs["g"] < 0.2 and 1.1 <= hs["b6"] <= 1.3 and 0.1 < hs["s6"] < 1.2 and hs["br"] >= 2.3 and hs["b8"] >= 2.3 and hs["b9"] >= 3.5, hs=hs)
         shot("jt_barrow2_hall")
+        w = T.ev("(() => { const c = window.__hd2d.ctx, O = c.scene.objects, W = O.filter((o) => /rune_waystone\\.glb$/.test(o.glb)), p = W[0] ? W[0].pos : [0, 0, 0], sp = c.scene.game.spawns.from_waystone;"
+                 " return { n: W.length, standin: O.some((o) => /rune_standing_stone/.test(o.glb) && Math.hypot(o.pos[0] + 4, o.pos[2] + 37.2) < 0.5),"
+                 " near: O.filter((o) => o !== W[0] && !/frost_rune_pillar|rune_standing_stone/.test(o.glb) && Math.hypot(o.pos[0] - p[0], o.pos[2] - p[2]) < 2.6).map((o) => o.glb),"
+                 " stones: O.filter((o) => o !== W[0] && Math.hypot(o.pos[0] - p[0], o.pos[2] - p[2]) < 2.6).length, lamp: c.scene.lamps.some((l) => l.kind === 'rune_waystone'),"
+                 " spawnClear: Math.hypot(sp[0] - p[0], sp[1] - p[2]) >= 2.0 && !c.collide.blocked(sp[0], sp[1]), pool: !!c.gamefx.meta.effects.pool_cold }; })()")
+        T.step("barrow2: the real rune_waystone replaces the stand-in, with its lamp, nothing within its 2.6 m keep-clear, and the arrival spawn is free",
+               w["n"] == 1 and not w["standin"] and w["lamp"] and w["stones"] == 0 and w["spawnClear"] and w["pool"], w=w)
         walk_to(0, 0.8); jt("qaSpot('echo')"); fin()
         walk_to(0, -31.2); jt("qaSpot('tb3')"); fin(); a = sv()
         T.step("brazier 3 at the crypt entrance is snuffed (tb_b3), the third of three", a["found"].get("tb_b3") == 1 and all(a["found"].get(k) == 1 for k in ("tb_b1", "tb_b2", "tb_b3")), found=a["found"])
@@ -331,10 +395,15 @@ def steps(b, url, T, size, errors, rep, stub=None, shots=None):
         h1 = sv()["boss"]["hp"]; frames(60)
         T.step("snuffing all three stops the healing (resettable: you can always snuff them)", sv()["boss"]["relit"] == [0, 0, 0] and sv()["boss"]["hp"] <= h1 + 0.01, boss=sv()["boss"])
         framed("p3")
-        # ---- cairn props use the existing kit (snow_mound)
+        # ---- cairn props are the real kit models (watch_cairn + cairn_toppled at the three Toll of Stones spots, stone_cairn trail markers); the snow_mound stand-ins are gone
         a = load("rimecaves", "&jtq=conquer")
-        n = T.ev("window.__hd2d.ctx.scene.objects.filter((o) => /snow_mound/.test(o.glb)).length")
-        T.step("the three watch-cairns are standing stone-mounds in the Rime Caves", n >= 3, n=n)
+        n = T.ev("(() => { const O = window.__hd2d.ctx.scene.objects, at = (re, x, z) => O.some((o) => re.test(o.glb) && Math.hypot(o.pos[0] - x, o.pos[2] - z) < 0.3); const spots = [[-10.2, 6.4], [10.2, 6.4], [3.0, -1.6]];"
+                 " return { watch: O.filter((o) => /watch_cairn\\.glb$/.test(o.glb)).length, toppled: O.filter((o) => /cairn_toppled\\.glb$/.test(o.glb)).length, trail: O.filter((o) => /stone_cairn\\.glb$/.test(o.glb)).length,"
+                 " atSpots: spots.every(([x, z]) => at(/watch_cairn\\.glb$/, x, z) && at(/cairn_toppled\\.glb$/, x, z)), standins: O.filter((o) => /snow_mound/.test(o.glb) && spots.some(([x, z]) => Math.hypot(o.pos[0] - x, o.pos[2] - z) < 0.5)).length }; })()")
+        T.step("the three watch-cairns are the real watch_cairn + cairn_toppled models (no snow_mound stand-ins), with stone_cairn trail markers",
+               n["watch"] == 3 and n["toppled"] == 3 and n["atSpots"] and n["standins"] == 0 and n["trail"] >= 2, n=n)
+        g = T.ev("(() => { const c = window.__hd2d.ctx, p = c.scene.lamps.filter((l) => l.kind === 'watch_cairn'); return { lamps: p.length, toppledLamps: c.scene.lamps.filter((l) => l.kind === 'cairn_toppled').length, pools: c.gamefx.list.filter((f) => f.name === 'pool_cold').length }; })()")
+        T.step("each standing cairn has its kit lamp and cold pool; the toppled rubble is unlit until the game shows it", g["lamps"] == 3 and g["toppledLamps"] == 0 and g["pools"] == 3, g=g)
         shot("jt_cairns")
         # ---- the Rime Caves' rares (BASES hook): frostmother and avalanche
         a = load("rimecaves", "&rare")

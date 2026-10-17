@@ -46,6 +46,8 @@
  "image_neon": "flurry_neon.png",
  "image_lock_safe": "flurry.png",
  "primary": "flurry_neon.png",
+ "fallback": "flurry.png",
+ "fallback_note": "primary sheet is the neon twin (like pets/pets_neon.png); flurry.png is the palette-safe twin (passes check-sprite) and the fallback until the scoped pet_flurry neon allow-list entry lands (the lead is adding it)",
  "neon_accents": {
   "neon_blue_hi": "#a6ecff",
   "neon_blue": "#2ab4ff",

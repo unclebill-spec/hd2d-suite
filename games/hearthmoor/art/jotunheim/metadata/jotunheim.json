@@ -270,7 +270,7 @@
   }
  },
  "pet": {
-  "flurry": "pets/flurry.json (pets layout 20x32, pivot [10,32], idle 0-3 walk 4-7 follow 8-11)"
+  "flurry": "pets/flurry.json (pets layout 20x32, pivot [10,32], idle 0-3 walk 4-7 follow 8-11); primary flurry_neon.png, fallback flurry.png"
  },
  "areas": {
   "jotunheim": {
@@ -981,11 +981,30 @@
   "rimecaves_night": 28.8,
   "barrow_night": 28.1
  },
+ "stonefrost": {
+  "file": "gamefx/stonefrost_fx.json",
+  "tiers": [
+   "II",
+   "III"
+  ],
+  "effects": [
+   "stonefrost_cast_ii",
+   "stonefrost_bolt_ii",
+   "stonefrost_impact_ii",
+   "stonefrost_rune_ii",
+   "stonefrost_burst_ii",
+   "stonefrost_cast_iii",
+   "stonefrost_bolt_iii",
+   "stonefrost_impact_iii",
+   "stonefrost_rune_iii",
+   "stonefrost_burst_iii"
+  ]
+ },
  "neon": {
   "sprites": [
-   "pets/flurry_neon.png"
+   "pets/flurry_neon.png (primary)"
   ],
-  "fx": "all gamefx/jt_fx",
+  "fx": "all gamefx/jt_fx and gamefx/stonefrost_fx",
   "kit": "glow material (cold fire, runes, crystal tips, pools, orbs)"
  },
  "check_sprite": {
@@ -1024,7 +1043,13 @@
    "failures": 0,
    "semi_transparent": 0,
    "pass": true
+  },
+  "flurry_neon": {
+   "roles": 1,
+   "failures": 0,
+   "semi_transparent": 0,
+   "pass": true
   }
  },
- "kit_pieces": 27
+ "kit_pieces": 31
 }

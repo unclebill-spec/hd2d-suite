@@ -1,3 +1,3 @@
 READY: true
-Art complete: 5 character sheets (town giants, Ulfar, enemies, elites, Hrimgard 7x), Flurry pet (safe + neon twins), 27 kit pieces, 18 gamefx, 4 scenes, contact sheet, metadata, README.
-Not done: check-scene (needs the built game, so the lead runs it); optional extras (Hall of Hearthstones interior, Hjordis shield-wall pose, goat mount Clatter, Rimebreaker prop). Four questions are at the bottom of README.md.
+Update 2026-10-16: Stonefrost II+III fx (gamefx/stonefrost_fx), rune_waystone + stone_cairn + watch_cairn + cairn_toppled kit pieces (31 total, keep_clear footprints, night renders), Flurry neon twin primary with safe fallback. All 5 character sheets + flurry.png PASS check-sprite.
+Not blocking (optional extras): Hall of Hearthstones interior, Hjordis shield-wall pose, goat mount Clatter, Rimebreaker prop. check-scene still needs the built game.

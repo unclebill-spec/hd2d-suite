@@ -14,7 +14,13 @@ STATUS: SKELETON. The art pack is not ready. Nothing runs until /workspace/heart
 names, the staging role names and the PLACE coordinates are guesses from the story doc (areas / NPCs / bosses), not from real files.
 Missing staging files are SKIPPED with a message, never an error, so a partial pack can be wired in stages.
 
-usage: python3 tools/hearthmoor/jot_art.py [--force] [area ...]      (then: cd games/hearthmoor && python3 -c "import build; build.write_pwa()")
+Stonefrost II / III (staging gamefx/stonefrost_fx, 48 px cells, 10 effects) are appended under the gamefx atlas of EVERY built area that has one
+(mark `stonefrost_from`, crop-and-append, idempotent; add / overwrite only), so the spells draw wherever the player casts. RUN THIS LAST: build.py's
+install_forge / install_alchemy re-crop a gamefx atlas at their own marks and would drop the Stonefrost rows (re-run `jot_art.py --stonefrost-all` after them).
+Real kit props replace the stand-ins: rune_waystone (Waystone Crypt, barrow2), watch_cairn + cairn_toppled (the Toll of Stones cairns, Rime Caves; the game
+swaps them with ctx.pz) and stone_cairn trail markers.
+
+usage: python3 tools/hearthmoor/jot_art.py [--force] [--stonefrost-all] [area ...]      (then: cd games/hearthmoor && python3 -c "import build; build.write_pwa()")
 """
 import json, shutil, sys
 from pathlib import Path
@@ -24,6 +30,7 @@ GAME = Path(__file__).resolve().parents[2] / "games" / "hearthmoor"
 STAGING = Path("/workspace/hearthmoor-staging/art/jotunheim")
 ST = GAME / "art" / "jotunheim"
 ARGS = [a for a in sys.argv[1:] if not a.startswith("--")]
+SF_ONLY = "--stonefrost-all" in sys.argv and not ARGS   # `--stonefrost-all` alone: fx only, no sprite / kit / place work
 FORCE = "--force" in sys.argv
 PLANNED = ["jotunheim", "jt_hall", "rimecaves", "barrow", "barrow2"]   # story 2.1; the Barrow is two areas (decision 8, like clockdeep / clockdeep2)
 AREAS = ARGS or PLANNED
@@ -141,6 +148,7 @@ def gamefx(area):
 # Coordinates are the art README's Stonehollow layout (metadata/jotunheim.json), moved where the area spec's own terrain (plateau + stair come
 # from the spec, so the kit's stone_ledge / stone_stair are not placed) or an actor stands. Keep-clear: nothing on the stair + 1 m, 2.5 m in
 # front of longhouse doors, 1.5 m around the from_bifrost spawn.
+NOBLOCK = {"cairn_toppled"}   # walkable rubble: no blocker (kit.json blockers [])
 WALK = {"snow_floor", "ice_floor", "ice_lake", "glow_ice_pool", "barrow_floor", "rune_bridge"}   # flat decals: walkable, no blocker
 PLACE = {
     "jotunheim": [("longhouse", [-7.8, -6.0], "fixed"), ("longhouse", [7.8, -6.2], "fixed"),
@@ -164,7 +172,11 @@ PLACE = {
                   ("ice_crystal_cluster", [-11.0, 10.4], "fixed"), ("ice_crystal_cluster", [11.0, 10.4], "fixed"), ("ice_crystal_cluster", [-11.0, -3.0], "fixed"), ("ice_crystal_cluster", [11.0, -3.0], "fixed"),
                   ("glow_ice_pool", [-6.0, 5.2], "fixed"), ("glow_ice_pool", [6.0, 5.2], "fixed"), ("glow_ice_pool", [-7.4, -0.4], "fixed"), ("glow_ice_pool", [7.4, -0.4], "fixed"), ("glow_ice_pool", [0.0, 0.2], "fixed"),
                   ("ice_wall", [8.0, -9.0], "fixed"), ("ice_wall", [10.0, -9.0], "fixed"), ("warm_lantern", [-2.8, 9.4], "fixed"), ("warm_lantern", [2.8, 9.4], "fixed"), ("warm_lantern", [-4.6, -3.0], "fixed"),
-                  ("snow_mound", [-10.2, 6.4], "fixed"), ("snow_mound", [10.2, 6.4], "fixed"), ("snow_mound", [3.0, -1.6], "fixed")],
+                  # the Toll of Stones cairns (game CAIRNS in jotunheim.js): the real watch-cairn, plus the toppled rubble that the game shows in its place
+                  ("watch_cairn", [-10.2, 6.4], "fixed", {"pz": "tt_cairn1"}), ("watch_cairn", [10.2, 6.4], "fixed", {"pz": "tt_cairn2"}), ("watch_cairn", [3.0, -1.6], "fixed", {"pz": "tt_cairn3"}),
+                  ("cairn_toppled", [-10.2, 6.4], "fixed", {"pz": "tt_cairn1_t", "hidden": True}), ("cairn_toppled", [10.2, 6.4], "fixed", {"pz": "tt_cairn2_t", "hidden": True}),
+                  ("cairn_toppled", [3.0, -1.6], "fixed", {"pz": "tt_cairn3_t", "hidden": True}),
+                  ("stone_cairn", [-5.6, 6.6], "fixed"), ("stone_cairn", [5.4, 7.2], "fixed")],   # trail markers on the snow path
     "barrow": [("cold_brazier", [-3.6, 7.0], "fixed"), ("cold_brazier", [3.6, 7.0], "fixed"), ("shield_rack", [-9.4, -6.0], "fixed"), ("shield_rack", [9.4, -6.0], "fixed"),
                ("shield_rack", [-9.4, -10.0], "fixed"), ("shield_rack", [9.4, -10.0], "fixed"), ("cold_brazier", [0.0, -8.6], "fixed"),
                ("frost_rune_pillar", [-6.4, -4.8], "fixed"), ("frost_rune_pillar", [6.4, -4.8], "fixed"),
@@ -177,7 +189,7 @@ PLACE = {
                 ("glow_ice_pool", [-6.4, -21.0], "fixed"), ("glow_ice_pool", [6.4, -21.0], "fixed"), ("glow_ice_pool", [-6.4, -26.0], "fixed"), ("glow_ice_pool", [6.4, -26.0], "fixed"),
                 ("frost_rune_pillar", [-4.4, -19.0], "fixed"), ("frost_rune_pillar", [4.4, -19.0], "fixed"), ("frost_rune_pillar", [-4.4, -24.0], "fixed"), ("frost_rune_pillar", [4.4, -24.0], "fixed"),
                 ("cold_brazier", [0.0, -32.0], "fixed"), ("rune_standing_stone", [-9.0, -35.0], "fixed"), ("rune_standing_stone", [9.0, -35.0], "fixed"),
-                ("rune_standing_stone", [-9.0, -39.0], "fixed"), ("rune_standing_stone", [-4.0, -37.2], "fixed"), ("ice_wall", [8.0, -40.0], "fixed"), ("ice_crystal_cluster", [-10.4, -40.0], "fixed"),
+                ("rune_standing_stone", [-9.0, -39.0], "fixed"), ("rune_waystone", [-4.0, -36.4], "fixed"),   # the real waystone (was a rune_standing_stone stand-in) ("ice_wall", [8.0, -40.0], "fixed"), ("ice_crystal_cluster", [-10.4, -40.0], "fixed"),
                 ("cold_brazier", [-6.0, -47.0], "fixed"), ("cold_brazier", [6.0, -47.0], "fixed"), ("frost_rune_pillar", [-9.4, -45.0], "fixed"), ("frost_rune_pillar", [9.4, -45.0], "fixed"),
                 ("cold_brazier", [0.0, -52.4], "fixed")],
 }
@@ -239,6 +251,7 @@ def place(area):
         return hs[len(hs) // 2] / 100
 
     for name, (px, pz), *fixed in PLACE.get(area, []):
+        extra = next((f for f in fixed if isinstance(f, dict)), {}); fixed = [f for f in fixed if not isinstance(f, dict)]
         if name not in pieces: print(f"  {area}: no kit piece {name} yet"); continue
         pc = pieces[name]; hw, hd = pc["size"][0] / 2, pc["size"][2] / 2
         if name == "elf_archway": hw *= 0.6   # a thin open arch: its posts need room, the span does not
@@ -257,12 +270,14 @@ def place(area):
         x, y, z = spot
         o = {"glb": f"public/art/kit/{pc['file']}", "pos": [x, y, z], "rot": 0, "jot_art": True}
         if name in WALK: o.update(walkable=True, cast=False)
+        if extra.get("pz"): o["pz"] = extra["pz"]
+        if extra.get("hidden"): o["hidden"] = True
         sc["objects"].append(o)
         keep.append((x, z, max(hw, hd) + 0.6))
-        if name not in WALK:
+        if name not in WALK and name not in NOBLOCK:
             for i, j in cells(x, z, hw * 0.8, hd * 0.8): d[j * W + i] = -32768
         mk = pc["markers"]
-        for lp in mk.get("lamps", []):
+        for lp in ([] if extra.get("hidden") else mk.get("lamps", [])):   # a hidden piece (cairn_toppled) is lit at runtime when the game shows it
             sc["lamps"].append({"pos": [x + lp[0], y + lp[1], z + lp[2]], "range": min(mk.get("lamp_range", 5.0), LAMP_CAP_AREA[area].get(name, 9.0)) if area in LAMP_CAP_AREA else mk.get("lamp_range", 5.0), "kind": name,
                                 "color": mk.get("lamp_color", "#a45cf0"), "fixed": mk.get("lamp_fixed", 0.5), "jot_art": True})
         print(f"  {area}: {name} at ({x}, {z})")
@@ -272,19 +287,43 @@ def place(area):
 
 
 
+def stonefrost(area):
+    """Stonefrost II / III fx under this area's gamefx atlas (48 px cells). Crop-at-mark + append: re-running never grows the atlas."""
+    src = ST / "gamefx" / "stonefrost_fx.json"
+    if not have(src): return False
+    sc = json.loads((GAME / "areas" / area / "scene.json").read_text())
+    if not sc.get("gamefx"): return False
+    jp, ip = GAME / "areas" / area / sc["gamefx"]["json"], GAME / "areas" / area / sc["gamefx"]["image"]
+    meta, sj = json.loads(jp.read_text()), json.loads(src.read_text())
+    assert meta["cell"] == sj["cell"], "cell size mismatch"
+    base = Image.open(ip).convert("RGBA"); h0 = meta.get("stonefrost_from", base.height)
+    base = base.crop((0, 0, base.width, h0)); add = Image.open(ST / "gamefx" / sj["image"]).convert("RGBA")
+    out = Image.new("RGBA", (max(base.width, add.width), h0 + add.height), (0, 0, 0, 0)); out.paste(base, (0, 0)); out.paste(add, (0, h0)); out.save(ip)
+    row0 = h0 // meta["cell"]
+    for k, e in sj["effects"].items():
+        e = {kk: vv for kk, vv in e.items() if kk not in ("frame_list", "strip")}; e["row"] += row0; meta["effects"][k] = e
+    meta.setdefault("cast_sets", {}).update(sj.get("cast_sets", {}))
+    meta["stonefrost_from"] = h0; meta["size"] = [out.width, out.height]
+    jp.write_text(json.dumps(meta, indent=1)); return True
+
+
 def main():
     if not (STAGING / "READY.txt").exists() and not FORCE:
         print("jot_art: /workspace/hearthmoor-staging/art/jotunheim/READY.txt is missing: the art pack is not ready. Nothing done (use --force for a dry look).")
         return 0
     copy_staging()
-    for a in AREAS:
+    for a in ([] if SF_ONLY else AREAS):
         d = GAME / "areas" / a
         if not (d / "scene.json").exists():
             print(f"{a}: not built yet (areas/{a}/scene.json missing): skipped"); continue
         sprites(a)
         if (ST / "kit" / "kit.json").exists(): kit(a); place(a)
         fx = gamefx(a)
-        print(f"{a}: sprites + kit + props{' + gamefx' if fx else ' (no gamefx atlas)'}")
+        sf = stonefrost(a)
+        print(f"{a}: sprites + kit + props{' + gamefx' if fx else ' (no gamefx atlas)'}{' + stonefrost' if sf else ''}")
+    if "--stonefrost-all" in sys.argv:   # every other built area with a gamefx atlas (run after build.py's installers)
+        done = [a.name for a in sorted((GAME / "areas").iterdir()) if (a / "scene.json").exists() and stonefrost(a.name)]
+        print("stonefrost: " + ", ".join(done))
     return 0
 
 

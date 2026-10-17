@@ -5,7 +5,7 @@
 import { TALK, ITEMS, QUESTS, MARKER_HOOKS, SPELL_NAMES } from './data.js';
 import { REALM, MERIT } from './factions.js';
 import { ENEMIES, SPAWNS, SPELLS } from './heroes.js';
-import { XP } from './progress.js';
+import { XP, TIER } from './progress.js';
 import { SHOPS, GOODS } from './shop.js';
 import { WAYS, WAY_SAY } from './ravenhold.js';
 import { lockRival, moodUp } from './alfheim.js';
@@ -21,6 +21,7 @@ export const AREAS_JOT = { jotunheim: 'areas/jotunheim/', jt_hall: 'areas/jt_hal
 export const AREA_NAMES_JOT = { jotunheim: 'Stonehollow', jt_hall: 'Hall of Hearthstones', rimecaves: 'The Rime Caves', barrow: "The Titan's Barrow", barrow2: "The Titan's Barrow: the Throne" };   // id -> display name (merged into game.js's AREA_NAME)
 export const JOT_AREAS = Object.keys(JOT_PLANNED);
 
+const SF_LV = { 2: TIER[2].lv, 3: TIER[3].lv };   // Stonefrost II / III open with the skill tiers (Lv 5 / Lv 10)
 const flags = (S) => (S.flags = S.flags || {});
 const F = (S) => S.flags || {};
 const q = (S, k) => (S.quests || {})[k] || 0;
@@ -137,9 +138,13 @@ Object.assign(QUESTS, {
 });
 // Solvi's Stonefrost school (story 4.2): tier I lessons are real casts built on the existing spell kinds (a thrown boulder = a projectile with the earth burst, a frost rune = a trap).
 // Tiers II / III (Stone Skin, Cold Fire, Stone Golem) are recorded as unlocks and learned from her later; their casts arrive with the spell atlas additions.
-SPELLS.boulder_toss = { name: 'Boulder Toss', cd: 2.2, dmg: 26, radius: 1.6, kind: 'projectile', fx: 'seed_bomb', burst: 'earth_burst' };
-SPELLS.frost_rune = { name: 'Frost Rune', cd: 3.2, dmg: 24, radius: 1.8, kind: 'trap', arm: 0.5, life: 6 };
-Object.assign(SPELL_NAMES, { boulder_toss: 'Boulder Toss', frost_rune: 'Frost Rune' });
+// Stonefrost. Tier I plays the spells-atlas art; `stone: 1` swaps in the tier II / III art (gamefx atlas) and damage once Solvi has taught those circles (flags sf_ii / sf_iii)
+SPELLS.boulder_toss = { name: 'Boulder Toss', cd: 2.2, dmg: 26, radius: 1.6, kind: 'projectile', fx: 'seed_bomb', burst: 'earth_burst', stone: 1 };
+SPELLS.frost_rune = { name: 'Frost Rune', cd: 3.2, dmg: 24, radius: 1.8, kind: 'trap', arm: 0.5, life: 6, stone: 1 };
+SPELLS.stone_skin = { name: 'Stone Skin', cd: 14, dmg: 0, radius: 0, kind: 'skin', own: 'skin', t: 6, take: 0.6, speed: 0.8 };   // tier II: 6 s, -40 % damage taken, -20 % speed
+SPELLS.cold_fire = { name: 'Cold Fire', cd: 12, dmg: 0, radius: 2.2, kind: 'coldfire', own: 'cold', life: 8 };   // tier II: a neon-blue fire patch, foes at half speed, lights dark rooms, never burns
+SPELLS.stone_golem = { name: 'Stone Golem', cd: 40, dmg: 0, radius: 0, kind: 'golem', own: 'golem', life: 20 };   // tier III: a stone golem fights for 20 s
+Object.assign(SPELL_NAMES, { boulder_toss: 'Boulder Toss', frost_rune: 'Frost Rune', stone_skin: 'Stone Skin', cold_fire: 'Cold Fire', stone_golem: 'Stone Golem' });
 // ---- the Rimebreaker (story 3.8 / 9.1): a legendary weapon from Solvi after three heart-ice. Every 3rd melee hit with it freezes the foe for 1.5 s and rings a small ice wave.
 // Deviation: the engine has no charged attack yet, so the "charged hit throws an ice wave" half rides on the 3rd hit instead.
 export function RIMEBREAKER(S) {
@@ -247,13 +252,21 @@ Object.assign(TALK, {
   rimewife(S) {
     const f = F(S), al = (f.alliance || {}).jotunheim;
     if (al === 'conquer') return { pages: ["You know it's hollow. Everyone can hear it.", 'Cold fire is a gift. It lights. It never burns. Someone made it burn in a tomb.'] };
+    // Stonefrost II / III come before the axe errand's talk lines: the lesson wins as soon as the level allows
+    const lv = S.lv || 1;
+    if (al === 'befriend' && f.sf_i && !f.sf_ii && lv >= SF_LV[2]) return { pages: ['Back at my hearth. The first circle holds. Now the stone learns to hold you.', '(Solvi sets two runes in the soot, one for a skin of grey stone, one a blue that does not burn.)', 'Stone Skin: grey stone over you for six breaths, the blows soften and your feet slow. Cold Fire: a blue patch on the floor that thickens the foe\'s steps and lights the dark. It never burns. It never forgets.', 'And the first circle grows: your boulders hit harder, your runes hold more.'],
+      then: (G) => { flags(G.S).sf_ii = 1; G.learn('stone_skin'); G.learn('cold_fire'); G.toast('Stonefrost II: Stone Skin, Cold Fire', 2.8); G.refreshMarkers && G.refreshMarkers(); G.save && G.save(); } };
+    if (al === 'befriend' && f.sf_ii && !f.sf_iii && lv >= SF_LV[3]) return { pages: ['The third circle. Sit. This one asks something of you.', '(Solvi lays her palm on the hearthstone. It stands up out of the floor on two legs.)', 'The Stone Golem. It remembers being a mountain; for twenty breaths it will let you borrow the memory. Do not ask it to stay.', 'The boulder and the rune grow once more. That is the last of what the stone has taught me.'],
+      then: (G) => { flags(G.S).sf_iii = 1; G.learn('stone_golem'); G.toast('Stonefrost III: Stone Golem', 2.8); G.refreshMarkers && G.refreshMarkers(); G.save && G.save(); } };
     if (al === 'befriend' && q(S, 'jt_axe') === 2) return { pages: ['Three heart-ice. Good. They are the Titan\'s own cold, and the cold remembers what it was for.', '(Solvi sets the shards in an axe-head of black rune-iron. Ulfar hums a long low note. Blue fire runs along the edge.)', 'The Rimebreaker. It was a giant\'s axe once. It will fit your hand now.'],
       then: (G) => { const i = G.S.inv; i.heart_ice = Math.max(0, (i.heart_ice || 0) - 3); (G.S.bag = G.S.bag || []).push(RIMEBREAKER(G.S)); G.setQuest('jt_axe', 3); G.toast('You are given The Rimebreaker (check your bag)', 3.0); G.refreshMarkers && G.refreshMarkers(); G.save && G.save(); } };
     if (al === 'befriend' && q(S, 'jt_axe') === 1) return { pages: [`Heart-ice, small one: ${['hi_1', 'hi_2', 'hi_3'].filter((k) => (S.found || {})[k]).length} of 3. One in the Glow Pools, one behind the Berserker chief's seat, one in the crypt crystals.`] };
     if (al === 'befriend' && f.sf_i && q(S, 'barrow') === 3 && !q(S, 'jt_axe')) return { pages: ['There is an axe I have wanted to wake for a hundred winters. It needs three shards of heart-ice from the Barrow.', 'Bring them, and I will cut it down to your size.'], then: (G) => { G.setQuest('jt_axe', 1); G.refreshMarkers && G.refreshMarkers(); } };
     if (al === 'befriend' && q(S, 'barrow') === 3 && !f.sf_i) return { pages: ['You laid the king down. Sit by my hearth, small one, and I will teach you what the stone teaches.', '(Solvi draws a rune in the soot. The stone in the hearth hums back.)', 'Stonefrost. Throw the boulder, then ask it to stay: two lessons for the first circle. Come back when you are older for the rest.'],
       then: (G) => { flags(G.S).sf_i = 1; G.S.unlocks = { ...(G.S.unlocks || {}), stonefrost: 1 }; G.learn('boulder_toss'); G.learn('frost_rune'); G.toast('Stonefrost school: first circle', 2.6); G.refreshMarkers && G.refreshMarkers(); } };
-    if (al === 'befriend' && f.sf_i) return { pages: ['The first circle is yours: Boulder Toss, Frost Rune. Stone Skin, Cold Fire and the Stone Golem come later. The stone is patient, and so am I.'] };
+    if (al === 'befriend' && f.sf_iii) return { pages: ['All three circles are yours: Boulder Toss, Frost Rune, Stone Skin, Cold Fire, the Stone Golem. The stone is patient, and so am I.'] };
+    if (al === 'befriend' && f.sf_ii) return { pages: [`The second circle is yours: Stone Skin, Cold Fire. The third waits for Lv ${SF_LV[3]}. The stone is patient, and so am I.`] };
+    if (al === 'befriend' && f.sf_i) return { pages: [`The first circle is yours: Boulder Toss, Frost Rune. Stone Skin and Cold Fire wait for Lv ${SF_LV[2]}, the Stone Golem for Lv ${SF_LV[3]}. The stone is patient, and so am I.`] };
     if (al === 'befriend' && q(S, 'jt_heart') === 1 && !f.jh_solvi) return { pages: ['The cellar Heart? Rime tells the truth if you give it good light. Take my rune-light.', '(Solvi lends you her rune-light. It hums, and shows rime for what it is.)'], then: (G) => { flags(G.S).jh_solvi = 1; } };
     return { pages: ['Cold fire is a gift. It lights. It never burns. Someone made it burn in a tomb.'] };
   },
@@ -301,7 +314,8 @@ JT_FX.rimecaves = [['cold_flame', [-3.6, -8.4], 1.0, 1], ['cold_flame', [3.6, -8
 JT_FX.barrow = [['cold_flame', [-3.6, 7.0], 1.0, 1], ['cold_flame', [3.6, 7.0], 1.0, 1], ['cold_flame', [0, -8.6], 1.0, 1], ['cold_flame', [0, -29.0], 1.0, 1],
   ['pool_teal', [-5.0, -17.0], 0, 0], ['pool_aurora', [5.0, -17.0], 0, 0], ['pool_teal', [0, -19.4], 0, 0], ['ice_sparkles', [0, -16.0], 0.5, 0]];
 JT_FX.barrow2 = [['cold_flame', [-3.6, 7.0], 1.0, 1], ['cold_flame', [3.6, 7.0], 1.0, 1], ['cold_flame', [0, -32.0], 1.0, 1], ['pool_teal', [-6.4, -21.0], 0, 0], ['pool_aurora', [6.4, -21.0], 0, 0],
-  ['cold_flame', [-6.0, -47.0], 1.0, 1], ['cold_flame', [6.0, -47.0], 1.0, 1], ['cold_flame', [0, -52.4], 1.0, 1], ['ice_sparkles', [0, -2.0], 0.5, 0], ['rune_pulse', [0, -30.8], 0.8, 0]];
+  ['cold_flame', [-6.0, -47.0], 1.0, 1], ['cold_flame', [6.0, -47.0], 1.0, 1], ['cold_flame', [0, -52.4], 1.0, 1], ['ice_sparkles', [0, -2.0], 0.5, 0], ['rune_pulse', [0, -30.8], 0.8, 0],
+  ['pool_cold', [-4.0, -36.4], 0, 0], ['rune_pulse', [-4.0, -36.4], 0.8, 0], ['ice_sparkles', [-4.0, -36.4], 0.5, 0]];   // the real rune_waystone's kit fx (pool_cold r 3 m under it, rune_pulse, sparkles)
 const CAIRNS = [[-10.2, 6.4], [10.2, 6.4], [3.0, -1.6]];   // the Toll of Stones cairns (invisible spots; the ambush spawns at runtime)
 // the Rune Bridge (story 7, B7): step on lit frost runes only; unlit tiles crack and drop you back at the bridge head. 3 columns x 6 rows; LIT[row] = lit columns.
 // The lit tiles form one orthogonally connected path from the head to the far end (the smoke checks that); a fall costs a little health, never position.
@@ -534,16 +548,37 @@ export class Jotunheim {
     }
     this.spot({ id: 'door', pos: [0, -7.6], r: 2.2, label: 'the Barrow door (E / A)', act: () => this.barrowDoor() });
     this.spot({ id: 'spring', pos: [9.0, -7.4], r: 2.0, label: 'the frozen waterfall (E / A)', act: () => this.springLook() });
+    this.baseD = null; this.cairnOpen = {}; this.cairnLit = {}; this.cairnFx = {};
+    if (ctx.gamefx && ctx.gamefx.meta.effects.pool_cold) CAIRNS.forEach(([x, z], i) => { if (!(G.S.found || {})['tt_c' + (i + 1)]) this.cairnFx[i + 1] = ctx.gamefx.spawn('pool_cold', x, ctx.heightAt(x, z), z, { duration: Infinity, fadeIn: still ? 0 : 0.6 }); });   // the watch_cairn kit fx; gone once it is toppled
+    this.syncCairns();
     // the Toll of Stones (conquer, story 3.5): three watch-cairns with two Rime Berserkers each, then the Rime-Captain
     CAIRNS.forEach(([x, z], i) => this.spot({ id: 'tt' + (i + 1), pos: [x, z], r: 1.8, label: 'a watch-cairn (E / A: topple it)', show: () => q(this.G.S, 'jt_take') === 1 && !(this.G.S.found || {})['tt_c' + (i + 1)], act: () => this.cairn(i + 1) }));
     this.spot({ id: 'captain', pos: [0, -3.6], r: 1.6, label: 'the Rime-Captain\'s post (E / A)', show: () => q(this.G.S, 'jt_take') === 1 && CAIRNS.every((_, i) => (this.G.S.found || {})['tt_c' + (i + 1)]) && !F(this.G.S).barrow_key, act: () => this.captain() });
+  }
+  // the Toll of Stones cairns are real models: watch_cairn (pz tt_cairnN) stands until its wardens fall, then cairn_toppled (tt_cairnN_t) lies in its place
+  // and the standing cairn's blocker is lifted, so the rubble is walkable (collision restored from the scene's pre-blocker base_data)
+  syncCairns(puff) {
+    const c = this.ctx; if (!c || !c.pz) return;
+    this.cairnOpen = this.cairnOpen || {}; this.cairnLit = this.cairnLit || {};
+    CAIRNS.forEach(([x, z], i) => {
+      const n = i + 1, down = !!(this.G.S.found || {})['tt_c' + n], up = c.pz('tt_cairn' + n), dn = c.pz('tt_cairn' + n + '_t');
+      if (up) up.visible = !down;
+      if (dn) dn.visible = down;
+      if (down && !this.cairnOpen[n]) { this.cairnOpen[n] = 1; if (this.cairnFx && this.cairnFx[n]) { c.gamefx.remove(this.cairnFx[n]); delete this.cairnFx[n]; } this.unblock(x, z, 0.65); if (puff && c.effects) c.effects.spawn('impact', x, c.heightAt(x, z), z + 0.1); }
+      if (down && c.addGlow && !this.cairnLit[n]) { this.cairnLit[n] = 1; this.lights.push(c.addGlow(x + 0.7, c.heightAt(x, z), z + 0.7, { color: '#3fb8ff', intensity: 3, range: 1.6, lift: 0.2, fadeIn: puff ? 0.6 : 0.01 })); }   // cairn_toppled's kit lamp, lit only while the rubble shows
+    });
+  }
+  unblock(x, z, r) {
+    const c = this.ctx, col = c && c.collide, sp = c && c.scene && c.scene.collision; if (!col || !sp || !sp.base_data) return;
+    if (!this.baseD) { const bin = atob(sp.base_data), u8 = new Uint8Array(bin.length); for (let i = 0; i < bin.length; i++) u8[i] = bin.charCodeAt(i); this.baseD = new Int16Array(u8.buffer); }
+    for (let dx = -r; dx <= r + 1e-6; dx += col.cell * 0.5) for (let dz = -r; dz <= r + 1e-6; dz += col.cell * 0.5) { const k = col.idx(x + dx, z + dz); if (k >= 0) col.d[k] = this.baseD[k]; }
   }
   cairn(n) {
     const S = this.G.S, c = this.ctx, [x, z] = CAIRNS[n - 1];
     if (this.cb['tt' + n + 'a'] || this.cb['tt' + n + 'b']) return this.look('tt_busy' + n, 'The watch-cairn', ['The cairn-wardens are already on you.']);
     this.look('tt_c' + n, 'The watch-cairn', ['A watch-cairn of stacked rime-stone, a horn on top. Two Rime Berserkers sleep against it. Not for long.'], () => {
       let left = 2;
-      const dead = () => { if (--left > 0) return; S.found = { ...(S.found || {}), ['tt_c' + n]: 1 }; delete this.cb['tt' + n + 'a']; delete this.cb['tt' + n + 'b']; this.G.toast(`Cairn ${n} toppled.`, 2.4); this.G.save && this.G.save(); this.G.refreshMarkers && this.G.refreshMarkers(); };
+      const dead = () => { if (--left > 0) return; S.found = { ...(S.found || {}), ['tt_c' + n]: 1 }; delete this.cb['tt' + n + 'a']; delete this.cb['tt' + n + 'b']; this.syncCairns(true); this.G.toast(`Cairn ${n} toppled.`, 2.4); this.G.save && this.G.save(); this.G.refreshMarkers && this.G.refreshMarkers(); };
       ['a', 'b'].forEach((k, j) => this.foe({ id: 'tt' + n + k, role: 'rime_berserker', pos: [x + (j ? 1.4 : -1.4), z - 1.4] }, dead));
     });
   }

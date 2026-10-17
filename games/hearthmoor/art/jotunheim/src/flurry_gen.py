@@ -138,7 +138,8 @@ def main():
     neon, _ = P.build_sheet({**P.SLOTS_NEON, **NEONS}); neon.save(OUT / "flurry_neon.png")
     meta = {"tool": "hearthmoor-art flurry_gen (pets_gen layout)", "biome": "cozy-village", "frame": [P.FW, P.FH], "pivot": P.PIVOT,
             "ground_row": P.GROUND, "facings": list(P.FACINGS), "anims": P.ANIMS, "cols": P.COLS, "image": "flurry_neon.png",
-            "image_neon": "flurry_neon.png", "image_lock_safe": "flurry.png", "primary": "flurry_neon.png",
+            "image_neon": "flurry_neon.png", "image_lock_safe": "flurry.png", "primary": "flurry_neon.png", "fallback": "flurry.png",
+            "fallback_note": "primary sheet is the neon twin (like pets/pets_neon.png); flurry.png is the palette-safe twin (passes check-sprite) and the fallback until the scoped pet_flurry neon allow-list entry lands (the lead is adding it)",
             "neon_accents": {k: P.NEON[k] for k in NB}, "size": [safe.width, safe.height], "fx": "flurry_fx.json", "roles": roles}
     (OUT / "flurry.json").write_text(json.dumps(meta, indent=1))
     fa, fm, _ = P.build_fx(); fm["image"] = "flurry_fx.png"

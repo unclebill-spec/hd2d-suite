@@ -9,6 +9,7 @@ import { Crossing } from './bifrost.js';
 import { Alfheim, AREAS_ALF, AREA_NAMES_ALF } from './alfheim.js';   // [ALFHEIM]
 import { Svartalfheim, AREAS_SV, AREA_NAMES_SV } from './svartalfheim.js';   // [SVARTALFHEIM]
 import { Jotunheim, AREAS_JOT, AREA_NAMES_JOT } from './jotunheim.js';   // [JOTUNHEIM] stub
+const EXTRA_SPELLS = ['boulder_toss', 'frost_rune', 'stone_skin', 'cold_fire', 'stone_golem'];   // [JOTUNHEIM] Stonefrost spells: drawn by combat from the game-fx atlas, so the engine's spells-atlas cycle filter must let them through
 import { Temple } from './temple.js';
 import { Verdant } from './verdant.js';
 import { Ambient } from './audio.js';
@@ -353,7 +354,7 @@ async function loadArea(id, spawnKey, pos) {
   const canvas = document.createElement('canvas'); canvas.id = 'view'; document.body.prepend(canvas);
   G.area = id; G.S.area = id; G.armed = false;
   G.rifts.detach(); G.storms.detach(); G.rares.detach(); G.combat.detach(); G.glow.detach(); G.hollows.detach(); G.harbor.detach(); G.crossing.detach(); G.alfheim.detach(); G.svart.detach(); G.jot.detach(); G.garden.detach(); G.lanterns.detach(); G.forge.detach(); G.alchemy.detach(); G.weather.detach(); G.loot.detach(); G.shopUI.detach(); G.pets.detach(); G.temple.detach(); G.verdant.detach();
-  G.game = await boot({ base: AREAS[id], canvas, spawn: sp, startT: G.S.t, glowLights: glowCap(), clockSpeed: 1 / DAY_SECONDS, spellCycle: slots(),
+  G.game = await boot({ base: AREAS[id], canvas, spawn: sp, startT: G.S.t, glowLights: glowCap(), clockSpeed: 1 / DAY_SECONDS, spellCycle: slots(), extraSpells: EXTRA_SPELLS,
                         player: { role: G.S.cls || G.preview || 'wildcaller' }, castAdvance: false,
                         keepTitle: true, padHandled: true, hooks, toast: (m, t) => toast(m, t) });
   const ctx = G.ctx = G.game.ctx;
@@ -515,7 +516,7 @@ function drawVitals(ctx) {
   const S = G.S; if (S.lv) { setW('xpFill', S.lv >= PR.LEVEL_CAP ? 1 : S.xp / PR.xpNeed(S.lv)); setTxt('lvTxt', 'Lv' + S.lv); setTxt('ptsTxt', (S.free || S.sp) ? `+${S.free + S.sp}` : ''); }
   setTxt('hpTxt', `${Math.ceil(hp)}`);
   const cur = ctx.spellCycle()[ctx.spellIndex()] || '';
-  const cd = SPELLS[cur] ? C.cd.spell : C.cd.charm;
+  const cd = SPELLS[cur] ? Math.max(C.cd.spell, SPELLS[cur].own ? C.cd[SPELLS[cur].own] || 0 : 0) : C.cd.charm;   // [JOTUNHEIM] Stonefrost II / III spells carry their own long cooldown (S.own)
   setTxt('spellTxt', '✦ ' + spellName(cur) + (cd > 0.05 ? ` ${cd.toFixed(1)}` : ''));
   setTxt('padSpellName', (spellName(cur).split(' ')[0] || 'spell').slice(0, 7).toLowerCase());
   setCd('padSpell', cd); setCd('padSummon', C.cd.summon);

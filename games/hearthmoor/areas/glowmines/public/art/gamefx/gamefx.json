@@ -3,12 +3,25 @@
  "biome": "cozy-village",
  "seed": 104,
  "cell": 48,
- "cast_sets": {},
+ "cast_sets": {
+  "stonefrost_ii": [
+   [
+    "stonefrost_cast_ii",
+    "hands"
+   ]
+  ],
+  "stonefrost_iii": [
+   [
+    "stonefrost_cast_iii",
+    "hands"
+   ]
+  ]
+ },
  "cycle": [],
  "image": "gamefx.png",
  "size": [
   384,
-  624
+  1104
  ],
  "effects": {
   "quest_mark": {
@@ -275,6 +288,343 @@
    "then": null,
    "duration": 9999,
    "notes": "floating glow orb, hover 1.1-2.2 m"
+  },
+  "stonefrost_cast_ii": {
+   "row": 13,
+   "frames": 6,
+   "fps": 12,
+   "loop": false,
+   "loop_from": 0,
+   "loops": 1,
+   "kind": "billboard",
+   "pivot": [
+    24,
+    30
+   ],
+   "lift": 1.0,
+   "glow": true,
+   "light": {
+    "color": "#a6ecff",
+    "intensity": 5,
+    "range": 3.5,
+    "curve": [
+     0.4,
+     0.8,
+     1,
+     0.9,
+     0.6,
+     0.2
+    ]
+   },
+   "speed": null,
+   "travel": null,
+   "then": null,
+   "duration": 0.5,
+   "notes": "Stonefrost II cast flare at the hands: floating rune sigil (triangle) + rising motes + sparkles (NEON blue/teal)"
+  },
+  "stonefrost_bolt_ii": {
+   "row": 14,
+   "frames": 6,
+   "fps": 12,
+   "loop": true,
+   "loop_from": 0,
+   "loops": 1,
+   "kind": "projectile",
+   "pivot": [
+    24,
+    24
+   ],
+   "lift": 1.0,
+   "glow": true,
+   "light": {
+    "color": "#2ab4ff",
+    "intensity": 4,
+    "range": 3.5,
+    "curve": [
+     1,
+     1,
+     1,
+     1,
+     1,
+     1
+    ]
+   },
+   "speed": 8.0,
+   "travel": 6.0,
+   "then": "stonefrost_impact_ii",
+   "duration": 0.5,
+   "notes": "Stonefrost II boulder rimed in glowing ice crystals, sparkles around it; replaces seed_bomb for tier II"
+  },
+  "stonefrost_impact_ii": {
+   "row": 15,
+   "frames": 7,
+   "fps": 14,
+   "loop": false,
+   "loop_from": 0,
+   "loops": 1,
+   "kind": "billboard",
+   "pivot": [
+    24,
+    41
+   ],
+   "lift": 0.0,
+   "glow": true,
+   "light": {
+    "color": "#a6ecff",
+    "intensity": 8,
+    "range": 4.0,
+    "curve": [
+     1,
+     1,
+     0.7,
+     0.45,
+     0.25,
+     0.1,
+     0
+    ]
+   },
+   "speed": null,
+   "travel": null,
+   "then": null,
+   "duration": 0.5,
+   "notes": "Stonefrost II impact: white-blue flash, snow ring, ice shards, stone chips, sparkles (radius ~1.9 m at 18 px/m x2)"
+  },
+  "stonefrost_rune_ii": {
+   "row": 16,
+   "frames": 8,
+   "fps": 12,
+   "loop": false,
+   "loop_from": 0,
+   "loops": 1,
+   "kind": "decal",
+   "pivot": [
+    24,
+    24
+   ],
+   "lift": 0.03,
+   "glow": true,
+   "light": {
+    "color": "#2ab4ff",
+    "intensity": 3.0,
+    "range": 3,
+    "curve": [
+     0.2,
+     0.4,
+     0.6,
+     0.8,
+     0.8,
+     0.8,
+     1,
+     1
+    ]
+   },
+   "speed": null,
+   "travel": null,
+   "then": null,
+   "duration": 0.667,
+   "notes": "Stonefrost II Frost Rune trap decal: draws in over frames 0-3, frame 5 = armed (engine holds frame 5 like rune_trap); larger, brighter and with an outer ring per tier"
+  },
+  "stonefrost_burst_ii": {
+   "row": 17,
+   "frames": 6,
+   "fps": 14,
+   "loop": false,
+   "loop_from": 0,
+   "loops": 1,
+   "kind": "billboard",
+   "pivot": [
+    24,
+    43
+   ],
+   "lift": 0.0,
+   "glow": true,
+   "light": {
+    "color": "#a6ecff",
+    "intensity": 9,
+    "range": 4.5,
+    "curve": [
+     0.6,
+     1,
+     1,
+     0.7,
+     0.4,
+     0.1
+    ]
+   },
+   "speed": null,
+   "travel": null,
+   "then": null,
+   "duration": 0.429,
+   "notes": "Stonefrost II trap trigger: pillar of cold light + shards (replaces glyph_burst)"
+  },
+  "stonefrost_cast_iii": {
+   "row": 18,
+   "frames": 6,
+   "fps": 12,
+   "loop": false,
+   "loop_from": 0,
+   "loops": 1,
+   "kind": "billboard",
+   "pivot": [
+    24,
+    30
+   ],
+   "lift": 1.0,
+   "glow": true,
+   "light": {
+    "color": "#a6ecff",
+    "intensity": 7,
+    "range": 4.5,
+    "curve": [
+     0.4,
+     0.8,
+     1,
+     0.9,
+     0.6,
+     0.2
+    ]
+   },
+   "speed": null,
+   "travel": null,
+   "then": null,
+   "duration": 0.5,
+   "notes": "Stonefrost III cast flare at the hands: floating rune sigil (hexagram) + rising motes + sparkles (NEON blue/teal)"
+  },
+  "stonefrost_bolt_iii": {
+   "row": 19,
+   "frames": 6,
+   "fps": 12,
+   "loop": true,
+   "loop_from": 0,
+   "loops": 1,
+   "kind": "projectile",
+   "pivot": [
+    24,
+    24
+   ],
+   "lift": 1.0,
+   "glow": true,
+   "light": {
+    "color": "#2ab4ff",
+    "intensity": 6,
+    "range": 4.7,
+    "curve": [
+     1,
+     1,
+     1,
+     1,
+     1,
+     1
+    ]
+   },
+   "speed": 7.5,
+   "travel": 7.5,
+   "then": "stonefrost_impact_iii",
+   "duration": 0.5,
+   "notes": "Stonefrost III boulder rimed in glowing ice crystals, sparkles around it; replaces seed_bomb for tier III"
+  },
+  "stonefrost_impact_iii": {
+   "row": 20,
+   "frames": 7,
+   "fps": 14,
+   "loop": false,
+   "loop_from": 0,
+   "loops": 1,
+   "kind": "billboard",
+   "pivot": [
+    24,
+    41
+   ],
+   "lift": 0.0,
+   "glow": true,
+   "light": {
+    "color": "#a6ecff",
+    "intensity": 11,
+    "range": 5.5,
+    "curve": [
+     1,
+     1,
+     0.7,
+     0.45,
+     0.25,
+     0.1,
+     0
+    ]
+   },
+   "speed": null,
+   "travel": null,
+   "then": null,
+   "duration": 0.5,
+   "notes": "Stonefrost III impact: white-blue flash, snow ring, ice shards, stone chips, sparkles (radius ~2.4 m at 18 px/m x2)"
+  },
+  "stonefrost_rune_iii": {
+   "row": 21,
+   "frames": 8,
+   "fps": 12,
+   "loop": false,
+   "loop_from": 0,
+   "loops": 1,
+   "kind": "decal",
+   "pivot": [
+    24,
+    24
+   ],
+   "lift": 0.03,
+   "glow": true,
+   "light": {
+    "color": "#2ab4ff",
+    "intensity": 4.5,
+    "range": 4,
+    "curve": [
+     0.2,
+     0.4,
+     0.6,
+     0.8,
+     0.8,
+     0.8,
+     1,
+     1
+    ]
+   },
+   "speed": null,
+   "travel": null,
+   "then": null,
+   "duration": 0.667,
+   "notes": "Stonefrost III Frost Rune trap decal: draws in over frames 0-3, frame 5 = armed (engine holds frame 5 like rune_trap); larger, brighter and with an outer ring per tier"
+  },
+  "stonefrost_burst_iii": {
+   "row": 22,
+   "frames": 6,
+   "fps": 14,
+   "loop": false,
+   "loop_from": 0,
+   "loops": 1,
+   "kind": "billboard",
+   "pivot": [
+    24,
+    43
+   ],
+   "lift": 0.0,
+   "glow": true,
+   "light": {
+    "color": "#a6ecff",
+    "intensity": 11,
+    "range": 6.0,
+    "curve": [
+     0.6,
+     1,
+     1,
+     0.7,
+     0.4,
+     0.1
+    ]
+   },
+   "speed": null,
+   "travel": null,
+   "then": null,
+   "duration": 0.429,
+   "notes": "Stonefrost III trap trigger: pillar of cold light + shards (replaces glyph_burst)"
   }
- }
+ },
+ "stonefrost_from": 624
 }

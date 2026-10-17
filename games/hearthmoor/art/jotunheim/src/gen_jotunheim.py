@@ -5,6 +5,7 @@ from pathlib import Path
 HERE = Path(__file__).resolve().parent
 sys.path.insert(0, str(HERE))
 import jt_common as C
+import stonefrost_gen as SF
 import gen_sheets as GS, flurry_gen as FG, jt_fx as X, kit_jotun as KJ, jt_scene as SC, jt_layouts as LY, jt_npcs as N
 from PIL import Image
 H = C.H
@@ -39,6 +40,16 @@ KIT_META = {
  "rune_bridge": {"placement": "B7 Rune Bridge: chain along z; lit planks safe, unlit crack", "fx": ["pool_cold"]},
  "rune_brazier": {"placement": "B2 / B4 / B7 braziers tb_b1..3 (snuffable)", "fx": ["cold_flame", "pool_cold"]},
 }
+KIT_META.update({
+ "rune_waystone": {"placement": "Stonehollow arrival waystone [0,9.2]-side / Barrow Waystone Crypt; lamp + pool_cold (r 3 m) + rune_pulse; arrival point 2 m in front (+z)", "fx": ["pool_cold", "rune_pulse", "ice_sparkles"],
+                   "keep_clear": {"footprint_m": [-1.8, -1.8, 1.8, 1.8], "radius_m": 2.6, "note": "no props, spawns or fx within 2.6 m of the plinth; off stairs and ledge edges"}},
+ "stone_cairn": {"placement": "trail marker on snow paths; small cold ember glow on top, no pool needed", "fx": ["ice_sparkles"],
+                 "keep_clear": {"footprint_m": [-0.9, -0.9, 0.9, 0.9], "radius_m": 1.2, "note": "1.2 m clear of spawns, stairs and ledge edges"}},
+ "watch_cairn": {"placement": "Toll of Stones watch-cairns at (-10.2,6.4) (10.2,6.4) (3.0,-1.6); bone horn on top; swap to cairn_toppled when toppled", "fx": ["pool_cold"],
+                 "keep_clear": {"footprint_m": [-1.2, -1.2, 1.2, 1.2], "radius_m": 1.8, "note": "interact radius 1.8 m; the ambush spawns at runtime around it, so keep props away"}},
+ "cairn_toppled": {"placement": "replaces watch_cairn after the topple; walkable rubble, no blocker", "fx": [],
+                   "keep_clear": {"footprint_m": [-1.0, -1.0, 1.0, 1.0], "radius_m": 1.0, "note": "1 m clear of spawns"}},
+})
 FX_ORDER = list(X.FX)
 SCENE_NAMES = {"stonehollow": "scene_stonehollow", "rimecaves": "scene_rimecaves", "barrow": "scene_titans_barrow"}
 
@@ -69,11 +80,19 @@ def strip(sheet, role, picks, folder="sprite", hero=True):
 
 
 def main():
-    reps = GS.main()
-    FG.main()
-    reps["flurry (safe)"] = H.check_sprite(OUT / "pets/flurry.png")
-    print("flurry", H.report_line(reps["flurry (safe)"]))
-    H.write_json(OUT / "check_sprite_report.json", reps)
+    import os
+    if os.environ.get("JT_SKIP_SHEETS"):      # token-saver: sheets unchanged, reuse the stored check-sprite reports (run once per sheet)
+        reps = json.loads((OUT / "check_sprite_report.json").read_text()); FG.main()
+    else:
+        reps = GS.main()
+        FG.main()
+        reps["flurry (safe)"] = H.check_sprite(OUT / "pets/flurry.png")
+        print("flurry", H.report_line(reps["flurry (safe)"]))
+        H.write_json(OUT / "check_sprite_report.json", reps)
+    if "flurry_neon" not in reps:     # scoped pet_flurry allow-list entry is now in the repo's check-sprite: check the neon twin once
+        reps["flurry_neon"] = H.load_tool("check-sprite").check(OUT / "pets/flurry_neon.png", OUT / "pets/flurry.json", None, 20)
+        H.write_json(OUT / "check_sprite_report.json", reps)
+    sfm = SF.main()
     fxm = H.write_fx(OUT / "gamefx", "jt_fx", X.FX, 48)
     built, _ = H.build_kit(OUT / "kit", KJ.pieces, KIT_META)
     rd = OUT / "renders"; rd.mkdir(exist_ok=True)
@@ -94,7 +113,7 @@ def main():
     print("luma", lumas)
     meta = metadata(reps, lumas, built)
     (OUT / "metadata").mkdir(exist_ok=True)
-    contact(scenes, reps, built, fxm, lumas)
+    contact(scenes, reps, built, fxm, lumas, sfm)
     H.write_json(OUT / "metadata/jotunheim.json", meta)
     write_readme(reps, lumas)
     return reps, lumas
@@ -122,13 +141,14 @@ def metadata(reps, lumas, built):
                        "spawn from_bifrost [0,9.2]: nothing within 1.5 m", "longhouse doors: 2.5 m clear in front", "Barrow door: 3 m clear"],
     }
     return {"pack": "jotunheim", "story": "story/jotunheim.md", "frame_convention": "boss_sheet layout (native big frames, pivot bottom centre, idle 0-3 walk 4-7 cast 8-11 attack 12-15 die 24-27)",
-            "sheets": sheets, "pet": {"flurry": "pets/flurry.json (pets layout 20x32, pivot [10,32], idle 0-3 walk 4-7 follow 8-11)"},
+            "sheets": sheets, "pet": {"flurry": "pets/flurry.json (pets layout 20x32, pivot [10,32], idle 0-3 walk 4-7 follow 8-11); primary flurry_neon.png, fallback flurry.png"},
             "areas": areas, "placement_notes": notes, "luma_measured_on_renders": lumas,
-            "neon": {"sprites": ["pets/flurry_neon.png"], "fx": "all gamefx/jt_fx", "kit": "glow material (cold fire, runes, crystal tips, pools, orbs)"},
+            "stonefrost": {"file": "gamefx/stonefrost_fx.json", "tiers": ["II", "III"], "effects": list(json.loads((OUT / "gamefx/stonefrost_fx.json").read_text())["effects"])},
+            "neon": {"sprites": ["pets/flurry_neon.png (primary)"], "fx": "all gamefx/jt_fx and gamefx/stonefrost_fx", "kit": "glow material (cold fire, runes, crystal tips, pools, orbs)"},
             "check_sprite": {k: v["summary"] for k, v in reps.items()}, "kit_pieces": len(json.loads((OUT / "kit/kit.json").read_text())["pieces"])}
 
 
-def contact(scenes, reps, built, fxm, lumas):
+def contact(scenes, reps, built, fxm, lumas, sfm):
     S = H.Sheet("Jotunheim - Stonehollow, Rime Caves, Titan's Barrow (Hrimgard the Unthawed)",
                 "giants 2-3.2x (real tunics, belts, boots), Ulfar, Flurry, trolls + golems, Hrimgard 7x (only plate); kit with real height; neon on glow only")
     S.section("Scenes (night + day)", "luma: " + ", ".join(f"{k} {v}" for k, v in lumas.items()))
@@ -162,6 +182,14 @@ def contact(scenes, reps, built, fxm, lumas):
         for i in range(e["frames"]):
             st.alpha_composite(SC.fxf(fxm, n, i), (i * 48, 0))
         S.cell(st, n, "", k=2)
+    if sfm:
+        S.section("Stonefrost II + III spell fx (gamefx/stonefrost_fx; tier I is the repo's seed_bomb / rune_trap; cold-blue + teal neon)", "")
+        for n in sfm["effects"]:
+            e = sfm["effects"][n]
+            st = Image.new("RGBA", (48 * e["frames"], 48), (12, 14, 26, 255))
+            for i in range(e["frames"]):
+                st.alpha_composite(SC.fxf(sfm, n, i), (i * 48, 0))
+            S.cell(st, n, "", k=2)
     S.render(OUT / "contact_sheet.png")
 
 

@@ -283,8 +283,10 @@ export async function boot(opts = {}) {
   const gamefx = gMeta ? new Effects(world, sharp, gImg, gMeta, 0) : null;
   const fxPlaced = {};
   if (gamefx) for (const f of scene.fx || []) fxPlaced[f.id || f.name] = gamefx.spawn(f.name, f.pos[0], f.pos[1], f.pos[2], { duration: Infinity });
-  let spellCycle = sMeta ? (opts.spellCycle || scene.spell_cycle || sMeta.cycle).filter((n) => sMeta.cast_sets[n] || sMeta.effects[n]) : [];
+  let spellCycle = sMeta ? (opts.spellCycle || scene.spell_cycle || sMeta.cycle).filter((n) => sMeta.cast_sets[n] || sMeta.effects[n] || extraSpell(n)) : [];
   let spellIdx = 0;
+  // spells the game draws itself (hooks.onCast returns false and combat spawns the fx from the game-fx atlas): they have no spells-atlas entry
+  const extraSpell = (n) => (opts.extraSpells || []).includes(n);
   function facingVec(a) { return { down: [0, 1], up: [0, -1], left: [-1, 0], right: [1, 0] }[a.facing] || [0, 1]; }
   function castSpell(a, name) {
     if (!effects) return;
@@ -848,7 +850,7 @@ export async function boot(opts = {}) {
   const ctx = {
     scene, clock, camera, actors, player, npcs, collide, nav, effects, gamefx, fx: fxPlaced, particles, keys, project,
     walkTo: (x, z, extra) => walkPath(x, z, extra), stopWalk: () => { walkTo = null; }, walking: () => !!walkTo,
-    castSpell, setSpellCycle: (c) => { spellCycle = (c || []).filter((n) => sMeta && (sMeta.cast_sets[n] || sMeta.effects[n])); spellIdx = Math.min(spellIdx, Math.max(0, spellCycle.length - 1)); if ($('btnSpell')) $('btnSpell').hidden = !spellCycle.length; showSpell(); },
+    castSpell, setSpellCycle: (c) => { spellCycle = (c || []).filter((n) => sMeta && (sMeta.cast_sets[n] || sMeta.effects[n] || extraSpell(n))); spellIdx = Math.min(spellIdx, Math.max(0, spellCycle.length - 1)); if ($('btnSpell')) $('btnSpell').hidden = !spellCycle.length; showSpell(); },
     spellCycle: () => spellCycle.slice(),
     addNpc: (spec) => { const a = actors.add(spec); npcs.push(a); return a; },
     removeNpc: (a) => { const i = npcs.indexOf(a); if (i >= 0) npcs.splice(i, 1); actors.remove(a); },

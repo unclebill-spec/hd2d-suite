@@ -7,6 +7,14 @@ import { HERO, SPELLS, CHARM_DMG, CHARM_CD, SUMMONS, SUMMON_LIFE, SUMMON_CD, ENE
 // summon tiers (Part 4): I base, II glows (a following light + sparkles), III radiant form (lit rim, crown of light,
 // sparkles; '<role>_r' sprite) + a rune circle on arrival, IV (capstone) brighter and wider light + a sparkle burst.
 // Stats grow through the summon-branch skills (summonMul / summonLife). Gloom-and-glow: palette pixels, no bloom.
+// [JOTUNHEIM] Stonefrost II / III (Solvi's lessons; flags sf_ii / sf_iii). The art is the gamefx atlas rows jot_art.py appends (48 px cells).
+const STONE = {
+  2: { cast: 'stonefrost_cast_ii', bolt: 'stonefrost_bolt_ii', hit: 'stonefrost_impact_ii', rune: 'stonefrost_rune_ii', burst: 'stonefrost_burst_ii', mul: 1.3, rad: 1.15 },
+  3: { cast: 'stonefrost_cast_iii', bolt: 'stonefrost_bolt_iii', hit: 'stonefrost_impact_iii', rune: 'stonefrost_rune_iii', burst: 'stonefrost_burst_iii', mul: 1.6, rad: 1.3 },
+};
+const COLD_BLUE = '#7fd4ff', COLD_R = 2.2, GOLEM = { name: 'Stone golem', hp: 90, dmg: 14, reach: 1.4, speed: 1.9 };
+const GOLEM_ROLES = ['golem', 'eldergolem', 'icegolem', 'mushgolem'];   // first one this area's actor atlas has
+
 const SUMMON_GLOW = { mushgolem: '#f2c24a', runesentinel: '#ffb24a', runewisp: '#94c0dc', stormsprite: '#94c0dc', sapling: '#b2c464', emberimp: '#ffb24a' };
 // 6.4: camera framing for big foes: 2.5x Glenheart pulls ~1.18 (unchanged); 5-6x bosses pull up to ~1.9 (engine clamp 2.0)
 export const framePullFor = (k) => (k >= 4 ? Math.min(2.0, 1 + (k - 1) * 0.18) : 1 + (k - 1) * 0.12);
@@ -48,7 +56,8 @@ export class Combat {
     this.nums = [];
     this.bars = new Map();
     this.st = PLAYER.stamina; this.stT = 0;
-    this.cd = { spell: 0, charm: 0, summon: 0 };
+    this.cd = { spell: 0, charm: 0, summon: 0, skin: 0, cold: 0, golem: 0 };   // skin / cold / golem: the long Stonefrost II / III cooldowns (spell = the shared 1 s gap)
+    this.skin = null; this.patches = [];
     this.godT = 0;
     this.defeated = {};              // area:id -> game seconds left until it wanders back
     this.time = 0;
@@ -71,7 +80,7 @@ export class Combat {
   // ---------------------------------------------------------------- area lifecycle
   attach(ctx, area) {
     this.ctx = ctx; this.area = area;
-    this.enemies = []; this.navBig = null; this.summon = null; this.projs = []; this.traps = []; this.later = [];
+    this.enemies = []; this.navBig = null; this.summon = null; this.projs = []; this.traps = []; this.later = []; this.skin = null; this.patches = [];
     this.clearDom();
     if (this.G.S.hp == null || this.G.S.hp <= 0) this.G.S.hp = this.maxHp();
     this.G.S.hp = Math.min(this.G.S.hp, this.maxHp());
@@ -143,6 +152,7 @@ export class Combat {
     this.updateSummon(dt, frozen);
     this.updateProjs(dt);
     this.updateTraps(dt);
+    this.updateStone(dt, frozen);
     for (const l of this.later) l.t -= dt;
     const due = this.later.filter((l) => l.t <= 0); this.later = this.later.filter((l) => l.t > 0);
     for (const l of due) l.fn();
@@ -172,7 +182,7 @@ export class Combat {
     const gl = D.shy ? this.G.glow : null;   // cold-fire wraiths: never drift into light
     const step = (tx, tz, scale = 1) => {
       if (gl) { const n = Math.hypot(tx, tz) || 1; if (gl.litAt(a.x + tx / n * 0.45, a.z + tz / n * 0.45)) return false; }
-      return ctx.moveActor(a, tx, tz, dt * scale);
+      return ctx.moveActor(a, tx, tz, dt * scale * (this.coldAt(a.x, a.z) ? this.coldSlow : 1));   // Cold Fire patch: half speed
     };
     if (gl && e.state !== 'attack') {
       const Z = gl.zoneAt(a.x, a.z);   // caught in light (a pool bloomed under it, a lamp came on): slip out
@@ -341,6 +351,7 @@ export class Combat {
     const ctx = this.ctx, p = ctx.player, G = this.G;
     if (G.downed || this.godT > 0 || p.iframes > 0) return false;
     dmg *= (MODES[G.S.mode] || MODES.adventurer).hurt;   // Story / Adventurer / Hero
+    if (this.skin) dmg = Math.max(1, Math.round(dmg * this.skin.take));   // Stone Skin: -40 % damage taken
     const fv = FV[p.facing] || [0, 1];
     const dx = src.x - p.x, dz = src.z - p.z, d = Math.hypot(dx, dz) || 1;
     let guarded = false;
@@ -443,8 +454,9 @@ export class Combat {
       } });
       return true;
     }
-    if (this.cd.spell > 0) { this.tired(); return false; }
-    this.cd.spell = S.cd * (1 - Math.min(0.5, this.M.spellCd || 0));   // tier II / III skills shorten spell cooldowns
+    if (this.cd.spell > 0 || (S.own && this.cd[S.own] > 0)) { this.tired(); return false; }
+    if (S.own) { this.cd[S.own] = S.cd * (1 - Math.min(0.5, this.M.spellCd || 0)); this.cd.spell = 1.0; }
+    else this.cd.spell = S.cd * (1 - Math.min(0.5, this.M.spellCd || 0));   // tier II / III skills shorten spell cooldowns
     // auto-face the nearest foe (4-way facing) so a quick tap aims where you mean
     const tgt = this.nearestEnemy(p, 7);
     if (tgt && !p.act) ctx.actors.setFacingFromVec(p, tgt.a.x - p.x, tgt.a.z - p.z);
@@ -452,12 +464,18 @@ export class Combat {
     G.audio.sfx('spell');
     const fv = FV[p.facing] || [0, 1], fx = ctx.effects;
     if (!fx) return false;
-    if (S.kind === 'projectile' || S.kind === 'pierce') {
-      const travel = fx.meta.effects[S.fx].travel || 4.5;
+    const T = S.stone ? this.stoneFx() : null;   // Boulder Toss / Frost Rune: tier II / III art + damage from the game-fx atlas
+    if (T && T.cast) T.g.spawn(T.cast, p.x + fv[0] * 0.4, p.y, p.z + fv[1] * 0.4 + 0.06);
+    if (S.kind === 'skin') this.doSkin(S);
+    else if (S.kind === 'coldfire') this.doColdFire(S);
+    else if (S.kind === 'golem') this.doGolem(S);
+    else if (S.kind === 'projectile' || S.kind === 'pierce') {
+      const fxo = T && T.bolt ? T.g : fx, fxn = T && T.bolt ? T.bolt : S.fx;
+      const travel = fxo.meta.effects[fxn].travel || 4.5;
       const tx = p.x + fv[0] * travel, tz = p.z + fv[1] * travel;
-      const proj = { owner: 'player', spell: name, S, hitSet: new Set() };
-      proj.f = fx.spawn(S.fx, p.x + fv[0] * 0.4, p.y, p.z + fv[1] * 0.4 + 0.05,
-                        { to: [tx, ctx.heightAt(tx, tz), tz], onDone: (f) => { if (S.kind === 'projectile' && !proj.done) this.burst(proj, f.x, f.z); proj.done = true; if (S.kind === 'pierce' && this.G.glow) this.G.glow.pool(f.x, f.z, this.G.glow.colorOf(S.fx)); } });
+      const proj = { owner: 'player', spell: name, S, hitSet: new Set(), fxo, mul: T ? T.mul : 1, T };
+      proj.f = fxo.spawn(fxn, p.x + fv[0] * 0.4, p.y, p.z + fv[1] * 0.4 + 0.05,
+                        { to: [tx, ctx.heightAt(tx, tz), tz], onDone: (f) => { if (S.kind === 'projectile' && !proj.done) this.burst(proj, f.x, f.z, true); proj.done = true; if (S.kind === 'pierce' && this.G.glow) this.G.glow.pool(f.x, f.z, this.G.glow.colorOf(S.fx)); } });
       this.projs.push(proj);
     } else if (S.kind === 'nova') {
       fx.spawn('rune_slam', p.x, p.y, p.z + 0.05); fx.spawn('impact', p.x, p.y, p.z + 0.06);
@@ -465,9 +483,9 @@ export class Combat {
       for (const e of this.alive()) if (dist(e.a, p) < S.radius + e.D.r) this.damageEnemy(e, this.out('spell', S.dmg), p, S.push, PAL.gold);
     } else if (S.kind === 'trap') {
       const x = p.x + fv[0] * 1.7, z = p.z + fv[1] * 1.7, y = ctx.heightAt(x, z);
-      fx.spawn('rune_trap', x, y, z + 0.02);
-      this.traps.push({ x, y, z, t: 0, S, armed: null });
-      if (this.G.glow) this.G.glow.pool(x, z, this.G.glow.colorOf('rune_trap'));
+      (T && T.rune ? T.g : fx).spawn(T && T.rune ? T.rune : 'rune_trap', x, y, z + 0.02);
+      this.traps.push({ x, y, z, t: 0, S, armed: null, T });
+      if (this.G.glow) this.G.glow.pool(x, z, T ? COLD_BLUE : this.G.glow.colorOf('rune_trap'));
     } else if (S.kind === 'chain') {
       let from = p, hitList = [], t = 0;
       for (let i = 0; i <= S.jumps + this.M.chainJumps; i++) {
@@ -488,8 +506,8 @@ export class Combat {
     }
     return false;
   }
-  burst(proj, x, z) {
-    const ctx = this.ctx, S = proj.S;
+  burst(proj, x, z, hitFxAuto = false) {   // hitFxAuto: the bolt ran its full travel, so the atlas already queues its own impact (`then`)
+    const ctx = this.ctx, S = proj.S, T = proj.T;
     if (!proj.small && this.G.glow) this.G.glow.pool(x, z, this.G.glow.colorOf(S.fx === 'seed_bomb' ? 'earth_burst' : S.fx));
     if (!proj.small && S.fx === 'seed_bomb' && this.M.seedSplit) {
       for (let k = 0; k < this.M.seedSplit; k++) {
@@ -497,14 +515,17 @@ export class Combat {
         this.later.push({ t: 0.15 + 0.1 * k, fn: () => this.burst({ S, small: true }, sx, sz) });
       }
     }
-    if (S.burst && ctx.effects) ctx.effects.spawn(S.burst, x, ctx.heightAt(x, z), z + 0.05);
-    for (const e of this.alive()) if (Math.hypot(e.a.x - x, e.a.z - z) < S.radius + e.D.r) this.damageEnemy(e, this.out('spell', S.dmg * (proj.small ? 0.5 : 1)), { x, z }, 0.4, PAL.gold);
+    if (T && T.hit) { if (!hitFxAuto) T.g.spawn(T.hit, x, ctx.heightAt(x, z), z + 0.05); }
+    else if (S.burst && ctx.effects) ctx.effects.spawn(S.burst, x, ctx.heightAt(x, z), z + 0.05);
+    const rad = S.radius * (T ? T.rad : 1);
+    for (const e of this.alive()) if (Math.hypot(e.a.x - x, e.a.z - z) < rad + e.D.r) this.damageEnemy(e, this.out('spell', S.dmg * (proj.mul || 1) * (proj.small ? 0.5 : 1)), { x, z }, 0.4, PAL.gold);
   }
   updateProjs() {
     const ctx = this.ctx, p = ctx.player;
     for (const pr of this.projs) {
       const f = pr.f;
-      if (!f || pr.done || !ctx.effects.list.includes(f)) { pr.done = true; continue; }
+      const fxo = pr.fxo || ctx.effects;
+      if (!f || pr.done || !fxo.list.includes(f)) { pr.done = true; continue; }
       if (pr.owner === 'enemy') {
         if (Math.hypot(f.x - p.x, f.z - p.z) < pr.r && !this.G.downed) {
           if (this.hurtPlayer(pr.dmg, { x: f.x, z: f.z }, 0.35) || p.act?.name === 'defend') { ctx.effects.remove(f); ctx.effects.spawn('frost_puff', f.x, f.y - 0.6, f.z); pr.done = true; }
@@ -517,7 +538,7 @@ export class Combat {
       for (const e of this.alive()) {
         if (pr.hitSet.has(e) || Math.hypot(e.a.x - f.x, e.a.z - f.z) > 0.6 + e.D.r) continue;
         if (pr.S.kind === 'pierce') { pr.hitSet.add(e); this.damageEnemy(e, this.out('spell', pr.S.dmg), f, 0.5, PAL.gold); }
-        else { ctx.effects.remove(f); this.burst(pr, f.x, f.z); pr.done = true; break; }
+        else { fxo.remove(f); this.burst(pr, f.x, f.z); pr.done = true; break; }
       }
     }
     this.projs = this.projs.filter((pr) => !pr.done);
@@ -526,17 +547,91 @@ export class Combat {
     const ctx = this.ctx;
     for (const tr of this.traps) {
       tr.t += dt;
-      if (!tr.armed && tr.t >= tr.S.arm) tr.armed = ctx.effects.spawn('rune_trap', tr.x, tr.y, tr.z + 0.02, { frame: 5 });
+      const T = tr.T, fxo = T && T.rune ? T.g : ctx.effects;
+      if (!tr.armed && tr.t >= tr.S.arm) tr.armed = fxo.spawn(T && T.rune ? T.rune : 'rune_trap', tr.x, tr.y, tr.z + 0.02, { frame: 5 });
       if (!tr.armed) continue;
       const near = this.alive().some((e) => Math.hypot(e.a.x - tr.x, e.a.z - tr.z) < 1.1 + e.D.r);
       if (near || tr.t > tr.S.life) {
-        ctx.effects.remove(tr.armed);
-        ctx.effects.spawn('glyph_burst', tr.x, tr.y, tr.z + 0.04);
-        if (near) for (const e of this.alive()) if (Math.hypot(e.a.x - tr.x, e.a.z - tr.z) < tr.S.radius * this.M.trapRadius + e.D.r) { this.damageEnemy(e, this.out('spell', tr.S.dmg), tr, 0.3, PAL.gold); e.cd = Math.max(e.cd, 1.6); }
+        fxo.remove(tr.armed);
+        (T && T.burst ? T.g : ctx.effects).spawn(T && T.burst ? T.burst : 'glyph_burst', tr.x, tr.y, tr.z + 0.04);
+        if (near) for (const e of this.alive()) if (Math.hypot(e.a.x - tr.x, e.a.z - tr.z) < tr.S.radius * (T ? T.rad : 1) * this.M.trapRadius + e.D.r) { this.damageEnemy(e, this.out('spell', tr.S.dmg * (T ? T.mul : 1)), tr, 0.3, PAL.gold); e.cd = Math.max(e.cd, 1.6); }
         tr.done = true;
       }
     }
     this.traps = this.traps.filter((t) => !t.done);
+  }
+
+  // ---------------------------------------------------------------- [JOTUNHEIM] Stonefrost II / III
+  stoneTier() { const f = this.G.S.flags || {}; return f.sf_iii ? 3 : f.sf_ii ? 2 : 1; }
+  // tier II / III art for Boulder Toss / Frost Rune (null = tier I, or an area with no game-fx atlas: the old spells-atlas art plays)
+  stoneFx() {
+    const g = this.ctx && this.ctx.gamefx, T = STONE[this.stoneTier()];
+    if (!g || !T) return null;
+    const has = (n) => !!g.meta.effects[n];
+    return { g, mul: T.mul, rad: T.rad, cast: has(T.cast) ? T.cast : null, bolt: has(T.bolt) ? T.bolt : null, hit: has(T.hit) ? T.hit : null, rune: has(T.rune) ? T.rune : null, burst: has(T.burst) ? T.burst : null };
+  }
+  get coldSlow() { return 0.5; }
+  coldAt(x, z) { for (const c of this.patches || []) if (Math.hypot(x - c.x, z - c.z) < c.r) return true; return false; }
+  // Stone Skin: 6 s, -40 % damage taken, -20 % speed (p.speed is shared with the blizzard's frost slow: re-base whenever someone else writes it)
+  doSkin(S) {
+    const ctx = this.ctx, p = ctx.player, g = ctx.gamefx;
+    if (this.skin) this.endSkin();
+    this.skin = { t: S.t, take: S.take, sp0: p.speed, sp: p.speed * S.speed, k: S.speed };
+    p.speed = this.skin.sp;
+    const T = STONE[2];
+    if (g && g.meta.effects[T.cast]) g.spawn(T.cast, p.x, p.y, p.z + 0.06);
+    if (g && g.meta.effects[T.rune]) this.skin.ring = g.spawn(T.rune, p.x, p.y, p.z + 0.03, { duration: S.t, frame: 5 });
+    if (this.G.glow) this.G.glow.pool(p.x, p.z, '#b9c7d6', 0.5);
+    this.G.toast('Stone Skin: the stone holds', 1.4);
+  }
+  endSkin() {
+    const k = this.skin, p = this.ctx && this.ctx.player; if (!k) return;
+    if (p && p.speed === k.sp) p.speed = k.sp0;
+    if (k.ring && this.ctx.gamefx) this.ctx.gamefx.remove(k.ring);
+    this.skin = null;
+  }
+  // Cold Fire: a neon-blue fire patch for 8 s: foes in it move at half speed, it lights dark rooms (a glow zone + a cold-blue light), it never burns
+  doColdFire(S) {
+    const ctx = this.ctx, p = ctx.player, g = ctx.gamefx, fv = FV[p.facing] || [0, 1];
+    const x = p.x + fv[0] * 2.0, z = p.z + fv[1] * 2.0, y = ctx.heightAt(x, z);
+    const c = { x, z, r: S.radius, t: S.life, fx: [] };
+    const T = STONE[2], gl = this.G.glow;
+    if (g && g.meta.effects[T.rune]) c.fx.push([g, g.spawn(T.rune, x, y, z + 0.03, { duration: S.life, frame: 5 })]);
+    else if (ctx.effects) c.fx.push([ctx.effects, ctx.effects.spawn('coldfire_pool', x, y, z + 0.03, { duration: S.life })]);
+    if (ctx.effects) c.fx.push([ctx.effects, ctx.effects.spawn('coldfire_motes', x + 0.1, y + 0.1, z + 0.1, { duration: S.life })]);
+    if (ctx.addGlow) ctx.addGlow(x, y, z, { color: COLD_BLUE, intensity: 8, range: 4.6, life: S.life, fadeIn: 0.2, lift: 0.5 });
+    if (gl) { gl.pools.push({ x, z, r: S.radius, t: S.life, cold: 1 }); if (this.G.hollows) this.G.hollows.spellAt(x, z); }   // a lit zone: braziers catch it, shy wraiths keep out
+    this.patches.push(c);
+    this.G.toast('Cold Fire', 1.0);
+  }
+  // Stone Golem: a stone golem fights for you for 20 s (it takes the place of any other summon)
+  doGolem(S) {
+    const ctx = this.ctx, p = ctx.player, G = this.G, roles = ctx.actors.meta.roles;
+    const role = GOLEM_ROLES.find((r) => roles[r]);
+    if (!role) { this.cd.golem = 0; this.cd.spell = 0; return; }
+    if (this.summon) this.unsummon();
+    const fv = FV[p.facing] || [0, 1], hp = Math.round(GOLEM.hp * this.M.summonMul);
+    const a = ctx.addNpc({ id: 'summon', role, name: GOLEM.name, pos: [p.x + fv[0] * 1.0 + 0.3, p.z + fv[1] * 1.0], behavior: 'idle', turn: false, speed: GOLEM.speed });
+    a.ai = true; a.noTalk = true; a.facing = p.facing;
+    this.summon = { a, tier: 3, golem: true, D: { ...GOLEM, hp }, hp, life: S.life + this.M.summonLife, cd: 0.4, target: null, sparkT: 0.3 };
+    if (ctx.addGlow) this.summon.light = ctx.addGlow(a.x, a.y, a.z, { color: COLD_BLUE, intensity: 3.5, range: 2.8, lift: 0.8, fadeIn: 0.4 });
+    const g = ctx.gamefx, T = STONE[3];
+    if (g && g.meta.effects[T.burst]) g.spawn(T.burst, a.x, a.y, a.z + 0.05); else if (ctx.effects) ctx.effects.spawn('summon_poof', a.x, a.y, a.z + 0.05);
+    G.audio.sfx('summon');
+    G.toast('The Stone Golem rises!', 1.6);
+  }
+  updateStone(dt, frozen) {
+    const ctx = this.ctx, p = ctx.player, k = this.skin;
+    if (k && !frozen) {
+      k.t -= dt;
+      if (p.speed !== k.sp) { k.sp0 = p.speed; k.sp = k.sp0 * k.k; p.speed = k.sp; }   // someone else (the blizzard slow) wrote p.speed: re-base
+      if (k.t <= 0 || this.G.downed) this.endSkin();
+    }
+    for (const c of this.patches) {
+      if (!frozen) c.t -= dt;
+      if (c.t <= 0) { c.done = true; for (const [o, f] of c.fx) o.remove(f); }   // forced-frame decals never expire by themselves
+    }
+    if (this.patches.some((c) => c.done)) this.patches = this.patches.filter((c) => !c.done);
   }
 
   // ---------------------------------------------------------------- summons (a tiny friend from the hero's background)

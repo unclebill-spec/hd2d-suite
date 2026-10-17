@@ -370,9 +370,126 @@ def pieces(K):
         pc.mesh = m.ao(0, 2.0, 0.1); lamp(pc, (0.35, 1.6, 0.0), WARM, 5.0); pc.size = [0.8, 2.0, 0.4]; pc.blockers.append([-.2, -.2, .2, .2])
         pc.markers["note"] = "warm accent against the cold glow (Bill: gloom and glow, not all blue)"; return pc
 
+    # ======================================================================= waystone + cairns (replace the stand-ins; added 2026-10-16)
+    def rune_glyphs(m, face_z, y0, y1, n, flip=False, w=0.0):
+        """rows of cold-blue rune strokes on a +z facing plane at depth face_z (caller rotates the mesh part)"""
+        for k in range(n):
+            y = y0 + (y1 - y0) * k / max(1, n - 1)
+            col = RUNE if k % 2 else CF_HI
+            m.add(box(0.3, 0.06, 0.025, col, "glow", y0=y).xf((0, 0, face_z)))
+            sx = 0.1 * (1 if (k + flip) % 2 else -1)
+            m.add(box(0.06, 0.24, 0.025, CF, "glow", y0=y - 0.1).xf((sx, 0, face_z)))
+            if k % 3 == 1:
+                m.add(box(0.1, 0.04, 0.02, CF_HI, "glow", y0=y + 0.11).xf((-sx, 0, face_z)))
+
+    def rune_waystone(cx):
+        pc = Piece("rune_waystone"); r = K.rng(cx.seed, "way"); m = Mesh()
+        # stepped round plinth (0.38 m) with a glowing inlay ring
+        m.add(cylinder(1.45, 1.3, 0.2, 10, STONE_LO, "stone", y0=0))
+        m.add(cylinder(1.15, 1.0, 0.18, 10, STONE, "stone", y0=0.2))
+        for k in range(10):
+            a = k * 2 * PI / 10 + 0.15
+            m.add(box(0.34, 0.012, 0.06, RUNE if k % 2 else CF_HI, "glow", y0=0.2).xf((math.cos(a) * 1.3, 0, math.sin(a) * 1.3), rot=(0, -a + PI / 2, 0)))
+        # the slab: a tapering four-sided obelisk, faces axis aligned, black stone with a snow cap
+        slab = cylinder(0.62, 0.40, 3.3, 4, "#3a4258", "stone", y0=0.38).xf((0, 0, 0), rot=(0, PI / 4, 0))
+        m.add(slab)
+        m.add(cylinder(0.40, 0.0, 0.42, 4, STONE_HI, "stone", y0=3.68).xf((0, 0, 0), rot=(0, PI / 4, 0)))
+        m.add(sphere(0.34, 7, 3, SNOW, "paint", squash=(1.15, .4, 1.15)).xf((0.0, 3.62, 0.0)))
+        # glowing rune columns on the four faces (apothem 0.44 at the foot -> 0.28 at the head)
+        for fi, ry in enumerate((0, PI / 2, PI, -PI / 2)):
+            face = Mesh()
+            rune_glyphs(face, 0.40, 0.95, 3.1, 8, flip=fi)
+            face.add(box(0.05, 0.9, 0.02, CF_HI, "glow", y0=0.55).xf((0, 0, 0.45)))       # keystone line
+            m.add(face.xf((0, 0, 0), rot=(0, ry, 0)))
+        # white-hot crystal on top: the beacon
+        m.add(sphere(0.2, 7, 4, CF_HI, "glow").xf((0, 4.05, 0)))
+        m.add(cylinder(0.12, 0.0, 0.5, 5, CF, "glow", y0=4.05))
+        # two leaning guard stones with a few runes each
+        for sx, sz, lean, h in ((-1.55, 0.35, 0.12, 1.5), (1.5, -0.3, -0.1, 1.2)):
+            g = Mesh()
+            g.add(cylinder(0.34, 0.2, h, 5, STONE, "stone", y0=0))
+            g.add(sphere(0.2, 6, 3, SNOW, "paint", squash=(1.1, .4, 1.1)).xf((0, h, 0)))
+            rune_glyphs(g, 0.3, 0.5, h - 0.25, 3, flip=sx > 0)
+            m.add(g.xf((sx, 0.0, sz), rot=(0, 0.5 * sx, lean)))
+        # snow drifts against the plinth
+        for k in range(5):
+            a = r.uniform(0, 2 * PI)
+            m.add(sphere(r.uniform(.28, .45), 6, 3, SNOW, "paint", squash=(1.4, .4, 1.0)).xf((math.cos(a) * 1.45, 0.0, math.sin(a) * 1.45)))
+        pc.mesh = m.ao(0, 4.3, 0.15); pc.size = [3.4, 4.5, 3.4]
+        lamp(pc, (0, 2.2, 1.1), RUNE, 6.5)
+        pc.blockers.append([-0.8, -0.8, 0.8, 0.8])
+        pc.markers["interact"] = "waystone (E / A): travel; the lift ring is the plinth"
+        pc.markers["pool_fx"] = "pool_cold r 3.0 m under it; rune_pulse every 3 s"
+        pc.markers["keep_clear"] = {"footprint": [-1.8, -1.8, 1.8, 1.8], "radius_m": 2.6, "front_m": 2.0,
+                                    "note": "no props, spawns or fx within 2.6 m (the arrival point is 2 m in front, +z)"}
+        return pc
+
+    def cairn_stones(m, r, n, base, h0, glow_at=None, snow=True, lean=0.0):
+        y = h0
+        for i in range(n):
+            f = i / max(1, n - 1)
+            rad = base * (1 - 0.62 * f) * r.uniform(0.85, 1.12)
+            ht = rad * 0.55
+            ox, oz = r.uniform(-.14, .14) * (1 + f) * base, r.uniform(-.14, .14) * (1 + f) * base
+            col = "#66708c" if i % 3 == 0 else STONE_HI if i % 3 == 1 else "#586278"
+            m.add(sphere(rad, 7, 4, col, "stone", squash=(1.35, 0.52, 1.2)).xf((ox + lean * f, y + ht * 0.5, oz)))
+            if snow and i in (n - 1, n // 2):
+                m.add(sphere(rad * 0.7, 6, 3, SNOW, "paint", squash=(1.2, 0.3, 1.0)).xf((ox + lean * f, y + ht * 0.92, oz)))
+            if glow_at is not None and i == glow_at:       # a single rune stroke pair on the front of this stone
+                m.add(box(rad * 0.7, 0.04, 0.02, RUNE, "glow", y0=y + ht * 0.45).xf((ox + lean * f, 0, oz + rad * 0.98)))
+                m.add(box(0.04, rad * 0.5, 0.02, CF_HI, "glow", y0=y + ht * 0.2).xf((ox + lean * f, 0, oz + rad * 1.0)))
+            y += ht * 0.85
+        return y
+
+    def stone_cairn(cx):
+        pc = Piece("stone_cairn"); r = K.rng(cx.seed, "cairn"); m = Mesh()
+        m.add(sphere(0.78, 7, 3, SNOW, "paint", squash=(1.2, .18, 1.2)).xf((0, 0.0, 0)))
+        top = cairn_stones(m, r, 7, 0.62, 0.0, glow_at=2, lean=0.04)
+        m.add(sphere(0.085, 6, 4, CF_HI, "glow").xf((0.04, top + 0.12, 0)))        # the small glow accent: a cold-fire ember on top
+        m.add(sphere(0.04, 5, 3, CF, "glow").xf((0.25, 0.08, 0.55)))               # a lit pebble at the foot
+        pc.mesh = m.ao(0, top + 0.4, 0.15); pc.size = [1.5, top + 0.35, 1.5]
+        lamp(pc, (0.04, top + 0.15, 0.1), CF, 2.4)
+        pc.blockers.append([-.45, -.45, .45, .45])
+        pc.markers["keep_clear"] = {"footprint": [-0.9, -0.9, 0.9, 0.9], "radius_m": 1.2, "note": "trail marker; keep spawns and fx 1.2 m away; small cold ember glow, no pool decal needed"}
+        return pc
+
+    def watch_cairn(cx):
+        """the Toll of Stones watch-cairn: tall stack of rime-stone with a bone horn on top and one glowing rune stone"""
+        pc = Piece("watch_cairn"); r = K.rng(cx.seed, "wcairn"); m = Mesh()
+        m.add(sphere(1.0, 7, 3, SNOW, "paint", squash=(1.2, .18, 1.2)).xf((0, 0.0, 0)))
+        top = cairn_stones(m, r, 9, 0.85, 0.0, glow_at=3, lean=-0.05)
+        # horn: three bone beams curving up and out, iron band at the root
+        pts = [(-0.08, top - 0.02), (0.0, top + 0.28), (0.14, top + 0.52), (0.32, top + 0.64)]
+        for (a, b) in zip(pts[:-1], pts[1:]):
+            m.add(beam([a[0], a[1], 0.0], [b[0], b[1], 0.0], 0.07 if a[1] < top + 0.4 else 0.05, FUR, "paint"))
+        m.add(sphere(0.045, 5, 3, CF_HI, "glow").xf((0.34, top + 0.67, 0)))        # glowing horn tip
+        m.add(cylinder(0.12, 0.12, 0.05, 6, IRON, "paint", y0=top + 0.06))
+        pc.mesh = m.ao(0, top + 0.9, 0.15); pc.size = [2.0, top + 0.8, 2.0]
+        lamp(pc, (0.3, top + 0.55, 0.2), CF, 3.2)
+        pc.blockers.append([-.6, -.6, .6, .6])
+        pc.markers["interact"] = "watch-cairn (E / A: topple it); swap to cairn_toppled when toppled"
+        pc.markers["keep_clear"] = {"footprint": [-1.2, -1.2, 1.2, 1.2], "radius_m": 1.8, "note": "the interact radius is 1.8 m; keep it clear of props and spawns (the berserker ambush spawns around it at runtime)"}
+        return pc
+
+    def cairn_toppled(cx):
+        pc = Piece("cairn_toppled"); r = K.rng(cx.seed, "topple"); m = Mesh()
+        m.add(sphere(0.9, 7, 3, SNOW, "paint", squash=(1.3, .14, 1.3)).xf((0, 0.0, 0)))
+        for i in range(10):
+            a = r.uniform(0, 2 * PI); d = r.uniform(0.15, 0.95); rad = r.uniform(.14, .34)
+            col = (STONE_HI, STONE, STONE_LO)[i % 3]
+            m.add(sphere(rad, 6, 3, col, "stone", squash=(1.25, .6, 1.1)).xf((math.cos(a) * d, rad * .2, math.sin(a) * d), rot=(0, a, 0)))
+        m.add(beam([0.1, 0.1, 0.6], [0.7, 0.08, 0.75], 0.06, FUR, "paint"))
+        m.add(sphere(0.045, 5, 3, CF, "glow").xf((0.72, 0.09, 0.76)))
+        m.add(box(0.2, 0.02, 0.03, RUNE, "glow", y0=0.2).xf((-0.2, 0, 0.3), rot=(0, 0.5, 0)))
+        pc.mesh = m.ao(0, 0.6, 0.1); pc.size = [2.0, 0.5, 2.0]
+        lamp(pc, (0.7, 0.2, 0.7), CF, 1.6)
+        pc.markers["keep_clear"] = {"footprint": [-1.0, -1.0, 1.0, 1.0], "radius_m": 1.0, "note": "walkable rubble (no blocker); 1 m clear of spawns"}
+        return pc
+
     fns = [warm_lantern, snow_floor, ice_lake, stone_ledge, stone_stair, snow_mound, longhouse, rune_standing_stone, lift_stone, lambda cx: cold_brazier(cx),
            goat_fence, giant_stool, glow_orb_chain, fur_stall, ice_floor, ice_wall, glow_ice_pool, icicle_cluster, ice_crystal_cluster, frost_rune_pillar,
-           barrow_floor, barrow_wall, barrow_door, shield_rack, ice_throne, rune_bridge, rune_brazier]
+           barrow_floor, barrow_wall, barrow_door, shield_rack, ice_throne, rune_bridge, rune_brazier,
+           rune_waystone, stone_cairn, watch_cairn, cairn_toppled]
     out = {}
     for f in fns:
         n = getattr(f, "__name__", "")
