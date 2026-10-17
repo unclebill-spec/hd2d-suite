@@ -555,8 +555,9 @@ def run(out, simscale=4, size=(960, 540), segs=SEGS):
                 T.step("Start opens the quest log, B closes it", log_open and log_closed)
                 z0 = T.ev("window.__hd2d.camState().dist")
                 rs = lambda v: T.ev(f"(() => {{ window.__fakePad.axes[3] = {v}; window.__fakePad.timestamp = performance.now(); }})()")  # noqa: E731
-                rs(-1); pg.wait_for_timeout(700); rs(0); pg.wait_for_timeout(200); z1 = T.ev("window.__hd2d.camState().dist")
-                rs(1); pg.wait_for_timeout(1400); rs(0); pg.wait_for_timeout(200); z2 = T.ev("window.__hd2d.camState().dist")
+                # the zoom runs on game frames (slow on a busy box): hold the stick until the distance has moved, then let go
+                rs(-1); T.until(f"window.__hd2d.camState().dist < {z0 - 0.5}", 60); rs(0); pg.wait_for_timeout(200); z1 = T.ev("window.__hd2d.camState().dist")
+                rs(1); T.until(f"window.__hd2d.camState().dist > {z1 + 0.5}", 60); rs(0); pg.wait_for_timeout(200); z2 = T.ev("window.__hd2d.camState().dist")
                 T.step("right stick up zooms in, down zooms out (inside the limits)", z1 < z0 - 0.3 and z2 > z1 + 0.3 and 23 - 1e-3 <= min(z1, z2) and max(z1, z2) <= 40 + 1e-3, dist=[round(z0, 2), round(z1, 2), round(z2, 2)])
                 pad_hidden = T.ev("getComputedStyle(document.getElementById('pad')).display === 'none' || document.getElementById('pad').hidden")
                 T.btn(8); pad_sel = T.ev("[document.body.classList.contains('padon'), getComputedStyle(document.getElementById('pad')).display !== 'none' && !document.getElementById('pad').hidden]")
