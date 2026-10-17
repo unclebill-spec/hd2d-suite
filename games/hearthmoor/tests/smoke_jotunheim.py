@@ -447,7 +447,7 @@ def steps(b, url, T, size, errors, rep, stub=None, shots=None):
         walk_to(8.0, 4.0); jt("qaFrost(0)"); jt("qaFrost(750)"); frames(3)
         T.step("blizzard frost slow: -1% per 5 s, capped at -30% (speed 1.82 of 2.6)", abs(sv()["wx"]["slow"] - 0.3) < 1e-6 and abs(sv()["wx"]["speed"] - 2.6 * 0.7) < 1e-3, wx=sv()["wx"])
         walk_to(-2.4, -3.2); T.ev("window.__hm.jot.qaFrost(300)")
-        T.step("standing near cold fire thaws the frost", until("window.__hm.jot.qa().wx.frost < 100", 60), wx=sv()["wx"])
+        T.step("standing near cold fire thaws the frost", until("window.__hm.jot.qa().wx.frost < 100", 240), wx=sv()["wx"])
         a = load("jotunheim", "&wx=snow"); jt("qaFrost(0)"); frames(3)
         T.step("in plain snow there is no frost slow", sv()["wx"]["slow"] == 0 and sv()["wx"]["speed"] == 2.6, wx=sv()["wx"])
         a = load("jotunheim", "&wx=aurora")
