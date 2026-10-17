@@ -553,6 +553,33 @@ def install_forge(areas=AREAS):
     print(f"forge: sheet ({len(FORGE_ROLES)} roles) + {len(fxm['effects'])} gamefx in {', '.join(x for x in areas if x in FORGE_AREAS)}")
 
 
+CAULDRON_AREAS = ["forge"]
+
+
+def install_cauldron(areas=AREAS):
+    """6.8 The Cold Cauldron: Bloop, Bryony's glowing frog (art/cold_cauldron/, Art seat 2026-10-16). His own 240x128 sheet (bloop_neon.png is
+    the primary look, scoped check-sprite allow-list entry for role pet_bloop; bloop.png is the palette-safe twin) added as sheet 'bloop' / role
+    'pet_bloop' to the forge's actors.json. Additive and idempotent (it only adds the sheet and the role), so it also runs on a built forge
+    without a rebuild: python3 -c "import build; build.install_cauldron()"."""
+    P = GAME / "art" / "cold_cauldron"
+    bm = json.loads((P / "bloop.json").read_text())
+    for a in [x for x in areas if x in CAULDRON_AREAS]:
+        root = GAME / "areas" / a
+        scene = json.loads((root / "scene.json").read_text())
+        sp = root / scene["atlas"]["json"]
+        am = json.loads(sp.read_text())
+        shutil.copy2(P / bm["primary"], sp.parent / "bloop.png")
+        out = {k: bm[k] for k in ("tool", "biome", "frame", "pivot", "ground_row", "facings", "anims", "cols", "size")}
+        out["image"] = "bloop.png"
+        out["roles"] = {"pet_bloop": {k: v for k, v in bm["roles"]["pet_bloop"].items() if k != "frames"}}
+        (sp.parent / "bloop.json").write_text(json.dumps(out, indent=1))
+        am.setdefault("sheets", {})["bloop"] = {"json": "bloop.json", "image": "bloop.png"}
+        r = bm["roles"]["pet_bloop"]
+        am["roles"]["pet_bloop"] = {"sheet": "bloop", "row": r["row"], "kind": r.get("kind", "creature"), "anims": ["idle", "walk"], "desc": r.get("desc", "")}
+        sp.write_text(json.dumps(am, indent=1))
+    print(f"cauldron: Bloop sheet in {', '.join(x for x in areas if x in CAULDRON_AREAS)}")
+
+
 ORB_AREAS = ["plaza", "lane"]
 
 
@@ -586,6 +613,7 @@ if __name__ == "__main__":
     install_verdant_heart(only)
     install_orb_lanterns(only)
     install_forge(only)
+    install_cauldron(only)
     draw_icons()
     draw_button_icons()
     write_pwa()

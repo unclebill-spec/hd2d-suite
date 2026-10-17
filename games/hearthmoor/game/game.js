@@ -76,7 +76,7 @@ G.lanterns = new Lanterns(G);   // 6.6 glow-fish orb lanterns
 G.forge = new Forge(G);   // 6.7 the Forge Quarter (Tova tempers, Orri rerolls)
 TALK.smith = () => G.forge.tova(); TALK.runesmith = () => G.forge.orri();
 G.alchemy = new Alchemy(G); G.ITEMS = ITEMS; G.drinkBrew = (id) => { const ok = drinkBrew(G, id); if (ok) save(); return ok; };   // 6.8 the Glowfrog Still
-TALK.alchemist = () => G.alchemy.bryony();
+TALK.alchemist = () => G.alchemy.bryony();   TALK.bloop = () => G.alchemy.bloop();
 for (const r of ['rioter1', 'rioter2', 'rioter3']) TALK[r] = () => G.forge.rioter(r);   // 6.7 Sparks in the Street
 G.weather = new Weather(G);
 G.intro = new Intro(G);

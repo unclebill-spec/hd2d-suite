@@ -50,12 +50,17 @@ export const writeBank = (b) => localStorage.setItem(BANK_STORE, JSON.stringify(
 export const bankUsed = (b) => b.items.length + Object.values(b.gems).filter((n) => n > 0).length;
 SHOPS.forge = { name: 'Anvilsong Forge', keeper: 'Tova Anvilsong, master smith', goods: ['ironbit', 'coldsteel'], gear: { n: 0, rar: [] }, sellMul: 1 };
 SHOPS.runebench = { name: "Orri's Rune Bench", keeper: 'Orri Flintcog, rune bench', goods: ['runestone'], gear: { n: 0, rar: [] }, sellMul: 1 };
-SHOPS.still = { name: 'The Glowfrog Still', keeper: 'Bryony Glasswort, alchemist', goods: ['dewdrop', 'vial', 'redcap'], gear: { n: 0, rar: [] }, sellMul: 1 };
+SHOPS.still = { name: 'The Glowfrog Still', keeper: 'Bryony Glasswort, alchemist', goods: ['dewdrop', 'vial', 'redcap'], stock: { redcap: 3 }, gear: { n: 0, rar: [] }, sellMul: 1, still: true };
 SHOPS.bank = { name: 'The Nine Keys Bank', keeper: 'Bix Coppertuft', goods: [], gear: { n: 0, rar: [] }, sellMul: 1, bank: true, tabs: ['Deposit', 'Vault'] };
 export const MERCHANT = { plaza: { id: 'merchant', role: 'shopkeeper', name: 'Odo the merchant', pos: [5.4, 3.4], facing: 'down',
   say: ['Tonics, seeds, sturdy kit. And I buy whatever you drag out of the glade.'] } };
 
 const pick = (a) => a[Math.floor(Math.random() * a.length)];
+export function stillStock(S) {
+  const d = S.day || 0;
+  if (!S.stillStock || S.stillStock.day !== d) S.stillStock = { day: d, redcap: 3 };
+  return S.stillStock;
+}
 export class Shop {
   constructor(G) { this.G = G; this.open = null; this.tab = 0; this.i = 0; this.stock = {}; this.confirm = -1; }
   attach(ctx, area) {
@@ -140,7 +145,13 @@ export class Shop {
     if (D.bank) return this.bankRows();
     if (this.tab === 0) {
       const mul = this.G.factions ? this.G.factions.priceMul(this.open) : 1;   // faction Friend discounts
-      return [...D.goods.map((g) => ({ kind: 'good', id: g, name: GOODS[g].name, about: GOODS[g].about, price: Math.round(GOODS[g].price * mul), have: (S.inv[g] || 0) })),
+      const stock = D.still ? stillStock(S) : null;
+      return [...D.goods.map((g) => {
+        const left = stock && stock[g] != null ? stock[g] : null, sold = left === 0;
+        return { kind: 'good', id: g, name: GOODS[g].name,
+          about: sold ? 'Out of caps till tomorrow. The patches by the gardens regrow overnight.' : GOODS[g].about,
+          price: Math.round(GOODS[g].price * mul), have: (S.inv[g] || 0), cant: sold, left };
+      }),
               ...(D.gems || []).map((g) => ({ kind: 'gem', id: g, name: LO.GEMS[g].name, about: `socket gem · ${LO.GEMS[g].about}`, price: Math.round(LO.GEMS[g].price * mul), have: (S.gems[g] || 0) })),
               ...this.stockOf(this.open).map((it, k) => ({ kind: 'gear', it, k, name: it.name, about: `${LO.RARITY[it.rar].name} ${it.slot} · ${LO.describe(it)}`, price: Math.round(buyPrice(it) * mul) }))];
     }
@@ -184,7 +195,7 @@ export class Shop {
             + `<em class="iname">${r.it ? `<i class="ic" data-ic="${k}"></i>` : r.id ? `<i class="gm" data-gm="${r.id}"></i>` : ''}${r.name}</em>`
             + `<span>${r.about}</span><span class="bb"><button class="wbtn sm plus" data-buy="${k}" ${r.cant ? 'disabled' : ''}>${this.tab === 0 ? 'deposit' : 'take'}</button></span></div>`;
         }
-        const rar = r.it ? r.it.rar : -1, cant = r.kind !== 'sell' && ((S.gold || 0) < r.price || (r.kind === 'gear' && S.bag.length >= LO.BAG_MAX));
+        const rar = r.it ? r.it.rar : -1, cant = r.cant || (r.kind !== 'sell' && ((S.gold || 0) < r.price || (r.kind === 'gear' && S.bag.length >= LO.BAG_MAX)));
         const label = r.kind === 'sell' ? (this.confirm === k ? `sure? ${r.price}g` : `sell ${r.price}g`) : `buy ${r.price}g`;
         return `<div class="row gear${rar >= 0 ? ' r' + rar : ' good'}${k === this.i ? ' sel' : ''}" data-k="${k}">`
           + `<em class="iname">${r.it ? `<i class="ic" data-ic="${k}"></i>` : r.kind === 'gem' ? `<i class="gm" data-gm="${r.id}"></i>` : `<i class="gd" data-gd="${r.id}"></i>`}${r.name}${r.kind === 'good' || r.kind === 'gem' ? ` <small>(have ${r.have})</small>` : ''}</em>`
@@ -210,7 +221,11 @@ export class Shop {
         if (S.bag.length >= LO.BAG_MAX) { G.toast && G.toast('Bag full', 1.2); return false; }
         S.gold -= r.price; S.bag.push(r.it); this.stock[this.open].splice(r.k, 1);
       } else if (r.kind === 'gem') { S.gold -= r.price; S.gems[r.id] = (S.gems[r.id] || 0) + 1; }
-      else { S.gold -= r.price; S.inv[r.id] = (S.inv[r.id] || 0) + 1; }
+      else {
+        if (r.cant) { G.toast && G.toast(r.about || 'Sold out', 1.6); return false; }
+        S.gold -= r.price; S.inv[r.id] = (S.inv[r.id] || 0) + 1;
+        if (this.open === 'still' && r.id === 'redcap') { const st = stillStock(S); if (st.redcap > 0) st.redcap -= 1; }
+      }
       G.toast && G.toast(`Bought ${r.name}`, 1.4); G.audio && G.audio.sfx('pickup');
       if (this.open === 'night' && r.kind !== 'good' && G.factions) G.factions.onSmuggle();   // Corsair merit, a little Hearth standing lost
     }
