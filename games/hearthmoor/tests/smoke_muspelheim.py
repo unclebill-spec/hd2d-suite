@@ -1,0 +1,251 @@
+"""[MUSPELHEIM] Muspelheim realm smoke (realm-muspelheim branch), CHUNK 1 = skeleton: what exists before the art pack (READY.txt) and the area builds.
+
+    python3 games/hearthmoor/tests/smoke_muspelheim.py [--out games/hearthmoor/shots/muspelheim_smoke]
+
+Runs standalone (its own server + headless Chromium), and smoke.py calls steps() in its own browser context after the main run, so the main run's save is untouched.
+Boots ?qa (fresh state, no saving) with &combat&peace.
+Covers (runtime tables, no built Muspelheim area needed): the module is live (G.musp); the shared-table registrations (10 quests, MERIT, foes incl. Vharzul 8x framed, rares, weather
+kinds, Kindle's COMP + kit, Svala's stall, items, TALK); Bifrost's red arch stays sealed while no area is built (and moves to portals with ?muq=open once Cinderhold is built);
+the Armed Crossing look-spots (Aud's rank / armed checks, Halvard's key); Aska's choice for a free player, a Niflheim friend (locked label, contract option), a Niflheim conqueror
+(mood, Walk skipped), an Ember-born hero, the 4-ally cap, conquer; the Walk and Sigil turn-ins (+ the quick route clue rules); the realm's merit routing; the weather calendar split;
+Emberfang. Plus file-level checks: the three skeleton specs (real height + stair), build.py / musp_art.py waiting on READY.txt. When Muspelheim areas are built the extra steps
+(area loads, gate portal, return spawn) run too. Screenshots only once an area exists.
+"""
+import argparse
+import functools
+import json
+import os
+import subprocess
+import sys
+import threading
+import time
+from http.server import SimpleHTTPRequestHandler, ThreadingHTTPServer
+from pathlib import Path
+
+GAME = Path(__file__).resolve().parents[1]
+READY = Path("/workspace/hearthmoor-staging/art/muspelheim/READY.txt")
+ARGS = ["--use-angle=swiftshader", "--enable-unsafe-swiftshader", "--ignore-gpu-blocklist"]
+
+
+def steps(b, url, T, size, errors, rep, stub=None, shots=None):
+    """b: a playwright Browser; url: .../index.html?nosw&peace&simscale=N; T: smoke.Smoke (its pg is swapped here)"""
+    shots = Path(shots or T.out)
+    shots.mkdir(parents=True, exist_ok=True)
+    cx = b.new_context(viewport={"width": size[0], "height": size[1]}, has_touch=True)
+    if stub:
+        cx.add_init_script(stub)
+    pg = cx.new_page()
+    pg.on("pageerror", lambda e: errors.append(f"PAGEERROR {e}"))
+    pg.on("console", lambda m: errors.append(f"console.error {m.text}") if m.type == "error" else None)
+    old_pg, old_out = T.pg, T.out
+    T.pg, T.out = pg, shots
+    frames = lambda n=6, timeout=120: T.frames(n, timeout)   # engine-frame waits, never fixed sleeps
+
+    def sv():
+        return T.ev("window.__hm.musp.qa()")
+
+    def load(area, extra="", spawn="start"):
+        pg.goto(url + f"&qa&combat&area={area}&spawn={spawn}{extra}", timeout=150000)
+        T.wait(f"window.__hm && window.__hm.area === '{area}' && window.__hd2d && window.__hd2d.ready && !window.__hm.busy", 150)
+        T.idle(); frames(10)
+        return sv()
+
+    FIN = "(() => { const G = window.__hm; if (G.dlg && G.dlg.then) { const t = G.dlg.then; G.dropDialogue(); t(G); } else G.dropDialogue && G.dropDialogue(); })()"
+
+    def fin():
+        T.ev(FIN); frames(2)
+
+    def mp(js):
+        return T.ev("window.__hm.musp." + js)
+
+    def S(js):
+        return T.ev("(() => { const S = window.__hm.S; " + js + " })()")
+
+    def merit(k="embassy"):
+        return T.ev(f"(window.__hm.factions.qa().merit.{k}) || 0")
+
+    def reset_state():   # a clean realm state between talk scenarios (same page: no reload)
+        S("S.flags = { ...(S.flags || {}), alliance: {}, rivals: {}, realm_mood: {}, mp_contract: 0, mh_terms: 0 }; S.quests.mp_walk = 0; S.quests.mp_sigil = 0; S.quests.mp_take = 0; S.quests.mp_hire = 0; S.hero = 'wildcaller'; return 1;")
+
+    try:
+        # ---- file-level: the skeleton specs and the installer / build gate wait on READY.txt
+        ready = READY.exists()
+        spec_ok = True
+        for a in ("muspelheim", "mp_hall", "lavafalls"):
+            d = json.loads((GAME / "areas" / "src" / f"{a}.json").read_text())
+            hmax = max(t["h"] for t in d["terraces"] if "wall" not in t["name"])
+            spec_ok &= hmax >= 1.0 and len(d.get("stairs", [])) >= 1 and d["game"]["id"] == a and len(d["grades"]) == 3
+        T.step("the three skeleton specs (Cinderhold, the Sigil Forge, the Lavafalls) each have a 1.2 m terrace with a stair and day / dusk / night grades", spec_ok)
+        r = subprocess.run([sys.executable, "-c", "import build; print(','.join(build.AREAS))"], cwd=GAME, capture_output=True, text=True, timeout=120)
+        areas = r.stdout.strip().split(",") if r.returncode == 0 else []
+        T.step("build.py joins the Muspelheim areas only when READY.txt exists" , r.returncode == 0 and (("muspelheim" in areas) == ready), ready=ready, n=len(areas), err=r.stderr[-200:])
+        r = subprocess.run([sys.executable, str(GAME.parents[1] / "tools" / "hearthmoor" / "musp_art.py")], capture_output=True, text=True, timeout=300)
+        T.step("musp_art.py waits on READY.txt (does nothing without it)", r.returncode == 0 and (ready or "READY.txt is missing" in r.stdout), out=r.stdout[-200:])
+        # ---- the module and its shared-table registrations
+        a = load("bifrost")
+        d = mp("qaDefs()")
+        T.step("the Muspelheim module is live (G.musp) and plans the five areas", a["realm"] == "muspelheim" and a["planned"] == ["muspelheim", "mp_hall", "lavafalls", "caldera", "caldera2"], qa=a["planned"])
+        T.step("ten quests, the merit keys (story 3.12), eight NPC talk entries, Svala's stall and nine items are registered",
+               d["quests"] == 10 and d["merit"] == {"mp_gate": 60, "ashtoll": 60, "mp_contract": 60, "caldera_c": 120, "mp_walk": 40, "mp_sigil": 60, "mp_rival": 20, "mp_kindle": 80, "caldera": 120, "emberfall": 40}
+               and d["talk"] == 8 and d["shop"] and d["items"] == 9, d=d)
+        T.step("Vharzul is an 8x framed plate boss (fire, three phases); the other seven foes and both rare bases exist",
+               d["vharzul"]["scale"] == 8 and d["vharzul"]["framed"] is True and d["vharzul"]["plate"] and d["vharzul"]["element"] == "fire" and d["vharzul"]["boss"] and d["vharzul"]["phases"] == [0.6, 0.25]
+               and len(d["foes"]) == 8 and d["bases"] == ["ashalpha", "pyreling"], d=d["vharzul"])
+        T.step("Kindle is a companion (COMP + follower kit) and the two weather kinds exist", d["comp"] == "Kindle" and d["kit"] and d["wx"]["ash_fall"] and d["wx"]["ember_storm"], d=d)
+        n = {"ash_fall": 0, "clear": 0, "ember_storm": 0}; tot = 0
+        for day in range(40):
+            for blk in range(10):
+                k = T.ev(f"window.__hm.weatherAt('muspelheim', {day}, {blk / 10 + 0.05})"); n[k] = n.get(k, 0) + 1; tot += 1
+        T.step("muspelheim's calendar is about 60 % ash fall, 25 % clear glow, 15 % ember storm", abs(n["ash_fall"] / tot - 0.6) < 0.1 and abs(n["clear"] / tot - 0.25) < 0.1 and abs(n["ember_storm"] / tot - 0.15) < 0.1, n=n)
+        # ---- Bifrost's red arch
+        b0 = a["gate"]
+        T.step("Bifrost: the Muspelheim arch is sealed for a stranger, no Armed Crossing spots while nothing is built", "muspelheim" in b0["sealed"] and "muspelheim" not in b0["portals"] and not b0["open"] and (a["spots"] == 0 or b0["live"]), gate=b0, spots=a["spots"])
+        T.step("the sealed arch's look still reads the Guild key text (Gate Runner)", "red glow" in T.ev("window.__hm.crossing.pages({ arch: 'muspelheim', realm: 'Muspelheim' }).join(' ')") and "Gatekeepers" in T.ev("window.__hm.crossing.pages({ arch: 'muspelheim', realm: 'Muspelheim' }).join(' ')"))
+        a1 = load("bifrost", "&muq=open"); b1 = a1["gate"]
+        if b1["live"]:
+            T.step("?muq=open: the arch moves from sealed to portals and the return spawn is added", "muspelheim" not in b1["sealed"] and "muspelheim" in b1["portals"] and "from_muspelheim" in b1["spawns"], gate=b1)
+        else:
+            T.step("?muq=open with no area built: the arch stays sealed (dormant) but the return spawn exists", "muspelheim" in b1["sealed"] and "muspelheim" not in b1["portals"] and "from_muspelheim" in b1["spawns"] and b1["open"], gate=b1)
+        # ---- The Armed Crossing: Aud and Halvard (the spots are hidden until an area exists; the actions are driven directly)
+        load("bifrost")
+        T.ev("window.__hm.musp.spot({ id: 'qa_aud', pos: [0, 0], r: 9, label: '', act: () => window.__hm.musp.aud() })")
+        mp("qaSpot('qa_aud')"); frames(2)
+        T.step("Aud turns away a stranger (Guild rank < 2)", sv()["dlg"] == "mg_no", dlg=sv()["dlg"]); fin()
+        S("S.ranks = { ...(S.ranks || {}), gate: 2 }; return 1;")
+        mp("qaSpot('qa_aud')"); frames(2)
+        T.step("Aud sends a Gate Runner without a blade to the gear page", sv()["dlg"] == "mg_unarmed", dlg=sv()["dlg"]); fin()
+        S("S.gear = { ...(S.gear || {}), weapon: { slot: 'weapon', name: 'Test blade', rar: 1, lv: 5, mods: {}, gems: [null, null] } }; return 1;")
+        mp("qaSpot('qa_aud')"); frames(2); d1 = sv()["dlg"]; fin(); s1 = sv()
+        T.step("an armed Gate Runner starts The Armed Crossing (stage 1, mg_aud)", d1 == "mg_aud" and s1["quests"]["mp_gate"] == 1 and s1["flags"]["aud"], dlg=d1, qa=s1["quests"])
+        T.ev("window.__hm.musp.spot({ id: 'qa_key', pos: [0, 0], r: 9, label: '', act: () => window.__hm.musp.key() })")
+        mp("qaSpot('qa_key')"); frames(2); fin(); s1 = sv()
+        T.step("Halvard hands over the heat-sealed key with the tongs (item, mg_key)", s1["flags"]["key"] and T.ev("window.__hm.S.inv.heat_key") == 1, qa=s1["flags"])
+        # ---- Aska's choice
+        reset_state()
+        t = mp("qaTalk('warden_mp')")
+        T.step("Aska's choice for a free player: befriend / conquer, no contract, nothing locked", t["choice"] == ["A friend. Let me clear your name.", "Midgard's. Hand over the Ember Crown."] and not t["locked"], t=t)
+        mp("qaPick('A friend. Let me clear your name.')"); s1 = sv()
+        T.step("befriend: alliance set, Niflheim is locked as a rival, The Cinder Walk starts", s1["alliance"] == "befriend" and s1["rivals"].get("niflheim") == "locked" and s1["quests"]["mp_walk"] == 1 and s1["quests"]["mp_sigil"] == 0, qa=[s1["alliance"], s1["rivals"], s1["quests"]])
+        reset_state(); S("S.hero = 'cinderknight'; return 1;")
+        mp("qaPick('A friend. Let me clear your name.')"); s1 = sv()
+        T.step("an Ember-born hero skips the Walk: befriend starts The Mirror Sigil", s1["quests"]["mp_walk"] == 0 and s1["quests"]["mp_sigil"] == 1, qa=s1["quests"])
+        reset_state(); S("S.flags.realm_mood = { muspelheim: 1 }; return 1;")
+        t = mp("qaTalk('warden_mp')"); line = T.ev("window.__hm.musp.qaLine('warden_mp')")   # her greeting, before the pick changes the state
+        mp("qaPick('A friend. Let me clear your name.')"); s1 = sv()
+        T.step("a Niflheim conqueror (mood 1) skips the Walk too, and Aska says so", s1["quests"]["mp_sigil"] == 1 and s1["quests"]["mp_walk"] == 0 and "frost-witches" in (line or ""), qa=s1["quests"], line=line)
+        reset_state(); S("S.flags.rivals = { muspelheim: 'locked' }; return 1;")
+        t = mp("qaTalk('warden_mp')")
+        T.step("a Niflheim friend: the befriend option is greyed with the locked label; conquer and the contract offer stay open",
+               t["choice"] == ["(Locked. You stand with Niflheim.)", "Midgard's. Hand over the Ember Crown.", "(Locked path) The Guild sent me with an offer."] and t["locked"] == ["(Locked. You stand with Niflheim.)"], t=t)
+        mp("qaPick('(Locked. You stand with Niflheim.)')"); s1 = sv()
+        T.step("picking the greyed option does nothing but talk", s1["alliance"] is None and s1["quests"]["mp_walk"] == 0)
+        mp("qaPick('(Locked path) The Guild sent me with an offer.')"); s1 = sv()
+        T.step("contract: flags.mp_contract, Ash Wages starts, no alliance", s1["contract"] and s1["quests"]["mp_hire"] == 1 and s1["alliance"] is None, qa=s1["quests"])
+        reset_state(); S("S.flags.alliance = { vanaheim: 'befriend', alfheim: 'befriend', svartalfheim: 'befriend', jotunheim: 'befriend' }; return 1;")
+        t = mp("qaTalk('warden_mp')")
+        T.step("the 4-ally cap greys the befriend option with its own label", t["choice"][0] == "(Four realms already stand with you.)" and t["locked"] == ["(Four realms already stand with you.)"], t=t)
+        reset_state()
+        mp("qaPick(\"Midgard's. Hand over the Ember Crown.\")"); s1 = sv()
+        T.step("conquer: alliance conquer, Niflheim's mood goes up, The Ashen Toll starts", s1["alliance"] == "conquer" and s1["moods"].get("niflheim") == 1 and s1["quests"]["mp_take"] == 1, qa=[s1["alliance"], s1["moods"], s1["quests"]])
+        # ---- turn-ins and the clue rules
+        reset_state(); S("S.flags.alliance = { muspelheim: 'befriend' }; S.quests.mp_walk = 2; return 1;")
+        m0, g0 = merit(), T.ev("window.__hm.S.gold || 0")
+        mp("qaTalk('warden_mp')"); s1 = sv()
+        T.step("the Walk turn-in: quest 3, trusted, mood 3, +40 Realm Favor, +20 gold, The Mirror Sigil starts", s1["quests"]["mp_walk"] == 3 and s1["flags"]["trusted"] and s1["mood"] == 3 and merit() - m0 == 40 and T.ev("window.__hm.S.gold || 0") - g0 == 20 and s1["quests"]["mp_sigil"] == 1,
+               qa=[s1["quests"], s1["mood"], merit() - m0])
+        S("S.flags.sf_cast = 0; S.flags.sf_ledger = 0; S.flags.sf_mirror = 0; S.evidence = { jotunheim: 'false_heart', svartalfheim: 'boot_mould' }; return 1;")
+        c0 = sv()["sigil"]
+        S("S.flags.sf_cast = 1; return 1;"); c1 = sv()["sigil"]
+        T.step("quick route: two cleared realms are two free clues, at least one is read here (0 read: not done, 1 read: done)", c0 == {"read": 0, "free": 2, "n": 2, "done": False} and c1["n"] == 3 and c1["done"], c0=c0, c1=c1)
+        S("S.evidence = {}; S.flags.sf_cast = 0; S.hero = 'runeguard'; return 1;"); c2 = sv()["sigil"]
+        S("S.hero = 'wildcaller'; return 1;")
+        T.step("a Rune-reader's mirror clue is free (one free, nothing read yet)", c2 == {"read": 0, "free": 1, "n": 1, "done": False}, c2=c2)
+        S("S.flags.sf_cast = 1; S.flags.sf_ledger = 1; S.flags.sf_mirror = 1; return 1;")
+        m0, g0 = merit(), T.ev("window.__hm.S.gold || 0")
+        mp("qaTalk('warden_mp')"); s1 = sv()
+        T.step("the Sigil turn-in: quest 3, cleared, Hearthmoor's rider (mp_peace), evidence mirror_sigil, +60 Realm Favor", s1["quests"]["mp_sigil"] == 3 and s1["flags"]["cleared"] and s1["flags"]["peace"] and s1["evidence"] == "mirror_sigil" and merit() - m0 == 60 and T.ev("window.__hm.S.gold || 0") - g0 == 40, qa=[s1["quests"], s1["evidence"], merit() - m0])
+        # ---- merit routing and Emberfang
+        rr = T.ev("(() => { const G = window.__hm, a = G.area, f = G.S.flags; const out = {}; G.area = 'lavafalls';"
+                  " f.alliance = { muspelheim: 'befriend' }; f.mp_contract = 0; out.bef = G.factions.realm();"
+                  " f.alliance = { muspelheim: 'conquer' }; out.con = G.factions.realm();"
+                  " f.alliance = {}; f.mp_contract = 1; out.hire = G.factions.realm(); f.mp_contract = 0;"
+                  " G.area = 'plaza'; f.alliance = { muspelheim: 'conquer' }; out.away = G.factions.realm(); f.alliance = {}; G.area = a; return out; })()")
+        T.step("merit routing: befriend pays Realm Favor, conquer and contract pay Rift Marks (gate) inside the realm's areas only", rr == {"bef": "embassy", "con": "gate", "hire": "gate", "away": "hearth"}, rr=rr)
+        ef = mp("qaFang()")
+        T.step("Emberfang is a legendary weapon (unique emberfang)", ef["unique"] == "emberfang" and ef["name"] == "Emberfang" and ef["rar"] == 4 and ef["slot"] == "weapon", ef=ef)
+        # ---- built areas (only once the art pack and the builds exist)
+        built = sv()["built"]
+        if built:
+            a = load("muspelheim"); T.ev("window.__hd2d.setTime(0.5)"); frames(6)
+            T.step("Cinderhold loads (Muspelheim module live)", a["area"] == "muspelheim" and "bifrost" in a["portals"] and "mp_hall" in a["exits"], qa=a)
+            hs = T.ev("(() => { const c = window.__hd2d.ctx; return { terrace: c.heightAt(-6, -7), ground: c.heightAt(0, 6), stair: c.heightAt(0, -2.4) }; })()")
+            T.step("real height: the Warden's terrace stands 1.2 m up with a walkable stair", hs["terrace"] >= 1.0 and hs["ground"] < 0.2 and 0.2 < hs["stair"] < hs["terrace"], hs=hs)
+            rep.setdefault("shots", {})["mp_day"] = T.shot("mp_day")
+            T.ev("window.__hd2d.setTime(0.0)"); frames(6); rep["shots"]["mp_night"] = T.shot("mp_night")
+        T.step("no JS errors in the Muspelheim run", not [e for e in errors if "muspelheim" in e.lower()], errs=errors[-3:])
+    except Exception:
+        try:
+            rep.setdefault("shots", {})["mp_fail"] = T.shot("mp_fail")
+        except Exception:
+            pass
+        raise
+    finally:
+        T.pg, T.out = old_pg, old_out
+        cx.close()
+
+
+class _Quiet(SimpleHTTPRequestHandler):
+    def log_message(self, *a):
+        pass
+
+    def end_headers(self):   # a persistent profile keeps its HTTP cache between runs: never serve a stale module
+        self.send_header("Cache-Control", "no-store")
+        super().end_headers()
+
+
+def main():
+    from playwright.sync_api import sync_playwright
+    sys.path.insert(0, str(Path(__file__).resolve().parent))
+    import smoke as SM
+    ap = argparse.ArgumentParser()
+    ap.add_argument("--out", default=str(GAME / "shots" / "muspelheim_smoke"))
+    ap.add_argument("--simscale", type=int, default=4)
+    a = ap.parse_args()
+    out = Path(a.out); out.mkdir(parents=True, exist_ok=True)
+    srv = ThreadingHTTPServer(("127.0.0.1", 0), functools.partial(_Quiet, directory=str(GAME)))
+    threading.Thread(target=srv.serve_forever, daemon=True).start()
+    url = f"http://127.0.0.1:{srv.server_address[1]}/index.html?nosw&peace&simscale={a.simscale}"
+    lines, errors, rep = [], [], {"url": url, "shots": {}}
+    log = lambda s: (print(s, flush=True), lines.append(s))  # noqa: E731
+    t0 = time.time()
+    with sync_playwright() as p:
+        udd = os.environ.get("HD2D_USER_DATA_DIR")   # Bill's rule: browse only on the dedicated user-data dir (/workspace/alf_qa/chrome-profile-musp), under the browser lock
+        if udd:
+            pc = p.chromium.launch_persistent_context(udd, args=ARGS, viewport={"width": 960, "height": 540}, has_touch=True)
+
+            class _OneContext:   # steps() asks for new_context(); a persistent profile has exactly one context, so hand that one out
+                def new_context(self, **kw):
+                    return pc
+
+                def close(self):
+                    pc.close()
+            b = _OneContext()
+        else:
+            b = p.chromium.launch(args=ARGS)
+        T = SM.Smoke(None, out, log)
+        try:
+            steps(b, url, T, (960, 540), errors, rep, SM.STUB, out)
+            rep["pass"] = True
+        except Exception as e:  # noqa: BLE001
+            rep["pass"] = False; rep["error"] = str(e)[:400]
+            log(f"FAIL: {e}")
+        b.close()
+    srv.shutdown()
+    rep["seconds"] = round(time.time() - t0, 1); rep["steps"] = T.steps; rep["errors"] = errors[:20]
+    (out / "smoke_muspelheim.json").write_text(json.dumps(rep, indent=1))
+    log(f"smoke_muspelheim: {'PASS' if rep['pass'] else 'FAIL'} {sum(s['pass'] for s in T.steps)}/{len(T.steps)} steps in {rep['seconds']} s")
+    sys.exit(0 if rep["pass"] else 1)
+
+
+if __name__ == "__main__":
+    main()

@@ -1803,6 +1803,15 @@ def run(out, simscale=4, size=(960, 540), segs=SEGS):
                 rep["pass"] = False
                 rep["error"] = f"jotunheim: {e}"[:400]
         # [JOTUNHEIM] end
+        # [MUSPELHEIM] begin: the Muspelheim realm (tests/smoke_muspelheim.py), own context again
+        if rep["pass"]:
+            try:
+                import smoke_muspelheim  # noqa: E402
+                smoke_muspelheim.steps(b, url, T, size, errors, rep, STUB, out)
+            except Exception as e:  # noqa: BLE001
+                rep["pass"] = False
+                rep["error"] = f"muspelheim: {e}"[:400]
+        # [MUSPELHEIM] end
         # ---------------------------------------------------------- v1 save migration (old saves still load)
         if rep["pass"] and "E" in segs:
             seg_mark("E")

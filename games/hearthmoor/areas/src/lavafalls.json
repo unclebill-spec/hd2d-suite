@@ -1,0 +1,474 @@
+{
+ "seed": 313,
+ "biome": "cozy-village",
+ "time": {
+  "start": "night",
+  "speed": 0.0016
+ },
+ "spells": true,
+ "boss_roles": [],
+ "camera": {
+  "fov": 24,
+  "pitch": 36,
+  "distance": 33,
+  "zoom": [
+   24,
+   44
+  ],
+  "look": [
+   0,
+   0,
+   -2.4
+  ],
+  "bounds": [
+   -9.6,
+   -7.2,
+   9.6,
+   8.2
+  ]
+ },
+ "hedges": [],
+ "trees": [],
+ "backdrop": {},
+ "decks": [],
+ "blocks": [],
+ "buildings": [],
+ "name": "The Lavafalls",
+ "about": "Molten falls pour into glowing channels under glass walkways; ember-kin pilgrims, Torka's contest anvils, a cool spring grotto with violet lamps and, at the north end on a raised terrace, the Caldera mouth: a 6 m basalt arch sealed by three seal-doors (the Caldera itself is a later area). SKELETON (stand-in kit).",
+ "sprite_roles": [
+  "actors",
+  "heroes",
+  "combat",
+  "lanternseller",
+  "dwarftrader",
+  "poolkeeper",
+  "wispcatcher",
+  "elffolk",
+  "elffolk2",
+  "innkeeper",
+  "shopkeeper",
+  "nightmerchant",
+  "gnome"
+ ],
+ "ground": {
+  "size": [
+   70,
+   60
+  ],
+  "mat": "stone",
+  "walk": [
+   -10.0,
+   -8.4,
+   10.0,
+   8.4
+  ]
+ },
+ "slabs": [
+  {
+   "name": "glass_walk",
+   "rect": [
+    -9.8,
+    -4.2,
+    9.8,
+    8.2
+   ],
+   "mat": "cobble",
+   "h": 0.03
+  },
+  {
+   "name": "entry",
+   "rect": [
+    -9.8,
+    1.8,
+    -6.0,
+    5.2
+   ],
+   "mat": "plaster",
+   "h": 0.04
+  }
+ ],
+ "terraces": [
+  {
+   "name": "mouth_terrace",
+   "rect": [
+    -10.0,
+    -8.4,
+    10.0,
+    -4.4
+   ],
+   "h": 1.2,
+   "top": "plaster",
+   "gaps": [
+    [
+     -1.5,
+     1.5
+    ]
+   ]
+  },
+  {
+   "name": "wall_w",
+   "rect": [
+    -30,
+    -30,
+    -10.2,
+    13
+   ],
+   "h": 3.6,
+   "top": "stone",
+   "coping": true
+  },
+  {
+   "name": "wall_e",
+   "rect": [
+    10.2,
+    -30,
+    30,
+    13
+   ],
+   "h": 3.6,
+   "top": "stone",
+   "coping": true
+  },
+  {
+   "name": "wall_n",
+   "rect": [
+    -30,
+    -30,
+    30,
+    -8.6
+   ],
+   "h": 3.6,
+   "top": "stone",
+   "coping": true
+  },
+  {
+   "name": "wall_s",
+   "rect": [
+    -12,
+    8.8,
+    12,
+    30
+   ],
+   "h": 1.0,
+   "top": "stone",
+   "coping": true
+  }
+ ],
+ "stairs": [
+  {
+   "name": "stair_mouth",
+   "x": 0.0,
+   "z_top": -4.4,
+   "width": 3.0,
+   "rise": 1.2,
+   "base": 0.0
+  }
+ ],
+ "props": [
+  {
+   "piece": "waterfall",
+   "pos": [
+    -4.0,
+    -8.0
+   ]
+  },
+  {
+   "piece": "waterfall",
+   "pos": [
+    4.0,
+    -8.0
+   ]
+  },
+  {
+   "piece": "riftgate_arch",
+   "pos": [
+    0.0,
+    -7.6
+   ]
+  },
+  {
+   "piece": "rift_brazier_red",
+   "pos": [
+    -3.0,
+    -5.4
+   ]
+  },
+  {
+   "piece": "rift_brazier_red",
+   "pos": [
+    3.0,
+    -5.4
+   ]
+  },
+  {
+   "piece": "forge_anvil",
+   "pos": [
+    -6.0,
+    -3.6
+   ]
+  },
+  {
+   "piece": "forge_anvil",
+   "pos": [
+    -7.4,
+    -2.4
+   ]
+  },
+  {
+   "piece": "grindstone",
+   "pos": [
+    -5.0,
+    -2.4
+   ]
+  },
+  {
+   "piece": "spring_basin",
+   "pos": [
+    8.4,
+    4.6
+   ]
+  },
+  {
+   "piece": "orb_standing_violet",
+   "pos": [
+    7.4,
+    3.2
+   ]
+  },
+  {
+   "piece": "orb_standing_violet",
+   "pos": [
+    9.2,
+    3.2
+   ]
+  },
+  {
+   "piece": "standing_stone",
+   "pos": [
+    8.0,
+    2.0
+   ]
+  },
+  {
+   "piece": "orb_hanging_red",
+   "pos": [
+    -5.0,
+    3.4
+   ]
+  },
+  {
+   "piece": "orb_hanging_red",
+   "pos": [
+    4.6,
+    0.4
+   ]
+  },
+  {
+   "piece": "lamp_post",
+   "pos": [
+    -8.4,
+    6.4
+   ],
+   "glow": {
+    "color": "#ff7a1a",
+    "range": 5.0,
+    "fixed": 0.8
+   }
+  },
+  {
+   "piece": "bench",
+   "pos": [
+    2.6,
+    5.4
+   ]
+  },
+  {
+   "piece": "barrel",
+   "pos": [
+    -2.8,
+    6.8
+   ]
+  }
+ ],
+ "emitters": [
+  {
+   "preset": "embers",
+   "pos": [
+    0,
+    1.6,
+    0.0
+   ],
+   "area": [
+    18,
+    1.6,
+    12
+   ],
+   "min_gate": 0.0
+  },
+  {
+   "preset": "embers",
+   "pos": [
+    0,
+    1.4,
+    -6.0
+   ],
+   "area": [
+    10,
+    1.0,
+    3
+   ],
+   "min_gate": 0.0
+  }
+ ],
+ "actors": [
+  {
+   "id": "forgejudge",
+   "role": "shopkeeper",
+   "name": "Torka Ashgrip",
+   "pos": [
+    -6.6,
+    -1.2
+   ],
+   "facing": "right",
+   "behavior": "idle",
+   "talkable": true,
+   "say": [
+    "Hot iron says what a smith won't. Let it."
+   ]
+  },
+  {
+   "id": "springkeeper",
+   "role": "poolkeeper",
+   "name": "Yrsa Brightwell",
+   "pos": [
+    6.4,
+    4.4
+   ],
+   "facing": "left",
+   "behavior": "idle",
+   "talkable": true,
+   "say": [
+    "Springs are shy. Whistle, and they bubble."
+   ]
+  },
+  {
+   "id": "mp_b",
+   "role": "elffolk",
+   "name": "Cinderhold pilgrim",
+   "pos": [
+    1.0,
+    3.0
+   ],
+   "facing": "right",
+   "behavior": "idle",
+   "talkable": true,
+   "say": [
+    "Frost-witches blame us. We blame the weather."
+   ]
+  }
+ ],
+ "player": {
+  "role": "traveler",
+  "pos": [
+   -8.0,
+   3.6
+  ],
+  "facing": "right"
+ },
+ "fx": [],
+ "grades": {
+  "day": {
+   "fog_color": "#5a3030",
+   "sky_top": "#2a1418",
+   "sky_bottom": "#c8783a",
+   "hemi_sky": "#f0c8a0",
+   "saturation": 0.95,
+   "bugs": 0.0,
+   "warmth": 0.08,
+   "exposure": 0.84,
+   "sun_intensity": 1.0,
+   "hemi_intensity": 0.7,
+   "sun_color": "#ffd8b0",
+   "lamp_intensity": 0.85
+  },
+  "dusk": {
+   "fog_color": "#2c1418",
+   "sky_top": "#14080c",
+   "sky_bottom": "#7a3018",
+   "exposure": 0.95,
+   "sun_intensity": 0.6,
+   "warmth": 0.1,
+   "sun_color": "#ff9a60",
+   "bugs": 0.5
+  },
+  "night": {
+   "fog_color": "#180c10",
+   "sky_top": "#08040a",
+   "sky_bottom": "#4a1c14",
+   "hemi_sky": "#8a5a50",
+   "bugs": 1.0,
+   "exposure": 1.0,
+   "sun_intensity": 0.4,
+   "hemi_intensity": 0.55,
+   "sun_color": "#d08060"
+  }
+ },
+ "game": {
+  "id": "lavafalls",
+  "title": "The Lavafalls",
+  "exits": [
+   {
+    "rect": [
+     -10.9,
+     1.6,
+     -9.6,
+     4.6
+    ],
+    "to": "muspelheim",
+    "spawn": "from_falls",
+    "label": "the glass bridge back to Cinderhold"
+   }
+  ],
+  "portals": [],
+  "spawns": {
+   "start": [
+    -8.0,
+    3.6,
+    "right"
+   ],
+   "from_town": [
+    -8.0,
+    3.6,
+    "right"
+   ],
+   "qa": [
+    -7.0,
+    3.6,
+    "right"
+   ],
+   "anvils": [
+    -5.0,
+    -1.0,
+    "left"
+   ],
+   "mouth": [
+    0.0,
+    -3.2,
+    "up"
+   ],
+   "grotto": [
+    6.0,
+    4.0,
+    "left"
+   ]
+  },
+  "spring": {
+   "pos": [
+    8.4,
+    4.6
+   ],
+   "r": 1.6,
+   "secret": "lf_spring"
+  }
+ }
+}

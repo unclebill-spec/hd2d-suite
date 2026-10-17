@@ -7,7 +7,7 @@
 import { active, COMP } from './svartalfheim_companions.js';
 
 const SV = ['svartalfheim', 'forge_hall', 'glowmines', 'clockdeep', 'clockdeep2'];
-const KIT = {
+export const KIT = {   // [MUSPELHEIM] exported so a realm module can add its companion's kit (muspelheim.js: kindle)
   dagna: { role: 'dagna', dist: 1.2, speed: 2.8, brawl: { dmg: 10, reach: 1.2, cd: 1.6, knock: 0.6 }, mend: { below: 0.3, heal: 40 }, light: '#f2a63a',
     follow: ['Walk where I walk. The floor here bites.', 'Your boots are Midgard-made. I can tell. They squeak.'] },
   // [JOTUNHEIM] Ulfar Mossback: story 5.4. combat_scale 2.4 (his sheet's meta; the engine draws one native-pixel size, so the scale shapes his reach and footprint), boulder-toss brawl,

@@ -1,0 +1,390 @@
+{
+ "seed": 312,
+ "biome": "cozy-village",
+ "time": {
+  "start": "night",
+  "speed": 0.0016
+ },
+ "spells": true,
+ "boss_roles": [],
+ "camera": {
+  "fov": 24,
+  "pitch": 36,
+  "distance": 33,
+  "zoom": [
+   24,
+   44
+  ],
+  "look": [
+   0,
+   0,
+   -2.4
+  ],
+  "bounds": [
+   -6.8,
+   -7.0,
+   6.8,
+   8.8
+  ]
+ },
+ "hedges": [],
+ "trees": [],
+ "backdrop": {},
+ "decks": [],
+ "blocks": [],
+ "buildings": [],
+ "name": "The Sigil Forge",
+ "about": "The Ember-Warden's hall and the seal foundry of Cinderhold. The Warden's seat on a basalt dais with a violet shrine-lamp either side; the seal foundry (cooling bed, stamp-press, ledger desk, the sigil mould wall) along the west wall. SKELETON (stand-in kit).",
+ "sprite_roles": [
+  "actors",
+  "heroes",
+  "combat",
+  "lanternseller",
+  "dwarftrader",
+  "poolkeeper",
+  "wispcatcher",
+  "elffolk",
+  "elffolk2",
+  "innkeeper",
+  "shopkeeper",
+  "nightmerchant",
+  "gnome"
+ ],
+ "ground": {
+  "size": [
+   60,
+   60
+  ],
+  "mat": "stone",
+  "walk": [
+   -7.0,
+   -9.0,
+   7.0,
+   9.0
+  ]
+ },
+ "slabs": [
+  {
+   "name": "entry",
+   "rect": [
+    -1.8,
+    4.5,
+    1.8,
+    9.0
+   ],
+   "mat": "cobble",
+   "h": 0.03
+  },
+  {
+   "name": "aisle",
+   "rect": [
+    -2.4,
+    -5.0,
+    2.4,
+    4.5
+   ],
+   "mat": "cobble",
+   "h": 0.03
+  }
+ ],
+ "terraces": [
+  {
+   "name": "warden_dais",
+   "rect": [
+    -4.0,
+    -9.0,
+    4.0,
+    -5.0
+   ],
+   "h": 1.2,
+   "top": "plaster",
+   "gaps": [
+    [
+     -1.5,
+     1.5
+    ]
+   ]
+  },
+  {
+   "name": "wall_w",
+   "rect": [
+    -30,
+    -30,
+    -7.2,
+    13
+   ],
+   "h": 3.6,
+   "top": "stone",
+   "coping": true
+  },
+  {
+   "name": "wall_e",
+   "rect": [
+    7.2,
+    -30,
+    30,
+    13
+   ],
+   "h": 3.6,
+   "top": "stone",
+   "coping": true
+  },
+  {
+   "name": "wall_n",
+   "rect": [
+    -30,
+    -30,
+    30,
+    -9.2
+   ],
+   "h": 3.6,
+   "top": "stone",
+   "coping": true
+  },
+  {
+   "name": "wall_s",
+   "rect": [
+    -12,
+    9.6,
+    12,
+    30
+   ],
+   "h": 1.0,
+   "top": "stone",
+   "coping": true
+  }
+ ],
+ "stairs": [
+  {
+   "name": "stair_dais",
+   "x": 0.0,
+   "z_top": -5.0,
+   "width": 3.0,
+   "rise": 1.2,
+   "base": 0.0
+  }
+ ],
+ "props": [
+  {
+   "piece": "empty_throne",
+   "pos": [
+    0.0,
+    -8.0
+   ]
+  },
+  {
+   "piece": "stone_lantern",
+   "pos": [
+    -3.0,
+    -6.2
+   ]
+  },
+  {
+   "piece": "stone_lantern",
+   "pos": [
+    3.0,
+    -6.2
+   ]
+  },
+  {
+   "piece": "forge_hearth",
+   "pos": [
+    -6.0,
+    -3.0
+   ]
+  },
+  {
+   "piece": "forge_anvil",
+   "pos": [
+    -5.2,
+    -0.4
+   ]
+  },
+  {
+   "piece": "tool_rack",
+   "pos": [
+    -6.6,
+    2.0
+   ]
+  },
+  {
+   "piece": "coal_bin",
+   "pos": [
+    -5.6,
+    4.0
+   ]
+  },
+  {
+   "piece": "lens_table",
+   "pos": [
+    5.2,
+    -2.6
+   ]
+  },
+  {
+   "piece": "bench",
+   "pos": [
+    5.6,
+    1.0
+   ]
+  },
+  {
+   "piece": "reliquary",
+   "pos": [
+    5.6,
+    3.6
+   ]
+  },
+  {
+   "piece": "barrel",
+   "pos": [
+    5.8,
+    7.0
+   ]
+  }
+ ],
+ "emitters": [
+  {
+   "preset": "embers",
+   "pos": [
+    -5.0,
+    1.8,
+    0.0
+   ],
+   "area": [
+    4,
+    1.2,
+    6
+   ],
+   "min_gate": 0.0
+  }
+ ],
+ "actors": [
+  {
+   "id": "envoy_mp",
+   "role": "shopkeeper",
+   "name": "Envoy Sunndis Embervane",
+   "pos": [
+    3.4,
+    6.2
+   ],
+   "facing": "left",
+   "behavior": "idle",
+   "talkable": true,
+   "say": [
+    "Muspelheim doesn't welcome tourists. Be a Gate Runner. Be armed."
+   ]
+  },
+  {
+   "id": "warden_mp",
+   "role": "innkeeper",
+   "name": "Ember-Warden Aska Cindervane",
+   "pos": [
+    0.0,
+    -6.8
+   ],
+   "facing": "down",
+   "behavior": "idle",
+   "talkable": true,
+   "say": [
+    "Midgard blames us for a sigil. Frost blames us for a war. Who are you?"
+   ]
+  }
+ ],
+ "player": {
+  "role": "traveler",
+  "pos": [
+   0.0,
+   7.4
+  ],
+  "facing": "up"
+ },
+ "fx": [],
+ "grades": {
+  "day": {
+   "fog_color": "#5a3030",
+   "sky_top": "#2a1418",
+   "sky_bottom": "#c8783a",
+   "hemi_sky": "#f0c8a0",
+   "saturation": 0.95,
+   "bugs": 0.0,
+   "warmth": 0.08,
+   "exposure": 0.84,
+   "sun_intensity": 1.0,
+   "hemi_intensity": 0.7,
+   "sun_color": "#ffd8b0",
+   "lamp_intensity": 0.85
+  },
+  "dusk": {
+   "fog_color": "#2c1418",
+   "sky_top": "#14080c",
+   "sky_bottom": "#7a3018",
+   "exposure": 0.95,
+   "sun_intensity": 0.6,
+   "warmth": 0.1,
+   "sun_color": "#ff9a60",
+   "bugs": 0.5
+  },
+  "night": {
+   "fog_color": "#180c10",
+   "sky_top": "#08040a",
+   "sky_bottom": "#4a1c14",
+   "hemi_sky": "#8a5a50",
+   "bugs": 1.0,
+   "exposure": 1.0,
+   "sun_intensity": 0.4,
+   "hemi_intensity": 0.55,
+   "sun_color": "#d08060"
+  }
+ },
+ "game": {
+  "id": "mp_hall",
+  "title": "The Sigil Forge",
+  "exits": [
+   {
+    "rect": [
+     -1.5,
+     8.2,
+     1.5,
+     9.0
+    ],
+    "to": "muspelheim",
+    "spawn": "from_hall",
+    "label": "the great doors out to Cinderhold"
+   }
+  ],
+  "portals": [],
+  "spawns": {
+   "start": [
+    0.0,
+    7.4,
+    "up"
+   ],
+   "from_town": [
+    0.0,
+    7.4,
+    "up"
+   ],
+   "qa": [
+    0.0,
+    7.0,
+    "up"
+   ],
+   "hearth": [
+    0.0,
+    1.0,
+    "up"
+   ],
+   "dais": [
+    0.0,
+    -4.2,
+    "up"
+   ],
+   "foundry": [
+    -3.4,
+    -1.6,
+    "left"
+   ]
+  }
+ }
+}
