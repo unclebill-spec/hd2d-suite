@@ -1,0 +1,254 @@
+{
+ "seed": 423,
+ "biome": "cozy-village",
+ "time": {
+  "start": "night",
+  "speed": 0.0016
+ },
+ "spells": true,
+ "boss_roles": [],
+ "camera": {
+  "fov": 24,
+  "pitch": 36,
+  "distance": 33,
+  "zoom": [
+   24,
+   44
+  ],
+  "look": [
+   0,
+   0,
+   -2.4
+  ],
+  "bounds": [
+   -6.0,
+   -6.0,
+   6.0,
+   14.4
+  ]
+ },
+ "hedges": [],
+ "trees": [],
+ "backdrop": {},
+ "decks": [],
+ "blocks": [],
+ "buildings": [],
+ "name": "The Crown of Ice",
+ "about": "Veyra's finale arena: a round ice platform above the void, the broken Rainbow Rift's colours frozen into the air, aurora overhead, four frozen portals at the edges.",
+ "sprite_roles": [
+  "actors",
+  "heroes",
+  "combat",
+  "lanternseller",
+  "dwarftrader",
+  "poolkeeper",
+  "wispcatcher",
+  "elffolk",
+  "elffolk2",
+  "innkeeper",
+  "shopkeeper",
+  "nightmerchant",
+  "gnome"
+ ],
+ "ground": {
+  "size": [
+   60,
+   80
+  ],
+  "mat": "stone",
+  "walk": [
+   -6.6,
+   -7.0,
+   6.6,
+   15.6
+  ]
+ },
+ "slabs": [],
+ "terraces": [
+  {
+   "name": "landing",
+   "rect": [
+    -3.1,
+    6.4,
+    3.1,
+    10.0
+   ],
+   "h": 1.2,
+   "top": "plaster",
+   "gaps": [
+    [
+     -1.1,
+     1.1
+    ]
+   ]
+  },
+  {
+   "name": "crown",
+   "rect": [
+    -5.2,
+    -5.2,
+    5.2,
+    5.2
+   ],
+   "h": 1.8,
+   "top": "plaster",
+   "gaps": [
+    [
+     -1.1,
+     1.1
+    ]
+   ]
+  },
+  {
+   "name": "wall_w",
+   "rect": [
+    -30,
+    -30,
+    -7.0,
+    18
+   ],
+   "h": 6.0,
+   "top": "stone",
+   "coping": true
+  },
+  {
+   "name": "wall_e",
+   "rect": [
+    7.0,
+    -30,
+    30,
+    18
+   ],
+   "h": 6.0,
+   "top": "stone",
+   "coping": true
+  },
+  {
+   "name": "wall_n",
+   "rect": [
+    -30,
+    -30,
+    30,
+    -7.2
+   ],
+   "h": 6.0,
+   "top": "stone",
+   "coping": true
+  }
+ ],
+ "stairs": [
+  {
+   "name": "stair_land",
+   "x": 0.0,
+   "z_top": 10.0,
+   "width": 2.2,
+   "rise": 1.2,
+   "base": 0.0
+  },
+  {
+   "name": "stair_crown",
+   "x": 0.0,
+   "z_top": 5.2,
+   "width": 2.2,
+   "rise": 0.6000000000000001,
+   "base": 1.2
+  }
+ ],
+ "props": [],
+ "emitters": [
+  {
+   "preset": "snowfall",
+   "pos": [
+    0,
+    3.0,
+    4.0
+   ],
+   "area": [
+    12,
+    3.0,
+    14
+   ],
+   "min_gate": 0.0
+  }
+ ],
+ "actors": [],
+ "player": {
+  "role": "traveler",
+  "pos": [
+   0.0,
+   14.0
+  ],
+  "facing": "up"
+ },
+ "fx": [],
+ "grades": {
+  "day": {
+   "fog_color": "#6a7e9c",
+   "sky_top": "#2a3a5a",
+   "sky_bottom": "#9cb4d4",
+   "hemi_sky": "#c8d6ec",
+   "saturation": 0.95,
+   "bugs": 0.0,
+   "warmth": -0.05,
+   "exposure": 0.9,
+   "sun_intensity": 0.9,
+   "hemi_intensity": 0.75,
+   "sun_color": "#e8f0ff",
+   "lamp_intensity": 0.85
+  },
+  "dusk": {
+   "fog_color": "#1c2848",
+   "sky_top": "#0c1430",
+   "sky_bottom": "#34508c",
+   "exposure": 0.95,
+   "sun_intensity": 0.6,
+   "warmth": -0.1,
+   "sun_color": "#8cb0f0",
+   "bugs": 0.5
+  },
+  "night": {
+   "fog_color": "#0c1428",
+   "sky_top": "#050a1c",
+   "sky_bottom": "#1b2a4a",
+   "hemi_sky": "#5c7cb0",
+   "bugs": 1.0,
+   "exposure": 1.0,
+   "sun_intensity": 0.4,
+   "hemi_intensity": 0.55,
+   "sun_color": "#7ea0e0"
+  }
+ },
+ "game": {
+  "id": "frozen_rift",
+  "title": "The Crown of Ice",
+  "exits": [],
+  "portals": [],
+  "spawns": {
+   "start": [
+    0.0,
+    14.0,
+    "up"
+   ],
+   "from_spire": [
+    0.0,
+    14.0,
+    "up"
+   ],
+   "qa": [
+    0.0,
+    8.0,
+    "up"
+   ],
+   "landing": [
+    0.0,
+    8.2,
+    "up"
+   ],
+   "arena": [
+    0.0,
+    3.6,
+    "up"
+   ]
+  }
+ }
+}

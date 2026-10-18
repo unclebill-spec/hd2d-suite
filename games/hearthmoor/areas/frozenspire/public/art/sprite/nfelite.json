@@ -1,0 +1,218 @@
+{
+ "tool": "hd2d boss_sheet (muspelheim big frames)",
+ "biome": "cozy-village",
+ "frame": [
+  88,
+  100
+ ],
+ "pivot": [
+  44,
+  100
+ ],
+ "ground_row": 99,
+ "facings": [
+  "down",
+  "up",
+  "left",
+  "right"
+ ],
+ "anims": {
+  "idle": {
+   "start": 0,
+   "count": 4,
+   "fps": 3,
+   "loop": [
+    0,
+    1,
+    2,
+    1
+   ],
+   "blink": 3
+  },
+  "walk": {
+   "start": 4,
+   "count": 4,
+   "fps": 8
+  },
+  "cast": {
+   "start": 8,
+   "count": 4,
+   "fps": 6,
+   "loop": [
+    0,
+    1,
+    2,
+    2,
+    3,
+    3
+   ],
+   "casters_only": true
+  },
+  "attack": {
+   "start": 12,
+   "count": 4,
+   "fps": 10,
+   "loop": [
+    0,
+    1,
+    2,
+    2,
+    3
+   ],
+   "heroes_only": true
+  },
+  "defend": {
+   "start": 16,
+   "count": 4,
+   "fps": 6,
+   "loop": [
+    0,
+    1
+   ],
+   "hold": [
+    2,
+    3
+   ],
+   "heroes_only": true
+  },
+  "jump": {
+   "start": 20,
+   "count": 4,
+   "fps": 8,
+   "phases": [
+    "crouch",
+    "launch",
+    "airborne",
+    "land"
+   ],
+   "heroes_only": true
+  },
+  "die": {
+   "start": 24,
+   "count": 4,
+   "fps": 6,
+   "once": true,
+   "enemies_only": true
+  }
+ },
+ "cols": 28,
+ "size": [
+  2464,
+  1600
+ ],
+ "image": "nfelite.png",
+ "roles": {
+  "brisa_mini": {
+   "row": 0,
+   "kind": "enemy",
+   "scale": 3.0,
+   "desc": "Rimewarden Brisa Rimeheart (mini-boss, 3x; conquer-only): leather jerkin over a belted tunic, frost shield + two ice blades. No plate.",
+   "anims": [
+    "idle",
+    "walk",
+    "attack",
+    "die"
+   ],
+   "size_bounds": [
+    [
+     10,
+     86
+    ],
+    [
+     8,
+     100
+    ]
+   ],
+   "caster": false,
+   "enemy": true,
+   "stats_hint": {
+    "tier": "miniboss",
+    "height_x_player": 3.0
+   }
+  },
+  "mistalpha": {
+   "row": 4,
+   "kind": "enemy",
+   "scale": 2.0,
+   "desc": "Mist-alpha (rare, 2x): a pale mist-stalker with a mist mane; calls 2 stalkers (violet mist halo = fx).",
+   "anims": [
+    "idle",
+    "walk",
+    "attack",
+    "die"
+   ],
+   "size_bounds": [
+    [
+     10,
+     86
+    ],
+    [
+     8,
+     100
+    ]
+   ],
+   "caster": false,
+   "enemy": true,
+   "stats_hint": {
+    "tier": "rare",
+    "height_x_player": 2.0
+   }
+  },
+  "spiritprime": {
+   "row": 8,
+   "kind": "enemy",
+   "scale": 3.0,
+   "desc": "Spirit prime (rare, 3x): a tall blue flame column inside a ring of glowing runes; rune burst.",
+   "anims": [
+    "idle",
+    "walk",
+    "attack",
+    "die"
+   ],
+   "size_bounds": [
+    [
+     10,
+     86
+    ],
+    [
+     8,
+     100
+    ]
+   ],
+   "caster": false,
+   "enemy": true,
+   "stats_hint": {
+    "tier": "rare",
+    "height_x_player": 3.0
+   }
+  },
+  "kael_bat": {
+   "row": 12,
+   "kind": "enemy",
+   "scale": 2.0,
+   "desc": "Kael bat form (2x): one of Kael's three bat-shaped mist forms (phase 2); splits and returns.",
+   "anims": [
+    "idle",
+    "walk",
+    "attack",
+    "die"
+   ],
+   "size_bounds": [
+    [
+     10,
+     86
+    ],
+    [
+     8,
+     100
+    ]
+   ],
+   "caster": false,
+   "enemy": true,
+   "stats_hint": {
+    "tier": "boss_add",
+    "height_x_player": 2.0
+   }
+  }
+ }
+}

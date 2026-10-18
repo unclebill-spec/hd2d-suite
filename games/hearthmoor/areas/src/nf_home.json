@@ -163,10 +163,7 @@
    "id": "nf_shore",
    "role": "elffolk",
    "name": "Mistmere mourner",
-   "pos": [
-    -5.4,
-    1.4
-   ],
+   "pos": [-2.4, 3.2],
    "facing": "right",
    "behavior": "idle",
    "talkable": true,

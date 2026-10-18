@@ -1,0 +1,390 @@
+{
+ "seed": 421,
+ "biome": "cozy-village",
+ "time": {
+  "start": "night",
+  "speed": 0.0016
+ },
+ "spells": true,
+ "boss_roles": [],
+ "camera": {
+  "fov": 24,
+  "pitch": 36,
+  "distance": 33,
+  "zoom": [
+   24,
+   44
+  ],
+  "look": [
+   0,
+   0,
+   -2.4
+  ],
+  "bounds": [
+   -6.6,
+   -62.0,
+   6.6,
+   12.0
+  ]
+ },
+ "hedges": [],
+ "trees": [],
+ "backdrop": {},
+ "decks": [],
+ "blocks": [],
+ "buildings": [],
+ "name": "The Frozen Spire",
+ "about": "Niflheim's dungeon, rooms F1-F5 (story 7): the Spire Gate, the Banner Hall, the Glow Pool Gallery, the Mirror Stairs and the Glacier Heart. Rime-glass halls, rune locks, cold-fire braziers.",
+ "sprite_roles": [
+  "actors",
+  "heroes",
+  "combat",
+  "lanternseller",
+  "dwarftrader",
+  "poolkeeper",
+  "wispcatcher",
+  "elffolk",
+  "elffolk2",
+  "innkeeper",
+  "shopkeeper",
+  "nightmerchant",
+  "gnome"
+ ],
+ "ground": {
+  "size": [
+   80,
+   150
+  ],
+  "mat": "stone",
+  "walk": [
+   -8.0,
+   -64.8,
+   8.0,
+   12.4
+  ]
+ },
+ "slabs": [],
+ "terraces": [
+  {
+   "name": "plat_f1",
+   "rect": [
+    -7.5,
+    -4.65,
+    -1.3,
+    -2.55
+   ],
+   "h": 1.2,
+   "top": "plaster",
+   "gaps": [
+    [
+     -5.6000000000000005,
+     -3.2
+    ]
+   ]
+  },
+  {
+   "name": "plat_f2",
+   "rect": [
+    1.3,
+    -19.45,
+    7.5,
+    -17.349999999999998
+   ],
+   "h": 1.2,
+   "top": "plaster",
+   "gaps": [
+    [
+     3.2,
+     5.6000000000000005
+    ]
+   ]
+  },
+  {
+   "name": "plat_f3",
+   "rect": [
+    -7.5,
+    -32.65,
+    -1.3,
+    -30.55
+   ],
+   "h": 1.2,
+   "top": "plaster",
+   "gaps": [
+    [
+     -5.6000000000000005,
+     -3.2
+    ]
+   ]
+  },
+  {
+   "name": "plat_f4",
+   "rect": [
+    -7.5,
+    -46.65,
+    -1.3,
+    -44.550000000000004
+   ],
+   "h": 1.2,
+   "top": "plaster",
+   "gaps": [
+    [
+     -5.6000000000000005,
+     -3.2
+    ]
+   ]
+  },
+  {
+   "name": "plat_f5",
+   "rect": [
+    -7.5,
+    -60.65,
+    -1.3,
+    -58.550000000000004
+   ],
+   "h": 1.2,
+   "top": "plaster",
+   "gaps": [
+    [
+     -5.6000000000000005,
+     -3.2
+    ]
+   ]
+  },
+  {
+   "name": "wall_w",
+   "rect": [
+    -30,
+    -90.0,
+    -8.2,
+    13
+   ],
+   "h": 5.0,
+   "top": "stone",
+   "coping": true
+  },
+  {
+   "name": "wall_e",
+   "rect": [
+    8.2,
+    -90.0,
+    30,
+    13
+   ],
+   "h": 5.0,
+   "top": "stone",
+   "coping": true
+  },
+  {
+   "name": "wall_n",
+   "rect": [
+    -30,
+    -90.0,
+    30,
+    -64.2
+   ],
+   "h": 5.0,
+   "top": "stone",
+   "coping": true
+  }
+ ],
+ "stairs": [
+  {
+   "name": "stair_f1",
+   "x": -4.4,
+   "z_top": -2.55,
+   "width": 2.2,
+   "rise": 1.2,
+   "base": 0.0
+  },
+  {
+   "name": "stair_f2",
+   "x": 4.4,
+   "z_top": -17.349999999999998,
+   "width": 2.2,
+   "rise": 1.2,
+   "base": 0.0
+  },
+  {
+   "name": "stair_f3",
+   "x": -4.4,
+   "z_top": -30.55,
+   "width": 2.2,
+   "rise": 1.2,
+   "base": 0.0
+  },
+  {
+   "name": "stair_f4",
+   "x": -4.4,
+   "z_top": -44.550000000000004,
+   "width": 2.2,
+   "rise": 1.2,
+   "base": 0.0
+  },
+  {
+   "name": "stair_f5",
+   "x": -4.4,
+   "z_top": -58.550000000000004,
+   "width": 2.2,
+   "rise": 1.2,
+   "base": 0.0
+  }
+ ],
+ "props": [],
+ "emitters": [
+  {
+   "preset": "snowfall",
+   "pos": [
+    0,
+    3.0,
+    2.0
+   ],
+   "area": [
+    14,
+    3.0,
+    12
+   ],
+   "min_gate": 0.0
+  }
+ ],
+ "actors": [],
+ "player": {
+  "role": "traveler",
+  "pos": [
+   0.0,
+   8.4
+  ],
+  "facing": "up"
+ },
+ "fx": [],
+ "grades": {
+  "day": {
+   "fog_color": "#6a7e9c",
+   "sky_top": "#2a3a5a",
+   "sky_bottom": "#9cb4d4",
+   "hemi_sky": "#c8d6ec",
+   "saturation": 0.95,
+   "bugs": 0.0,
+   "warmth": -0.05,
+   "exposure": 0.9,
+   "sun_intensity": 0.9,
+   "hemi_intensity": 0.75,
+   "sun_color": "#e8f0ff",
+   "lamp_intensity": 0.85
+  },
+  "dusk": {
+   "fog_color": "#1c2848",
+   "sky_top": "#0c1430",
+   "sky_bottom": "#34508c",
+   "exposure": 0.95,
+   "sun_intensity": 0.6,
+   "warmth": -0.1,
+   "sun_color": "#8cb0f0",
+   "bugs": 0.5
+  },
+  "night": {
+   "fog_color": "#0c1428",
+   "sky_top": "#050a1c",
+   "sky_bottom": "#1b2a4a",
+   "hemi_sky": "#5c7cb0",
+   "bugs": 1.0,
+   "exposure": 1.0,
+   "sun_intensity": 0.4,
+   "hemi_intensity": 0.55,
+   "sun_color": "#7ea0e0"
+  }
+ },
+ "game": {
+  "id": "frozenspire",
+  "title": "The Frozen Spire",
+  "exits": [
+   {
+    "rect": [
+     -1.5,
+     10.4,
+     1.5,
+     11.4
+    ],
+    "to": "iceglow",
+    "spawn": "mouth",
+    "label": "back out to the Glowpool Caverns"
+   },
+   {
+    "rect": [
+     -1.5,
+     -63.5,
+     1.5,
+     -62.6
+    ],
+    "to": "frozenspire2",
+    "spawn": "from_spire",
+    "label": "the Frozen Spire, higher"
+   }
+  ],
+  "portals": [],
+  "spawns": {
+   "start": [
+    0.0,
+    8.4,
+    "up"
+   ],
+   "from_caves": [
+    0.0,
+    8.4,
+    "up"
+   ],
+   "qa": [
+    0.0,
+    8.0,
+    "up"
+   ],
+   "f1": [
+    0.0,
+    5.0,
+    "up"
+   ],
+   "f2": [
+    0.0,
+    -9.0,
+    "up"
+   ],
+   "f3": [
+    0.0,
+    -23.0,
+    "up"
+   ],
+   "f4": [
+    0.0,
+    -37.0,
+    "up"
+   ],
+   "f5": [
+    0.0,
+    -51.0,
+    "up"
+   ],
+   "from_spire2": [
+    0.0,
+    -61.0,
+    "down"
+   ],
+   "from_mouth": [
+    0.0,
+    8.4,
+    "up"
+   ],
+   "from_mouth_key": [
+    0.0,
+    8.4,
+    "up"
+   ]
+  },
+  "spring": {
+   "pos": [
+    4.6,
+    -32.4
+   ],
+   "r": 1.8,
+   "secret": "fs_spring"
+  }
+ }
+}

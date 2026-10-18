@@ -1,0 +1,246 @@
+{
+ "tool": "hd2d boss_sheet (niflheim big frames)",
+ "biome": "cozy-village",
+ "frame": [
+  56,
+  68
+ ],
+ "pivot": [
+  28,
+  68
+ ],
+ "ground_row": 67,
+ "facings": [
+  "down",
+  "up",
+  "left",
+  "right"
+ ],
+ "anims": {
+  "idle": {
+   "start": 0,
+   "count": 4,
+   "fps": 3,
+   "loop": [
+    0,
+    1,
+    2,
+    1
+   ],
+   "blink": 3
+  },
+  "walk": {
+   "start": 4,
+   "count": 4,
+   "fps": 8
+  },
+  "cast": {
+   "start": 8,
+   "count": 4,
+   "fps": 6,
+   "loop": [
+    0,
+    1,
+    2,
+    2,
+    3,
+    3
+   ],
+   "casters_only": true
+  },
+  "attack": {
+   "start": 12,
+   "count": 4,
+   "fps": 10,
+   "loop": [
+    0,
+    1,
+    2,
+    2,
+    3
+   ],
+   "heroes_only": true
+  },
+  "defend": {
+   "start": 16,
+   "count": 4,
+   "fps": 6,
+   "loop": [
+    0,
+    1
+   ],
+   "hold": [
+    2,
+    3
+   ],
+   "heroes_only": true
+  },
+  "jump": {
+   "start": 20,
+   "count": 4,
+   "fps": 8,
+   "phases": [
+    "crouch",
+    "launch",
+    "airborne",
+    "land"
+   ],
+   "heroes_only": true
+  },
+  "die": {
+   "start": 24,
+   "count": 4,
+   "fps": 6,
+   "once": true,
+   "enemies_only": true
+  }
+ },
+ "cols": 28,
+ "size": [
+  1568,
+  1360
+ ],
+ "image": "nfenemy.png",
+ "roles": {
+  "frost_spirit": {
+   "row": 0,
+   "kind": "enemy",
+   "scale": 1.2,
+   "desc": "Frost spirit (1.2x): a blue-white flame spirit with a dark core; ice bolt.",
+   "anims": [
+    "idle",
+    "walk",
+    "attack",
+    "die"
+   ],
+   "size_bounds": [
+    [
+     10,
+     54
+    ],
+    [
+     8,
+     68
+    ]
+   ],
+   "caster": false,
+   "enemy": true,
+   "stats_hint": {
+    "tier": "enemy",
+    "height_x_player": 1.2
+   }
+  },
+  "mist_stalker": {
+   "row": 4,
+   "kind": "enemy",
+   "scale": 1.5,
+   "desc": "Mist stalker (1.5x): a lithe pale cat-shape with frost seams; pounces out of the mist.",
+   "anims": [
+    "idle",
+    "walk",
+    "attack",
+    "die"
+   ],
+   "size_bounds": [
+    [
+     10,
+     54
+    ],
+    [
+     8,
+     68
+    ]
+   ],
+   "caster": false,
+   "enemy": true,
+   "stats_hint": {
+    "tier": "enemy",
+    "height_x_player": 1.5
+   }
+  },
+  "ice_golem": {
+   "row": 8,
+   "kind": "enemy",
+   "scale": 1.8,
+   "desc": "Ice golem (1.8x, slow): stacked glacier ice, sky cracks; slam + ice-block throw.",
+   "anims": [
+    "idle",
+    "walk",
+    "attack",
+    "die"
+   ],
+   "size_bounds": [
+    [
+     10,
+     54
+    ],
+    [
+     8,
+     68
+    ]
+   ],
+   "caster": false,
+   "enemy": true,
+   "stats_hint": {
+    "tier": "enemy",
+    "height_x_player": 1.8
+   }
+  },
+  "frost_wraith": {
+   "row": 12,
+   "kind": "enemy",
+   "scale": 1.4,
+   "desc": "Frost wraith (1.4x): a drifting blue-white shroud with two glowing eyes; chill touch.",
+   "anims": [
+    "idle",
+    "walk",
+    "attack",
+    "die"
+   ],
+   "size_bounds": [
+    [
+     10,
+     54
+    ],
+    [
+     8,
+     68
+    ]
+   ],
+   "caster": false,
+   "enemy": true,
+   "stats_hint": {
+    "tier": "enemy",
+    "height_x_player": 1.4
+   }
+  },
+  "ice_warden": {
+   "row": 16,
+   "kind": "enemy",
+   "scale": 1.0,
+   "desc": "Ice Warden (elite, 1x): grey-blue hooded tunic, grey jerkin, belted trousers, ice lance + shield-bash. No plate.",
+   "anims": [
+    "idle",
+    "walk",
+    "attack",
+    "die"
+   ],
+   "size_bounds": [
+    [
+     10,
+     54
+    ],
+    [
+     8,
+     68
+    ]
+   ],
+   "caster": false,
+   "enemy": true,
+   "stats_hint": {
+    "tier": "elite",
+    "height_x_player": 1.0
+   }
+  }
+ }
+}

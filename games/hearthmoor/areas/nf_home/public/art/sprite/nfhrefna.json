@@ -1,0 +1,170 @@
+{
+ "tool": "hd2d boss_sheet (muspelheim big frames)",
+ "biome": "cozy-village",
+ "frame": [
+  40,
+  44
+ ],
+ "pivot": [
+  20,
+  44
+ ],
+ "ground_row": 43,
+ "facings": [
+  "down",
+  "up",
+  "left",
+  "right"
+ ],
+ "anims": {
+  "idle": {
+   "start": 0,
+   "count": 4,
+   "fps": 3,
+   "loop": [
+    0,
+    1,
+    2,
+    1
+   ],
+   "blink": 3
+  },
+  "walk": {
+   "start": 4,
+   "count": 4,
+   "fps": 8
+  },
+  "cast": {
+   "start": 8,
+   "count": 4,
+   "fps": 6,
+   "loop": [
+    0,
+    1,
+    2,
+    2,
+    3,
+    3
+   ],
+   "casters_only": true
+  },
+  "attack": {
+   "start": 12,
+   "count": 4,
+   "fps": 10,
+   "loop": [
+    0,
+    1,
+    2,
+    2,
+    3
+   ],
+   "heroes_only": true
+  },
+  "defend": {
+   "start": 16,
+   "count": 4,
+   "fps": 6,
+   "loop": [
+    0,
+    1
+   ],
+   "hold": [
+    2,
+    3
+   ],
+   "heroes_only": true
+  },
+  "jump": {
+   "start": 20,
+   "count": 4,
+   "fps": 8,
+   "phases": [
+    "crouch",
+    "launch",
+    "airborne",
+    "land"
+   ],
+   "heroes_only": true
+  },
+  "die": {
+   "start": 24,
+   "count": 4,
+   "fps": 6,
+   "once": true,
+   "enemies_only": true
+  }
+ },
+ "cols": 12,
+ "size": [
+  480,
+  176
+ ],
+ "image": "nfhrefna.png",
+ "roles": {
+  "hrefna": {
+   "row": 0,
+   "kind": "companion",
+   "scale": 1.0,
+   "desc": "Hrefna Frostveil (companion, 1x): slate tunic, short belted skirt over grey leggings, boots, blue scarf, cold-fire hand lantern (glow = fx / light). follow = walk, cast = ice lance / mist veil. NO pet in this realm.",
+   "anims": [
+    "idle",
+    "walk",
+    "cast"
+   ],
+   "size_bounds": [
+    [
+     10,
+     38
+    ],
+    [
+     8,
+     44
+    ]
+   ],
+   "caster": false,
+   "named": true,
+   "light": {
+    "color": "#3fb8ff",
+    "intensity": 1.1,
+    "range": 6.0
+   },
+   "stats_hint": {
+    "tier": "companion",
+    "height_x_player": 1.0
+   }
+  },
+  "lanternseller": {
+   "row": 0,
+   "kind": "companion",
+   "scale": 1.0,
+   "desc": "Hrefna Frostveil (companion, 1x): slate tunic, short belted skirt over grey leggings, boots, blue scarf, cold-fire hand lantern (glow = fx / light). follow = walk, cast = ice lance / mist veil. NO pet in this realm.",
+   "anims": [
+    "idle",
+    "walk",
+    "cast"
+   ],
+   "size_bounds": [
+    [
+     10,
+     38
+    ],
+    [
+     8,
+     44
+    ]
+   ],
+   "caster": false,
+   "named": true,
+   "light": {
+    "color": "#3fb8ff",
+    "intensity": 1.1,
+    "range": 6.0
+   },
+   "stats_hint": {
+    "tier": "companion",
+    "height_x_player": 1.0
+   }
+  }
+ }
+}

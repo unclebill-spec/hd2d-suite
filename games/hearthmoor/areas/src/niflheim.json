@@ -141,27 +141,7 @@
    "base": 0.0
   }
  ],
- "props": [
-  {
-   "piece": "realm_arch",
-   "pos": [
-    0.0,
-    10.6
-   ],
-   "glow": {
-    "color": "#3fb8ff",
-    "range": 6.0,
-    "fixed": 0.8
-   }
-  },
-  {
-   "piece": "realm_glow_ice",
-   "pos": [
-    0.0,
-    10.6
-   ]
-  }
- ],
+ "props": [],
  "emitters": [
   {
    "preset": "snowfall",
@@ -200,7 +180,7 @@
    "name": "Tove Lanternwright",
    "pos": [
     -8.5,
-    -3.0
+    -1.4
    ],
    "facing": "right",
    "behavior": "idle",
@@ -214,8 +194,8 @@
    "role": "wispcatcher",
    "name": "Ketil Icehook",
    "pos": [
-    9.0,
-    -3.0
+    7.0,
+    -2.8
    ],
    "facing": "left",
    "behavior": "idle",
@@ -228,10 +208,7 @@
    "id": "nf_a",
    "role": "elffolk",
    "name": "Mistmere villager",
-   "pos": [
-    -6.0,
-    7.4
-   ],
+   "pos": [-1.2, 3.8],
    "facing": "right",
    "behavior": "idle",
    "talkable": true,
@@ -390,8 +367,8 @@
   },
   "spring": {
    "pos": [
-    -11.5,
-    -2.0
+    -11.0,
+    -1.0
    ],
    "r": 1.6,
    "secret": "nf_spring"

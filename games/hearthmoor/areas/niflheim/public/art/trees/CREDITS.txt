@@ -1,0 +1,3 @@
+Tree canopy art generated with brileta-sprites by Mark Ayzenshtat (MIT).
+https://github.com/mayz/brileta-sprites
+Snapped to the hd2d biome palette by tools/trees/trees.py.

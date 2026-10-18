@@ -1,0 +1,340 @@
+{
+ "tool": "hd2d boss_sheet (muspelheim big frames)",
+ "biome": "cozy-village",
+ "frame": [
+  40,
+  44
+ ],
+ "pivot": [
+  20,
+  44
+ ],
+ "ground_row": 43,
+ "facings": [
+  "down",
+  "up",
+  "left",
+  "right"
+ ],
+ "anims": {
+  "idle": {
+   "start": 0,
+   "count": 4,
+   "fps": 3,
+   "loop": [
+    0,
+    1,
+    2,
+    1
+   ],
+   "blink": 3
+  },
+  "walk": {
+   "start": 4,
+   "count": 4,
+   "fps": 8
+  },
+  "cast": {
+   "start": 8,
+   "count": 4,
+   "fps": 6,
+   "loop": [
+    0,
+    1,
+    2,
+    2,
+    3,
+    3
+   ],
+   "casters_only": true
+  },
+  "attack": {
+   "start": 12,
+   "count": 4,
+   "fps": 10,
+   "loop": [
+    0,
+    1,
+    2,
+    2,
+    3
+   ],
+   "heroes_only": true
+  },
+  "defend": {
+   "start": 16,
+   "count": 4,
+   "fps": 6,
+   "loop": [
+    0,
+    1
+   ],
+   "hold": [
+    2,
+    3
+   ],
+   "heroes_only": true
+  },
+  "jump": {
+   "start": 20,
+   "count": 4,
+   "fps": 8,
+   "phases": [
+    "crouch",
+    "launch",
+    "airborne",
+    "land"
+   ],
+   "heroes_only": true
+  },
+  "die": {
+   "start": 24,
+   "count": 4,
+   "fps": 6,
+   "once": true,
+   "enemies_only": true
+  }
+ },
+ "cols": 12,
+ "size": [
+  480,
+  1408
+ ],
+ "image": "nffolk.png",
+ "roles": {
+  "gatewright": {
+   "row": 0,
+   "kind": "human",
+   "scale": 1.0,
+   "desc": "Halvard Rimegate (gatewright, 1x): calm; slate wool tunic under a leather jerkin, belted grey trousers, short grey beard, ash mantle.",
+   "anims": [
+    "idle",
+    "walk"
+   ],
+   "size_bounds": [
+    [
+     10,
+     38
+    ],
+    [
+     8,
+     44
+    ]
+   ],
+   "caster": false,
+   "named": true,
+   "stats_hint": {
+    "tier": "npc",
+    "height_x_player": 1.0
+   }
+  },
+  "frostspeaker": {
+   "row": 4,
+   "kind": "human",
+   "scale": 1.0,
+   "desc": "Gudrun Hoarwick (frost-speaker, 1x): grey wool tunic, belted slate trousers, long pale braid to the waist, rune cuffs (blue glow = fx).",
+   "anims": [
+    "idle",
+    "walk"
+   ],
+   "size_bounds": [
+    [
+     10,
+     38
+    ],
+    [
+     8,
+     44
+    ]
+   ],
+   "caster": false,
+   "named": true,
+   "stats_hint": {
+    "tier": "npc",
+    "height_x_player": 1.0
+   }
+  },
+  "veyra": {
+   "row": 8,
+   "kind": "human",
+   "scale": 1.2,
+   "desc": "Veyra Ashmantle (the Rift-Warden before the rime-plate, 1.2x): violet-black long coat worn open over a pale tunic + belt, belted trousers, ash-grey mantle, small belt lantern. Before the rime-plate.",
+   "anims": [
+    "idle",
+    "walk"
+   ],
+   "size_bounds": [
+    [
+     10,
+     38
+    ],
+    [
+     8,
+     44
+    ]
+   ],
+   "caster": false,
+   "named": true,
+   "stats_hint": {
+    "tier": "npc",
+    "height_x_player": 1.2
+   }
+  },
+  "eira": {
+   "row": 12,
+   "kind": "human",
+   "scale": 1.0,
+   "desc": "Eira (Veyra's sister, memory, 1x): pale belted tunic, belted trousers, hand lantern; glowing-outline = fx (eira_outline), shown only in memories.",
+   "anims": [
+    "idle",
+    "walk"
+   ],
+   "size_bounds": [
+    [
+     10,
+     38
+    ],
+    [
+     8,
+     44
+    ]
+   ],
+   "caster": false,
+   "named": true,
+   "stats_hint": {
+    "tier": "npc",
+    "height_x_player": 1.0
+   }
+  },
+  "nf_trader": {
+   "row": 16,
+   "kind": "human",
+   "scale": 1.0,
+   "desc": "Tove Lanternwright (trader, 1x): layered tunics (slate under sand), wide belt hung with pouches, knit cap look via short hair.",
+   "anims": [
+    "idle",
+    "walk"
+   ],
+   "size_bounds": [
+    [
+     10,
+     38
+    ],
+    [
+     8,
+     44
+    ]
+   ],
+   "caster": false,
+   "named": true,
+   "stats_hint": {
+    "tier": "npc",
+    "height_x_player": 1.0
+   }
+  },
+  "elkman": {
+   "row": 20,
+   "kind": "human",
+   "scale": 1.0,
+   "desc": "Ketil Icehook (elk-keeper, 1x): quilted leather jerkin over a grey tunic, rope-belted trousers, short beard, crook.",
+   "anims": [
+    "idle",
+    "walk"
+   ],
+   "size_bounds": [
+    [
+     10,
+     38
+    ],
+    [
+     8,
+     44
+    ]
+   ],
+   "caster": false,
+   "named": true,
+   "stats_hint": {
+    "tier": "npc",
+    "height_x_player": 1.0
+   }
+  },
+  "archivist": {
+   "row": 24,
+   "kind": "human",
+   "scale": 1.0,
+   "desc": "Vigdis Stillwater (archivist, 1x): ink-stained wrap tunic, belted trousers, hair in a bun.",
+   "anims": [
+    "idle",
+    "walk"
+   ],
+   "size_bounds": [
+    [
+     10,
+     38
+    ],
+    [
+     8,
+     44
+    ]
+   ],
+   "caster": false,
+   "named": true,
+   "stats_hint": {
+    "tier": "npc",
+    "height_x_player": 1.0
+   }
+  },
+  "brisa": {
+   "row": 28,
+   "kind": "human",
+   "scale": 1.0,
+   "desc": "Warden-Captain Brisa Rimeheart (guard captain NPC, 1x; same look as the 3x mini-boss): leather jerkin over a grey-blue belted tunic, belted trousers, small frost shield.",
+   "anims": [
+    "idle",
+    "walk"
+   ],
+   "size_bounds": [
+    [
+     10,
+     38
+    ],
+    [
+     8,
+     44
+    ]
+   ],
+   "caster": false,
+   "named": true,
+   "stats_hint": {
+    "tier": "npc",
+    "height_x_player": 1.0
+   }
+  },
+  "innkeeper": {
+   "row": 4,
+   "kind": "human",
+   "scale": 1.0,
+   "desc": "Gudrun Hoarwick (frost-speaker, 1x): grey wool tunic, belted slate trousers, long pale braid to the waist, rune cuffs (blue glow = fx).",
+   "anims": [
+    "idle",
+    "walk"
+   ],
+   "size_bounds": [
+    [
+     10,
+     38
+    ],
+    [
+     8,
+     44
+    ]
+   ],
+   "caster": false,
+   "named": true,
+   "stats_hint": {
+    "tier": "npc",
+    "height_x_player": 1.0
+   }
+  }
+ }
+}

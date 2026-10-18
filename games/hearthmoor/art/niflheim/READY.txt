@@ -1,0 +1,7 @@
+READY: true
+Pack: niflheim (Mistmere, Quiet Shore, Glowpool Caverns, Frozen Spire F1-F10, Crown of Ice) - built 2026-10-18 (America/New_York)
+Done: 7 sprite sheets (folk, Hrefna companion, enemies, elites, Colossus 6x, Kael 5.5x, Veyra 5-6x with 4 phases + clone), all check-sprite PASS (0 failures);
+      39 kit pieces (.glb + kit.json) with a 1.34 m ledge + stair in every area / room set; 45 gamefx; 16 night + 2 day scene renders (night luma 21-30, day 65-66);
+      contact_sheet.png, metadata/, README.md. No neon sprites -> no check-sprite allow-list entries needed.
+Left (non-blocking, see README "Left"): item icons, Ashmantle interior, extra Hrefna spell fx, per-room Spire layouts beyond ledge + stair + centrepiece.
+Not run: check-scene (needs the built game).

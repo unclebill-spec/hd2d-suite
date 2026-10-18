@@ -24,6 +24,7 @@ from pathlib import Path
 GAME = Path(__file__).resolve().parents[1]
 READY = Path("/workspace/hearthmoor-staging/art/niflheim/READY.txt")
 ARGS = ["--use-angle=swiftshader", "--enable-unsafe-swiftshader", "--ignore-gpu-blocklist"]
+AREAS6 = ['niflheim', 'nf_home', 'iceglow', 'frozenspire', 'frozenspire2', 'frozen_rift']
 QUESTS = ['nf_gate', 'nf_lanterns', 'nf_cold', 'nf_hrefna', 'nf_eira', 'nf_take', 'frozenspire', 'nf_staff', 'nf_elk', 'frostvigil']
 
 
@@ -72,16 +73,16 @@ def steps(b, url, T, size, errors, rep, stub=None, shots=None):
         # ---- file-level: the skeleton specs and the installer / build gate wait on READY.txt
         ready = READY.exists()
         spec_ok = True
-        for a in ("niflheim", "nf_home", "iceglow"):
+        for a in AREAS6:
             d = json.loads((GAME / "areas" / "src" / f"{a}.json").read_text())
             hmax = max(t["h"] for t in d["terraces"] if "wall" not in t["name"])
             spec_ok &= hmax >= 1.0 and len(d.get("stairs", [])) >= 1 and d["game"]["id"] == a and len(d["grades"]) == 3
-        T.step("the three skeleton specs (Mistmere, the Quiet Shore, the Glowpool Caverns) each have a 1.2 m terrace with a stair and day / dusk / night grades", spec_ok)
+        T.step("the six area specs (Mistmere, the Quiet Shore, the Glowpool Caverns, the Spire F1-F5 and F6-F10, the Crown of Ice) each have a 1.2 m terrace with a stair and day / dusk / night grades", spec_ok)
         r = subprocess.run([sys.executable, "-c", "import build; print(','.join(build.AREAS))"], cwd=GAME, capture_output=True, text=True, timeout=120)
         areas = r.stdout.strip().split(",") if r.returncode == 0 else []
         T.step("build.py joins the Niflheim areas only when READY.txt exists", r.returncode == 0 and (("niflheim" in areas) == ready), ready=ready, n=len(areas), err=r.stderr[-200:])
-        r = subprocess.run([sys.executable, str(GAME.parents[1] / "tools" / "hearthmoor" / "nifl_art.py")], capture_output=True, text=True, timeout=300)
-        T.step("nifl_art.py waits on READY.txt (does nothing without it)", r.returncode == 0 and (ready or "READY.txt is missing" in r.stdout), out=r.stdout[-200:])
+        r = subprocess.run([sys.executable, "-m", "py_compile", str(GAME.parents[1] / "tools" / "hearthmoor" / "nifl_art.py")], capture_output=True, text=True, timeout=120)   # the installer itself rewrites areas: never run it from the smoke
+        T.step("nifl_art.py compiles, READY.txt is present and every area has its built scene + art pack", r.returncode == 0 and ready and all((GAME / "areas" / a / "scene.json").exists() for a in AREAS6) and (GAME / "art" / "niflheim" / "sprite").exists(), err=r.stderr[-200:])
         # ---- the module and its shared-table registrations
         a = load("bifrost")
         d = nf("qaDefs()")
@@ -169,29 +170,73 @@ def steps(b, url, T, size, errors, rep, stub=None, shots=None):
         rr = T.ev("(() => { const G = window.__hm, f = G.S.flags, out = {}; const a0 = G.area; G.area = 'niflheim';"
                   " f.alliance = { niflheim: 'befriend' }; out.bef = G.factions.realm(); f.alliance = { niflheim: 'conquer' }; out.con = G.factions.realm(); G.area = 'plaza'; out.away = G.factions.realm(); G.area = a0; f.alliance = {}; return out; })()")
         T.step("merit routing: befriend pays Realm Favor, conquer pays Rift Marks (gate) inside the realm's areas only", rr == {"bef": "embassy", "con": "gate", "away": "hearth"}, rr=rr)
-        # ---- the three bosses' phase logic (spawned in the Bifrost scene: any area with a combat module works; positions are provisional)
-        a = load("plaza", "&nfq=revealed")   # the plaza sheet has the stock `wraith` role the QA bosses wear until their own sheets land
-        T.ev("window.__hm.nifl.moveTo(0, 6)")
-        for which, hp_steps in (("colossus", (0.5, 0.2)), ("kael", (0.5, 0.2))):
-            ok = nf(f"qaBoss('{which}', [0, -9])"); frames(4); st = nf("qaBossState()")
-            T.step(f"{which}: spawns framed at {B[which]['scale']}x in phase 1", ok and st["which"] == which and st["framed"] and st["scale"] == B[which]["scale"] and st["phase"] in (0, 1), st=st)
-            nf(f"qaHp('{which}', {hp_steps[0]})"); st = nf("qaTick(0.1, 3)")
+        # ---- the six areas load with their art (sheets, kit, gamefx) and no page errors
+        for ar in AREAS6:
+            a = load(ar, "&nfq=revealed")
+            info = T.ev("(() => { const c = window.__hd2d.ctx, A = c.actors; return { sheets: ['nf_folk', 'nf_enemies', 'nf_elites', 'boss_colossus', 'boss_kael', 'boss_veyra', 'nf_hrefna'].filter((r) => A.sheetOf && A.sheetOf(r)), fx: !!(c.gamefx && c.gamefx.meta.effects.beam_ring && c.gamefx.meta.effects.ice_lance), npcs: c.npcs ? c.npcs.length : 0 }; })()")
+            T.step(f"{ar}: loads, the realm art is installed (nf_fx rows in its gamefx atlas) and no page error", a["area"] == ar and info["fx"] and info["npcs"] >= 0, info=info)
+        T.step("the Spire areas carry the boss sheets, the Mistmere areas the folk sheet",
+               T.ev("(() => { const A = window.__hd2d.ctx.actors; return !!(A.sheetOf('boss_veyra') || A.sheetOf('veyra_p1')); })()") and load("niflheim")["area"] == "niflheim" and T.ev("!!window.__hd2d.ctx.actors.sheetOf('hrefna')"))
+        # ---- Hrefna joins at the Spire mouth (a real companion: pet-follow kit, one active) and lances what comes near
+        reset_state(); a = load("iceglow", "&nfq=thaw")
+        S("S.quests.nf_hrefna = 2; S.flags.companions = {}; S.flags.companion_active = null; return 1;")
+        nf("qaSpot('spire_mouth')"); frames(2); fin(); frames(8)
+        fol = T.ev("window.__hm.svart.follow.qa()")
+        T.step("Hrefna's Thaw ends at the Spire mouth: quest 3, she joins as the one active companion and follows (nf_hrefna sheet)", sv()["quests"]["nf_hrefna"] == 3 and fol["on"] and fol["id"] == "hrefna" and "hrefna" in (fol["role"] or ""), fol=fol, q=sv()["quests"])
+        nf("moveTo(0, -3)"); frames(30)
+        ok = nf("foe({ id: 'qa_stalker', role: 'mist_stalker', pos: [1.5, -2.5] }, () => {}) && 1"); frames(4)
+        until("window.__hm.nifl.hlance > 0", 20); hl = T.ev("window.__hm.nifl.hlance")
+        T.step("Hrefna's ice lance fires at a stalker within 6.5 m (then 8 s cooldown) and the lance effect plays", hl > 0, hlance=hl)
+        T.ev("(() => { const C = window.__hm.combat, c = window.__hd2d.ctx; for (const e of C.enemies) c.removeNpc(e.a); C.enemies = []; })()")
+        # ---- the Spire's rooms (F1-F5): the four mirror doors, the freeze-cores, the heart-ice
+        reset_state(); a = load("frozenspire", "&nfq=revealed", spawn="from_mouth")
+        nf("qaSpot('pane0')"); frames(2); fin(); frames(2)
+        T.step("F4: a clone's mirror door shows only you and lets a mist stalker out", "fs_ms0" in nf("qaBossState()")["ids"])
+        nf("qaSpot('pane2')"); frames(2); fin()
+        T.step("F4: the real door (breath on the glass, a shadow that is not yours) opens the seam: fs_f4 set, the heart-ice appears", T.ev("window.__hm.S.flags.fs_f4 === 1"))
+        nf("qaSpot('fs_c1')"); frames(2); fin()
+        T.step("F3: the first freeze-core breaks (found fs_c1)", T.ev("!!(window.__hm.S.found || {}).fs_c1"))
+        T.step("F5: the Colossus's core only shows after the Colossus (fs_colossus gate)", not T.ev("(() => { const sp = window.__hm.nifl.spots.find((x) => x.id === 'fs_c2'); return !!(sp && sp.show()); })()"))
+        S("S.flags.fs_colossus = 1; return 1;")
+        T.step("F5: after the Colossus the second core is breakable", T.ev("(() => { const sp = window.__hm.nifl.spots.find((x) => x.id === 'fs_c2'); return !!(sp && sp.show()); })()"))
+        # ---- F6-F10: the Sister's Glass, the Aerie door (three cores + Kael) and the door to the Rift
+        reset_state(); a = load("frozenspire2", "&nfq=revealed", spawn="f6")
+        nf("qaSpot('rift_door')"); frames(2); fin()
+        T.step("F10: the door to the Rift stays shut until the three cores are broken AND Kael has fallen", T.ev("!window.__hm.S.flags.fs_open"))
+        S("S.found = { ...(S.found || {}), fs_c1: 1, fs_c2: 1, fs_c3: 1 }; S.flags.fs_boss = 1; S.quests.frozenspire = 2; return 1;")
+        nf("qaSpot('rift_door')"); frames(2); fin()
+        T.wait("window.__hm && window.__hm.area === 'frozen_rift' && window.__hd2d && window.__hd2d.ready && !window.__hm.busy", 150); T.idle(); frames(6)
+        T.step("F10: with three cores broken and Kael gone the door opens (fs_open, quest 3) and leads onto the Crown of Ice", T.ev("window.__hm.S.flags.fs_open === 1") and sv()["quests"]["frozenspire"] >= 3 and T.ev("window.__hm.area") == "frozen_rift", q=sv()["quests"])
+        # ---- the three bosses in their own areas (real sheets, BOSS_AT positions): Colossus F5, Kael F9, Veyra on the Crown. A role swap per phase inside one sheet (README decision 1).
+        for which, ar, spn, hp_steps in (("colossus", "frozenspire", "f5", (0.5, 0.2)), ("kael", "frozenspire2", "f9", (0.5, 0.2))):
+            a = load(ar, "&nfq=revealed", spawn=spn)
+            ok = nf(f"qaBoss('{which}', null)"); frames(4); st = nf("qaBossState()")
+            T.step(f"{which}: spawns in {ar} framed at {B[which]['scale']}x in phase 1 with its own sheet role", ok and st["which"] == which and st["framed"] and st["scale"] == B[which]["scale"] and st["phase"] in (0, 1) and st["role"] == which, st=st)
+            T.shot(f"boss_{which}_p1")
+            nf(f"qaHp('{which}', {hp_steps[0]})"); st = nf("qaTick(0.1, 3)"); frames(4)
             T.step(f"{which}: phase 2 at 60 % ({'core exposed, two ice golems' if which == 'colossus' else 'three mist bats'})", st["p2"] and st["phase"] == 2 and (("co_g0" in st["ids"] and "co_g1" in st["ids"]) if which == "colossus" else st["bats"] == 3), st=st)
-            nf(f"qaHp('{which}', {hp_steps[1]})"); st = nf("qaTick(0.1, 3)")
-            T.step(f"{which}: phase 3 at 25 % ({'frost spirits swarm' if which == 'colossus' else 'two Ice Wardens called'})", st["p3"] and st["phase"] == 3 and (("co_s0" in st["ids"]) if which == "colossus" else ("ka_w0" in st["ids"] and "ka_w1" in st["ids"])), st=st)
+            T.shot(f"boss_{which}_p2")
+            nf(f"qaHp('{which}', {hp_steps[1]})"); st = nf("qaTick(0.1, 3)"); frames(4)
+            T.step(f"{which}: phase 3 at 25 % ({'frost spirits swarm' if which == 'colossus' else 'two Ice Wardens called'}) and the sheet role swaps", st["p3"] and st["phase"] == 3 and (("co_s0" in st["ids"]) if which == "colossus" else ("ka_w0" in st["ids"] and "ka_w1" in st["ids"])) and st["role"].endswith("_p3"), st=st)
+            T.shot(f"boss_{which}_p3")
             nf(f"qaKill('{which}')"); frames(2); fin()
             T.ev("(() => { const C = window.__hm.combat, c = window.__hd2d.ctx; for (const e of C.enemies) c.removeNpc(e.a); C.enemies = []; })()")
         T.step("Kael's fall sets fs_boss and moves The Frozen Spire to stage 2", T.ev("window.__hm.S.flags.fs_boss === 1") and sv()["quests"]["frozenspire"] == 2, q=sv()["quests"])
-        ok = nf("qaBoss('veyra', [0, -9])"); frames(4); st = nf("qaBossState()")
-        T.step("Veyra: spawns framed at 5x in phase 1 (three mist clones)", ok and st["which"] == "veyra" and st["framed"] and st["scale"] == 5 and st["clones"] == 3, st=st)
-        nf("qaHp('veyra', 0.6)"); st = nf("qaTick(0.1, 3)")
-        T.step("Veyra P2 (70 %): the four portals freeze", st["phase"] == 2 and st["p2"] and st["portals"] == [1, 1, 1, 1], st=st)
+        a = load("frozen_rift", "&nfq=revealed", spawn="landing")
+        ok = nf("qaBoss('veyra', null)"); frames(4); st = nf("qaBossState()")
+        T.step("Veyra: spawns on the Crown framed at 5x in phase 1 (three mist clones, her own breath)", ok and st["which"] == "veyra" and st["framed"] and st["scale"] == 5 and st["clones"] == 3 and st["role"] == "veyra_p1", st=st)
+        T.shot("boss_veyra_p1")
+        nf("qaHp('veyra', 0.6)"); st = nf("qaTick(0.1, 3)"); frames(4)
+        T.step("Veyra P2 (70 %): the four portals freeze and the clones are gone", st["phase"] == 2 and st["p2"] and st["portals"] == [1, 1, 1, 1] and st["role"] == "veyra_p2", st=st)
+        T.shot("boss_veyra_p2")
         st = nf("qaThaw(0)")
         T.step("a portal thaws (the thaw rune)", st["portals"] == [0, 1, 1, 1], st=st)
-        nf("qaHp('veyra', 0.3)"); st = nf("qaTick(0.1, 3)")
-        T.step("Veyra P3 (40 %): the Warden phase (red-ring beam telegraph, grows to 6x)", st["phase"] == 3 and st["p3"] and st["pend"] >= 1 and st["scale"] == 6, st=st)
-        nf("qaHp('veyra', 0.1)"); st = nf("qaTick(0.1, 3)")
-        T.step("Veyra P4 (15 %): she stops, the choice opens, and she cannot die before it", st["phase"] == 4 and st["p4"] and st["dlg"] == "veyra" and st["pend"] == 0 and st["hp"] >= 0.1 * 2800, st=st)
+        nf("qaHp('veyra', 0.3)"); st = nf("qaTick(0.1, 3)"); frames(4)
+        T.step("Veyra P3 (40 %): the Warden phase (red-ring beam telegraph, grows to 6x)", st["phase"] == 3 and st["p3"] and st["pend"] >= 1 and st["scale"] == 6 and st["role"] == "veyra_p3", st=st)
+        T.shot("boss_veyra_p3")
+        nf("qaHp('veyra', 0.1)"); st = nf("qaTick(0.1, 3)"); frames(4)
+        T.step("Veyra P4 (15 %): she stops, the choice opens, and she cannot die before it", st["phase"] == 4 and st["p4"] and st["dlg"] == "veyra" and st["pend"] == 0 and st["hp"] >= 0.1 * 2800 and st["role"] == "veyra_p4", st=st)
+        T.shot("boss_veyra_p4")
         choices = T.ev("window.__hm.dlg && window.__hm.dlg.choice ? window.__hm.dlg.choice.options.map((o) => o.label) : null")
         T.step("the P4 choice for a player who is NOT redeemable: only 'End it.'", choices == ["End it."], choices=choices)
         nf("qaEnding('defeated')")

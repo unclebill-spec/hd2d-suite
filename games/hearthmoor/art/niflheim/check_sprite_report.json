@@ -1,0 +1,233 @@
+{
+ "nf_folk": {
+  "atlas": "/workspace/hearthmoor-staging/art/niflheim/sprite/nf_folk.png",
+  "biome": "cozy-village",
+  "roles": {
+   "gatewright": {
+    "frames": 32,
+    "colors": 15,
+    "issues": []
+   },
+   "frostspeaker": {
+    "frames": 32,
+    "colors": 17,
+    "issues": []
+   },
+   "veyra": {
+    "frames": 32,
+    "colors": 15,
+    "issues": []
+   },
+   "eira": {
+    "frames": 32,
+    "colors": 14,
+    "issues": []
+   },
+   "nf_trader": {
+    "frames": 32,
+    "colors": 16,
+    "issues": []
+   },
+   "elkman": {
+    "frames": 32,
+    "colors": 15,
+    "issues": []
+   },
+   "archivist": {
+    "frames": 32,
+    "colors": 14,
+    "issues": []
+   },
+   "brisa": {
+    "frames": 32,
+    "colors": 17,
+    "issues": []
+   }
+  },
+  "summary": {
+   "roles": 8,
+   "failures": 0,
+   "semi_transparent": 0,
+   "pass": true
+  },
+  "failures": []
+ },
+ "nf_hrefna": {
+  "atlas": "/workspace/hearthmoor-staging/art/niflheim/sprite/nf_hrefna.png",
+  "biome": "cozy-village",
+  "roles": {
+   "hrefna": {
+    "frames": 48,
+    "colors": 16,
+    "issues": []
+   }
+  },
+  "summary": {
+   "roles": 1,
+   "failures": 0,
+   "semi_transparent": 0,
+   "pass": true
+  },
+  "failures": []
+ },
+ "nf_enemies": {
+  "atlas": "/workspace/hearthmoor-staging/art/niflheim/sprite/nf_enemies.png",
+  "biome": "cozy-village",
+  "roles": {
+   "frost_spirit": {
+    "frames": 64,
+    "colors": 6,
+    "issues": []
+   },
+   "mist_stalker": {
+    "frames": 64,
+    "colors": 6,
+    "issues": []
+   },
+   "ice_golem": {
+    "frames": 64,
+    "colors": 6,
+    "issues": []
+   },
+   "frost_wraith": {
+    "frames": 64,
+    "colors": 5,
+    "issues": []
+   },
+   "ice_warden": {
+    "frames": 64,
+    "colors": 16,
+    "issues": []
+   }
+  },
+  "summary": {
+   "roles": 5,
+   "failures": 0,
+   "semi_transparent": 0,
+   "pass": true
+  },
+  "failures": []
+ },
+ "nf_elites": {
+  "atlas": "/workspace/hearthmoor-staging/art/niflheim/sprite/nf_elites.png",
+  "biome": "cozy-village",
+  "roles": {
+   "brisa_mini": {
+    "frames": 64,
+    "colors": 17,
+    "issues": []
+   },
+   "mistalpha": {
+    "frames": 64,
+    "colors": 6,
+    "issues": []
+   },
+   "spiritprime": {
+    "frames": 64,
+    "colors": 6,
+    "issues": []
+   },
+   "kael_bat": {
+    "frames": 64,
+    "colors": 6,
+    "issues": []
+   }
+  },
+  "summary": {
+   "roles": 4,
+   "failures": 0,
+   "semi_transparent": 0,
+   "pass": true
+  },
+  "failures": []
+ },
+ "boss_colossus": {
+  "atlas": "/workspace/hearthmoor-staging/art/niflheim/sprite/boss_colossus.png",
+  "biome": "cozy-village",
+  "roles": {
+   "colossus": {
+    "frames": 64,
+    "colors": 7,
+    "issues": []
+   },
+   "colossus_p2": {
+    "frames": 64,
+    "colors": 7,
+    "issues": []
+   },
+   "colossus_p3": {
+    "frames": 64,
+    "colors": 8,
+    "issues": []
+   }
+  },
+  "summary": {
+   "roles": 3,
+   "failures": 0,
+   "semi_transparent": 0,
+   "pass": true
+  },
+  "failures": []
+ },
+ "boss_kael": {
+  "atlas": "/workspace/hearthmoor-staging/art/niflheim/sprite/boss_kael.png",
+  "biome": "cozy-village",
+  "roles": {
+   "kael": {
+    "frames": 80,
+    "colors": 17,
+    "issues": []
+   },
+   "kael_p3": {
+    "frames": 80,
+    "colors": 17,
+    "issues": []
+   }
+  },
+  "summary": {
+   "roles": 2,
+   "failures": 0,
+   "semi_transparent": 0,
+   "pass": true
+  },
+  "failures": []
+ },
+ "boss_veyra": {
+  "atlas": "/workspace/hearthmoor-staging/art/niflheim/sprite/boss_veyra.png",
+  "biome": "cozy-village",
+  "roles": {
+   "veyra_p1": {
+    "frames": 64,
+    "colors": 15,
+    "issues": []
+   },
+   "veyra_p2": {
+    "frames": 64,
+    "colors": 15,
+    "issues": []
+   },
+   "veyra_p3": {
+    "frames": 64,
+    "colors": 17,
+    "issues": []
+   },
+   "veyra_p4": {
+    "frames": 48,
+    "colors": 17,
+    "issues": []
+   },
+   "veyra_clone": {
+    "frames": 64,
+    "colors": 5,
+    "issues": []
+   }
+  },
+  "summary": {
+   "roles": 5,
+   "failures": 0,
+   "semi_transparent": 0,
+   "pass": true
+  },
+  "failures": []
+ }
+}

@@ -1,0 +1,1531 @@
+{
+ "tool": "hd2d kit",
+ "biome": "cozy-village",
+ "seed": 1,
+ "sprite_height_m": 1.8,
+ "pieces": {
+  "snow_floor": {
+   "file": "snow_floor.glb",
+   "kind": "prop",
+   "tris": 132,
+   "size": [
+    2,
+    0.02,
+    2
+   ],
+   "markers": {
+    "lamps": [],
+    "chimneys": [],
+    "windows": [],
+    "doors": []
+   },
+   "blockers": [],
+   "placement": "2 m grid ground of Mistmere / nf_home (reused from Jotunheim)",
+   "fx": [
+    "mist_drift",
+    "ice_sparkles"
+   ]
+  },
+  "ice_lake": {
+   "file": "ice_lake.glb",
+   "kind": "prop",
+   "tris": 272,
+   "size": [
+    4,
+    0.04,
+    4
+   ],
+   "markers": {
+    "lamps": [
+     [
+      0,
+      0.5,
+      0
+     ]
+    ],
+    "chimneys": [],
+    "windows": [],
+    "doors": [],
+    "lamp_color": "#2fd0d0",
+    "lamp_range": 5.0,
+    "lamp_fixed": 0.5
+   },
+   "blockers": [],
+   "placement": "4 x 4 m frozen lake / shore water (two side by side = Mistmere lake); glowing cracks",
+   "fx": [
+    "pool_teal",
+    "ice_sparkles"
+   ]
+  },
+  "ice_floor": {
+   "file": "ice_floor.glb",
+   "kind": "prop",
+   "tris": 116,
+   "size": [
+    2,
+    0.02,
+    2
+   ],
+   "markers": {
+    "lamps": [],
+    "chimneys": [],
+    "windows": [],
+    "doors": []
+   },
+   "blockers": [],
+   "placement": "2 m grid ground of the Glowpool Caverns and the Frozen Spire rooms",
+   "fx": [
+    "glow_fog",
+    "ice_sparkles"
+   ]
+  },
+  "ice_wall": {
+   "file": "ice_wall.glb",
+   "kind": "prop",
+   "tris": 192,
+   "size": [
+    2,
+    3.4,
+    0.6
+   ],
+   "markers": {
+    "lamps": [
+     [
+      0,
+      1.6,
+      0.6
+     ]
+    ],
+    "chimneys": [],
+    "windows": [],
+    "doors": [],
+    "lamp_color": "#2fd0d0",
+    "lamp_range": 3.5,
+    "lamp_fixed": 0.5
+   },
+   "blockers": [
+    [
+     -1,
+     -0.3,
+     1,
+     0.3
+    ]
+   ],
+   "placement": "2 m ice wall module (caves and Spire rooms)",
+   "fx": [
+    "pool_cold"
+   ]
+  },
+  "glow_ice_pool": {
+   "file": "glow_ice_pool.glb",
+   "kind": "prop",
+   "tris": 272,
+   "size": [
+    3.4,
+    0.14,
+    2.4
+   ],
+   "markers": {
+    "lamps": [
+     [
+      0,
+      0.5,
+      0
+     ]
+    ],
+    "chimneys": [],
+    "windows": [],
+    "doors": [],
+    "lamp_color": "#2fd0d0",
+    "lamp_range": 5.0,
+    "lamp_fixed": 0.5,
+    "no_props_within_m": 0.5
+   },
+   "blockers": [
+    [
+     -1.5,
+     -1.0,
+     1.5,
+     1.0
+    ]
+   ],
+   "placement": "bioluminescent pool (iceglow has five; Spire F3); never closer than 2 m to a stair",
+   "fx": [
+    "pool_teal",
+    "glow_fog"
+   ]
+  },
+  "icicle_cluster": {
+   "file": "icicle_cluster.glb",
+   "kind": "prop",
+   "tris": 192,
+   "size": [
+    1.6,
+    3.5,
+    0.9
+   ],
+   "markers": {
+    "lamps": [
+     [
+      0,
+      2.4,
+      0.3
+     ]
+    ],
+    "chimneys": [],
+    "windows": [],
+    "doors": [],
+    "lamp_color": "#a8fff0",
+    "lamp_range": 4.0,
+    "lamp_fixed": 0.5,
+    "hanging": "mount to the cave ceiling at y = 3.2 m; glow tips"
+   },
+   "blockers": [],
+   "placement": "hanging icicles with glow tips; hang at y 3.2 m",
+   "fx": [
+    "glow_crystals_blue"
+   ]
+  },
+  "ice_crystal_cluster": {
+   "file": "ice_crystal_cluster.glb",
+   "kind": "prop",
+   "tris": 330,
+   "size": [
+    1.4,
+    1.9,
+    1.2
+   ],
+   "markers": {
+    "lamps": [
+     [
+      0,
+      1.0,
+      0.3
+     ]
+    ],
+    "chimneys": [],
+    "windows": [],
+    "doors": [],
+    "lamp_color": "#2fd0d0",
+    "lamp_range": 4.5,
+    "lamp_fixed": 0.5
+   },
+   "blockers": [
+    [
+     -0.6,
+     -0.5,
+     0.6,
+     0.5
+    ]
+   ],
+   "placement": "standing crystal cluster; corners and Glacier Heart",
+   "fx": [
+    "glow_crystals_blue",
+    "ice_sparkles"
+   ]
+  },
+  "frost_rune_pillar": {
+   "file": "frost_rune_pillar.glb",
+   "kind": "prop",
+   "tris": 176,
+   "size": [
+    1.3,
+    3.4,
+    1.3
+   ],
+   "markers": {
+    "lamps": [
+     [
+      0,
+      1.8,
+      0.7
+     ]
+    ],
+    "chimneys": [],
+    "windows": [],
+    "doors": [],
+    "lamp_color": "#7fd4ff",
+    "lamp_range": 4.5,
+    "lamp_fixed": 0.5
+   },
+   "blockers": [
+    [
+     -0.5,
+     -0.5,
+     0.5,
+     0.5
+    ]
+   ],
+   "placement": "rune pillar (every cave pillar); the hidden spring hides behind one",
+   "fx": [
+    "pool_cold",
+    "rune_pulse"
+   ]
+  },
+  "spire_mouth_door": {
+   "file": "spire_mouth_door.glb",
+   "kind": "prop",
+   "tris": 462,
+   "size": [
+    6.4,
+    6.9,
+    1.0
+   ],
+   "markers": {
+    "lamps": [
+     [
+      0,
+      3.2,
+      0.9
+     ]
+    ],
+    "chimneys": [],
+    "windows": [],
+    "doors": [],
+    "lamp_color": "#3fb8ff",
+    "lamp_range": 6.0,
+    "lamp_fixed": 0.5,
+    "rune_locks": 3,
+    "note": "iceglow Spire mouth [0,-7.5]: 6 m ice door with three rune-locks; keep 3 m clear"
+   },
+   "blockers": [
+    [
+     -3.2,
+     -0.5,
+     3.2,
+     0.5
+    ]
+   ],
+   "placement": "iceglow Spire mouth [0,-7.5]: 6 m ice door, 3 rune locks; keep 3 m clear (reused Jotunheim barrow door)",
+   "fx": [
+    "pool_cold",
+    "rune_pulse"
+   ]
+  },
+  "rime_bridge": {
+   "file": "rime_bridge.glb",
+   "kind": "prop",
+   "tris": 96,
+   "size": [
+    1.8,
+    0.8,
+    2.0
+   ],
+   "markers": {
+    "lamps": [
+     [
+      0,
+      0.5,
+      0
+     ]
+    ],
+    "chimneys": [],
+    "windows": [],
+    "doors": [],
+    "lamp_color": "#3fb8ff",
+    "lamp_range": 3.0,
+    "lamp_fixed": 0.5,
+    "note": "F8 rime bridge: step on lit runes only"
+   },
+   "blockers": [],
+   "placement": "F8 Rime Bridge: chain along z; step only on lit runes (every second plank is lit)",
+   "fx": [
+    "pool_cold"
+   ]
+  },
+  "kael_perch": {
+   "file": "kael_perch.glb",
+   "kind": "prop",
+   "tris": 222,
+   "size": [
+    5.0,
+    8.0,
+    5.0
+   ],
+   "markers": {
+    "lamps": [
+     [
+      0,
+      3.0,
+      0.4
+     ]
+    ],
+    "chimneys": [],
+    "windows": [],
+    "doors": [],
+    "lamp_color": "#3fb8ff",
+    "lamp_range": 7.0,
+    "lamp_fixed": 0.5,
+    "boss_stand": [
+     0,
+     0,
+     3.4
+    ],
+    "note": "F9 Kael's aerie perch (boss_stand marker); Kael 5.5x"
+   },
+   "blockers": [
+    [
+     -2.4,
+     -1.5,
+     2.4,
+     1.5
+    ]
+   ],
+   "placement": "F9 Kael's aerie: boss_stand marker z +3.4 (Kael 5.5x); keep the front 4 m clear (reused Jotunheim ice throne)",
+   "fx": [
+    "pool_cold"
+   ]
+  },
+  "nf_waystone": {
+   "file": "nf_waystone.glb",
+   "kind": "prop",
+   "tris": 1640,
+   "size": [
+    3.4,
+    4.5,
+    3.4
+   ],
+   "markers": {
+    "lamps": [
+     [
+      0,
+      2.2,
+      1.1
+     ]
+    ],
+    "chimneys": [],
+    "windows": [],
+    "doors": [],
+    "lamp_color": "#7fd4ff",
+    "lamp_range": 6.5,
+    "lamp_fixed": 0.5,
+    "interact": "waystone (E / A): travel; the lift ring is the plinth",
+    "pool_fx": "pool_cold r 3.0 m under it; rune_pulse every 3 s",
+    "keep_clear": {
+     "footprint": [
+      -1.8,
+      -1.8,
+      1.8,
+      1.8
+     ],
+     "radius_m": 2.6,
+     "front_m": 2.0,
+     "note": "no props, spawns or fx within 2.6 m (the arrival point is 2 m in front, +z)"
+    }
+   },
+   "blockers": [
+    [
+     -0.8,
+     -0.8,
+     0.8,
+     0.8
+    ]
+   ],
+   "placement": "Niflheim waystone: Quiet Shore path, Spire F7 safe room; 2.6 m clear",
+   "fx": [
+    "pool_cold",
+    "rune_pulse"
+   ]
+  },
+  "nf_cairn": {
+   "file": "nf_cairn.glb",
+   "kind": "prop",
+   "tris": 450,
+   "size": [
+    1.5,
+    1.684,
+    1.5
+   ],
+   "markers": {
+    "lamps": [
+     [
+      0.04,
+      1.484093594935945,
+      0.1
+     ]
+    ],
+    "chimneys": [],
+    "windows": [],
+    "doors": [],
+    "lamp_color": "#3fb8ff",
+    "lamp_range": 2.4,
+    "lamp_fixed": 0.5,
+    "keep_clear": {
+     "footprint": [
+      -0.9,
+      -0.9,
+      0.9,
+      0.9
+     ],
+     "radius_m": 1.2,
+     "note": "trail marker; keep spawns and fx 1.2 m away; small cold ember glow, no pool decal needed"
+    }
+   },
+   "blockers": [
+    [
+     -0.45,
+     -0.45,
+     0.45,
+     0.45
+    ]
+   ],
+   "placement": "trail marker on paths; 1.2 m clear",
+   "fx": []
+  },
+  "glow_orb_chain": {
+   "file": "glow_orb_chain.glb",
+   "kind": "prop",
+   "tris": 208,
+   "size": [
+    0.7,
+    3.0,
+    0.7
+   ],
+   "markers": {
+    "lamps": [
+     [
+      0,
+      1.6,
+      0
+     ]
+    ],
+    "chimneys": [],
+    "windows": [],
+    "doors": [],
+    "lamp_color": "#9fe8ff",
+    "lamp_range": 5.5,
+    "lamp_fixed": 0.0,
+    "hanging": "hang from roof beams at y = 3 m; still light (no flicker)"
+   },
+   "blockers": [],
+   "placement": "hanging glow-orb chain (y 3 m); steady light",
+   "fx": [
+    "glow_orb_blue"
+   ]
+  },
+  "cold_brazier": {
+   "file": "cold_brazier.glb",
+   "kind": "prop",
+   "tris": 192,
+   "size": [
+    1.3,
+    3.4,
+    1.3
+   ],
+   "markers": {
+    "lamps": [
+     [
+      0,
+      2.66,
+      0.1
+     ]
+    ],
+    "chimneys": [],
+    "windows": [],
+    "doors": [],
+    "lamp_color": "#3fb8ff",
+    "lamp_range": 6.0,
+    "lamp_fixed": 0.5
+   },
+   "blockers": [
+    [
+     -0.4,
+     -0.4,
+     0.4,
+     0.4
+    ]
+   ],
+   "placement": "cold-fire brazier; cold_flame at y 1.9 m + pool_cold",
+   "fx": [
+    "cold_flame",
+    "pool_cold"
+   ]
+  },
+  "warm_lantern": {
+   "file": "warm_lantern.glb",
+   "kind": "prop",
+   "tris": 96,
+   "size": [
+    0.8,
+    2.0,
+    0.4
+   ],
+   "markers": {
+    "lamps": [
+     [
+      0.35,
+      1.6,
+      0.0
+     ]
+    ],
+    "chimneys": [],
+    "windows": [],
+    "doors": [],
+    "lamp_color": "#ffc866",
+    "lamp_range": 5.0,
+    "lamp_fixed": 0.5,
+    "note": "warm accent against the cold glow (Bill: gloom and glow, not all blue)"
+   },
+   "blockers": [
+    [
+     -0.2,
+     -0.2,
+     0.2,
+     0.2
+    ]
+   ],
+   "placement": "warm accent every 6-8 m so the grade is never all blue",
+   "fx": [
+    "pool_warm"
+   ]
+  },
+  "snow_mound": {
+   "file": "snow_mound.glb",
+   "kind": "prop",
+   "tris": 220,
+   "size": [
+    3.0,
+    1.3,
+    2.4
+   ],
+   "markers": {
+    "lamps": [],
+    "chimneys": [],
+    "windows": [],
+    "doors": [],
+    "height_m": 1.3
+   },
+   "blockers": [
+    [
+     -1.3,
+     -1.0,
+     1.3,
+     1.0
+    ]
+   ],
+   "placement": "1.3 m snow mound, dressing; keep off paths",
+   "fx": []
+  },
+  "frost_ledge": {
+   "file": "frost_ledge.glb",
+   "kind": "prop",
+   "tris": 288,
+   "size": [
+    3.1,
+    1.34,
+    2.1
+   ],
+   "markers": {
+    "lamps": [
+     [
+      0,
+      0.6,
+      1.3
+     ]
+    ],
+    "chimneys": [],
+    "windows": [],
+    "doors": [],
+    "lamp_color": "#7fd4ff",
+    "lamp_range": 3.0,
+    "lamp_fixed": 0.5,
+    "height_m": 1.34,
+    "ledge_edge": [
+     [
+      -1.5,
+      1.0
+     ],
+     [
+      1.5,
+      1.0
+     ]
+    ],
+    "no_props_within_m": 0.8
+   },
+   "blockers": [
+    [
+     -1.5,
+     -1.0,
+     1.5,
+     1.0
+    ]
+   ],
+   "placement": "1.34 m ledge / terrace (pairs along x, 3.1 x 2.1 m each); props >= 1.5 m behind the front edge",
+   "fx": [
+    "pool_cold"
+   ]
+  },
+  "frost_stair": {
+   "file": "frost_stair.glb",
+   "kind": "stairs",
+   "tris": 420,
+   "size": [
+    2.6,
+    1.84,
+    3.5
+   ],
+   "markers": {
+    "lamps": [
+     [
+      -1.15,
+      1.1,
+      1.65
+     ],
+     [
+      1.15,
+      1.1,
+      1.65
+     ]
+    ],
+    "chimneys": [],
+    "windows": [],
+    "doors": [],
+    "lamp_color": "#3fb8ff",
+    "lamp_range": 3.0,
+    "lamp_fixed": 0.5,
+    "no_props_within_m": 1.0,
+    "note": "keep props, fx and spawns off the stair footprint (+1 m each end); top flush with frost_ledge (1.34 m)"
+   },
+   "blockers": [],
+   "stairs": {
+    "width": 2.0,
+    "rise": 1.34,
+    "length": 3.5,
+    "steps": 7
+   },
+   "placement": "7 steps x 0.191 m = 1.34 m, 2 m wide, one per ledge, centred on the front face; climbs toward -z (rot pi to climb toward +z)",
+   "fx": []
+  },
+  "mist_arch": {
+   "file": "mist_arch.glb",
+   "kind": "prop",
+   "tris": 570,
+   "size": [
+    4.9,
+    6.2,
+    1.0
+   ],
+   "markers": {
+    "lamps": [
+     [
+      0,
+      3.0,
+      1.0
+     ]
+    ],
+    "chimneys": [],
+    "windows": [],
+    "doors": [],
+    "lamp_color": "#3fb8ff",
+    "lamp_range": 6.0,
+    "lamp_fixed": 0.5,
+    "note": "Mistmere's ice arch to Bifrost [0,10.6]; arrival [0,9.2,'up']; nothing within 2.6 m",
+    "keep_clear": {
+     "footprint_m": [
+      -2.0,
+      -1.0,
+      2.0,
+      3.0
+     ],
+     "radius_m": 2.6,
+     "note": "arrival ring"
+    }
+   },
+   "blockers": [
+    [
+     -2.5,
+     -0.5,
+     -1.5,
+     0.5
+    ],
+    [
+     1.5,
+     -0.5,
+     2.5,
+     0.5
+    ]
+   ],
+   "placement": "Mistmere's ice arch to Bifrost [0,10.6]; arrival [0,9.2,'up']; nothing within 2.6 m",
+   "fx": [
+    "pool_cold",
+    "mist_drift"
+   ]
+  },
+  "lantern_post": {
+   "file": "lantern_post.glb",
+   "kind": "prop",
+   "tris": 96,
+   "size": [
+    1.0,
+    3.0,
+    0.6
+   ],
+   "markers": {
+    "lamps": [
+     [
+      0.5,
+      2.55,
+      0
+     ]
+    ],
+    "chimneys": [],
+    "windows": [],
+    "doors": [],
+    "lamp_color": "#3fb8ff",
+    "lamp_range": 5.0,
+    "lamp_fixed": 0.5,
+    "note": "Mistmere cold-fire lantern posts [-7,4] [0,5] [7,4]; lantern_float fx at the cage; a warm_lantern within 6 m"
+   },
+   "blockers": [
+    [
+     -0.25,
+     -0.25,
+     0.25,
+     0.25
+    ]
+   ],
+   "placement": "cold-fire lantern posts [-7,4] [0,5] [7,4]; lantern_float fx at the cage + pool_cold",
+   "fx": [
+    "lantern_float",
+    "pool_cold"
+   ]
+  },
+  "speaker_hall": {
+   "file": "speaker_hall.glb",
+   "kind": "prop",
+   "tris": 144,
+   "size": [
+    5.4,
+    4.2,
+    3.8
+   ],
+   "markers": {
+    "lamps": [
+     [
+      0,
+      1.4,
+      2.4
+     ],
+     [
+      0,
+      2.6,
+      2.2
+     ]
+    ],
+    "chimneys": [],
+    "windows": [],
+    "doors": [],
+    "lamp_color": "#3fb8ff",
+    "lamp_range": 4.0,
+    "lamp_fixed": 0.5,
+    "note": "frost-speaker hall [0,-9.6]: Gudrun's hall, door faces +z; 2 m clear in front",
+    "keep_clear": {
+     "footprint_m": [
+      -1.5,
+      1.8,
+      1.5,
+      3.8
+     ],
+     "radius_m": 2.0,
+     "note": "door"
+    }
+   },
+   "blockers": [
+    [
+     -2.6,
+     -1.8,
+     2.6,
+     1.8
+    ]
+   ],
+   "placement": "frost-speaker hall [0,-9.6], door faces +z; 2 m clear in front; terrace + stair in front",
+   "fx": [
+    "pool_warm",
+    "pool_cold"
+   ]
+  },
+  "fish_stall": {
+   "file": "fish_stall.glb",
+   "kind": "prop",
+   "tris": 216,
+   "size": [
+    2.6,
+    2.5,
+    1.7
+   ],
+   "markers": {
+    "lamps": [
+     [
+      0.7,
+      1.9,
+      0.9
+     ]
+    ],
+    "chimneys": [],
+    "windows": [],
+    "doors": [],
+    "lamp_color": "#ffc866",
+    "lamp_range": 4.0,
+    "lamp_fixed": 0.5,
+    "note": "Tove's fish-stall [-8.5,-3], counter faces +z; 1.5 m clear in front"
+   },
+   "blockers": [
+    [
+     -1.2,
+     -0.7,
+     1.2,
+     0.8
+    ]
+   ],
+   "placement": "Tove's fish-stall [-8.5,-3.0], counter faces +z; 1.5 m clear",
+   "fx": [
+    "pool_warm"
+   ]
+  },
+  "elk_paddock": {
+   "file": "elk_paddock.glb",
+   "kind": "prop",
+   "tris": 408,
+   "size": [
+    4.0,
+    1.4,
+    3.0
+   ],
+   "markers": {
+    "lamps": [],
+    "chimneys": [],
+    "windows": [],
+    "doors": [],
+    "note": "Ketil's elk paddock [9,-3]; gate gap on the -x side; the elk are runtime NPCs inside (not in this kit)"
+   },
+   "blockers": [
+    [
+     -1.9,
+     -1.45,
+     1.9,
+     -1.35
+    ],
+    [
+     -1.9,
+     1.35,
+     1.9,
+     1.45
+    ]
+   ],
+   "placement": "Ketil's elk paddock [9,-3]; gate gap on the -x side; the elk are runtime NPCs",
+   "fx": []
+  },
+  "eira_grave": {
+   "file": "eira_grave.glb",
+   "kind": "prop",
+   "tris": 288,
+   "size": [
+    1.8,
+    1.6,
+    2.4
+   ],
+   "markers": {
+    "lamps": [
+     [
+      0,
+      0.9,
+      0.0
+     ]
+    ],
+    "chimneys": [],
+    "windows": [],
+    "doors": [],
+    "lamp_color": "#a45cf0",
+    "lamp_range": 4.5,
+    "lamp_fixed": 0.5,
+    "note": "Eira's grave [0,-4] (nf_home): the memory scene; two violet lamps; eira_outline fx stands at z +0.6; 2 m clear",
+    "keep_clear": {
+     "footprint_m": [
+      -1.0,
+      -1.2,
+      1.0,
+      1.4
+     ],
+     "radius_m": 2.0,
+     "note": "memory scene"
+    }
+   },
+   "blockers": [
+    [
+     -0.4,
+     -0.95,
+     0.4,
+     -0.65
+    ]
+   ],
+   "placement": "Eira's grave [0,-4] (nf_home): runes + two violet lamps; eira_outline at z +0.6; 2 m clear",
+   "fx": [
+    "pool_violet",
+    "violet_flame",
+    "eira_outline"
+   ]
+  },
+  "ashmantle_house": {
+   "file": "ashmantle_house.glb",
+   "kind": "prop",
+   "tris": 144,
+   "size": [
+    5.0,
+    5.4,
+    4.0
+   ],
+   "markers": {
+    "lamps": [
+     [
+      -1.4,
+      1.5,
+      2.4
+     ],
+     [
+      0.6,
+      1.0,
+      2.5
+     ]
+    ],
+    "chimneys": [],
+    "windows": [],
+    "doors": [],
+    "lamp_color": "#ffc866",
+    "lamp_range": 3.0,
+    "lamp_fixed": 0.5,
+    "note": "Ashmantle House [6,-3] (nf_home): hearth glow in the windows; look points eh_lantern / eh_song / eh_glass inside (interior is a scene, not kit); 1.8 m clear at the door",
+    "keep_clear": {
+     "footprint_m": [
+      -0.5,
+      1.8,
+      1.7,
+      3.6
+     ],
+     "radius_m": 1.8,
+     "note": "door"
+    }
+   },
+   "blockers": [
+    [
+     -2.4,
+     -1.8,
+     2.4,
+     1.8
+    ]
+   ],
+   "placement": "Ashmantle House [6,-3] (nf_home): hearth glow windows; interior is a scene; 1.8 m clear at the door",
+   "fx": [
+    "pool_warm"
+   ]
+  },
+  "shard_window": {
+   "file": "shard_window.glb",
+   "kind": "prop",
+   "tris": 120,
+   "size": [
+    2.4,
+    3.0,
+    0.3
+   ],
+   "markers": {
+    "lamps": [
+     [
+      0,
+      1.6,
+      0.9
+     ]
+    ],
+    "chimneys": [],
+    "windows": [],
+    "doors": [],
+    "lamp_color": "#3fb8ff",
+    "lamp_range": 4.0,
+    "lamp_fixed": 0.5,
+    "note": "Veyra's shard window (eh_glass / Spire F6 sister's glass): a pane of frozen, glowing shards"
+   },
+   "blockers": [],
+   "placement": "eh_glass shard-window (nf_home) and F6 Sister's Glass panes; violet / blue glow",
+   "fx": [
+    "pool_violet",
+    "glow_crystals_violet"
+   ]
+  },
+  "spring_pool": {
+   "file": "spring_pool.glb",
+   "kind": "prop",
+   "tris": 312,
+   "size": [
+    3.4,
+    0.4,
+    3.4
+   ],
+   "markers": {
+    "lamps": [
+     [
+      0,
+      0.6,
+      0
+     ]
+    ],
+    "chimneys": [],
+    "windows": [],
+    "doors": [],
+    "lamp_color": "#2fd0d0",
+    "lamp_range": 4.5,
+    "lamp_fixed": 0.0,
+    "note": "hidden spring: bubbles + teal pool; hide behind a pillar / cairn; 2 m clear",
+    "keep_clear": {
+     "footprint_m": [
+      -1.8,
+      -1.8,
+      1.8,
+      1.8
+     ],
+     "radius_m": 2.0,
+     "note": "spring"
+    }
+   },
+   "blockers": [
+    [
+     -1.4,
+     -1.4,
+     1.4,
+     1.4
+    ]
+   ],
+   "placement": "hidden bubbly spring (nf_spring / ig_spring / fs_spring): clear, warm, steaming blue-teal; 2 m clear",
+   "fx": [
+    "spring_bubbles",
+    "pool_teal"
+   ]
+  },
+  "rune_hall": {
+   "file": "rune_hall.glb",
+   "kind": "prop",
+   "tris": 168,
+   "size": [
+    5.0,
+    3.9,
+    3.6
+   ],
+   "markers": {
+    "lamps": [
+     [
+      0,
+      1.6,
+      2.4
+     ]
+    ],
+    "chimneys": [],
+    "windows": [],
+    "doors": [],
+    "lamp_color": "#7fd4ff",
+    "lamp_range": 5.0,
+    "lamp_fixed": 0.5,
+    "note": "iceglow rune-hall [-6,-4]: the rune-reading puzzle front; door faces +z; 2 m clear",
+    "keep_clear": {
+     "footprint_m": [
+      -1.5,
+      1.6,
+      1.5,
+      3.6
+     ],
+     "radius_m": 2.0,
+     "note": "door"
+    }
+   },
+   "blockers": [
+    [
+     -2.3,
+     -1.6,
+     2.3,
+     1.6
+    ]
+   ],
+   "placement": "iceglow rune-hall [-6,-4] (Gudrun's school), door faces +z; 2 m clear",
+   "fx": [
+    "pool_cold",
+    "rune_pulse"
+   ]
+  },
+  "glow_vine": {
+   "file": "glow_vine.glb",
+   "kind": "prop",
+   "tris": 532,
+   "size": [
+    2.0,
+    3.3,
+    0.9
+   ],
+   "markers": {
+    "lamps": [
+     [
+      0,
+      2.2,
+      0.3
+     ]
+    ],
+    "chimneys": [],
+    "windows": [],
+    "doors": [],
+    "lamp_color": "#3fe0a0",
+    "lamp_range": 4.5,
+    "lamp_fixed": 0.5,
+    "hanging": "glowing icicle vines: hang at y 3.1 m from cave / hall ceilings; glow_vines fx adds the twinkle"
+   },
+   "blockers": [],
+   "placement": "glowing icicle vines hang at y 3.1 m (caves, halls); glow_vines fx adds the twinkle",
+   "fx": [
+    "glow_vines"
+   ]
+  },
+  "spire_gate": {
+   "file": "spire_gate.glb",
+   "kind": "prop",
+   "tris": 204,
+   "size": [
+    5.1,
+    6.0,
+    1.1
+   ],
+   "markers": {
+    "lamps": [
+     [
+      0,
+      2.8,
+      1.0
+     ]
+    ],
+    "chimneys": [],
+    "windows": [],
+    "doors": [],
+    "lamp_color": "#3fb8ff",
+    "lamp_range": 6.0,
+    "lamp_fixed": 0.5,
+    "note": "F1 Spire gate (room exit / entry portal frame); 2.6 m clear",
+    "keep_clear": {
+     "footprint_m": [
+      -1.4,
+      -1.0,
+      1.4,
+      2.6
+     ],
+     "radius_m": 2.6,
+     "note": "doorway"
+    }
+   },
+   "blockers": [
+    [
+     -2.6,
+     -0.5,
+     -1.4,
+     0.5
+    ],
+    [
+     1.4,
+     -0.5,
+     2.6,
+     0.5
+    ]
+   ],
+   "placement": "F1 Spire gate (doorway frame); 2.6 m clear",
+   "fx": [
+    "pool_cold"
+   ]
+  },
+  "banner_hall_banner": {
+   "file": "banner_hall_banner.glb",
+   "kind": "prop",
+   "tris": 72,
+   "size": [
+    1.4,
+    3.5,
+    0.2
+   ],
+   "markers": {
+    "lamps": [],
+    "chimneys": [],
+    "windows": [],
+    "doors": [],
+    "hanging": "F2 banner hall: red banners hang from the wall at y 0.8-3.4 m, one per 2 m; Kael's house colours (they burn in his phase 3: fx)"
+   },
+   "blockers": [],
+   "placement": "F2 / F9 red banners hang at y 0.8-3.4 m on the walls (Kael's colours; burn in his phase 3)",
+   "fx": [
+    "banner_burn"
+   ]
+  },
+  "mirror_pane": {
+   "file": "mirror_pane.glb",
+   "kind": "prop",
+   "tris": 48,
+   "size": [
+    2.2,
+    3.2,
+    0.3
+   ],
+   "markers": {
+    "lamps": [
+     [
+      0,
+      1.6,
+      0.8
+     ]
+    ],
+    "chimneys": [],
+    "windows": [],
+    "doors": [],
+    "lamp_color": "#3fb8ff",
+    "lamp_range": 4.0,
+    "lamp_fixed": 0.5,
+    "note": "F4 mirror stairs / F6 sister's glass: framed mirror pane, standing against the wall"
+   },
+   "blockers": [],
+   "placement": "F4 mirror stairs / F6 panes; stands against a wall",
+   "fx": [
+    "pool_violet",
+    "pool_cold"
+   ]
+  },
+  "glacier_heart": {
+   "file": "glacier_heart.glb",
+   "kind": "prop",
+   "tris": 282,
+   "size": [
+    4.0,
+    5.6,
+    4.0
+   ],
+   "markers": {
+    "lamps": [
+     [
+      0,
+      2.6,
+      0
+     ]
+    ],
+    "chimneys": [],
+    "windows": [],
+    "doors": [],
+    "lamp_color": "#3fb8ff",
+    "lamp_range": 8.0,
+    "lamp_fixed": 0.5,
+    "note": "F5 glacier heart (Colossus arena): centrepiece; Colossus boss_stand marker z +4.0 off it; 3 m clear ring (arena)",
+    "boss_stand": [
+     0,
+     0,
+     4.0
+    ],
+    "keep_clear": {
+     "footprint_m": [
+      -2.4,
+      -2.4,
+      2.4,
+      2.4
+     ],
+     "radius_m": 3.0,
+     "note": "arena centre"
+    }
+   },
+   "blockers": [
+    [
+     -1.9,
+     -1.9,
+     1.9,
+     1.9
+    ]
+   ],
+   "placement": "F5 glacier heart: arena centre; Colossus boss_stand marker z +4.0; 3 m clear ring",
+   "fx": [
+    "pool_cold",
+    "core_pulse"
+   ]
+  },
+  "archive_tablets": {
+   "file": "archive_tablets.glb",
+   "kind": "prop",
+   "tris": 204,
+   "size": [
+    3.6,
+    2.4,
+    0.9
+   ],
+   "markers": {
+    "lamps": [
+     [
+      0,
+      1.2,
+      0.8
+     ]
+    ],
+    "chimneys": [],
+    "windows": [],
+    "doors": [],
+    "lamp_color": "#3fe0a0",
+    "lamp_range": 4.5,
+    "lamp_fixed": 0.5,
+    "note": "F7 aurora archive: row of glowing record-tablets (Vigdis' archive; clue points); aurora_glow fx above"
+   },
+   "blockers": [
+    [
+     -1.7,
+     -0.35,
+     1.7,
+     0.25
+    ]
+   ],
+   "placement": "F7 aurora archive tablet row (clue points)",
+   "fx": [
+    "aurora_glow",
+    "pool_aurora"
+   ]
+  },
+  "crown_stair": {
+   "file": "crown_stair.glb",
+   "kind": "prop",
+   "tris": 400,
+   "size": [
+    3.0,
+    2.0,
+    4.5
+   ],
+   "markers": {
+    "lamps": [
+     [
+      0,
+      1.0,
+      0
+     ]
+    ],
+    "chimneys": [],
+    "windows": [],
+    "doors": [],
+    "lamp_color": "#3fb8ff",
+    "lamp_range": 5.0,
+    "lamp_fixed": 0.5,
+    "note": "F10 crown stair: 10 steps up to the Crown of Ice; climbs toward -z",
+    "no_props_within_m": 1.0
+   },
+   "blockers": [],
+   "placement": "F10 crown stair: 10 steps up to the Rift; climbs toward -z; keep clear",
+   "fx": [
+    "rune_pulse"
+   ]
+  },
+  "frozen_portal": {
+   "file": "frozen_portal.glb",
+   "kind": "prop",
+   "tris": 332,
+   "size": [
+    3.4,
+    3.6,
+    0.6
+   ],
+   "markers": {
+    "lamps": [
+     [
+      0,
+      1.8,
+      0.8
+     ]
+    ],
+    "chimneys": [],
+    "windows": [],
+    "doors": [],
+    "lamp_color": "#3fb8ff",
+    "lamp_range": 6.0,
+    "lamp_fixed": 0.5,
+    "note": "Crown of Ice: one of four frozen portals (N/E/S/W of the platform); portal freeze/thaw rune fx on it"
+   },
+   "blockers": [
+    [
+     -1.2,
+     -0.3,
+     1.2,
+     0.3
+    ]
+   ],
+   "placement": "frozen portal: F8 walls, F10 door, four at the Crown of Ice (N/E/S/W, 6.2 m ring)",
+   "fx": [
+    "portal_freeze",
+    "portal_thaw"
+   ]
+  },
+  "crown_platform": {
+   "file": "crown_platform.glb",
+   "kind": "prop",
+   "tris": 416,
+   "size": [
+    10.4,
+    0.55,
+    10.4
+   ],
+   "markers": {
+    "lamps": [
+     [
+      0,
+      0.8,
+      0
+     ]
+    ],
+    "chimneys": [],
+    "windows": [],
+    "doors": [],
+    "lamp_color": "#3fb8ff",
+    "lamp_range": 9.0,
+    "lamp_fixed": 0.5,
+    "note": "frozen_rift: the Crown of Ice, round 10 m platform; Veyra boss_stand at [0,0,-3]; portals at N/E/S/W on a 6.2 m ring; aurora above",
+    "boss_stand": [
+     0,
+     0.5,
+     -3.0
+    ]
+   },
+   "blockers": [],
+   "placement": "frozen_rift Crown of Ice: round 10 m platform; Veyra boss_stand [0,0.5,-3]; aurora above",
+   "fx": [
+    "aurora_glow",
+    "pool_cold",
+    "pool_violet"
+   ]
+  },
+  "spire_pillar": {
+   "file": "spire_pillar.glb",
+   "kind": "prop",
+   "tris": 170,
+   "size": [
+    1.2,
+    4.5,
+    1.2
+   ],
+   "markers": {
+    "lamps": [
+     [
+      0,
+      2.0,
+      0.7
+     ]
+    ],
+    "chimneys": [],
+    "windows": [],
+    "doors": [],
+    "lamp_color": "#7fd4ff",
+    "lamp_range": 3.5,
+    "lamp_fixed": 0.5,
+    "note": "generic Spire pillar with a rune strip; rhythm along halls every 4 m"
+   },
+   "blockers": [
+    [
+     -0.5,
+     -0.5,
+     0.5,
+     0.5
+    ]
+   ],
+   "placement": "generic Spire pillar with rune strip; rhythm every 4 m along halls",
+   "fx": [
+    "pool_cold"
+   ]
+  }
+ }
+}
