@@ -1714,9 +1714,9 @@ def run(out, simscale=4, size=(960, 540), segs=SEGS):
                     c = T.ev(f"(() => {{ const r = document.querySelector('{sel}').getBoundingClientRect(); return [r.left + r.width / 2, r.top + r.height / 2]; }})()")
                     tap(c[0], c[1]); q.wait_for_timeout(300)
                 pm = [T.ev("window.__hm.weather.mode")]
-                tap_el("#btnOpts"); tap_el("#btnWeather")
+                tap_el("#btnOpts"); T.until("!!window.__hm.opts"); tap_el("#btnWeather"); T.until("window.__hm.weather.mode === 'off'")   # game-time: the touch lands on a game frame (slow on a busy box)
                 pm.append(T.ev("[window.__hm.weather.mode, window.__hm.weather.qa().emitters.length]"))
-                tap_el("#btnWeather"); tap_el("#btnWeather")
+                tap_el("#btnWeather"); T.until("window.__hm.weather.mode === 'on'"); tap_el("#btnWeather"); T.until("window.__hm.weather.mode === 'light'")
                 pm.append(T.ev("window.__hm.weather.mode")); tap_el("#optsClose")
                 T.step("phone: weather defaults to light; the Options button cycles light -> off -> on -> light by touch", pm == ["light", ["off", 0], "light"] and not T.ev("window.__hm.opts"), modes=pm)
                 # touch: the moss gate's destination choice (errands done) takes a tap on a row
