@@ -10,7 +10,8 @@ import { Alfheim, AREAS_ALF, AREA_NAMES_ALF } from './alfheim.js';   // [ALFHEIM
 import { Svartalfheim, AREAS_SV, AREA_NAMES_SV } from './svartalfheim.js';   // [SVARTALFHEIM]
 import { Jotunheim, AREAS_JOT, AREA_NAMES_JOT } from './jotunheim.js';   // [JOTUNHEIM] stub
 import { Muspelheim, AREAS_MUSP, AREA_NAMES_MUSP } from './muspelheim.js';   // [MUSPELHEIM] skeleton: AREAS_MUSP is empty until areas are built
-const EXTRA_SPELLS = ['boulder_toss', 'frost_rune', 'stone_skin', 'cold_fire', 'stone_golem'];   // [JOTUNHEIM] Stonefrost spells: drawn by combat from the game-fx atlas, so the engine's spells-atlas cycle filter must let them through
+const EXTRA_SPELLS = ['boulder_toss', 'frost_rune', 'stone_skin', 'cold_fire', 'stone_golem',   // [JOTUNHEIM] Stonefrost spells: drawn by combat from the game-fx atlas, so the engine's spells-atlas cycle filter must let them through
+  'fire_wave', 'magma_pool', 'ember_swarm', 'flame_ward', 'magma_hound'];   // [MUSPELHEIM-2] the Caldera school (Torka), the same path
 import { Temple } from './temple.js';
 import { Verdant } from './verdant.js';
 import { Ambient } from './audio.js';

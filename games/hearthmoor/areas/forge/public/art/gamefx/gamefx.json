@@ -6,7 +6,7 @@
  "cell": 48,
  "size": [
   384,
-  2208
+  2640
  ],
  "effects": {
   "portal_vortex": {
@@ -1301,6 +1301,199 @@
    "then": null,
    "duration": 0.429,
    "notes": "Stonefrost III trap trigger: pillar of cold light + shards (replaces glyph_burst)"
+  },
+  "fire_wave": {
+   "row": 46,
+   "frames": 8,
+   "fps": 12,
+   "loop": false,
+   "loop_from": 0,
+   "loops": 1,
+   "kind": "billboard",
+   "pivot": [
+    24,
+    40
+   ],
+   "lift": 0.4,
+   "glow": true,
+   "light": null,
+   "speed": null,
+   "travel": null,
+   "then": null,
+   "duration": 0.667,
+   "notes": "Fire Wave (crescent of flame, sweeps right; flip for left)"
+  },
+  "magma_pool": {
+   "row": 47,
+   "frames": 6,
+   "fps": 6,
+   "loop": true,
+   "loop_from": 0,
+   "loops": 1,
+   "kind": "decal",
+   "pivot": [
+    24,
+    24
+   ],
+   "lift": 0.03,
+   "glow": true,
+   "light": {
+    "color": "#ff7a1a",
+    "intensity": 1.0,
+    "range": 3.0
+   },
+   "speed": null,
+   "travel": null,
+   "then": null,
+   "duration": 9999,
+   "notes": "Magma Pool (damaging ground pool, r ~ 2-3 m; also Vharzul's rising lava edge when tiled)"
+  },
+  "ember_swarm": {
+   "row": 48,
+   "frames": 8,
+   "fps": 12,
+   "loop": true,
+   "loop_from": 0,
+   "loops": 1,
+   "kind": "billboard",
+   "pivot": [
+    24,
+    30
+   ],
+   "lift": 0.8,
+   "glow": true,
+   "light": null,
+   "speed": null,
+   "travel": null,
+   "then": null,
+   "duration": 9999,
+   "notes": "Ember Swarm: a cloud of orbiting embers"
+  },
+  "flame_ward": {
+   "row": 49,
+   "frames": 8,
+   "fps": 10,
+   "loop": true,
+   "loop_from": 0,
+   "loops": 1,
+   "kind": "billboard",
+   "pivot": [
+    24,
+    38
+   ],
+   "lift": 0.0,
+   "glow": true,
+   "light": null,
+   "speed": null,
+   "travel": null,
+   "then": null,
+   "duration": 9999,
+   "notes": "Flame Ward: a ring of small flames around the caster (shield)"
+  },
+  "hound_summon": {
+   "row": 50,
+   "frames": 8,
+   "fps": 10,
+   "loop": false,
+   "loop_from": 0,
+   "loops": 1,
+   "kind": "billboard",
+   "pivot": [
+    24,
+    30
+   ],
+   "lift": 0.0,
+   "glow": true,
+   "light": null,
+   "speed": null,
+   "travel": null,
+   "then": null,
+   "duration": 0.8,
+   "notes": "Magma Hound summon / alpha's call: a lava ring with a column rising"
+  },
+  "fire_wave_l": {
+   "row": 51,
+   "frames": 8,
+   "fps": 12,
+   "loop": false,
+   "loop_from": 0,
+   "loops": 1,
+   "kind": "billboard",
+   "pivot": [
+    24,
+    40
+   ],
+   "lift": 0.4,
+   "glow": true,
+   "light": null,
+   "speed": null,
+   "travel": null,
+   "then": null,
+   "duration": 0.667,
+   "notes": "Fire Wave (l), derived by musp_art.school from fire_wave"
+  },
+  "fire_wave_d": {
+   "row": 52,
+   "frames": 8,
+   "fps": 12,
+   "loop": false,
+   "loop_from": 0,
+   "loops": 1,
+   "kind": "billboard",
+   "pivot": [
+    24,
+    24
+   ],
+   "lift": 0.4,
+   "glow": true,
+   "light": null,
+   "speed": null,
+   "travel": null,
+   "then": null,
+   "duration": 0.667,
+   "notes": "Fire Wave (d), derived by musp_art.school from fire_wave"
+  },
+  "fire_wave_u": {
+   "row": 53,
+   "frames": 8,
+   "fps": 12,
+   "loop": false,
+   "loop_from": 0,
+   "loops": 1,
+   "kind": "billboard",
+   "pivot": [
+    24,
+    24
+   ],
+   "lift": 0.4,
+   "glow": true,
+   "light": null,
+   "speed": null,
+   "travel": null,
+   "then": null,
+   "duration": 0.667,
+   "notes": "Fire Wave (u), derived by musp_art.school from fire_wave"
+  },
+  "ember_mote": {
+   "frames": 4,
+   "fps": 10,
+   "loop": true,
+   "loop_from": 0,
+   "loops": 1,
+   "kind": "billboard",
+   "pivot": [
+    24,
+    24
+   ],
+   "lift": 0.8,
+   "glow": true,
+   "light": null,
+   "speed": null,
+   "travel": null,
+   "then": null,
+   "duration": 9999,
+   "notes": "Ember Swarm: one mote (drawn by musp_art.school in the swarm's colours)",
+   "row": 54
   }
  },
  "cast_sets": {
@@ -1320,5 +1513,6 @@
  "cycle": [],
  "forge_from": 864,
  "alchemy_from": 1248,
- "stonefrost_from": 1728
+ "stonefrost_from": 1728,
+ "caldera_from": 2208
 }

@@ -21,7 +21,14 @@ Not in the pack (stand-ins / later): item icons, the Emberfang prop, Orm's mount
 Decisions on the README's four questions (Cozy Builder's spirit, Oct 17): (1) Dagny 2.5x (the roster, and the pack); (2) ember-kin stay on the 40x44 frame at 1x; (3) Vharzul 144x256 with
 folded wings is fine; (4) the Red arch keeps its warm cream pane (the hub stays warm).
 
-usage: python3 tools/hearthmoor/musp_art.py [--force] [area ...]      (then: cd games/hearthmoor && python3 -c "import build; build.write_pwa()")
+The Caldera school (Muspelheim-2, story 9.2): `school(area)` appends the five spell rows (fire_wave, magma_pool, ember_swarm, flame_ward, hound_summon: only those an
+area's atlas does not already carry from mp_fx) plus four rows derived here (fire_wave_l mirrored, fire_wave_u / fire_wave_d turned a quarter, ember_mote: one small
+mote drawn in the swarm's own four colours) under EVERY built area's gamefx atlas (mark `caldera_from`, crop-and-append, idempotent), so the spells draw wherever
+the player casts. RUN IT LAST: build.py's install_forge / install_alchemy and jot_art.py's stonefrost crop a gamefx atlas at their own marks and would drop the rows
+(jot_art.stonefrost re-applies the school itself; `--school-all` re-applies it everywhere). A normal run on Muspelheim areas re-applies Stonefrost and the school
+after gamefx() (which rebuilds the atlas from its base).
+
+usage: python3 tools/hearthmoor/musp_art.py [--force] [--school-all] [area ...]      (then: cd games/hearthmoor && python3 -c "import build; build.write_pwa()")
 """
 import json, shutil, sys
 from pathlib import Path
@@ -32,6 +39,7 @@ STAGING = Path("/workspace/hearthmoor-staging/art/muspelheim")
 ST = GAME / "art" / "muspelheim"
 ARGS = [a for a in sys.argv[1:] if not a.startswith("--")]
 FORCE = "--force" in sys.argv
+SCHOOL_ONLY = "--school-all" in sys.argv and not ARGS   # `--school-all` alone: the Caldera school rows only, no sprite / kit / place work
 PLANNED = ["muspelheim", "mp_hall", "lavafalls", "caldera", "caldera2"]   # story 2.1; the Caldera is two areas (like clockdeep / barrow), see MUSPELHEIM_PROGRESS.md
 AREAS = ARGS or PLANNED
 
@@ -368,7 +376,71 @@ def place(area):
 
 
 
+# ---- the Caldera school (Muspelheim-2)
+SCHOOL_FX = ["fire_wave", "magma_pool", "ember_swarm", "flame_ward", "hound_summon"]   # the pack's spell rows (mp_fx.json)
+SCHOOL_DERIVED = ["fire_wave_l", "fire_wave_u", "fire_wave_d", "ember_mote"]           # drawn here from the pack's own pixels / colours
+MOTE = [(255, 248, 230, 255), (255, 210, 122, 255), (255, 122, 26, 255), (232, 50, 30, 255)]   # ember_swarm's own colours: core, hot, lava, ember red
+
+
+def _mote_strip(c, n=4):
+    """ember_mote: one glowing ember (a plus with a white-hot core), pulsing small / big; the swarm's four colours only."""
+    im = Image.new("RGBA", (c * n, c), (0, 0, 0, 0)); px = im.load(); m = c // 2
+    small, big = [MOTE[0], MOTE[1], MOTE[3]], [MOTE[0], MOTE[1], MOTE[2], MOTE[3]]
+    for f in range(n):
+        ring = big if f % 2 else small
+        for d in range(len(ring)):
+            for dx, dy in ((d, 0), (-d, 0), (0, d), (0, -d)):
+                px[f * c + m + dx, m + dy] = ring[d]
+        if f % 2:
+            for dx, dy in ((1, 1), (1, -1), (-1, 1), (-1, -1)): px[f * c + m + dx, m + dy] = MOTE[2]
+    return im
+
+
+def school(area):
+    """The Caldera school rows under this area's gamefx atlas (48 px cells). Crop-at-mark + append: re-running never grows the atlas."""
+    src = ST / "gamefx" / "mp_fx.json"
+    if not have(src): return False
+    sc = json.loads((GAME / "areas" / area / "scene.json").read_text())
+    if not sc.get("gamefx"): return False
+    jp, ip = GAME / "areas" / area / sc["gamefx"]["json"], GAME / "areas" / area / sc["gamefx"]["image"]
+    meta, sj = json.loads(jp.read_text()), json.loads(src.read_text())
+    c = meta["cell"]; assert c == sj["cell"], "cell size mismatch"
+    base = Image.open(ip).convert("RGBA"); h0 = meta.get("caldera_from", base.height)
+    for k in list(meta["effects"]):   # an earlier run's rows (at or past the mark) are re-made below
+        if meta["effects"][k]["row"] * c >= h0: del meta["effects"][k]
+    base = base.crop((0, 0, base.width, h0)); si = Image.open(ST / "gamefx" / sj["image"]).convert("RGBA")
+    rows = []   # (name, strip image, effect entry)
+    for k in SCHOOL_FX:
+        if k in meta["effects"]: continue   # the Muspelheim areas carry these from mp_fx already
+        e = sj["effects"][k]; rows.append((k, si.crop((0, e["row"] * c, si.width, (e["row"] + 1) * c)), e))
+    fw = sj["effects"]["fire_wave"]; wave = si.crop((0, fw["row"] * c, si.width, (fw["row"] + 1) * c))
+    for k, how in (("fire_wave_l", Image.Transpose.FLIP_LEFT_RIGHT), ("fire_wave_d", Image.Transpose.ROTATE_270), ("fire_wave_u", Image.Transpose.ROTATE_90)):
+        strip = Image.new("RGBA", wave.size, (0, 0, 0, 0))
+        for f in range(fw["frames"]):
+            strip.paste(wave.crop((f * c, 0, (f + 1) * c, c)).transpose(how), (f * c, 0))
+        piv = [c - fw["pivot"][0], fw["pivot"][1]] if k == "fire_wave_l" else [c // 2, c // 2]
+        rows.append((k, strip, {**fw, "pivot": piv, "notes": f"Fire Wave ({k[-1]}), derived by musp_art.school from fire_wave"}))
+    rows.append(("ember_mote", _mote_strip(c), {"frames": 4, "fps": 10, "loop": True, "loop_from": 0, "loops": 1, "kind": "billboard", "pivot": [c // 2, c // 2], "lift": 0.8, "glow": True,
+                                                 "light": None, "speed": None, "travel": None, "then": None, "duration": 9999, "notes": "Ember Swarm: one mote (drawn by musp_art.school in the swarm's colours)"}))
+    out = Image.new("RGBA", (max(base.width, si.width), h0 + c * len(rows)), (0, 0, 0, 0)); out.paste(base, (0, 0))
+    for i, (k, img, e) in enumerate(rows):
+        out.paste(img, (0, h0 + i * c))
+        meta["effects"][k] = {**{kk: vv for kk, vv in e.items() if kk not in ("frame_list", "strip")}, "row": h0 // c + i}
+    out.save(ip)
+    meta["caldera_from"] = h0; meta["size"] = [out.width, out.height]
+    jp.write_text(json.dumps(meta, indent=1)); return True
+
+
+def _stonefrost(area):   # jot_art's Stonefrost II / III rows (gamefx() rebuilt this atlas from its base, so they are re-applied before the school)
+    sys.path.insert(0, str(Path(__file__).resolve().parent))
+    import jot_art
+    return jot_art.stonefrost(area)
+
+
 def main():
+    if SCHOOL_ONLY:   # every built area with a gamefx atlas (run after build.py's installers and jot_art.py --stonefrost-all)
+        done = [a.name for a in sorted((GAME / "areas").iterdir()) if (a / "scene.json").exists() and school(a.name)]
+        print("caldera school: " + ", ".join(done)); return 0
     if not (STAGING / "READY.txt").exists() and not FORCE:
         print("musp_art: /workspace/hearthmoor-staging/art/muspelheim/READY.txt is missing: the art pack is not ready. Nothing done (use --force for a dry look).")
         return 0
@@ -380,7 +452,12 @@ def main():
         sprites(a)
         if (ST / "kit" / "kit.json").exists(): kit(a); place(a)
         fx = gamefx(a)
-        print(f"{a}: sprites + kit + props{' + gamefx' if fx else ' (no gamefx atlas)'}")
+        sf = fx and _stonefrost(a)
+        cs = school(a)
+        print(f"{a}: sprites + kit + props{' + gamefx' if fx else ' (no gamefx atlas)'}{' + stonefrost' if sf else ''}{' + caldera school' if cs else ''}")
+    if "--school-all" in sys.argv:
+        done = [a.name for a in sorted((GAME / "areas").iterdir()) if (a / "scene.json").exists() and school(a.name)]
+        print("caldera school: " + ", ".join(done))
     return 0
 
 

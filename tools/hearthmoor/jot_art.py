@@ -303,11 +303,19 @@ def stonefrost(area):
     base = base.crop((0, 0, base.width, h0)); add = Image.open(ST / "gamefx" / sj["image"]).convert("RGBA")
     out = Image.new("RGBA", (max(base.width, add.width), h0 + add.height), (0, 0, 0, 0)); out.paste(base, (0, 0)); out.paste(add, (0, h0)); out.save(ip)
     row0 = h0 // meta["cell"]
+    for k in list(meta["effects"]):   # rows appended after the mark (the Caldera school's) were cropped away: drop them, the school is re-applied below
+        if meta["effects"][k]["row"] >= row0: del meta["effects"][k]
+    meta.pop("caldera_from", None)
     for k, e in sj["effects"].items():
         e = {kk: vv for kk, vv in e.items() if kk not in ("frame_list", "strip")}; e["row"] += row0; meta["effects"][k] = e
     meta.setdefault("cast_sets", {}).update(sj.get("cast_sets", {}))
     meta["stonefrost_from"] = h0; meta["size"] = [out.width, out.height]
-    jp.write_text(json.dumps(meta, indent=1)); return True
+    jp.write_text(json.dumps(meta, indent=1))
+    try:   # [MUSPELHEIM-2] the Caldera school rows sit after Stonefrost's: re-append them (musp_art.school, crop-at-mark, idempotent)
+        sys.path.insert(0, str(Path(__file__).resolve().parent)); import musp_art; musp_art.school(area)
+    except ImportError:
+        pass
+    return True
 
 
 def main():

@@ -7,10 +7,10 @@
 // like jotunheim.js, so shared files only carry a few marked hook lines.
 // Decisions (Cozy Builder, Oct 17 2026): (1) lockRival("niflheim") on befriend stays as written; (2) the Ember-born skip is the whole Ember-born
 // perk (no second option in Aska's choice); (3) Vharzul stays a boss only.
-import { TALK, ITEMS, QUESTS, MARKER_HOOKS } from './data.js';
+import { TALK, ITEMS, QUESTS, MARKER_HOOKS, SPELL_NAMES } from './data.js';
 import { REALM, MERIT, Factions } from './factions.js';
-import { ENEMIES, SPAWNS } from './heroes.js';
-import { XP } from './progress.js';
+import { ENEMIES, SPAWNS, SPELLS } from './heroes.js';
+import { XP, TIER } from './progress.js';
 import { SHOPS, GOODS } from './shop.js';
 import { lockRival, moodUp } from './alfheim.js';
 import { BASES, RARE_AREAS, Rares } from './rares.js';
@@ -79,6 +79,39 @@ Object.assign(ENEMIES, {
   vharzul: { name: 'Vharzul the Ember Throne', scale: 8, framed: true, plate: true, element: 'fire', hp: 2300, dmg: 30, speed: 0.8, reach: 6.2, windup: 0.95, cd: 2.4, aggro: 13, r: 2.3, push: 0.05, heavy: true, slam: true, boss: true,
              wave: { every: 3, r: 7.2, dmg: 24 }, minion: 'flame_elemental', phases: [0.6, 0.25], glow: '#ff7a1a', legendary: true, respawn: 1e9 },
 });
+// ------------------------------------------------------------------ the Caldera school (story 9.2, Muspelheim-2): realm magic from Torka, drawn by combat.js from the game-fx atlas
+// Circle I after The Ember Caldera (caldera = 3, befriend; flag cs_i), II at Lv 5 (cs_ii), III at Lv 10 (cs_iii): the skill tiers' gates (TIER in progress.js), like Solvi's Stonefrost.
+export const CS_LV = { 2: TIER[2].lv, 3: TIER[3].lv };
+export const SCHOOL = ['fire_wave', 'magma_pool', 'ember_swarm', 'flame_ward', 'magma_hound'];
+SPELLS.fire_wave = { name: 'Fire Wave', cd: 2.4, dmg: 24, range: 4.2, arc: 0.64, roll: 10, push: 0.6, burn: 4, kind: 'firewave' };   // I: a rolling cone of fire (100 deg, 4.2 m), a little burn after
+SPELLS.magma_pool = { name: 'Magma Pool', cd: 3.6, dmg: 5, radius: 1.6, life: 6, kind: 'magma' };   // I: a lava patch 2 m ahead for 6 s, 5 every 0.5 s to foes standing in it
+SPELLS.ember_swarm = { name: 'Ember Swarm', cd: 10, dmg: 9, burn: 2, n: 6, orbit: 1.0, kind: 'swarm', own: 'swarm' };   // II: 6 motes orbit you for 1 s, then fly at the nearest foes
+SPELLS.flame_ward = { name: 'Flame Ward', cd: 16, t: 8, take: 0.7, refl: 0.1, kind: 'ward', own: 'ward' };   // II: 8 s, -30 % fire damage taken, 10 % of each blow back as a burn
+SPELLS.magma_hound = { name: 'Magma Hound', cd: 40, life: 20, kind: 'hound', own: 'hound' };   // III: a magma hound fights for 20 s (replaces any other summon)
+Object.assign(SPELL_NAMES, { fire_wave: 'Fire Wave', magma_pool: 'Magma Pool', ember_swarm: 'Ember Swarm', flame_ward: 'Flame Ward', magma_hound: 'Magma Hound' });
+const csTeach = (G, flag, spells, toast) => { flags(G.S)[flag] = 1; for (const n of spells) G.learn(n); G.toast(toast, 2.8); mark(G); G.save && G.save(); };
+function school(S) {   // Torka's lessons, or null: they win over the Emberfang / Emberfall lines as soon as the level allows (Solvi's order)
+  const f = F(S), al = (f.alliance || {}).muspelheim, lv = S.lv || 1;
+  if (al !== 'befriend') return null;
+  if (f.cs_i && !f.cs_ii && lv >= CS_LV[2]) return { pages: ['Back at my anvil. You have grown into your boots.', '(Torka opens his fist. Six embers lift off his palm and circle him like moths. Then he closes the fist, and a ring of small flames stands up around him.)',
+    'Ember Swarm: six motes circle you, then go and bite whatever is rude. Flame Ward: a ring of fire for eight breaths. Fire forgets to burn you, and whatever strikes you feels its own heat.'],
+    then: (G) => csTeach(G, 'cs_ii', ['ember_swarm', 'flame_ward'], 'Caldera school II: Ember Swarm, Flame Ward') };
+  if (f.cs_ii && !f.cs_iii && lv >= CS_LV[3]) return { pages: ['The third circle. Stand back from the anvil.', '(Torka strikes the anvil once. Lava runs off its horn, curls up on the floor, and shakes itself into a hound.)',
+    'The Magma Hound. It runs at your side for twenty breaths, then it is warm stone again. Do not try to pet it.', 'That is the whole of the Caldera school. Hot iron says what a smith won\'t. Let it.'],
+    then: (G) => csTeach(G, 'cs_iii', ['magma_hound'], 'Caldera school III: Magma Hound') };
+  if (q(S, 'caldera') === 3 && !f.cs_i) return { pages: ['The Throne sleeps, and the Caldera breathes easy. Sit at my anvil, small one. Hot iron teaches; so do I.', '(Torka draws two shapes in the forge-scale: a wave that curls over, and a round pool that glows when he breathes on it.)',
+    'Fire Wave: push the heat out in front of you and let it roll. Magma Pool: pour it on the ground and let them stand in it. Two lessons for the first circle. Come back older for the rest.'],
+    then: (G) => { G.S.unlocks = { ...(G.S.unlocks || {}), caldera_school: 1 }; csTeach(G, 'cs_i', ['fire_wave', 'magma_pool'], 'Caldera school: first circle (Fire Wave, Magma Pool)'); } };
+  return null;
+}
+function schoolWait(S) {   // what you are waiting for, below the level (after the errand lines)
+  const f = F(S);
+  if ((F(S).alliance || {}).muspelheim !== 'befriend') return null;
+  if (f.cs_iii) return { pages: ['All three circles are yours: Fire Wave, Magma Pool, Ember Swarm, Flame Ward, the Magma Hound. Hot iron says what a smith won\'t. Let it.'] };
+  if (f.cs_ii) return { pages: [`The second circle is yours: Ember Swarm, Flame Ward. The Magma Hound waits for Lv ${CS_LV[3]}. Hot iron does not hurry.`] };
+  if (f.cs_i) return { pages: [`The first circle is yours: Fire Wave, Magma Pool. Ember Swarm and Flame Ward wait for Lv ${CS_LV[2]}, the Magma Hound for Lv ${CS_LV[3]}. Hot iron does not hurry.`] };
+  return null;
+}
 Object.assign(XP, { magma_hound: 45, magma_hound_gate: 120, flame_elemental: 60, fire_golem: 90, ashen_cultist: 80, kilnmother: 240, dagny: 0, vharzul: 1000 });
 // rares (story 8.3) on the procedural-rare system: bodies `ashalpha` (2x) and `pyreling` (3x) must be in lavafalls' boss_roles when the art lands.
 Object.assign(BASES, {
@@ -278,10 +311,11 @@ Object.assign(TALK, {
     const f = F(S), al = (f.alliance || {}).muspelheim;
     if (al === 'conquer') return { pages: ["You know the flame curls wrong. We all do.", 'The Caldera Key opens the door. It does not make the Throne agree.'] };
     if (!q(S, 'caldera') && (q(S, 'mp_sigil') >= 3 || f.mp_contract || al === 'conquer')) return { pages: ['Hot iron says what a smith won\'t. Let it.', "Veyra drove three frost wedges into the Throne's seals. Melt them with fire, then face what wakes."], then: (G) => { G.setQuest('caldera', 1); mark(G); } };
+    const sc = school(S); if (sc) return sc;   // the Caldera school (I right after the Caldera, II / III as soon as the level allows)
     if (al === 'befriend' && q(S, 'caldera') === 3 && !q(S, 'mp_sword')) return { pages: ['The Throne sleeps. Good. There is a blade I have wanted to quench for a hundred winters. It needs three heart-coals.'], then: (G) => { G.setQuest('mp_sword', 1); mark(G); } };
     if (al === 'befriend' && q(S, 'mp_sword') === 2) return { pages: ['Three heart-coals. Good. Watch.', '(Torka sets the coals in the blade and quenches it. Blue runs down the fuller, once, and stays.)', 'Emberfang. Mind the cold line: it is a reminder.'],
       then: (G) => { const i = G.S.inv; i.heart_coal = Math.max(0, (i.heart_coal || 0) - 3); (G.S.bag = G.S.bag || []).push(EMBERFANG(G.S)); G.setQuest('mp_sword', 3); G.toast('You are given Emberfang (check your bag)', 3.0); mark(G); } };
-    return { pages: ['Hot iron says what a smith won\'t. Let it.'] };
+    return schoolWait(S) || { pages: ['Hot iron says what a smith won\'t. Let it.'] };
   },
   springkeeper(S) {   // Yrsa Brightwell: A Spark for Kindle (story 3.4, 5.5)
     const f = F(S), al = (f.alliance || {}).muspelheim;
@@ -318,6 +352,7 @@ MARKER_HOOKS.push((id, S) => {
   if (id === 'kindle' && al === 'befriend' && q(S, 'mp_kindle') === 1 && found(S, 'ks_hot', 'ks_song', 'ks_glass') === 3) return 'quest_mark';
   if (id === 'springkeeper' && al === 'befriend' && q(S, 'mp_sigil') >= 3 && !q(S, 'mp_kindle')) return 'quest_mark';
   if (id === 'forgejudge' && ((!q(S, 'caldera') && (q(S, 'mp_sigil') >= 3 || f.mp_contract || al === 'conquer')) || (al === 'befriend' && ((q(S, 'caldera') === 3 && !q(S, 'mp_sword')) || q(S, 'mp_sword') === 2)))) return 'quest_mark';
+  if (id === 'forgejudge' && school(S)) return 'quest_mark';   // a Caldera school lesson is ready
   if (id === 'lizardman' && al === 'befriend' && ((!q(S, 'mp_lizard') && q(S, 'mp_walk') >= 3) || (q(S, 'mp_lizard') === 1 && (f.ml_lastDay ?? -1) < (S.day || 0) && (f.ml_berries || 0) < 3))) return 'quest_mark';
   if (id === 'envoy_mp' && al === 'conquer' && q(S, 'mp_take') === 1) return 'quest_mark';
   if (id === 'mp_guide' && f.mp_contract && f.mh_terms && !f.mh_grettir) return 'quest_mark';
@@ -364,7 +399,7 @@ export class Muspelheim {
   }
   moveTo(x, z) { const c = this.ctx; if (!c) return; c.player.x = x; c.player.z = z; c.player.y = c.heightAt(x, z); }
 
-  // QA preset (smoke / screenshots): ?muq=open (gate only) | befriend | walk | sigil | kindle | conquer | contract | done
+  // QA preset (smoke / screenshots): ?muq=open (gate only) | befriend | walk | sigil | kindle | conquer | contract | done | school (the Caldera done, befriend: Torka's lessons)
   qaPreset() {
     const v = this.qs().get('muq'), S = this.G.S; if (!v || this.qaDone === v) return;
     this.qaDone = v;
@@ -376,6 +411,7 @@ export class Muspelheim {
     if (v === 'conquer') { ally(S).muspelheim = 'conquer'; open(); S.quests.mp_take = 1; }
     if (v === 'contract') { flags(S).rivals = { ...(flags(S).rivals || {}), muspelheim: 'locked' }; flags(S).mp_contract = 1; flags(S).mh_terms = 1; open(); S.quests.mp_hire = 1; }
     if (v === 'open') open();
+    if (v === 'school') { ally(S).muspelheim = 'befriend'; open(); S.quests.mp_walk = 3; S.quests.mp_sigil = 3; flags(S).mp_cleared = 1; flags(S).mp_trusted = 1; S.quests.caldera = 3; flags(S).cd_bound = 1; }
     if (v === 'done') { ally(S).muspelheim = 'befriend'; open(); S.quests.mp_walk = 3; S.quests.mp_sigil = 3; flags(S).mp_cleared = 1; flags(S).mp_trusted = 1; }
   }
   attach(ctx, area) {
@@ -413,7 +449,7 @@ export class Muspelheim {
     // the 1.5 s cool cycle (story 3.2): each stone is hot for the last 0.5 s of its own 1.5 s beat, staggered by stone; a hot stone sulks (start again) and stings. ?mwalk=steady keeps the stones cool (QA / accessibility)
     if (this.qs().get('mwalk') !== 'steady' && ((w.t + i * 0.37) % 1.5) > 1.0) {
       w.next = 0; w.dir = 0; w.last = -1; G.toast('The stone is hot! It stings. Start again.', 1.6);
-      if (G.combat && G.combat.hurtPlayer && (S.hp || 0) > 8) G.combat.hurtPlayer(3, { x: XS[i], z: 3.0 }, 0);
+      if (G.combat && G.combat.hurtPlayer && (S.hp || 0) > 8) G.combat.hurtPlayer(3, { x: XS[i], z: 3.0, fire: true }, 0);
       return;
     }
     if (w.next === 0 && (i === 0 || i === 4)) { w.dir = i === 0 ? 1 : -1; w.next = 1; return; }
@@ -468,20 +504,20 @@ export class Muspelheim {
     this.pend = this.pend.filter((s) => {
       s.t -= dt; if (s.t > 0) return true;
       if (s.kind !== 'fist') this.fxAt(c, 'fire_pillar', s.x, c.heightAt(s.x, s.z), s.z, { duration: 0.7, fadeIn: 0 });
-      if (Math.hypot(p.x - s.x, p.z - s.z) < s.r && this.G.combat && this.G.combat.hurtPlayer) this.G.combat.hurtPlayer(s.dmg, { x: s.x, z: s.z }, 0.5);
+      if (Math.hypot(p.x - s.x, p.z - s.z) < s.r && this.G.combat && this.G.combat.hurtPlayer) this.G.combat.hurtPlayer(s.dmg, { x: s.x, z: s.z, fire: true }, 0.5);
       return false;
     });
   }
   // ---- weather: the ember storm burns open ground (2 dmg / s) unless something keeps the fire off you (Kindle, a fire-ward charm, a spring's fizz, cinder-tea)
-  fireRes() { const G = this.G, S = G.S; return compActive(S) === 'kindle' || !!((S.inv || {}).fire_ward) || !!(G.hollows && G.hollows.buffT > 0) || this.teaT > 0 || (this.qs().get('mwx') === 'safe'); }
+  fireRes() { const G = this.G, S = G.S; return compActive(S) === 'kindle' || !!((S.inv || {}).fire_ward) || !!(G.combat && G.combat.ward) || !!(G.hollows && G.hollows.buffT > 0) || this.teaT > 0 || (this.qs().get('mwx') === 'safe'); }   // + the Caldera school's Flame Ward
   weatherTick(dt) {
     const c = this.ctx, G = this.G, kind = G.weather ? G.weather.kind : 'clear';
     if (!(this.area === 'muspelheim' || this.area === 'lavafalls') || kind !== 'ember_storm' || G.dlg || this.fireRes()) { this.burnT = 0; return; }
     this.burnT = (this.burnT || 0) + dt;
     if (this.burnT >= 1.0) {
       this.burnT = 0; const p = c.player, C = G.combat;
-      if (C && C.hurtPlayer && (G.S.hp || 0) > 12) C.hurtPlayer(2, { x: p.x, z: p.z }, 0);
-      if (!this.burnSaid) { this.burnSaid = true; G.toast('The ember storm scorches you. Kindle, a fire-ward charm, a spring or cinder-tea keeps the fire off.', 3.0); }
+      if (C && C.hurtPlayer && (G.S.hp || 0) > 12) C.hurtPlayer(2, { x: p.x, z: p.z, fire: true }, 0);
+      if (!this.burnSaid) { this.burnSaid = true; G.toast('The ember storm scorches you. Kindle, a fire-ward charm, Flame Ward, a spring or cinder-tea keeps the fire off.', 3.0); }
     }
   }
   // ---- Kindle (story 5.4): warm_ring (10 HP/s in 3 m for 4 s, cd 20 s, when you are below 60%), ember_dash (a bite-rush at the nearest foe + a burn patch, cd 11 s)
@@ -646,7 +682,7 @@ export class Muspelheim {
       e.p2 = 1; G.toast('Two flame elementals spiral out of the vents. The edges of the hall burn!', 3.0);
       THRONE.elems.forEach(([x, z], i) => this.foe({ id: 'vz_m' + (i + 1), role: 'flame_elemental', pos: [x, z] }, () => {}));
     }
-    if (ph >= 2 && Math.abs(p.x) > 8.0 && p.z < -42 && !G.dlg) { this.edgeT = (this.edgeT || 0) + dt; if (this.edgeT > 1) { this.edgeT = 0; if (G.combat && G.combat.hurtPlayer && !this.fireRes()) G.combat.hurtPlayer(3, { x: p.x < 0 ? -9.4 : 9.4, z: p.z }, 0.2); } }
+    if (ph >= 2 && Math.abs(p.x) > 8.0 && p.z < -42 && !G.dlg) { this.edgeT = (this.edgeT || 0) + dt; if (this.edgeT > 1) { this.edgeT = 0; if (G.combat && G.combat.hurtPlayer && !this.fireRes()) G.combat.hurtPlayer(3, { x: p.x < 0 ? -9.4 : 9.4, z: p.z, fire: true }, 0.2); } }
     if (ph >= 3 && !e.p3) { e.p3 = 1; e.p3t = 0; e.healT = 0; this.relit = [0, 0, 0]; this.snuffed = [0, 0, 0]; G.toast("The three Warden's lamps gutter back to life. Snuff them, or he mends!", 3.2); }
     if (e.p3) {   // P3: the lamps relight one by one; each lit one mends him until you snuff it
       e.p3t += dt;
@@ -783,6 +819,8 @@ export class Muspelheim {
              items: ['heat_key', 'ember_sigil_copy', 'caldera_key', 'heart_coal', 'cinder_berry', 'cinder_tea', 'fire_ward', 'brazier_lamp', 'ember_crown'].filter((k) => ITEMS[k]).length,
              talk: ['envoy_mp', 'warden_mp', 'forgejudge', 'springkeeper', 'lizardman', 'mp_trader', 'cindercaptain', 'mp_guide'].filter((k) => TALK[k]).length };
   }
+  qaSchool() { const f = F(this.G.S), C = this.G.combat; return { flags: { i: !!f.cs_i, ii: !!f.cs_ii, iii: !!f.cs_iii }, unlock: !!(this.G.S.unlocks || {}).caldera_school, spells: SCHOOL.filter((n) => (this.G.S.spells || []).includes(n)),
+    defs: SCHOOL.filter((n) => SPELLS[n] && SPELL_NAMES[n]).length, mark: (MARKER_HOOKS.map((h) => h('forgejudge', this.G.S)).find((m) => m !== undefined)) || null, lv: CS_LV, cal: C && C.qaCaldera ? C.qaCaldera() : null }; }
   qaFang() { const it = EMBERFANG(this.G.S); return { name: it.name, unique: it.unique, slot: it.slot, rar: it.rar }; }
   qaKill(id) { const f = this.cb[id]; if (!f) return false; f(); return true; }
   qa() {

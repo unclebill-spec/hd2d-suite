@@ -40,6 +40,7 @@ def steps(b, url, T, size, errors, rep, stub=None, shots=None):
     old_pg, old_out = T.pg, T.out
     T.pg, T.out = pg, shots
     frames = lambda n=6, timeout=120: T.frames(n, timeout)   # engine-frame waits, never fixed sleeps
+    until = T.until   # game-time waits (True / False, never raises)
 
     def sv():
         return T.ev("window.__hm.musp.qa()")
@@ -304,6 +305,118 @@ def steps(b, url, T, size, errors, rep, stub=None, shots=None):
             T.step("snuffing all three lamps stops the heal", st["relit"] == [0, 0, 0] and st["snuffed"] == [1, 1, 1], st=st)
             mp("qaKill('vharzul')"); frames(2); fin(); s1 = sv()
             T.step("befriend ending: Vharzul sleeps (cd_boss, cd_bound), The Ember Caldera moves to stage 2", T.ev("window.__hm.S.found.cd_boss") and T.ev("window.__hm.S.flags.cd_bound") and s1["quests"]["caldera"] == 2, q=s1["quests"])
+        # ---- the Caldera school (Muspelheim-2, story 9.2): Torka teaches circle I after the Caldera (befriend), II at Lv 5, III at Lv 10; the spells are real casts
+        SCH = ["fire_wave", "magma_pool", "ember_swarm", "flame_ward", "magma_hound"]
+        rows = ["fire_wave", "magma_pool", "ember_swarm", "flame_ward", "hound_summon", "fire_wave_l", "fire_wave_u", "fire_wave_d", "ember_mote"]
+        miss = {}
+        for sp in sorted((GAME / "areas").glob("*/scene.json")):
+            sc = json.loads(sp.read_text())
+            if not sc.get("gamefx"):
+                continue
+            m = json.loads((sp.parent / sc["gamefx"]["json"]).read_text())
+            bad = [k for k in rows if k not in m["effects"] or (m["effects"][k]["row"] + 1) * m["cell"] > m["size"][1]]
+            if bad:
+                miss[sp.parent.name] = bad
+        T.step("every built area's gamefx atlas carries the Caldera school rows (the pack's five + fire_wave_l / _u / _d + ember_mote), inside the image", not miss, miss=miss)
+        if built:
+            a = load("lavafalls", "&muq=school")
+            sc0 = mp("qaSchool()")
+            T.step("the five Caldera spells are registered (SPELLS + names) and Torka's mark shows a lesson is ready once the Caldera is done", sc0["defs"] == 5 and sc0["mark"] == "quest_mark" and not sc0["flags"]["i"] and sc0["lv"] == {"2": 5, "3": 10}, sc0=sc0)
+            T.ev("(() => { const f = window.__hm.S.flags; f.alliance = { ...(f.alliance || {}), muspelheim: 'conquer' }; })()")
+            mp("qaTalk('forgejudge')"); sc1 = mp("qaSchool()")
+            T.step("a conqueror gets no lessons from Torka", not sc1["spells"] and not sc1["flags"]["i"], sc1=sc1)
+            T.ev("(() => { const f = window.__hm.S.flags; f.alliance.muspelheim = 'befriend'; window.__hm.S.lv = 1; })()")
+            line = T.ev("window.__hm.musp.qaLine('forgejudge')")
+            mp("qaTalk('forgejudge')"); frames(2); sc1 = mp("qaSchool()")
+            T.step("at Lv 1, right after the Caldera: the first circle (Fire Wave, Magma Pool; cs_i, the school unlock)", sc1["spells"] == ["fire_wave", "magma_pool"] and sc1["flags"]["i"] and sc1["unlock"] and "Throne sleeps" in (line or ""), sc1=sc1, line=line)
+            mp("qaTalk('forgejudge')"); frames(2)
+            T.step("then Torka offers Emberfang as before (mp_sword 1)", sv()["quests"]["mp_sword"] == 1, q=sv()["quests"])
+            line = T.ev("window.__hm.musp.qaLine('forgejudge')"); sc1 = mp("qaSchool()")
+            T.step("below Lv 5 he says what you are waiting for (Ember Swarm / Flame Ward at Lv 5, the Magma Hound at Lv 10); no mark", "wait for Lv 5" in (line or "") and "Lv 10" in line and sc1["mark"] is None, line=line, mark=sc1["mark"])
+            T.ev("window.__hm.S.lv = 5"); sc1 = mp("qaSchool()"); mk = sc1["mark"]
+            mp("qaTalk('forgejudge')"); frames(2); sc1 = mp("qaSchool()")
+            T.step("at Lv 5 the second circle (marked): Ember Swarm and Flame Ward are learned (cs_ii), not the hound", mk == "quest_mark" and sc1["flags"]["ii"] and "ember_swarm" in sc1["spells"] and "flame_ward" in sc1["spells"] and "magma_hound" not in sc1["spells"], sc1=sc1, mark=mk)
+            line = T.ev("window.__hm.musp.qaLine('forgejudge')"); mp("qaTalk('forgejudge')"); frames(2); sc1 = mp("qaSchool()")
+            T.step("the third circle still waits at Lv 5, and Torka says so", "Magma Hound waits for Lv 10" in (line or "") and not sc1["flags"]["iii"], line=line)
+            T.ev("window.__hm.S.lv = 10"); mp("qaTalk('forgejudge')"); frames(2); sc1 = mp("qaSchool()"); line = T.ev("window.__hm.musp.qaLine('forgejudge')")
+            T.step("at Lv 10 the third circle: the Magma Hound (cs_iii); then 'all three circles are yours'", sc1["flags"]["iii"] and sc1["spells"] == SCH and "All three circles" in (line or ""), sc1=sc1, line=line)
+            T.step("all five are in the spellbook (known spells)", all(n in T.ev("window.__hm.knownSpells()") for n in SCH))
+            T.ev("(() => { const G = window.__hm; G.S.slots = ['fire_wave', 'magma_pool', 'ember_swarm', 'flame_ward']; G.ctx.setSpellCycle(G.slots()); })()")
+            cyc = T.ev("window.__hm.ctx.spellCycle()")
+            T.ev("(() => { const G = window.__hm; G.S.slots = ['magma_hound', 'fire_wave']; G.ctx.setSpellCycle(G.slots()); })()")
+            cyc2 = T.ev("window.__hm.ctx.spellCycle()")
+            T.step("the engine lets the game-drawn Caldera spells into the cast cycle", cyc == SCH[:4] and cyc2 == ["magma_hound", "fire_wave"], cyc=cyc, cyc2=cyc2)
+            T.step("the Lavafalls atlas has all nine Caldera rows at runtime", T.ev("(() => { const g = window.__hd2d.ctx.gamefx; return " + json.dumps(rows) + ".every((k) => !!g.meta.effects[k]); })()"))
+            # test foes: three 5000-HP hounds that hold still (peace: no aggro; no wandering): one ahead (2 m), one behind (2.6 m), one to the side (3 m)
+            CAST = "(n) => { const C = window.__hm.combat; C.cd.spell = 0; for (const k of ['swarm', 'ward', 'hound', 'skin', 'cold', 'golem']) C.cd[k] = 0; C.cast(n); }"
+            FOES = ("(() => { const G = window.__hm, C = G.combat, c = window.__hd2d.ctx, p = c.player; G.musp.moveTo(0, 3.6); p.facing = 'down'; C.godT = 0;"
+                    " for (const e of C.enemies) if (e.id.startsWith('qa_t')) { e.state = 'gone'; c.removeNpc(e.a); }"
+                    " C.enemies = C.enemies.filter((e) => e.state !== 'gone'); C.magma.forEach((m) => C.coolMagma(m)); C.magma = []; C.endWard(); C.motes = []; C.swarm = null; C.swarmHits = 0;"
+                    " const mk = (id, x, z) => { const e = C.spawnEnemy({ id, role: 'magma_hound', pos: [x, z], once: true, noXp: true, noLoot: true }); e.D = { ...e.D, hp: 5000 }; e.hp = 5000; e.wt = 1e9; return e.id; };"
+                    " return [mk('qa_t1', 0, 5.6), mk('qa_t2', 0, 1.0), mk('qa_t3', 3.0, 3.6)]; })()")
+            HP = "(() => Object.fromEntries(window.__hm.combat.enemies.filter((e) => e.id.startsWith('qa_t')).map((e) => [e.id, e.hp])))()"
+            T.ev(FOES); frames(4)
+            T.ev(f"({CAST})('fire_wave')")
+            ok = until("window.__hm.combat.enemies.some((e) => e.id === 'qa_t1' && e.hp < 5000)", 60)
+            ok_fx = until("window.__hd2d.ctx.gamefx.list.some((f) => f.name === 'fire_wave_d')", 30)
+            frames(12); hp = T.ev(HP); cal = mp("qaSchool()")["cal"]
+            T.step("Fire Wave rolls down the cone: the foe ahead is hit (and burns), the ones behind and to the side are not; the facing art (fire_wave_d) plays",
+                   ok and ok_fx and hp["qa_t1"] < 5000 and hp["qa_t2"] == 5000 and hp["qa_t3"] == 5000 and cal["wave"]["ids"] == ["qa_t1"], hp=hp, wave=cal["wave"], fx=ok_fx)
+            T.ev(FOES); frames(4); g0 = T.ev("window.__hd2d.ctx.gamefx.list.length")
+            T.ev(f"({CAST})('magma_pool')"); cal = mp("qaSchool()")["cal"]
+            pool = cal["magma"][0] if cal["magma"] else None
+            T.step("Magma Pool: a 1.6 m lava patch 2 m ahead for 6 s (the pack's magma_pool + embers), a lit zone", bool(pool) and abs(pool["z"] - 5.6) < 0.05 and abs(pool["x"]) < 0.05 and 5.5 < pool["t"] <= 6 and "magma_pool" in pool["fx"] and T.ev("window.__hm.glow.litAt(0, 5.6)"), pool=pool)
+            ok = until("window.__hm.combat.enemies.some((e) => e.id === 'qa_t1' && e.hp <= 5000 - 10)", 60); hp = T.ev(HP)
+            T.step("the foe standing in it burns tick by tick; the others are untouched", ok and hp["qa_t2"] == 5000 and hp["qa_t3"] == 5000, hp=hp)
+            T.ev("window.__hm.combat.magma.forEach((m) => { m.t = 0.02; })")
+            ok = until("window.__hm.combat.magma.length === 0 && window.__hd2d.ctx.gamefx.list.length <= " + str(g0), 40)
+            h1 = T.ev(HP)["qa_t1"]; frames(40); h2 = T.ev(HP)["qa_t1"]
+            T.step("the pool cools after its time: decals gone, no more burning", ok and h2 == h1, h1=h1, h2=h2, n=T.ev("window.__hd2d.ctx.gamefx.list.length"), g0=g0)
+            T.ev(FOES); frames(4)
+            T.ev(f"({CAST})('ember_swarm')"); cal = mp("qaSchool()")["cal"]
+            T.step("Ember Swarm: six motes orbit you first (own 10 s cooldown)", cal["motes"] == ["orbit"] * 6 and cal["swarm"] and not cal["swarm"]["launched"] and cal["cd"]["swarm"] > 9, cal=cal)
+            ok = until("window.__hm.combat.swarmHits >= 6", 60); hp = T.ev(HP)
+            T.step("... then fly at the foes: all six hit, shared over the three foes in reach", ok and all(v < 5000 for v in hp.values()), hits=T.ev("window.__hm.combat.swarmHits"), hp=hp)
+            T.step("the motes are gone after their flight", until("window.__hm.combat.motes.length === 0 && !window.__hm.combat.swarm", 30))
+            T.ev(FOES); frames(4)
+            T.ev("window.__hm.S.flags.companions = {}; window.__hm.S.flags.companion_active = null; window.__hm.S.inv.fire_ward = 0; 1")
+            HURT = ("(src) => { const G = window.__hm, C = G.combat, p = G.ctx.player; C.godT = 0; p.iframes = 0; p.act = null; G.S.hp = C.maxHp(); const h = G.S.hp;"
+                    " const s = src === 'foe' ? C.enemies.find((e) => e.id === 'qa_t1').a : src === 'fire' ? { x: p.x + 1, z: p.z, fire: true } : { x: p.x + 1, z: p.z }; C.hurtPlayer(20, s, 0); return h - G.S.hp; }")
+            l0, lf0 = T.ev(f"({HURT})('foe')"), T.ev(f"({HURT})('fire')")
+            r0 = mp("qaFire()")["res"]
+            T.ev(f"({CAST})('flame_ward')"); cal = mp("qaSchool()")["cal"]
+            T.step("Flame Ward: 8 s, a ring of flames on you (own 16 s cooldown); the ember storm counts it as fire resist", cal["ward"] and 7.5 < cal["ward"]["t"] <= 8 and cal["ward"]["fx"] and cal["cd"]["ward"] > 15 and mp("qaFire()")["res"] and not r0, ward=cal["ward"], r0=r0)
+            b0 = T.ev(HP)["qa_t1"]
+            l1 = T.ev(f"({HURT})('foe')"); burn = T.ev("(() => { const e = window.__hm.combat.enemies.find((x) => x.id === 'qa_t1'); return e && e.burn ? e.burn.left : 0; })()")
+            lf1, ln1 = T.ev(f"({HURT})('fire')"), T.ev(f"({HURT})('plain')")
+            T.step("... -30 % damage from a fire foe and from fire on the ground; a non-fire blow is not reduced", l0 > 1 and abs(l1 / l0 - 0.7) < 0.08 and abs(lf1 / lf0 - 0.7) < 0.08 and abs(ln1 - lf0) < 1e-6, l0=l0, l1=l1, lf0=lf0, lf1=lf1, plain=ln1)
+            ok = until(f"window.__hm.combat.enemies.some((e) => e.id === 'qa_t1' && e.hp < {b0})", 30)
+            T.step("... and the striker burns: 10 % of its blow comes back on it as a burn", ok and burn == max(1, round(l0 * 0.1)), burn=burn, want=max(1, round(l0 * 0.1)), hp=T.ev(HP)["qa_t1"], b0=b0)
+            T.ev("window.__hm.combat.ward.t = 0.02")
+            ok = until("!window.__hm.combat.ward", 30); l2 = T.ev(f"({HURT})('foe')")
+            T.step("the ward ends on its own: full fire damage again, no storm resist", ok and abs(l2 - l0) < 1e-6 and not mp("qaFire()")["res"], l2=l2, l0=l0)
+            T.ev(FOES); frames(4)
+            old = T.ev("(() => { const C = window.__hm.combat, c = window.__hd2d.ctx, p = c.player, roles = c.actors.meta.roles; let how;"
+                       " if (roles[C.hero.summon]) { C.cd.summon = 0; C.doSummon(); how = 'summon'; }"
+                       " else { const a = c.addNpc({ id: 'summon', role: 'magma_hound', name: 'Stand-in friend', pos: [p.x + 1, p.z], behavior: 'idle', turn: false, speed: 2 }); a.ai = true; a.noTalk = true;"
+                       "   C.summon = { a, tier: 1, D: { name: 'Stand-in friend', hp: 50, dmg: 1, reach: 1, speed: 2 }, hp: 50, life: 30, cd: 1, target: null, sparkT: 1 }; how = 'stand-in'; }"
+                       " window.__oldSummon = C.summon && C.summon.a; return { how, ok: !!C.summon }; })()")
+            T.ev(f"({CAST})('magma_hound')")
+            hd = T.ev("(() => { const C = window.__hm.combat, c = window.__hd2d.ctx, s = C.summon; return s ? { hound: !!s.hound, role: s.a.role, life: s.life, cd: C.cd.hound, light: !!s.light, replaced: s.a !== window.__oldSummon && !c.actors.list.includes(window.__oldSummon), burst: c.gamefx.list.some((f) => f.name === 'hound_summon') } : null; })()")
+            T.step("Magma Hound: a magma hound ally for 20 s (own 40 s cooldown, a lava light, the hound_summon burst) and it replaces the summon you had", old["ok"] and bool(hd) and hd["hound"] and hd["role"] == "magma_hound" and 19 < hd["life"] <= 20 and hd["cd"] > 38 and hd["light"] and hd["replaced"] and hd["burst"], hd=hd, old=old)
+            ok = until("(() => { const s = window.__hm.combat.summon; return !!s && Object.values(" + HP + ").some((v) => v < 5000); })()", 60)
+            T.step("the hound runs at a foe and bites", ok, hp=T.ev(HP))
+            rep.setdefault("shots", {})["mp_school"] = T.shot("mp_school")
+            T.ev("window.__hm.combat.summon.life = 0.02")
+            T.step("the hound goes back to warm stone after its 20 s", until("!window.__hm.combat.summon", 40))
+            T.ev("(() => { const C = window.__hm.combat, c = window.__hd2d.ctx; for (const e of C.enemies) if (e.id.startsWith('qa_t')) { e.state = 'gone'; c.removeNpc(e.a); } C.enemies = C.enemies.filter((e) => e.state !== 'gone'); })()")
+            # outside the realm: the rows draw everywhere, the hound needs Muspelheim's sheet
+            load("plaza")
+            T.ev("(() => { const C = window.__hm.combat, c = window.__hd2d.ctx; for (const e of C.enemies) c.removeNpc(e.a); C.enemies = []; })()")
+            T.ev("(() => { const G = window.__hm; G.S.lv = 12; for (const n of " + json.dumps(SCH) + ") G.learn(n); G.S.slots = ['fire_wave', 'magma_hound']; G.ctx.setSpellCycle(G.slots()); window.__hd2d.ctx.player.facing = 'left'; })()")
+            T.ev(f"({CAST})('fire_wave')"); ok = until("window.__hd2d.ctx.gamefx.list.some((f) => f.name === 'fire_wave_l')", 30)
+            T.ev(f"({CAST})('magma_hound')"); r = T.ev("(() => { const C = window.__hm.combat; return { summon: !!C.summon, cd: C.cd.hound, spell: C.cd.spell }; })()")
+            T.step("in the Plaza Fire Wave draws its left-facing art from the Plaza atlas; the Magma Hound does not answer (no hound sheet) and costs no cooldown", ok and not r["summon"] and r["cd"] == 0 and r["spell"] == 0, r=r, wave=ok)
         T.step("no JS errors in the Muspelheim run", not [e for e in errors if "muspelheim" in e.lower()], errs=errors[-3:])
     except Exception:
         try:

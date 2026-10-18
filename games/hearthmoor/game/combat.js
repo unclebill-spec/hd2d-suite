@@ -14,6 +14,12 @@ const STONE = {
 };
 const COLD_BLUE = '#7fd4ff', COLD_R = 2.2, GOLEM = { name: 'Stone golem', hp: 90, dmg: 14, reach: 1.4, speed: 1.9 };
 const GOLEM_ROLES = ['golem', 'eldergolem', 'icegolem', 'mushgolem'];   // first one this area's actor atlas has
+// [MUSPELHEIM-2] the Caldera school (Torka's lessons; flags cs_i / cs_ii / cs_iii). Art: the gamefx rows musp_art.school appends (48 px cells; the
+// Muspelheim areas carry the pack's five from mp_fx), fire_wave_l / _u / _d and ember_mote are derived there. Neon-orange fire against the dark.
+const LAVA = '#ff7a1a', HOT = '#ffd27a';
+const HOUND = { name: 'Magma hound', hp: 110, dmg: 13, reach: 1.4, speed: 2.6 };
+const HOUND_ROLES = ['magma_hound'];   // the realm's own hound sheet (every Muspelheim area carries it); elsewhere no hound answers
+const WAVE_FX = { right: 'fire_wave', left: 'fire_wave_l', up: 'fire_wave_u', down: 'fire_wave_d' };
 
 const SUMMON_GLOW = { mushgolem: '#f2c24a', runesentinel: '#ffb24a', runewisp: '#94c0dc', stormsprite: '#94c0dc', sapling: '#b2c464', emberimp: '#ffb24a' };
 // 6.4: camera framing for big foes: 2.5x Glenheart pulls ~1.18 (unchanged); 5-6x bosses pull up to ~1.9 (engine clamp 2.0)
@@ -56,8 +62,8 @@ export class Combat {
     this.nums = [];
     this.bars = new Map();
     this.st = PLAYER.stamina; this.stT = 0;
-    this.cd = { spell: 0, charm: 0, summon: 0, skin: 0, cold: 0, golem: 0 };   // skin / cold / golem: the long Stonefrost II / III cooldowns (spell = the shared 1 s gap)
-    this.skin = null; this.patches = [];
+    this.cd = { spell: 0, charm: 0, summon: 0, skin: 0, cold: 0, golem: 0, swarm: 0, ward: 0, hound: 0 };   // skin / cold / golem: the long Stonefrost II / III cooldowns, swarm / ward / hound: the Caldera school's (spell = the shared 1 s gap)
+    this.skin = null; this.patches = []; this.magma = []; this.motes = []; this.ward = null;
     this.godT = 0;
     this.defeated = {};              // area:id -> game seconds left until it wanders back
     this.time = 0;
@@ -80,13 +86,13 @@ export class Combat {
   // ---------------------------------------------------------------- area lifecycle
   attach(ctx, area) {
     this.ctx = ctx; this.area = area;
-    this.enemies = []; this.navBig = null; this.summon = null; this.projs = []; this.traps = []; this.later = []; this.skin = null; this.patches = [];
+    this.enemies = []; this.navBig = null; this.summon = null; this.projs = []; this.traps = []; this.later = []; this.skin = null; this.patches = []; this.magma = []; this.motes = []; this.endWard();
     this.clearDom();
     if (this.G.S.hp == null || this.G.S.hp <= 0) this.G.S.hp = this.maxHp();
     this.G.S.hp = Math.min(this.G.S.hp, this.maxHp());
     for (const sp of SPAWNS[area] || []) if (!sp.night && !(this.defeated[area + ':' + sp.id] > 0)) this.spawnEnemy(sp);
   }
-  detach() { this.clearDom(); this.ctx = null; this.enemies = []; this.navBig = null; this.summon = null; }
+  detach() { this.endWard(); this.clearDom(); this.ctx = null; this.enemies = []; this.navBig = null; this.summon = null; this.magma = []; this.motes = []; }
   clearDom() {
     for (const e of this.enemies || []) if (e.light) e.light.kill = true;
     if (this.bossEl) { this.bossEl.remove(); this.bossEl = null; }
@@ -153,6 +159,7 @@ export class Combat {
     this.updateProjs(dt);
     this.updateTraps(dt);
     this.updateStone(dt, frozen);
+    this.updateCaldera(dt, frozen);
     for (const l of this.later) l.t -= dt;
     const due = this.later.filter((l) => l.t <= 0); this.later = this.later.filter((l) => l.t > 0);
     for (const l of due) l.fn();
@@ -352,6 +359,8 @@ export class Combat {
     if (G.downed || this.godT > 0 || p.iframes > 0) return false;
     dmg *= (MODES[G.S.mode] || MODES.adventurer).hurt;   // Story / Adventurer / Hero
     if (this.skin) dmg = Math.max(1, Math.round(dmg * this.skin.take));   // Stone Skin: -40 % damage taken
+    const foe = this.ward && src ? this.enemies.find((x) => x.a === src || (src.a && x.a === src.a)) : null, raw = dmg;
+    if (this.ward && src && (src.fire || (foe && foe.D.element === 'fire'))) dmg = Math.max(1, Math.round(dmg * this.ward.take));   // Flame Ward: -30 % fire damage taken
     const fv = FV[p.facing] || [0, 1];
     const dx = src.x - p.x, dz = src.z - p.z, d = Math.hypot(dx, dz) || 1;
     let guarded = false;
@@ -364,6 +373,7 @@ export class Combat {
       if (this.st <= 0) { this.st = 0; ctx.release('defend'); G.toast('Guard broken!', 1.2); }
     } else G.audio.sfx('hurt');
     G.S.hp = Math.max(0, G.S.hp - dmg);
+    if (foe && foe.state !== 'dead' && foe.state !== 'gone') this.ignite(foe, Math.max(1, Math.round(raw * this.ward.refl)));   // ... and 10 % of the blow comes back as a burn on whoever struck
     p.flashT = 0.15; p.iframes = PLAYER.hitIframes;
     this.number(dmg, p.x, p.y + 2.0, p.z, guarded ? PAL.sky : PAL.rose);
     this.shove(p, -dx, -dz, guarded ? push * 0.4 : push);
@@ -469,6 +479,11 @@ export class Combat {
     if (S.kind === 'skin') this.doSkin(S);
     else if (S.kind === 'coldfire') this.doColdFire(S);
     else if (S.kind === 'golem') this.doGolem(S);
+    else if (S.kind === 'firewave') this.doFireWave(S);
+    else if (S.kind === 'magma') this.doMagma(S);
+    else if (S.kind === 'swarm') this.doSwarm(S);
+    else if (S.kind === 'ward') this.doWard(S);
+    else if (S.kind === 'hound') this.doHound(S);
     else if (S.kind === 'projectile' || S.kind === 'pierce') {
       const fxo = T && T.bolt ? T.g : fx, fxn = T && T.bolt ? T.bolt : S.fx;
       const travel = fxo.meta.effects[fxn].travel || 4.5;
@@ -528,7 +543,7 @@ export class Combat {
       if (!f || pr.done || !fxo.list.includes(f)) { pr.done = true; continue; }
       if (pr.owner === 'enemy') {
         if (Math.hypot(f.x - p.x, f.z - p.z) < pr.r && !this.G.downed) {
-          if (this.hurtPlayer(pr.dmg, { x: f.x, z: f.z }, 0.35) || p.act?.name === 'defend') { ctx.effects.remove(f); ctx.effects.spawn('frost_puff', f.x, f.y - 0.6, f.z); pr.done = true; }
+          if (this.hurtPlayer(pr.dmg, { x: f.x, z: f.z, a: pr.src }, 0.35) || p.act?.name === 'defend') { ctx.effects.remove(f); ctx.effects.spawn('frost_puff', f.x, f.y - 0.6, f.z); pr.done = true; }
         }
         // a summon in the way takes the bolt
         const s = this.summon;
@@ -632,6 +647,164 @@ export class Combat {
       if (c.t <= 0) { c.done = true; for (const [o, f] of c.fx) o.remove(f); }   // forced-frame decals never expire by themselves
     }
     if (this.patches.some((c) => c.done)) this.patches = this.patches.filter((c) => !c.done);
+  }
+
+  // ---------------------------------------------------------------- [MUSPELHEIM-2] the Caldera school
+  calFx(name) { const g = this.ctx && this.ctx.gamefx; return g && g.meta.effects[name] ? g : null; }
+  calSpawn(name, x, y, z, o) { const g = this.calFx(name); return g ? [g, g.spawn(name, x, y, z, o)] : null; }
+  // a burn on a foe: `n` damage, dealt over ~2 s in 0.5 s ticks (burns stack)
+  ignite(e, n) { if (!e || n <= 0) return; e.burn = e.burn || { left: 0, t: 0.5 }; e.burn.left += n; }
+  // Fire Wave (I): a rolling wave of fire in a 100 deg cone in front of you, 4.2 m deep; it reaches each foe as the wave rolls past it
+  doFireWave(S) {
+    const ctx = this.ctx, p = ctx.player, fv = FV[p.facing] || [0, 1], nm = WAVE_FX[p.facing] || 'fire_wave', G = this.G;
+    for (let i = 0; i < 3; i++) {
+      const d = 1.1 + i * 1.05, x = p.x + fv[0] * d, z = p.z + fv[1] * d;
+      this.later.push({ t: i * 0.11, fn: () => { if (this.ctx !== ctx) return; if (!this.calSpawn(this.calFx(nm) ? nm : 'fire_wave', x, ctx.heightAt(x, z), z + 0.06, {}) && ctx.effects && ctx.effects.meta.effects.ember_pop) ctx.effects.spawn('ember_pop', x, ctx.heightAt(x, z), z + 0.06); } });   // no game-fx atlas (hollows, lane): the spells atlas' ember pop
+    }
+    if (ctx.addGlow) ctx.addGlow(p.x + fv[0] * 2.2, p.y, p.z + fv[1] * 2.2, { color: LAVA, intensity: 9, range: 4.8, life: 0.7, fadeIn: 0.05, lift: 0.5 });
+    if (G.hollows) G.hollows.spellAt(p.x + fv[0] * 2, p.z + fv[1] * 2);   // braziers in its path catch
+    const hit = [];
+    for (const e of this.alive()) {
+      const dx = e.a.x - p.x, dz = e.a.z - p.z, d = Math.hypot(dx, dz);
+      if (d > S.range + e.D.r || Math.abs(e.a.y - p.y) > 1.2) continue;
+      if (d > 0.5 && (fv[0] * dx + fv[1] * dz) / d < S.arc) continue;
+      hit.push(e);
+      this.later.push({ t: Math.max(0, d - 0.6) / S.roll, fn: () => { if (this.ctx === ctx && e.state !== 'dead' && e.state !== 'gone') { this.damageEnemy(e, this.out('spell', S.dmg), p, S.push, PAL.gold); this.ignite(e, S.burn); } } });
+    }
+    this.lastWave = { n: hit.length, ids: hit.map((e) => e.id) };
+  }
+  // Magma Pool (I): a lava patch 2 m ahead for 6 s; foes standing in it burn (5 every 0.5 s); two at most (the oldest cools first)
+  doMagma(S) {
+    const ctx = this.ctx, p = ctx.player, fv = FV[p.facing] || [0, 1];
+    const x = p.x + fv[0] * 2.0, z = p.z + fv[1] * 2.0, y = ctx.heightAt(x, z);
+    while (this.magma.length >= 2) this.coolMagma(this.magma.shift());
+    const m = { x, z, r: S.radius, t: S.life, tick: 0.5, dmg: S.dmg, fx: [] };
+    const f = this.calSpawn('magma_pool', x, y, z + 0.03, { duration: S.life }); if (f) m.fx.push(f);
+    else if (ctx.effects) m.fx.push([ctx.effects, ctx.effects.spawn('red_pool', x, y, z + 0.03, { duration: S.life })]);
+    const e2 = this.calSpawn('ember_mote', x, y + 0.1, z + 0.1, { duration: S.life }); if (e2) m.fx.push(e2);
+    if (ctx.addGlow) m.light = ctx.addGlow(x, y, z, { color: LAVA, intensity: 7, range: 4.0, life: S.life, fadeIn: 0.2, lift: 0.4 });
+    if (this.G.glow) { this.G.glow.pools.push({ x, z, r: S.radius, t: S.life }); if (this.G.hollows) this.G.hollows.spellAt(x, z); }   // lava is light: a lit zone
+    this.magma.push(m);
+  }
+  coolMagma(m) { m.done = true; for (const [o, f] of m.fx) o.remove(f); if (m.light) m.light.kill = true; }
+  magmaAt(x, z) { return this.magma.some((m) => Math.hypot(x - m.x, z - m.z) < m.r); }
+  // Ember Swarm (II): six motes circle you for 1 s, then each flies at a foe (the nearest six, shared round), 9 damage + a small burn each
+  doSwarm(S) {
+    const ctx = this.ctx, p = ctx.player;
+    for (const m of this.motes) if (m.f) m.f[0].remove(m.f[1]);
+    this.motes = [];
+    const cloud = this.calSpawn('ember_swarm', p.x, p.y, p.z + 0.05, { duration: S.orbit + 0.2 });
+    for (let i = 0; i < S.n; i++) {
+      const a0 = i / S.n * Math.PI * 2;
+      this.motes.push({ i, a0, t: 0, state: 'orbit', x: p.x, z: p.z, y: p.y, target: null, f: this.calSpawn('ember_mote', p.x, p.y, p.z, { duration: S.orbit + 3.5 }), S });
+    }
+    this.swarm = { cloud, t: S.orbit, hits: 0 };
+    if (ctx.addGlow) this.swarm.light = ctx.addGlow(p.x, p.y, p.z, { color: LAVA, intensity: 5, range: 3.2, life: S.orbit + 1.0, fadeIn: 0.1, lift: 0.8 });
+    this.G.toast('Ember Swarm', 1.0);
+  }
+  // Flame Ward (II): a ring of small flames for 8 s: -30 % fire damage taken (fire foes, fire pillars, lava stones), the ember storm cannot burn you,
+  // and 10 % of every blow that lands comes back on the striker as a burn
+  doWard(S) {
+    const ctx = this.ctx, p = ctx.player;
+    this.endWard();
+    this.ward = { t: S.t, take: S.take, refl: S.refl, f: this.calSpawn('flame_ward', p.x, p.y, p.z + 0.08, { duration: S.t }) };
+    if (ctx.addGlow) this.ward.light = ctx.addGlow(p.x, p.y, p.z, { color: LAVA, intensity: 4, range: 3.0, life: S.t, fadeIn: 0.2, lift: 0.7 });
+    this.G.toast('Flame Ward: the fire forgets you', 1.4);
+  }
+  endWard() {
+    const w = this.ward; if (!w) return;
+    if (w.f) w.f[0].remove(w.f[1]);
+    if (w.light) w.light.kill = true;
+    this.ward = null;
+  }
+  // Magma Hound (III): a magma hound runs at your side for 20 s (it takes the place of any other summon); only where the hound sheet is (Muspelheim)
+  doHound(S) {
+    const ctx = this.ctx, p = ctx.player, G = this.G, roles = ctx.actors.meta.roles;
+    const role = HOUND_ROLES.find((r) => roles[r]);
+    if (!role) { this.cd.hound = 0; this.cd.spell = 0; G.toast('No hound answers here: the Magma Hound needs Muspelheim\'s heat.', 2.2); return; }
+    if (this.summon) this.unsummon();
+    const fv = FV[p.facing] || [0, 1], hp = Math.round(HOUND.hp * this.M.summonMul);
+    const x = p.x + fv[0] * 1.0 + 0.3, z = p.z + fv[1] * 1.0;
+    this.calSpawn('hound_summon', x, ctx.heightAt(x, z), z + 0.05, {}) || (ctx.effects && ctx.effects.spawn('summon_poof', x, ctx.heightAt(x, z), z + 0.05));
+    const a = ctx.addNpc({ id: 'summon', role, name: HOUND.name, pos: [x, z], behavior: 'idle', turn: false, speed: HOUND.speed });
+    a.ai = true; a.noTalk = true; a.facing = p.facing;
+    this.summon = { a, tier: 3, hound: true, D: { ...HOUND, hp }, hp, life: S.life + this.M.summonLife, cd: 0.4, target: null, sparkT: 0.3 };
+    if (ctx.addGlow) this.summon.light = ctx.addGlow(a.x, a.y, a.z, { color: LAVA, intensity: 4, range: 3.0, lift: 0.6, fadeIn: 0.4 });
+    if (G.glow) G.glow.pool(x, z, LAVA, 0.6);
+    G.audio.sfx('summon');
+    G.toast('A Magma Hound shakes itself out of the lava!', 1.6);
+  }
+  updateCaldera(dt, frozen) {
+    const ctx = this.ctx, p = ctx.player;
+    if (frozen) return;
+    // burns on foes (Fire Wave, Magma Pool, motes, Flame Ward's reflect)
+    for (const e of this.alive()) {
+      const b = e.burn; if (!b) continue;
+      if ((b.t -= dt) > 0) continue;
+      b.t = 0.5; const n = Math.min(b.left, Math.max(1, Math.ceil(b.left / 4))); b.left -= n;
+      this.damageEnemy(e, n, null, 0, LAVA);
+      if (b.left <= 0) e.burn = null;
+    }
+    // magma pools
+    for (const m of this.magma) {
+      m.t -= dt;
+      if ((m.tick -= dt) <= 0) {
+        m.tick = 0.5;
+        for (const e of this.alive()) if (Math.hypot(e.a.x - m.x, e.a.z - m.z) < m.r + e.D.r * 0.5 && Math.abs(e.a.y - ctx.heightAt(m.x, m.z)) < 1.0) this.damageEnemy(e, this.out('spell', m.dmg), null, 0, LAVA);
+      }
+      if (m.t <= 0) this.coolMagma(m);
+    }
+    if (this.magma.some((m) => m.done)) this.magma = this.magma.filter((m) => !m.done);
+    // the ward follows you
+    const w = this.ward;
+    if (w) {
+      w.t -= dt;
+      if (w.f) { w.f[1].x = p.x; w.f[1].y = p.y; w.f[1].z = p.z + 0.08; }
+      if (w.light) w.light.pos.set(p.x, p.y, p.z);
+      if (w.t <= 0 || this.G.downed) this.endWard();
+    }
+    // the swarm: orbit, then fly
+    const sw = this.swarm;
+    if (sw) {
+      sw.t -= dt;
+      if (sw.cloud) { sw.cloud[1].x = p.x; sw.cloud[1].y = p.y; sw.cloud[1].z = p.z + 0.05; }
+      if (sw.light) sw.light.pos.set(p.x, p.y, p.z);
+      if (sw.t <= 0 && !sw.launched) {
+        sw.launched = true;
+        const foes = this.alive().filter((e) => dist(e.a, p) < 7 && Math.abs(e.a.y - p.y) < 1.5).sort((a, b) => dist(a.a, p) - dist(b.a, p)).slice(0, 6);
+        this.motes.forEach((m, i) => { m.state = 'fly'; m.target = foes.length ? foes[i % foes.length] : null; m.t = 0; });
+      }
+    }
+    for (const m of this.motes) {
+      m.t += dt;
+      if (m.state === 'orbit') {
+        const a = m.a0 + m.t * Math.PI * 2.2, r = 0.95;
+        m.x = p.x + Math.cos(a) * r; m.z = p.z + Math.sin(a) * r * 0.75; m.y = p.y + 0.35 + Math.sin(a * 2) * 0.12;
+      } else if (m.state === 'fly') {
+        const e = m.target;
+        let tx, tz, ty;
+        if (e && e.state !== 'dead' && e.state !== 'gone') { tx = e.a.x; tz = e.a.z; ty = e.a.y + 0.4; }
+        else { const a = m.a0; tx = m.x + Math.cos(a) * 3; tz = m.z + Math.sin(a) * 3; ty = m.y; if (m.t > 0.6) m.state = 'gone'; }
+        const dx = tx - m.x, dz = tz - m.z, d = Math.hypot(dx, dz), st = Math.min(d, 9 * dt);
+        if (d > 0.01) { m.x += dx / d * st; m.z += dz / d * st; m.y += (ty - m.y) * Math.min(1, dt * 6); }
+        if (e && e.state !== 'dead' && e.state !== 'gone' && d < 0.35 + e.D.r * 0.6) {
+          this.damageEnemy(e, this.out('spell', m.S.dmg), m, 0.15, PAL.gold); this.ignite(e, m.S.burn);
+          if (sw) sw.hits++; this.swarmHits = (this.swarmHits || 0) + 1;
+          if (ctx.effects && ctx.effects.meta.effects.ember_pop) ctx.effects.spawn('ember_pop', e.a.x, e.a.y, e.a.z + 0.1);
+          m.state = 'gone';
+        }
+        if (m.t > 3) m.state = 'gone';
+      }
+      if (m.f) { m.f[1].x = m.x; m.f[1].y = m.y; m.f[1].z = m.z + 0.1; }
+      if (m.state === 'gone' && m.f) { m.f[0].remove(m.f[1]); m.f = null; }
+    }
+    if (this.motes.length && this.motes.every((m) => m.state === 'gone')) { this.motes = []; if (sw && sw.launched) this.swarm = null; }
+  }
+  qaCaldera() {
+    const w = this.ward, sw = this.swarm;
+    return { magma: this.magma.map((m) => ({ x: +m.x.toFixed(2), z: +m.z.toFixed(2), r: m.r, t: +m.t.toFixed(2), fx: m.fx.map(([, f]) => f.name) })), motes: this.motes.map((m) => m.state),
+             swarm: sw ? { t: +sw.t.toFixed(2), hits: sw.hits, launched: !!sw.launched } : null, ward: w ? { t: +w.t.toFixed(2), take: w.take, refl: w.refl, fx: !!w.f } : null,
+             wave: this.lastWave || null, burns: this.enemies.filter((e) => e.burn).map((e) => e.id), cd: { swarm: this.cd.swarm, ward: this.cd.ward, hound: this.cd.hound } };
   }
 
   // ---------------------------------------------------------------- summons (a tiny friend from the hero's background)
