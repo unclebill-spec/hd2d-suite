@@ -117,7 +117,7 @@ Rares.prototype.spawn = function spawn(o = {}) {   // Mist Alpha = ghosting + qu
   return spawnRare0.call(this, o);
 };
 SPAWNS.iceglow = [   // provisional (authored with the area build): 1.4x / 1.5x foes read fully on screen, far from the start view
-  { id: 'ig_stalker0', role: 'mist_stalker', pos: [3.2, -3.0] }, { id: 'ig_spirit0', role: 'frost_spirit', pos: [-3.0, 1.0], night: true },
+  { id: 'ig_stalker0', role: 'mist_stalker', pos: [-2.4, 4.4] }, { id: 'ig_spirit0', role: 'frost_spirit', pos: [-3.0, 1.0], night: true },
 ];
 // the three warm springs (story 2.6): nf_spring (Mistmere), ig_spring (the caverns), fs_spring (Spire F3); +2 s frost-slow immunity per drink, stacking to 3
 export const SPRINGS = { nf_spring: 'niflheim', ig_spring: 'iceglow', fs_spring: 'frozenspire' };

@@ -319,8 +319,8 @@ def layout_place(area):
 # crop colours / source colours <= 2). The lights stay; only their reach shrinks. Tune from check_scene's colour check (add a piece when it names it).
 LAMP_CAP = {"cold_lantern": 3.0, "lantern_post": 3.0, "cold_brazier": 2.8, "glow_pool": 3.0, "ice_arch": 3.2, "aurora_lamp": 3.0, "rune_gate": 2.6, "glow_orb": 2.4, "shrine_lamp": 2.6,
             "rune_pillar": 2.5, "fish_stall": 3.0, "elk_paddock": 3.0, "grave_stone": 2.6, "ashmantle_house": 3.0, "spire_door": 4.0, "freeze_core": 3.5, "frozen_portal": 4.0}   # GUESSED piece names
-LAMP_CAP["ice_lake"] = 3.4   # the two lake-edge pools in the Quiet Shore blew the snow floor to 255 (check_scene no_bloom, night)
-EXTRA_CAP = {"nf_home": 5.0}   # the pack's extra pools (not the ambient fill, range >= 9) capped per area when check_scene's no_bloom names one
+LAMP_CAP["ice_lake"] = 2.2   # the two lake-edge pools in the Quiet Shore blew the snow floor to 255 (check_scene no_bloom, night)
+EXTRA_CAP = {"nf_home": 3.5}   # the pack's extra pools (not the ambient fill, range >= 9) capped per area when check_scene's no_bloom names one
 LAMP_CAP_AREA = {a: dict(LAMP_CAP) for a in PLANNED}
 # per-area tightening goes here when check_scene's colour check (crop colours / source colours <= 2) names a lamp beside a few-colour sprite.
 
