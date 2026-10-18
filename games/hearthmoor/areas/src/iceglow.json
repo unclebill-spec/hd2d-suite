@@ -163,10 +163,7 @@
    "id": "frostspeaker",
    "role": "innkeeper",
    "name": "Frost-Speaker Gudrun Hoarwick",
-   "pos": [
-    -6.0,
-    -4.0
-   ],
+   "pos": [1.8, -0.6],
    "facing": "right",
    "behavior": "idle",
    "talkable": true,

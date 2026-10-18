@@ -59,7 +59,7 @@ fs2 = corridor(
                 "f10": [0.0, -51.0, "up"], "door": [0.0, -59.0, "up"], "from_rift": [0.0, -59.0, "down"], "from_waystone": [2.6, -11.4, "down"]},
      "waystone": {"pos": [4.8, -13.8]}},
     [snow([0, 3.0, 2.0], [14, 3.0, 12])], None)
-fs2["actors"].append({"id": "archivist", "role": "elffolk", "name": "Vigdis Stillwater", "pos": [-1.0, -17.2], "facing": "down", "behavior": "idle", "talkable": True, "say": ["The tablets are older than the Spire. The Spire is older than the quarrel."]})
+fs2["actors"].append({"id": "archivist", "role": "elffolk", "name": "Vigdis Stillwater", "pos": [4.0, -15.6], "facing": "down", "behavior": "idle", "talkable": True, "say": ["The tablets are older than the Spire. The Spire is older than the quarrel."]})
 for n, d in (("frozenspire", fs1), ("frozenspire2", fs2)):
     (OUT / f"{n}.json").write_text(json.dumps(d, indent=1) + "\n"); print("wrote", n)
 

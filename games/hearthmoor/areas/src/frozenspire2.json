@@ -252,8 +252,8 @@
    "role": "elffolk",
    "name": "Vigdis Stillwater",
    "pos": [
-    -1.0,
-    -17.2
+    4.0,
+    -15.6
    ],
    "facing": "down",
    "behavior": "idle",

@@ -60,6 +60,7 @@ EXTRA["frozenspire"]["boss_veyra"] = (ST / "sprite" / "boss_veyra.json", {"veyra
 EXTRA["frozenspire2"].pop("boss_veyra")
 # Scoped neon (art README "Neon flag", lead ruling): EMPTY until the README names it. Mirrors NIFL_NEON_ALLOW in check_sprite.py, never wider.
 NIFL_NEON_SCOPE = {}
+FX_DROP = {"nf_home": {("pool_teal", -2.0, 5.4), ("pool_teal", 2.0, 5.4)}}   # per-area placed decals left out when check_scene no_bloom names them (the Quiet Shore's two lake-edge teal pools clip the snow at 255)
 FX_SKIP = {"veyra_shadow"}   # near-black (#0c1220) decal: it never matches the atlas over the dark ice floors (check_scene gamefx_sharp atlas_corr 0.0): left out of the area atlases, see NIFLHEIM_PROGRESS.md   # effects whose crop never matches the atlas frame (check_scene gamefx_sharp): the pack keeps them, the area atlases do not list them
 FX_FILE = ("gamefx", "nf_fx.json")   # staging gamefx rows: ST / "gamefx" / "nf_fx.json"
 
@@ -284,6 +285,7 @@ def fx_table():
         for key, zc in _rooms(area):
             if key not in lay: continue
             for d in lay[key].get("decals", []):
+                if (d[0], round(d[1][0], 2), round(d[1][1] + zc, 2)) in FX_DROP.get(area, ()): continue
                 rows.append([d[0], [round(d[1][0], 2), round(d[1][1] + zc, 2)], 0])
             for b in lay[key].get("bills", []):
                 n, (x, y, z) = b[0], b[1]

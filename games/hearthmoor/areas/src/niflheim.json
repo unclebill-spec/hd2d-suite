@@ -208,7 +208,7 @@
    "id": "nf_a",
    "role": "elffolk",
    "name": "Mistmere villager",
-   "pos": [-1.2, 3.8],
+   "pos": [-8.4, 3.6],
    "facing": "right",
    "behavior": "idle",
    "talkable": true,

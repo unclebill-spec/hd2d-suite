@@ -117,7 +117,7 @@ Rares.prototype.spawn = function spawn(o = {}) {   // Mist Alpha = ghosting + qu
   return spawnRare0.call(this, o);
 };
 SPAWNS.iceglow = [   // provisional (authored with the area build): 1.4x / 1.5x foes read fully on screen, far from the start view
-  { id: 'ig_stalker0', role: 'mist_stalker', pos: [5.0, -4.0] }, { id: 'ig_spirit0', role: 'frost_spirit', pos: [-3.0, 1.0], night: true },
+  { id: 'ig_stalker0', role: 'mist_stalker', pos: [3.2, -3.0] }, { id: 'ig_spirit0', role: 'frost_spirit', pos: [-3.0, 1.0], night: true },
 ];
 // the three warm springs (story 2.6): nf_spring (Mistmere), ig_spring (the caverns), fs_spring (Spire F3); +2 s frost-slow immunity per drink, stacking to 3
 export const SPRINGS = { nf_spring: 'niflheim', ig_spring: 'iceglow', fs_spring: 'frozenspire' };
@@ -696,8 +696,8 @@ Object.assign(PORTALS, [[0, -4.2], [4.2, 0], [-4.2, 0], [-3.0, 4.0]]);   // thaw
 Object.assign(HI, [['hi_1', 'frozenspire', [1.6, -46.6]], ['hi_2', 'frozenspire2', [2.8, -3.2]], ['hi_3', 'frozenspire2', [3.4, -32.2]]]);
 const hiAt = (area) => HI.filter((h) => h[1] === area);
 const coresBroken = (S) => found(S, 'fs_c1', 'fs_c2', 'fs_c3');
-Object.assign(SPAWNS, { frozenspire: [   // F2's pair (not conquer: wardens) and F3's spirit: out of the start view (z > -7.6)
-  { id: 'fs_wraith0', role: 'frost_wraith', pos: [-2.0, -17.4] }, { id: 'fs_wraith1', role: 'frost_wraith', pos: [2.6, -18.6], night: true }, { id: 'fs_spirit0', role: 'frost_spirit', pos: [-0.6, -27.0] },
+Object.assign(SPAWNS, { frozenspire: [   // F2's pair (not conquer: wardens) and F3's spirit: out of the start view (z > -7.6; the portrait view shows to z -22, so the wraiths wait fully off screen beyond -25)
+  { id: 'fs_wraith0', role: 'frost_wraith', pos: [-2.0, -26.0] }, { id: 'fs_wraith1', role: 'frost_wraith', pos: [2.6, -26.8], night: true }, { id: 'fs_spirit0', role: 'frost_spirit', pos: [-0.6, -27.0] },
 ], frozenspire2: [{ id: 'f2_golem0', role: 'ice_golem', pos: [-3.0, -26.4] }, { id: 'f2_spirit0', role: 'frost_spirit', pos: [3.4, -30.0], night: true }] });
 Object.assign(Niflheim.prototype, {
   spire1(ctx) {   // F1-F5
