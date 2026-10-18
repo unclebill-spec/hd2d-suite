@@ -208,8 +208,8 @@ def steps(b, url, T, size, errors, rep, stub=None, shots=None):
             a = load("lavafalls")
             hs = {"terrace": H(-7.4, 0.2), "ground": H(0, 5), "stair": H(-7.4, 2.4)}
             T.step("real height: the Lavafalls glass terrace stands 1.34 m up with a walkable stair", hs["terrace"] >= 1.2 and hs["ground"] < 0.2 and 0.2 < hs["stair"] < hs["terrace"], hs=hs)
-            far = T.ev("(() => { const c = window.__hd2d.ctx, sp = window.__hm.musp.qaRares().spots, ac = c.actors.list.filter((a) => !a.rare && a.role !== 'traveler').map((a) => [a.x, a.z]); return sp.map(([x, z]) => Math.min(...ac.map(([ax, az]) => Math.hypot(ax - x, az - z)))); })()")
-            T.step("rare spots are 3.5 m clear of every actor (giants are tall)", far and min(far) >= 3.5, far=far)
+            far = T.ev("(() => { const c = window.__hd2d.ctx, sp = window.__hm.musp.qaRares().spots, ac = c.actors.list.filter((a) => !a.rare && a.role !== 'traveler').map((a) => { const e = window.__hm.combat.enemies.find((q) => q.a === a); return e ? e.home : [a.x, a.z]; }); return sp.map(([x, z]) => Math.min(...ac.map(([ax, az]) => Math.hypot(ax - x, az - z)))); })()")
+            T.step("rare spots are 3.5 m clear of every actor (giants are tall; foes measured from their home spots, they wander up to 2 m off them)", far and min(far) >= 3.5, far=far)
             mp("qaSpot('caldera_mouth')"); frames(2); d1 = sv()["dlg"]; fin()
             T.step("Caldera mouth: shut for a stranger (no door yet)", d1 == "cm_shut", d1=d1)
             rep["shots"]["mp_falls"] = T.shot("mp_falls")
