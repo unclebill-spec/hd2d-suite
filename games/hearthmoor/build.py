@@ -29,6 +29,10 @@ AREAS += [a for a in ("jotunheim", "jt_hall", "rimecaves", "barrow", "barrow2") 
 # HM_MUSP_SKELETON=1 lets a QA run include the skeleton specs without the pack (private build dir only: never commit that output).
 if os.environ.get("HM_MUSP_SKELETON") or Path("/workspace/hearthmoor-staging/art/muspelheim/READY.txt").exists():
     AREAS += [a for a in ("muspelheim", "mp_hall", "lavafalls", "caldera", "caldera2") if (Path(__file__).resolve().parent / "areas" / "src" / f"{a}.json").exists()]
+# [NIFLHEIM] the realm's areas join the build only once the art pack is ready (staging art/niflheim/READY.txt) and their specs exist: no READY.txt, no change.
+# HM_NIFL_SKELETON=1 lets a QA run include the skeleton specs without the pack (private build dir only: never commit that output).
+if os.environ.get("HM_NIFL_SKELETON") or Path("/workspace/hearthmoor-staging/art/niflheim/READY.txt").exists():
+    AREAS += [a for a in ("niflheim", "nf_home", "iceglow", "frozenspire", "frozenspire2", "frozen_rift") if (Path(__file__).resolve().parent / "areas" / "src" / f"{a}.json").exists()]
 TMP = Path(os.environ.get("HM_BUILD_TMP", "/tmp/hearthmoor_build"))   # [ALFHEIM] private build dir per worker
 
 

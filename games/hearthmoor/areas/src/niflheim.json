@@ -1,0 +1,400 @@
+{
+ "seed": 411,
+ "biome": "cozy-village",
+ "time": {
+  "start": "night",
+  "speed": 0.0016
+ },
+ "spells": true,
+ "boss_roles": [],
+ "camera": {
+  "fov": 24,
+  "pitch": 36,
+  "distance": 33,
+  "zoom": [
+   24,
+   44
+  ],
+  "look": [
+   0,
+   0,
+   -2.4
+  ],
+  "bounds": [
+   -11.0,
+   -9.0,
+   11.0,
+   10.8
+  ]
+ },
+ "hedges": [],
+ "trees": [],
+ "backdrop": {},
+ "decks": [],
+ "blocks": [],
+ "buildings": [],
+ "name": "Mistmere",
+ "about": "Niflheim, realm of ice, mist and water. Mistmere is a ring of pale-stone houses on the shore of a vast frozen lake: bridges of ice, a neon-blue cold-fire lantern on every post, frost runes on the gates and the aurora pouring green and violet over black mountains. Arrival from Bifrost through the ice arch; the Frost-Speaker's hall on the north terrace; the Quiet Shore path east; the cave stair west to the Glowpool Caverns.",
+ "sprite_roles": [
+  "actors",
+  "heroes",
+  "combat",
+  "lanternseller",
+  "dwarftrader",
+  "poolkeeper",
+  "wispcatcher",
+  "elffolk",
+  "elffolk2",
+  "innkeeper",
+  "shopkeeper",
+  "nightmerchant",
+  "gnome"
+ ],
+ "ground": {
+  "size": [
+   80,
+   70
+  ],
+  "mat": "stone",
+  "walk": [
+   -12.0,
+   -11.0,
+   12.0,
+   11.4
+  ]
+ },
+ "slabs": [],
+ "terraces": [
+  {
+   "name": "hall_terrace",
+   "rect": [
+    -4.2,
+    -9.8,
+    4.2,
+    -5.6
+   ],
+   "h": 1.2,
+   "top": "plaster",
+   "gaps": [
+    [
+     -1.45,
+     1.45
+    ]
+   ]
+  },
+  {
+   "name": "wall_w",
+   "rect": [
+    -30,
+    -30,
+    -12.0,
+    13
+   ],
+   "h": 3.6,
+   "top": "stone",
+   "coping": true
+  },
+  {
+   "name": "wall_e",
+   "rect": [
+    12.0,
+    -30,
+    30,
+    13
+   ],
+   "h": 3.6,
+   "top": "stone",
+   "coping": true
+  },
+  {
+   "name": "wall_n",
+   "rect": [
+    -12.0,
+    -30,
+    12.0,
+    -11.0
+   ],
+   "h": 3.6,
+   "top": "stone",
+   "coping": true
+  },
+  {
+   "name": "wall_s",
+   "rect": [
+    -12,
+    12.4,
+    12,
+    30
+   ],
+   "h": 1.0,
+   "top": "stone",
+   "coping": true
+  }
+ ],
+ "stairs": [
+  {
+   "name": "stair_hall",
+   "x": 0.0,
+   "z_top": -5.6,
+   "width": 2.9,
+   "rise": 1.2,
+   "base": 0.0
+  }
+ ],
+ "props": [
+  {
+   "piece": "realm_arch",
+   "pos": [
+    0.0,
+    10.6
+   ],
+   "glow": {
+    "color": "#3fb8ff",
+    "range": 6.0,
+    "fixed": 0.8
+   }
+  },
+  {
+   "piece": "realm_glow_ice",
+   "pos": [
+    0.0,
+    10.6
+   ]
+  }
+ ],
+ "emitters": [
+  {
+   "preset": "snowfall",
+   "pos": [
+    0,
+    3.0,
+    2.0
+   ],
+   "area": [
+    22,
+    3.0,
+    20
+   ],
+   "min_gate": 0.0
+  }
+ ],
+ "actors": [
+  {
+   "id": "frostspeaker",
+   "role": "innkeeper",
+   "name": "Frost-Speaker Gudrun Hoarwick",
+   "pos": [
+    0.0,
+    -8.2
+   ],
+   "facing": "down",
+   "behavior": "idle",
+   "talkable": true,
+   "say": [
+    "Don't be loud. The lake listens."
+   ]
+  },
+  {
+   "id": "nf_trader",
+   "role": "dwarftrader",
+   "name": "Tove Lanternwright",
+   "pos": [
+    -8.5,
+    -3.0
+   ],
+   "facing": "right",
+   "behavior": "idle",
+   "talkable": true,
+   "say": [
+    "Eat. Mistmere hasn't had a guest in years."
+   ]
+  },
+  {
+   "id": "elkman",
+   "role": "wispcatcher",
+   "name": "Ketil Icehook",
+   "pos": [
+    9.0,
+    -3.0
+   ],
+   "facing": "left",
+   "behavior": "idle",
+   "talkable": true,
+   "say": [
+    "She bit you? Good. Elk say hello with their teeth."
+   ]
+  },
+  {
+   "id": "nf_a",
+   "role": "elffolk",
+   "name": "Mistmere villager",
+   "pos": [
+    -6.0,
+    7.4
+   ],
+   "facing": "right",
+   "behavior": "idle",
+   "talkable": true,
+   "say": [
+    "The aurora hums, if you stand still."
+   ]
+  },
+  {
+   "id": "nf_b",
+   "role": "elffolk2",
+   "name": "Mistmere villager",
+   "pos": [
+    6.4,
+    7.0
+   ],
+   "facing": "left",
+   "behavior": "idle",
+   "talkable": true,
+   "say": [
+    "We lit the lanterns for her anyway."
+   ]
+  }
+ ],
+ "player": {
+  "role": "traveler",
+  "pos": [
+   -4.6,
+   4.6
+  ],
+  "facing": "up"
+ },
+ "fx": [],
+ "grades": {
+  "day": {
+   "fog_color": "#6a7e9c",
+   "sky_top": "#2a3a5a",
+   "sky_bottom": "#9cb4d4",
+   "hemi_sky": "#c8d6ec",
+   "saturation": 0.95,
+   "bugs": 0.0,
+   "warmth": -0.05,
+   "exposure": 0.82,
+   "sun_intensity": 1.0,
+   "hemi_intensity": 0.7,
+   "sun_color": "#e8f0ff",
+   "lamp_intensity": 0.85
+  },
+  "dusk": {
+   "fog_color": "#1c2848",
+   "sky_top": "#0c1430",
+   "sky_bottom": "#34508c",
+   "exposure": 0.95,
+   "sun_intensity": 0.6,
+   "warmth": -0.1,
+   "sun_color": "#8cb0f0",
+   "bugs": 0.5
+  },
+  "night": {
+   "fog_color": "#0c1428",
+   "sky_top": "#050a1c",
+   "sky_bottom": "#1b2a4a",
+   "hemi_sky": "#5c7cb0",
+   "bugs": 1.0,
+   "exposure": 1.0,
+   "sun_intensity": 0.4,
+   "hemi_intensity": 0.55,
+   "sun_color": "#7ea0e0"
+  }
+ },
+ "game": {
+  "id": "niflheim",
+  "title": "Mistmere",
+  "exits": [
+   {
+    "rect": [
+     10.8,
+     -10.2,
+     11.9,
+     -8.0
+    ],
+    "to": "nf_home",
+    "spawn": "from_town",
+    "label": "the Quiet Shore path"
+   },
+   {
+    "rect": [
+     -11.9,
+     -10.2,
+     -10.8,
+     -8.0
+    ],
+    "to": "iceglow",
+    "spawn": "from_town",
+    "label": "the cave stair to the Glowpool Caverns"
+   }
+  ],
+  "portals": [
+   {
+    "to": "bifrost",
+    "spawn": "from_niflheim",
+    "rect": [
+     -0.9,
+     10.1,
+     0.9,
+     11.1
+    ],
+    "label": "the ice arch back to Bifrost Crossing"
+   }
+  ],
+  "spawns": {
+   "start": [
+    -4.6,
+    4.6,
+    "up"
+   ],
+   "from_bifrost": [
+    0.0,
+    9.2,
+    "up"
+   ],
+   "qa": [
+    -4.6,
+    4.6,
+    "up"
+   ],
+   "lanterns": [
+    0.0,
+    6.6,
+    "up"
+   ],
+   "stall": [
+    -7.4,
+    -1.6,
+    "up"
+   ],
+   "paddock": [
+    8.0,
+    -1.6,
+    "up"
+   ],
+   "hall": [
+    0.0,
+    -4.4,
+    "up"
+   ],
+   "from_shore": [
+    10.2,
+    -8.6,
+    "left"
+   ],
+   "from_caves": [
+    -10.2,
+    -8.6,
+    "right"
+   ]
+  },
+  "spring": {
+   "pos": [
+    -11.5,
+    -2.0
+   ],
+   "r": 1.6,
+   "secret": "nf_spring"
+  }
+ }
+}

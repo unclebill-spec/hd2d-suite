@@ -1,0 +1,282 @@
+{
+ "seed": 413,
+ "biome": "cozy-village",
+ "time": {
+  "start": "night",
+  "speed": 0.0016
+ },
+ "spells": true,
+ "boss_roles": [],
+ "camera": {
+  "fov": 24,
+  "pitch": 36,
+  "distance": 33,
+  "zoom": [
+   24,
+   44
+  ],
+  "look": [
+   0,
+   0,
+   -2.4
+  ],
+  "bounds": [
+   -9.6,
+   -7.2,
+   9.6,
+   8.2
+  ]
+ },
+ "hedges": [],
+ "trees": [],
+ "backdrop": {},
+ "decks": [],
+ "blocks": [],
+ "buildings": [],
+ "name": "The Glowpool Caverns",
+ "about": "Ice caves under the frozen lake, lit from below by bioluminescent pools; frost runes on every pillar, rime-glass glow orbs, the rune-hall of the Frost-Speaker to the west and, at the north end, the Spire mouth: a 6 m ice door sealed by three rune-locks (the Frozen Spire itself is a later area).",
+ "sprite_roles": [
+  "actors",
+  "heroes",
+  "combat",
+  "lanternseller",
+  "dwarftrader",
+  "poolkeeper",
+  "wispcatcher",
+  "elffolk",
+  "elffolk2",
+  "innkeeper",
+  "shopkeeper",
+  "nightmerchant",
+  "gnome"
+ ],
+ "ground": {
+  "size": [
+   70,
+   60
+  ],
+  "mat": "stone",
+  "walk": [
+   -10.0,
+   -8.4,
+   10.0,
+   8.4
+  ]
+ },
+ "slabs": [],
+ "terraces": [
+  {
+   "name": "spire_terrace",
+   "rect": [
+    -3.1,
+    -8.2,
+    3.1,
+    -4.4
+   ],
+   "h": 1.2,
+   "top": "plaster",
+   "gaps": [
+    [
+     -1.45,
+     1.45
+    ]
+   ]
+  },
+  {
+   "name": "wall_w",
+   "rect": [
+    -30,
+    -30,
+    -10.2,
+    13
+   ],
+   "h": 3.6,
+   "top": "stone",
+   "coping": true
+  },
+  {
+   "name": "wall_e",
+   "rect": [
+    10.2,
+    -30,
+    30,
+    13
+   ],
+   "h": 3.6,
+   "top": "stone",
+   "coping": true
+  },
+  {
+   "name": "wall_n",
+   "rect": [
+    -30,
+    -30,
+    30,
+    -8.6
+   ],
+   "h": 3.6,
+   "top": "stone",
+   "coping": true
+  },
+  {
+   "name": "wall_s",
+   "rect": [
+    -12,
+    8.8,
+    12,
+    30
+   ],
+   "h": 1.0,
+   "top": "stone",
+   "coping": true
+  }
+ ],
+ "stairs": [
+  {
+   "name": "stair_spire",
+   "x": 0.0,
+   "z_top": -4.4,
+   "width": 2.9,
+   "rise": 1.2,
+   "base": 0.0
+  }
+ ],
+ "props": [],
+ "emitters": [
+  {
+   "preset": "fireflies",
+   "pos": [
+    0,
+    1.6,
+    0.0
+   ],
+   "area": [
+    18,
+    1.6,
+    12
+   ],
+   "min_gate": 0.0
+  }
+ ],
+ "actors": [
+  {
+   "id": "frostspeaker",
+   "role": "innkeeper",
+   "name": "Frost-Speaker Gudrun Hoarwick",
+   "pos": [
+    -6.0,
+    -4.0
+   ],
+   "facing": "right",
+   "behavior": "idle",
+   "talkable": true,
+   "say": [
+    "Frost isn't cruelty. It's patience."
+   ]
+  }
+ ],
+ "player": {
+  "role": "traveler",
+  "pos": [
+   0.0,
+   5.4
+  ],
+  "facing": "up"
+ },
+ "fx": [],
+ "grades": {
+  "day": {
+   "fog_color": "#6a7e9c",
+   "sky_top": "#2a3a5a",
+   "sky_bottom": "#9cb4d4",
+   "hemi_sky": "#c8d6ec",
+   "saturation": 0.95,
+   "bugs": 0.0,
+   "warmth": -0.05,
+   "exposure": 0.82,
+   "sun_intensity": 1.0,
+   "hemi_intensity": 0.7,
+   "sun_color": "#e8f0ff",
+   "lamp_intensity": 0.85
+  },
+  "dusk": {
+   "fog_color": "#1c2848",
+   "sky_top": "#0c1430",
+   "sky_bottom": "#34508c",
+   "exposure": 0.95,
+   "sun_intensity": 0.6,
+   "warmth": -0.1,
+   "sun_color": "#8cb0f0",
+   "bugs": 0.5
+  },
+  "night": {
+   "fog_color": "#0c1428",
+   "sky_top": "#050a1c",
+   "sky_bottom": "#1b2a4a",
+   "hemi_sky": "#5c7cb0",
+   "bugs": 1.0,
+   "exposure": 1.0,
+   "sun_intensity": 0.4,
+   "hemi_intensity": 0.55,
+   "sun_color": "#7ea0e0"
+  }
+ },
+ "game": {
+  "id": "iceglow",
+  "title": "The Glowpool Caverns",
+  "exits": [
+   {
+    "rect": [
+     9.7,
+     -2.8,
+     10.9,
+     -0.8
+    ],
+    "to": "niflheim",
+    "spawn": "from_caves",
+    "label": "the cave stair back to Mistmere"
+   }
+  ],
+  "portals": [],
+  "spawns": {
+   "start": [
+    0.0,
+    5.4,
+    "up"
+   ],
+   "from_town": [
+    9.2,
+    -1.8,
+    "left"
+   ],
+   "qa": [
+    0.0,
+    5.4,
+    "up"
+   ],
+   "runehall": [
+    -5.0,
+    -2.0,
+    "left"
+   ],
+   "mouth": [
+    0.0,
+    -3.4,
+    "up"
+   ],
+   "pools": [
+    4.0,
+    3.0,
+    "up"
+   ]
+  },
+  "spring": {
+   "pos": [
+    7.6,
+    6.0
+   ],
+   "r": 1.6,
+   "secret": "ig_spring"
+  }
+ }
+}

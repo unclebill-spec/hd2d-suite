@@ -1,0 +1,289 @@
+{
+ "seed": 412,
+ "biome": "cozy-village",
+ "time": {
+  "start": "night",
+  "speed": 0.0016
+ },
+ "spells": true,
+ "boss_roles": [],
+ "camera": {
+  "fov": 24,
+  "pitch": 36,
+  "distance": 33,
+  "zoom": [
+   24,
+   44
+  ],
+  "look": [
+   0,
+   0,
+   -2.4
+  ],
+  "bounds": [
+   -7.6,
+   -6.6,
+   7.6,
+   7.8
+  ]
+ },
+ "hedges": [],
+ "trees": [],
+ "backdrop": {},
+ "decks": [],
+ "blocks": [],
+ "buildings": [],
+ "name": "The Quiet Shore",
+ "about": "Veyra's childhood shore: black water, a standing stone of glowing runes with violet shrine-lamps (Eira's grave) on a raised ledge, and the small stone house with a cold-fire hearth where Eira's room stays shut. The reveal of the Rift-Warden happens here.",
+ "sprite_roles": [
+  "actors",
+  "heroes",
+  "combat",
+  "lanternseller",
+  "dwarftrader",
+  "poolkeeper",
+  "wispcatcher",
+  "elffolk",
+  "elffolk2",
+  "innkeeper",
+  "shopkeeper",
+  "nightmerchant",
+  "gnome"
+ ],
+ "ground": {
+  "size": [
+   60,
+   60
+  ],
+  "mat": "stone",
+  "walk": [
+   -8.0,
+   -8.0,
+   8.0,
+   8.0
+  ]
+ },
+ "slabs": [],
+ "terraces": [
+  {
+   "name": "grave_ledge",
+   "rect": [
+    -3.2,
+    -7.8,
+    3.2,
+    -2.9
+   ],
+   "h": 1.2,
+   "top": "plaster",
+   "gaps": [
+    [
+     -1.45,
+     1.45
+    ]
+   ]
+  },
+  {
+   "name": "wall_w",
+   "rect": [
+    -30,
+    -30,
+    -8.2,
+    13
+   ],
+   "h": 3.6,
+   "top": "stone",
+   "coping": true
+  },
+  {
+   "name": "wall_e",
+   "rect": [
+    8.2,
+    -30,
+    30,
+    13
+   ],
+   "h": 3.6,
+   "top": "stone",
+   "coping": true
+  },
+  {
+   "name": "wall_n",
+   "rect": [
+    -30,
+    -30,
+    30,
+    -8.2
+   ],
+   "h": 3.6,
+   "top": "stone",
+   "coping": true
+  },
+  {
+   "name": "wall_s",
+   "rect": [
+    -12,
+    8.6,
+    12,
+    30
+   ],
+   "h": 1.0,
+   "top": "stone",
+   "coping": true
+  }
+ ],
+ "stairs": [
+  {
+   "name": "stair_grave",
+   "x": 0.0,
+   "z_top": -2.9,
+   "width": 2.9,
+   "rise": 1.2,
+   "base": 0.0
+  }
+ ],
+ "props": [],
+ "emitters": [
+  {
+   "preset": "snowfall",
+   "pos": [
+    0,
+    3.0,
+    0.0
+   ],
+   "area": [
+    14,
+    3.0,
+    14
+   ],
+   "min_gate": 0.0
+  }
+ ],
+ "actors": [
+  {
+   "id": "nf_shore",
+   "role": "elffolk",
+   "name": "Mistmere mourner",
+   "pos": [
+    -5.4,
+    1.4
+   ],
+   "facing": "right",
+   "behavior": "idle",
+   "talkable": true,
+   "say": [
+    "We never stopped missing her. We never said so."
+   ]
+  },
+  {
+   "id": "hrefna",
+   "role": "lanternseller",
+   "name": "Hrefna Frostveil",
+   "pos": [
+    4.4,
+    0.6
+   ],
+   "facing": "left",
+   "behavior": "idle",
+   "talkable": true,
+   "say": [
+    "I know this fight. I learned it from her."
+   ]
+  }
+ ],
+ "player": {
+  "role": "traveler",
+  "pos": [
+   0.0,
+   5.2
+  ],
+  "facing": "up"
+ },
+ "fx": [],
+ "grades": {
+  "day": {
+   "fog_color": "#6a7e9c",
+   "sky_top": "#2a3a5a",
+   "sky_bottom": "#9cb4d4",
+   "hemi_sky": "#c8d6ec",
+   "saturation": 0.95,
+   "bugs": 0.0,
+   "warmth": -0.05,
+   "exposure": 0.82,
+   "sun_intensity": 1.0,
+   "hemi_intensity": 0.7,
+   "sun_color": "#e8f0ff",
+   "lamp_intensity": 0.85
+  },
+  "dusk": {
+   "fog_color": "#1c2848",
+   "sky_top": "#0c1430",
+   "sky_bottom": "#34508c",
+   "exposure": 0.95,
+   "sun_intensity": 0.6,
+   "warmth": -0.1,
+   "sun_color": "#8cb0f0",
+   "bugs": 0.5
+  },
+  "night": {
+   "fog_color": "#0c1428",
+   "sky_top": "#050a1c",
+   "sky_bottom": "#1b2a4a",
+   "hemi_sky": "#5c7cb0",
+   "bugs": 1.0,
+   "exposure": 1.0,
+   "sun_intensity": 0.4,
+   "hemi_intensity": 0.55,
+   "sun_color": "#7ea0e0"
+  }
+ },
+ "game": {
+  "id": "nf_home",
+  "title": "The Quiet Shore",
+  "exits": [
+   {
+    "rect": [
+     -1.5,
+     7.2,
+     1.5,
+     8.0
+    ],
+    "to": "niflheim",
+    "spawn": "from_shore",
+    "label": "the path back to Mistmere"
+   }
+  ],
+  "portals": [],
+  "spawns": {
+   "start": [
+    0.0,
+    5.2,
+    "up"
+   ],
+   "from_town": [
+    0.0,
+    6.6,
+    "up"
+   ],
+   "qa": [
+    0.0,
+    5.2,
+    "up"
+   ],
+   "shore": [
+    0.0,
+    0.4,
+    "up"
+   ],
+   "grave": [
+    0.0,
+    -2.2,
+    "up"
+   ],
+   "house": [
+    5.0,
+    -1.0,
+    "left"
+   ]
+  }
+ }
+}

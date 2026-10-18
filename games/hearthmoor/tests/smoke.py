@@ -1812,6 +1812,15 @@ def run(out, simscale=4, size=(960, 540), segs=SEGS):
                 rep["pass"] = False
                 rep["error"] = f"muspelheim: {e}"[:400]
         # [MUSPELHEIM] end
+        # [NIFLHEIM] begin: the Niflheim realm (tests/smoke_niflheim.py), own context again
+        if rep["pass"]:
+            try:
+                import smoke_niflheim  # noqa: E402
+                smoke_niflheim.steps(b, url, T, size, errors, rep, STUB, out)
+            except Exception as e:  # noqa: BLE001
+                rep["pass"] = False
+                rep["error"] = f"niflheim: {e}"[:400]
+        # [NIFLHEIM] end
         # ---------------------------------------------------------- v1 save migration (old saves still load)
         if rep["pass"] and "E" in segs:
             seg_mark("E")
