@@ -682,7 +682,7 @@ export class Niflheim {
              actors: c ? c.actors.list.map((a) => a.id || a.role) : [], fx: this.fx.length, lights: this.lights.length, gold: S.gold || 0 };
   }
 }
-export const BOSS_AT = { colossus: [0, -52.0], kael: [0, -41.4], veyra: [0, -2.4] };   // F5 (zc -56, pack stand +4.0), F9 (zc -42, pack +0.6), frozen_rift (platform centre -2.4)
+export const BOSS_AT = { colossus: [0, -52.0], kael: [0, -41.4], veyra: [0, -0.8] };   // F5 (zc -56, pack stand +4.0), F9 (zc -42, pack +0.6), frozen_rift (platform centre -2.4)
 
 // ------------------------------------------------------------------ the Frozen Spire (story 7) and the Crown of Ice (8.1)
 // frozenspire = F1 (zc 0), F2 (-14), F3 (-28), F4 (-42), F5 (-56); frozenspire2 = F6 (0), F7 (-14), F8 (-28), F9 (-42), F10 (-56). Rooms are zones of one long corridor each (like the Caldera).

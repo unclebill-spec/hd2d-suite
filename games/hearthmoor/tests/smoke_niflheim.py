@@ -213,7 +213,7 @@ def steps(b, url, T, size, errors, rep, stub=None, shots=None):
             frames(6); ok = nf("qaBossState()")["which"] == which   # F5's own trigger (z < -47) starts the Colossus on arrival; otherwise start it through qaBoss
             ok = ok or nf(f"qaBoss('{which}', null)"); frames(4); st = nf("qaBossState()")
             T.step(f"{which}: spawns in {ar} framed at {B[which]['scale']}x in phase 1 with its own sheet role", ok and st["which"] == which and st["framed"] and st["scale"] == B[which]["scale"] and st["phase"] in (0, 1) and st["role"] == which, st=st)
-            T.shot(f"boss_{which}_p1")
+            frames(80); T.shot(f"boss_{which}_p1")
             nf(f"qaHp('{which}', {hp_steps[0]})"); st = nf("qaTick(0.1, 3)"); frames(4)
             T.step(f"{which}: phase 2 at 60 % ({'core exposed, two ice golems' if which == 'colossus' else 'three mist bats'})", st["p2"] and st["phase"] == 2 and (("co_g0" in st["ids"] and "co_g1" in st["ids"]) if which == "colossus" else st["bats"] == 3), st=st)
             T.shot(f"boss_{which}_p2")
@@ -227,7 +227,7 @@ def steps(b, url, T, size, errors, rep, stub=None, shots=None):
         frames(6); ok = nf("qaBossState()")["which"] == "veyra"   # the Crown's own trigger (z < 8.6) may already have started her
         ok = ok or nf("qaBoss('veyra', null)"); frames(4); st = nf("qaBossState()")
         T.step("Veyra: spawns on the Crown framed at 5x in phase 1 (three mist clones, her own breath)", ok and st["which"] == "veyra" and st["framed"] and st["scale"] == 5 and st["clones"] == 3 and st["role"] == "veyra_p1", st=st)
-        T.shot("boss_veyra_p1")
+        frames(80); T.shot("boss_veyra_p1")
         nf("qaHp('veyra', 0.6)"); st = nf("qaTick(0.1, 3)"); frames(4)
         T.step("Veyra P2 (70 %): the four portals freeze and the clones are gone", st["phase"] == 2 and st["p2"] and st["portals"] == [1, 1, 1, 1] and st["role"] == "veyra_p2", st=st)
         T.shot("boss_veyra_p2")
