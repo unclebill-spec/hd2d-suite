@@ -320,6 +320,7 @@ def layout_place(area):
 LAMP_CAP = {"cold_lantern": 3.0, "lantern_post": 3.0, "cold_brazier": 2.8, "glow_pool": 3.0, "ice_arch": 3.2, "aurora_lamp": 3.0, "rune_gate": 2.6, "glow_orb": 2.4, "shrine_lamp": 2.6,
             "rune_pillar": 2.5, "fish_stall": 3.0, "elk_paddock": 3.0, "grave_stone": 2.6, "ashmantle_house": 3.0, "spire_door": 4.0, "freeze_core": 3.5, "frozen_portal": 4.0}   # GUESSED piece names
 LAMP_CAP["ice_lake"] = 2.2   # the two lake-edge pools in the Quiet Shore blew the snow floor to 255 (check_scene no_bloom, night)
+NO_LIGHT = {("nf_home", "ice_lake")}   # lamps kept as glow sprites but not real point lights (the engine gives the first 7-8 lamps real lights; the lake pair sat first and blew the snow to 255: check_scene no_bloom)
 EXTRA_CAP = {"nf_home": 3.5}   # the pack's extra pools (not the ambient fill, range >= 9) capped per area when check_scene's no_bloom names one
 LAMP_CAP_AREA = {a: dict(LAMP_CAP) for a in PLANNED}
 # per-area tightening goes here when check_scene's colour check (crop colours / source colours <= 2) names a lamp beside a few-colour sprite.
@@ -406,7 +407,7 @@ def place(area):
         mk = pc["markers"]
         for lp in ([] if extra.get("hidden") else mk.get("lamps", [])):   # a hidden piece (cairn_toppled) is lit at runtime when the game shows it
             sc["lamps"].append({"pos": [x + lp[0], y + lp[1], z + lp[2]], "range": min(mk.get("lamp_range", 5.0), LAMP_CAP_AREA[area].get(name, 9.0)) if area in LAMP_CAP_AREA else mk.get("lamp_range", 5.0), "kind": name,
-                                "color": mk.get("lamp_color", "#3fb8ff"), "fixed": mk.get("lamp_fixed", 0.5), "nifl_art": True})
+                                "color": mk.get("lamp_color", "#3fb8ff"), "fixed": mk.get("lamp_fixed", 0.5), "nifl_art": True, **({"light": False} if (area, name) in NO_LIGHT else {})})
         print(f"  {area}: {name} at ({x}, {z})")
     for (lx, ly, lz), col, rng, fix in layout_lights(area):   # the pack's extra pools of light (cold blue, teal, aurora, violet and the warm lantern / window every 6-8 m)
         if rng < 9.0: rng = min(rng, EXTRA_CAP.get(area, 99.0))
