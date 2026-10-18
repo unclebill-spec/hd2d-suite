@@ -210,7 +210,8 @@ def steps(b, url, T, size, errors, rep, stub=None, shots=None):
         # ---- the three bosses in their own areas (real sheets, BOSS_AT positions): Colossus F5, Kael F9, Veyra on the Crown. A role swap per phase inside one sheet (README decision 1).
         for which, ar, spn, hp_steps in (("colossus", "frozenspire", "f5", (0.5, 0.2)), ("kael", "frozenspire2", "f9", (0.5, 0.2))):
             a = load(ar, "&nfq=revealed", spawn=spn)
-            ok = nf(f"qaBoss('{which}', null)"); frames(4); st = nf("qaBossState()")
+            frames(6); ok = nf("qaBossState()")["which"] == which   # F5's own trigger (z < -47) starts the Colossus on arrival; otherwise start it through qaBoss
+            ok = ok or nf(f"qaBoss('{which}', null)"); frames(4); st = nf("qaBossState()")
             T.step(f"{which}: spawns in {ar} framed at {B[which]['scale']}x in phase 1 with its own sheet role", ok and st["which"] == which and st["framed"] and st["scale"] == B[which]["scale"] and st["phase"] in (0, 1) and st["role"] == which, st=st)
             T.shot(f"boss_{which}_p1")
             nf(f"qaHp('{which}', {hp_steps[0]})"); st = nf("qaTick(0.1, 3)"); frames(4)
@@ -223,7 +224,8 @@ def steps(b, url, T, size, errors, rep, stub=None, shots=None):
             T.ev("(() => { const C = window.__hm.combat, c = window.__hd2d.ctx; for (const e of C.enemies) c.removeNpc(e.a); C.enemies = []; })()")
         T.step("Kael's fall sets fs_boss and moves The Frozen Spire to stage 2", T.ev("window.__hm.S.flags.fs_boss === 1") and sv()["quests"]["frozenspire"] == 2, q=sv()["quests"])
         a = load("frozen_rift", "&nfq=revealed", spawn="landing")
-        ok = nf("qaBoss('veyra', null)"); frames(4); st = nf("qaBossState()")
+        frames(6); ok = nf("qaBossState()")["which"] == "veyra"   # the Crown's own trigger (z < 8.6) may already have started her
+        ok = ok or nf("qaBoss('veyra', null)"); frames(4); st = nf("qaBossState()")
         T.step("Veyra: spawns on the Crown framed at 5x in phase 1 (three mist clones, her own breath)", ok and st["which"] == "veyra" and st["framed"] and st["scale"] == 5 and st["clones"] == 3 and st["role"] == "veyra_p1", st=st)
         T.shot("boss_veyra_p1")
         nf("qaHp('veyra', 0.6)"); st = nf("qaTick(0.1, 3)"); frames(4)
