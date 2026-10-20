@@ -135,7 +135,25 @@ class Smoke:
         return self.ev("JSON.parse(JSON.stringify(window.__hm.S))")
 
     def wait(self, js, timeout=90):
-        self.pg.wait_for_function(js, timeout=timeout * 1000)
+        try:
+            self.pg.wait_for_function(js, timeout=timeout * 1000)
+        except Exception:
+            self.dump_timeout(js)
+            raise
+
+    def dump_timeout(self, js):
+        """on a wait timeout: log the predicate's parts, page state, recent JS errors and a screenshot (diagnosis only; the wait still fails)"""
+        try:
+            st = self.pg.evaluate("""() => { const G = window.__hm, H = window.__hd2d; return { href: location.href, hm: !!G, area: G && G.area, busy: G && G.busy,
+              ready: G && G.ready, title: G && !!G.title, hd2d: !!H, h_ready: H && H.ready, frames: H && H.frames, gate: window.__hd2dGate && window.__hd2dGate.loading,
+              errs: H && H.errors ? H.errors.slice(-5).map(String) : null, boot: (document.getElementById('boot') || {}).textContent }; }""")
+        except Exception as e:  # noqa: BLE001
+            st = f"state unavailable: {e}"
+        self.log(f"  [TIMEOUT] waiting for {js[:160]} -> {json.dumps(st, default=str)[:900]}")
+        try:
+            self.shot(f"timeout_{time.strftime('%H%M%S')}")
+        except Exception:  # noqa: BLE001
+            pass
 
     def until(self, js, timeout=150):
         """wait for a condition that depends on GAME time (storm / rift / gust / vent timers, pad polls): the game clock runs slow on a
