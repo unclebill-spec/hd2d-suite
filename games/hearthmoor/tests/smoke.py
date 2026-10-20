@@ -176,13 +176,13 @@ class Smoke:
                 raise AssertionError(f"no npc {npc_id} in {self.ev('window.__hm.area')}")
             self.walk(a[0] + off[0], a[1] + off[1])
             self.pg.keyboard.press("e")
-            self.pg.wait_for_timeout(250)
+            self.until("!!window.__hm.dlg", 2)   # was a fixed 250 ms: the E press has opened a dialogue (or 2 s: it did not, try the next spot)
             who = self.ev("window.__hm.dlg ? window.__hm.dlg.npc.id : null")
             self.tries = getattr(self, "tries", [])[-5:] + [{"who": who, "near": self.ev(f"(() => {{ const c = window.__hm.ctx, n = c.nearestNpc(), a = c.npc('{npc_id}'); return {{ n: n && n.id, vis: a && a.quad && a.quad.visible, noTalk: a && !!a.noTalk, talkable: a && !!a.talkable, say: a && !!a.say, prompt: (document.getElementById('prompt') || {{}}).textContent }}; }})()")}]
             if who == npc_id:
                 break
             while self.ev("!!window.__hm.dlg"):
-                self.pg.keyboard.press("Escape"); self.pg.wait_for_timeout(100)
+                self.pg.keyboard.press("Escape"); self.until("!window.__hm.dlg", 2)
         else:
             st = self.ev(f"(() => {{ const G = window.__hm, c = G.ctx, p = c.player, a = c.npc('{npc_id}'); return {{ p: [p.x, p.z, p.y].map((v) => +v.toFixed(2)), a: a && [a.x, a.z, a.y], busy: !!G.busy, walking: c.walking(), prompt: (document.getElementById('prompt') || {{}}).textContent }}; }})()")
             raise AssertionError(f"could not talk to {npc_id}: {st} tries={getattr(self, 'tries', [])}")
@@ -196,20 +196,26 @@ class Smoke:
     def to_choice(self, n=80):
         """read a dialogue up to its choice page without ever pressing E on it (E there would pick an answer)"""
         for _ in range(n):
-            st = self.ev("(() => { const d = window.__hm.dlg; return d ? [d.picking, d.full, d.i === d.pages.length - 1] : null; })()")
+            st = self.ev("(() => { const d = window.__hm.dlg; return d ? [d.picking, d.full, d.i === d.pages.length - 1, d.i] : null; })()")
             if not st:
                 return None
             if st[0]:
                 return self.ev("window.__hm.dlgChoice()")
             if st[2]:
-                self.pg.wait_for_timeout(200); continue   # the last page types itself out, then the answers appear
-            self.pg.keyboard.press("e"); self.pg.wait_for_timeout(160)
+                self.until("!window.__hm.dlg || window.__hm.dlg.picking", 3); continue   # the last page types itself out, then the answers appear
+            self.pg.keyboard.press("e"); self.until(self.DLG_MOVED % (st[3], "true" if st[1] else "false"), 3)
         return None
+
+    # the E press was seen: the dialogue closed, turned a page, or finished typing (replaces fixed 140-250 ms pauses)
+    DLG_MOVED = "(() => { const d = window.__hm.dlg; return !d || d.i !== %s || !!d.full !== %s || !!d.picking; })()"
 
     def read_all(self):
         n = 0
-        while self.ev("!!window.__hm.dlg") and n < 40:
-            self.pg.keyboard.press("e"); self.pg.wait_for_timeout(140); n += 1
+        while n < 40:
+            st = self.ev("(() => { const d = window.__hm.dlg; return d ? [d.i, d.full] : null; })()")
+            if not st:
+                break
+            self.pg.keyboard.press("e"); self.until(self.DLG_MOVED % (st[0], "true" if st[1] else "false"), 3); n += 1
 
     # ---------------------------------------------------------- controller (stubbed navigator.getGamepads)
     def btn(self, i, hold=120):
@@ -399,9 +405,9 @@ def run(out, simscale=4, size=(960, 540), segs=SEGS):
                 detail = T.ev("document.getElementById('heroDetail').textContent")
                 T.step("hero picker: 6 starters with origin, mortal / demigod, blurb; arrows choose", cards == ["Wildcaller", "Runeguard", "Seer", "Stormborn", "Grovekeeper", "Cinderknight"]
                        and sel == "stormborn" and "Child of thunder" in detail and "demigod" in detail and "Chain Lightning" in detail, cards=cards, sel=sel)
-                pg.keyboard.press("m"); pg.wait_for_timeout(150)
+                pg.keyboard.press("m"); T.until("window.__hm.picker.state().mode === 'hero'", 5)
                 m1, tip = T.ev("window.__hm.picker.state().mode"), T.ev("document.getElementById('pickModeTip').textContent")
-                pg.keyboard.press("m"); pg.keyboard.press("m"); pg.wait_for_timeout(150)
+                pg.keyboard.press("m"); pg.keyboard.press("m"); T.until("window.__hm.picker.state().mode === 'adventurer'", 5)
                 T.step("hero picker: M cycles the mode (Story / Adventurer / Hero) with a tip", m1 == "hero" and "Hero mode" in tip
                        and T.ev("window.__hm.picker.state().mode") == "adventurer", mode=m1)
                 pg.click("#btnBegin")
@@ -507,7 +513,7 @@ def run(out, simscale=4, size=(960, 540), segs=SEGS):
                 T.talk("innkeeper", keep_open=True); ch = T.to_choice()
                 seeds0 = T.ev("window.__hm.S.inv.glowseed || 0")
                 rep["shots"]["dialogue_choice"] = T.shot("dialogue_choice")
-                pg.click("#dlgChoices .choice[data-i='2']"); pg.wait_for_timeout(300)
+                pg.click("#dlgChoices .choice[data-i='2']"); T.until("!window.__hm.dlg || !window.__hm.dlg.picking", 5)
                 reply = T.ev("window.__hm.dlg ? window.__hm.dlg.pages[0] : ''"); T.read_all()
                 T.step("dialogue choices: Bram asks who your Lantern Eve lantern is for (4 answers); clicking one sets a flag and gives that gift",
                        bool(ch) and len(ch["options"]) == 4 and ch["ci"] == 0 and T.ev("window.__hm.S.flags.lantern") == "lost"
@@ -518,7 +524,7 @@ def run(out, simscale=4, size=(960, 540), segs=SEGS):
                 T.talk("herbalist", keep_open=True)
                 pg.wait_for_timeout(1200)
                 pg.keyboard.press("j")
-                pg.wait_for_timeout(500)
+                T.until("!document.getElementById('log').hidden && !document.getElementById('dlg').hidden", 5)
                 T.step("quest log opens over the dialogue", T.ev("!document.getElementById('log').hidden && !document.getElementById('dlg').hidden"))
                 rep["shots"]["dialogue_questlog"] = T.shot("dialogue_questlog")
                 pg.keyboard.press("j")
@@ -535,7 +541,7 @@ def run(out, simscale=4, size=(960, 540), segs=SEGS):
                 pg.wait_for_timeout(500)
                 T.step("spell cast key (F) still works", casting or T.ev(near) > n0, cast=cast, casting=casting)
                 # ---------------------------------------------------------- Bluetooth controller (standard mapping, stubbed)
-                T.ev("__padPlug(true)"); pg.wait_for_timeout(700)
+                T.ev("__padPlug(true)"); T.until("document.getElementById('toast').textContent.includes('controller connected') && !document.getElementById('toast').hidden", 10)
                 T.step("controller hot-plug: 'controller connected' toast", "controller connected" in T.ev("document.getElementById('toast').textContent")
                        and T.ev("!document.getElementById('toast').hidden"))
                 pa = T.pos()
@@ -735,14 +741,14 @@ def run(out, simscale=4, size=(960, 540), segs=SEGS):
                 pools = T.ev("window.__hm.glow.pools.length"); glows = T.ev("window.__hm.ctx.glows.filter((g) => isFinite(g.life)).length")
                 T.step("glow pass: the spell leaves a light pool (decal + glitter + point light)", pools > 0 and glows > 0, pools=pools, glows=glows)
                 t_keep = T.ev("window.__hd2d.clock.t")
-                T.ev("window.__hd2d.setTime(0.95)"); pg.wait_for_timeout(500)
+                T.ev("window.__hd2d.setTime(0.95)"); T.until("window.__hm.glow.toads.length === 6", 10)
                 toads = T.ev("window.__hm.glow.toads.length")
                 T.ev("(() => { const c = window.__hm.ctx, p = c.player, t = window.__hm.glow.toads[0]; p.x = t.x + 0.6; p.z = t.z + 0.3; p.y = c.heightAt(p.x, p.z); c.stopWalk(); })()")
                 pg.wait_for_timeout(400)
                 lit = T.ev("window.__hm.glow.lit && !document.getElementById('litTag').hidden")
                 shy = T.ev("(() => { const g = window.__hm.glow, t = g.toads[0]; return g.litAt(t.x, t.z) && !g.litAt(t.x + 3, t.z + 3); })()")
                 T.step("night: toadstools glow, standing by one makes you glowlit (light zones)", toads == 6 and lit and shy, toads=toads, lit=lit)
-                T.ev("window.__hd2d.setTime(0.5)"); pg.wait_for_timeout(500)   # midday (t_keep itself may already be night)
+                T.ev("window.__hd2d.setTime(0.5)"); T.until("window.__hm.glow.toads.length === 0", 10)   # midday (t_keep itself may already be night)
                 T.step("dawn: the toadstools dither away", T.ev("window.__hm.glow.toads.length") == 0)
                 T.ev(f"window.__hd2d.setTime({t_keep if 0.25 < t_keep < 0.8 else 0.5})"); pg.wait_for_timeout(200)
                 # ---------------------------------------------------------- loot, gear page, faint penalty, modes
@@ -1370,7 +1376,7 @@ def run(out, simscale=4, size=(960, 540), segs=SEGS):
                 p0 = T.pos()
                 T.ev("(() => { const c = window.__hm.ctx, p = c.player; p.x = 0; p.z = 3.0; p.y = c.heightAt(0, 3.0); c.stopWalk(); })()"); pg.wait_for_timeout(500)
                 cv = T.ev("(() => { const r = document.getElementById('view').getBoundingClientRect(); return [r.left + r.width * 0.42, r.top + r.height * 0.42]; })()")
-                pg.mouse.click(cv[0], cv[1]); pg.wait_for_timeout(300)
+                pg.mouse.click(cv[0], cv[1]); T.until("window.__hm.ctx.walking()", 5)
                 walking = T.ev("window.__hm.ctx.walking()")
                 T.wait("!window.__hm.ctx.walking()", 60); p1 = T.pos()
                 T.walk(7.6, 5.4); pe = T.pos(); edge = round(((pe[0]) ** 2 + (pe[1] + 1.0) ** 2) ** 0.5, 2)
@@ -1378,7 +1384,7 @@ def run(out, simscale=4, size=(960, 540), segs=SEGS):
                        walking and abs(p1[0]) + abs(p1[1] - 3.0) > 0.8 and 6.0 < edge < 7.55, p1=p1, edge=edge)
                 T.ev("(() => { const c = window.__hm.ctx, p = c.player; p.x = -3.4; p.z = -4.9; p.y = c.heightAt(-3.4, -4.9); c.stopWalk(); })()"); pg.wait_for_timeout(400)
                 pr = T.ev("document.getElementById('prompt').textContent")
-                T.btn(0); pg.wait_for_timeout(300)
+                T.btn(0); T.until("!!window.__hm.dlg", 5)
                 who = T.ev("window.__hm.dlg ? window.__hm.dlg.npc.id : null"); txt = T.ev("window.__hm.dlg ? window.__hm.dlg.pages[0] : ''")
                 n = 0
                 while T.ev("!!window.__hm.dlg") and n < 10:
@@ -1392,7 +1398,7 @@ def run(out, simscale=4, size=(960, 540), segs=SEGS):
                        and T.ev("window.__hm.ctx.fx.gate_rift.name") == "rift_vortex", enemies=en)
                 T.talk("warden", keep_open=True); ch = T.to_choice()
                 rep["shots"]["alliance_choice"] = T.shot("alliance_choice")
-                pg.keyboard.press("1"); pg.wait_for_timeout(300)
+                pg.keyboard.press("1"); T.until("!window.__hm.dlg || !window.__hm.dlg.picking", 5)
                 reply = T.ev("window.__hm.dlg ? window.__hm.dlg.pages[0] : ''"); T.read_all()
                 T.step("the spring-warden asks what you are to Vanaheim (befriend / conquer / not now); key 1 befriends: the alliance flag is set",
                        bool(ch) and len(ch["options"]) == 3 and "friend" in ch["options"][0].lower() and "bow" in ch["options"][1].lower()
@@ -1437,7 +1443,7 @@ def run(out, simscale=4, size=(960, 540), segs=SEGS):
                 # keys: up the harbor stair; the Market Terraces gate is sealed, coming soon (E looks, the quest notes it)
                 T.walk(0.5, -10.2)
                 pr = T.ev("document.getElementById('prompt').textContent")
-                pg.keyboard.press("e"); pg.wait_for_timeout(300)
+                pg.keyboard.press("e"); T.until("!!window.__hm.dlg", 5)
                 who = T.ev("window.__hm.dlg ? window.__hm.dlg.npc.id : null"); txt = T.ev("window.__hm.dlg ? window.__hm.dlg.pages.join(' ') : ''")
                 T.read_all()
                 T.step("keys: up the harbor stair onto the 3 m terrace, E at the Market Terraces gate: sealed, coming soon; the quest notes it",
@@ -1460,11 +1466,11 @@ def run(out, simscale=4, size=(960, 540), segs=SEGS):
                 # the chandler's shop (her own stock)
                 T.talk("chandler")
                 sh = T.ev("[window.__hm.shop, window.__hm.shopUI.open, document.getElementById('shopName') ? document.getElementById('shopName').textContent : '']")
-                pg.keyboard.press("Escape"); pg.wait_for_timeout(300)
+                pg.keyboard.press("Escape"); T.until("!window.__hm.shop", 5)
                 T.step("Ida Wickmere the chandler opens Wickmere's Chandlery (tonics, glow seeds, a rift shard, harbor kit); Esc closes it", sh[0] is True and sh[1] == "harbor" and not T.ev("window.__hm.shop"), shop=sh)
                 # the hidden bubbly spring in the west corner, behind the crates: heals + spring-fizz, a first find is a secret (Gnome Council merit)
                 n0 = T.ev("window.__hm.S.merit.gnome")
-                T.walk(-16.4, -7.4); pg.wait_for_timeout(600)
+                T.walk(-16.4, -7.4); T.until("window.__hm.hollows.buffOn() && window.__hm.S.found.rh_spring === 1", 10)
                 T.step("the hidden spring behind the crates fizzes (spring-fizz buff); a first find is a secret: +40 Gnome Council merit",
                        T.ev("window.__hm.hollows.buffOn()") and T.ev("window.__hm.S.found.rh_spring") == 1 and T.ev("window.__hm.S.merit.gnome") - n0 == 40, merit=[n0, T.ev("window.__hm.S.merit.gnome")])
                 # mouse: click the waystone (walks up), click again (its travel choice), key 1 travels to Bakery Lane
@@ -1472,7 +1478,7 @@ def run(out, simscale=4, size=(960, 540), segs=SEGS):
                 def click_world(x, z):
                     s_ = T.ev(f"(() => {{ const c = window.__hd2d.ctx; return c.project({x}, c.heightAt({x}, {z}), {z}); }})()")
                     pg.mouse.click(s_["x"], s_["y"]); pg.wait_for_timeout(300)
-                click_world(15.0, -3.6); T.wait("!window.__hm.ctx.walking()", 60); pg.wait_for_timeout(300)
+                click_world(15.0, -3.6); T.wait("!window.__hm.ctx.walking()", 60); T.until("window.__hm.harbor.near()", 5)
                 near = T.ev("window.__hm.harbor.near()")
                 click_world(15.0, -3.6)
                 wc = T.to_choice()
@@ -1492,7 +1498,7 @@ def run(out, simscale=4, size=(960, 540), segs=SEGS):
                 # ---------------------------------------------------------- stage 6 part 1: Bifrost Crossing, by Sable's rift-skiff
                 T.walk(6.6, 4.6)
                 pr = T.ev("document.getElementById('prompt').textContent")
-                pg.keyboard.press("e"); pg.wait_for_timeout(300)
+                pg.keyboard.press("e"); T.until("!!window.__hm.dlg", 5)
                 fc = T.to_choice()
                 pg.keyboard.press("1")
                 T.wait("window.__hm.area === 'bifrost' && !window.__hm.busy", 90); T.idle(); pg.wait_for_timeout(600)
@@ -1526,7 +1532,7 @@ def run(out, simscale=4, size=(960, 540), segs=SEGS):
                 # keys: E at a sealed realm gate says why it is shut, the key it needs (a faction rank) and where you stand
                 T.walk(-6.6, -3.6)
                 pr = T.ev("document.getElementById('prompt').textContent")
-                pg.keyboard.press("e"); pg.wait_for_timeout(300)
+                pg.keyboard.press("e"); T.until("!!window.__hm.dlg", 5)
                 who = T.ev("window.__hm.dlg ? window.__hm.dlg.npc.id : null"); txt = T.ev("window.__hm.dlg ? window.__hm.dlg.pages.join(' ') : ''")
                 T.read_all()
                 T.step("keys: E at Svartalfheim's sealed gate (copper light): why it is shut, its key (Gnome Council at Trusted) and your standing",
@@ -1540,7 +1546,7 @@ def run(out, simscale=4, size=(960, 540), segs=SEGS):
                 # Vanaheim's vine gate now asks where to: the Rift Shrine or Bifrost Crossing; key 2 steps out of Bifrost's open gate
                 r = T.ev("window.__hm.ctx.scene.game.portals[0].rect")
                 T.ev(f"window.__hm.ctx.walkTo({(r[0] + r[2]) / 2}, {(r[1] + r[3]) / 2})")
-                T.wait("window.__hm.dlgChoice && window.__hm.dlgChoice()", 90); pg.wait_for_timeout(300)
+                T.wait("window.__hm.dlgChoice && window.__hm.dlgChoice()", 90)   # (was + a fixed 300 ms: the choice is already up)
                 vc = T.ev("window.__hm.dlgChoice()")
                 pg.keyboard.press("2")
                 T.wait("window.__hm.area === 'bifrost' && !window.__hm.busy", 90); T.idle(); pg.wait_for_timeout(400)
@@ -1555,7 +1561,7 @@ def run(out, simscale=4, size=(960, 540), segs=SEGS):
                 T.wait("window.__hm.area === 'lane' && !window.__hm.busy", 90); T.idle(); pg.wait_for_timeout(400)
                 a4 = T.ev("window.__hm.area")
                 T.walk(-13.4, 3.2)
-                pg.keyboard.press("e"); pg.wait_for_timeout(300)
+                pg.keyboard.press("e"); T.until("!!window.__hm.dlg", 5)
                 lc = T.to_choice()
                 pg.keyboard.press("1")
                 T.wait("window.__hm.area === 'ravenhold' && !window.__hm.busy", 90); T.idle(); pg.wait_for_timeout(400)

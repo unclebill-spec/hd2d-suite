@@ -79,9 +79,9 @@ def steps(b, url, T, size, errors, rep, stub=None, shots=None):
         T.step("Prism Vault: rooms gated, Lumi along, staging prism-shard sheet", a["gates"] is not None and a["lumi"]["on"]
                and T.ev("window.__hd2d.ctx.actors.meta.roles.prismshard.sheet === 'alfenemy'"), qa={"room": a["room"], "gates": a["gates"]})
         shot("alf_vault")
-        a = load("prismvault", "&alfq=vault&beams=solve", "p2"); pg.wait_for_timeout(800); a = alf()
+        a = load("prismvault", "&alfq=vault&beams=solve", "p2"); T.until("(() => { const b = window.__hm.alfheim.qa().beams; return !!(b && b.lit); })()", 10); a = alf()
         T.step("beams=solve lights the P2 receivers", bool(a["beams"] and a["beams"]["lit"]), beams=a["beams"])
-        a = load("prismvault", "&alfq=boss", "boss"); pg.wait_for_timeout(1500); a = alf()
+        a = load("prismvault", "&alfq=boss", "boss"); T.until("(() => { const s = window.__hm.alfheim.qa().sylvaine; return !!s && s.scale >= 5.5 && s.phase === 1; })()", 20); a = alf()
         sy = a["sylvaine"]
         T.step("Lady Sylvaine spawns at 6x on her own boss sheet", bool(sy) and sy["scale"] >= 5.5 and sy["phase"] == 1, sylvaine=sy)
         shot("alf_sylvaine")
