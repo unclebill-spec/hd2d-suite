@@ -75,9 +75,15 @@ def steps(b, url, T, size, errors, rep, stub=None, shots=None, only=""):
             a = load(ar, "&asq=named")
             ex = set(a["exits"]) | set(a["portals"])
             T.step(f"{ar} loads (Asgard module attached) with its exits {sorted(EXITS[ar])}", a["area"] == ar and EXITS[ar] <= ex, exits=sorted(ex), actors=a["actors"][:12])
+            rep.setdefault("shots", {})[f"area_{ar}"] = T.shot(f"area_{ar}")
         T.step("no JS errors loading the five Asgard areas", not errors, errs=errors[-4:])
         if only == "load":
             return
+        # ---- pictures: the Reliquary room by room (G1-G9)
+        for ar, rooms in (("reliquary", ("g1", "g2", "g3", "g4", "g5")), ("reliquary2", ("g6", "g7", "g8", "g9"))):
+            for g in rooms:
+                load(ar, "&asq=done&g7safe", spawn=g)
+                rep["shots"][f"room_{g}"] = T.shot(f"room_{g}")
         # ---- file level: each spec has a 1 m+ ledge with a stair and three grades
         spec_ok = True
         for ar in AREAS5:
@@ -100,7 +106,7 @@ def steps(b, url, T, size, errors, rep, stub=None, shots=None, only=""):
         r = asg("qaTalk('envoy_as')")
         T.step("Bifrost: Ingrith offers The Named Ally at Embassy rank 3", sv()["quests"]["as_gate"] == 1, r=r)
         asg("qaSpot('ag_witness')"); fin(); asg("qaSpot('ag_witness')"); fin()
-        T.step("two envoys witness (ag_w1, ag_w2)", T.ev("!!(window.__hm.S.flags.ag_w1 && window.__hm.S.flags.ag_w2)"))
+        T.check("two envoys witness (ag_w1, ag_w2)", "!!(window.__hm.S.flags.ag_w1 && window.__hm.S.flags.ag_w2)")
         asg("qaSpot('ag_name')"); fin()
         T.wait("window.__hm && window.__hm.area === 'asgard' && window.__hd2d.ready && !window.__hm.busy", 150); T.idle(); frames(6)
         ok = until("window.__hm.asg.cb.ag_sentinel !== undefined", 60)
@@ -169,7 +175,7 @@ def steps(b, url, T, size, errors, rep, stub=None, shots=None, only=""):
         T.step("at the Reliquary door Sigrun joins (stage 3, companions.sigrun)", sv()["quests"]["as_sigrun"] == 3 and "sigrun" in sv()["companions"], c=sv()["companions"])
         asg("qaSpot('rq_door')"); fin()
         T.wait("window.__hm && window.__hm.area === 'reliquary' && window.__hd2d.ready && !window.__hm.busy", 150); T.idle(); frames(4)
-        T.step("befriend: the Lord-Warden's word opens the door into the Reliquary", T.ev("window.__hm.area") == "reliquary")
+        T.check("befriend: the Lord-Warden's word opens the door into the Reliquary", "window.__hm.area === 'reliquary'")
         # ---- the Storm Sentinel Prime (G4)
         load("reliquary", "&asq=reliquary", spawn="g4")
         frames(6); ok = asg("qaBossState()")["which"] == "sentinelprime" or asg("qaBoss('sentinelprime', null)"); frames(4)
@@ -198,7 +204,7 @@ def steps(b, url, T, size, errors, rep, stub=None, shots=None, only=""):
         g = asg("qaG7()"); g1 = asg("qaG7Beat(1)")
         T.step("G7: the lit rune set alternates on the beat", "beat" in g and g1["set"] != g["set"], g=g, g1=g1)
         S("window.__hd2d.ctx.player.z = -19.6; return 1;"); asg("qaG7Beat(1)")
-        T.step("G7: past the far end the bridge is done (gr_g7)", sv()["flags"]["gr_g7"])
+        T.check("G7: past the far end the bridge is done (gr_g7)", "!!window.__hm.S.flags.gr_g7")
         a = load("reliquary2", "&asq=reliquary", spawn="g9")
         frames(6); ok = asg("qaBossState()")["which"] == "aurelion" or asg("qaBoss('aurelion', null)"); frames(4)
         st = asg("qaBossState()")
@@ -222,9 +228,9 @@ def steps(b, url, T, size, errors, rep, stub=None, shots=None, only=""):
         S("Object.assign(S.flags, { gr_flame: 1, gr_boss: 1, aurelion_rest: 1 }); S.quests.reliquary = 2; S.inv.dawn_flame = 1; return 1;")
         asg("qaTalk('priestess')"); frames(2)
         f = sv()["flags"]
-        T.step("the flame comes home (flame_home, as_resolved, reliquary 3)", f["flame_home"] and f["as_resolved"] and sv()["quests"]["reliquary"] == 3, f=f)
+        T.check("the flame comes home (flame_home, as_resolved, reliquary 3)", "(() => { const f = window.__hm.S.flags; return !!(f.flame_home && f.as_resolved) && window.__hm.S.quests.reliquary === 3; })()", f=f)
         a = load("gs_hall", "&asq=done", spawn="seat")
-        T.step("Aurelion's statue stands in the Thunder Hall (aurelion_rest role)", T.ev("!!window.__hd2d.ctx.actors.list.find((a) => a.id === 'aurelion' && a.role === 'aurelion_rest')"), actors=a["actors"])
+        T.check("Aurelion's statue stands in the Thunder Hall (aurelion_rest role)", "!!window.__hd2d.ctx.actors.list.find((a) => a.id === 'aurelion' && a.role === 'aurelion_rest')", actors=a["actors"])
         T.shot("gs_hall_statue")
         T.step("no JS errors in the Asgard run", not [e for e in errors if "asgard" in e.lower() or "PAGEERROR" in e], errs=errors[-4:])
     except Exception:
