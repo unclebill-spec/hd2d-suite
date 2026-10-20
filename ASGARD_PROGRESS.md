@@ -9,7 +9,7 @@
 ## Areas
 | Area | Spec | Built | check_scene | Committed |
 |---|---|---|---|---|
-| asgard | yes | yes | - | - |
+| asgard | yes | yes | PASS | yes |
 | gs_hall | yes | yes | - | - |
 | gs_temple | yes | yes | - | - |
 | reliquary (G1-G5) | yes | yes | - | - |
