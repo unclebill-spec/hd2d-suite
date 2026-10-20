@@ -298,8 +298,9 @@ def layout_place(area):
 # Lamps dimmed in reach so they do not tint the few-colour sprites standing near them (check_scene colours) or blow the marble to 255 (no_bloom). Tune from check_scene.
 LAMP_CAP = {}
 NO_LIGHT = set()   # (area, piece): lamps kept as glow sprites but not real point lights
-EXTRA_CAP = {}     # area -> cap for the pack's extra pools (range < 9)
+EXTRA_CAP = {"gs_temple": 4.0}     # area -> cap for the pack's extra pools (range < 9). gs_temple: the violet window pools stacked on the window lamps (check_scene no_bloom, night)
 LAMP_CAP_AREA = {a: dict(LAMP_CAP) for a in PLANNED}
+LAMP_CAP_AREA["gs_temple"]["temple_window"] = 3.0   # the six violet windows clipped the night frame (check_scene no_bloom)
 # per-area tightening goes here when check_scene's colour check names a lamp beside a few-colour sprite.
 
 

@@ -90,7 +90,7 @@ temple = base(
     [t, WALL("wall_w", [-30, -30, -8.2, 13]), WALL("wall_e", [8.2, -30, 30, 13]), WALL("wall_n", [-30, -30, 30, -10.2]), {"name": "wall_s", "rect": [-12, 8.6, 12, 30], "h": 1.0, "top": "stone", "coping": True}],
     [s],
     [npc("priestess", "innkeeper", "Priestess Sunna Dawnward", [2.4, -3.0], "down", "The dawn has never gone out. Someone carried it away."),
-     npc("as_guide", "elffolk", "Orla", [-3.0, 1.4], "right", "I sweep the undercroft. I know every door down there.")],
+     npc("as_guide", "elffolk", "Orla", [-5.0, 3.8], "right", "I sweep the undercroft. I know every door down there.")],
     {"role": "traveler", "pos": [0.0, 5.2], "facing": "up"},
     {"id": "gs_temple", "title": "The Dawn Temple",
      "exits": [{"rect": [-1.5, 7.2, 1.5, 8.0], "to": "asgard", "spawn": "from_temple", "label": "back down to the Goldspire terraces"}], "portals": [],
