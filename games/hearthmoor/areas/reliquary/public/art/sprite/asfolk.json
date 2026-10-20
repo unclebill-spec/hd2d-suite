@@ -1,0 +1,314 @@
+{
+ "tool": "hd2d boss_sheet (niflheim big frames)",
+ "biome": "cozy-village",
+ "frame": [
+  40,
+  44
+ ],
+ "pivot": [
+  20,
+  44
+ ],
+ "ground_row": 43,
+ "facings": [
+  "down",
+  "up",
+  "left",
+  "right"
+ ],
+ "anims": {
+  "idle": {
+   "start": 0,
+   "count": 4,
+   "fps": 3,
+   "loop": [
+    0,
+    1,
+    2,
+    1
+   ],
+   "blink": 3
+  },
+  "walk": {
+   "start": 4,
+   "count": 4,
+   "fps": 8
+  },
+  "cast": {
+   "start": 8,
+   "count": 4,
+   "fps": 6,
+   "loop": [
+    0,
+    1,
+    2,
+    2,
+    3,
+    3
+   ],
+   "casters_only": true
+  },
+  "attack": {
+   "start": 12,
+   "count": 4,
+   "fps": 10,
+   "loop": [
+    0,
+    1,
+    2,
+    2,
+    3
+   ],
+   "heroes_only": true
+  },
+  "defend": {
+   "start": 16,
+   "count": 4,
+   "fps": 6,
+   "loop": [
+    0,
+    1
+   ],
+   "hold": [
+    2,
+    3
+   ],
+   "heroes_only": true
+  },
+  "jump": {
+   "start": 20,
+   "count": 4,
+   "fps": 8,
+   "phases": [
+    "crouch",
+    "launch",
+    "airborne",
+    "land"
+   ],
+   "heroes_only": true
+  },
+  "die": {
+   "start": 24,
+   "count": 4,
+   "fps": 6,
+   "once": true,
+   "enemies_only": true
+  }
+ },
+ "cols": 12,
+ "size": [
+  480,
+  1408
+ ],
+ "image": "asfolk.png",
+ "roles": {
+  "envoy_as": {
+   "row": 0,
+   "kind": "human",
+   "scale": 1.0,
+   "desc": "Envoy Ingrith Goldrune (1x): cream tunic, belted blue trousers, gold-buckled belt, a gold-pinned blue cloak.",
+   "anims": [
+    "idle",
+    "walk"
+   ],
+   "size_bounds": [
+    [
+     10,
+     38
+    ],
+    [
+     8,
+     44
+    ]
+   ],
+   "caster": false,
+   "named": true,
+   "stats_hint": {
+    "tier": "npc",
+    "height_x_player": 1.0
+   }
+  },
+  "lordwarden": {
+   "row": 4,
+   "kind": "human",
+   "scale": 1.0,
+   "desc": "Lord-Warden Hallgerd Sunmantle (1x): wine-red tunic, belted trousers, white fur mantle, rune circlet, short beard.",
+   "anims": [
+    "idle",
+    "walk"
+   ],
+   "size_bounds": [
+    [
+     10,
+     38
+    ],
+    [
+     8,
+     44
+    ]
+   ],
+   "caster": false,
+   "named": true,
+   "stats_hint": {
+    "tier": "npc",
+    "height_x_player": 1.0
+   }
+  },
+  "runemaster": {
+   "row": 8,
+   "kind": "human",
+   "scale": 1.0,
+   "desc": "Rune-Master Alrik Runehammer (1x): leather apron over a grey tunic, belted trousers, rune-burned gloves, braided beard.",
+   "anims": [
+    "idle",
+    "walk"
+   ],
+   "size_bounds": [
+    [
+     10,
+     38
+    ],
+    [
+     8,
+     44
+    ]
+   ],
+   "caster": false,
+   "named": true,
+   "stats_hint": {
+    "tier": "npc",
+    "height_x_player": 1.0
+   }
+  },
+  "priestess": {
+   "row": 12,
+   "kind": "human",
+   "scale": 1.0,
+   "desc": "Priestess Sunna Dawnward (1x): white wrap tunic, gold sash at the waist, belted skirt over leggings.",
+   "anims": [
+    "idle",
+    "walk"
+   ],
+   "size_bounds": [
+    [
+     10,
+     38
+    ],
+    [
+     8,
+     44
+    ]
+   ],
+   "caster": false,
+   "named": true,
+   "stats_hint": {
+    "tier": "npc",
+    "height_x_player": 1.0
+   }
+  },
+  "fridleif": {
+   "row": 16,
+   "kind": "human",
+   "scale": 1.0,
+   "desc": "Captain Fridleif Thunderhelm (1x NPC): leather jerkin under a gilded tabard, belted trousers, spear. No plate.",
+   "anims": [
+    "idle",
+    "walk"
+   ],
+   "size_bounds": [
+    [
+     10,
+     38
+    ],
+    [
+     8,
+     44
+    ]
+   ],
+   "caster": false,
+   "named": true,
+   "stats_hint": {
+    "tier": "npc",
+    "height_x_player": 1.0
+   }
+  },
+  "groom": {
+   "row": 20,
+   "kind": "human",
+   "scale": 1.0,
+   "desc": "Bodil Windmane (sky-horse keeper, 1x): quilted jerkin over a tunic, rope-belted trousers.",
+   "anims": [
+    "idle",
+    "walk"
+   ],
+   "size_bounds": [
+    [
+     10,
+     38
+    ],
+    [
+     8,
+     44
+    ]
+   ],
+   "caster": false,
+   "named": true,
+   "stats_hint": {
+    "tier": "npc",
+    "height_x_player": 1.0
+   }
+  },
+  "as_trader": {
+   "row": 24,
+   "kind": "human",
+   "scale": 1.0,
+   "desc": "Nessa (stall-keeper, 1x): layered tunics (wine under cream), wide belt with pouches.",
+   "anims": [
+    "idle",
+    "walk"
+   ],
+   "size_bounds": [
+    [
+     10,
+     38
+    ],
+    [
+     8,
+     44
+    ]
+   ],
+   "caster": false,
+   "named": true,
+   "stats_hint": {
+    "tier": "npc",
+    "height_x_player": 1.0
+   }
+  },
+  "as_guide": {
+   "row": 28,
+   "kind": "human",
+   "scale": 1.0,
+   "desc": "Orla (acolyte, contract guide, 1x): plain white tunic, belted trousers, a lamp.",
+   "anims": [
+    "idle",
+    "walk"
+   ],
+   "size_bounds": [
+    [
+     10,
+     38
+    ],
+    [
+     8,
+     44
+    ]
+   ],
+   "caster": false,
+   "named": true,
+   "stats_hint": {
+    "tier": "npc",
+    "height_x_player": 1.0
+   }
+  }
+ }
+}

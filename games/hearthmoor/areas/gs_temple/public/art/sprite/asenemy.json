@@ -1,0 +1,218 @@
+{
+ "tool": "hd2d boss_sheet (niflheim big frames)",
+ "biome": "cozy-village",
+ "frame": [
+  64,
+  72
+ ],
+ "pivot": [
+  32,
+  72
+ ],
+ "ground_row": 71,
+ "facings": [
+  "down",
+  "up",
+  "left",
+  "right"
+ ],
+ "anims": {
+  "idle": {
+   "start": 0,
+   "count": 4,
+   "fps": 3,
+   "loop": [
+    0,
+    1,
+    2,
+    1
+   ],
+   "blink": 3
+  },
+  "walk": {
+   "start": 4,
+   "count": 4,
+   "fps": 8
+  },
+  "cast": {
+   "start": 8,
+   "count": 4,
+   "fps": 6,
+   "loop": [
+    0,
+    1,
+    2,
+    2,
+    3,
+    3
+   ],
+   "casters_only": true
+  },
+  "attack": {
+   "start": 12,
+   "count": 4,
+   "fps": 10,
+   "loop": [
+    0,
+    1,
+    2,
+    2,
+    3
+   ],
+   "heroes_only": true
+  },
+  "defend": {
+   "start": 16,
+   "count": 4,
+   "fps": 6,
+   "loop": [
+    0,
+    1
+   ],
+   "hold": [
+    2,
+    3
+   ],
+   "heroes_only": true
+  },
+  "jump": {
+   "start": 20,
+   "count": 4,
+   "fps": 8,
+   "phases": [
+    "crouch",
+    "launch",
+    "airborne",
+    "land"
+   ],
+   "heroes_only": true
+  },
+  "die": {
+   "start": 24,
+   "count": 4,
+   "fps": 6,
+   "once": true,
+   "enemies_only": true
+  }
+ },
+ "cols": 28,
+ "size": [
+  1792,
+  1152
+ ],
+ "image": "asenemy.png",
+ "roles": {
+  "light_wraith": {
+   "row": 0,
+   "kind": "enemy",
+   "scale": 1.2,
+   "desc": "Light wraith (1.2x): a gold-white drifting shroud with a halo; no gore.",
+   "anims": [
+    "idle",
+    "walk",
+    "attack",
+    "die"
+   ],
+   "size_bounds": [
+    [
+     10,
+     62
+    ],
+    [
+     8,
+     72
+    ]
+   ],
+   "caster": false,
+   "enemy": true,
+   "stats_hint": {
+    "tier": "enemy",
+    "height_x_player": 1.2
+   }
+  },
+  "storm_sentinel": {
+   "row": 4,
+   "kind": "enemy",
+   "scale": 1.8,
+   "desc": "Storm sentinel (1.8x): lightning golem of white stone + gold bands, a caged blue storm in the chest.",
+   "anims": [
+    "idle",
+    "walk",
+    "attack",
+    "die"
+   ],
+   "size_bounds": [
+    [
+     10,
+     62
+    ],
+    [
+     8,
+     72
+    ]
+   ],
+   "caster": false,
+   "enemy": true,
+   "stats_hint": {
+    "tier": "enemy",
+    "height_x_player": 1.8
+   }
+  },
+  "storm_centaur": {
+   "row": 8,
+   "kind": "enemy",
+   "scale": 1.6,
+   "desc": "Storm-centaur (1.6x, sky plains): bay horse body, a storm-blue belted tunic, gold lance.",
+   "anims": [
+    "idle",
+    "walk",
+    "attack",
+    "die"
+   ],
+   "size_bounds": [
+    [
+     10,
+     62
+    ],
+    [
+     8,
+     72
+    ]
+   ],
+   "caster": false,
+   "enemy": true,
+   "stats_hint": {
+    "tier": "enemy",
+    "height_x_player": 1.6
+   }
+  },
+  "gilded_inquisitor": {
+   "row": 12,
+   "kind": "enemy",
+   "scale": 1.0,
+   "desc": "Gilded Inquisitor (elite, 1x): hooded gold tabard over a cream tunic, belted, gold mask with red eyes, mace of light. No plate.",
+   "anims": [
+    "idle",
+    "walk",
+    "attack",
+    "die"
+   ],
+   "size_bounds": [
+    [
+     10,
+     62
+    ],
+    [
+     8,
+     72
+    ]
+   ],
+   "caster": false,
+   "enemy": true,
+   "stats_hint": {
+    "tier": "elite",
+    "height_x_player": 1.0
+   }
+  }
+ }
+}

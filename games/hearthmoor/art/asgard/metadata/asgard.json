@@ -1,0 +1,2983 @@
+{
+ "pack": "asgard",
+ "story": "story/asgard.md",
+ "frame_convention": "boss_sheet layout (native big frames, pivot bottom centre, idle 0-3 walk 4-7 cast 8-11 attack 12-15 die 24-27)",
+ "sheets": {
+  "as_folk": {
+   "frame": [
+    40,
+    44
+   ],
+   "pivot": [
+    20,
+    44
+   ],
+   "ground_row": 43,
+   "roles": {
+    "envoy_as": {
+     "scale": 1.0,
+     "anims": [
+      "idle",
+      "walk"
+     ],
+     "tier": "npc"
+    },
+    "lordwarden": {
+     "scale": 1.0,
+     "anims": [
+      "idle",
+      "walk"
+     ],
+     "tier": "npc"
+    },
+    "runemaster": {
+     "scale": 1.0,
+     "anims": [
+      "idle",
+      "walk"
+     ],
+     "tier": "npc"
+    },
+    "priestess": {
+     "scale": 1.0,
+     "anims": [
+      "idle",
+      "walk"
+     ],
+     "tier": "npc"
+    },
+    "fridleif": {
+     "scale": 1.0,
+     "anims": [
+      "idle",
+      "walk"
+     ],
+     "tier": "npc"
+    },
+    "groom": {
+     "scale": 1.0,
+     "anims": [
+      "idle",
+      "walk"
+     ],
+     "tier": "npc"
+    },
+    "as_trader": {
+     "scale": 1.0,
+     "anims": [
+      "idle",
+      "walk"
+     ],
+     "tier": "npc"
+    },
+    "as_guide": {
+     "scale": 1.0,
+     "anims": [
+      "idle",
+      "walk"
+     ],
+     "tier": "npc"
+    }
+   }
+  },
+  "as_sigrun": {
+   "frame": [
+    40,
+    44
+   ],
+   "pivot": [
+    20,
+    44
+   ],
+   "ground_row": 43,
+   "roles": {
+    "sigrun": {
+     "scale": 1.1,
+     "anims": [
+      "idle",
+      "walk",
+      "cast",
+      "attack"
+     ],
+     "tier": "companion"
+    }
+   }
+  },
+  "as_enemies": {
+   "frame": [
+    64,
+    72
+   ],
+   "pivot": [
+    32,
+    72
+   ],
+   "ground_row": 71,
+   "roles": {
+    "light_wraith": {
+     "scale": 1.2,
+     "anims": [
+      "idle",
+      "walk",
+      "attack",
+      "die"
+     ],
+     "tier": "enemy"
+    },
+    "storm_sentinel": {
+     "scale": 1.8,
+     "anims": [
+      "idle",
+      "walk",
+      "attack",
+      "die"
+     ],
+     "tier": "enemy"
+    },
+    "storm_centaur": {
+     "scale": 1.6,
+     "anims": [
+      "idle",
+      "walk",
+      "attack",
+      "die"
+     ],
+     "tier": "enemy"
+    },
+    "gilded_inquisitor": {
+     "scale": 1.0,
+     "anims": [
+      "idle",
+      "walk",
+      "attack",
+      "die"
+     ],
+     "tier": "elite"
+    }
+   }
+  },
+  "as_elites": {
+   "frame": [
+    100,
+    112
+   ],
+   "pivot": [
+    50,
+    112
+   ],
+   "ground_row": 111,
+   "roles": {
+    "severin": {
+     "scale": 3.0,
+     "anims": [
+      "idle",
+      "walk",
+      "attack",
+      "die"
+     ],
+     "tier": "miniboss"
+    },
+    "storm_sentinel_gate": {
+     "scale": 2.0,
+     "anims": [
+      "idle",
+      "walk",
+      "attack",
+      "die"
+     ],
+     "tier": "gate"
+    },
+    "fridleif_boss": {
+     "scale": 3.0,
+     "anims": [
+      "idle",
+      "walk",
+      "attack",
+      "die"
+     ],
+     "tier": "miniboss"
+    },
+    "centaurchamp": {
+     "scale": 2.5,
+     "anims": [
+      "idle",
+      "walk",
+      "attack",
+      "die"
+     ],
+     "tier": "rare"
+    },
+    "elderwraith": {
+     "scale": 3.0,
+     "anims": [
+      "idle",
+      "walk",
+      "attack",
+      "die"
+     ],
+     "tier": "rare"
+    }
+   }
+  },
+  "boss_sentinel": {
+   "frame": [
+    144,
+    200
+   ],
+   "pivot": [
+    72,
+    200
+   ],
+   "ground_row": 199,
+   "roles": {
+    "sentinelprime": {
+     "scale": 5.0,
+     "anims": [
+      "idle",
+      "walk",
+      "attack",
+      "die"
+     ],
+     "tier": "boss"
+    },
+    "sentinel_p2": {
+     "scale": 5.0,
+     "anims": [
+      "idle",
+      "walk",
+      "attack",
+      "die"
+     ],
+     "tier": "boss"
+    },
+    "sentinel_p3": {
+     "scale": 5.0,
+     "anims": [
+      "idle",
+      "walk",
+      "attack",
+      "die"
+     ],
+     "tier": "boss"
+    }
+   }
+  },
+  "boss_aurelion": {
+   "frame": [
+    144,
+    224
+   ],
+   "pivot": [
+    72,
+    224
+   ],
+   "ground_row": 223,
+   "roles": {
+    "aurelion": {
+     "scale": 7.0,
+     "anims": [
+      "idle",
+      "walk",
+      "cast",
+      "attack",
+      "die"
+     ],
+     "tier": "boss"
+    },
+    "aurelion_p3": {
+     "scale": 7.0,
+     "anims": [
+      "idle",
+      "walk",
+      "cast",
+      "attack",
+      "die"
+     ],
+     "tier": "boss"
+    },
+    "aurelion_wraith": {
+     "scale": 7.0,
+     "anims": [
+      "idle",
+      "walk",
+      "attack"
+     ],
+     "tier": "boss_add"
+    },
+    "aurelion_rest": {
+     "scale": 7.0,
+     "anims": [
+      "idle",
+      "walk"
+     ],
+     "tier": "boss_rest"
+    }
+   }
+  }
+ },
+ "companion": {
+  "sigrun": "sprite/as_sigrun.json role sigrun (idle, walk = follow, cast, attack); wings are fx sigrun_wings; NO pet in this realm"
+ },
+ "areas": {
+  "asgard": {
+   "pieces": [
+    {
+     "piece": "gold_arch",
+     "pos": [
+      0,
+      0,
+      10.6
+     ]
+    },
+    {
+     "piece": "hall_facade",
+     "pos": [
+      0,
+      0,
+      -10.4
+     ]
+    },
+    {
+     "piece": "gold_ledge",
+     "pos": [
+      -1.55,
+      0,
+      -7.2
+     ]
+    },
+    {
+     "piece": "gold_ledge",
+     "pos": [
+      1.55,
+      0,
+      -7.2
+     ]
+    },
+    {
+     "piece": "gold_stair",
+     "pos": [
+      0.0,
+      0,
+      -4.45
+     ]
+    },
+    {
+     "piece": "dawn_flame_brazier",
+     "pos": [
+      -2.8,
+      1.34,
+      -7.4
+     ]
+    },
+    {
+     "piece": "dawn_flame_brazier",
+     "pos": [
+      2.8,
+      1.34,
+      -7.4
+     ]
+    },
+    {
+     "piece": "rune_pillar",
+     "pos": [
+      -7.0,
+      0,
+      3.0
+     ]
+    },
+    {
+     "piece": "rune_pillar",
+     "pos": [
+      0.0,
+      0,
+      4.5
+     ]
+    },
+    {
+     "piece": "rune_pillar",
+     "pos": [
+      7.0,
+      0,
+      3.0
+     ]
+    },
+    {
+     "piece": "market_stall",
+     "pos": [
+      -8.0,
+      0,
+      5.5
+     ]
+    },
+    {
+     "piece": "skyfield_fence",
+     "pos": [
+      10.0,
+      0,
+      -3.0
+     ]
+    },
+    {
+     "piece": "moot_ring",
+     "pos": [
+      6.0,
+      0,
+      -6.0
+     ]
+    },
+    {
+     "piece": "marble_spring",
+     "pos": [
+      -11.0,
+      0,
+      -2.0
+     ],
+     "rot": 1.5707963267948966
+    },
+    {
+     "piece": "gold_lamp",
+     "pos": [
+      -4.2,
+      0,
+      7.4
+     ]
+    },
+    {
+     "piece": "gold_lamp",
+     "pos": [
+      4.2,
+      0,
+      7.6
+     ]
+    },
+    {
+     "piece": "gold_lamp",
+     "pos": [
+      -6.0,
+      0,
+      -4.6
+     ]
+    },
+    {
+     "piece": "gold_lamp",
+     "pos": [
+      6.4,
+      0,
+      1.0
+     ]
+    },
+    {
+     "piece": "gold_lamp",
+     "pos": [
+      -3.6,
+      0,
+      0.6
+     ]
+    },
+    {
+     "piece": "angel_statue",
+     "pos": [
+      -9.6,
+      0,
+      -7.6
+     ]
+    },
+    {
+     "piece": "as_waystone",
+     "pos": [
+      9.6,
+      0,
+      7.0
+     ]
+    },
+    {
+     "piece": "gold_orb_chain",
+     "pos": [
+      -3.0,
+      0.2,
+      -3.4
+     ]
+    },
+    {
+     "piece": "gold_orb_chain",
+     "pos": [
+      3.0,
+      0.2,
+      -3.6
+     ]
+    }
+   ]
+  },
+  "gs_hall": {
+   "pieces": [
+    {
+     "piece": "marble_wall",
+     "pos": [
+      -6,
+      0,
+      -8.9
+     ]
+    },
+    {
+     "piece": "marble_wall",
+     "pos": [
+      -4,
+      0,
+      -8.9
+     ]
+    },
+    {
+     "piece": "marble_wall",
+     "pos": [
+      -2,
+      0,
+      -8.9
+     ]
+    },
+    {
+     "piece": "marble_wall",
+     "pos": [
+      0,
+      0,
+      -8.9
+     ]
+    },
+    {
+     "piece": "marble_wall",
+     "pos": [
+      2,
+      0,
+      -8.9
+     ]
+    },
+    {
+     "piece": "marble_wall",
+     "pos": [
+      4,
+      0,
+      -8.9
+     ]
+    },
+    {
+     "piece": "marble_wall",
+     "pos": [
+      6,
+      0,
+      -8.9
+     ]
+    },
+    {
+     "piece": "marble_wall",
+     "pos": [
+      -6.9,
+      0,
+      -6
+     ],
+     "rot": 1.5707963267948966
+    },
+    {
+     "piece": "marble_wall",
+     "pos": [
+      -6.9,
+      0,
+      -4
+     ],
+     "rot": 1.5707963267948966
+    },
+    {
+     "piece": "marble_wall",
+     "pos": [
+      -6.9,
+      0,
+      -2
+     ],
+     "rot": 1.5707963267948966
+    },
+    {
+     "piece": "marble_wall",
+     "pos": [
+      -6.9,
+      0,
+      0
+     ],
+     "rot": 1.5707963267948966
+    },
+    {
+     "piece": "marble_wall",
+     "pos": [
+      -6.9,
+      0,
+      2
+     ],
+     "rot": 1.5707963267948966
+    },
+    {
+     "piece": "marble_wall",
+     "pos": [
+      -6.9,
+      0,
+      4
+     ],
+     "rot": 1.5707963267948966
+    },
+    {
+     "piece": "marble_wall",
+     "pos": [
+      -6.9,
+      0,
+      6
+     ],
+     "rot": 1.5707963267948966
+    },
+    {
+     "piece": "marble_wall",
+     "pos": [
+      6.9,
+      0,
+      -6
+     ],
+     "rot": -1.5707963267948966
+    },
+    {
+     "piece": "marble_wall",
+     "pos": [
+      6.9,
+      0,
+      -4
+     ],
+     "rot": -1.5707963267948966
+    },
+    {
+     "piece": "marble_wall",
+     "pos": [
+      6.9,
+      0,
+      -2
+     ],
+     "rot": -1.5707963267948966
+    },
+    {
+     "piece": "marble_wall",
+     "pos": [
+      6.9,
+      0,
+      0
+     ],
+     "rot": -1.5707963267948966
+    },
+    {
+     "piece": "marble_wall",
+     "pos": [
+      6.9,
+      0,
+      2
+     ],
+     "rot": -1.5707963267948966
+    },
+    {
+     "piece": "marble_wall",
+     "pos": [
+      6.9,
+      0,
+      4
+     ],
+     "rot": -1.5707963267948966
+    },
+    {
+     "piece": "marble_wall",
+     "pos": [
+      6.9,
+      0,
+      6
+     ],
+     "rot": -1.5707963267948966
+    },
+    {
+     "piece": "gold_ledge",
+     "pos": [
+      -1.55,
+      0,
+      -7.0
+     ]
+    },
+    {
+     "piece": "gold_ledge",
+     "pos": [
+      1.55,
+      0,
+      -7.0
+     ]
+    },
+    {
+     "piece": "gold_stair",
+     "pos": [
+      0.0,
+      0,
+      -4.25
+     ]
+    },
+    {
+     "piece": "high_seat",
+     "pos": [
+      0,
+      1.34,
+      -7.4
+     ]
+    },
+    {
+     "piece": "rune_pillar",
+     "pos": [
+      -2.8,
+      1.34,
+      -7.4
+     ]
+    },
+    {
+     "piece": "rune_pillar",
+     "pos": [
+      2.8,
+      1.34,
+      -7.4
+     ]
+    },
+    {
+     "piece": "long_table",
+     "pos": [
+      -3.4,
+      0,
+      -1.0
+     ],
+     "rot": 1.5707963267948966
+    },
+    {
+     "piece": "long_table",
+     "pos": [
+      3.4,
+      0,
+      -1.0
+     ],
+     "rot": 1.5707963267948966
+    },
+    {
+     "piece": "long_table",
+     "pos": [
+      -3.4,
+      0,
+      3.6
+     ],
+     "rot": 1.5707963267948966
+    },
+    {
+     "piece": "long_table",
+     "pos": [
+      3.4,
+      0,
+      3.6
+     ],
+     "rot": 1.5707963267948966
+    },
+    {
+     "piece": "rune_forge",
+     "pos": [
+      -5.0,
+      0,
+      6.6
+     ]
+    },
+    {
+     "piece": "dawn_flame_brazier",
+     "pos": [
+      0,
+      0,
+      1.4
+     ]
+    },
+    {
+     "piece": "gold_lamp",
+     "pos": [
+      -5.6,
+      0,
+      -4.0
+     ]
+    },
+    {
+     "piece": "gold_lamp",
+     "pos": [
+      5.6,
+      0,
+      -4.0
+     ]
+    },
+    {
+     "piece": "gold_lamp",
+     "pos": [
+      5.6,
+      0,
+      6.6
+     ]
+    },
+    {
+     "piece": "gold_orb_chain",
+     "pos": [
+      -2.0,
+      0.2,
+      1.0
+     ]
+    },
+    {
+     "piece": "gold_orb_chain",
+     "pos": [
+      2.0,
+      0.2,
+      1.0
+     ]
+    },
+    {
+     "piece": "gold_orb_chain",
+     "pos": [
+      0,
+      0.2,
+      -3.4
+     ]
+    }
+   ]
+  },
+  "gs_temple": {
+   "pieces": [
+    {
+     "piece": "marble_wall",
+     "pos": [
+      -6,
+      0,
+      -9.9
+     ]
+    },
+    {
+     "piece": "marble_wall",
+     "pos": [
+      -4,
+      0,
+      -9.9
+     ]
+    },
+    {
+     "piece": "marble_wall",
+     "pos": [
+      4,
+      0,
+      -9.9
+     ]
+    },
+    {
+     "piece": "marble_wall",
+     "pos": [
+      6,
+      0,
+      -9.9
+     ]
+    },
+    {
+     "piece": "temple_window",
+     "pos": [
+      -7.9,
+      0,
+      -4
+     ],
+     "rot": 1.5707963267948966
+    },
+    {
+     "piece": "temple_window",
+     "pos": [
+      -7.9,
+      0,
+      0
+     ],
+     "rot": 1.5707963267948966
+    },
+    {
+     "piece": "temple_window",
+     "pos": [
+      -7.9,
+      0,
+      4
+     ],
+     "rot": 1.5707963267948966
+    },
+    {
+     "piece": "temple_window",
+     "pos": [
+      7.9,
+      0,
+      -4
+     ],
+     "rot": -1.5707963267948966
+    },
+    {
+     "piece": "temple_window",
+     "pos": [
+      7.9,
+      0,
+      0
+     ],
+     "rot": -1.5707963267948966
+    },
+    {
+     "piece": "temple_window",
+     "pos": [
+      7.9,
+      0,
+      4
+     ],
+     "rot": -1.5707963267948966
+    },
+    {
+     "piece": "reliquary_door",
+     "pos": [
+      0,
+      0,
+      -9.0
+     ]
+    },
+    {
+     "piece": "dark_altar",
+     "pos": [
+      0,
+      0,
+      -5.0
+     ]
+    },
+    {
+     "piece": "gold_ledge",
+     "pos": [
+      -6.1499999999999995,
+      0,
+      -6.0
+     ]
+    },
+    {
+     "piece": "gold_ledge",
+     "pos": [
+      -3.05,
+      0,
+      -6.0
+     ]
+    },
+    {
+     "piece": "gold_stair",
+     "pos": [
+      -4.6,
+      0,
+      -3.25
+     ]
+    },
+    {
+     "piece": "angel_statue",
+     "pos": [
+      -5.8,
+      1.34,
+      -6.4
+     ]
+    },
+    {
+     "piece": "angel_statue",
+     "pos": [
+      4.6,
+      0,
+      -6.6
+     ]
+    },
+    {
+     "piece": "angel_statue",
+     "pos": [
+      6.0,
+      0,
+      2.6
+     ]
+    },
+    {
+     "piece": "rimed_lamp",
+     "pos": [
+      -3.0,
+      0,
+      -1.6
+     ]
+    },
+    {
+     "piece": "rimed_lamp",
+     "pos": [
+      3.0,
+      0,
+      -1.6
+     ]
+    },
+    {
+     "piece": "rimed_lamp",
+     "pos": [
+      3.0,
+      0,
+      3.4
+     ]
+    },
+    {
+     "piece": "gold_lamp",
+     "pos": [
+      -3.0,
+      0,
+      3.4
+     ]
+    },
+    {
+     "piece": "gold_lamp",
+     "pos": [
+      -1.6,
+      0,
+      6.0
+     ]
+    },
+    {
+     "piece": "marble_spring",
+     "pos": [
+      5.6,
+      0,
+      6.0
+     ]
+    }
+   ]
+  },
+  "reliquary_g1": {
+   "pieces": [
+    {
+     "piece": "marble_wall",
+     "pos": [
+      -6,
+      0,
+      -6.9
+     ]
+    },
+    {
+     "piece": "marble_wall",
+     "pos": [
+      -4,
+      0,
+      -6.9
+     ]
+    },
+    {
+     "piece": "marble_wall",
+     "pos": [
+      -2,
+      0,
+      -6.9
+     ]
+    },
+    {
+     "piece": "marble_wall",
+     "pos": [
+      0,
+      0,
+      -6.9
+     ]
+    },
+    {
+     "piece": "marble_wall",
+     "pos": [
+      2,
+      0,
+      -6.9
+     ]
+    },
+    {
+     "piece": "marble_wall",
+     "pos": [
+      4,
+      0,
+      -6.9
+     ]
+    },
+    {
+     "piece": "marble_wall",
+     "pos": [
+      6,
+      0,
+      -6.9
+     ]
+    },
+    {
+     "piece": "marble_wall",
+     "pos": [
+      -6.9,
+      0,
+      -4
+     ],
+     "rot": 1.5707963267948966
+    },
+    {
+     "piece": "marble_wall",
+     "pos": [
+      -6.9,
+      0,
+      -2
+     ],
+     "rot": 1.5707963267948966
+    },
+    {
+     "piece": "marble_wall",
+     "pos": [
+      -6.9,
+      0,
+      0
+     ],
+     "rot": 1.5707963267948966
+    },
+    {
+     "piece": "marble_wall",
+     "pos": [
+      -6.9,
+      0,
+      2
+     ],
+     "rot": 1.5707963267948966
+    },
+    {
+     "piece": "marble_wall",
+     "pos": [
+      -6.9,
+      0,
+      4
+     ],
+     "rot": 1.5707963267948966
+    },
+    {
+     "piece": "gold_ledge",
+     "pos": [
+      -5.95,
+      0,
+      -3.6
+     ]
+    },
+    {
+     "piece": "gold_ledge",
+     "pos": [
+      -2.8500000000000005,
+      0,
+      -3.6
+     ]
+    },
+    {
+     "piece": "gold_stair",
+     "pos": [
+      -4.4,
+      0,
+      -0.8500000000000001
+     ]
+    },
+    {
+     "piece": "dawn_flame_brazier",
+     "pos": [
+      -1.2000000000000002,
+      1.34,
+      -4.2
+     ]
+    },
+    {
+     "piece": "rimed_lamp",
+     "pos": [
+      4.6,
+      0,
+      -4.6
+     ]
+    },
+    {
+     "piece": "gold_lamp",
+     "pos": [
+      4.6,
+      0,
+      4.4
+     ]
+    },
+    {
+     "piece": "gold_lamp",
+     "pos": [
+      -1.4,
+      0,
+      5.2
+     ]
+    },
+    {
+     "piece": "rimed_lamp",
+     "pos": [
+      -4.6,
+      0,
+      4.4
+     ]
+    },
+    {
+     "piece": "reliquary_door",
+     "pos": [
+      0,
+      0,
+      -5.8
+     ]
+    },
+    {
+     "piece": "angel_statue",
+     "pos": [
+      -2.8,
+      0,
+      -4.4
+     ]
+    },
+    {
+     "piece": "angel_statue",
+     "pos": [
+      2.8,
+      0,
+      -4.4
+     ]
+    }
+   ]
+  },
+  "reliquary_g2": {
+   "pieces": [
+    {
+     "piece": "marble_wall",
+     "pos": [
+      -6,
+      0,
+      -6.9
+     ]
+    },
+    {
+     "piece": "marble_wall",
+     "pos": [
+      -4,
+      0,
+      -6.9
+     ]
+    },
+    {
+     "piece": "marble_wall",
+     "pos": [
+      -2,
+      0,
+      -6.9
+     ]
+    },
+    {
+     "piece": "marble_wall",
+     "pos": [
+      0,
+      0,
+      -6.9
+     ]
+    },
+    {
+     "piece": "marble_wall",
+     "pos": [
+      2,
+      0,
+      -6.9
+     ]
+    },
+    {
+     "piece": "marble_wall",
+     "pos": [
+      4,
+      0,
+      -6.9
+     ]
+    },
+    {
+     "piece": "marble_wall",
+     "pos": [
+      6,
+      0,
+      -6.9
+     ]
+    },
+    {
+     "piece": "marble_wall",
+     "pos": [
+      -6.9,
+      0,
+      -4
+     ],
+     "rot": 1.5707963267948966
+    },
+    {
+     "piece": "marble_wall",
+     "pos": [
+      -6.9,
+      0,
+      -2
+     ],
+     "rot": 1.5707963267948966
+    },
+    {
+     "piece": "marble_wall",
+     "pos": [
+      -6.9,
+      0,
+      0
+     ],
+     "rot": 1.5707963267948966
+    },
+    {
+     "piece": "marble_wall",
+     "pos": [
+      -6.9,
+      0,
+      2
+     ],
+     "rot": 1.5707963267948966
+    },
+    {
+     "piece": "marble_wall",
+     "pos": [
+      -6.9,
+      0,
+      4
+     ],
+     "rot": 1.5707963267948966
+    },
+    {
+     "piece": "gold_ledge",
+     "pos": [
+      2.8500000000000005,
+      0,
+      -4.4
+     ]
+    },
+    {
+     "piece": "gold_ledge",
+     "pos": [
+      5.95,
+      0,
+      -4.4
+     ]
+    },
+    {
+     "piece": "gold_stair",
+     "pos": [
+      4.4,
+      0,
+      -1.6500000000000004
+     ]
+    },
+    {
+     "piece": "dawn_flame_brazier",
+     "pos": [
+      7.6000000000000005,
+      1.34,
+      -5.0
+     ]
+    },
+    {
+     "piece": "rimed_lamp",
+     "pos": [
+      4.6,
+      0,
+      -4.6
+     ]
+    },
+    {
+     "piece": "gold_lamp",
+     "pos": [
+      4.6,
+      0,
+      4.4
+     ]
+    },
+    {
+     "piece": "gold_lamp",
+     "pos": [
+      -1.4,
+      0,
+      5.2
+     ]
+    },
+    {
+     "piece": "rimed_lamp",
+     "pos": [
+      -4.6,
+      0,
+      4.4
+     ]
+    },
+    {
+     "piece": "angel_statue",
+     "pos": [
+      -2.4,
+      0,
+      -4.0
+     ]
+    },
+    {
+     "piece": "angel_statue",
+     "pos": [
+      -2.4,
+      0,
+      -1.0
+     ]
+    },
+    {
+     "piece": "angel_statue",
+     "pos": [
+      -2.4,
+      0,
+      2.0
+     ]
+    },
+    {
+     "piece": "angel_statue",
+     "pos": [
+      2.4,
+      0,
+      -4.0
+     ]
+    },
+    {
+     "piece": "angel_statue",
+     "pos": [
+      2.4,
+      0,
+      -1.0
+     ]
+    },
+    {
+     "piece": "angel_statue",
+     "pos": [
+      2.4,
+      0,
+      2.0
+     ]
+    }
+   ]
+  },
+  "reliquary_g3": {
+   "pieces": [
+    {
+     "piece": "marble_wall",
+     "pos": [
+      -6,
+      0,
+      -6.9
+     ]
+    },
+    {
+     "piece": "marble_wall",
+     "pos": [
+      -4,
+      0,
+      -6.9
+     ]
+    },
+    {
+     "piece": "marble_wall",
+     "pos": [
+      -2,
+      0,
+      -6.9
+     ]
+    },
+    {
+     "piece": "marble_wall",
+     "pos": [
+      0,
+      0,
+      -6.9
+     ]
+    },
+    {
+     "piece": "marble_wall",
+     "pos": [
+      2,
+      0,
+      -6.9
+     ]
+    },
+    {
+     "piece": "marble_wall",
+     "pos": [
+      4,
+      0,
+      -6.9
+     ]
+    },
+    {
+     "piece": "marble_wall",
+     "pos": [
+      6,
+      0,
+      -6.9
+     ]
+    },
+    {
+     "piece": "marble_wall",
+     "pos": [
+      -6.9,
+      0,
+      -4
+     ],
+     "rot": 1.5707963267948966
+    },
+    {
+     "piece": "marble_wall",
+     "pos": [
+      -6.9,
+      0,
+      -2
+     ],
+     "rot": 1.5707963267948966
+    },
+    {
+     "piece": "marble_wall",
+     "pos": [
+      -6.9,
+      0,
+      0
+     ],
+     "rot": 1.5707963267948966
+    },
+    {
+     "piece": "marble_wall",
+     "pos": [
+      -6.9,
+      0,
+      2
+     ],
+     "rot": 1.5707963267948966
+    },
+    {
+     "piece": "marble_wall",
+     "pos": [
+      -6.9,
+      0,
+      4
+     ],
+     "rot": 1.5707963267948966
+    },
+    {
+     "piece": "gold_ledge",
+     "pos": [
+      -5.95,
+      0,
+      -3.6
+     ]
+    },
+    {
+     "piece": "gold_ledge",
+     "pos": [
+      -2.8500000000000005,
+      0,
+      -3.6
+     ]
+    },
+    {
+     "piece": "gold_stair",
+     "pos": [
+      -4.4,
+      0,
+      -0.8500000000000001
+     ]
+    },
+    {
+     "piece": "dawn_flame_brazier",
+     "pos": [
+      -1.2000000000000002,
+      1.34,
+      -4.2
+     ]
+    },
+    {
+     "piece": "rimed_lamp",
+     "pos": [
+      4.6,
+      0,
+      -4.6
+     ]
+    },
+    {
+     "piece": "gold_lamp",
+     "pos": [
+      4.6,
+      0,
+      4.4
+     ]
+    },
+    {
+     "piece": "gold_lamp",
+     "pos": [
+      -1.4,
+      0,
+      5.2
+     ]
+    },
+    {
+     "piece": "rimed_lamp",
+     "pos": [
+      -4.6,
+      0,
+      4.4
+     ]
+    },
+    {
+     "piece": "temple_window",
+     "pos": [
+      -3.6,
+      0,
+      -6.6
+     ]
+    },
+    {
+     "piece": "temple_window",
+     "pos": [
+      0,
+      0,
+      -6.6
+     ]
+    },
+    {
+     "piece": "temple_window",
+     "pos": [
+      3.6,
+      0,
+      -6.6
+     ]
+    },
+    {
+     "piece": "temple_window",
+     "pos": [
+      -6.6,
+      0,
+      -1.0
+     ],
+     "rot": 1.5707963267948966
+    }
+   ]
+  },
+  "reliquary_g4": {
+   "pieces": [
+    {
+     "piece": "marble_wall",
+     "pos": [
+      -7,
+      0,
+      -7.9
+     ]
+    },
+    {
+     "piece": "marble_wall",
+     "pos": [
+      -5,
+      0,
+      -7.9
+     ]
+    },
+    {
+     "piece": "marble_wall",
+     "pos": [
+      -3,
+      0,
+      -7.9
+     ]
+    },
+    {
+     "piece": "marble_wall",
+     "pos": [
+      -1,
+      0,
+      -7.9
+     ]
+    },
+    {
+     "piece": "marble_wall",
+     "pos": [
+      1,
+      0,
+      -7.9
+     ]
+    },
+    {
+     "piece": "marble_wall",
+     "pos": [
+      3,
+      0,
+      -7.9
+     ]
+    },
+    {
+     "piece": "marble_wall",
+     "pos": [
+      5,
+      0,
+      -7.9
+     ]
+    },
+    {
+     "piece": "marble_wall",
+     "pos": [
+      7,
+      0,
+      -7.9
+     ]
+    },
+    {
+     "piece": "marble_wall",
+     "pos": [
+      -7.9,
+      0,
+      -5
+     ],
+     "rot": 1.5707963267948966
+    },
+    {
+     "piece": "marble_wall",
+     "pos": [
+      -7.9,
+      0,
+      -3
+     ],
+     "rot": 1.5707963267948966
+    },
+    {
+     "piece": "marble_wall",
+     "pos": [
+      -7.9,
+      0,
+      -1
+     ],
+     "rot": 1.5707963267948966
+    },
+    {
+     "piece": "marble_wall",
+     "pos": [
+      -7.9,
+      0,
+      1
+     ],
+     "rot": 1.5707963267948966
+    },
+    {
+     "piece": "marble_wall",
+     "pos": [
+      -7.9,
+      0,
+      3
+     ],
+     "rot": 1.5707963267948966
+    },
+    {
+     "piece": "marble_wall",
+     "pos": [
+      -7.9,
+      0,
+      5
+     ],
+     "rot": 1.5707963267948966
+    },
+    {
+     "piece": "gold_ledge",
+     "pos": [
+      -6.1499999999999995,
+      0,
+      -5.0
+     ]
+    },
+    {
+     "piece": "gold_ledge",
+     "pos": [
+      -3.05,
+      0,
+      -5.0
+     ]
+    },
+    {
+     "piece": "gold_stair",
+     "pos": [
+      -4.6,
+      0,
+      -2.25
+     ]
+    },
+    {
+     "piece": "dawn_flame_brazier",
+     "pos": [
+      -1.3999999999999995,
+      1.34,
+      -5.6
+     ]
+    },
+    {
+     "piece": "rimed_lamp",
+     "pos": [
+      4.6,
+      0,
+      -4.6
+     ]
+    },
+    {
+     "piece": "gold_lamp",
+     "pos": [
+      4.6,
+      0,
+      4.4
+     ]
+    },
+    {
+     "piece": "gold_lamp",
+     "pos": [
+      -1.4,
+      0,
+      5.2
+     ]
+    },
+    {
+     "piece": "rimed_lamp",
+     "pos": [
+      -4.6,
+      0,
+      4.4
+     ]
+    },
+    {
+     "piece": "storm_pillar",
+     "pos": [
+      -2.6,
+      0,
+      -3.0
+     ]
+    },
+    {
+     "piece": "storm_pillar",
+     "pos": [
+      2.6,
+      0,
+      -3.0
+     ]
+    },
+    {
+     "piece": "storm_pillar",
+     "pos": [
+      -2.6,
+      0,
+      1.0
+     ]
+    },
+    {
+     "piece": "storm_pillar",
+     "pos": [
+      2.6,
+      0,
+      1.0
+     ]
+    }
+   ]
+  },
+  "reliquary_g5": {
+   "pieces": [
+    {
+     "piece": "marble_wall",
+     "pos": [
+      -6,
+      0,
+      -6.9
+     ]
+    },
+    {
+     "piece": "marble_wall",
+     "pos": [
+      -4,
+      0,
+      -6.9
+     ]
+    },
+    {
+     "piece": "marble_wall",
+     "pos": [
+      -2,
+      0,
+      -6.9
+     ]
+    },
+    {
+     "piece": "marble_wall",
+     "pos": [
+      0,
+      0,
+      -6.9
+     ]
+    },
+    {
+     "piece": "marble_wall",
+     "pos": [
+      2,
+      0,
+      -6.9
+     ]
+    },
+    {
+     "piece": "marble_wall",
+     "pos": [
+      4,
+      0,
+      -6.9
+     ]
+    },
+    {
+     "piece": "marble_wall",
+     "pos": [
+      6,
+      0,
+      -6.9
+     ]
+    },
+    {
+     "piece": "marble_wall",
+     "pos": [
+      -6.9,
+      0,
+      -4
+     ],
+     "rot": 1.5707963267948966
+    },
+    {
+     "piece": "marble_wall",
+     "pos": [
+      -6.9,
+      0,
+      -2
+     ],
+     "rot": 1.5707963267948966
+    },
+    {
+     "piece": "marble_wall",
+     "pos": [
+      -6.9,
+      0,
+      0
+     ],
+     "rot": 1.5707963267948966
+    },
+    {
+     "piece": "marble_wall",
+     "pos": [
+      -6.9,
+      0,
+      2
+     ],
+     "rot": 1.5707963267948966
+    },
+    {
+     "piece": "marble_wall",
+     "pos": [
+      -6.9,
+      0,
+      4
+     ],
+     "rot": 1.5707963267948966
+    },
+    {
+     "piece": "gold_ledge",
+     "pos": [
+      2.8500000000000005,
+      0,
+      -4.4
+     ]
+    },
+    {
+     "piece": "gold_ledge",
+     "pos": [
+      5.95,
+      0,
+      -4.4
+     ]
+    },
+    {
+     "piece": "gold_stair",
+     "pos": [
+      4.4,
+      0,
+      -1.6500000000000004
+     ]
+    },
+    {
+     "piece": "dawn_flame_brazier",
+     "pos": [
+      7.6000000000000005,
+      1.34,
+      -5.0
+     ]
+    },
+    {
+     "piece": "rimed_lamp",
+     "pos": [
+      4.6,
+      0,
+      -4.6
+     ]
+    },
+    {
+     "piece": "gold_lamp",
+     "pos": [
+      4.6,
+      0,
+      4.4
+     ]
+    },
+    {
+     "piece": "gold_lamp",
+     "pos": [
+      -1.4,
+      0,
+      5.2
+     ]
+    },
+    {
+     "piece": "rimed_lamp",
+     "pos": [
+      -4.6,
+      0,
+      4.4
+     ]
+    },
+    {
+     "piece": "high_seat",
+     "pos": [
+      0,
+      0,
+      -5.0
+     ]
+    }
+   ]
+  },
+  "reliquary_g6": {
+   "pieces": [
+    {
+     "piece": "marble_wall",
+     "pos": [
+      -6,
+      0,
+      -6.9
+     ]
+    },
+    {
+     "piece": "marble_wall",
+     "pos": [
+      -4,
+      0,
+      -6.9
+     ]
+    },
+    {
+     "piece": "marble_wall",
+     "pos": [
+      -2,
+      0,
+      -6.9
+     ]
+    },
+    {
+     "piece": "marble_wall",
+     "pos": [
+      0,
+      0,
+      -6.9
+     ]
+    },
+    {
+     "piece": "marble_wall",
+     "pos": [
+      2,
+      0,
+      -6.9
+     ]
+    },
+    {
+     "piece": "marble_wall",
+     "pos": [
+      4,
+      0,
+      -6.9
+     ]
+    },
+    {
+     "piece": "marble_wall",
+     "pos": [
+      6,
+      0,
+      -6.9
+     ]
+    },
+    {
+     "piece": "marble_wall",
+     "pos": [
+      -6.9,
+      0,
+      -4
+     ],
+     "rot": 1.5707963267948966
+    },
+    {
+     "piece": "marble_wall",
+     "pos": [
+      -6.9,
+      0,
+      -2
+     ],
+     "rot": 1.5707963267948966
+    },
+    {
+     "piece": "marble_wall",
+     "pos": [
+      -6.9,
+      0,
+      0
+     ],
+     "rot": 1.5707963267948966
+    },
+    {
+     "piece": "marble_wall",
+     "pos": [
+      -6.9,
+      0,
+      2
+     ],
+     "rot": 1.5707963267948966
+    },
+    {
+     "piece": "marble_wall",
+     "pos": [
+      -6.9,
+      0,
+      4
+     ],
+     "rot": 1.5707963267948966
+    },
+    {
+     "piece": "gold_ledge",
+     "pos": [
+      -5.95,
+      0,
+      -3.6
+     ]
+    },
+    {
+     "piece": "gold_ledge",
+     "pos": [
+      -2.8500000000000005,
+      0,
+      -3.6
+     ]
+    },
+    {
+     "piece": "gold_stair",
+     "pos": [
+      -4.4,
+      0,
+      -0.8500000000000001
+     ]
+    },
+    {
+     "piece": "dawn_flame_brazier",
+     "pos": [
+      -1.2000000000000002,
+      1.34,
+      -4.2
+     ]
+    },
+    {
+     "piece": "rimed_lamp",
+     "pos": [
+      4.6,
+      0,
+      -4.6
+     ]
+    },
+    {
+     "piece": "gold_lamp",
+     "pos": [
+      4.6,
+      0,
+      4.4
+     ]
+    },
+    {
+     "piece": "gold_lamp",
+     "pos": [
+      -1.4,
+      0,
+      5.2
+     ]
+    },
+    {
+     "piece": "rimed_lamp",
+     "pos": [
+      -4.6,
+      0,
+      4.4
+     ]
+    },
+    {
+     "piece": "gold_mirror",
+     "pos": [
+      -3.0,
+      0,
+      -6.4
+     ]
+    },
+    {
+     "piece": "gold_mirror",
+     "pos": [
+      0,
+      0,
+      -6.4
+     ]
+    },
+    {
+     "piece": "gold_mirror",
+     "pos": [
+      3.0,
+      0,
+      -6.4
+     ]
+    }
+   ]
+  },
+  "reliquary_g7": {
+   "pieces": [
+    {
+     "piece": "marble_wall",
+     "pos": [
+      -6,
+      0,
+      -6.9
+     ]
+    },
+    {
+     "piece": "marble_wall",
+     "pos": [
+      -4,
+      0,
+      -6.9
+     ]
+    },
+    {
+     "piece": "marble_wall",
+     "pos": [
+      -2,
+      0,
+      -6.9
+     ]
+    },
+    {
+     "piece": "marble_wall",
+     "pos": [
+      0,
+      0,
+      -6.9
+     ]
+    },
+    {
+     "piece": "marble_wall",
+     "pos": [
+      2,
+      0,
+      -6.9
+     ]
+    },
+    {
+     "piece": "marble_wall",
+     "pos": [
+      4,
+      0,
+      -6.9
+     ]
+    },
+    {
+     "piece": "marble_wall",
+     "pos": [
+      6,
+      0,
+      -6.9
+     ]
+    },
+    {
+     "piece": "marble_wall",
+     "pos": [
+      -6.9,
+      0,
+      -4
+     ],
+     "rot": 1.5707963267948966
+    },
+    {
+     "piece": "marble_wall",
+     "pos": [
+      -6.9,
+      0,
+      -2
+     ],
+     "rot": 1.5707963267948966
+    },
+    {
+     "piece": "marble_wall",
+     "pos": [
+      -6.9,
+      0,
+      0
+     ],
+     "rot": 1.5707963267948966
+    },
+    {
+     "piece": "marble_wall",
+     "pos": [
+      -6.9,
+      0,
+      2
+     ],
+     "rot": 1.5707963267948966
+    },
+    {
+     "piece": "marble_wall",
+     "pos": [
+      -6.9,
+      0,
+      4
+     ],
+     "rot": 1.5707963267948966
+    },
+    {
+     "piece": "gold_ledge",
+     "pos": [
+      -6.1499999999999995,
+      0,
+      3.0
+     ]
+    },
+    {
+     "piece": "gold_ledge",
+     "pos": [
+      -3.05,
+      0,
+      3.0
+     ]
+    },
+    {
+     "piece": "gold_stair",
+     "pos": [
+      -4.6,
+      0,
+      5.75
+     ]
+    },
+    {
+     "piece": "dawn_flame_brazier",
+     "pos": [
+      -1.3999999999999995,
+      1.34,
+      2.4
+     ]
+    },
+    {
+     "piece": "rimed_lamp",
+     "pos": [
+      4.6,
+      0,
+      -4.6
+     ]
+    },
+    {
+     "piece": "gold_lamp",
+     "pos": [
+      4.6,
+      0,
+      4.4
+     ]
+    },
+    {
+     "piece": "gold_lamp",
+     "pos": [
+      -1.4,
+      0,
+      5.2
+     ]
+    },
+    {
+     "piece": "rimed_lamp",
+     "pos": [
+      -4.6,
+      0,
+      4.4
+     ]
+    },
+    {
+     "piece": "as_rune_bridge",
+     "pos": [
+      0,
+      0.0,
+      -4.0
+     ]
+    },
+    {
+     "piece": "as_rune_bridge",
+     "pos": [
+      0,
+      0.0,
+      -2.0
+     ]
+    },
+    {
+     "piece": "as_rune_bridge",
+     "pos": [
+      0,
+      0.0,
+      0.0
+     ]
+    },
+    {
+     "piece": "as_rune_bridge",
+     "pos": [
+      0,
+      0.0,
+      2.0
+     ]
+    }
+   ]
+  },
+  "reliquary_g8": {
+   "pieces": [
+    {
+     "piece": "marble_wall",
+     "pos": [
+      -6,
+      0,
+      -6.9
+     ]
+    },
+    {
+     "piece": "marble_wall",
+     "pos": [
+      -4,
+      0,
+      -6.9
+     ]
+    },
+    {
+     "piece": "marble_wall",
+     "pos": [
+      -2,
+      0,
+      -6.9
+     ]
+    },
+    {
+     "piece": "marble_wall",
+     "pos": [
+      0,
+      0,
+      -6.9
+     ]
+    },
+    {
+     "piece": "marble_wall",
+     "pos": [
+      2,
+      0,
+      -6.9
+     ]
+    },
+    {
+     "piece": "marble_wall",
+     "pos": [
+      4,
+      0,
+      -6.9
+     ]
+    },
+    {
+     "piece": "marble_wall",
+     "pos": [
+      6,
+      0,
+      -6.9
+     ]
+    },
+    {
+     "piece": "marble_wall",
+     "pos": [
+      -6.9,
+      0,
+      -4
+     ],
+     "rot": 1.5707963267948966
+    },
+    {
+     "piece": "marble_wall",
+     "pos": [
+      -6.9,
+      0,
+      -2
+     ],
+     "rot": 1.5707963267948966
+    },
+    {
+     "piece": "marble_wall",
+     "pos": [
+      -6.9,
+      0,
+      0
+     ],
+     "rot": 1.5707963267948966
+    },
+    {
+     "piece": "marble_wall",
+     "pos": [
+      -6.9,
+      0,
+      2
+     ],
+     "rot": 1.5707963267948966
+    },
+    {
+     "piece": "marble_wall",
+     "pos": [
+      -6.9,
+      0,
+      4
+     ],
+     "rot": 1.5707963267948966
+    },
+    {
+     "piece": "gold_ledge",
+     "pos": [
+      -5.95,
+      0,
+      -4.2
+     ]
+    },
+    {
+     "piece": "gold_ledge",
+     "pos": [
+      -2.8500000000000005,
+      0,
+      -4.2
+     ]
+    },
+    {
+     "piece": "gold_stair",
+     "pos": [
+      -4.4,
+      0,
+      -1.4500000000000002
+     ]
+    },
+    {
+     "piece": "dawn_flame_brazier",
+     "pos": [
+      -1.2000000000000002,
+      1.34,
+      -4.8
+     ]
+    },
+    {
+     "piece": "gold_lamp",
+     "pos": [
+      4.6,
+      0,
+      -4.6
+     ]
+    },
+    {
+     "piece": "gold_lamp",
+     "pos": [
+      4.6,
+      0,
+      4.4
+     ]
+    },
+    {
+     "piece": "gold_lamp",
+     "pos": [
+      -1.4,
+      0,
+      5.2
+     ]
+    },
+    {
+     "piece": "gold_lamp",
+     "pos": [
+      -4.6,
+      0,
+      4.4
+     ]
+    },
+    {
+     "piece": "urn_shelf",
+     "pos": [
+      -3.0,
+      0,
+      -6.2
+     ]
+    },
+    {
+     "piece": "urn_shelf",
+     "pos": [
+      3.0,
+      0,
+      -6.2
+     ]
+    },
+    {
+     "piece": "lore_tablet",
+     "pos": [
+      -5.8,
+      0,
+      -1.0
+     ],
+     "rot": 1.5707963267948966
+    },
+    {
+     "piece": "lore_tablet",
+     "pos": [
+      -5.8,
+      0,
+      1.6
+     ],
+     "rot": 1.5707963267948966
+    },
+    {
+     "piece": "as_waystone",
+     "pos": [
+      3.6,
+      0,
+      0.6
+     ]
+    },
+    {
+     "piece": "marble_spring",
+     "pos": [
+      4.8,
+      0,
+      -3.4
+     ]
+    }
+   ]
+  },
+  "reliquary_g9": {
+   "pieces": [
+    {
+     "piece": "marble_wall",
+     "pos": [
+      -7,
+      0,
+      -7.9
+     ]
+    },
+    {
+     "piece": "marble_wall",
+     "pos": [
+      -5,
+      0,
+      -7.9
+     ]
+    },
+    {
+     "piece": "marble_wall",
+     "pos": [
+      -3,
+      0,
+      -7.9
+     ]
+    },
+    {
+     "piece": "marble_wall",
+     "pos": [
+      -1,
+      0,
+      -7.9
+     ]
+    },
+    {
+     "piece": "marble_wall",
+     "pos": [
+      1,
+      0,
+      -7.9
+     ]
+    },
+    {
+     "piece": "marble_wall",
+     "pos": [
+      3,
+      0,
+      -7.9
+     ]
+    },
+    {
+     "piece": "marble_wall",
+     "pos": [
+      5,
+      0,
+      -7.9
+     ]
+    },
+    {
+     "piece": "marble_wall",
+     "pos": [
+      7,
+      0,
+      -7.9
+     ]
+    },
+    {
+     "piece": "marble_wall",
+     "pos": [
+      -7.9,
+      0,
+      -5
+     ],
+     "rot": 1.5707963267948966
+    },
+    {
+     "piece": "marble_wall",
+     "pos": [
+      -7.9,
+      0,
+      -3
+     ],
+     "rot": 1.5707963267948966
+    },
+    {
+     "piece": "marble_wall",
+     "pos": [
+      -7.9,
+      0,
+      -1
+     ],
+     "rot": 1.5707963267948966
+    },
+    {
+     "piece": "marble_wall",
+     "pos": [
+      -7.9,
+      0,
+      1
+     ],
+     "rot": 1.5707963267948966
+    },
+    {
+     "piece": "marble_wall",
+     "pos": [
+      -7.9,
+      0,
+      3
+     ],
+     "rot": 1.5707963267948966
+    },
+    {
+     "piece": "marble_wall",
+     "pos": [
+      -7.9,
+      0,
+      5
+     ],
+     "rot": 1.5707963267948966
+    },
+    {
+     "piece": "gold_ledge",
+     "pos": [
+      -6.1499999999999995,
+      0,
+      -5.6
+     ]
+    },
+    {
+     "piece": "gold_ledge",
+     "pos": [
+      -3.05,
+      0,
+      -5.6
+     ]
+    },
+    {
+     "piece": "gold_stair",
+     "pos": [
+      -4.6,
+      0,
+      -2.8499999999999996
+     ]
+    },
+    {
+     "piece": "dawn_flame_brazier",
+     "pos": [
+      -1.3999999999999995,
+      1.34,
+      -6.199999999999999
+     ]
+    },
+    {
+     "piece": "rimed_lamp",
+     "pos": [
+      4.6,
+      0,
+      -4.6
+     ]
+    },
+    {
+     "piece": "gold_lamp",
+     "pos": [
+      4.6,
+      0,
+      4.4
+     ]
+    },
+    {
+     "piece": "gold_lamp",
+     "pos": [
+      -1.4,
+      0,
+      5.2
+     ]
+    },
+    {
+     "piece": "rimed_lamp",
+     "pos": [
+      -4.6,
+      0,
+      4.4
+     ]
+    },
+    {
+     "piece": "crypt_throne",
+     "pos": [
+      0,
+      0,
+      -5.2
+     ]
+    },
+    {
+     "piece": "rimed_lamp",
+     "pos": [
+      -5.0,
+      0,
+      -2.0
+     ]
+    },
+    {
+     "piece": "rimed_lamp",
+     "pos": [
+      5.0,
+      0,
+      -2.0
+     ]
+    },
+    {
+     "piece": "rimed_lamp",
+     "pos": [
+      -5.0,
+      0,
+      2.4
+     ]
+    },
+    {
+     "piece": "rimed_lamp",
+     "pos": [
+      5.0,
+      0,
+      2.4
+     ]
+    }
+   ]
+  }
+ },
+ "placement_notes": {
+  "height": "every area and Reliquary room has a 1.34 m ledge (gold_ledge pairs) and ONE gold_stair (7 x 0.191 m, 2 m wide) on its front face",
+  "lighting": "day luma 55-70, night 20-30: warm gold pools (#ffc85a) every 6-8 m + neon cold-blue rune / lightning pools + violet temple glass; never all-dark",
+  "keep_clear": [
+   "no props, fx or spawns on a stair footprint + 1 m each end",
+   "ledge edges: props >= 1.5 m behind the front edge",
+   "gold arch arrival [0,9.2]: 2.6 m",
+   "Thunder Hall door 2.5 m, Reliquary door 3 m, dark altar 2 m, springs 2 m, waystones 2.6 m"
+  ],
+  "shadow": "as_shadow decal is mid-dark #5a5068 / #7a7090 (no near-black)",
+  "boss_stand": {
+   "sentinelprime (G4)": [
+    0,
+    0,
+    -0.6
+   ],
+   "aurelion (G9)": [
+    0,
+    0,
+    -1.4
+   ],
+   "severin (G5)": [
+    0,
+    0,
+    -2.6
+   ]
+  }
+ },
+ "luma_measured_on_renders": {
+  "asgard_night": 25.0,
+  "asgard_day": 66.5,
+  "gs_hall_night": 25.4,
+  "gs_hall_day": 62.4,
+  "gs_temple_night": 22.8,
+  "reliquary_g1_night": 25.0,
+  "reliquary_g2_night": 22.6,
+  "reliquary_g3_night": 28.1,
+  "reliquary_g4_night": 20.7,
+  "reliquary_g5_night": 26.4,
+  "reliquary_g6_night": 27.7,
+  "reliquary_g7_night": 20.9,
+  "reliquary_g8_night": 29.2,
+  "reliquary_g9_night": 22.7
+ },
+ "neon": {
+  "sprites": [],
+  "allow_list_needed": [],
+  "fx": "all gamefx/as_fx",
+  "kit": "glow material"
+ },
+ "check_sprite": {
+  "as_folk": {
+   "roles": 8,
+   "failures": 0,
+   "semi_transparent": 0,
+   "pass": true
+  },
+  "as_sigrun": {
+   "roles": 1,
+   "failures": 0,
+   "semi_transparent": 0,
+   "pass": true
+  },
+  "as_enemies": {
+   "roles": 4,
+   "failures": 0,
+   "semi_transparent": 0,
+   "pass": true
+  },
+  "as_elites": {
+   "roles": 5,
+   "failures": 0,
+   "semi_transparent": 0,
+   "pass": true
+  },
+  "boss_sentinel": {
+   "roles": 3,
+   "failures": 0,
+   "semi_transparent": 0,
+   "pass": true
+  },
+  "boss_aurelion": {
+   "roles": 4,
+   "failures": 0,
+   "semi_transparent": 0,
+   "pass": true
+  }
+ },
+ "kit_pieces": 29
+}

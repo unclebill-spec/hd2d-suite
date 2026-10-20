@@ -1,0 +1,246 @@
+{
+ "tool": "hd2d boss_sheet (niflheim big frames)",
+ "biome": "cozy-village",
+ "frame": [
+  100,
+  112
+ ],
+ "pivot": [
+  50,
+  112
+ ],
+ "ground_row": 111,
+ "facings": [
+  "down",
+  "up",
+  "left",
+  "right"
+ ],
+ "anims": {
+  "idle": {
+   "start": 0,
+   "count": 4,
+   "fps": 3,
+   "loop": [
+    0,
+    1,
+    2,
+    1
+   ],
+   "blink": 3
+  },
+  "walk": {
+   "start": 4,
+   "count": 4,
+   "fps": 8
+  },
+  "cast": {
+   "start": 8,
+   "count": 4,
+   "fps": 6,
+   "loop": [
+    0,
+    1,
+    2,
+    2,
+    3,
+    3
+   ],
+   "casters_only": true
+  },
+  "attack": {
+   "start": 12,
+   "count": 4,
+   "fps": 10,
+   "loop": [
+    0,
+    1,
+    2,
+    2,
+    3
+   ],
+   "heroes_only": true
+  },
+  "defend": {
+   "start": 16,
+   "count": 4,
+   "fps": 6,
+   "loop": [
+    0,
+    1
+   ],
+   "hold": [
+    2,
+    3
+   ],
+   "heroes_only": true
+  },
+  "jump": {
+   "start": 20,
+   "count": 4,
+   "fps": 8,
+   "phases": [
+    "crouch",
+    "launch",
+    "airborne",
+    "land"
+   ],
+   "heroes_only": true
+  },
+  "die": {
+   "start": 24,
+   "count": 4,
+   "fps": 6,
+   "once": true,
+   "enemies_only": true
+  }
+ },
+ "cols": 28,
+ "size": [
+  2800,
+  2240
+ ],
+ "image": "aselite.png",
+ "roles": {
+  "severin": {
+   "row": 0,
+   "kind": "enemy",
+   "scale": 3.0,
+   "desc": "Abbot Severin (mini-boss, 3x, G5): hooded gold tabard over a wine tunic, belted, gold mask, mace of light. No plate.",
+   "anims": [
+    "idle",
+    "walk",
+    "attack",
+    "die"
+   ],
+   "size_bounds": [
+    [
+     10,
+     98
+    ],
+    [
+     8,
+     112
+    ]
+   ],
+   "caster": false,
+   "enemy": true,
+   "stats_hint": {
+    "tier": "miniboss",
+    "height_x_player": 3.0
+   }
+  },
+  "storm_sentinel_gate": {
+   "row": 4,
+   "kind": "enemy",
+   "scale": 2.0,
+   "desc": "Storm sentinel, gate foe (2x): the same lightning golem, bigger.",
+   "anims": [
+    "idle",
+    "walk",
+    "attack",
+    "die"
+   ],
+   "size_bounds": [
+    [
+     10,
+     98
+    ],
+    [
+     8,
+     112
+    ]
+   ],
+   "caster": false,
+   "enemy": true,
+   "stats_hint": {
+    "tier": "gate",
+    "height_x_player": 2.0
+   }
+  },
+  "fridleif_boss": {
+   "row": 8,
+   "kind": "enemy",
+   "scale": 3.0,
+   "desc": "Captain Fridleif Thunderhelm (3x, conquer): leather jerkin + gilded tabard, spear and shield; yields at 25%. No plate.",
+   "anims": [
+    "idle",
+    "walk",
+    "attack",
+    "die"
+   ],
+   "size_bounds": [
+    [
+     10,
+     98
+    ],
+    [
+     8,
+     112
+    ]
+   ],
+   "caster": false,
+   "enemy": true,
+   "stats_hint": {
+    "tier": "miniboss",
+    "height_x_player": 3.0
+   }
+  },
+  "centaurchamp": {
+   "row": 12,
+   "kind": "enemy",
+   "scale": 2.5,
+   "desc": "Centaur champion (rare, 2.5x): white-maned centaur in a storm-blue belted tunic, lightning lance.",
+   "anims": [
+    "idle",
+    "walk",
+    "attack",
+    "die"
+   ],
+   "size_bounds": [
+    [
+     10,
+     98
+    ],
+    [
+     8,
+     112
+    ]
+   ],
+   "caster": false,
+   "enemy": true,
+   "stats_hint": {
+    "tier": "rare",
+    "height_x_player": 2.5
+   }
+  },
+  "elderwraith": {
+   "row": 16,
+   "kind": "enemy",
+   "scale": 3.0,
+   "desc": "Elder light wraith (rare, 3x): tall gold shroud with a cracked halo; drinks lamp light.",
+   "anims": [
+    "idle",
+    "walk",
+    "attack",
+    "die"
+   ],
+   "size_bounds": [
+    [
+     10,
+     98
+    ],
+    [
+     8,
+     112
+    ]
+   ],
+   "caster": false,
+   "enemy": true,
+   "stats_hint": {
+    "tier": "rare",
+    "height_x_player": 3.0
+   }
+  }
+ }
+}

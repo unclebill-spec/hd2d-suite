@@ -1,0 +1,4 @@
+READY: true
+pack: asgard
+written: 2026-10-19 21:42 EDT
+checks: 6/6 sheets PASS (check_sprite_report.json)

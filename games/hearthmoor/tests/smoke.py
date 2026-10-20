@@ -1821,6 +1821,15 @@ def run(out, simscale=4, size=(960, 540), segs=SEGS):
                 rep["pass"] = False
                 rep["error"] = f"niflheim: {e}"[:400]
         # [NIFLHEIM] end
+        # [ASGARD] begin: the Asgard realm (tests/smoke_asgard.py), own context again
+        if rep["pass"]:
+            try:
+                import smoke_asgard  # noqa: E402
+                smoke_asgard.steps(b, url, T, size, errors, rep, STUB, out)
+            except Exception as e:  # noqa: BLE001
+                rep["pass"] = False
+                rep["error"] = f"asgard: {e}"[:400]
+        # [ASGARD] end
         # ---------------------------------------------------------- v1 save migration (old saves still load)
         if rep["pass"] and "E" in segs:
             seg_mark("E")

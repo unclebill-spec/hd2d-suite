@@ -1,0 +1,205 @@
+{
+ "as_folk": {
+  "atlas": "/workspace/hearthmoor-staging/art/asgard/sprite/as_folk.png",
+  "biome": "cozy-village",
+  "roles": {
+   "envoy_as": {
+    "frames": 32,
+    "colors": 17,
+    "issues": []
+   },
+   "lordwarden": {
+    "frames": 32,
+    "colors": 19,
+    "issues": []
+   },
+   "runemaster": {
+    "frames": 32,
+    "colors": 17,
+    "issues": []
+   },
+   "priestess": {
+    "frames": 32,
+    "colors": 17,
+    "issues": []
+   },
+   "fridleif": {
+    "frames": 32,
+    "colors": 18,
+    "issues": []
+   },
+   "groom": {
+    "frames": 32,
+    "colors": 17,
+    "issues": []
+   },
+   "as_trader": {
+    "frames": 32,
+    "colors": 18,
+    "issues": []
+   },
+   "as_guide": {
+    "frames": 32,
+    "colors": 17,
+    "issues": []
+   }
+  },
+  "summary": {
+   "roles": 8,
+   "failures": 0,
+   "semi_transparent": 0,
+   "pass": true
+  },
+  "failures": []
+ },
+ "as_sigrun": {
+  "atlas": "/workspace/hearthmoor-staging/art/asgard/sprite/as_sigrun.png",
+  "biome": "cozy-village",
+  "roles": {
+   "sigrun": {
+    "frames": 64,
+    "colors": 19,
+    "issues": []
+   }
+  },
+  "summary": {
+   "roles": 1,
+   "failures": 0,
+   "semi_transparent": 0,
+   "pass": true
+  },
+  "failures": []
+ },
+ "as_enemies": {
+  "atlas": "/workspace/hearthmoor-staging/art/asgard/sprite/as_enemies.png",
+  "biome": "cozy-village",
+  "roles": {
+   "light_wraith": {
+    "frames": 64,
+    "colors": 6,
+    "issues": []
+   },
+   "storm_sentinel": {
+    "frames": 64,
+    "colors": 10,
+    "issues": []
+   },
+   "storm_centaur": {
+    "frames": 64,
+    "colors": 15,
+    "issues": []
+   },
+   "gilded_inquisitor": {
+    "frames": 64,
+    "colors": 18,
+    "issues": []
+   }
+  },
+  "summary": {
+   "roles": 4,
+   "failures": 0,
+   "semi_transparent": 0,
+   "pass": true
+  },
+  "failures": []
+ },
+ "as_elites": {
+  "atlas": "/workspace/hearthmoor-staging/art/asgard/sprite/as_elites.png",
+  "biome": "cozy-village",
+  "roles": {
+   "severin": {
+    "frames": 64,
+    "colors": 17,
+    "issues": []
+   },
+   "storm_sentinel_gate": {
+    "frames": 64,
+    "colors": 10,
+    "issues": []
+   },
+   "fridleif_boss": {
+    "frames": 64,
+    "colors": 18,
+    "issues": []
+   },
+   "centaurchamp": {
+    "frames": 64,
+    "colors": 18,
+    "issues": []
+   },
+   "elderwraith": {
+    "frames": 64,
+    "colors": 6,
+    "issues": []
+   }
+  },
+  "summary": {
+   "roles": 5,
+   "failures": 0,
+   "semi_transparent": 0,
+   "pass": true
+  },
+  "failures": []
+ },
+ "boss_sentinel": {
+  "atlas": "/workspace/hearthmoor-staging/art/asgard/sprite/boss_sentinel.png",
+  "biome": "cozy-village",
+  "roles": {
+   "sentinelprime": {
+    "frames": 64,
+    "colors": 10,
+    "issues": []
+   },
+   "sentinel_p2": {
+    "frames": 64,
+    "colors": 10,
+    "issues": []
+   },
+   "sentinel_p3": {
+    "frames": 64,
+    "colors": 10,
+    "issues": []
+   }
+  },
+  "summary": {
+   "roles": 3,
+   "failures": 0,
+   "semi_transparent": 0,
+   "pass": true
+  },
+  "failures": []
+ },
+ "boss_aurelion": {
+  "atlas": "/workspace/hearthmoor-staging/art/asgard/sprite/boss_aurelion.png",
+  "biome": "cozy-village",
+  "roles": {
+   "aurelion": {
+    "frames": 80,
+    "colors": 15,
+    "issues": []
+   },
+   "aurelion_p3": {
+    "frames": 80,
+    "colors": 15,
+    "issues": []
+   },
+   "aurelion_wraith": {
+    "frames": 48,
+    "colors": 6,
+    "issues": []
+   },
+   "aurelion_rest": {
+    "frames": 32,
+    "colors": 15,
+    "issues": []
+   }
+  },
+  "summary": {
+   "roles": 4,
+   "failures": 0,
+   "semi_transparent": 0,
+   "pass": true
+  },
+  "failures": []
+ }
+}

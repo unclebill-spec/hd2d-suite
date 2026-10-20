@@ -33,6 +33,9 @@ if os.environ.get("HM_MUSP_SKELETON") or Path("/workspace/hearthmoor-staging/art
 # HM_NIFL_SKELETON=1 lets a QA run include the skeleton specs without the pack (private build dir only: never commit that output).
 if os.environ.get("HM_NIFL_SKELETON") or Path("/workspace/hearthmoor-staging/art/niflheim/READY.txt").exists():
     AREAS += [a for a in ("niflheim", "nf_home", "iceglow", "frozenspire", "frozenspire2", "frozen_rift") if (Path(__file__).resolve().parent / "areas" / "src" / f"{a}.json").exists()]
+# [ASGARD] the realm's areas join the build only once the art pack is ready (staging art/asgard/READY.txt) and their specs exist: no READY.txt, no change.
+if Path("/workspace/hearthmoor-staging/art/asgard/READY.txt").exists():
+    AREAS += [a for a in ("asgard", "gs_hall", "gs_temple", "reliquary", "reliquary2") if (Path(__file__).resolve().parent / "areas" / "src" / f"{a}.json").exists()]
 TMP = Path(os.environ.get("HM_BUILD_TMP", "/tmp/hearthmoor_build"))   # [ALFHEIM] private build dir per worker
 
 
