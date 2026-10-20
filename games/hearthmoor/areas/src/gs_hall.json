@@ -164,8 +164,8 @@
    "role": "innkeeper",
    "name": "Lord-Warden Hallgerd Sunmantle",
    "pos": [
-    0.0,
-    -6.6
+    -2.6,
+    -4.4
    ],
    "facing": "down",
    "behavior": "idle",
@@ -194,8 +194,8 @@
    "role": "elffolk",
    "name": "Captain Fridleif Thunderhelm",
    "pos": [
-    5.0,
-    -1.6
+    4.4,
+    1.6
    ],
    "facing": "left",
    "behavior": "idle",

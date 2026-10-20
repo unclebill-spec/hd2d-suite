@@ -1,9 +1,9 @@
 # Asgard progress (branch realm-asgard)
 
 ## RESUME HERE
-- WIP commit pushed (all 5 areas built + installed, asgard.js module, game.js hooks, smoke_asgard.py + smoke.py hook). Quick-load of all 5 areas: PASS, no JS errors.
-- check_scene asgard: fixed so far: groom -> [9.6,-6.4], sigrun -> [-4.2,-3.2], start -> [-3.4,1.6], FX_SKIP rain + tile_flash (flat one-colour frames). Re-check of asgard in /workspace/alf_qa/asg/c_asgard.
-- Next: asgard passing -> gs_hall -> gs_temple -> reliquary -> reliquary2 (chk.sh <out> <area>, one at a time; fix by moving actors / props / lamp caps), commit + push each; then the full smoke_asgard (run_load.sh <out>) after the last code commit; pictures.
+- asgard: check_scene --quick PASS (b3fc463). origin/main merged (tests/preflight.sh, tools/heavy.sh, T.check); chk.sh / run_load.sh now run preflight (HM_IN_BROWSER_LOCK=1 under browser-mb.lock) and wrap jobs in tools/heavy.sh.
+- gs_hall: 1st check failed sprites_sharp (lordwarden off the top edge behind the throne; fridleif on a gold pool). Moved lordwarden -> [-2.6,-4.4], fridleif -> [4.4,1.6]; rebuilt. The re-check (/workspace/alf_qa/asg/c_hall) was queued on heavy.sh (both slots held by other bots' smokes) -- re-run: `chk.sh /workspace/alf_qa/asg/c_hall gs_hall`.
+- Then gs_temple, reliquary, reliquary2 (one at a time), commit + push each; then the full smoke_asgard (`run_load.sh <out>`) after the last code commit (switch retryable steps to T.check); pictures.
 - QA scripts: /workspace/alf_qa/asg/ (HM_BUILD_TMP=/workspace/alf_qa/asg/hmbuild, profile chrome-profile-nifl, lock /workspace/.hm-logs/browser-mb.lock).
 
 ## Areas
