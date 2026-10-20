@@ -318,7 +318,7 @@ QUICK = {
     "storm": "H", "storms": "H", "riftstorm": "H", "bounty": "H",
 }
 TIMING = FIX / "smoke_timing.json"   # seconds per segment from the last passing runs (shard balancing only)
-DEFAULT_SECONDS = {"A": 560, "B": 260, "C": 230, "D": 140, "E": 25, "F": 150, "G": 200, "H": 170, "I": 90, "J": 120, "K": 60, "L": 60, "M": 60}
+DEFAULT_SECONDS = {"A": 560, "B": 260, "C": 230, "D": 5640, "E": 25, "F": 150, "G": 200, "H": 170, "I": 90, "J": 120, "K": 60, "L": 60, "M": 60}   # D ~94 min since the music step visits every realm
 
 
 def seg_seconds():
