@@ -1,9 +1,9 @@
 # Asgard progress (branch realm-asgard)
 
 ## RESUME HERE
-- All 5 areas pass check_scene --quick (gs_temple: NO_LIGHT windows + per-grade window glow; reliquary: wraiths off the portrait edge).
-- Next: the full smoke_asgard after the last code commit (`/workspace/alf_qa/asg/run_load.sh /workspace/alf_qa/asg/fsa`, done file fsa/done), then the pictures (smoke shots: area_*, room_g1..g9, boss_*), then the final report.
-- QA scripts: /workspace/alf_qa/asg/ (HM_BUILD_TMP=/workspace/alf_qa/asg/hmbuild, profile chrome-profile-nifl, lock /workspace/.hm-logs/browser-mb.lock, jobs via tools/heavy.sh after preflight).
+- DONE, ready for merge checks. All 5 areas pass check_scene --quick. Smokes at 269abd1: smoke_asgard PASS 47/47, smoke_alfheim PASS 8/8, smoke_niflheim PASS 63/63 (0 retries).
+- Pictures: /workspace/alf_qa/asg/fsa/ (area_*.png, room_g1..g9.png, boss_sentinel_p1-3.png, boss_aurelion_p1-3.png, gs_hall_statue.png).
+- If main moves before merge: merge origin/main, then re-run smoke_asgard (+ alfheim / niflheim).
 
 ## Areas
 | Area | Spec | Built | check_scene | Committed |
