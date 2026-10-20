@@ -115,7 +115,7 @@ def steps(b, url, T, size, errors, rep, stub=None, shots=None, only=""):
         asg("qaTalk('envoy_as')"); frames(2)
         q = sv()["quests"]
         T.step("the sentinel down -> stage 2; Ingrith's turn-in opens the gate (as_gate 3, as_gate_open)", q["as_gate"] == 3 and sv()["flags"]["as_gate_open"], q=q)
-        a = load("bifrost")
+        a = load("bifrost", "&asq=open")   # ?qa starts fresh on every load: the open gate comes from the preset
         T.step("Bifrost: the gold arch is a portal to Asgard now (sealed list without it, return spawn from_asgard)", "asgard" in a["gate"]["portals"] and "asgard" not in a["gate"]["sealed"] and "from_asgard" in a["gate"]["spawns"], g=a["gate"])
         # ---- the Lord-Warden's choice + the soft Vanaheim cost
         load("gs_hall", "&asq=named")
