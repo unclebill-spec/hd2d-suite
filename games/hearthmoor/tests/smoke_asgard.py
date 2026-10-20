@@ -128,7 +128,7 @@ def steps(b, url, T, size, errors, rep, stub=None, shots=None, only=""):
         T.ev("window.__hm.area = 'vanaheim'")
         mul = asg("qaPrice('none')")
         S("S.quests.alf_gate = 3; S.flags.alliance.vanaheim = 'befriend'; S.flags.moss_letter = 0; return 1;")
-        line = asg("qaLine('warden')")
+        line = asg("qaPages('warden')")
         T.ev("window.__hm.area = 'gs_hall'")
         T.step("soft cost: Vanaheim prices x1.2 and the Elder withholds the apology letter", abs(mul - 1.2) < 1e-6 and "wait" in line, mul=mul, line=line)
         S("S.inv.mead_cake = 1; return 1;")

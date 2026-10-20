@@ -833,6 +833,7 @@ export class Asgard {
     pend: this.pend.length, hp: e ? e.hp : null, scale: e ? e.D.scale : null, framed: e ? !!e.D.framed : null, dlg: this.G.dlg ? this.G.dlg.npc.id : null,
     ids: this.G.combat ? this.G.combat.enemies.filter((x) => x.state !== 'dead' && x.state !== 'gone').map((x) => x.id) : [] }; }
   qaLine(id) { const e = TALK[id](this.G.S); return e && e.pages ? e.pages[0] : null; }
+  qaPages(id) { const e = TALK[id](this.G.S); return e && e.pages ? e.pages.join(' ') : ''; }
   qaTalk(id) { const e = TALK[id](this.G.S); if (e && e.then) e.then(this.G); return { pages: e ? e.pages.length : 0, choice: e && e.choice ? e.choice.options.map((o) => o.label) : null, locked: e && e.choice ? e.choice.options.filter((o) => o.locked).map((o) => o.label) : null }; }
   qaPick(label, id = 'lordwarden') { const e = TALK[id](this.G.S), o = e.choice.options.find((x) => x.label === label), nx = o.pick(this.G); if (nx && nx.then) nx.then(this.G); return nx ? nx.pages.length : 0; }
   qaSpot(id) { const sp = this.spots.find((x) => x.id === id); if (!sp) return false; sp.act(); return true; }
