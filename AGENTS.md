@@ -13,6 +13,8 @@ Hearthmoor batch 1 (6.2-6.5), batch 2 (6.6-6.8), the **Alfheim realm** (4 areas)
 - Alfheim and Svartalfheim are merged (worktrees /workspace/hd2d-alfheim and /workspace/hd2d-svartalfheim). Pitfall found in the merge: re-running only `install_pets` on plaza / lane crops their orb-lantern fx rows; rebuild those with `HM_BUILD_TMP=/tmp/x python3 build.py --areas plaza,lane --no-zip`, then `tools/hearthmoor/alf_art.py` and `svart_art.py`.
 - Testing policy: batch 3-4 additions with quick checks per change, then a full smoke + check_all before publishing. Secret scan before every push.
 
+- **Music (2026-10-19, branch `hearthmoor-music`, not merged):** realm themes in `games/hearthmoor/audio/music/` (see `audio/README.md` for the area -> track map, `audio/LICENSES.md` ledger: every new audio file gets a row; CC0 / CC-BY only). `Ambient` in `game/audio.js` owns the music channel (`setBattle`, `setMusicVol`, `toggleMusic`, `musicState()`). New areas: add their id to `REALM_OF` in audio.js.
+
 ## Before you start / before you stop
 1. **`git pull` first**, every time you resume.
 2. Keep `CHANGELOG.md` (dated America/New_York entries) and this file current.

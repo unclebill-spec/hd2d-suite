@@ -2,6 +2,11 @@
 
 Dates are America/New_York. Newest first. Keep this current with every change you push.
 
+## 2026-10-19 (America/New_York): Hearthmoor realm music (branch hearthmoor-music)
+- `games/hearthmoor/audio/music/`: 8 procedural CC0 mono Vorbis loops (Midgard, Alfheim, Svartalfheim, Jotunheim, Muspelheim, Niflheim, battle, boss; ~525 KB) from `tools/hearthmoor/gen_realm_music.py`; ledger `audio/LICENSES.md`, area map `audio/README.md`.
+- `game/audio.js`: fetch + decodeAudioData loader, music bus with 1.6 s crossfades, loop by buffer length, ambient plucks / birds / pad ducked to 30% while music plays, synth-only fallback if a file fails; battle / boss switching from `combat.enemies` (chase / attack, 4 s linger; `D.boss` and not rare = boss).
+- Options card: `music: on/off` + music volume slider (saved: `hearthmoor-music-mute`, `hearthmoor-music-vol`). Smoke D step `music:`; `--quick audio|music|options` = D. sw.js precaches `audio/`.
+
 ## 2026-10-19: Hearthmoor testing time-savers (branch `hearthmoor-timesavers`)
 - `tests/preflight.sh` (+ `preflight_load.py`): node --check on all game / engine js (as .mjs) and one headless title load that fails on startup errors; run first by `smoke.py`, `smoke_*.py`, `check_all.py` (`--no-preflight`).
 - Smoke harness: a failing re-runnable step (callable / new `T.check`) retries once immediately, `[RETRY]` logs both results, passes only if the retry passes; `retries N` in the summary; `--no-retry`. Smoke logs and json carry the commit hash (`# smoke header: commit ...`).

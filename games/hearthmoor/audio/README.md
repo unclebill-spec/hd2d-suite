@@ -1,0 +1,16 @@
+# Hearthmoor music
+
+Mono 22.05 kHz Vorbis (q0), 42-100 KB each, ~525 KB total. Each file is exactly 8 bars; tails wrap to the start: loop start 0, loop end = buffer length (WebAudio `AudioBufferSourceNode.loop`, not `<audio loop>`). Regenerate: `python3 tools/hearthmoor/gen_realm_music.py`.
+
+| Track | Areas (`setArea` ids) | Mood |
+|---|---|---|
+| midgard | plaza, lane, mossglen, hollows, rift, vanaheim, ravenhold, bifrost, temple, rotwood, verdant, forge | F major music box over a warm pad, light chimes |
+| alfheim | alfheim, lumen_court, wispwood, prismvault | D lydian chimes, high soft choir, music box |
+| svartalfheim | svartalfheim, forge_hall, glowmines, clockdeep, clockdeep2 | A dorian low music box, soft anvil bell, drone |
+| jotunheim | jotunheim, jt_hall, rimecaves, barrow, barrow2 | E minor slow choir + drone, sparse chimes |
+| muspelheim | muspelheim, mp_hall, lavafalls, caldera, caldera2 | D phrygian-dominant warm drone and bells |
+| niflheim | niflheim, nf_home, iceglow, frozenspire, frozenspire2, frozen_rift | B minor glass chimes, choir, cold drone |
+| battle | any foe chasing / attacking (lingers 4 s) | 120 bpm plucked ostinato + soft toms |
+| boss | a boss (`D.boss`, not rares) engaged | 104 bpm choir, toms, drone |
+
+Unknown area ids fall back to midgard. Ambient plucks / birds / crickets / pad duck to 30% while a track plays. Licenses: `LICENSES.md`.

@@ -424,7 +424,7 @@ def write_pwa():
                      {"src": "icons/icon-512.png", "sizes": "512x512", "type": "image/png"},
                      {"src": "icons/icon-maskable-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable"}]}
     (GAME / "manifest.webmanifest").write_text(json.dumps(man, indent=1))
-    files = sorted(str(p.relative_to(GAME)) for d in ("engine", "vendor", "areas", "game", "art", "icons") for p in (GAME / d).rglob("*")
+    files = sorted(str(p.relative_to(GAME)) for d in ("engine", "vendor", "areas", "game", "art", "icons", "audio") for p in (GAME / d).rglob("*")
                    if p.is_file() and "src" not in p.relative_to(GAME).parts[:2] and p.suffix != ".py")
     files = ["./", "index.html", "manifest.webmanifest"] + files
     h = hashlib.sha1()
