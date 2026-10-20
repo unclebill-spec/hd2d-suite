@@ -194,13 +194,47 @@ def steps(b, url, T, size, errors, rep, stub=None, shots=None):
         T.step("F4: a clone's mirror door shows only you and lets a mist stalker out", "fs_ms0" in nf("qaBossState()")["ids"])
         nf("qaSpot('pane2')"); frames(2); fin()
         T.step("F4: the real door (breath on the glass, a shadow that is not yours) opens the seam: fs_f4 set, the heart-ice appears", T.ev("window.__hm.S.flags.fs_f4 === 1"))
+        # F3 the Glow Pool Gallery slide: the layout is solvable from the bank, no stop cell soft-locks, the core stays sealed until the far edge is reached
+        bfs = T.ev("""(async () => { const M = await import('./game/niflheim.js'), P = M.NPZ, seen = new Set(), q = [];
+          for (let c = 0; c < P.cols; c++) { seen.add(c + ',-1'); q.push([c, -1]); }
+          let goal = false; const adj = {};
+          while (q.length) { const [c, r] = q.shift(), k = c + ',' + r; adj[k] = [];
+            for (const d of (r === -1 ? ['N'] : ['N', 'S', 'E', 'W'])) { const e = M.npzSlide(c, r, d); if (!e) continue; if (e === 'goal') { goal = true; adj[k].push('goal'); continue; }
+              const ek = e[0] + ',' + e[1]; adj[k].push(ek); if (!seen.has(ek)) { seen.add(ek); q.push(e); } } }
+          const bankAdj = [].concat(...Object.keys(adj).filter((k) => k.endsWith(',-1')).map((k) => adj[k])); for (const k of Object.keys(adj)) if (k.endsWith(',-1')) adj[k] = bankAdj;   // the bank is open floor: walk along it to any column
+          const reach = (k0, want) => { const s = new Set([k0]), qq = [k0]; while (qq.length) { const k = qq.shift(); if (k === want || (want === 'bank' && k.endsWith(',-1'))) return true; for (const n of adj[k] || []) if (!s.has(n)) { s.add(n); qq.push(n); } } return false; };
+          const cells = [...seen]; return { goal, n: cells.length, stuck: cells.filter((k) => !reach(k, 'goal') || !reach(k, 'bank')) }; })()""")
+        T.step("F3: the slide puzzle is solvable from the bank and every stop cell reaches both the far edge and the bank (no soft-lock)", bfs["goal"] and not bfs["stuck"], bfs=bfs)
+        nf("qaSpot('fs_c1')"); frames(2); fin()
+        T.step("F3: the freeze-core stays sealed until the slide is solved", not T.ev("!!(window.__hm.S.found || {}).fs_c1") and nf("qaPz()")["on"])
+        nf("moveTo(3.8, -22.6)"); frames(4)
+        T.shot("nf_f3_slide_before")
+        ok = True
+        for d in ("N", "E", "N", "W", "N"):
+            ok = bool(ok and nf(f"qaPzGo('{d}')") and until("window.__hm.nifl.qaPz().st === 'idle'", 10))
+        pz = nf("qaPz()")
+        T.step("F3: N E N W N slides to the far edge: fs_slide set, the core's seal thaws", ok and pz["solved"] and pz["moves"] == 5, pz=pz)
+        frames(20); T.shot("nf_f3_slide_after")
         nf("qaSpot('fs_c1')"); frames(2); fin()
         T.step("F3: the first freeze-core breaks (found fs_c1)", T.ev("!!(window.__hm.S.found || {}).fs_c1"))
         T.step("F5: the Colossus's core only shows after the Colossus (fs_colossus gate)", not T.ev("(() => { const sp = window.__hm.nifl.spots.find((x) => x.id === 'fs_c2'); return !!(sp && sp.show()); })()"))
         S("S.flags.fs_colossus = 1; return 1;")
         T.step("F5: after the Colossus the second core is breakable", T.ev("(() => { const sp = window.__hm.nifl.spots.find((x) => x.id === 'fs_c2'); return !!(sp && sp.show()); })()"))
-        # ---- F6-F10: the Sister's Glass, the Aerie door (three cores + Kael) and the door to the Rift
-        reset_state(); a = load("frozenspire2", "&nfq=revealed", spawn="f6")
+        # ---- F8 the Rime Bridge: a dark tile drops you at the head, the lit path walked from the head crosses and frees heart-ice hi_3
+        reset_state(); a = load("frozenspire2", "&nfq=revealed", spawn="f8")
+        until("!!window.__hm.dlg", 5); fin(); frames(2)   # F6's Sister's Glass speaks first (the f8 spawn is past z -1): close it
+        T.step("F8: hi_3 waits until the bridge is crossed", not T.ev("(() => { const sp = window.__hm.nifl.spots.find((x) => x.id === 'hi_3'); return !!(sp && sp.show()); })()"))
+        nf("moveTo(3.0, -23.0)"); frames(4)
+        T.shot("nf_f8_bridge_before")
+        nf("moveTo(1.4, -24.6)")
+        fell = until("window.__hm.nifl.qaBr().falls >= 1", 10)
+        T.step("F8: stepping on a dark tile cracks it and drops you back at the bridge head", fell and abs(T.ev("window.__hd2d.ctx.player.z") + 23.0) < 0.3, br=nf("qaBr()"))
+        lit = T.ev("(async () => { const M = await import('./game/niflheim.js'); return M.NBR.LIT.map((cols, r) => M.nbrCentre(cols[0], r)); })()")
+        for i, (x, z) in enumerate(lit):
+            nf(f"moveTo({x}, {z})"); until(f"window.__hm.nifl.qaBr().row >= {i}", 10)
+        br = nf("qaBr()")
+        T.step("F8: the lit runes walked in order from the head bear you across: fs_bridge set, the heart-ice shows", br["solved"] and br["falls"] == 1 and T.ev("(() => { const sp = window.__hm.nifl.spots.find((x) => x.id === 'hi_3'); return !!(sp && sp.show()); })()"), br=br)
+        frames(10); T.shot("nf_f8_bridge_after")
         nf("qaSpot('rift_door')"); frames(2); fin()
         T.step("F10: the door to the Rift stays shut until the three cores are broken AND Kael has fallen", T.ev("!window.__hm.S.flags.fs_open"))
         S("S.found = { ...(S.found || {}), fs_c1: 1, fs_c2: 1, fs_c3: 1 }; S.flags.fs_boss = 1; S.quests.frozenspire = 2; return 1;")
@@ -228,6 +262,10 @@ def steps(b, url, T, size, errors, rep, stub=None, shots=None):
         ok = ok or nf("qaBoss('veyra', null)"); frames(4); st = nf("qaBossState()")
         T.step("Veyra: spawns on the Crown framed at 5x in phase 1 (three mist clones, her own breath)", ok and st["which"] == "veyra" and st["framed"] and st["scale"] == 5 and st["clones"] == 3 and st["role"] == "veyra_p1", st=st)
         frames(80); T.shot("boss_veyra_p1")
+        # her bar stays up wherever she stands once the fight is on: idle at full health, at the top edge of the view (the old gap: the bar only showed while she chased)
+        T.ev("(() => { const e = window.__hm.combat.enemies.find((x) => x.id === 'veyra'); e.state = 'idle'; e.a.z = -5.0; e.a.y = window.__hd2d.ctx.heightAt(e.a.x, -5.0); e.hp = e.D.hp; })()")
+        bar = until("(() => { const el = document.getElementById('bossbar'); return !!el && !el.hidden && el.dataset.id === 'veyra'; })()", 20)
+        T.step("Veyra's HP bar shows while she stands idle at the top edge at full health (engaged boss)", bar)
         nf("qaHp('veyra', 0.6)"); st = nf("qaTick(0.1, 3)"); frames(4)
         T.step("Veyra P2 (70 %): the four portals freeze and the clones are gone", st["phase"] == 2 and st["p2"] and st["portals"] == [1, 1, 1, 1] and st["role"] == "veyra_p2", st=st)
         T.shot("boss_veyra_p2")
@@ -244,6 +282,74 @@ def steps(b, url, T, size, errors, rep, stub=None, shots=None):
         nf("qaEnding('defeated')")
         T.step("the endings set flags (veyra_defeated / veyra_redeemed)", T.ev("window.__hm.S.flags.veyra_defeated === 1"))
         T.ev("window.__hm.dropDialogue && window.__hm.dropDialogue()")
+        # ---- the Frostweave school (Niflheim-2, story 9.2): Gudrun teaches weave I after the Spire (befriend), II at Lv 5, III at Lv 10; the spells are real casts
+        FW = ["fw_lance", "fw_nova", "fw_veil", "fw_spirits", "fw_golem"]
+        reset_state(); a = load("iceglow", "&nfq=school")
+        sc0 = nf("qaSchool()")
+        T.step("the five Frostweave spells are registered (SPELLS + names) and Gudrun's mark shows a lesson is ready once the Spire is done", sc0["defs"] == 5 and sc0["mark"] == "quest_mark" and not sc0["flags"]["i"] and sc0["lv"] == {"2": 5, "3": 10}, sc0=sc0)
+        T.ev("(() => { const f = window.__hm.S.flags; f.alliance = { ...(f.alliance || {}), niflheim: 'conquer' }; })()")
+        nf("qaTalk('frostspeaker')"); sc1 = nf("qaSchool()")
+        T.step("a conqueror gets no lessons from Gudrun", not sc1["spells"] and not sc1["flags"]["i"], sc1=sc1)
+        T.ev("(() => { const f = window.__hm.S.flags; f.alliance.niflheim = 'befriend'; window.__hm.S.lv = 1; })()")
+        line = nf("qaLine('frostspeaker')"); nf("qaTalk('frostspeaker')"); frames(2); sc1 = nf("qaSchool()")
+        T.step("at Lv 1, right after the Spire: the first weave (Ice Lance, Frost Nova; fw_i, the school unlock)", sc1["spells"] == ["fw_lance", "fw_nova"] and sc1["flags"]["i"] and sc1["unlock"] and "Spire breathes" in (line or ""), sc1=sc1, line=line)
+        line = nf("qaLine('frostspeaker')"); sc1 = nf("qaSchool()")
+        T.step("below Lv 5 she says what you are waiting for (Lv 5 / Lv 10); no mark", "wait for Lv 5" in (line or "") and "Lv 10" in line and sc1["mark"] is None, line=line, mark=sc1["mark"])
+        T.ev("window.__hm.S.lv = 5"); mk = nf("qaSchool()")["mark"]; nf("qaTalk('frostspeaker')"); frames(2); sc1 = nf("qaSchool()")
+        T.step("at Lv 5 the second weave (marked): Mist Veil and Frost Spirits (fw_ii), not the golem", mk == "quest_mark" and sc1["flags"]["ii"] and "fw_veil" in sc1["spells"] and "fw_spirits" in sc1["spells"] and "fw_golem" not in sc1["spells"], sc1=sc1)
+        T.ev("window.__hm.S.lv = 10"); nf("qaTalk('frostspeaker')"); frames(2); sc1 = nf("qaSchool()"); line = nf("qaLine('frostspeaker')")
+        T.step("at Lv 10 the third weave: the Ice Golem (fw_iii); then 'all three weaves are yours'", sc1["flags"]["iii"] and sc1["spells"] == FW and "All three weaves" in (line or ""), sc1=sc1, line=line)
+        T.step("all five are in the spellbook (known spells)", all(n in T.ev("window.__hm.knownSpells()") for n in FW))
+        T.ev("(() => { const G = window.__hm; G.S.slots = ['fw_lance', 'fw_nova', 'fw_veil', 'fw_spirits']; G.ctx.setSpellCycle(G.slots()); })()")
+        cyc = T.ev("window.__hm.ctx.spellCycle()")
+        T.step("the engine lets the game-drawn Frostweave spells into the cast cycle", cyc == FW[:4], cyc=cyc)
+        T.step("the Niflheim atlas carries the pack rows the school draws (ice_lance, frost_nova, mist_veil, spirit_swarm)", T.ev("(() => { const g = window.__hd2d.ctx.gamefx; return ['ice_lance', 'frost_nova', 'mist_veil', 'spirit_swarm'].every((k) => !!g.meta.effects[k]); })()"))
+        CAST = "(n) => { const C = window.__hm.combat; C.cd.spell = 0; for (const k of Object.keys(C.cd)) C.cd[k] = 0; return C.cast(n); }"
+        FOES = ("(() => { const G = window.__hm, C = G.combat, c = window.__hd2d.ctx, p = c.player; p.facing = 'down'; C.godT = 0;"
+                " for (const e of C.enemies) { e.state = 'gone'; c.removeNpc(e.a); } C.enemies = []; C.endVeil(); C.spirits = []; C.spiritHits = 0; if (C.summon) C.unsummon();"
+                " const mk = (id, x, z) => { const e = C.spawnEnemy({ id, role: 'mist_stalker', pos: [p.x + x, p.z + z], once: true, noXp: true, noLoot: true }); e.D = { ...e.D, hp: 5000 }; e.hp = 5000; e.wt = 1e9; return e.id; };"
+                " return [mk('qa_t1', 0, 2.0), mk('qa_t2', 0, -3.6), mk('qa_t3', 4.0, 0)]; })()")   # the nearest one ahead (cast() auto-faces the nearest foe)
+        HP = "(() => Object.fromEntries(window.__hm.combat.enemies.filter((e) => e.id.startsWith('qa_t')).map((e) => [e.id, e.hp])))()"
+        nf("moveTo(0, 2.0)"); frames(2)
+        T.ev(FOES); frames(4)
+        T.ev(f"({CAST})('fw_lance')")
+        ok = until("window.__hm.combat.enemies.some((e) => e.id === 'qa_t1' && e.hp < 5000)", 60); frames(8); hp = T.ev(HP); fr = nf("qaSchool()")["frost"]
+        T.step("Ice Lance pierces straight ahead: the foe ahead is hit and chilled, the ones behind and to the side are not", ok and hp["qa_t1"] < 5000 and hp["qa_t2"] == 5000 and hp["qa_t3"] == 5000 and fr["lance"]["ids"] == ["qa_t1"] and "qa_t1" in fr["chilled"], hp=hp, fr=fr)
+        T.ev(FOES); frames(4)
+        T.ev(f"({CAST})('fw_nova')"); frames(4); hp = T.ev(HP); fr = nf("qaSchool()")["frost"]
+        T.step("Frost Nova: the ring (2.8 m) hits and chills the near foe (2 m), not the ones 3.6 m / 4 m out", hp["qa_t1"] < 5000 and hp["qa_t2"] == 5000 and hp["qa_t3"] == 5000 and fr["chilled"] == ["qa_t1"], hp=hp, fr=fr)
+        T.ev(FOES); frames(4)
+        T.ev(f"({CAST})('fw_veil')"); fr = nf("qaSchool()")["frost"]
+        hide = T.ev("(() => { const C = window.__hm.combat, p = window.__hd2d.ctx.player; return C.enemies.filter((e) => C.veilHides(e, Math.hypot(e.a.x - p.x, e.a.z - p.z))).map((e) => e.id); })()")
+        T.step("Mist Veil: 4 s of mist on you (own 14 s cooldown); the stalkers cannot see you", fr["veil"] and 3.5 < fr["veil"]["t"] <= 4 and fr["veil"]["fx"] and fr["cd"]["veil"] > 13 and sorted(hide) == ["qa_t1", "qa_t2", "qa_t3"], fr=fr, hide=hide)
+        T.ev("window.__hm.combat.veil.t = 0.02")
+        T.step("the veil lifts on its own", until("!window.__hm.combat.veil", 30))
+        T.ev(FOES); frames(4)
+        T.ev(f"({CAST})('fw_spirits')"); fr = nf("qaSchool()")["frost"]
+        T.step("Frost Spirits: two spirits circle you for 15 s (own 30 s cooldown)", len(fr["spirits"]) == 2 and all(14 < s2["life"] <= 15.5 for s2 in fr["spirits"]) and fr["cd"]["spirits"] > 28, fr=fr)
+        ok = until("window.__hm.combat.spiritHits >= 2", 60); hp = T.ev(HP)
+        T.step("... and they throw ice at the foes in reach", ok and any(v < 5000 for v in hp.values()), hits=T.ev("window.__hm.combat.spiritHits"), hp=hp)
+        T.ev("window.__hm.combat.spirits.forEach((s) => { s.life = 0.02; })")
+        T.step("the spirits fade after their time", until("window.__hm.combat.spirits.length === 0", 30))
+        T.ev(FOES); frames(4)
+        T.ev(f"({CAST})('fw_golem')"); fr = nf("qaSchool()")["frost"]
+        T.step("Ice Golem: an ice golem ally for 20 s (own 40 s cooldown), the realm's own ice_golem look", fr["golem"] and fr["golem"]["role"] == "ice_golem" and 19 < fr["golem"]["life"] <= 20 and fr["cd"]["igolem"] > 38, fr=fr)
+        ok = until("(() => { const s = window.__hm.combat.summon; return !!s && Object.values(" + HP + ").some((v) => v < 5000); })()", 60)
+        T.step("the golem walks to a foe and strikes", ok, hp=T.ev(HP))
+        T.shot("nf_frostweave")
+        T.ev("window.__hm.combat.summon.life = 0.02")
+        T.step("the golem melts back into the lake after its 20 s", until("!window.__hm.combat.summon", 40))
+        T.ev("(() => { const C = window.__hm.combat, c = window.__hd2d.ctx; for (const e of C.enemies) c.removeNpc(e.a); C.enemies = []; })()")
+        # outside the realm: the stock spells-atlas stand-ins (no Niflheim rows there), the lance still lands
+        sp0 = T.ev("JSON.stringify(window.__hm.S.spells || [])")
+        load("plaza")
+        T.ev("(() => { const C = window.__hm.combat, c = window.__hd2d.ctx; for (const e of C.enemies) c.removeNpc(e.a); C.enemies = []; })()")
+        T.ev("(() => { const S = window.__hm.S; S.spells = " + sp0 + "; return 1; })()")
+        T.ev("(() => { const C = window.__hm.combat, c = window.__hd2d.ctx, p = c.player; p.facing = 'down'; const e = C.spawnEnemy({ id: 'qa_p1', role: 'wraith', pos: [p.x, p.z + 3.0], once: true, noXp: true, noLoot: true }); e.D = { ...e.D, hp: 5000 }; e.hp = 5000; e.wt = 1e9; })()")
+        T.ev(f"({CAST})('fw_lance')")
+        ok = until("window.__hm.combat.enemies.some((e) => e.id === 'qa_p1' && e.hp < 5000)", 60)
+        T.step("outside Niflheim Ice Lance draws the stock cold-fire bolt and still lands", ok and not T.ev("!!(window.__hd2d.ctx.gamefx && window.__hd2d.ctx.gamefx.meta.effects.ice_lance)"))
+        T.ev("(() => { const C = window.__hm.combat, c = window.__hd2d.ctx; for (const e of C.enemies) c.removeNpc(e.a); C.enemies = []; })()")
         T.step("no JS errors in the Niflheim run", not [e for e in errors if "niflheim" in e.lower() or "nifl" in e.lower()], errs=errors[-3:])
     except Exception:
         try:

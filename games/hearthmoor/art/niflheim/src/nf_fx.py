@@ -9,7 +9,7 @@ import jt_fx_base as J
 import mp_fx_base as M
 H = C.H
 CELL = 48
-H.ALLC.update({"nf_mist": "#b8c8e4", "nf_mist_hi": "#e4eeff", "nf_mist_lo": "#6a7ea8", "nf_dk": "#0c1220", "nf_snow": "#c8d6ec"})
+H.ALLC.update({"nf_mist": "#b8c8e4", "nf_mist_hi": "#e4eeff", "nf_mist_lo": "#6a7ea8", "nf_dk": "#0c1220", "nf_shade": "#2c5a60", "nf_ash": "#5e6e74", "nf_snow": "#c8d6ec"})
 NB, NV, NR, NG, TE, AG = J.NB, J.NV, M.NR, J.NG, J.TE, J.AG
 MI = ("nf_mist_hi", "nf_mist", "nf_mist_lo")
 
@@ -200,13 +200,22 @@ def breath_fog():
 
 
 def veyra_shadow():
-    """ground shadow of the real Veyra: a dithered dark ellipse (clones have none)"""
+    """ground shadow of the real Veyra (clones have none). Oct 19 2026: redrawn lighter (was a near-black #0c1220 ellipse that vanished into the dark
+    ice floors and failed check_scene gamefx_sharp): a dark-teal core with an ash-grey dithered rim and a thin frost edge, readable on dark and pale floors."""
     F = H.Fx(CELL)
     for y in range(CELL):
         for x in range(CELL):
             d = math.hypot((x - 23.5) / 20, (y - 23.5) / 8)
-            if d < 1 and ((x + y) % 2 == 0 or d < .55):
-                F.set(x, y, "nf_dk")
+            if d >= 1:
+                continue
+            if d < .5:
+                F.set(x, y, "nf_shade")                                   # solid dark-teal core
+            elif d < .78:
+                F.set(x, y, "nf_shade" if (x + y) % 2 == 0 else "nf_ash")  # teal / ash checker
+            elif d < .92:
+                if (x + y) % 2 == 0: F.set(x, y, "nf_ash")                 # ash-grey dithered rim
+            elif (x * 3 + y) % 4 == 0:
+                F.set(x, y, "nf_mist_lo")                                 # a sparse frost edge
     return [F] * 4
 
 

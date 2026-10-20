@@ -7,10 +7,10 @@
 // shared tables from here (like muspelheim.js), so shared files only carry a few marked hook lines.
 // Decisions (Cozy Builder, Oct 18 2026): (1) the Muspelheim lock stays (befriending Muspelheim = Niflheim is conquer-only) but behind ONE constant, NIFL_MUSP_LOCK,
 // so it is an easy change once Bill answers; (2) the mirror sigil and the frost wedges are enough: no corrupted Cinderhold shrine; (3) the rest follows the story doc.
-import { TALK, ITEMS, QUESTS, MARKER_HOOKS } from './data.js';
+import { TALK, ITEMS, QUESTS, MARKER_HOOKS, SPELL_NAMES } from './data.js';
 import { REALM, MERIT, Factions } from './factions.js';
-import { ENEMIES, SPAWNS } from './heroes.js';
-import { XP } from './progress.js';
+import { ENEMIES, SPAWNS, SPELLS } from './heroes.js';
+import { XP, TIER } from './progress.js';
 import { SHOPS, GOODS } from './shop.js';
 import { lockRival, moodUp } from './alfheim.js';
 import { allyCount } from './muspelheim.js';
@@ -241,6 +241,40 @@ const FROST_OPTIONS = (S) => {   // Gudrun's choice (story 5.2): the befriend op
     then: (G) => { ally(G.S).niflheim = 'conquer'; moodUp(G.S, 'muspelheim'); G.setQuest('nf_take', 1); G.toast('Niflheim: conquered', 2.2); mark(G); } }) });
   return opts;
 };
+// ------------------------------------------------------------------ the Frostweave school (story 9.2, Niflheim-2): realm magic from Gudrun, drawn by combat.js (pack nf_fx rows in the
+// Niflheim areas, stock spells-atlas stand-ins elsewhere). Circle I after The Frozen Spire (frozenspire = 3, befriend; flag fw_i), II at Lv 5 (fw_ii), III at Lv 10 (fw_iii): Torka's / Solvi's order.
+export const FW_LV = { 2: TIER[2].lv, 3: TIER[3].lv };
+export const FW_SCHOOL = ['fw_lance', 'fw_nova', 'fw_veil', 'fw_spirits', 'fw_golem'];
+SPELLS.fw_lance = { name: 'Ice Lance', cd: 1.8, dmg: 22, range: 6.5, speed: 14, push: 0.3, chill: 2.0, kind: 'lance' };   // I: a piercing bolt straight ahead, chills 2 s
+SPELLS.fw_nova = { name: 'Frost Nova', cd: 4.0, dmg: 16, radius: 2.8, push: 0.8, chill: 3.0, kind: 'fnova' };   // I: a ring of ice round you, slows every foe in it 3 s
+SPELLS.fw_veil = { name: 'Mist Veil', cd: 14, t: 4, near: 1.2, kind: 'veil', own: 'veil' };   // II: 4 s hard to target (foes beyond 1.2 m lose you; stalkers cannot see you)
+SPELLS.fw_spirits = { name: 'Frost Spirits', cd: 30, life: 15, dmg: 8, every: 1.2, reach: 6, kind: 'spirits', own: 'spirits' };   // II: two frost spirits for 15 s
+SPELLS.fw_golem = { name: 'Ice Golem', cd: 40, life: 20, kind: 'igolem', own: 'igolem' };   // III: an ice golem fights for 20 s (replaces any other summon)
+Object.assign(SPELL_NAMES, { fw_lance: 'Ice Lance', fw_nova: 'Frost Nova', fw_veil: 'Mist Veil', fw_spirits: 'Frost Spirits', fw_golem: 'Ice Golem' });
+const fwTeach = (G, flag, spells, toast) => { flags(G.S)[flag] = 1; for (const n of spells) G.learn(n); G.toast(toast, 2.8); mark(G); G.save && G.save(); };
+function fwSchool(S) {   // Gudrun's lessons, or null
+  const f = F(S), al = (f.alliance || {}).niflheim, lv = S.lv || 1;
+  if (al !== 'befriend') return null;
+  if (f.fw_i && !f.fw_ii && lv >= FW_LV[2]) return { pages: ['Sit. You have come back slower. Good.', '(Gudrun breathes on the window. The frost on the glass thickens into a grey veil, and two small lights wake in it and circle her like moths.)',
+    'Mist Veil: wear the mist, and the eye slides off you for four breaths. Frost Spirits: two of the small cold ones. They will keep you company, and they bite.'],
+    then: (G) => fwTeach(G, 'fw_ii', ['fw_veil', 'fw_spirits'], 'Frostweave II: Mist Veil, Frost Spirits') };
+  if (f.fw_ii && !f.fw_iii && lv >= FW_LV[3]) return { pages: ['The third weave. Stand where the floor is thick.', '(Gudrun lays her palm on the ice. It heaves, and a golem of clear ice stands up out of it, patient as a glacier.)',
+    'The Ice Golem. It stands with you for twenty breaths, then it is lake again.', 'That is the whole of the Frostweave. Frost isn\'t cruelty. It\'s patience.'],
+    then: (G) => fwTeach(G, 'fw_iii', ['fw_golem'], 'Frostweave III: Ice Golem') };
+  if (q(S, 'frozenspire') === 3 && !f.fw_i) return { pages: ['The cores are broken and the Spire breathes. Now you learn to be cold on purpose.', '(Gudrun draws a line of frost across the table, sharp as a needle, then a ring of it round her cup.)',
+    'Ice Lance: one breath, straight and far, and it slows what it touches. Frost Nova: a ring of winter around you. The first weave. Come back older for the rest.'],
+    then: (G) => { G.S.unlocks = { ...(G.S.unlocks || {}), frostweave_school: 1 }; fwTeach(G, 'fw_i', ['fw_lance', 'fw_nova'], 'Frostweave school: first weave (Ice Lance, Frost Nova)'); } };
+  return null;
+}
+function fwWait(S) {
+  const f = F(S);
+  if ((f.alliance || {}).niflheim !== 'befriend') return null;
+  if (f.fw_iii) return { pages: ['All three weaves are yours: Ice Lance, Frost Nova, Mist Veil, Frost Spirits, the Ice Golem. Frost isn\'t cruelty. It\'s patience.'] };
+  if (f.fw_ii) return { pages: [`The second weave is yours: Mist Veil, Frost Spirits. The Ice Golem waits for Lv ${FW_LV[3]}. Patience.`] };
+  if (f.fw_i) return { pages: [`The first weave is yours: Ice Lance, Frost Nova. Mist Veil and Frost Spirits wait for Lv ${FW_LV[2]}, the Ice Golem for Lv ${FW_LV[3]}. Patience.`] };
+  return null;
+}
+
 Object.assign(TALK, {
   frostspeaker(S) {   // Gudrun Hoarwick: the choice (after the reveal), the Cold Mark / Lanterns / Spire turn-ins, the Vigil bounty (story 5.2, 5.3, 3.2-3.10)
     const f = F(S), al = (f.alliance || {}).niflheim, st = (k) => q(S, k);
@@ -252,9 +286,10 @@ Object.assign(TALK, {
     if (st('nf_cold') === 1) return { pages: [`Gudrun's table is a map of the nine realms, with a hollow for each mark. The table, the runes, the lantern: ${cold(S).n}/3.`] };
     if (st('nf_cold') === 2) return { pages: ['Blue-black rime, grown from the inside out. One hand, in every realm.', 'We knew the mark. We said nothing. We were ashamed.', mood(S) ? 'You broke the fire-throne, and you read this. Sit.' : 'Hrefna will want to speak with you.'], then: closeCold };
     if (st('frozenspire') === 2) return { pages: ['The Spire is open. Kael is gone, and the Rift is showing through.', 'Frost is not cruelty. It is patience. Be patient with her.'], then: (G) => { G.setQuest('frozenspire', 3); G.factions.add('embassy', MERIT.frozenspire, 'frozenspire'); gold(G, 150); mark(G); } };
+    { const sc = fwSchool(S); if (sc) return sc; }   // the Frostweave school (I right after the Spire, II / III as soon as the level allows)
     if (!st('frozenspire') && st('nf_cold') >= 3 && st('nf_hrefna') >= 3) return { pages: ['Three cores hold the Rift\'s portals shut, high in the Spire. The mouth is in the Glowpool Caverns. Hrefna knows the way.'], then: (G) => { G.setQuest('frozenspire', 1); mark(G); } };
     if (!st('frostvigil') && st('nf_eira') >= 3) return { pages: ['The Frost Vigil is every seventh night. Light a lantern for someone. There is no wrong one.'], then: (G) => { G.setQuest('frostvigil', 1); mark(G); } };
-    return { pages: ['Frost isn\'t cruelty. It\'s patience.'] };   // the Frostweave school (9.2) comes with its combat.js kinds, after frozenspire = 3
+    return fwWait(S) || { pages: ['Frost isn\'t cruelty. It\'s patience.'] };   // the Frostweave school (9.2): fwSchool above, after frozenspire = 3
   },
   hrefna(S) {   // Hrefna Frostveil: the Thaw, Eira's Lanterns, the Coldflame Lantern, the locked line (story 3.4, 3.5, 3.8, 9.9)
     const f = F(S), al = (f.alliance || {}).niflheim, st = (k) => q(S, k);
@@ -300,6 +335,7 @@ MARKER_HOOKS.push((id, S) => {
   const f = F(S), al = f.alliance && f.alliance.niflheim;
   if (id === 'frostspeaker') {
     if (f.veyra_revealed && !al) return 'quest_mark';
+    if (fwSchool(S)) return 'quest_mark';   // a Frostweave lesson is ready
     if (al === 'befriend' && (q(S, 'nf_lanterns') === 2 || q(S, 'nf_cold') === 2 || q(S, 'frozenspire') === 2 || (!q(S, 'frozenspire') && q(S, 'nf_cold') >= 3 && q(S, 'nf_hrefna') >= 3))) return 'quest_mark';
   }
   if (id === 'hrefna' && !lockedBy(S) && al === 'befriend' && ((q(S, 'nf_cold') >= 3 && !q(S, 'nf_hrefna')) || (q(S, 'nf_hrefna') >= 3 && !q(S, 'nf_eira')) || q(S, 'nf_staff') === 2 || (q(S, 'frozenspire') >= 2 && q(S, 'nf_eira') >= 3 && !q(S, 'nf_staff')))) return 'quest_mark';
@@ -390,6 +426,7 @@ export class Niflheim {
     if (v === 'thaw') { open(); ally(S).niflheim = 'befriend'; S.quests.nf_lanterns = 3; S.quests.nf_cold = 3; flags(S).nf_cleared = 1; S.quests.nf_hrefna = 1; }
     if (v === 'eira') { open(); ally(S).niflheim = 'befriend'; S.quests.nf_lanterns = 3; S.quests.nf_cold = 3; flags(S).nf_cleared = 1; S.quests.nf_hrefna = 3; S.quests.nf_eira = 1; }
     if (v === 'conquer') { open(); ally(S).niflheim = 'conquer'; S.quests.nf_take = 1; }
+    if (v === 'school') { open(); ally(S).niflheim = 'befriend'; S.quests.nf_lanterns = 3; S.quests.nf_cold = 3; S.quests.nf_hrefna = 3; flags(S).nf_cleared = 1; flags(S).nf_trusted = 1; S.quests.frozenspire = 3; }   // the Spire done: Gudrun's Frostweave lessons
     if (v === 'done') { open(); ally(S).niflheim = 'befriend'; S.quests.nf_lanterns = 3; S.quests.nf_cold = 3; S.quests.nf_hrefna = 3; flags(S).nf_cleared = 1; flags(S).nf_trusted = 1; }
   }
   attach(ctx, area) {
@@ -558,7 +595,7 @@ export class Niflheim {
     const G = this.G, def = which, at = pos || BOSS_AT[which]; if (this.cb[which] || !at) return null;
     const OPEN = { colossus: 'The ice shudders. "WHO WAKES THE GLACIER HEART?"', kael: '"Little hearth-rat. She said you\'d come."', veyra: '"Which is me? You\'ve lost count."' };
     G.toast(OPEN[which], 3.0);
-    this.boss = this.foe({ id: which, role: role || which, def, pos: at.slice() }, () => this.bossDown(which)); this.boss.which = which; this.bt = 3; this.bt2 = 0; this.p4open = false;
+    this.boss = this.foe({ id: which, role: role || which, def, pos: at.slice() }, () => this.bossDown(which)); this.boss.which = which; this.boss.engaged = true; this.bt = 3; this.bt2 = 0; this.p4open = false;
     if (which === 'veyra' && this.ctx.actors && this.ctx.actors.sheetOf && this.ctx.actors.sheetOf('veyra_clone')) {   // three mist clones: pale, no breath, no shadow (the real one breathes)
       this.boss.cl = [[-4.0, -1.0], [4.0, -1.0], [0.0, 3.2]].map(([x, z], i) => this.ctx.addNpc({ id: 'vclone' + i, role: 'veyra_clone', name: 'Mist clone', pos: [at[0] + x, at[1] + z], behavior: 'idle', turn: false }));
     }
@@ -661,6 +698,8 @@ export class Niflheim {
   qaPick(label, id = 'frostspeaker') { const e = TALK[id](this.G.S), o = e.choice.options.find((x) => x.label === label), nx = o.pick(this.G); if (nx && nx.then) nx.then(this.G); return nx ? nx.pages.length : 0; }
   qaSpot(id) { const sp = this.spots.find((x) => x.id === id); if (!sp) return false; sp.act(); return true; }
   qaKill(id) { const f = this.cb[id]; if (!f) return false; f(); return true; }
+  qaSchool() { const f = F(this.G.S), C = this.G.combat; return { flags: { i: !!f.fw_i, ii: !!f.fw_ii, iii: !!f.fw_iii }, unlock: !!(this.G.S.unlocks || {}).frostweave_school, spells: FW_SCHOOL.filter((n) => (this.G.S.spells || []).includes(n)),
+    defs: FW_SCHOOL.filter((n) => SPELLS[n] && SPELL_NAMES[n]).length, mark: (MARKER_HOOKS.map((h) => h('frostspeaker', this.G.S)).find((m) => m !== undefined)) || null, lv: FW_LV, frost: C && C.qaFrost ? C.qaFrost() : null }; }
   qaCold() { return cold(this.G.S); }
   qaWx() { return { kinds: ['frost_mist', 'still_frost'].filter((k) => WX_KINDS[k]), hook: !!WX_HOOK.niflheim }; }
   qaDefs() {   // the realm's shared-table registrations, for the smoke
@@ -695,6 +734,30 @@ const DOOR_AT = [0.0, -61.4];   // F10's top door to the Rift (frozenspire2)
 Object.assign(PORTALS, [[0, -4.2], [4.2, 0], [-4.2, 0], [-3.0, 4.0]]);   // thaw runes just inside each frozen portal on the Crown (N, E, W, S-west of the stair)
 Object.assign(HI, [['hi_1', 'frozenspire', [1.6, -46.6]], ['hi_2', 'frozenspire2', [2.8, -3.2]], ['hi_3', 'frozenspire2', [3.4, -32.2]]]);
 const hiAt = (area) => HI.filter((h) => h[1] === area);
+// F3 the Glow Pool Gallery slide puzzle (story 7, modelled on Jotunheim's B3): the gallery floor east of the corridor is glare ice. A push of the stick slides you
+// until a frost-rune pillar (rune_pulse decal) or the ice's edge stops you; north out of column NPZ.door is the far edge, where the freeze-core's ice seal thaws
+// (found.fs_slide). Stateless (no soft-lock: the smoke BFS checks every stop cell), the bank (south edge) is the way back, and E / A on the ice slides you back there.
+export const NPZ = { cols: 4, rows: 4, cell: 1.6, x0: 0.6, z0: -23.8, door: 2, zS: -23.0, zN: -29.4, goal: [3.8, -30.0], speed: 7.0, pillars: [[1, 3], [2, 2], [3, 0]] };
+export const npzXZ = (c, r) => [NPZ.x0 + c * NPZ.cell, NPZ.z0 - r * NPZ.cell];
+export function npzSlide(c, r, d) {   // [c, r] (r = -1: the bank), 'goal' or null (blocked)
+  const [dx, dr] = { N: [0, 1], S: [0, -1], E: [1, 0], W: [-1, 0] }[d];
+  const P = (cc, rr) => NPZ.pillars.some(([a, b]) => a === cc && b === rr);
+  let k = 0;
+  for (;;) {
+    const nc = c + dx, nr = r + dr;
+    if (nr >= NPZ.rows) return c === NPZ.door ? 'goal' : (k ? [c, r] : null);
+    if (nr < 0) return r === -1 ? null : [c, -1];
+    if (nc < 0 || nc >= NPZ.cols || P(nc, nr)) return k ? [c, r] : null;
+    c = nc; r = nr; k++;
+  }
+}
+const npzOnIce = (x, z) => z < NPZ.zS && z > NPZ.zN && x > NPZ.x0 - NPZ.cell / 2 && x < NPZ.x0 + (NPZ.cols - 0.5) * NPZ.cell;
+// F8 the Rime Bridge (story 7, modelled on Jotunheim's B7 Rune Bridge): step only on the lit runes (rune_pulse decals), in order from the bridge head; a dark tile
+// (or a lit one reached from the side, skipping rows) cracks and drops you back at the head. Crossing (found.fs_bridge) frees heart-ice hi_3 at the far end.
+export const NBR = { x0: 0.6, w: 1.6, cols: 3, z0: -23.8, h: 1.6, rows: 5, head: [3.0, -23.0], LIT: [[1], [1, 2], [2], [2, 1], [1, 0]] };
+const nbrTile = (x, z) => { const r = Math.floor((NBR.z0 - z) / NBR.h), c = Math.floor((x - NBR.x0) / NBR.w); return r < 0 || r >= NBR.rows || c < 0 || c >= NBR.cols ? null : [c, r]; };
+export const nbrCentre = (c, r) => [NBR.x0 + NBR.w * (c + 0.5), NBR.z0 - NBR.h * (r + 0.5)];
+
 const coresBroken = (S) => found(S, 'fs_c1', 'fs_c2', 'fs_c3');
 Object.assign(SPAWNS, { frozenspire: [   // F2's pair (not conquer: wardens) and F3's spirit: out of the start view (z > -7.6; the portrait view shows to z -22, so the wraiths wait fully off screen beyond -25)
   { id: 'fs_wraith0', role: 'frost_wraith', pos: [-2.0, -26.0] }, { id: 'fs_wraith1', role: 'frost_wraith', pos: [2.6, -26.8], night: true }, { id: 'fs_spirit0', role: 'frost_spirit', pos: [-0.6, -27.0] },
@@ -704,6 +767,13 @@ Object.assign(Niflheim.prototype, {
     const G = this.G, S = G.S, f = flags(S), got = (k) => !!(S.found || {})[k];
     this.sp = {}; this.nffx(ctx, 'frozenspire');
     this.coreSpots('frozenspire'); this.heartSpots('frozenspire');
+    this.pz = { st: 'idle', moves: 0, resets: 0, at: 'bank' }; this.pzPrev = null;
+    if (!got('fs_slide')) NPZ.pillars.forEach(([c2, r2]) => { const [x, z] = npzXZ(c2, r2); this.fxAt(ctx, 'rune_pulse', x, ctx.heightAt(x, z), z); });
+    const follow = [0, 0];   // the reset spot follows you over the ice
+    this.spot({ id: 'pzreset', pos: follow, r: 0.6, label: 'the ice hums (E / A: slide back to the bank)', show: () => {
+      const c = this.ctx; if (!c || !this.pzOn() || this.pz.st !== 'idle') return false;
+      const p = c.player; if (!npzOnIce(p.x, p.z)) return false; follow[0] = p.x; follow[1] = p.z; return true;
+    }, act: () => this.pzReset() });
     PANES.forEach(([x, z], i) => this.spot({ id: 'pane' + i, pos: [x, z], r: 1.4, label: 'a mirror door (E / A)', show: () => !f.fs_f4, act: () => this.pane(i) }));
     if (f.fs_f4 || got('fs_f4')) this.fxAt(ctx, 'breath_fog', PANES[REAL_PANE][0], ctx.heightAt(...PANES[REAL_PANE]) + 1.6, PANES[REAL_PANE][1]);
     else { this.fxAt(ctx, 'breath_fog', PANES[REAL_PANE][0], ctx.heightAt(...PANES[REAL_PANE]) + 1.6, PANES[REAL_PANE][1]); PANES.forEach(([x, z], i) => { if (i !== REAL_PANE) this.fxAt(ctx, 'mist_violet', x, ctx.heightAt(x, z), z); }); }
@@ -713,6 +783,8 @@ Object.assign(Niflheim.prototype, {
     const G = this.G, S = G.S, f = flags(S), got = (k) => !!(S.found || {})[k];
     this.sp = {}; this.nffx(ctx, 'frozenspire2');
     this.coreSpots('frozenspire2'); this.heartSpots('frozenspire2');
+    this.br = { row: -1, falls: 0 };
+    NBR.LIT.forEach((cols, r) => cols.forEach((c2) => { const [x, z] = nbrCentre(c2, r); this.fxAt(ctx, 'rune_pulse', x, ctx.heightAt(x, z), z); }));
     TABLETS.forEach(([x, z], i) => this.spot({ id: 'tablet' + i, pos: [x, z], r: 1.7, label: 'a Frost-witch tablet (E / A)', show: () => true, act: () => this.look('tablet' + i, 'The archive tablet', [TABLET_TEXT[i]]) }));
     this.spot({ id: 'rift_door', pos: DOOR_AT, r: 2.0, label: 'the door to the Rift (E / A)', show: () => true, act: () => this.riftDoor() });
   },
@@ -725,8 +797,10 @@ Object.assign(Niflheim.prototype, {
     const G = this.G, S = G.S;
     for (const [k, [a, pos]] of Object.entries(CORE_AT)) {
       if (a !== area) continue;
-      const gate = () => (k !== 'fs_c2' || !!F(S).fs_colossus);
+      const gate = () => (k !== 'fs_c2' || !!F(S).fs_colossus) && (k !== 'fs_c1' || !!(S.found || {}).fs_slide);   // F3's core sits under an ice seal until the slide puzzle is solved
+      if (k === 'fs_c1') this.spot({ id: 'fs_c1_seal', pos, r: 1.8, label: 'a sealed freeze-core (E / A)', show: () => !(S.found || {}).fs_slide, act: () => this.look('fs_c1_seal', 'The freeze-core', ['(The core hums under a skin of glare ice, out of reach. The seal runs back across the gallery floor: the far edge of the slide, east of here.)']) });
       this.spot({ id: k, pos, r: 1.8, label: 'a freeze-core (E / A: break it)', show: () => !(S.found || {})[k] && gate(), act: () => {
+        if (!gate()) return;
         this.look(k, 'The freeze-core', ['(A knot of blue ice the size of a hearth-pot, humming. Every frozen portal in the Spire is tied to it by a thread of frost.)', '(You strike it where the thread is thinnest. It rings once, like a bell, and lets go.)'], () => {
           this.find(k); this.fxAt(this.ctx, 'frost_nova', pos[0], this.ctx.heightAt(pos[0], pos[1]), pos[1], { duration: 0.8, fadeIn: 0 }); const n = coresBroken(S);
           if (n >= 3) G.toast('The third core breaks. The Aerie door grinds open: Kael is waiting.', 3.2); else G.toast(`Freeze-core ${n}/3`, 2.2);
@@ -737,7 +811,7 @@ Object.assign(Niflheim.prototype, {
   },
   heartSpots(area) {
     const G = this.G, S = G.S, got = (k) => !!(S.found || {})[k];
-    for (const [k, , pos] of hiAt(area)) this.spot({ id: k, pos, r: 1.6, label: 'warm ice (E / A)', show: () => !got(k) && (k !== 'hi_1' || !!F(S).fs_f4), act: () => this.look(k, 'Heart-ice', ['(A lump of ice, warm as a hand. You take it. It does not melt.)'], () => { this.find(k); G.give('heart_ice', 1); G.toast('Heart-ice', 1.8); mark(G); }) });
+    for (const [k, , pos] of hiAt(area)) this.spot({ id: k, pos, r: 1.6, label: 'warm ice (E / A)', show: () => !got(k) && (k !== 'hi_1' || !!F(S).fs_f4) && (k !== 'hi_3' || got('fs_bridge')), act: () => this.look(k, 'Heart-ice', ['(A lump of ice, warm as a hand. You take it. It does not melt.)'], () => { this.find(k); G.give('heart_ice', 1); G.toast('Heart-ice', 1.8); mark(G); }) });
   },
   pane(i) {   // F4: the Mirror Stairs. A clone's door shows only you (a mist stalker steps out); the real one breathes cold air and opens the seam (heart-ice)
     const G = this.G, S = G.S, f = flags(S), [x, z] = PANES[i];
@@ -757,6 +831,8 @@ Object.assign(Niflheim.prototype, {
   },
   spireTick(dt) {
     const G = this.G, c = this.ctx, S = G.S, f = flags(S), p = c.player, busy = G.dlg || G.busy || !G.combat, sp = this.sp || (this.sp = {});
+    if (this.area === 'frozenspire') this.pzTick(dt);
+    if (this.area === 'frozenspire2' && !G.dlg && !G.busy) this.bridgeTick();
     if (this.area === 'frozenspire' && !busy) {
       if (!sp.f1 && p.z < 3.0) { sp.f1 = 1; G.toast('Two mist stalkers slip out of the torchlight.', 2.4); [[-2.4, -3.0], [2.6, -2.4]].forEach(([x, z], i) => this.foe({ id: 'f1_ms' + i, role: 'mist_stalker', pos: [x, z] }, () => {}));
         if (conquer(S)) [[-4.6, -1.0], [4.6, -1.0]].forEach(([x, z], i) => this.foe({ id: 'f1_w' + i, role: 'ice_warden', pos: [x, z] }, () => {})); }
@@ -766,7 +842,7 @@ Object.assign(Niflheim.prototype, {
     }
     if (this.area === 'frozenspire2' && !busy) {
       if (!sp.f6 && p.z < -1.0 && !f.fs_veyra) { sp.f6 = 1; this.sisterGlass(); }
-      if (!sp.f8 && p.z < -22.0 && conquer(S)) { sp.f8 = 1; [[-4.4, -29.0], [4.4, -29.0]].forEach(([x, z], i) => this.foe({ id: 'f8_w' + i, role: 'ice_warden', pos: [x, z] }, () => {})); }
+      if (!sp.f8 && p.z < -22.0 && conquer(S)) { sp.f8 = 1; [[-4.4, -29.0], [6.0, -29.0]].forEach(([x, z], i) => this.foe({ id: 'f8_w' + i, role: 'ice_warden', pos: [x, z] }, () => {})); }
       if (p.z < -34.0 && !f.fs_boss && !this.boss && !this.cb.kael) {
         if (coresBroken(S) < 3) { if (!sp.f9) { sp.f9 = 1; G.toast(`The Aerie door is frozen shut: break the three freeze-cores (${coresBroken(S)}/3).`, 3.2); } this.moveTo(0, -32.0); }
         else if (!sp.f9b) { sp.f9b = 1; this.bossStart('kael'); }
@@ -774,6 +850,82 @@ Object.assign(Niflheim.prototype, {
     }
     if (this.area === 'frozen_rift' && !busy && !sp.rift && p.z < 8.6 && !f.nf_resolved && !this.boss && !this.cb.veyra) { sp.rift = 1; this.bossStart('veyra'); }
   },
+  // ---- F3 the slide (see NPZ)
+  pzOn() { return this.area === 'frozenspire' && !!this.pz && !((this.G.S.found || {}).fs_slide); },
+  pzCell() {   // the free cell nearest the player (r = -1: on the bank)
+    const p = this.ctx.player, c0 = Math.max(0, Math.min(NPZ.cols - 1, Math.round((p.x - NPZ.x0) / NPZ.cell)));
+    if (p.z >= NPZ.zS) return [c0, -1];
+    const r0 = Math.max(0, Math.min(NPZ.rows - 1, Math.round((NPZ.z0 - p.z) / NPZ.cell)));
+    let best = null, bd = 1e9;
+    for (let c = 0; c < NPZ.cols; c++) for (let r = 0; r < NPZ.rows; r++) {
+      if (NPZ.pillars.some(([a, b]) => a === c && b === r)) continue;
+      const d = Math.hypot(c - c0, r - r0); if (d < bd) { bd = d; best = [c, r]; }
+    }
+    return best;
+  },
+  pzStart(d, fromBank) {
+    const c = this.ctx, p = c.player, st = this.pz; if (!c || !st || st.st !== 'idle' || !this.pzOn()) return false;
+    const [cc, rr] = fromBank ? [Math.max(0, Math.min(NPZ.cols - 1, Math.round((p.x - NPZ.x0) / NPZ.cell))), -1] : this.pzCell(), end = npzSlide(cc, rr, d); if (!end) return false;
+    const a = npzXZ(cc, rr), b = end === 'goal' ? NPZ.goal : npzXZ(end[0], end[1]);
+    c.stopWalk && c.stopWalk();
+    Object.assign(st, { st: 'slide', d, t: 0, lock: 0.1, from: [p.x, p.z], a, b, end, len: Math.hypot(b[0] - a[0], b[1] - a[1]), cell: [cc, rr] });
+    st.moves++; return true;
+  },
+  pzTick(dt) {
+    const c = this.ctx, st = this.pz, G = this.G; if (!c || !st) return;
+    const p = c.player;
+    if (!this.pzOn()) { st.st = 'idle'; return; }
+    if (st.st === 'slide') {
+      let x, z;
+      if (st.lock > 0) { st.lock = Math.max(0, st.lock - dt); const k = 1 - st.lock / 0.1; x = st.from[0] + (st.a[0] - st.from[0]) * k; z = st.from[1] + (st.a[1] - st.from[1]) * k; }
+      else { st.t = Math.min(1, st.t + dt * NPZ.speed / Math.max(0.1, st.len)); x = st.a[0] + (st.b[0] - st.a[0]) * st.t; z = st.a[1] + (st.b[1] - st.a[1]) * st.t; }
+      p.x = x; p.z = z; p.y = c.heightAt(x, z);
+      if (st.lock <= 0 && st.t >= 1) {
+        st.st = 'idle'; this.pzPrev = null; st.at = st.end === 'goal' ? 'goal' : st.end;
+        if (st.end === 'goal') this.pzSolved(); else if (st.end[1] === -1) st.at = 'bank';
+      }
+      return;
+    }
+    const prev = this.pzPrev; this.pzPrev = [p.x, p.z];
+    if (!prev || dt <= 0 || G.dlg || G.busy || G.title) return;
+    const dx = p.x - prev[0], dz = p.z - prev[1], sp = Math.hypot(dx, dz) / dt;
+    if (!npzOnIce(p.x, p.z) || sp < 1.2) return;
+    const d = Math.abs(dx) > Math.abs(dz) ? (dx > 0 ? 'E' : 'W') : (dz < 0 ? 'N' : 'S');
+    const wasBank = prev[1] >= NPZ.zS;
+    if (wasBank && d !== 'N') return;   // from the bank the only slide is north onto the ice
+    if (!this.pzStart(d, wasBank)) { const [cc, rr] = this.pzCell(); if (!wasBank && rr >= 0) { const q2 = npzXZ(cc, rr); p.x = q2[0]; p.z = q2[1]; } }
+  },
+  pzSolved() {
+    const G = this.G; this.find('fs_slide'); gold(G, 40);
+    const [x, z] = CORE_AT.fs_c1[1]; if (this.ctx) this.fxAt(this.ctx, 'frost_nova', x, this.ctx.heightAt(x, z), z, { duration: 0.8, fadeIn: 0 });
+    G.toast("The far edge of the ice rings. The seal on the freeze-core thaws.", 3.0); mark(G);
+  },
+  pzReset() {
+    const c = this.ctx, st = this.pz; if (!c || !this.pzOn() || st.st !== 'idle') return;
+    const p = c.player, [cc] = this.pzCell(), b = npzXZ(cc, -1);
+    c.stopWalk && c.stopWalk(); p.x = b[0]; p.z = b[1] + 0.4; p.y = c.heightAt(p.x, p.z); st.at = 'bank'; st.resets++; this.pzPrev = null;
+    this.G.toast('The ice slides you back to the bank.', 1.8);
+  },
+  // ---- F8 the Rime Bridge (see NBR)
+  bridgeTick() {
+    const c = this.ctx, br = this.br, S = this.G.S; if (!c || !br || (S.found || {}).fs_bridge) return;
+    const p = c.player, t = nbrTile(p.x, p.z); if (!t) return;
+    const [col, row] = t;
+    if (!NBR.LIT[row].includes(col)) return this.crack(t, 'The dark ice cracks under you! Back to the bridge head. Only the lit runes hold.');
+    if (row > br.row + 1) return this.crack(t, 'The runes go dark under you: they bear only a walk from the bridge head.');
+    if (row === br.row + 1) br.row = row;
+    if (br.row === NBR.rows - 1) { this.find('fs_bridge'); this.G.toast('The runes hold. Something warm glints at the far end.', 2.6); mark(this.G); }
+  },
+  crack(t, msg) {
+    const c = this.ctx, p = c.player, [x, z] = nbrCentre(t[0], t[1]);
+    this.fxAt(c, 'snow_puff', x, c.heightAt(x, z), z, { duration: 0.8, fadeIn: 0 });
+    c.stopWalk && c.stopWalk(); p.x = NBR.head[0]; p.z = NBR.head[1]; p.y = c.heightAt(p.x, p.z);
+    this.br.row = -1; this.br.falls++; this.G.toast(msg, 2.4);
+    const C = this.G.combat; if (C && (this.G.S.hp || 0) > 6) this.G.S.hp -= 4;   // a fall costs a little health, never progress elsewhere
+  },
+  qaPzGo(d) { return this.pzStart(d); },
+  qaPz() { const S = this.G.S; return { on: this.pzOn(), st: this.pz ? this.pz.st : null, at: this.pz ? this.pz.at : null, moves: this.pz ? this.pz.moves : 0, resets: this.pz ? this.pz.resets : 0, solved: !!(S.found || {}).fs_slide }; },
+  qaBr() { const S = this.G.S; const p = this.ctx && this.ctx.player; return { row: this.br ? this.br.row : null, falls: this.br ? this.br.falls : 0, solved: !!(S.found || {}).fs_bridge, at: p ? [+p.x.toFixed(2), +p.y.toFixed(2), +p.z.toFixed(2)] : null, tile: p ? nbrTile(p.x, p.z) : null }; },
   sisterGlass() {   // F6: Veyra's voice from the glass (story 6.8); sets fs_veyra
     const G = this.G, S = G.S, f = flags(S), eb = emberBorn(S);
     this.look('fs_veyra', 'The Sister\'s Glass', ['(The ice panes along the wall light, one after another. In the glass a crack opens across the sky and a girl in a pale tunic holds it closed with both hands. Her lantern is at her belt.)',
