@@ -12,7 +12,7 @@
 | asgard | yes | yes | PASS | yes |
 | gs_hall | yes | yes | PASS | yes |
 | gs_temple | yes | yes | - | - |
-| reliquary (G1-G5) | yes | yes | - | - |
+| reliquary (G1-G5) | yes | yes | PASS | yes |
 | reliquary2 (G6-G9) | yes | yes | PASS | yes |
 
 ## Decisions (lead 2026-10-19)
