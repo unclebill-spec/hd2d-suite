@@ -1,17 +1,16 @@
 # Asgard progress (branch realm-asgard)
 
 ## RESUME HERE
-- asgard: check_scene --quick PASS (b3fc463). origin/main merged (tests/preflight.sh, tools/heavy.sh, T.check); chk.sh / run_load.sh now run preflight (HM_IN_BROWSER_LOCK=1 under browser-mb.lock) and wrap jobs in tools/heavy.sh.
-- gs_hall: 1st check failed sprites_sharp (lordwarden off the top edge behind the throne; fridleif on a gold pool). Moved lordwarden -> [-2.6,-4.4], fridleif -> [4.4,1.6]; rebuilt. The re-check (/workspace/alf_qa/asg/c_hall) was queued on heavy.sh (both slots held by other bots' smokes) -- re-run: `chk.sh /workspace/alf_qa/asg/c_hall gs_hall`.
-- Then gs_temple, reliquary, reliquary2 (one at a time), commit + push each; then the full smoke_asgard (`run_load.sh <out>`) after the last code commit (switch retryable steps to T.check); pictures.
-- QA scripts: /workspace/alf_qa/asg/ (HM_BUILD_TMP=/workspace/alf_qa/asg/hmbuild, profile chrome-profile-nifl, lock /workspace/.hm-logs/browser-mb.lock).
+- All 5 areas pass check_scene --quick (gs_temple: NO_LIGHT windows + per-grade window glow; reliquary: wraiths off the portrait edge).
+- Next: the full smoke_asgard after the last code commit (`/workspace/alf_qa/asg/run_load.sh /workspace/alf_qa/asg/fsa`, done file fsa/done), then the pictures (smoke shots: area_*, room_g1..g9, boss_*), then the final report.
+- QA scripts: /workspace/alf_qa/asg/ (HM_BUILD_TMP=/workspace/alf_qa/asg/hmbuild, profile chrome-profile-nifl, lock /workspace/.hm-logs/browser-mb.lock, jobs via tools/heavy.sh after preflight).
 
 ## Areas
 | Area | Spec | Built | check_scene | Committed |
 |---|---|---|---|---|
 | asgard | yes | yes | PASS | yes |
 | gs_hall | yes | yes | PASS | yes |
-| gs_temple | yes | yes | - | - |
+| gs_temple | yes | yes | PASS | yes |
 | reliquary (G1-G5) | yes | yes | PASS | yes |
 | reliquary2 (G6-G9) | yes | yes | PASS | yes |
 
