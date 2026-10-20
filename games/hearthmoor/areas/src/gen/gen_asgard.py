@@ -98,6 +98,7 @@ temple = base(
      "spring": {"pos": [5.6, 6.0], "r": 2.0, "secret": "dt_spring"}},
     [motes([0, 1.6, 0.0], [14, 1.6, 14])], size=(60, 60),
 )
+temple["grades"] = {k: {**v, "window_intensity": {"day": 0.2, "dusk": 0.9, "night": 1.2}[k]} for k, v in GRADES.items()}   # the violet panes clipped at the palette's night 2.3 (check_scene no_bloom)
 
 
 # ---- the Gilded Reliquary (story 7): two north-running corridors, 16 m wide, rooms on a 14 m pitch. Room pads follow the pack's room layouts (metadata/asgard_layout.json).

@@ -212,7 +212,8 @@
    "sun_intensity": 1.0,
    "hemi_intensity": 0.7,
    "sun_color": "#fff0d0",
-   "lamp_intensity": 0.85
+   "lamp_intensity": 0.85,
+   "window_intensity": 0.2
   },
   "dusk": {
    "fog_color": "#2e2650",
@@ -222,7 +223,8 @@
    "sun_intensity": 0.6,
    "warmth": -0.04,
    "sun_color": "#a8a0f0",
-   "bugs": 0.5
+   "bugs": 0.5,
+   "window_intensity": 0.9
   },
   "night": {
    "fog_color": "#16122c",
@@ -233,7 +235,8 @@
    "exposure": 1.0,
    "sun_intensity": 0.4,
    "hemi_intensity": 0.55,
-   "sun_color": "#9a8ce0"
+   "sun_color": "#9a8ce0",
+   "window_intensity": 1.2
   }
  },
  "game": {
