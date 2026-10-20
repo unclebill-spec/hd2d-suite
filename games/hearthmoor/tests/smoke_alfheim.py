@@ -79,9 +79,9 @@ def steps(b, url, T, size, errors, rep, stub=None, shots=None):
         T.step("Prism Vault: rooms gated, Lumi along, staging prism-shard sheet", a["gates"] is not None and a["lumi"]["on"]
                and T.ev("window.__hd2d.ctx.actors.meta.roles.prismshard.sheet === 'alfenemy'"), qa={"room": a["room"], "gates": a["gates"]})
         shot("alf_vault")
-        a = load("prismvault", "&alfq=vault&beams=solve", "p2"); pg.wait_for_timeout(800); a = alf()
+        a = load("prismvault", "&alfq=vault&beams=solve", "p2"); T.until("(() => { const b = window.__hm.alfheim.qa().beams; return !!(b && b.lit); })()", 10); a = alf()
         T.step("beams=solve lights the P2 receivers", bool(a["beams"] and a["beams"]["lit"]), beams=a["beams"])
-        a = load("prismvault", "&alfq=boss", "boss"); pg.wait_for_timeout(1500); a = alf()
+        a = load("prismvault", "&alfq=boss", "boss"); T.until("(() => { const s = window.__hm.alfheim.qa().sylvaine; return !!s && s.scale >= 5.5 && s.phase === 1; })()", 20); a = alf()
         sy = a["sylvaine"]
         T.step("Lady Sylvaine spawns at 6x on her own boss sheet", bool(sy) and sy["scale"] >= 5.5 and sy["phase"] == 1, sylvaine=sy)
         shot("alf_sylvaine")
@@ -103,13 +103,18 @@ def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--out", default=str(GAME / "shots" / "alfheim_smoke"))
     ap.add_argument("--simscale", type=int, default=4)
+    ap.add_argument("--no-retry", action="store_true", help="a failing step fails at once (no one-shot retry)")
+    ap.add_argument("--no-preflight", action="store_true", help="skip tests/preflight.sh")
     a = ap.parse_args()
+    SM.Smoke.RETRY = not a.no_retry
+    SM.preflight(sys.argv)
     out = Path(a.out); out.mkdir(parents=True, exist_ok=True)
     srv = ThreadingHTTPServer(("127.0.0.1", 0), functools.partial(_Quiet, directory=str(GAME)))
     threading.Thread(target=srv.serve_forever, daemon=True).start()
     url = f"http://127.0.0.1:{srv.server_address[1]}/index.html?nosw&peace&simscale={a.simscale}"
     lines, errors, rep = [], [], {"url": url, "shots": {}}
     log = lambda s: (print(s, flush=True), lines.append(s))  # noqa: E731
+    log(SM.header("smoke_alfheim"))
     t0 = time.time()
     with sync_playwright() as p:
         b = p.chromium.launch(args=ARGS)
@@ -123,8 +128,9 @@ def main():
         b.close()
     srv.shutdown()
     rep["seconds"] = round(time.time() - t0, 1); rep["steps"] = T.steps; rep["errors"] = errors[:20]
+    rep["commit"] = SM.COMMIT; rep["retries"] = SM.Smoke.retries
     (out / "smoke_alfheim.json").write_text(json.dumps(rep, indent=1))
-    log(f"smoke_alfheim: {'PASS' if rep['pass'] else 'FAIL'} {sum(s['pass'] for s in T.steps)}/{len(T.steps)} steps in {rep['seconds']} s")
+    log(f"smoke_alfheim: {'PASS' if rep['pass'] else 'FAIL'} {sum(s['pass'] for s in T.steps)}/{len(T.steps)} steps in {rep['seconds']} s, retries {SM.Smoke.retries} @ {SM.COMMIT}")
     sys.exit(0 if rep["pass"] else 1)
 
 

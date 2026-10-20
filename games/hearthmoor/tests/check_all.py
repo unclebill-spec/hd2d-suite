@@ -59,7 +59,13 @@ def main():
     ap.add_argument("--jobs", type=int, default=1, help="check-scenes at once (default 1 = serial)")
     ap.add_argument("--tries", type=int, default=1, help="tries per area (a retry re-runs the identical check)")
     ap.add_argument("--logdir", default=str(GAME / "tests" / "out" / "check_all"))
+    ap.add_argument("--no-preflight", action="store_true", help="skip tests/preflight.sh (syntax + quick startup load)")
     a = ap.parse_args()
+    if not a.no_preflight:
+        import os
+        rc = subprocess.call(["bash", str(GAME / "tests" / "preflight.sh")], env={**os.environ, "HM_IN_BROWSER_LOCK": "1"})   # check_all runs under the browser lock already
+        if rc:
+            sys.exit(f"check_all: preflight FAILED (rc {rc}); fix it first (or --no-preflight)")
     want = [x.strip() for x in (a.areas or a.quick).split(",") if x.strip()]
     if a.changed:
         names = subprocess.run(["git", "diff", "--name-only", a.changed, "--", "games/hearthmoor/areas"], cwd=SUITE, capture_output=True, text=True, check=True).stdout.split()

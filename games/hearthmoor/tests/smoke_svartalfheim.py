@@ -39,6 +39,8 @@ def steps(b, url, T, size, errors, rep, stub=None, shots=None):
     def shot(name):
         rep.setdefault("shots", {})[name] = T.shot(name)
 
+    Q = "window.__hm.svart.qa()"   # the same object sv() returns, for T.until conditions
+
     def sv():
         return T.ev("window.__hm.svart.qa()")
 
@@ -84,7 +86,7 @@ def steps(b, url, T, size, errors, rep, stub=None, shots=None):
         shot("sv_glowmines")
         a = load("clockdeep", "&svq=seal")
         T.step("clockdeep loads from the lift", a["area"] == "clockdeep", qa=a)
-        a = load("clockdeep2", "&svq=gorrak", "boss"); pg.wait_for_timeout(1500); a = sv()
+        a = load("clockdeep2", "&svq=gorrak", "boss"); T.until(f"(() => {{ const a = {Q}; return !!a.gorrak && a.gorrak.scale === 6 && a.gorrak.phase === 1; }})()", 20); a = sv()
         g = a["gorrak"]
         T.step("Gorrak spawns at 6x on his own boss sheet, phase 1, no valves or anvils shown yet",
                bool(g) and g["scale"] == 6 and g["phase"] == 1 and a["spots"] == 0
@@ -93,10 +95,10 @@ def steps(b, url, T, size, errors, rep, stub=None, shots=None):
         au = T.ev("(() => { const e = window.__hm.combat.enemies.find((x) => x.id === 'gorrak'); return { glow: e.D.glow, pulse: e.D.aura && e.D.aura.pulse, ticking: e.auraT !== undefined }; })()")
         T.step("Gorrak's own aura: a dark red-violet glow with cold-blue rune pulses (not the red pool)", au["glow"] == "#7a2a62" and au["pulse"] == "#2ab4ff" and au["ticking"], aura=au)
         T.ev("(() => { const G = window.__hm; G.peace = false; window.__hd2d.ctx.player.iframes = 99; const e = G.combat.enemies.find((x) => x.id === 'gorrak'); e.hp = Math.round(e.D.hp * 0.6); })()")
-        pg.wait_for_timeout(1200); a = sv()
+        T.until(f"(() => {{ const a = {Q}; return a.gorrak && a.gorrak.phase === 2 && a.spots === 4; }})()", 20); a = sv()
         T.step("phase 2 at 65%: the 4 quench valves become usable", a["gorrak"]["phase"] == 2 and a["spots"] == 4, qa=a)
         T.ev("(() => { window.__hd2d.ctx.player.iframes = 99; const e = window.__hm.combat.enemies.find((x) => x.id === 'gorrak'); e.hp = Math.round(e.D.hp * 0.25); })()")
-        pg.wait_for_timeout(1200); a = sv()
+        T.until(f"(() => {{ const a = {Q}; return a.gorrak && a.gorrak.phase === 3 && a.spots === 4; }})()", 20); a = sv()
         T.step("phase 3 at 30%: the 4 rune-anvils become usable", a["gorrak"]["phase"] == 3 and a["spots"] == 4, qa=a)
         T.ev("(() => { const f = window.__hm.svart.fight; for (let i = 0; i < 4; i++) f.anvil(i); })()")
         bind = T.ev("(() => { const e = window.__hm.combat.enemies.find((x) => x.id === 'gorrak'); return { bind: e.bind, kneel: e.kneelEnd > window.__hm.svart.fight.t }; })()")
@@ -104,14 +106,12 @@ def steps(b, url, T, size, errors, rep, stub=None, shots=None):
         a = load("clockdeep", "&svq=seal"); a = sv()
         T.step("clockdeep C1-C3 foe pools spawn (forge constructs, sootlings, a spark golem)", {"forgeconstruct", "sootling", "sparkgolem"} <= set(a["foes"]), qa=a)
         T.ev("(() => { window.__hm.peace = false; window.__hd2d.ctx.player.iframes = 99; })()")
-        pg.wait_for_timeout(6500)
         T.until("window.__hm.svart.qa().deep.vents >= 2", 90)   # game-time timers: wait for the cycle, not a fixed 6.5 s
         a = sv()
         T.step("C1 steam vents cycle (puff tell, then blast)", a["deep"]["vents"] >= 2, deep=a["deep"])
         a = load("clockdeep2", "&svq=seal", "c7"); a = sv()
         T.step("clockdeep2 C4-C7 foe pools spawn (shadowsmiths, spark golems...)", {"shadowsmith", "sparkgolem", "sootling"} <= set(a["foes"]), qa=a)
         T.ev("(() => { window.__hm.peace = false; window.__hd2d.ctx.player.iframes = 99; })()")
-        pg.wait_for_timeout(7000)
         T.until("window.__hm.svart.qa().deep.gusts >= 1 && window.__hm.svart.qa().deep.pushed >= 1", 120)   # the gust timer runs in game time
         a = sv()
         T.step("C7 bellows gusts: one blows every 6 s and pushes you back off the bridge line", a["deep"]["gusts"] >= 1 and a["deep"]["pushed"] >= 1, deep=a["deep"])
@@ -161,10 +161,10 @@ def steps(b, url, T, size, errors, rep, stub=None, shots=None):
         T.step("hired payout: a smaller reward (90 gold), no Realm Favor, resolved as contract", a["quests"].get("prismvault") == 3 and g1 - g0 == 90
                and T.ev("window.__hm.S.flags.alf_resolved === 'contract'"), gold=[g0, g1])
         # ---- the conquer path: watch posts -> Ilvar's duel (yields at 25%) -> the Forge-Seal -> the lift
-        load("forge_hall", "&svq=conquer"); pg.wait_for_timeout(1200); a = sv()
+        load("forge_hall", "&svq=conquer"); T.until(f"{Q}.foes.filter((f) => f === 'hushblade').length === 6", 20); a = sv()
         T.step("conquer: three Hushed watch posts (6 hushblades) appear round the Great Forge", a["foes"].count("hushblade") == 6 and a["quests"].get("sv_take") == 1, foes=a["foes"])
         T.ev("(() => { window.__hm.peace = false; window.__hd2d.ctx.player.iframes = 99; })()")
-        tq("story.qaClear()"); pg.wait_for_timeout(600); a = sv()
+        tq("story.qaClear()"); T.until("[1, 2, 3].every((i) => !!window.__hm.S.found['fk_p' + i]) && window.__hm.combat.enemies.some((x) => x.sp.id === 'ilvar_duel')", 20); a = sv()
         T.step("all three posts broken: fk_p1..3 found and Ilvar's duel starts (1.3x elite)",
                all(T.ev("!!window.__hm.S.found.fk_p%d" % i) for i in (1, 2, 3)) and T.ev("(() => { const e = window.__hm.combat.enemies.find((x) => x.sp.id === 'ilvar_duel'); return !!e && e.D.scale === 1.3; })()"))
         tq("story.qaDuelHit()"); pg.wait_for_timeout(500); T.ev("(() => { const G = window.__hm, d = G.dlg; if (d && d.then) d.then(G); G.dropDialogue(); })()"); a = sv()
@@ -449,13 +449,18 @@ def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--out", default=str(GAME / "shots" / "svartalfheim_smoke"))
     ap.add_argument("--simscale", type=int, default=4)
+    ap.add_argument("--no-retry", action="store_true", help="a failing step fails at once (no one-shot retry)")
+    ap.add_argument("--no-preflight", action="store_true", help="skip tests/preflight.sh")
     a = ap.parse_args()
+    SM.Smoke.RETRY = not a.no_retry
+    SM.preflight(sys.argv)
     out = Path(a.out); out.mkdir(parents=True, exist_ok=True)
     srv = ThreadingHTTPServer(("127.0.0.1", 0), functools.partial(_Quiet, directory=str(GAME)))
     threading.Thread(target=srv.serve_forever, daemon=True).start()
     url = f"http://127.0.0.1:{srv.server_address[1]}/index.html?nosw&peace&simscale={a.simscale}"
     lines, errors, rep = [], [], {"url": url, "shots": {}}
     log = lambda s: (print(s, flush=True), lines.append(s))  # noqa: E731
+    log(SM.header("smoke_svartalfheim"))
     t0 = time.time()
     with sync_playwright() as p:
         b = p.chromium.launch(args=ARGS)
@@ -469,8 +474,9 @@ def main():
         b.close()
     srv.shutdown()
     rep["seconds"] = round(time.time() - t0, 1); rep["steps"] = T.steps; rep["errors"] = errors[:20]
+    rep["commit"] = SM.COMMIT; rep["retries"] = SM.Smoke.retries
     (out / "smoke_svartalfheim.json").write_text(json.dumps(rep, indent=1))
-    log(f"smoke_svartalfheim: {'PASS' if rep['pass'] else 'FAIL'} {sum(s['pass'] for s in T.steps)}/{len(T.steps)} steps in {rep['seconds']} s")
+    log(f"smoke_svartalfheim: {'PASS' if rep['pass'] else 'FAIL'} {sum(s['pass'] for s in T.steps)}/{len(T.steps)} steps in {rep['seconds']} s, retries {SM.Smoke.retries} @ {SM.COMMIT}")
     sys.exit(0 if rep["pass"] else 1)
 
 
