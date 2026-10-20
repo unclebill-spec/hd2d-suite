@@ -2,6 +2,14 @@
 
 Dates are America/New_York. Newest first. Keep this current with every change you push.
 
+## 2026-10-19: Niflheim-2 leftovers (branch `realm-niflheim-2` off main 581fa0f)
+- F3 Glow Pool Gallery slide puzzle (`NPZ`; solving it, `fs_slide`, unseals freeze-core `fs_c1`); F8 Rime Bridge rune-step (`NBR`; crossing, `fs_bridge`, frees heart-ice `hi_3`). Game-side only, no scene rebuild.
+- `veyra_shadow` redrawn lighter (dark teal / ash grey, not near-black), back in the atlases (`FX_SKIP` empty); installed on frozenspire, frozenspire2, frozen_rift.
+- Veyra's HP bar: an engaged boss keeps its bar in any state; in portrait (<= 640 px) `#bossbar` sits below the HUD chips.
+- The Frostweave school (Gudrun; Ice Lance, Frost Nova, Mist Veil, Frost Spirits, Ice Golem): `combat.js` kinds, tiered lessons, `?nfq=school`; draws the pack rows in Niflheim areas, stock spells elsewhere (no new atlas rows in other areas).
+- `smoke_jotunheim.py` standalone main gains the same `HD2D_USER_DATA_DIR` profile hook as the other realm smokes.
+- Leftover: wall-shooting Wardens (optional, not built).
+
 ## 2026-10-18: Niflheim LIVE (merge of `realm-niflheim` c7f81e7 via `hearthmoor-nifl-merge`, a fast-forward of main a9802be)
 - **Merge-check:** the diff touches no engine code (no `engine/`, `combat.js`, `tools/runtime/web/engine/main.js` or other area's gamefx atlas): `game.js` (module wiring), `build.py` (the READY-gated six areas), `smoke.py` (the realm tail), `check_sprite.py` (an empty `NIFL_NEON_ALLOW`: allows nothing) and the six new areas. Master Builder's runs pre-dated the last code edit (c7f81e7: Veyra's stand, smoke waits), so they were rerun here: `smoke_niflheim` 63/63, `smoke.py` segment A 114/114, segment B (with the five realm smokes) 401/402 (the one failure is the second fix below); check-sprite PASS on nf_folk, nf_hrefna, nf_enemies, nf_elites, boss_colossus, boss_kael, boss_veyra (no neon); `check_all --lowres` 6/6 (see the fix below).
 - **Fixed in the merge (iceglow, `check_all --lowres`, never loosened):** `sprites_sharp` failed (worst block 0.93 < 0.97) and `colours` too (crop / source colours 2.29): Gudrun (`frostspeaker`) stood at (1.8, -0.6) with the glow-vine bulb (3, 1) beside her staff, and at dusk / night it broke her sprite blocks; a lamp-reach cap did nothing (same 0.9278), (0.8, -1.6) put an orb-chain mesh in front of her, (1.8, -1.9) put her feet on a floor-tile seam (0.966 at night). **Gudrun now stands at (1.2, -1.0)** (spec `areas/src/iceglow.json` and the built `scene.json`): sprites_sharp 0.997, colours 1.0. `smoke_niflheim` was rerun after the move.
