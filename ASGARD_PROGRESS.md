@@ -13,7 +13,7 @@
 | gs_hall | yes | yes | PASS | yes |
 | gs_temple | yes | yes | - | - |
 | reliquary (G1-G5) | yes | yes | - | - |
-| reliquary2 (G6-G9) | yes | yes | - | - |
+| reliquary2 (G6-G9) | yes | yes | PASS | yes |
 
 ## Decisions (lead 2026-10-19)
 - aurelion_rest is its own role (swapped in on the befriend yield; the statue in gs_hall). Sigrun's wings are fx only. Sentinel Prime 5x, 3 phase roles, G4. Aurelion 7x, red P3, wraith copy.

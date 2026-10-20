@@ -126,7 +126,7 @@ RARE_AREAS.asgard = { bases: ['centaurchamp', 'elderwraith'], spots: [[9.0, -7.6
 // authored spawns: out of the arrival view (the hub's centaur on the Skyfield side, the Reliquary's wraiths in G2/G3 beyond the start view)
 Object.assign(SPAWNS, {
   asgard: [{ id: 'as_centaur0', role: 'storm_centaur', pos: [9.4, -8.4], night: true }],
-  reliquary: [{ id: 'rq_wraith0', role: 'light_wraith', pos: [-0.8, -24.6] }, { id: 'rq_wraith1', role: 'light_wraith', pos: [1.6, -25.4], night: true }],
+  reliquary: [{ id: 'rq_wraith0', role: 'light_wraith', pos: [-1.6, -27.0] }, { id: 'rq_wraith1', role: 'light_wraith', pos: [1.6, -27.8], night: true }],
   reliquary2: [{ id: 'rq2_wraith0', role: 'light_wraith', pos: [2.4, -3.6] }],
 });
 // the three springs (story 2.6): +2 s of lightning resist per drink (max 3 stacks = 6 s)
