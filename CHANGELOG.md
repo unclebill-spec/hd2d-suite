@@ -2,6 +2,11 @@
 
 Dates are America/New_York. Newest first. Keep this current with every change you push.
 
+## 2026-10-19: Hearthmoor testing time-savers (branch `hearthmoor-timesavers`)
+- `tests/preflight.sh` (+ `preflight_load.py`): node --check on all game / engine js (as .mjs) and one headless title load that fails on startup errors; run first by `smoke.py`, `smoke_*.py`, `check_all.py` (`--no-preflight`).
+- Smoke harness: a failing re-runnable step (callable / new `T.check`) retries once immediately, `[RETRY]` logs both results, passes only if the retry passes; `retries N` in the summary; `--no-retry`. Smoke logs and json carry the commit hash (`# smoke header: commit ...`).
+- Fixed waits -> `T.until(condition)` (same assertions, same values): the dialogue helpers (`talk`, `to_choice`, `read_all`), segment C, the picker / quest log / toast / glow-toad steps, Svartalfheim (Gorrak phases, vents / gusts, conquer posts) and Alfheim (beams, Sylvaine).
+- `tools/heavy.sh` (2-slot nice'd heavy-job queue), `tools/secret_scan.sh`, `tools/hm_publish.sh` (detached auto-publish watcher). AGENTS.md: builder rule (smoke after the last code commit, verified by hash) and the opt-in notes.
 ## 2026-10-19: Niflheim-2 leftovers (branch `realm-niflheim-2` off main 581fa0f)
 - F3 Glow Pool Gallery slide puzzle (`NPZ`; solving it, `fs_slide`, unseals freeze-core `fs_c1`); F8 Rime Bridge rune-step (`NBR`; crossing, `fs_bridge`, frees heart-ice `hi_3`). Game-side only, no scene rebuild.
 - `veyra_shadow` redrawn lighter (dark teal / ash grey, not near-black), back in the atlases (`FX_SKIP` empty); installed on frozenspire, frozenspire2, frozen_rift.
