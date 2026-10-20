@@ -2,6 +2,11 @@
 
 Dates are America/New_York. Newest first. Keep this current with every change you push.
 
+## 2026-10-19: Niflheim-2 LIVE (merge of `realm-niflheim-2` d7cdb97 + main a70ea29 via `hearthmoor-nifl2-merge`)
+- **Merge-check:** Master Builder's runs were after its last commit (6ad0f27 code, d7cdb97 docs; clean tree): `smoke_niflheim` 90/90, `smoke_muspelheim` 95/95, `smoke_jotunheim` 185/185. Its check-scenes pre-dated the commit, so they were rerun here. On the merge (1d53b75): preflight PASS, `smoke_niflheim` 90/90 (rerun: main changed its harness), `check_all --lowres` on frozenspire / frozenspire2 / frozen_rift, and `smoke.py` segments I (boss camera), A (combat) and D (phone portrait: the new portrait `#bossbar` rule in game.css) that MB could not run. No new actor sheets (gamefx atlases + the `veyra_shadow` strip only), so no check-sprite was needed.
+- **Screenshot:** `docs/screenshots/niflheim_frostweave.png` (Frostweave lance and Ice Golem in the Glowpool Caverns).
+- Niflheim leftovers now: Wardens that shoot from walls (optional), plus the rest of the list in AGENTS.md.
+
 ## 2026-10-19: Hearthmoor testing time-savers (branch `hearthmoor-timesavers`)
 - `tests/preflight.sh` (+ `preflight_load.py`): node --check on all game / engine js (as .mjs) and one headless title load that fails on startup errors; run first by `smoke.py`, `smoke_*.py`, `check_all.py` (`--no-preflight`).
 - Smoke harness: a failing re-runnable step (callable / new `T.check`) retries once immediately, `[RETRY]` logs both results, passes only if the retry passes; `retries N` in the summary; `--no-retry`. Smoke logs and json carry the commit hash (`# smoke header: commit ...`).
