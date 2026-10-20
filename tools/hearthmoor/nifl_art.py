@@ -61,7 +61,7 @@ EXTRA["frozenspire2"].pop("boss_veyra")
 # Scoped neon (art README "Neon flag", lead ruling): EMPTY until the README names it. Mirrors NIFL_NEON_ALLOW in check_sprite.py, never wider.
 NIFL_NEON_SCOPE = {}
 FX_DROP = {"nf_home": {("pool_teal", -2.0, 5.4), ("pool_teal", 2.0, 5.4)}}   # per-area placed decals left out when check_scene no_bloom names them (the Quiet Shore's two lake-edge teal pools clip the snow at 255)
-FX_SKIP = {"veyra_shadow"}   # near-black (#0c1220) decal: it never matches the atlas over the dark ice floors (check_scene gamefx_sharp atlas_corr 0.0): left out of the area atlases, see NIFLHEIM_PROGRESS.md   # effects whose crop never matches the atlas frame (check_scene gamefx_sharp): the pack keeps them, the area atlases do not list them
+FX_SKIP = set()   # (Oct 19 2026: veyra_shadow redrawn lighter, dark teal + ash grey, and back in the atlases)   # effects whose crop never matches the atlas frame (check_scene gamefx_sharp): the pack keeps them, the area atlases do not list them
 FX_FILE = ("gamefx", "nf_fx.json")   # staging gamefx rows: ST / "gamefx" / "nf_fx.json"
 
 

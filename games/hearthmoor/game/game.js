@@ -12,7 +12,8 @@ import { Jotunheim, AREAS_JOT, AREA_NAMES_JOT } from './jotunheim.js';   // [JOT
 import { Muspelheim, AREAS_MUSP, AREA_NAMES_MUSP } from './muspelheim.js';   // [MUSPELHEIM] skeleton: AREAS_MUSP is empty until areas are built
 import { Niflheim, AREAS_NIFL, AREA_NAMES_NIFL } from './niflheim.js';   // [NIFLHEIM] skeleton: AREAS_NIFL is empty until areas are built
 const EXTRA_SPELLS = ['boulder_toss', 'frost_rune', 'stone_skin', 'cold_fire', 'stone_golem',   // [JOTUNHEIM] Stonefrost spells: drawn by combat from the game-fx atlas, so the engine's spells-atlas cycle filter must let them through
-  'fire_wave', 'magma_pool', 'ember_swarm', 'flame_ward', 'magma_hound'];   // [MUSPELHEIM-2] the Caldera school (Torka), the same path
+  'fire_wave', 'magma_pool', 'ember_swarm', 'flame_ward', 'magma_hound',   // [MUSPELHEIM-2] the Caldera school (Torka), the same path
+  'fw_lance', 'fw_nova', 'fw_veil', 'fw_spirits', 'fw_golem'];   // [NIFLHEIM-2] the Frostweave school (Gudrun), the same path
 import { Temple } from './temple.js';
 import { Verdant } from './verdant.js';
 import { Ambient } from './audio.js';

@@ -12,6 +12,7 @@ actors and no JS errors; the Bifrost ice arch is sealed until the gate opens, th
 import argparse
 import functools
 import json
+import os
 import sys
 import threading
 import time
@@ -644,7 +645,19 @@ def main():
     log = lambda s: (print(s, flush=True), lines.append(s))  # noqa: E731
     t0 = time.time()
     with sync_playwright() as p:
-        b = p.chromium.launch(args=ARGS)
+        udd = os.environ.get("HD2D_USER_DATA_DIR")   # Bill's rule: browse only on the dedicated user-data dir, under the browser lock (same hook as smoke_muspelheim / smoke_niflheim)
+        if udd:
+            pc = p.chromium.launch_persistent_context(udd, args=ARGS, viewport={"width": 960, "height": 540}, has_touch=True)
+
+            class _OneContext:   # steps() asks for new_context(); a persistent profile has exactly one context, so hand that one out
+                def new_context(self, **kw):
+                    return pc
+
+                def close(self):
+                    pc.close()
+            b = _OneContext()
+        else:
+            b = p.chromium.launch(args=ARGS)
         T = SM.Smoke(None, out, log)
         try:
             steps(b, url, T, (960, 540), errors, rep, SM.STUB, out)

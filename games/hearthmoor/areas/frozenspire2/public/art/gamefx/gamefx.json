@@ -855,6 +855,27 @@
    "duration": 9999,
    "notes": "Veyra's breath: white puffs at head height (real Veyra only; mist clones have no breath)"
   },
+  "veyra_shadow": {
+   "row": 37,
+   "frames": 4,
+   "fps": 1,
+   "loop": true,
+   "loop_from": 0,
+   "loops": 1,
+   "kind": "decal",
+   "pivot": [
+    24,
+    24
+   ],
+   "lift": 0.02,
+   "glow": true,
+   "light": null,
+   "speed": null,
+   "travel": null,
+   "then": null,
+   "duration": 9999,
+   "notes": "Veyra's ground shadow (real Veyra only; clones cast none): scale ~2.5x"
+  },
   "lantern_change": {
    "row": 38,
    "frames": 8,
