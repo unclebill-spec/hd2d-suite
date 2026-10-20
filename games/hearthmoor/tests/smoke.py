@@ -21,6 +21,7 @@ Writes screenshots + smoke.json. Exit 0 = pass.
 """
 import argparse
 import math
+import os
 import functools
 import json
 import sys
@@ -31,6 +32,35 @@ from pathlib import Path
 
 GAME = Path(__file__).resolve().parents[1]
 STUB = (Path(__file__).resolve().parent / "gamepad_stub.js").read_text()
+def _commit():
+    """the commit under test, for the smoke log header (merge checks compare it with the branch tip); '+dirty' = uncommitted game edits"""
+    import subprocess
+    try:
+        h = subprocess.run(["git", "rev-parse", "--short", "HEAD"], cwd=GAME, capture_output=True, text=True).stdout.strip()
+        d = subprocess.run(["git", "status", "--porcelain", "--", "."], cwd=GAME, capture_output=True, text=True).stdout.strip()
+        return h + ("+dirty" if d else "")
+    except Exception:  # noqa: BLE001
+        return "unknown"
+
+
+COMMIT = _commit()
+
+
+def header(what):
+    return f"# smoke header: commit {COMMIT}  {what}  started {time.strftime('%Y-%m-%d %H:%M:%S %Z')}"
+
+
+def preflight(argv):
+    """tests/preflight.sh first (syntax + a quick startup load); --no-preflight skips it. Exits 2 on a preflight failure."""
+    import subprocess
+    if "--no-preflight" in argv or os.environ.get("HM_PREFLIGHT_DONE"):
+        return
+    rc = subprocess.call(["bash", str(Path(__file__).resolve().parent / "preflight.sh")], env={**os.environ, "HM_IN_BROWSER_LOCK": "1"})   # smokes run under the browser lock already
+    if rc:
+        print(f"preflight FAILED (rc {rc}): fix it before the smoke (or --no-preflight)", flush=True); sys.exit(2)
+    os.environ["HM_PREFLIGHT_DONE"] = "1"   # shard workers / child smokes skip it
+
+
 ARGS = ["--use-angle=swiftshader", "--enable-unsafe-swiftshader", "--ignore-gpu-blocklist"]
 
 
@@ -66,11 +96,35 @@ class Smoke:
     def ev(self, js):
         return self.pg.evaluate(js)
 
+    RETRY = True   # one immediate retry of a failing step (same check, same values); --no-retry turns it off
+    retries = 0
+
+    def _check(self, ok):
+        """ok is a bool, a JS expression string (T.check) or a callable: strings / callables can be re-evaluated for the retry"""
+        if callable(ok):
+            return ok()
+        return ok
+
     def step(self, name, ok, **info):
-        self.steps.append({"step": name, "pass": bool(ok), "seg": getattr(self, "seg", ""), **info})
-        self.log(f"  [{'PASS' if ok else 'FAIL'}] {name} {json.dumps(info)[:200] if info else ''}  @{time.time() - self.t0:.0f}s")
-        if not ok:
+        """a failing step retries ONCE right away with the same check when the check can be re-run (a callable or T.check's JS);
+        it passes only if the retry passes. A plain bool cannot be re-measured, so it is logged as [RETRY] n/a and fails as before."""
+        r1 = bool(self._check(ok))
+        res = r1
+        if not r1 and Smoke.RETRY:
+            Smoke.retries += 1
+            if callable(ok):
+                res = bool(self._check(ok))
+                self.log(f"  [RETRY] {name}: first={r1} retry={res}")
+            else:
+                self.log(f"  [RETRY] {name}: first={r1} retry=n/a (value-only check, cannot re-measure)")
+        self.steps.append({"step": name, "pass": res, "seg": getattr(self, "seg", ""), **({"retried": True, "first": r1} if res != r1 or (not r1 and Smoke.RETRY) else {}), **info})
+        self.log(f"  [{'PASS' if res else 'FAIL'}] {name} {json.dumps(info)[:200] if info else ''}  @{time.time() - self.t0:.0f}s")
+        if not res:
             raise AssertionError(name)
+
+    def check(self, name, js, **info):
+        """step on a JS boolean expression; on a fail the same expression is evaluated again once (see step)"""
+        return self.step(name, lambda: self.ev(js), **info)
 
     def frames(self, n=6, timeout=30):
         """wait until the engine has drawn n more frames (fixed sleeps alone race slow frames on a loaded box)"""
@@ -298,7 +352,8 @@ def run(out, simscale=4, size=(960, 540), segs=SEGS):
     url = f"http://127.0.0.1:{srv.server_address[1]}/index.html?nosw&peace&simscale={simscale}"
     lines, errors = [], []
     log = lambda s: (print(s, flush=True), lines.append(s))  # noqa: E731
-    rep = {"url": url, "shots": {}, "segments_run": segs, "segments": seg_rep}
+    rep = {"url": url, "shots": {}, "segments_run": segs, "segments": seg_rep, "commit": COMMIT}
+    log(header(f"segments {segs}"))
     T_START = time.time()
     with sync_playwright() as p:
         b = p.chromium.launch(args=ARGS)
@@ -2744,7 +2799,8 @@ def run(out, simscale=4, size=(960, 540), segs=SEGS):
     rep["seconds"] = round(time.time() - T_START, 1)
     rep["steps"] = T.steps
     (out / "smoke.json").write_text(json.dumps(rep, indent=1))
-    log(f"smoke: {'PASS' if rep['pass'] else 'FAIL'} {sum(s['pass'] for s in T.steps)}/{len(T.steps)} steps in {rep['seconds']} s" + (f"  ({rep.get('error')})" if not rep["pass"] else ""))
+    rep["retries"] = Smoke.retries; rep["commit"] = COMMIT
+    log(f"smoke: {'PASS' if rep['pass'] else 'FAIL'} {sum(s['pass'] for s in T.steps)}/{len(T.steps)} steps in {rep['seconds']} s, retries {Smoke.retries} @ {COMMIT}" + (f"  ({rep.get('error')})" if not rep["pass"] else ""))
     return rep
 
 
@@ -2768,12 +2824,13 @@ def run_jobs(n, out, simscale, segs=SEGS):
     plan = [p for p in plan_shards(n, segs) if p]
     out.mkdir(parents=True, exist_ok=True)
     t0 = time.time()
+    print(header(f"--jobs {n} segments {segs}"), flush=True)
     print(f"smoke --jobs {n}: shards {plan} (segment seconds {seg_seconds()})", flush=True)
     procs = []
     for i, p in enumerate(plan):
         so = out / f"shard{i + 1}"
         lf = open(out / f"shard{i + 1}.log", "w")
-        pr = subprocess.Popen([sys.executable, "-u", str(Path(__file__).resolve()), "--segments", p, "--out", str(so), "--simscale", str(simscale)],
+        pr = subprocess.Popen([sys.executable, "-u", str(Path(__file__).resolve()), "--segments", p, "--out", str(so), "--simscale", str(simscale)] + ([] if Smoke.RETRY else ["--no-retry"]),
                               stdout=subprocess.PIPE, stderr=subprocess.STDOUT, text=True, bufsize=1)
 
         def pump(pr=pr, lf=lf, tag=f"[s{i + 1}:{p}]"):
@@ -2801,7 +2858,8 @@ def run_jobs(n, out, simscale, segs=SEGS):
     for r in reps:
         print(f"  shard {r['shard']}: {'PASS' if r.get('pass') else 'FAIL'} {sum(s['pass'] for s in r.get('steps', []))}/{len(r.get('steps', []))} in {r.get('seconds')} s"
               + (f"  ({r.get('error')})" if not r.get("pass") else ""), flush=True)
-    print(f"smoke: {'PASS' if ok else 'FAIL'} {sum(s['pass'] for s in steps)}/{len(steps)} steps in {wall} s (sharded, {len(plan)} workers, segments {''.join(sorted(segs))})", flush=True)
+    merged["retries"] = sum(r.get("retries", 0) for r in reps); merged["commit"] = COMMIT; (out / "smoke.json").write_text(json.dumps(merged, indent=1))
+    print(f"smoke: {'PASS' if ok else 'FAIL'} {sum(s['pass'] for s in steps)}/{len(steps)} steps in {wall} s, retries {merged['retries']} @ {COMMIT} (sharded, {len(plan)} workers, segments {''.join(sorted(segs))})", flush=True)
     return merged
 
 
@@ -2814,7 +2872,12 @@ if __name__ == "__main__":
     ap.add_argument("--shard", default=None, help="i/N: run shard i of N (same split as --jobs N)")
     ap.add_argument("--jobs", type=int, default=0, help="run all segments as N parallel browser workers in this one process")
     ap.add_argument("--list", action="store_true", help="list the segments, quick areas and the shard plan")
+    ap.add_argument("--no-retry", action="store_true", help="a failing step fails at once (no one-shot retry)")
+    ap.add_argument("--no-preflight", action="store_true", help="skip tests/preflight.sh")
     a = ap.parse_args()
+    Smoke.RETRY = not a.no_retry
+    if not a.list:
+        preflight(sys.argv)
     segs = a.segments.upper()
     if a.quick:
         segs = "".join(sorted({c for q in a.quick.split(",") for c in QUICK[q.strip().lower()]}))
