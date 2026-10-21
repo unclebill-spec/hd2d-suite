@@ -1,6 +1,6 @@
 # Hearthmoor music
 
-Mono 22.05 kHz Vorbis (q0), 42-100 KB each, ~525 KB total. Each file is exactly 8 bars; tails wrap to the start: loop start 0, loop end = buffer length (WebAudio `AudioBufferSourceNode.loop`, not `<audio loop>`). Regenerate: `python3 tools/hearthmoor/gen_realm_music.py`.
+Mono 22.05 kHz Vorbis (q0), 42-100 KB each, ~605 KB total. Each file is exactly 8 bars; tails wrap to the start: loop start 0, loop end = buffer length (WebAudio `AudioBufferSourceNode.loop`, not `<audio loop>`). Regenerate: `python3 tools/hearthmoor/gen_realm_music.py`.
 
 | Track | Areas (`setArea` ids) | Mood |
 |---|---|---|
@@ -10,6 +10,7 @@ Mono 22.05 kHz Vorbis (q0), 42-100 KB each, ~525 KB total. Each file is exactly 
 | jotunheim | jotunheim, jt_hall, rimecaves, barrow, barrow2 | E minor slow choir + drone, sparse chimes |
 | muspelheim | muspelheim, mp_hall, lavafalls, caldera, caldera2 | D phrygian-dominant warm drone and bells |
 | niflheim | niflheim, nf_home, iceglow, frozenspire, frozenspire2, frozen_rift | B minor glass chimes, choir, cold drone |
+| asgard | asgard, gs_hall, gs_temple, reliquary, reliquary2 | C major golden bells, regal choir, low drone, distant soft thunder |
 | battle | any foe chasing / attacking (lingers 4 s) | 120 bpm plucked ostinato + soft toms |
 | boss | a boss (`D.boss`, not rares) engaged | 104 bpm choir, toms, drone |
 
