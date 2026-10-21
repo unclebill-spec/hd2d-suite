@@ -318,7 +318,7 @@ QUICK = {
     "storm": "H", "storms": "H", "riftstorm": "H", "bounty": "H",
 }
 TIMING = FIX / "smoke_timing.json"   # seconds per segment from the last passing runs (shard balancing only)
-DEFAULT_SECONDS = {"A": 560, "B": 260, "C": 230, "D": 5640, "E": 25, "F": 150, "G": 200, "H": 170, "I": 90, "J": 120, "K": 60, "L": 60, "M": 60}   # D ~94 min since the music step visits every realm
+DEFAULT_SECONDS = {"A": 560, "B": 260, "C": 230, "D": 420, "E": 25, "F": 150, "G": 200, "H": 170, "I": 90, "J": 120, "K": 60, "L": 60, "M": 60}   # D ~7 min (music plays live in the Plaza only; other realms checked statically)
 
 
 def seg_seconds():
@@ -1818,6 +1818,18 @@ def run(out, simscale=4, size=(960, 540), segs=SEGS):
                        and m1[0]["muted"] and m1[0]["track"] is None and not m1[0]["ducked"] and m1[1] == "1" and m1[2] == "music: off"
                        and m2 == [0.35, "0.35", "35%", "0"] and mb == "boss" and mr[0]["track"] == "midgard" and mr[0]["vol"] == 0.6 and mr[0]["ducked"] and not mr[1],
                        m0=m0, loop=lp, muted=m1, vol=m2, boss=mb, back=mr)
+                # music, other realms (static, 2026-10-21): only the Plaza plays live above; every other realm's area -> track map in audio.js and its music_<track>.ogg are checked on disk
+                import re as _re
+                _aj = (Path(__file__).resolve().parent.parent / "game" / "audio.js").read_text()
+                _map = {a: t for grp, t in _re.findall(r"for \(const a of \[([^\]]*)\]\) REALM_OF\[a\] = '(\w+)'", _aj) for a in _re.findall(r"'(\w+)'", grp)}
+                _tr = _re.findall(r"'(\w+)'", _re.search(r"MUSIC_TRACKS = \[([^\]]*)\]", _aj).group(1))
+                _md = Path(__file__).resolve().parent.parent / "audio" / "music"
+                _miss = [t for t in _tr if not (_md / f"music_{t}.ogg").is_file()]
+                _realms = {"alfheim", "svartalfheim", "jotunheim", "muspelheim", "niflheim", "asgard"}
+                _bad = [a for a, t in _map.items() if t not in _tr]
+                T.step("music (static): every non-Midgard realm hub maps to its own theme, every mapped track is in MUSIC_TRACKS, every music_<track>.ogg exists",
+                       all(_map.get(r) == r for r in _realms) and _map.get("plaza") == "midgard" and set(_map.values()) | {"battle", "boss"} == set(_tr) and not _bad and not _miss,
+                       areas=len(_map), tracks=_tr, missing=_miss, bad=_bad)
                 # touch: the moss gate's destination choice (errands done) takes a tap on a row
                 r = T.ev("window.__hm.ctx.scene.game.portals[0].rect")
                 T.ev(f"window.__hm.ctx.walkTo({(r[0] + r[2]) / 2}, {(r[1] + r[3]) / 2})")
