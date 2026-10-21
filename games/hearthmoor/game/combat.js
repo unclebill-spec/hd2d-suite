@@ -20,6 +20,11 @@ const LAVA = '#ff7a1a', HOT = '#ffd27a';
 const HOUND = { name: 'Magma hound', hp: 110, dmg: 13, reach: 1.4, speed: 2.6 };
 const HOUND_ROLES = ['magma_hound'];   // the realm's own hound sheet (every Muspelheim area carries it); elsewhere no hound answers
 const WAVE_FX = { right: 'fire_wave', left: 'fire_wave_l', up: 'fire_wave_u', down: 'fire_wave_d' };
+// [NIFLHEIM-2] the Frostweave school (Gudrun's lessons; flags fw_i / fw_ii / fw_iii). Art: the Niflheim pack's own nf_fx rows (ice_lance, frost_nova, mist_veil,
+// spirit_swarm, snow_puff) where an area's game-fx atlas carries them (the six Niflheim areas), else the stock spells atlas (coldfire_bolt, frost_puff, coldfire_motes, summon_poof).
+const FROST = '#a6ecff';
+const ICEGOLEM = { name: 'Ice golem', hp: 100, dmg: 15, reach: 1.4, speed: 1.8 };
+const ICEGOLEM_ROLES = ['ice_golem', 'icegolem', 'golem', 'eldergolem'];   // the realm's own ice golem first (Niflheim areas), else the stock frost golem / stone golem looks
 
 const SUMMON_GLOW = { mushgolem: '#f2c24a', runesentinel: '#ffb24a', runewisp: '#94c0dc', stormsprite: '#94c0dc', sapling: '#b2c464', emberimp: '#ffb24a' };
 // 6.4: camera framing for big foes: 2.5x Glenheart pulls ~1.18 (unchanged); 5-6x bosses pull up to ~1.9 (engine clamp 2.0)
@@ -62,8 +67,8 @@ export class Combat {
     this.nums = [];
     this.bars = new Map();
     this.st = PLAYER.stamina; this.stT = 0;
-    this.cd = { spell: 0, charm: 0, summon: 0, skin: 0, cold: 0, golem: 0, swarm: 0, ward: 0, hound: 0 };   // skin / cold / golem: the long Stonefrost II / III cooldowns, swarm / ward / hound: the Caldera school's (spell = the shared 1 s gap)
-    this.skin = null; this.patches = []; this.magma = []; this.motes = []; this.ward = null;
+    this.cd = { spell: 0, charm: 0, summon: 0, skin: 0, cold: 0, golem: 0, swarm: 0, ward: 0, hound: 0, veil: 0, spirits: 0, igolem: 0 };   // skin / cold / golem: the long Stonefrost II / III cooldowns, swarm / ward / hound: the Caldera school's (spell = the shared 1 s gap)
+    this.skin = null; this.patches = []; this.magma = []; this.motes = []; this.ward = null; this.veil = null; this.spirits = [];
     this.godT = 0;
     this.defeated = {};              // area:id -> game seconds left until it wanders back
     this.time = 0;
@@ -86,13 +91,13 @@ export class Combat {
   // ---------------------------------------------------------------- area lifecycle
   attach(ctx, area) {
     this.ctx = ctx; this.area = area;
-    this.enemies = []; this.navBig = null; this.summon = null; this.projs = []; this.traps = []; this.later = []; this.skin = null; this.patches = []; this.magma = []; this.motes = []; this.endWard();
+    this.enemies = []; this.navBig = null; this.summon = null; this.projs = []; this.traps = []; this.later = []; this.skin = null; this.patches = []; this.magma = []; this.motes = []; this.endWard(); this.endVeil(); this.spirits = [];
     this.clearDom();
     if (this.G.S.hp == null || this.G.S.hp <= 0) this.G.S.hp = this.maxHp();
     this.G.S.hp = Math.min(this.G.S.hp, this.maxHp());
     for (const sp of SPAWNS[area] || []) if (!sp.night && !(this.defeated[area + ':' + sp.id] > 0)) this.spawnEnemy(sp);
   }
-  detach() { this.endWard(); this.clearDom(); this.ctx = null; this.enemies = []; this.navBig = null; this.summon = null; this.magma = []; this.motes = []; }
+  detach() { this.endWard(); this.endVeil(); this.spirits = []; this.clearDom(); this.ctx = null; this.enemies = []; this.navBig = null; this.summon = null; this.magma = []; this.motes = []; }
   clearDom() {
     for (const e of this.enemies || []) if (e.light) e.light.kill = true;
     if (this.bossEl) { this.bossEl.remove(); this.bossEl = null; }
@@ -160,6 +165,7 @@ export class Combat {
     this.updateTraps(dt);
     this.updateStone(dt, frozen);
     this.updateCaldera(dt, frozen);
+    this.updateFrost(dt, frozen);
     for (const l of this.later) l.t -= dt;
     const due = this.later.filter((l) => l.t <= 0); this.later = this.later.filter((l) => l.t > 0);
     for (const l of due) l.fn();
@@ -183,13 +189,14 @@ export class Combat {
     let moving = false;
     const dx = p.x - a.x, dz = p.z - a.z, d = Math.hypot(dx, dz);
     const fromHome = Math.hypot(a.x - e.home[0], a.z - e.home[1]);
-    const sees = !frozen && !this.peace && this.godT <= 0 && d < D.aggro && Math.abs(p.y - a.y) < 1.3;
+    const veiled = this.veilHides(e, d);   // Mist Veil: you are hard to target (stalkers cannot see you at all)
+    const sees = !frozen && !this.peace && this.godT <= 0 && !veiled && d < D.aggro && Math.abs(p.y - a.y) < 1.3;
     e.cd -= dt;
     if (frozen && e.state !== 'attack') { ctx.actors.animate(a, dt, false); this.floatBob(e); return; }
     const gl = D.shy ? this.G.glow : null;   // cold-fire wraiths: never drift into light
     const step = (tx, tz, scale = 1) => {
       if (gl) { const n = Math.hypot(tx, tz) || 1; if (gl.litAt(a.x + tx / n * 0.45, a.z + tz / n * 0.45)) return false; }
-      return ctx.moveActor(a, tx, tz, dt * scale * (this.coldAt(a.x, a.z) ? this.coldSlow : 1));   // Cold Fire patch: half speed
+      return ctx.moveActor(a, tx, tz, dt * scale * (this.coldAt(a.x, a.z) ? this.coldSlow : 1) * (e.chillT > 0 ? 0.5 : 1));   // Cold Fire patch / Frostweave chill: half speed
     };
     if (gl && e.state !== 'attack') {
       const Z = gl.zoneAt(a.x, a.z);   // caught in light (a pool bloomed under it, a lamp came on): slip out
@@ -209,7 +216,7 @@ export class Combat {
         break;
       }
       case 'chase': {
-        if (this.peace || fromHome > LEASH || d > D.aggro * 1.9 || this.godT > 0) { e.state = 'home'; break; }
+        if (this.peace || fromHome > LEASH || d > D.aggro * 1.9 || this.godT > 0 || veiled) { e.state = 'home'; break; }
         if (D.ranged) {
           if (d < D.keep - 0.6) moving = step(-dx, -dz);
           else if (d > D.keep + 1.4) moving = this.seek(e, p.x, p.z, dt, step);
@@ -484,6 +491,11 @@ export class Combat {
     else if (S.kind === 'swarm') this.doSwarm(S);
     else if (S.kind === 'ward') this.doWard(S);
     else if (S.kind === 'hound') this.doHound(S);
+    else if (S.kind === 'lance') this.doLance(S);
+    else if (S.kind === 'fnova') this.doFrostNova(S);
+    else if (S.kind === 'veil') this.doVeil(S);
+    else if (S.kind === 'spirits') this.doSpirits(S);
+    else if (S.kind === 'igolem') this.doGolem(S);
     else if (S.kind === 'projectile' || S.kind === 'pierce') {
       const fxo = T && T.bolt ? T.g : fx, fxn = T && T.bolt ? T.bolt : S.fx;
       const travel = fxo.meta.effects[fxn].travel || 4.5;
@@ -622,13 +634,15 @@ export class Combat {
   // Stone Golem: a stone golem fights for you for 20 s (it takes the place of any other summon)
   doGolem(S) {
     const ctx = this.ctx, p = ctx.player, G = this.G, roles = ctx.actors.meta.roles;
-    const role = GOLEM_ROLES.find((r) => roles[r]);
-    if (!role) { this.cd.golem = 0; this.cd.spell = 0; return; }
+    const ice = S.kind === 'igolem', GD = ice ? ICEGOLEM : GOLEM, role = (ice ? ICEGOLEM_ROLES : GOLEM_ROLES).find((r) => roles[r]);   // [NIFLHEIM-2] the Frostweave Ice Golem shares this path
+    if (!role) { this.cd[S.own || 'golem'] = 0; this.cd.spell = 0; return; }
     if (this.summon) this.unsummon();
-    const fv = FV[p.facing] || [0, 1], hp = Math.round(GOLEM.hp * this.M.summonMul);
-    const a = ctx.addNpc({ id: 'summon', role, name: GOLEM.name, pos: [p.x + fv[0] * 1.0 + 0.3, p.z + fv[1] * 1.0], behavior: 'idle', turn: false, speed: GOLEM.speed });
+    const fv = FV[p.facing] || [0, 1], hp = Math.round(GD.hp * this.M.summonMul);
+    const a = ctx.addNpc({ id: 'summon', role, name: GD.name, pos: [p.x + fv[0] * 1.0 + 0.3, p.z + fv[1] * 1.0], behavior: 'idle', turn: false, speed: GD.speed });
     a.ai = true; a.noTalk = true; a.facing = p.facing;
-    this.summon = { a, tier: 3, golem: true, D: { ...GOLEM, hp }, hp, life: S.life + this.M.summonLife, cd: 0.4, target: null, sparkT: 0.3 };
+    this.summon = { a, tier: 3, golem: true, ice, D: { ...GD, hp }, hp, life: S.life + this.M.summonLife, cd: 0.4, target: null, sparkT: 0.3 };
+    if (ice) { if (ctx.addGlow) this.summon.light = ctx.addGlow(a.x, a.y, a.z, { color: FROST, intensity: 3.5, range: 2.8, lift: 0.8, fadeIn: 0.4 });
+      this.frostFx('frost_nova', 'frost_puff', a.x, a.y, a.z + 0.05, {}); G.audio.sfx('summon'); G.toast('An Ice Golem rises out of the frost!', 1.6); return; }
     if (ctx.addGlow) this.summon.light = ctx.addGlow(a.x, a.y, a.z, { color: COLD_BLUE, intensity: 3.5, range: 2.8, lift: 0.8, fadeIn: 0.4 });
     const g = ctx.gamefx, T = STONE[3];
     if (g && g.meta.effects[T.burst]) g.spawn(T.burst, a.x, a.y, a.z + 0.05); else if (ctx.effects) ctx.effects.spawn('summon_poof', a.x, a.y, a.z + 0.05);
@@ -800,6 +814,86 @@ export class Combat {
     }
     if (this.motes.length && this.motes.every((m) => m.state === 'gone')) { this.motes = []; if (sw && sw.launched) this.swarm = null; }
   }
+  // ---------------------------------------------------------------- [NIFLHEIM-2] the Frostweave school
+  // the pack effect where this area's game-fx atlas has it (Niflheim), else the stock spells-atlas stand-in; returns [atlas, fx] or null
+  frostFx(name, stock, x, y, z, o) {
+    const g = this.calFx(name); if (g) return [g, g.spawn(name, x, y, z, o)];
+    const e = this.ctx && this.ctx.effects; return e && stock && e.meta.effects[stock] ? [e, e.spawn(stock, x, y, z, o)] : null;
+  }
+  chill(e, t) { if (e) e.chillT = Math.max(e.chillT || 0, t); }   // half speed (the step() in updateEnemy)
+  // Ice Lance (I): a piercing bolt of ice 6.5 m straight ahead; every foe on the line takes the hit (as the lance passes it) and is chilled 2 s
+  doLance(S) {
+    const ctx = this.ctx, p = ctx.player, fv = FV[p.facing] || [0, 1];
+    for (let i = 0; i < 4; i++) {
+      const d = 1.0 + i * 1.6, x = p.x + fv[0] * d, z = p.z + fv[1] * d;
+      this.later.push({ t: i * 0.07, fn: () => { if (this.ctx === ctx) this.frostFx('ice_lance', 'coldfire_bolt', x, ctx.heightAt(x, z) + 0.9, z + 0.06, { duration: 0.25, fadeIn: 0 }); } });
+    }
+    if (ctx.addGlow) ctx.addGlow(p.x + fv[0] * 3, p.y, p.z + fv[1] * 3, { color: FROST, intensity: 6, range: 4.0, life: 0.5, fadeIn: 0.05, lift: 0.8 });
+    const hit = [];
+    for (const e of this.alive()) {
+      const dx = e.a.x - p.x, dz = e.a.z - p.z, along = dx * fv[0] + dz * fv[1], side = Math.abs(dx * fv[1] - dz * fv[0]);
+      if (along < 0 || along > S.range + e.D.r || side > 0.6 + e.D.r * 0.5 || Math.abs(e.a.y - p.y) > 1.2) continue;
+      hit.push(e);
+      this.later.push({ t: along / S.speed, fn: () => { if (this.ctx === ctx && e.state !== 'dead' && e.state !== 'gone') { this.damageEnemy(e, this.out('spell', S.dmg), p, S.push, PAL.sky); this.chill(e, S.chill); } } });
+    }
+    this.lastLance = { n: hit.length, ids: hit.map((e) => e.id) };
+  }
+  // Frost Nova (I): a ring of ice around you, 2.8 m: damage and a 3 s chill on every foe inside
+  doFrostNova(S) {
+    const ctx = this.ctx, p = ctx.player;
+    this.frostFx('frost_nova', 'frost_puff', p.x, p.y, p.z + 0.05, { duration: 0.9, fadeIn: 0 });
+    if (ctx.addGlow) ctx.addGlow(p.x, p.y, p.z, { color: FROST, intensity: 8, range: 4.6, life: 0.7, fadeIn: 0.05, lift: 0.4 });
+    const hit = [];
+    for (const e of this.alive()) {
+      if (dist(e.a, p) > S.radius + e.D.r * 0.5 || Math.abs(e.a.y - p.y) > 1.2) continue;
+      hit.push(e); this.damageEnemy(e, this.out('spell', S.dmg), p, S.push, PAL.sky); this.chill(e, S.chill);
+    }
+    this.lastNova = { n: hit.length, ids: hit.map((e) => e.id) };
+  }
+  // Mist Veil (II): a cloud of violet mist for 4 s: foes beyond arm's reach lose you (they go home), mist stalkers cannot see you at all
+  doVeil(S) {
+    const ctx = this.ctx, p = ctx.player;
+    this.endVeil();
+    this.veil = { t: S.t, near: S.near, f: this.frostFx('mist_veil', 'frost_puff', p.x, p.y, p.z + 0.08, { duration: S.t }) };
+    this.G.toast('Mist Veil: they cannot find you', 1.4);
+  }
+  endVeil() { const v = this.veil; if (!v) return; if (v.f) v.f[0].remove(v.f[1]); this.veil = null; }
+  veilHides(e, d) { const v = this.veil; return !!v && (/stalker/.test(e.a.role || '') || /stalker/.test(e.D.name || '') || d > v.near) && !e.D.boss; }
+  // Frost Spirits (II): two frost spirits circle you for 15 s; each throws an ice shard at the nearest foe in 6 m every 1.2 s (works in any area: no sprite, pack / stock fx)
+  doSpirits(S) {
+    const ctx = this.ctx, p = ctx.player;
+    for (const s2 of this.spirits) if (s2.f) s2.f[0].remove(s2.f[1]);
+    this.spirits = [0, 1].map((i) => ({ i, a0: i * Math.PI, t: 0, life: S.life + this.M.summonLife, cd: 0.6 + i * 0.6, x: p.x, y: p.y, z: p.z, S,
+      f: this.frostFx('spirit_swarm', 'coldfire_motes', p.x, p.y, p.z, { duration: S.life + this.M.summonLife + 0.5 }) }));
+    this.spiritHits = 0;
+    if (ctx.effects && ctx.effects.meta.effects.summon_poof) ctx.effects.spawn('summon_poof', p.x, p.y, p.z + 0.05);
+    this.G.audio.sfx('summon'); this.G.toast('Two frost spirits answer!', 1.6);
+  }
+  updateFrost(dt, frozen) {
+    const ctx = this.ctx, p = ctx.player;
+    if (frozen) return;
+    for (const e of this.enemies) if (e.chillT > 0) e.chillT = Math.max(0, e.chillT - dt);
+    const v = this.veil;
+    if (v) { v.t -= dt; if (v.f) { v.f[1].x = p.x; v.f[1].y = p.y; v.f[1].z = p.z + 0.08; } if (v.t <= 0 || this.G.downed) this.endVeil(); }
+    for (const s2 of this.spirits) {
+      s2.t += dt; s2.life -= dt;
+      const a = s2.a0 + s2.t * 1.8; s2.x = p.x + Math.cos(a) * 1.1; s2.z = p.z + Math.sin(a) * 0.8; s2.y = p.y + 1.0 + Math.sin(a * 2) * 0.15;
+      if (s2.f) { s2.f[1].x = s2.x; s2.f[1].y = s2.y; s2.f[1].z = s2.z + 0.1; }
+      if ((s2.cd -= dt) <= 0) {
+        const e = this.nearestEnemy(s2, s2.S.reach);
+        s2.cd = s2.S.every;
+        if (e) { this.frostFx('ice_lance', 'coldfire_bolt', e.a.x, e.a.y + 0.6, e.a.z + 0.1, { duration: 0.3, fadeIn: 0 }); this.damageEnemy(e, this.out('summon', s2.S.dmg), s2, 0.1, PAL.sky); this.chill(e, 1.0); this.spiritHits++; }
+      }
+      if (s2.life <= 0 || this.G.downed) { if (s2.f) s2.f[0].remove(s2.f[1]); s2.f = null; s2.done = true; }
+    }
+    if (this.spirits.some((s2) => s2.done)) this.spirits = this.spirits.filter((s2) => !s2.done);
+  }
+  qaFrost() {
+    const v = this.veil;
+    return { veil: v ? { t: +v.t.toFixed(2), fx: !!v.f } : null, spirits: this.spirits.map((s2) => ({ life: +s2.life.toFixed(1), fx: !!s2.f })), spiritHits: this.spiritHits || 0,
+             lance: this.lastLance || null, nova: this.lastNova || null, chilled: this.enemies.filter((e) => e.chillT > 0).map((e) => e.id),
+             golem: this.summon && this.summon.ice ? { role: this.summon.a.role, life: +this.summon.life.toFixed(1) } : null, cd: { veil: this.cd.veil, spirits: this.cd.spirits, igolem: this.cd.igolem } };
+  }
   qaCaldera() {
     const w = this.ward, sw = this.swarm;
     return { magma: this.magma.map((m) => ({ x: +m.x.toFixed(2), z: +m.z.toFixed(2), r: m.r, t: +m.t.toFixed(2), fx: m.fx.map(([, f]) => f.name) })), motes: this.motes.map((m) => m.state),
@@ -910,7 +1004,7 @@ export class Combat {
     if (ctx.framePull) ctx.framePull(pullF);
     for (const e of this.enemies) {
       let b = this.bars.get(e.id);
-      const show = (e.hp < e.D.hp || e.state === 'chase' || e.state === 'attack') && e.state !== 'dead' && e.state !== 'gone';
+      const show = (e.hp < e.D.hp || e.state === 'chase' || e.state === 'attack' || (e.engaged && (e.D.boss || e.D.rare))) && e.state !== 'dead' && e.state !== 'gone';   // [NIFLHEIM-2] an engaged boss keeps its bar wherever it stands (Veyra at the top edge of the portrait view)
       if (e.light) e.light.pos.set(e.a.x, e.a.y, e.a.z);
       if (!show) { if (b) b.hidden = true; if ((e.D.boss || e.D.rare) && this.bossEl && this.bossEl.dataset.id === e.id) this.bossEl.hidden = true; continue; }
       if (!b) { b = document.createElement('div'); b.className = 'ebar'; b.innerHTML = '<i></i>'; this.layer.appendChild(b); this.bars.set(e.id, b); }

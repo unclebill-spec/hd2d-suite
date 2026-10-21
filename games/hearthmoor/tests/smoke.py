@@ -135,7 +135,25 @@ class Smoke:
         return self.ev("JSON.parse(JSON.stringify(window.__hm.S))")
 
     def wait(self, js, timeout=90):
-        self.pg.wait_for_function(js, timeout=timeout * 1000)
+        try:
+            self.pg.wait_for_function(js, timeout=timeout * 1000)
+        except Exception:
+            self.dump_timeout(js)
+            raise
+
+    def dump_timeout(self, js):
+        """on a wait timeout: log the predicate's parts, page state, recent JS errors and a screenshot (diagnosis only; the wait still fails)"""
+        try:
+            st = self.pg.evaluate("""() => { const G = window.__hm, H = window.__hd2d; return { href: location.href, hm: !!G, area: G && G.area, busy: G && G.busy,
+              ready: G && G.ready, title: G && !!G.title, hd2d: !!H, h_ready: H && H.ready, frames: H && H.frames, gate: window.__hd2dGate && window.__hd2dGate.loading,
+              errs: H && H.errors ? H.errors.slice(-5).map(String) : null, boot: (document.getElementById('boot') || {}).textContent }; }""")
+        except Exception as e:  # noqa: BLE001
+            st = f"state unavailable: {e}"
+        self.log(f"  [TIMEOUT] waiting for {js[:160]} -> {json.dumps(st, default=str)[:900]}")
+        try:
+            self.shot(f"timeout_{time.strftime('%H%M%S')}")
+        except Exception:  # noqa: BLE001
+            pass
 
     def until(self, js, timeout=150):
         """wait for a condition that depends on GAME time (storm / rift / gust / vent timers, pad polls): the game clock runs slow on a
@@ -290,7 +308,7 @@ QUICK = {
     "rares": "A", "rifts": "A", "hollows": "A", "garden": "A", "leveling": "A",
     "slots": "B", "shop": "B", "bank": "B", "riddle": "B", "merchant": "B", "factions": "B", "weather": "B", "glow": "B", "gear": "B",
     "rift": "C", "vanaheim": "C", "ravenhold": "C", "bifrost": "C",
-    "phone": "D", "touch": "D", "migration": "E", "save": "BE",
+    "phone": "D", "touch": "D", "audio": "D", "music": "D", "options": "D", "migration": "E", "save": "BE",
     "pet": "F", "pets": "F", "stray": "F",
     "temple": "G", "oldtemple": "G", "midgard": "G",
     "vanaheim4": "I", "verdant": "J", "rotwood": "J", "regent": "J", "hjortur": "J", "vhspring": "J", "trial": "I", "glenheart": "I", "heartwood": "I",
@@ -300,7 +318,7 @@ QUICK = {
     "storm": "H", "storms": "H", "riftstorm": "H", "bounty": "H",
 }
 TIMING = FIX / "smoke_timing.json"   # seconds per segment from the last passing runs (shard balancing only)
-DEFAULT_SECONDS = {"A": 560, "B": 260, "C": 230, "D": 140, "E": 25, "F": 150, "G": 200, "H": 170, "I": 90, "J": 120, "K": 60, "L": 60, "M": 60}
+DEFAULT_SECONDS = {"A": 560, "B": 260, "C": 230, "D": 5640, "E": 25, "F": 150, "G": 200, "H": 170, "I": 90, "J": 120, "K": 60, "L": 60, "M": 60}   # D ~94 min since the music step visits every realm
 
 
 def seg_seconds():
@@ -1780,6 +1798,26 @@ def run(out, simscale=4, size=(960, 540), segs=SEGS):
                 tap_el("#btnWeather"); T.until("window.__hm.weather.mode === 'on'"); tap_el("#btnWeather"); T.until("window.__hm.weather.mode === 'light'")
                 pm.append(T.ev("window.__hm.weather.mode")); tap_el("#optsClose")
                 T.step("phone: weather defaults to light; the Options button cycles light -> off -> on -> light by touch", pm == ["light", ["off", 0], "light"] and not T.ev("window.__hm.opts"), modes=pm)
+                # music (2026-10-19): the Plaza plays the Midgard theme (decoded ogg, looped by buffer length), ambient ducked ~70%; music toggle + volume slider by touch, saved
+                T.until("window.__hm.audio.musicState().track === 'midgard'", 60)
+                m0 = T.ev("window.__hm.audio.musicState()")
+                lp = T.ev("(() => { const c = window.__hm.audio.cur; return c && c.src ? [c.src.loop, c.src.loopStart, Math.abs(c.src.loopEnd - c.src.buffer.duration) < 1e-6, c.src.buffer.numberOfChannels] : null; })()")
+                tap_el("#btnOpts"); T.until("!!window.__hm.opts"); tap_el("#btnMusic"); T.until("window.__hm.audio.musicMuted === true", 20)
+                m1 = T.ev("[window.__hm.audio.musicState(), localStorage.getItem('hearthmoor-music-mute'), document.getElementById('btnMusic').textContent]")
+                tap_el("#btnMusic"); T.until("window.__hm.audio.musicState().track === 'midgard'", 30)
+                T.ev("(() => { const r = document.getElementById('musicVol'); r.value = 35; r.dispatchEvent(new Event('input', { bubbles: true })); })()")
+                m2 = T.ev("[window.__hm.audio.musicVol, localStorage.getItem('hearthmoor-music-vol'), document.getElementById('musicVolN').textContent, localStorage.getItem('hearthmoor-music-mute')]")
+                T.ev("(() => { const r = document.getElementById('musicVol'); r.value = 60; r.dispatchEvent(new Event('input', { bubbles: true })); })()")
+                T.ev("window.__hm.audio.setBattle(true, false, 0.016)"); T.until("window.__hm.audio.musicState().track === 'battle'", 30)
+                T.ev("window.__hm.audio.setBattle(true, true, 0.016)"); T.until("window.__hm.audio.musicState().track === 'boss'", 30)
+                mb = T.ev("window.__hm.audio.musicState().track")
+                T.ev("window.__hm.audio.setBattle(false, false, 9)"); T.until("window.__hm.audio.musicState().track === 'midgard'", 30)
+                mr = T.ev("[window.__hm.audio.musicState(), window.__hm.audio.muted]"); tap_el("#optsClose")
+                T.step("music: Midgard theme loops by buffer length (mono), ambient ducked not muted; music toggle + volume slider save; battle -> boss -> back to the realm theme",
+                       m0["track"] == "midgard" and m0["ducked"] and not m0["failed"] and lp == [True, 0, True, 1]
+                       and m1[0]["muted"] and m1[0]["track"] is None and not m1[0]["ducked"] and m1[1] == "1" and m1[2] == "music: off"
+                       and m2 == [0.35, "0.35", "35%", "0"] and mb == "boss" and mr[0]["track"] == "midgard" and mr[0]["vol"] == 0.6 and mr[0]["ducked"] and not mr[1],
+                       m0=m0, loop=lp, muted=m1, vol=m2, boss=mb, back=mr)
                 # touch: the moss gate's destination choice (errands done) takes a tap on a row
                 r = T.ev("window.__hm.ctx.scene.game.portals[0].rect")
                 T.ev(f"window.__hm.ctx.walkTo({(r[0] + r[2]) / 2}, {(r[1] + r[3]) / 2})")

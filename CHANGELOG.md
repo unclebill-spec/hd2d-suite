@@ -2,11 +2,33 @@
 
 Dates are America/New_York. Newest first. Keep this current with every change you push.
 
+## 2026-10-21 (America/New_York): Hearthmoor realm music LIVE (merge of `hearthmoor-music` 0a9ca64 + main aa0c99f via `hearthmoor-music-merge`)
+- **Merge:** conflicts only in CHANGELOG.md (both entries kept) and `games/hearthmoor/sw.js` (regenerated with `build.write_pwa()`, precaches `audio/`). Smoke seg D default estimate raised to ~94 min (the music step visits every realm).
+- **Checks on the merge:** preflight PASS, `smoke_niflheim`, music static check (37 areas all mapped in `REALM_OF`, 8 tracks `audio/music/music_<t>.ogg` present and precached). The first preflight / smoke_niflheim run (Oct 20 16:08) failed with 'Could not create a WebGL context' (SwiftShader context failure while other browser jobs were running); no code cause, rerun holding both `browser.lock` and `browser-mb.lock`. The first static check looked for `<t>.ogg` instead of `music_<t>.ogg` (check bug, not a game bug).
+- **Screenshot:** `docs/screenshots/music_options.png` (Options card with the music toggle and volume slider).
+
+## 2026-10-19 (America/New_York): Hearthmoor realm music (branch hearthmoor-music)
+- `games/hearthmoor/audio/music/`: 8 procedural CC0 mono Vorbis loops (Midgard, Alfheim, Svartalfheim, Jotunheim, Muspelheim, Niflheim, battle, boss; ~525 KB) from `tools/hearthmoor/gen_realm_music.py`; ledger `audio/LICENSES.md`, area map `audio/README.md`.
+- `game/audio.js`: fetch + decodeAudioData loader, music bus with 1.6 s crossfades, loop by buffer length, ambient plucks / birds / pad ducked to 30% while music plays, synth-only fallback if a file fails; battle / boss switching from `combat.enemies` (chase / attack, 4 s linger; `D.boss` and not rare = boss).
+- Options card: `music: on/off` + music volume slider (saved: `hearthmoor-music-mute`, `hearthmoor-music-vol`). Smoke D step `music:`; `--quick audio|music|options` = D. sw.js precaches `audio/`.
+## 2026-10-19: Niflheim-2 LIVE (merge of `realm-niflheim-2` d7cdb97 + main a70ea29 via `hearthmoor-nifl2-merge`)
+- **Merge-check:** Master Builder's runs were after its last commit (6ad0f27 code, d7cdb97 docs; clean tree): `smoke_niflheim` 90/90, `smoke_muspelheim` 95/95, `smoke_jotunheim` 185/185. Its check-scenes pre-dated the commit, so they were rerun here. On the merge: preflight PASS, `smoke_niflheim` 90/90 @1d53b75 (rerun because main changed its harness), `check_all --lowres` 3/3 (frozenspire, frozenspire2, frozen_rift), `smoke.py` segment A (combat) 610/610 @7abe7a1. Segments D (phone portrait, for the new portrait `#bossbar` rule) and I (boss camera): D PASS 513/513 @7abe7a1 and I PASS 501/501 @336d5c5 (reruns holding both browser locks). No new actor sheets (only gamefx atlases and the `veyra_shadow` strip), so check-sprite had nothing to check.
+- **Test infra:** the checkpoint fixtures (`tests/fixtures/smoke_cp*.json`) are gitignored, so a fresh worktree copies them from the main checkout. Segment I failed three times with 0 steps on its first Alfheim load (150 s wait timeout), at 02:22 and 13:12 ET, each time straight after a segment D run on a loaded box (the 13:12 D took 10.2 h). Segment I's Alfheim tail and standalone `smoke_alfheim` call the same `steps()`, with the same URL and ready predicate. A probe of segment I at 14:3x ET passed that load in 3 s, so no code cause was found. `Smoke.wait` now logs a `[TIMEOUT]` line on any wait timeout (the predicate, the page / game state, recent JS errors, a screenshot) and still fails the wait, so a repeat can be diagnosed.
+- **Screenshot:** `docs/screenshots/niflheim_frostweave.png` (Frostweave lance and Ice Golem in the Glowpool Caverns).
+- Niflheim leftovers now: Wardens that shoot from walls (optional), plus the rest of the list in AGENTS.md.
+
 ## 2026-10-19: Hearthmoor testing time-savers (branch `hearthmoor-timesavers`)
 - `tests/preflight.sh` (+ `preflight_load.py`): node --check on all game / engine js (as .mjs) and one headless title load that fails on startup errors; run first by `smoke.py`, `smoke_*.py`, `check_all.py` (`--no-preflight`).
 - Smoke harness: a failing re-runnable step (callable / new `T.check`) retries once immediately, `[RETRY]` logs both results, passes only if the retry passes; `retries N` in the summary; `--no-retry`. Smoke logs and json carry the commit hash (`# smoke header: commit ...`).
 - Fixed waits -> `T.until(condition)` (same assertions, same values): the dialogue helpers (`talk`, `to_choice`, `read_all`), segment C, the picker / quest log / toast / glow-toad steps, Svartalfheim (Gorrak phases, vents / gusts, conquer posts) and Alfheim (beams, Sylvaine).
 - `tools/heavy.sh` (2-slot nice'd heavy-job queue), `tools/secret_scan.sh`, `tools/hm_publish.sh` (detached auto-publish watcher). AGENTS.md: builder rule (smoke after the last code commit, verified by hash) and the opt-in notes.
+## 2026-10-19: Niflheim-2 leftovers (branch `realm-niflheim-2` off main 581fa0f)
+- F3 Glow Pool Gallery slide puzzle (`NPZ`; solving it, `fs_slide`, unseals freeze-core `fs_c1`); F8 Rime Bridge rune-step (`NBR`; crossing, `fs_bridge`, frees heart-ice `hi_3`). Game-side only, no scene rebuild.
+- `veyra_shadow` redrawn lighter (dark teal / ash grey, not near-black), back in the atlases (`FX_SKIP` empty); installed on frozenspire, frozenspire2, frozen_rift.
+- Veyra's HP bar: an engaged boss keeps its bar in any state; in portrait (<= 640 px) `#bossbar` sits below the HUD chips.
+- The Frostweave school (Gudrun; Ice Lance, Frost Nova, Mist Veil, Frost Spirits, Ice Golem): `combat.js` kinds, tiered lessons, `?nfq=school`; draws the pack rows in Niflheim areas, stock spells elsewhere (no new atlas rows in other areas).
+- `smoke_jotunheim.py` standalone main gains the same `HD2D_USER_DATA_DIR` profile hook as the other realm smokes.
+- Leftover: wall-shooting Wardens (optional, not built).
 
 ## 2026-10-18: Niflheim LIVE (merge of `realm-niflheim` c7f81e7 via `hearthmoor-nifl-merge`, a fast-forward of main a9802be)
 - **Merge-check:** the diff touches no engine code (no `engine/`, `combat.js`, `tools/runtime/web/engine/main.js` or other area's gamefx atlas): `game.js` (module wiring), `build.py` (the READY-gated six areas), `smoke.py` (the realm tail), `check_sprite.py` (an empty `NIFL_NEON_ALLOW`: allows nothing) and the six new areas. Master Builder's runs pre-dated the last code edit (c7f81e7: Veyra's stand, smoke waits), so they were rerun here: `smoke_niflheim` 63/63, `smoke.py` segment A 114/114, segment B (with the five realm smokes) 401/402 (the one failure is the second fix below); check-sprite PASS on nf_folk, nf_hrefna, nf_enemies, nf_elites, boss_colossus, boss_kael, boss_veyra (no neon); `check_all --lowres` 6/6 (see the fix below).

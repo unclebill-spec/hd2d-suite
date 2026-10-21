@@ -13,7 +13,8 @@ import { Muspelheim, AREAS_MUSP, AREA_NAMES_MUSP } from './muspelheim.js';   // 
 import { Niflheim, AREAS_NIFL, AREA_NAMES_NIFL } from './niflheim.js';
 import { Asgard, AREAS_ASG, AREA_NAMES_ASG } from './asgard.js';   // [ASGARD]   // [NIFLHEIM] skeleton: AREAS_NIFL is empty until areas are built
 const EXTRA_SPELLS = ['boulder_toss', 'frost_rune', 'stone_skin', 'cold_fire', 'stone_golem',   // [JOTUNHEIM] Stonefrost spells: drawn by combat from the game-fx atlas, so the engine's spells-atlas cycle filter must let them through
-  'fire_wave', 'magma_pool', 'ember_swarm', 'flame_ward', 'magma_hound'];   // [MUSPELHEIM-2] the Caldera school (Torka), the same path
+  'fire_wave', 'magma_pool', 'ember_swarm', 'flame_ward', 'magma_hound',   // [MUSPELHEIM-2] the Caldera school (Torka), the same path
+  'fw_lance', 'fw_nova', 'fw_veil', 'fw_spirits', 'fw_golem'];   // [NIFLHEIM-2] the Frostweave school (Gudrun), the same path
 import { Temple } from './temple.js';
 import { Verdant } from './verdant.js';
 import { Ambient } from './audio.js';
@@ -492,6 +493,8 @@ function onFrame(dt, ctx) {
   G.hollows.update(dt); G.garden.update(dt); G.lanterns.update(dt); G.forge.update(dt); G.alchemy.update(dt); G.glow.update(dt); G.weather.update(dt); G.intro.update(dt);
   G.loot.update(dt); G.shopUI.update(dt); G.rares.update(dt); G.storms.update(dt); G.rifts.update(dt); G.pets.update(dt); G.temple.update(dt); G.verdant.update(dt); G.alfheim.update(dt); G.svart.update(dt); G.jot.update(dt); G.musp.update(dt); G.nifl.update(dt); G.asg.update(dt);   // [ALFHEIM]
   G.combat.update(dt, ctx);
+  { const eng = G.combat.enemies.filter((e) => e.state === 'chase' || e.state === 'attack');   // music: battle / boss themes
+    G.audio.setBattle(eng.length > 0 && !G.downed, eng.some((e) => e.D.boss && !e.D.rare), dt); }
   drawVitals(ctx);
   if (G.title || G.busy) return;
   // exits + portals: arm once the player has stood outside every trigger (no bounce on arrival)
@@ -870,6 +873,10 @@ function wire() {
   $('btnSave').onclick = () => save(true);
   $('btnSound').onclick = () => { G.audio.start(); const m = G.audio.toggle(); $('btnSound').textContent = m ? 'sound: off' : 'sound: on'; };
   $('btnSound').textContent = G.audio.muted ? 'sound: off' : 'sound: on';
+  const syncMusic = () => { $('btnMusic').textContent = G.audio.musicMuted ? 'music: off' : 'music: on'; const v = Math.round(G.audio.musicVol * 100); $('musicVol').value = v; $('musicVolN').textContent = v + '%'; };
+  $('btnMusic').onclick = () => { G.audio.start(); G.audio.toggleMusic(); syncMusic(); };
+  $('musicVol').oninput = () => { G.audio.start(); G.audio.setMusicVol(+$('musicVol').value / 100); syncMusic(); };
+  syncMusic();
   $('dlg').addEventListener('pointerdown', (e) => {
     e.preventDefault();
     const row = e.target.closest && e.target.closest('#dlgChoices .choice');
