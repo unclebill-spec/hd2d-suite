@@ -125,12 +125,12 @@ def steps(b, url, T, size, errors, rep, stub=None, shots=None, only=""):
         T.step("all nine Ossuary rooms load", True)
         # bosses
         load("ossuary", "&hhq=ossuary", spawn="o5")
-        T.step("Vesperin spawns in O5", hel("bosses.start('vesperin') ? true : false") and hel("bosses.qaState()")["which"] == "vesperin")
+        T.step("Vesperin spawns in O5", T.until("(() => { const B = window.__hm.hel.bosses; if (!B.boss) B.start('vesperin'); return !!B.boss && B.boss.which === 'vesperin'; })()", 30) and hel("bosses.qaState()")["which"] == "vesperin")
         frames(20); rep["shots"]["boss_vesperin"] = T.shot("boss_vesperin")
         hel("bosses.qaHp('vesperin', 0.45)"); st = hel("bosses.qaTick(0.1, 3)")
         T.step("Vesperin splits into mist-bats at 50 %", st["split"] and st["p2"], st=st)
         load("ossuary2", "&hhq=ossuary", spawn="o9")
-        T.step("Mordrath spawns in O9", hel("bosses.start('mordrath') ? true : false"))
+        T.step("Mordrath spawns in O9", T.until("(() => { const B = window.__hm.hel.bosses; if (!B.boss) B.start('mordrath'); return !!B.boss && B.boss.which === 'mordrath'; })()", 30))
         frames(20); rep["shots"]["boss_mordrath"] = T.shot("boss_mordrath")
         roles = []
         for fr in (1.0, 0.5, 0.2):
