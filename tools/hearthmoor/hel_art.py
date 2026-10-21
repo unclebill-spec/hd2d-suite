@@ -130,6 +130,9 @@ def kit(area):
     d = GAME / "areas" / area / "public" / "art" / "kit"
     for g in sorted((ST / "kit").glob("*.glb")):
         shutil.copy2(g, d / g.name)
+    for name, pack in FOREIGN.items():
+        if any(e[0] == name for e in EXTRA_PLACE.get(area, [])):
+            shutil.copy2(GAME / "art" / pack / "kit" / f"{name}.glb", d / f"{name}.glb")
 
 
 def gamefx(area):
@@ -179,7 +182,12 @@ WALK = {"gloam_floor", "ossuary_floor", "black_lake", "pebble_shore"}
 LAYOUT_AREA = {"helheim": "helheim", "hh_shore": "hh_shore", "hh_archive": "hh_archive"}
 SPEC_TERRAIN = {"mist_ledge", "mist_stair"}
 FLOORS = {"gloam_floor", "ossuary_floor", "pebble_shore"}
-EXTRA_PLACE = {}   # area -> [(piece, [x, z], "fixed", {rot, y})]
+# Approved by Cozy Builder 2026-10-21 (check_scene grades night_warm_frac / ossuary colours): ONE small warm lamp per area, from existing packs,
+# capped small (LAMP_CAP below) so the gloom stays dominant; placed by the clear-spot search (keeps off actors, spawns, exits, paths) - no overlaps.
+# The Ossuary also gets prop variety from the Helheim kit itself (mourning_statue, lore_tablet) in O1's arrival view.
+FOREIGN = {"warm_lantern": "jotunheim", "dawn_flame_brazier": "asgard"}   # piece -> pack under games/hearthmoor/art/<pack>/kit
+EXTRA_PLACE = {"hh_shore": [("warm_lantern", [-6.4, 7.4], "fixed")],   # spots checked clear (walkable, flat, >2 m from actors / spawns / exits / ledges / props)
+               "ossuary": [("dawn_flame_brazier", [-6.0, 3.5], "fixed"), ("mourning_statue", [5.45, 5.85], "fixed"), ("lore_tablet", [-5.4, 0.8], "fixed")]}
 PIECE_MOVE = {}    # (area, piece, x, z) -> (x, z): a prop moved off an actor / spawn / lamp (check_scene), rounded to 0.1
 NOCAST = set()     # (area, piece): its shadow fell across an NPC (check_scene atlas corr)
 DROP = {}          # (area, piece, x, z) left out (check_scene)
@@ -308,10 +316,25 @@ def layout_place(area):
 
 
 # Lamps dimmed in reach so they do not tint the few-colour sprites standing near them (check_scene colours) or blow a surface to 255 (no_bloom). Tune from check_scene.
-LAMP_CAP = {}
+LAMP_CAP = {"warm_lantern": 3.0, "dawn_flame_brazier": 3.0}   # the two approved warm accents: small pools only
 NO_LIGHT = set()   # (area, piece): lamps kept as glow sprites but not real point lights
 EXTRA_CAP = {}     # area -> cap for the pack's extra pools (range < 9)
 LAMP_CAP_AREA = {a: dict(LAMP_CAP) for a in PLANNED}
+
+
+# check_scene effects_sharp lever (Cozy Builder, 2026-10-21): hh_shore's lake bubbles drift over the toadcap's lineup slot, so the shore's spells
+# index drops glowplant_toadcap; glowplant_violet (an existing glowplant that passes effects_sharp) stays. The shore has no garden plots (garden.js).
+SPELL_SWAP = {"hh_shore": {"glowplant_toadcap": "glowplant_violet"}}
+
+
+def spell_swap(area):
+    sw = SPELL_SWAP.get(area)
+    jp = GAME / "areas" / area / "public/art/spells/spells.json"
+    if not sw or not jp.exists(): return
+    j = json.loads(jp.read_text()); e = j.get("effects", j)
+    for old, new in sw.items():
+        if old in e and new in e: del e[old]
+    jp.write_text(json.dumps(j))
 
 
 def place(area):
@@ -319,6 +342,8 @@ def place(area):
     from array import array
     sp = GAME / "areas" / area / "scene.json"; sc = json.loads(sp.read_text())
     pieces = json.loads((ST / "kit" / "kit.json").read_text())["pieces"]
+    for name, pack in FOREIGN.items():
+        pieces.setdefault(name, json.loads((GAME / "art" / pack / "kit" / "kit.json").read_text())["pieces"][name])
     NOBLOCK = {n for n, p in pieces.items() if not p.get("blockers")} | WALK   # kit.json blockers [] = walkable / hanging: no blocker
     C = sc["collision"]; C.setdefault("base_data", C["data"])
     d = array("h"); d.frombytes(base64.b64decode(C["base_data"]))
@@ -434,6 +459,7 @@ def main():
             print(f"{a}: not built yet (areas/{a}/scene.json missing): skipped"); continue
         sprites(a)
         if (ST / "kit" / "kit.json").exists(): kit(a); place(a)
+        spell_swap(a)
         fx = gamefx(a)
         sf, cs = _shared(a) if fx else (False, False)
         print(f"{a}: sprites + kit + props{' + gamefx' if fx else ' (no gamefx atlas)'}{' + stonefrost' if sf else ''}{' + caldera school' if cs else ''}")
