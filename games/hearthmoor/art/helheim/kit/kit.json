@@ -1,0 +1,1433 @@
+{
+ "tool": "hd2d kit",
+ "biome": "cozy-village",
+ "seed": 1,
+ "sprite_height_m": 1.8,
+ "pieces": {
+  "gloam_floor": {
+   "file": "gloam_floor.glb",
+   "kind": "prop",
+   "tris": 56,
+   "size": [
+    2,
+    0.02,
+    2
+   ],
+   "markers": {
+    "lamps": [],
+    "chimneys": [],
+    "windows": [],
+    "doors": [],
+    "note": "2 m cobble tile, Gloamhaven streets"
+   },
+   "blockers": [],
+   "placement": "2 m cobble tile, Gloamhaven streets"
+  },
+  "ossuary_floor": {
+   "file": "ossuary_floor.glb",
+   "kind": "prop",
+   "tris": 56,
+   "size": [
+    2,
+    0.02,
+    2
+   ],
+   "markers": {
+    "lamps": [],
+    "chimneys": [],
+    "windows": [],
+    "doors": [],
+    "note": "2 m Ossuary floor tile"
+   },
+   "blockers": [],
+   "placement": "2 m Ossuary floor tile"
+  },
+  "ossuary_wall": {
+   "file": "ossuary_wall.glb",
+   "kind": "prop",
+   "tris": 72,
+   "size": [
+    2.0,
+    4.3,
+    0.6
+   ],
+   "markers": {
+    "lamps": [],
+    "chimneys": [],
+    "windows": [],
+    "doors": [],
+    "note": "2 m Ossuary wall module"
+   },
+   "blockers": [],
+   "placement": "2 m Ossuary wall module"
+  },
+  "mist_ledge": {
+   "file": "mist_ledge.glb",
+   "kind": "prop",
+   "tris": 120,
+   "size": [
+    3.1,
+    1.34,
+    2.1
+   ],
+   "markers": {
+    "lamps": [
+     [
+      0,
+      0.6,
+      1.3
+     ]
+    ],
+    "chimneys": [],
+    "windows": [],
+    "doors": [],
+    "lamp_color": "#3fb8ff",
+    "lamp_range": 3.0,
+    "lamp_fixed": 0.5,
+    "height_m": 1.34,
+    "ledge_edge": [
+     [
+      -1.5,
+      1.0
+     ],
+     [
+      1.5,
+      1.0
+     ]
+    ],
+    "no_props_within_m": 0.8,
+    "note": "1.34 m ledge (pairs along x, 3.1 x 2.1 m); props / fx / spawns >= 1 m from every edge"
+   },
+   "blockers": [
+    [
+     -1.5,
+     -1.0,
+     1.5,
+     1.0
+    ]
+   ],
+   "placement": "1.34 m ledge (pairs along x, 3.1 x 2.1 m); props / fx / spawns >= 1 m from every edge"
+  },
+  "mist_stair": {
+   "file": "mist_stair.glb",
+   "kind": "stairs",
+   "tris": 264,
+   "size": [
+    2.6,
+    1.84,
+    3.5
+   ],
+   "markers": {
+    "lamps": [
+     [
+      -1.15,
+      0.7,
+      1.65
+     ],
+     [
+      1.15,
+      0.7,
+      1.65
+     ]
+    ],
+    "chimneys": [],
+    "windows": [],
+    "doors": [],
+    "lamp_color": "#9fd8ff",
+    "lamp_range": 3.0,
+    "lamp_fixed": 0.5,
+    "no_props_within_m": 1.0,
+    "note": "7 x 0.191 m = 1.34 m, 2 m wide, ONE per ledge, centred on the front face; climbs -z; footprint +1 m clear"
+   },
+   "blockers": [],
+   "stairs": {
+    "width": 2.0,
+    "rise": 1.34,
+    "length": 3.5,
+    "steps": 7
+   },
+   "placement": "7 x 0.191 m = 1.34 m, 2 m wide, ONE per ledge, centred on the front face; climbs -z; footprint +1 m clear"
+  },
+  "hels_arch": {
+   "file": "hels_arch.glb",
+   "kind": "prop",
+   "tris": 510,
+   "size": [
+    4.9,
+    6.4,
+    1.0
+   ],
+   "markers": {
+    "lamps": [
+     [
+      0,
+      3.0,
+      1.0
+     ]
+    ],
+    "chimneys": [],
+    "windows": [],
+    "doors": [],
+    "note": "Hel's arch to Bifrost [0,10.6]; spawn from_bifrost [0,9.2,'up']; spirit_rose_mist; 2.6 m clear",
+    "lamp_color": "#9fd8ff",
+    "lamp_range": 6.0,
+    "lamp_fixed": 0.5,
+    "keep_clear": {
+     "footprint_m": [
+      -2.0,
+      -1.0,
+      2.0,
+      3.0
+     ],
+     "radius_m": 2.6,
+     "note": "arrival"
+    }
+   },
+   "blockers": [
+    [
+     -2.5,
+     -0.5,
+     -1.5,
+     0.5
+    ],
+    [
+     1.5,
+     -0.5,
+     2.5,
+     0.5
+    ]
+   ],
+   "placement": "Hel's arch to Bifrost [0,10.6]; spawn from_bifrost [0,9.2,'up']; spirit_rose_mist; 2.6 m clear"
+  },
+  "hels_hall": {
+   "file": "hels_hall.glb",
+   "kind": "prop",
+   "tris": 72,
+   "size": [
+    7.4,
+    5.5,
+    1.2
+   ],
+   "markers": {
+    "lamps": [
+     [
+      0,
+      2.0,
+      1.4
+     ]
+    ],
+    "chimneys": [],
+    "windows": [],
+    "doors": [],
+    "note": "Hel's Hall [0,-9.6] (stance choice 5.2); 2.5 m clear",
+    "lamp_color": "#9fd8ff",
+    "lamp_range": 6.0,
+    "lamp_fixed": 0.5,
+    "keep_clear": {
+     "footprint_m": [
+      -1.4,
+      0.5,
+      1.4,
+      3.0
+     ],
+     "radius_m": 2.5,
+     "note": "door"
+    }
+   },
+   "blockers": [
+    [
+     -3.5,
+     -0.5,
+     3.5,
+     0.5
+    ]
+   ],
+   "placement": "Hel's Hall [0,-9.6] (stance choice 5.2); 2.5 m clear"
+  },
+  "last_hearth_inn": {
+   "file": "last_hearth_inn.glb",
+   "kind": "prop",
+   "tris": 92,
+   "size": [
+    6.4,
+    5.6,
+    4.1
+   ],
+   "markers": {
+    "lamps": [
+     [
+      -2.0,
+      1.9,
+      2.4
+     ],
+     [
+      2.0,
+      1.9,
+      2.4
+     ],
+     [
+      0.9,
+      2.2,
+      2.5
+     ]
+    ],
+    "chimneys": [],
+    "windows": [],
+    "doors": [],
+    "lamp_color": "#3fb8ff",
+    "lamp_range": 3.5,
+    "lamp_fixed": 0.5,
+    "keep_clear": {
+     "footprint_m": [
+      -1.2,
+      2.0,
+      1.2,
+      4.0
+     ],
+     "radius_m": 2.0,
+     "note": "inn door"
+    },
+    "note": "The Last Hearth Inn [-7.5,-2] (Hettie), rot pi/2 = door faces the lake; violet windows"
+   },
+   "blockers": [
+    [
+     -3.0,
+     -2.0,
+     3.0,
+     2.0
+    ]
+   ],
+   "placement": "The Last Hearth Inn [-7.5,-2] (Hettie), rot pi/2 = door faces the lake; violet windows"
+  },
+  "crooked_house": {
+   "file": "crooked_house.glb",
+   "kind": "prop",
+   "tris": 56,
+   "size": [
+    3.9,
+    5.0,
+    3.1
+   ],
+   "markers": {
+    "lamps": [
+     [
+      -0.9,
+      1.8,
+      1.9
+     ],
+     [
+      0.9,
+      1.8,
+      1.9
+     ]
+    ],
+    "chimneys": [],
+    "windows": [],
+    "doors": [],
+    "lamp_color": "#a45cf0",
+    "lamp_range": 3.0,
+    "lamp_fixed": 1.0,
+    "note": "crooked house, violet windows (r 3 m point light each)"
+   },
+   "blockers": [
+    [
+     -1.8,
+     -1.5,
+     1.8,
+     1.5
+    ]
+   ],
+   "placement": "crooked house, violet windows (r 3 m point light each)"
+  },
+  "lantern_bridge": {
+   "file": "lantern_bridge.glb",
+   "kind": "walkable_bridge",
+   "tris": 432,
+   "size": [
+    10.0,
+    2.1,
+    2.5
+   ],
+   "markers": {
+    "lamps": [
+     [
+      -4.4,
+      1.9,
+      -1.2
+     ],
+     [
+      -3.1428571428571432,
+      1.9,
+      1.2
+     ],
+     [
+      -1.8857142857142857,
+      1.9,
+      -1.2
+     ],
+     [
+      -0.6285714285714281,
+      1.9,
+      1.2
+     ],
+     [
+      0.628571428571429,
+      1.9,
+      -1.2
+     ],
+     [
+      1.8857142857142861,
+      1.9,
+      1.2
+     ],
+     [
+      3.142857142857144,
+      1.9,
+      -1.2
+     ]
+    ],
+    "chimneys": [],
+    "windows": [],
+    "doors": [],
+    "lamp_color": "#5ee08a",
+    "lamp_range": 3.0,
+    "lamp_fixed": 0.5,
+    "realm_lanterns": [
+     {
+      "realm": "alfheim",
+      "x": -4.4,
+      "z": -1.2,
+      "lit_color": "#a45cf0"
+     },
+     {
+      "realm": "svartalfheim",
+      "x": -3.14,
+      "z": 1.2,
+      "lit_color": "#ffb24a"
+     },
+     {
+      "realm": "jotunheim",
+      "x": -1.89,
+      "z": -1.2,
+      "lit_color": "#bfe8ff"
+     },
+     {
+      "realm": "muspelheim",
+      "x": -0.63,
+      "z": 1.2,
+      "lit_color": "#ff7a2a"
+     },
+     {
+      "realm": "niflheim",
+      "x": 0.63,
+      "z": -1.2,
+      "lit_color": "#3fb8ff"
+     },
+     {
+      "realm": "asgard",
+      "x": 1.89,
+      "z": 1.2,
+      "lit_color": "#ffc85a"
+     },
+     {
+      "realm": "vanaheim",
+      "x": 3.14,
+      "z": -1.2,
+      "lit_color": "#5ee08a"
+     },
+     {
+      "realm": "fallen_ally",
+      "x": 4.4,
+      "z": 1.2,
+      "lit_color": null
+     }
+    ],
+    "note": "Lantern Bridge [0,1] across the lake (rot pi/2 = runs along z); 7 realm lanterns + 1 fallen-ally lantern (dark, no name); markers realm_lanterns"
+   },
+   "blockers": [],
+   "placement": "Lantern Bridge [0,1] across the lake (rot pi/2 = runs along z); 7 realm lanterns + 1 fallen-ally lantern (dark, no name); markers realm_lanterns"
+  },
+  "black_lake": {
+   "file": "black_lake.glb",
+   "kind": "prop",
+   "tris": 48,
+   "size": [
+    2,
+    0.02,
+    2
+   ],
+   "markers": {
+    "lamps": [],
+    "chimneys": [],
+    "windows": [],
+    "doors": [],
+    "water": true,
+    "note": "2 m black-lake tile (violet reflections = lake_shimmer)"
+   },
+   "blockers": [],
+   "placement": "2 m black-lake tile (violet reflections = lake_shimmer)"
+  },
+  "pebble_shore": {
+   "file": "pebble_shore.glb",
+   "kind": "prop",
+   "tris": 192,
+   "size": [
+    2,
+    0.1,
+    2
+   ],
+   "markers": {
+    "lamps": [],
+    "chimneys": [],
+    "windows": [],
+    "doors": [],
+    "note": "2 m pebble tile (hh_shore)"
+   },
+   "blockers": [],
+   "placement": "2 m pebble tile (hh_shore)"
+  },
+  "jetty": {
+   "file": "jetty.glb",
+   "kind": "walkable",
+   "tris": 228,
+   "size": [
+    2.0,
+    1.8,
+    4.0
+   ],
+   "markers": {
+    "lamps": [
+     [
+      0.9,
+      1.6,
+      -1.8
+     ]
+    ],
+    "chimneys": [],
+    "windows": [],
+    "doors": [],
+    "lamp_color": "#3fb8ff",
+    "lamp_range": 3.5,
+    "lamp_fixed": 0.5,
+    "note": "jetty / ferry steps: Corvin [9,-3] (town), [0,-2] (hh_shore)"
+   },
+   "blockers": [],
+   "placement": "jetty / ferry steps: Corvin [9,-3] (town), [0,-2] (hh_shore)"
+  },
+  "lantern_boat": {
+   "file": "lantern_boat.glb",
+   "kind": "prop",
+   "tris": 68,
+   "size": [
+    0.9,
+    1.4,
+    2.8
+   ],
+   "markers": {
+    "lamps": [
+     [
+      0,
+      1.25,
+      -0.9
+     ]
+    ],
+    "chimneys": [],
+    "windows": [],
+    "doors": [],
+    "lamp_color": "#a45cf0",
+    "lamp_range": 2.5,
+    "lamp_fixed": 0.5,
+    "note": "lantern-boat (drifts on the lake; Lantern-Boat Night, living-lamp)"
+   },
+   "blockers": [],
+   "placement": "lantern-boat (drifts on the lake; Lantern-Boat Night, living-lamp)"
+  },
+  "willow_orb": {
+   "file": "willow_orb.glb",
+   "kind": "prop",
+   "tris": 356,
+   "size": [
+    3.0,
+    4.1,
+    3.0
+   ],
+   "markers": {
+    "lamps": [
+     [
+      0,
+      1.8,
+      0
+     ]
+    ],
+    "chimneys": [],
+    "windows": [],
+    "doors": [],
+    "lamp_color": "#d6b8ff",
+    "lamp_range": 3.5,
+    "lamp_fixed": 0.0,
+    "note": "willow hung with lilac glow orbs #d6b8ff"
+   },
+   "blockers": [
+    [
+     -0.3,
+     -0.3,
+     0.3,
+     0.3
+    ]
+   ],
+   "placement": "willow hung with lilac glow orbs #d6b8ff"
+  },
+  "reeds": {
+   "file": "reeds.glb",
+   "kind": "prop",
+   "tris": 144,
+   "size": [
+    1.8,
+    1.3,
+    1.8
+   ],
+   "markers": {
+    "lamps": [],
+    "chimneys": [],
+    "windows": [],
+    "doors": [],
+    "note": "reed bank (hh_shore, ls_spring)"
+   },
+   "blockers": [],
+   "placement": "reed bank (hh_shore, ls_spring)"
+  },
+  "archive_door": {
+   "file": "archive_door.glb",
+   "kind": "prop",
+   "tris": 246,
+   "size": [
+    5.4,
+    6.0,
+    1.0
+   ],
+   "markers": {
+    "lamps": [
+     [
+      0,
+      2.8,
+      0.9
+     ]
+    ],
+    "chimneys": [],
+    "windows": [],
+    "doors": [],
+    "note": "archive door [-10,-9] (to hh_archive)",
+    "lamp_color": "#3fb8ff",
+    "lamp_range": 5.0,
+    "lamp_fixed": 0.5,
+    "rune_locks": 3,
+    "keep_clear": {
+     "footprint_m": [
+      -1.7,
+      0.5,
+      1.7,
+      3.5
+     ],
+     "radius_m": 3.0,
+     "note": "door"
+    }
+   },
+   "blockers": [
+    [
+     -2.7,
+     -0.5,
+     2.7,
+     0.5
+    ]
+   ],
+   "placement": "archive door [-10,-9] (to hh_archive)"
+  },
+  "ossuary_door": {
+   "file": "ossuary_door.glb",
+   "kind": "prop",
+   "tris": 246,
+   "size": [
+    5.4,
+    6.0,
+    1.0
+   ],
+   "markers": {
+    "lamps": [
+     [
+      0,
+      2.8,
+      0.9
+     ]
+    ],
+    "chimneys": [],
+    "windows": [],
+    "doors": [],
+    "lamp_color": "#a45cf0",
+    "lamp_range": 5.0,
+    "lamp_fixed": 0.5,
+    "rune_locks": 3,
+    "keep_clear": {
+     "footprint_m": [
+      -1.7,
+      0.5,
+      1.7,
+      3.5
+     ],
+     "radius_m": 3.0,
+     "note": "door"
+    },
+    "note": "Ossuary stair door [0,-8] (hh_archive) / O1 Bone Door: violet rune-locks; 3 m clear"
+   },
+   "blockers": [],
+   "placement": "Ossuary stair door [0,-8] (hh_archive) / O1 Bone Door: violet rune-locks; 3 m clear"
+  },
+  "bubbly_spring": {
+   "file": "bubbly_spring.glb",
+   "kind": "prop",
+   "tris": 198,
+   "size": [
+    2.8,
+    2.9,
+    3.6
+   ],
+   "markers": {
+    "lamps": [
+     [
+      0,
+      0.8,
+      0
+     ]
+    ],
+    "chimneys": [],
+    "windows": [],
+    "doors": [],
+    "note": "hidden spring hh_spring [-11.5,4] / ls_spring / os_spring: warm, clear, bubbling, lit violet from below; 2 m clear",
+    "lamp_color": "#9fd8ff",
+    "lamp_range": 4.5,
+    "lamp_fixed": 0.0,
+    "keep_clear": {
+     "footprint_m": [
+      -1.8,
+      -1.8,
+      1.8,
+      1.8
+     ],
+     "radius_m": 2.0,
+     "note": "spring"
+    }
+   },
+   "blockers": [
+    [
+     -1.3,
+     -1.9,
+     1.3,
+     1.3
+    ]
+   ],
+   "placement": "hidden spring hh_spring [-11.5,4] / ls_spring / os_spring: warm, clear, bubbling, lit violet from below; 2 m clear"
+  },
+  "cold_fire_lamp": {
+   "file": "cold_fire_lamp.glb",
+   "kind": "prop",
+   "tris": 136,
+   "size": [
+    0.6,
+    3.0,
+    0.6
+   ],
+   "markers": {
+    "lamps": [
+     [
+      0,
+      2.7,
+      0
+     ]
+    ],
+    "chimneys": [],
+    "windows": [],
+    "doors": [],
+    "note": "street lamp, neon-blue cold fire",
+    "lamp_color": "#9fd8ff",
+    "lamp_range": 5.0,
+    "lamp_fixed": 0.5
+   },
+   "blockers": [
+    [
+     -0.2,
+     -0.2,
+     0.2,
+     0.2
+    ]
+   ],
+   "placement": "street lamp, neon-blue cold fire"
+  },
+  "grave_lantern_post": {
+   "file": "grave_lantern_post.glb",
+   "kind": "prop",
+   "tris": 136,
+   "size": [
+    0.6,
+    3.0,
+    0.6
+   ],
+   "markers": {
+    "lamps": [
+     [
+      0,
+      2.7,
+      0
+     ]
+    ],
+    "chimneys": [],
+    "windows": [],
+    "doors": [],
+    "note": "grave lantern (O3), cold fire; wakes as you pass",
+    "lamp_color": "#9fd8ff",
+    "lamp_range": 5.0,
+    "lamp_fixed": 0.5
+   },
+   "blockers": [
+    [
+     -0.2,
+     -0.2,
+     0.2,
+     0.2
+    ]
+   ],
+   "placement": "grave lantern (O3), cold fire; wakes as you pass"
+  },
+  "coldfire_brazier": {
+   "file": "coldfire_brazier.glb",
+   "kind": "prop",
+   "tris": 90,
+   "size": [
+    1.1,
+    2.3,
+    1.1
+   ],
+   "markers": {
+    "lamps": [
+     [
+      0,
+      1.8,
+      0
+     ]
+    ],
+    "chimneys": [],
+    "windows": [],
+    "doors": [],
+    "note": "cold-fire brazier on the ground beside ledges (x +-4.4)",
+    "lamp_color": "#9fd8ff",
+    "lamp_range": 5.0,
+    "lamp_fixed": 0.5
+   },
+   "blockers": [
+    [
+     -0.4,
+     -0.4,
+     0.4,
+     0.4
+    ]
+   ],
+   "placement": "cold-fire brazier on the ground beside ledges (x +-4.4)"
+  },
+  "glow_orb_chain": {
+   "file": "glow_orb_chain.glb",
+   "kind": "prop",
+   "tris": 116,
+   "size": [
+    0.7,
+    3.0,
+    0.7
+   ],
+   "markers": {
+    "lamps": [
+     [
+      0,
+      1.45,
+      0
+     ]
+    ],
+    "chimneys": [],
+    "windows": [],
+    "doors": [],
+    "lamp_color": "#9fd8ff",
+    "lamp_range": 5.0,
+    "lamp_fixed": 0.0,
+    "hanging": "gold-glass globe on a chain, hang from beams at y 3 m; steady",
+    "note": "hanging glow orb (porches)"
+   },
+   "blockers": [],
+   "placement": "hanging glow orb (porches)"
+  },
+  "mourning_statue": {
+   "file": "mourning_statue.glb",
+   "kind": "prop",
+   "tris": 160,
+   "size": [
+    1.4,
+    3.0,
+    1.3
+   ],
+   "markers": {
+    "lamps": [],
+    "chimneys": [],
+    "windows": [],
+    "doors": [],
+    "note": "hooded statue (somber)"
+   },
+   "blockers": [
+    [
+     -0.5,
+     -0.5,
+     0.5,
+     0.5
+    ]
+   ],
+   "placement": "hooded statue (somber)"
+  },
+  "violet_window": {
+   "file": "violet_window.glb",
+   "kind": "prop",
+   "tris": 92,
+   "size": [
+    2.4,
+    4.4,
+    0.5
+   ],
+   "markers": {
+    "lamps": [
+     [
+      0,
+      2.2,
+      1.0
+     ]
+    ],
+    "chimneys": [],
+    "windows": [],
+    "doors": [],
+    "note": "violet glass window wall",
+    "lamp_color": "#a45cf0",
+    "lamp_range": 4.5,
+    "lamp_fixed": 0.5
+   },
+   "blockers": [
+    [
+     -1.2,
+     -0.25,
+     1.2,
+     0.25
+    ]
+   ],
+   "placement": "violet glass window wall"
+  },
+  "ledger_lectern": {
+   "file": "ledger_lectern.glb",
+   "kind": "prop",
+   "tris": 84,
+   "size": [
+    2.6,
+    2.0,
+    1.4
+   ],
+   "markers": {
+    "lamps": [
+     [
+      0,
+      1.6,
+      0.4
+     ]
+    ],
+    "chimneys": [],
+    "windows": [],
+    "doors": [],
+    "note": "the Ledger of Names on a lectern [0,-4] (hh_archive), torn pages",
+    "lamp_color": "#3fb8ff",
+    "lamp_range": 4.0,
+    "lamp_fixed": 0.5,
+    "keep_clear": {
+     "footprint_m": [
+      -1.6,
+      -1.0,
+      1.6,
+      2.0
+     ],
+     "radius_m": 2.0,
+     "note": "clue points"
+    }
+   },
+   "blockers": [
+    [
+     -1.2,
+     -0.6,
+     1.2,
+     0.6
+    ]
+   ],
+   "placement": "the Ledger of Names on a lectern [0,-4] (hh_archive), torn pages"
+  },
+  "quillon_desk": {
+   "file": "quillon_desk.glb",
+   "kind": "prop",
+   "tris": 72,
+   "size": [
+    1.8,
+    1.2,
+    0.9
+   ],
+   "markers": {
+    "lamps": [
+     [
+      0.6,
+      1.2,
+      -0.2
+     ]
+    ],
+    "chimneys": [],
+    "windows": [],
+    "doors": [],
+    "lamp_color": "#3fb8ff",
+    "lamp_range": 2.5,
+    "lamp_fixed": 0.5,
+    "note": "Quillon's desk [-5,-3]"
+   },
+   "blockers": [
+    [
+     -0.9,
+     -0.45,
+     0.9,
+     0.45
+    ]
+   ],
+   "placement": "Quillon's desk [-5,-3]"
+  },
+  "archive_shelf": {
+   "file": "archive_shelf.glb",
+   "kind": "prop",
+   "tris": 432,
+   "size": [
+    2.0,
+    4.0,
+    0.5
+   ],
+   "markers": {
+    "lamps": [],
+    "chimneys": [],
+    "windows": [],
+    "doors": [],
+    "note": "tall archive shelf (wall)"
+   },
+   "blockers": [
+    [
+     -1,
+     -0.25,
+     1,
+     0.25
+    ]
+   ],
+   "placement": "tall archive shelf (wall)"
+  },
+  "floating_candles": {
+   "file": "floating_candles.glb",
+   "kind": "prop",
+   "tris": 200,
+   "size": [
+    2,
+    3.4,
+    2
+   ],
+   "markers": {
+    "lamps": [
+     [
+      0,
+      2.8,
+      0
+     ]
+    ],
+    "chimneys": [],
+    "windows": [],
+    "doors": [],
+    "lamp_color": "#3fb8ff",
+    "lamp_range": 4.0,
+    "lamp_fixed": 0.5,
+    "note": "floating cold-fire candles"
+   },
+   "blockers": [],
+   "placement": "floating cold-fire candles"
+  },
+  "name_cage": {
+   "file": "name_cage.glb",
+   "kind": "prop",
+   "tris": 236,
+   "size": [
+    1.1,
+    2.3,
+    1.1
+   ],
+   "markers": {
+    "lamps": [
+     [
+      0,
+      1.0,
+      0
+     ]
+    ],
+    "chimneys": [],
+    "windows": [],
+    "doors": [],
+    "lamp_color": "#a45cf0",
+    "lamp_range": 4.0,
+    "lamp_fixed": 0.5,
+    "note": "name-cage os_n1..3 + O8 fallen-ally cage"
+   },
+   "blockers": [
+    [
+     -0.55,
+     -0.55,
+     0.55,
+     0.55
+    ]
+   ],
+   "placement": "name-cage os_n1..3 + O8 fallen-ally cage"
+  },
+  "soul_glass": {
+   "file": "soul_glass.glb",
+   "kind": "prop",
+   "tris": 80,
+   "size": [
+    0.6,
+    1.1,
+    0.6
+   ],
+   "markers": {
+    "lamps": [
+     [
+      0,
+      0.85,
+      0
+     ]
+    ],
+    "chimneys": [],
+    "windows": [],
+    "doors": [],
+    "lamp_color": "#d6b8ff",
+    "lamp_range": 2.0,
+    "lamp_fixed": 0.5,
+    "note": "soul-glass pickup sgl_1..3"
+   },
+   "blockers": [],
+   "placement": "soul-glass pickup sgl_1..3"
+  },
+  "heart_slot": {
+   "file": "heart_slot.glb",
+   "kind": "prop",
+   "tris": 108,
+   "size": [
+    1.2,
+    0.9,
+    1.2
+   ],
+   "markers": {
+    "lamps": [
+     [
+      0,
+      0.6,
+      0
+     ]
+    ],
+    "chimneys": [],
+    "windows": [],
+    "doors": [],
+    "lamp_color": "#e8321e",
+    "lamp_range": 2.0,
+    "lamp_fixed": 0.5,
+    "note": "O4 glass-heart slot"
+   },
+   "blockers": [],
+   "placement": "O4 glass-heart slot"
+  },
+  "rhythm_door": {
+   "file": "rhythm_door.glb",
+   "kind": "prop",
+   "tris": 84,
+   "size": [
+    3.2,
+    4.2,
+    0.6
+   ],
+   "markers": {
+    "lamps": [
+     [
+      0,
+      2.6,
+      0.8
+     ]
+    ],
+    "chimneys": [],
+    "windows": [],
+    "doors": [],
+    "lamp_color": "#a45cf0",
+    "lamp_range": 3.5,
+    "lamp_fixed": 0.5,
+    "keep_clear": {
+     "footprint_m": [
+      -1.2,
+      0.3,
+      1.2,
+      2.8
+     ],
+     "radius_m": 2.5,
+     "note": "door"
+    },
+    "note": "O6 Choir Loft rhythm door"
+   },
+   "blockers": [
+    [
+     -1.6,
+     -0.3,
+     1.6,
+     0.3
+    ]
+   ],
+   "placement": "O6 Choir Loft rhythm door"
+  },
+  "lich_bier": {
+   "file": "lich_bier.glb",
+   "kind": "prop",
+   "tris": 36,
+   "size": [
+    2.5,
+    0.9,
+    1.2
+   ],
+   "markers": {
+    "lamps": [
+     [
+      0,
+      0.6,
+      0.8
+     ]
+    ],
+    "chimneys": [],
+    "windows": [],
+    "doors": [],
+    "lamp_color": "#a45cf0",
+    "lamp_range": 2.0,
+    "lamp_fixed": 0.5,
+    "note": "O7 lich bier"
+   },
+   "blockers": [
+    [
+     -1.25,
+     -0.6,
+     1.25,
+     0.6
+    ]
+   ],
+   "placement": "O7 lich bier"
+  },
+  "bone_niches": {
+   "file": "bone_niches.glb",
+   "kind": "prop",
+   "tris": 444,
+   "size": [
+    2.0,
+    3.6,
+    0.5
+   ],
+   "markers": {
+    "lamps": [],
+    "chimneys": [],
+    "windows": [],
+    "doors": [],
+    "note": "O2 bone-niche wall (clean)"
+   },
+   "blockers": [
+    [
+     -1,
+     -0.25,
+     1,
+     0.25
+    ]
+   ],
+   "placement": "O2 bone-niche wall (clean)"
+  },
+  "lore_tablet": {
+   "file": "lore_tablet.glb",
+   "kind": "prop",
+   "tris": 60,
+   "size": [
+    1.0,
+    1.8,
+    0.2
+   ],
+   "markers": {
+    "lamps": [],
+    "chimneys": [],
+    "windows": [],
+    "doors": [],
+    "note": "O8 Pale Sovereign lore"
+   },
+   "blockers": [
+    [
+     -0.5,
+     -0.1,
+     0.5,
+     0.1
+    ]
+   ],
+   "placement": "O8 Pale Sovereign lore"
+  },
+  "hh_waystone": {
+   "file": "hh_waystone.glb",
+   "kind": "prop",
+   "tris": 1640,
+   "size": [
+    3.4,
+    4.5,
+    3.4
+   ],
+   "markers": {
+    "lamps": [
+     [
+      0,
+      2.2,
+      1.1
+     ]
+    ],
+    "chimneys": [],
+    "windows": [],
+    "doors": [],
+    "lamp_color": "#7fd4ff",
+    "lamp_range": 6.5,
+    "lamp_fixed": 0.5,
+    "interact": "waystone (E / A): travel; the lift ring is the plinth",
+    "pool_fx": "pool_cold r 3.0 m under it; rune_pulse every 3 s",
+    "keep_clear": {
+     "footprint": [
+      -1.8,
+      -1.8,
+      1.8,
+      1.8
+     ],
+     "radius_m": 2.6,
+     "front_m": 2.0,
+     "note": "no props, spawns or fx within 2.6 m (the arrival point is 2 m in front, +z)"
+    },
+    "note": "O8 waystone (safe); 2.6 m clear"
+   },
+   "blockers": [
+    [
+     -0.8,
+     -0.8,
+     0.8,
+     0.8
+    ]
+   ],
+   "placement": "O8 waystone (safe); 2.6 m clear"
+  },
+  "salon_seat": {
+   "file": "salon_seat.glb",
+   "kind": "prop",
+   "tris": 84,
+   "size": [
+    3.0,
+    3.4,
+    2.2
+   ],
+   "markers": {
+    "lamps": [
+     [
+      0,
+      2.0,
+      1.2
+     ]
+    ],
+    "chimneys": [],
+    "windows": [],
+    "doors": [],
+    "note": "O5 Vesperin's seat",
+    "lamp_color": "#9fd8ff",
+    "lamp_range": 5.0,
+    "lamp_fixed": 0.5
+   },
+   "blockers": [
+    [
+     -1.5,
+     -1.1,
+     1.5,
+     1.1
+    ]
+   ],
+   "placement": "O5 Vesperin's seat"
+  },
+  "chain_anchor": {
+   "file": "chain_anchor.glb",
+   "kind": "prop",
+   "tris": 84,
+   "size": [
+    0.6,
+    2.2,
+    1.0
+   ],
+   "markers": {
+    "lamps": [
+     [
+      0,
+      1.2,
+      0.6
+     ]
+    ],
+    "chimneys": [],
+    "windows": [],
+    "doors": [],
+    "lamp_color": "#a45cf0",
+    "lamp_range": 2.5,
+    "lamp_fixed": 0.5,
+    "note": "O9 name-chain wall anchor (breakable)"
+   },
+   "blockers": [],
+   "placement": "O9 name-chain wall anchor (breakable)"
+  },
+  "pale_throne": {
+   "file": "pale_throne.glb",
+   "kind": "prop",
+   "tris": 60,
+   "size": [
+    5.0,
+    5.2,
+    4.0
+   ],
+   "markers": {
+    "lamps": [
+     [
+      0,
+      4.8,
+      -1.4
+     ]
+    ],
+    "chimneys": [],
+    "windows": [],
+    "doors": [],
+    "note": "O9 Pale Throne; Mordrath boss stand [0,0,-1.4]",
+    "lamp_color": "#9fd8ff",
+    "lamp_range": 7.0,
+    "lamp_fixed": 0.5,
+    "boss_stand": [
+     0,
+     0,
+     4.0
+    ]
+   },
+   "blockers": [
+    [
+     -2.5,
+     -2.0,
+     2.5,
+     0.0
+    ]
+   ],
+   "placement": "O9 Pale Throne; Mordrath boss stand [0,0,-1.4]"
+  }
+ }
+}

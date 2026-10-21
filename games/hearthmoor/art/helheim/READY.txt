@@ -1,0 +1,5 @@
+READY: true
+pack: helheim
+story: story/helheim.md
+checks: stock check-sprite PASS on hh_folk, hh_inkling and the 3 _safe twins; the 3 violet sheets FAIL stock only on #a45cf0/#3a2458 for the 5 listed roles and PASS with the temporary local allow-list; clearance 0 violations
+written: 2026-10-21 03:26 EDT

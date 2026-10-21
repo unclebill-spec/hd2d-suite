@@ -1,0 +1,126 @@
+{
+ "hh_enemies": {
+  "atlas": "/workspace/hearthmoor-staging/art/helheim/sprite/hh_enemies.png",
+  "biome": "cozy-village",
+  "roles": {
+   "shade": {
+    "frames": 64,
+    "colors": 6,
+    "issues": []
+   },
+   "gate_shade": {
+    "frames": 64,
+    "colors": 6,
+    "issues": []
+   },
+   "soul_wraith": {
+    "frames": 64,
+    "colors": 4,
+    "issues": []
+   },
+   "grave_lantern": {
+    "frames": 64,
+    "colors": 8,
+    "issues": []
+   },
+   "bone_elemental": {
+    "frames": 64,
+    "colors": 6,
+    "issues": []
+   },
+   "garnet_golem": {
+    "frames": 64,
+    "colors": 5,
+    "issues": []
+   },
+   "skeleton_line": {
+    "frames": 64,
+    "colors": 14,
+    "issues": []
+   },
+   "lich": {
+    "frames": 64,
+    "colors": 14,
+    "issues": []
+   },
+   "gloam_knight": {
+    "frames": 64,
+    "colors": 15,
+    "issues": []
+   }
+  },
+  "summary": {
+   "roles": 9,
+   "failures": 0,
+   "semi_transparent": 0,
+   "pass": true
+  },
+  "failures": []
+ },
+ "hh_elites": {
+  "atlas": "/workspace/hearthmoor-staging/art/helheim/sprite/hh_elites.png",
+  "biome": "cozy-village",
+  "roles": {
+   "vesperin": {
+    "frames": 64,
+    "colors": 16,
+    "issues": []
+   },
+   "vesperin_bat": {
+    "frames": 64,
+    "colors": 5,
+    "issues": []
+   },
+   "odric": {
+    "frames": 64,
+    "colors": 14,
+    "issues": []
+   },
+   "gravelamp": {
+    "frames": 64,
+    "colors": 8,
+    "issues": []
+   },
+   "hollowchoir": {
+    "frames": 64,
+    "colors": 6,
+    "issues": []
+   }
+  },
+  "summary": {
+   "roles": 5,
+   "failures": 0,
+   "semi_transparent": 0,
+   "pass": true
+  },
+  "failures": []
+ },
+ "boss_mordrath": {
+  "atlas": "/workspace/hearthmoor-staging/art/helheim/sprite/boss_mordrath.png",
+  "biome": "cozy-village",
+  "roles": {
+   "mordrath": {
+    "frames": 80,
+    "colors": 18,
+    "issues": []
+   },
+   "mordrath_p2": {
+    "frames": 80,
+    "colors": 18,
+    "issues": []
+   },
+   "mordrath_p3": {
+    "frames": 80,
+    "colors": 18,
+    "issues": []
+   }
+  },
+  "summary": {
+   "roles": 3,
+   "failures": 0,
+   "semi_transparent": 0,
+   "pass": true
+  },
+  "failures": []
+ }
+}

@@ -1,0 +1,358 @@
+{
+ "tool": "hd2d boss_sheet (niflheim big frames)",
+ "biome": "cozy-village",
+ "frame": [
+  64,
+  72
+ ],
+ "pivot": [
+  32,
+  72
+ ],
+ "ground_row": 71,
+ "facings": [
+  "down",
+  "up",
+  "left",
+  "right"
+ ],
+ "anims": {
+  "idle": {
+   "start": 0,
+   "count": 4,
+   "fps": 3,
+   "loop": [
+    0,
+    1,
+    2,
+    1
+   ],
+   "blink": 3
+  },
+  "walk": {
+   "start": 4,
+   "count": 4,
+   "fps": 8
+  },
+  "cast": {
+   "start": 8,
+   "count": 4,
+   "fps": 6,
+   "loop": [
+    0,
+    1,
+    2,
+    2,
+    3,
+    3
+   ],
+   "casters_only": true
+  },
+  "attack": {
+   "start": 12,
+   "count": 4,
+   "fps": 10,
+   "loop": [
+    0,
+    1,
+    2,
+    2,
+    3
+   ],
+   "heroes_only": true
+  },
+  "defend": {
+   "start": 16,
+   "count": 4,
+   "fps": 6,
+   "loop": [
+    0,
+    1
+   ],
+   "hold": [
+    2,
+    3
+   ],
+   "heroes_only": true
+  },
+  "jump": {
+   "start": 20,
+   "count": 4,
+   "fps": 8,
+   "phases": [
+    "crouch",
+    "launch",
+    "airborne",
+    "land"
+   ],
+   "heroes_only": true
+  },
+  "die": {
+   "start": 24,
+   "count": 4,
+   "fps": 6,
+   "once": true,
+   "enemies_only": true
+  }
+ },
+ "cols": 28,
+ "size": [
+  1792,
+  2592
+ ],
+ "image": "hhenemy.png",
+ "roles": {
+  "shade": {
+   "row": 0,
+   "kind": "enemy",
+   "scale": 1.0,
+   "desc": "Shade (1x): drifting blue-violet shape, fades in light.",
+   "anims": [
+    "idle",
+    "walk",
+    "attack",
+    "die"
+   ],
+   "size_bounds": [
+    [
+     10,
+     62
+    ],
+    [
+     8,
+     72
+    ]
+   ],
+   "caster": false,
+   "enemy": true,
+   "stats_hint": {
+    "tier": "enemy",
+    "height_x_player": 1.0
+   }
+  },
+  "gate_shade": {
+   "row": 4,
+   "kind": "enemy",
+   "scale": 1.2,
+   "desc": "Gate shade (1.2x, Hel's Leave): tests the living-lamp; fades in light.",
+   "anims": [
+    "idle",
+    "walk",
+    "attack",
+    "die"
+   ],
+   "size_bounds": [
+    [
+     10,
+     62
+    ],
+    [
+     8,
+     72
+    ]
+   ],
+   "caster": false,
+   "enemy": true,
+   "stats_hint": {
+    "tier": "gate",
+    "height_x_player": 1.2
+   }
+  },
+  "soul_wraith": {
+   "row": 8,
+   "kind": "enemy",
+   "scale": 1.3,
+   "desc": "Soul wraith (1.3x): neon-blue drifting wraith (palette sky/white; neon glow = fx soul_glow), drifts through walls.",
+   "anims": [
+    "idle",
+    "walk",
+    "attack",
+    "die"
+   ],
+   "size_bounds": [
+    [
+     10,
+     62
+    ],
+    [
+     8,
+     72
+    ]
+   ],
+   "caster": false,
+   "enemy": true,
+   "stats_hint": {
+    "tier": "enemy",
+    "height_x_player": 1.3
+   }
+  },
+  "grave_lantern": {
+   "row": 12,
+   "kind": "enemy",
+   "scale": 1.0,
+   "desc": "Grave lantern (1x): iron lantern of blue cold fire on clean bone legs; wakes as you pass.",
+   "anims": [
+    "idle",
+    "walk",
+    "attack",
+    "die"
+   ],
+   "size_bounds": [
+    [
+     10,
+     62
+    ],
+    [
+     8,
+     72
+    ]
+   ],
+   "caster": false,
+   "enemy": true,
+   "stats_hint": {
+    "tier": "enemy",
+    "height_x_player": 1.0
+   }
+  },
+  "bone_elemental": {
+   "row": 16,
+   "kind": "enemy",
+   "scale": 1.6,
+   "desc": "Bone elemental (1.6x): clean pale bone, rune seams (violet = fx).",
+   "anims": [
+    "idle",
+    "walk",
+    "attack",
+    "die"
+   ],
+   "size_bounds": [
+    [
+     10,
+     62
+    ],
+    [
+     8,
+     72
+    ]
+   ],
+   "caster": false,
+   "enemy": true,
+   "stats_hint": {
+    "tier": "enemy",
+    "height_x_player": 1.6
+   }
+  },
+  "garnet_golem": {
+   "row": 20,
+   "kind": "enemy",
+   "scale": 1.8,
+   "desc": "Garnet golem (1.8x, the 'blood golem'): dark red glass, slow; nothing wet.",
+   "anims": [
+    "idle",
+    "walk",
+    "attack",
+    "die"
+   ],
+   "size_bounds": [
+    [
+     10,
+     62
+    ],
+    [
+     8,
+     72
+    ]
+   ],
+   "caster": false,
+   "enemy": true,
+   "stats_hint": {
+    "tier": "enemy",
+    "height_x_player": 1.8
+   }
+  },
+  "skeleton_line": {
+   "row": 24,
+   "kind": "enemy",
+   "scale": 1.0,
+   "desc": "Skeleton line (1x): clean pale bone with blue-violet rune belt, spear; march in step.",
+   "anims": [
+    "idle",
+    "walk",
+    "attack",
+    "die"
+   ],
+   "size_bounds": [
+    [
+     10,
+     62
+    ],
+    [
+     8,
+     72
+    ]
+   ],
+   "caster": false,
+   "enemy": true,
+   "stats_hint": {
+    "tier": "enemy",
+    "height_x_player": 1.0
+   }
+  },
+  "lich": {
+   "row": 28,
+   "kind": "enemy",
+   "scale": 1.4,
+   "desc": "Lich (1.4x): dark hooded robe over a belted tunic, pale-blue eyes, staff-mace.",
+   "anims": [
+    "idle",
+    "walk",
+    "attack",
+    "die"
+   ],
+   "size_bounds": [
+    [
+     10,
+     62
+    ],
+    [
+     8,
+     72
+    ]
+   ],
+   "caster": false,
+   "enemy": true,
+   "stats_hint": {
+    "tier": "enemy",
+    "height_x_player": 1.4
+   }
+  },
+  "gloam_knight": {
+   "row": 32,
+   "kind": "enemy",
+   "scale": 1.0,
+   "desc": "Gloam Knight (elite 1x): dark leather jerkin + violet (palette blue-shadow) tabard, belted, spear; NO plate.",
+   "anims": [
+    "idle",
+    "walk",
+    "attack",
+    "die"
+   ],
+   "size_bounds": [
+    [
+     10,
+     62
+    ],
+    [
+     8,
+     72
+    ]
+   ],
+   "caster": false,
+   "enemy": true,
+   "stats_hint": {
+    "tier": "elite",
+    "height_x_player": 1.0
+   }
+  }
+ }
+}

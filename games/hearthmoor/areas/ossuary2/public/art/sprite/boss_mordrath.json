@@ -1,0 +1,220 @@
+{
+ "tool": "hd2d boss_sheet (niflheim big frames)",
+ "biome": "cozy-village",
+ "frame": [
+  144,
+  240
+ ],
+ "pivot": [
+  72,
+  240
+ ],
+ "ground_row": 239,
+ "facings": [
+  "down",
+  "up",
+  "left",
+  "right"
+ ],
+ "anims": {
+  "idle": {
+   "start": 0,
+   "count": 4,
+   "fps": 3,
+   "loop": [
+    0,
+    1,
+    2,
+    1
+   ],
+   "blink": 3
+  },
+  "walk": {
+   "start": 4,
+   "count": 4,
+   "fps": 8
+  },
+  "cast": {
+   "start": 8,
+   "count": 4,
+   "fps": 6,
+   "loop": [
+    0,
+    1,
+    2,
+    2,
+    3,
+    3
+   ],
+   "casters_only": true
+  },
+  "attack": {
+   "start": 12,
+   "count": 4,
+   "fps": 10,
+   "loop": [
+    0,
+    1,
+    2,
+    2,
+    3
+   ],
+   "heroes_only": true
+  },
+  "defend": {
+   "start": 16,
+   "count": 4,
+   "fps": 6,
+   "loop": [
+    0,
+    1
+   ],
+   "hold": [
+    2,
+    3
+   ],
+   "heroes_only": true
+  },
+  "jump": {
+   "start": 20,
+   "count": 4,
+   "fps": 8,
+   "phases": [
+    "crouch",
+    "launch",
+    "airborne",
+    "land"
+   ],
+   "heroes_only": true
+  },
+  "die": {
+   "start": 24,
+   "count": 4,
+   "fps": 6,
+   "once": true,
+   "enemies_only": true
+  }
+ },
+ "cols": 28,
+ "size": [
+  4032,
+  2880
+ ],
+ "image": "boss_mordrath.png",
+ "roles": {
+  "mordrath": {
+   "row": 0,
+   "kind": "enemy",
+   "scale": 8.0,
+   "desc": "Mordrath, the Pale Sovereign (boss 8x): bone-white plate (the only plate in the arc) with gold-black trim, crown of red cold fire, violet-smoke wings (cape; smoke = fx), chains of names on the arms, tall pale glaive. P1 (100-60%): glaive sweeps (violet arc tell), name-chains (red floor line).",
+   "anims": [
+    "idle",
+    "walk",
+    "cast",
+    "attack",
+    "die"
+   ],
+   "size_bounds": [
+    [
+     10,
+     142
+    ],
+    [
+     8,
+     240
+    ]
+   ],
+   "caster": false,
+   "enemy": true,
+   "boss": true,
+   "light": {
+    "color": "#a45cf0",
+    "intensity": 1.4,
+    "range": 12.0
+   },
+   "stats_hint": {
+    "tier": "boss",
+    "height_x_player": 8.0,
+    "plate": true,
+    "element": "dark",
+    "phases": 3
+   }
+  },
+  "mordrath_p2": {
+   "row": 4,
+   "kind": "enemy",
+   "scale": 8.0,
+   "desc": "Mordrath, the Pale Sovereign (boss 8x): bone-white plate (the only plate in the arc) with gold-black trim, crown of red cold fire, violet-smoke wings (cape; smoke = fx), chains of names on the arms, tall pale glaive. P2 (60-25%): hunts (red ring + lunge), calls 2 shades + 1 soul_wraith; the dome dims.",
+   "anims": [
+    "idle",
+    "walk",
+    "cast",
+    "attack",
+    "die"
+   ],
+   "size_bounds": [
+    [
+     10,
+     142
+    ],
+    [
+     8,
+     240
+    ]
+   ],
+   "caster": false,
+   "enemy": true,
+   "boss": true,
+   "light": {
+    "color": "#a45cf0",
+    "intensity": 1.4,
+    "range": 12.0
+   },
+   "stats_hint": {
+    "tier": "boss",
+    "height_x_player": 8.0,
+    "plate": true,
+    "element": "dark",
+    "phases": 3
+   }
+  },
+  "mordrath_p3": {
+   "row": 8,
+   "kind": "enemy",
+   "scale": 8.0,
+   "desc": "Mordrath, the Pale Sovereign (boss 8x): bone-white plate (the only plate in the arc) with gold-black trim, crown of red cold fire, violet-smoke wings (cape; smoke = fx), chains of names on the arms, tall pale glaive. P3 (25-0%): pulls names to heal (violet motes), crown flares (red half-arena ring); crown taller, gold trim burns red.",
+   "anims": [
+    "idle",
+    "walk",
+    "cast",
+    "attack",
+    "die"
+   ],
+   "size_bounds": [
+    [
+     10,
+     142
+    ],
+    [
+     8,
+     240
+    ]
+   ],
+   "caster": false,
+   "enemy": true,
+   "boss": true,
+   "light": {
+    "color": "#e8321e",
+    "intensity": 1.4,
+    "range": 12.0
+   },
+   "stats_hint": {
+    "tier": "boss",
+    "height_x_player": 8.0,
+    "plate": true,
+    "element": "dark",
+    "phases": 3
+   }
+  }
+ }
+}

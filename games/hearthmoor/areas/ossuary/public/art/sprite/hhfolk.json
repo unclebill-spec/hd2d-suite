@@ -1,0 +1,340 @@
+{
+ "tool": "hd2d boss_sheet (niflheim big frames)",
+ "biome": "cozy-village",
+ "frame": [
+  40,
+  44
+ ],
+ "pivot": [
+  20,
+  44
+ ],
+ "ground_row": 43,
+ "facings": [
+  "down",
+  "up",
+  "left",
+  "right"
+ ],
+ "anims": {
+  "idle": {
+   "start": 0,
+   "count": 4,
+   "fps": 3,
+   "loop": [
+    0,
+    1,
+    2,
+    1
+   ],
+   "blink": 3
+  },
+  "walk": {
+   "start": 4,
+   "count": 4,
+   "fps": 8
+  },
+  "cast": {
+   "start": 8,
+   "count": 4,
+   "fps": 6,
+   "loop": [
+    0,
+    1,
+    2,
+    2,
+    3,
+    3
+   ],
+   "casters_only": true
+  },
+  "attack": {
+   "start": 12,
+   "count": 4,
+   "fps": 10,
+   "loop": [
+    0,
+    1,
+    2,
+    2,
+    3
+   ],
+   "heroes_only": true
+  },
+  "defend": {
+   "start": 16,
+   "count": 4,
+   "fps": 6,
+   "loop": [
+    0,
+    1
+   ],
+   "hold": [
+    2,
+    3
+   ],
+   "heroes_only": true
+  },
+  "jump": {
+   "start": 20,
+   "count": 4,
+   "fps": 8,
+   "phases": [
+    "crouch",
+    "launch",
+    "airborne",
+    "land"
+   ],
+   "heroes_only": true
+  },
+  "die": {
+   "start": 24,
+   "count": 4,
+   "fps": 6,
+   "once": true,
+   "enemies_only": true
+  }
+ },
+ "cols": 12,
+ "size": [
+  480,
+  1584
+ ],
+ "image": "hhfolk.png",
+ "roles": {
+  "hel": {
+   "row": 0,
+   "kind": "human",
+   "scale": 1.25,
+   "desc": "Hel (1.25x, tall): half violet-lit, half shadow; dark violet tunic, silver-belted skirt over leggings, grey mantle, carries the Ledger.",
+   "anims": [
+    "idle",
+    "walk"
+   ],
+   "size_bounds": [
+    [
+     10,
+     38
+    ],
+    [
+     8,
+     44
+    ]
+   ],
+   "caster": false,
+   "named": true,
+   "stats_hint": {
+    "tier": "npc",
+    "height_x_player": 1.25
+   }
+  },
+  "ferryman": {
+   "row": 4,
+   "kind": "human",
+   "scale": 1.0,
+   "desc": "Corvin Lanternmere (ferryman, raven-keeper): long grey coat over a tunic, rope-belted trousers, a pole-lantern.",
+   "anims": [
+    "idle",
+    "walk"
+   ],
+   "size_bounds": [
+    [
+     10,
+     38
+    ],
+    [
+     8,
+     44
+    ]
+   ],
+   "caster": false,
+   "named": true,
+   "stats_hint": {
+    "tier": "npc",
+    "height_x_player": 1.0
+   }
+  },
+  "innghost": {
+   "row": 8,
+   "kind": "human",
+   "scale": 1.0,
+   "desc": "Hettie Tallow (ghost innkeeper): faded apron over a rose tunic, belted skirt; feet fade into mist.",
+   "anims": [
+    "idle",
+    "walk"
+   ],
+   "size_bounds": [
+    [
+     10,
+     38
+    ],
+    [
+     8,
+     44
+    ]
+   ],
+   "caster": false,
+   "named": true,
+   "stats_hint": {
+    "tier": "npc",
+    "height_x_player": 1.0
+   }
+  },
+  "archivist_hh": {
+   "row": 12,
+   "kind": "human",
+   "scale": 1.0,
+   "desc": "Quillon Greymarch (archivist): ink-stained tunic, belted trousers, spectacles, a quill behind his ear.",
+   "anims": [
+    "idle",
+    "walk"
+   ],
+   "size_bounds": [
+    [
+     10,
+     38
+    ],
+    [
+     8,
+     44
+    ]
+   ],
+   "caster": false,
+   "named": true,
+   "stats_hint": {
+    "tier": "npc",
+    "height_x_player": 1.0
+   }
+  },
+  "eira_spirit": {
+   "row": 16,
+   "kind": "human",
+   "scale": 1.0,
+   "desc": "Eira Ashmantle (spirit, never fought): pale tunic, belted, cold-fire lantern; soft glowing outline = fx eira_outline.",
+   "anims": [
+    "idle",
+    "walk"
+   ],
+   "size_bounds": [
+    [
+     10,
+     38
+    ],
+    [
+     8,
+     44
+    ]
+   ],
+   "caster": false,
+   "named": true,
+   "stats_hint": {
+    "tier": "npc",
+    "height_x_player": 1.0
+   }
+  },
+  "childghost": {
+   "row": 20,
+   "kind": "human",
+   "scale": 0.8,
+   "desc": "Hollin (child ghost, 0.8x): oversized tunic, rope belt, bare feet fading into mist; collects buttons.",
+   "anims": [
+    "idle",
+    "walk"
+   ],
+   "size_bounds": [
+    [
+     10,
+     38
+    ],
+    [
+     8,
+     44
+    ]
+   ],
+   "caster": false,
+   "named": true,
+   "stats_hint": {
+    "tier": "npc",
+    "height_x_player": 0.8
+   }
+  },
+  "bakerghost": {
+   "row": 24,
+   "kind": "human",
+   "scale": 1.0,
+   "desc": "Old Marrow (baker ghost): flour-dusted tunic and apron, belted trousers.",
+   "anims": [
+    "idle",
+    "walk"
+   ],
+   "size_bounds": [
+    [
+     10,
+     38
+    ],
+    [
+     8,
+     44
+    ]
+   ],
+   "caster": false,
+   "named": true,
+   "stats_hint": {
+    "tier": "npc",
+    "height_x_player": 1.0
+   }
+  },
+  "sailorghost": {
+   "row": 28,
+   "kind": "human",
+   "scale": 1.0,
+   "desc": "the ghost sailor (story 2, gs_sailor): faded blue tunic, belted trousers, knit cap.",
+   "anims": [
+    "idle",
+    "walk"
+   ],
+   "size_bounds": [
+    [
+     10,
+     38
+    ],
+    [
+     8,
+     44
+    ]
+   ],
+   "caster": false,
+   "named": true,
+   "stats_hint": {
+    "tier": "npc",
+    "height_x_player": 1.0
+   }
+  },
+  "gloam_folk": {
+   "row": 32,
+   "kind": "human",
+   "scale": 1.0,
+   "desc": "Gloamhaven folk ghost (ambient 5.9): faded tunic, belted skirt over leggings, shawl.",
+   "anims": [
+    "idle",
+    "walk"
+   ],
+   "size_bounds": [
+    [
+     10,
+     38
+    ],
+    [
+     8,
+     44
+    ]
+   ],
+   "caster": false,
+   "named": true,
+   "stats_hint": {
+    "tier": "npc",
+    "height_x_player": 1.0
+   }
+  }
+ }
+}

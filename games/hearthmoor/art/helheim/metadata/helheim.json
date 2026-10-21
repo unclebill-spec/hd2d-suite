@@ -1,0 +1,3288 @@
+{
+ "pack": "helheim",
+ "story": "story/helheim.md",
+ "sheets": {
+  "hh_folk": {
+   "frame": [
+    40,
+    44
+   ],
+   "roles": {
+    "hel": {
+     "scale": 1.25,
+     "anims": [
+      "idle",
+      "walk"
+     ],
+     "tier": "npc"
+    },
+    "ferryman": {
+     "scale": 1.0,
+     "anims": [
+      "idle",
+      "walk"
+     ],
+     "tier": "npc"
+    },
+    "innghost": {
+     "scale": 1.0,
+     "anims": [
+      "idle",
+      "walk"
+     ],
+     "tier": "npc"
+    },
+    "archivist_hh": {
+     "scale": 1.0,
+     "anims": [
+      "idle",
+      "walk"
+     ],
+     "tier": "npc"
+    },
+    "eira_spirit": {
+     "scale": 1.0,
+     "anims": [
+      "idle",
+      "walk"
+     ],
+     "tier": "npc"
+    },
+    "childghost": {
+     "scale": 0.8,
+     "anims": [
+      "idle",
+      "walk"
+     ],
+     "tier": "npc"
+    },
+    "bakerghost": {
+     "scale": 1.0,
+     "anims": [
+      "idle",
+      "walk"
+     ],
+     "tier": "npc"
+    },
+    "sailorghost": {
+     "scale": 1.0,
+     "anims": [
+      "idle",
+      "walk"
+     ],
+     "tier": "npc"
+    },
+    "gloam_folk": {
+     "scale": 1.0,
+     "anims": [
+      "idle",
+      "walk"
+     ],
+     "tier": "npc"
+    }
+   }
+  },
+  "hh_inkling": {
+   "frame": [
+    40,
+    44
+   ],
+   "roles": {
+    "inkling": {
+     "scale": 0.6,
+     "anims": [
+      "idle",
+      "walk"
+     ],
+     "tier": "pet"
+    }
+   }
+  },
+  "hh_enemies": {
+   "frame": [
+    64,
+    72
+   ],
+   "roles": {
+    "shade": {
+     "scale": 1.0,
+     "anims": [
+      "idle",
+      "walk",
+      "attack",
+      "die"
+     ],
+     "tier": "enemy"
+    },
+    "gate_shade": {
+     "scale": 1.2,
+     "anims": [
+      "idle",
+      "walk",
+      "attack",
+      "die"
+     ],
+     "tier": "gate"
+    },
+    "soul_wraith": {
+     "scale": 1.3,
+     "anims": [
+      "idle",
+      "walk",
+      "attack",
+      "die"
+     ],
+     "tier": "enemy"
+    },
+    "grave_lantern": {
+     "scale": 1.0,
+     "anims": [
+      "idle",
+      "walk",
+      "attack",
+      "die"
+     ],
+     "tier": "enemy"
+    },
+    "bone_elemental": {
+     "scale": 1.6,
+     "anims": [
+      "idle",
+      "walk",
+      "attack",
+      "die"
+     ],
+     "tier": "enemy"
+    },
+    "garnet_golem": {
+     "scale": 1.8,
+     "anims": [
+      "idle",
+      "walk",
+      "attack",
+      "die"
+     ],
+     "tier": "enemy"
+    },
+    "skeleton_line": {
+     "scale": 1.0,
+     "anims": [
+      "idle",
+      "walk",
+      "attack",
+      "die"
+     ],
+     "tier": "enemy"
+    },
+    "lich": {
+     "scale": 1.4,
+     "anims": [
+      "idle",
+      "walk",
+      "attack",
+      "die"
+     ],
+     "tier": "enemy"
+    },
+    "gloam_knight": {
+     "scale": 1.0,
+     "anims": [
+      "idle",
+      "walk",
+      "attack",
+      "die"
+     ],
+     "tier": "elite"
+    }
+   }
+  },
+  "hh_elites": {
+   "frame": [
+    100,
+    112
+   ],
+   "roles": {
+    "vesperin": {
+     "scale": 3.0,
+     "anims": [
+      "idle",
+      "walk",
+      "attack",
+      "die"
+     ],
+     "tier": "miniboss"
+    },
+    "vesperin_bat": {
+     "scale": 1.6,
+     "anims": [
+      "idle",
+      "walk",
+      "attack",
+      "die"
+     ],
+     "tier": "miniboss_add"
+    },
+    "odric": {
+     "scale": 3.0,
+     "anims": [
+      "idle",
+      "walk",
+      "attack",
+      "die"
+     ],
+     "tier": "miniboss"
+    },
+    "gravelamp": {
+     "scale": 2.0,
+     "anims": [
+      "idle",
+      "walk",
+      "attack",
+      "die"
+     ],
+     "tier": "rare"
+    },
+    "hollowchoir": {
+     "scale": 3.0,
+     "anims": [
+      "idle",
+      "walk",
+      "attack",
+      "die"
+     ],
+     "tier": "rare"
+    }
+   }
+  },
+  "boss_mordrath": {
+   "frame": [
+    144,
+    240
+   ],
+   "roles": {
+    "mordrath": {
+     "scale": 8.0,
+     "anims": [
+      "idle",
+      "walk",
+      "cast",
+      "attack",
+      "die"
+     ],
+     "tier": "boss"
+    },
+    "mordrath_p2": {
+     "scale": 8.0,
+     "anims": [
+      "idle",
+      "walk",
+      "cast",
+      "attack",
+      "die"
+     ],
+     "tier": "boss"
+    },
+    "mordrath_p3": {
+     "scale": 8.0,
+     "anims": [
+      "idle",
+      "walk",
+      "cast",
+      "attack",
+      "die"
+     ],
+     "tier": "boss"
+    }
+   }
+  },
+  "hh_enemies_safe": {
+   "frame": [
+    64,
+    72
+   ],
+   "roles": {
+    "shade": {
+     "scale": 1.0,
+     "anims": [
+      "idle",
+      "walk",
+      "attack",
+      "die"
+     ],
+     "tier": "enemy"
+    },
+    "gate_shade": {
+     "scale": 1.2,
+     "anims": [
+      "idle",
+      "walk",
+      "attack",
+      "die"
+     ],
+     "tier": "gate"
+    },
+    "soul_wraith": {
+     "scale": 1.3,
+     "anims": [
+      "idle",
+      "walk",
+      "attack",
+      "die"
+     ],
+     "tier": "enemy"
+    },
+    "grave_lantern": {
+     "scale": 1.0,
+     "anims": [
+      "idle",
+      "walk",
+      "attack",
+      "die"
+     ],
+     "tier": "enemy"
+    },
+    "bone_elemental": {
+     "scale": 1.6,
+     "anims": [
+      "idle",
+      "walk",
+      "attack",
+      "die"
+     ],
+     "tier": "enemy"
+    },
+    "garnet_golem": {
+     "scale": 1.8,
+     "anims": [
+      "idle",
+      "walk",
+      "attack",
+      "die"
+     ],
+     "tier": "enemy"
+    },
+    "skeleton_line": {
+     "scale": 1.0,
+     "anims": [
+      "idle",
+      "walk",
+      "attack",
+      "die"
+     ],
+     "tier": "enemy"
+    },
+    "lich": {
+     "scale": 1.4,
+     "anims": [
+      "idle",
+      "walk",
+      "attack",
+      "die"
+     ],
+     "tier": "enemy"
+    },
+    "gloam_knight": {
+     "scale": 1.0,
+     "anims": [
+      "idle",
+      "walk",
+      "attack",
+      "die"
+     ],
+     "tier": "elite"
+    }
+   }
+  },
+  "hh_elites_safe": {
+   "frame": [
+    100,
+    112
+   ],
+   "roles": {
+    "vesperin": {
+     "scale": 3.0,
+     "anims": [
+      "idle",
+      "walk",
+      "attack",
+      "die"
+     ],
+     "tier": "miniboss"
+    },
+    "vesperin_bat": {
+     "scale": 1.6,
+     "anims": [
+      "idle",
+      "walk",
+      "attack",
+      "die"
+     ],
+     "tier": "miniboss_add"
+    },
+    "odric": {
+     "scale": 3.0,
+     "anims": [
+      "idle",
+      "walk",
+      "attack",
+      "die"
+     ],
+     "tier": "miniboss"
+    },
+    "gravelamp": {
+     "scale": 2.0,
+     "anims": [
+      "idle",
+      "walk",
+      "attack",
+      "die"
+     ],
+     "tier": "rare"
+    },
+    "hollowchoir": {
+     "scale": 3.0,
+     "anims": [
+      "idle",
+      "walk",
+      "attack",
+      "die"
+     ],
+     "tier": "rare"
+    }
+   }
+  },
+  "boss_mordrath_safe": {
+   "frame": [
+    144,
+    240
+   ],
+   "roles": {
+    "mordrath": {
+     "scale": 8.0,
+     "anims": [
+      "idle",
+      "walk",
+      "cast",
+      "attack",
+      "die"
+     ],
+     "tier": "boss"
+    },
+    "mordrath_p2": {
+     "scale": 8.0,
+     "anims": [
+      "idle",
+      "walk",
+      "cast",
+      "attack",
+      "die"
+     ],
+     "tier": "boss"
+    },
+    "mordrath_p3": {
+     "scale": 8.0,
+     "anims": [
+      "idle",
+      "walk",
+      "cast",
+      "attack",
+      "die"
+     ],
+     "tier": "boss"
+    }
+   }
+  }
+ },
+ "frame_convention": "boss_sheet layout, pivot bottom centre, idle 0-3 walk 4-7 cast 8-11 attack 12-15 die 24-27",
+ "areas": {
+  "helheim": {
+   "pieces": [
+    {
+     "piece": "black_lake",
+     "pos": [
+      -3,
+      0,
+      -1
+     ]
+    },
+    {
+     "piece": "black_lake",
+     "pos": [
+      -3,
+      0,
+      1
+     ]
+    },
+    {
+     "piece": "black_lake",
+     "pos": [
+      -3,
+      0,
+      3
+     ]
+    },
+    {
+     "piece": "black_lake",
+     "pos": [
+      -1,
+      0,
+      -1
+     ]
+    },
+    {
+     "piece": "black_lake",
+     "pos": [
+      -1,
+      0,
+      1
+     ]
+    },
+    {
+     "piece": "black_lake",
+     "pos": [
+      -1,
+      0,
+      3
+     ]
+    },
+    {
+     "piece": "black_lake",
+     "pos": [
+      1,
+      0,
+      -1
+     ]
+    },
+    {
+     "piece": "black_lake",
+     "pos": [
+      1,
+      0,
+      1
+     ]
+    },
+    {
+     "piece": "black_lake",
+     "pos": [
+      1,
+      0,
+      3
+     ]
+    },
+    {
+     "piece": "black_lake",
+     "pos": [
+      3,
+      0,
+      -1
+     ]
+    },
+    {
+     "piece": "black_lake",
+     "pos": [
+      3,
+      0,
+      1
+     ]
+    },
+    {
+     "piece": "black_lake",
+     "pos": [
+      3,
+      0,
+      3
+     ]
+    },
+    {
+     "piece": "lantern_bridge",
+     "pos": [
+      0,
+      0,
+      1.0
+     ]
+    },
+    {
+     "piece": "hels_arch",
+     "pos": [
+      0,
+      0,
+      10.6
+     ]
+    },
+    {
+     "piece": "hels_hall",
+     "pos": [
+      0,
+      0,
+      -10.4
+     ]
+    },
+    {
+     "piece": "last_hearth_inn",
+     "pos": [
+      -7.5,
+      0,
+      -2.0
+     ]
+    },
+    {
+     "piece": "crooked_house",
+     "pos": [
+      8.0,
+      0,
+      -7.6
+     ]
+    },
+    {
+     "piece": "crooked_house",
+     "pos": [
+      -6.6,
+      0,
+      7.4
+     ]
+    },
+    {
+     "piece": "jetty",
+     "pos": [
+      9.0,
+      0,
+      -3.0
+     ]
+    },
+    {
+     "piece": "archive_door",
+     "pos": [
+      -10.0,
+      0,
+      -9.0
+     ]
+    },
+    {
+     "piece": "bubbly_spring",
+     "pos": [
+      -11.0,
+      0,
+      4.0
+     ]
+    },
+    {
+     "piece": "willow_orb",
+     "pos": [
+      -9.6,
+      0,
+      9.4
+     ]
+    },
+    {
+     "piece": "willow_orb",
+     "pos": [
+      7.4,
+      0,
+      5.4
+     ]
+    },
+    {
+     "piece": "willow_orb",
+     "pos": [
+      7.0,
+      0,
+      -0.8
+     ]
+    },
+    {
+     "piece": "mist_ledge",
+     "pos": [
+      -1.55,
+      0,
+      -7.0
+     ]
+    },
+    {
+     "piece": "mist_ledge",
+     "pos": [
+      1.55,
+      0,
+      -7.0
+     ]
+    },
+    {
+     "piece": "mist_stair",
+     "pos": [
+      0,
+      0,
+      -4.25
+     ]
+    },
+    {
+     "piece": "coldfire_brazier",
+     "pos": [
+      -4.4,
+      0,
+      -7.0
+     ]
+    },
+    {
+     "piece": "coldfire_brazier",
+     "pos": [
+      4.4,
+      0,
+      -7.0
+     ]
+    },
+    {
+     "piece": "cold_fire_lamp",
+     "pos": [
+      -2.2,
+      0,
+      6.5
+     ]
+    },
+    {
+     "piece": "cold_fire_lamp",
+     "pos": [
+      2.2,
+      0,
+      6.5
+     ]
+    },
+    {
+     "piece": "cold_fire_lamp",
+     "pos": [
+      -4.6,
+      0,
+      4.8
+     ]
+    },
+    {
+     "piece": "cold_fire_lamp",
+     "pos": [
+      6.0,
+      0,
+      2.8
+     ]
+    },
+    {
+     "piece": "cold_fire_lamp",
+     "pos": [
+      4.8,
+      0,
+      -3.4
+     ]
+    },
+    {
+     "piece": "cold_fire_lamp",
+     "pos": [
+      -4.4,
+      0,
+      -3.4
+     ]
+    },
+    {
+     "piece": "glow_orb_chain",
+     "pos": [
+      -5.4,
+      0.2,
+      -6.8
+     ]
+    },
+    {
+     "piece": "lantern_boat",
+     "pos": [
+      -3.6,
+      -0.05,
+      2.6
+     ]
+    },
+    {
+     "piece": "lantern_boat",
+     "pos": [
+      4.2,
+      -0.05,
+      -0.6
+     ]
+    }
+   ]
+  },
+  "hh_shore": {
+   "pieces": [
+    {
+     "piece": "pebble_shore",
+     "pos": [
+      -7,
+      0,
+      -1
+     ]
+    },
+    {
+     "piece": "pebble_shore",
+     "pos": [
+      -7,
+      0,
+      1.0
+     ]
+    },
+    {
+     "piece": "pebble_shore",
+     "pos": [
+      -7,
+      0,
+      3.0
+     ]
+    },
+    {
+     "piece": "pebble_shore",
+     "pos": [
+      -7,
+      0,
+      5.0
+     ]
+    },
+    {
+     "piece": "pebble_shore",
+     "pos": [
+      -7,
+      0,
+      7.0
+     ]
+    },
+    {
+     "piece": "pebble_shore",
+     "pos": [
+      -5.0,
+      0,
+      -1
+     ]
+    },
+    {
+     "piece": "pebble_shore",
+     "pos": [
+      -5.0,
+      0,
+      1.0
+     ]
+    },
+    {
+     "piece": "pebble_shore",
+     "pos": [
+      -5.0,
+      0,
+      3.0
+     ]
+    },
+    {
+     "piece": "pebble_shore",
+     "pos": [
+      -5.0,
+      0,
+      5.0
+     ]
+    },
+    {
+     "piece": "pebble_shore",
+     "pos": [
+      -5.0,
+      0,
+      7.0
+     ]
+    },
+    {
+     "piece": "pebble_shore",
+     "pos": [
+      -3.0,
+      0,
+      -1
+     ]
+    },
+    {
+     "piece": "pebble_shore",
+     "pos": [
+      -3.0,
+      0,
+      1.0
+     ]
+    },
+    {
+     "piece": "pebble_shore",
+     "pos": [
+      -3.0,
+      0,
+      3.0
+     ]
+    },
+    {
+     "piece": "pebble_shore",
+     "pos": [
+      -3.0,
+      0,
+      5.0
+     ]
+    },
+    {
+     "piece": "pebble_shore",
+     "pos": [
+      -3.0,
+      0,
+      7.0
+     ]
+    },
+    {
+     "piece": "pebble_shore",
+     "pos": [
+      -1.0,
+      0,
+      -1
+     ]
+    },
+    {
+     "piece": "pebble_shore",
+     "pos": [
+      -1.0,
+      0,
+      1.0
+     ]
+    },
+    {
+     "piece": "pebble_shore",
+     "pos": [
+      -1.0,
+      0,
+      3.0
+     ]
+    },
+    {
+     "piece": "pebble_shore",
+     "pos": [
+      -1.0,
+      0,
+      5.0
+     ]
+    },
+    {
+     "piece": "pebble_shore",
+     "pos": [
+      -1.0,
+      0,
+      7.0
+     ]
+    },
+    {
+     "piece": "pebble_shore",
+     "pos": [
+      1.0,
+      0,
+      -1
+     ]
+    },
+    {
+     "piece": "pebble_shore",
+     "pos": [
+      1.0,
+      0,
+      1.0
+     ]
+    },
+    {
+     "piece": "pebble_shore",
+     "pos": [
+      1.0,
+      0,
+      3.0
+     ]
+    },
+    {
+     "piece": "pebble_shore",
+     "pos": [
+      1.0,
+      0,
+      5.0
+     ]
+    },
+    {
+     "piece": "pebble_shore",
+     "pos": [
+      1.0,
+      0,
+      7.0
+     ]
+    },
+    {
+     "piece": "pebble_shore",
+     "pos": [
+      3.0,
+      0,
+      -1
+     ]
+    },
+    {
+     "piece": "pebble_shore",
+     "pos": [
+      3.0,
+      0,
+      1.0
+     ]
+    },
+    {
+     "piece": "pebble_shore",
+     "pos": [
+      3.0,
+      0,
+      3.0
+     ]
+    },
+    {
+     "piece": "pebble_shore",
+     "pos": [
+      3.0,
+      0,
+      5.0
+     ]
+    },
+    {
+     "piece": "pebble_shore",
+     "pos": [
+      3.0,
+      0,
+      7.0
+     ]
+    },
+    {
+     "piece": "pebble_shore",
+     "pos": [
+      5.0,
+      0,
+      -1
+     ]
+    },
+    {
+     "piece": "pebble_shore",
+     "pos": [
+      5.0,
+      0,
+      1.0
+     ]
+    },
+    {
+     "piece": "pebble_shore",
+     "pos": [
+      5.0,
+      0,
+      3.0
+     ]
+    },
+    {
+     "piece": "pebble_shore",
+     "pos": [
+      5.0,
+      0,
+      5.0
+     ]
+    },
+    {
+     "piece": "pebble_shore",
+     "pos": [
+      5.0,
+      0,
+      7.0
+     ]
+    },
+    {
+     "piece": "pebble_shore",
+     "pos": [
+      7.0,
+      0,
+      -1
+     ]
+    },
+    {
+     "piece": "pebble_shore",
+     "pos": [
+      7.0,
+      0,
+      1.0
+     ]
+    },
+    {
+     "piece": "pebble_shore",
+     "pos": [
+      7.0,
+      0,
+      3.0
+     ]
+    },
+    {
+     "piece": "pebble_shore",
+     "pos": [
+      7.0,
+      0,
+      5.0
+     ]
+    },
+    {
+     "piece": "pebble_shore",
+     "pos": [
+      7.0,
+      0,
+      7.0
+     ]
+    },
+    {
+     "piece": "black_lake",
+     "pos": [
+      -7,
+      0,
+      -7
+     ]
+    },
+    {
+     "piece": "black_lake",
+     "pos": [
+      -7,
+      0,
+      -5
+     ]
+    },
+    {
+     "piece": "black_lake",
+     "pos": [
+      -7,
+      0,
+      -3
+     ]
+    },
+    {
+     "piece": "black_lake",
+     "pos": [
+      -5,
+      0,
+      -7
+     ]
+    },
+    {
+     "piece": "black_lake",
+     "pos": [
+      -5,
+      0,
+      -5
+     ]
+    },
+    {
+     "piece": "black_lake",
+     "pos": [
+      -5,
+      0,
+      -3
+     ]
+    },
+    {
+     "piece": "black_lake",
+     "pos": [
+      -3,
+      0,
+      -7
+     ]
+    },
+    {
+     "piece": "black_lake",
+     "pos": [
+      -3,
+      0,
+      -5
+     ]
+    },
+    {
+     "piece": "black_lake",
+     "pos": [
+      -3,
+      0,
+      -3
+     ]
+    },
+    {
+     "piece": "black_lake",
+     "pos": [
+      -1,
+      0,
+      -7
+     ]
+    },
+    {
+     "piece": "black_lake",
+     "pos": [
+      -1,
+      0,
+      -5
+     ]
+    },
+    {
+     "piece": "black_lake",
+     "pos": [
+      -1,
+      0,
+      -3
+     ]
+    },
+    {
+     "piece": "black_lake",
+     "pos": [
+      1,
+      0,
+      -7
+     ]
+    },
+    {
+     "piece": "black_lake",
+     "pos": [
+      1,
+      0,
+      -5
+     ]
+    },
+    {
+     "piece": "black_lake",
+     "pos": [
+      1,
+      0,
+      -3
+     ]
+    },
+    {
+     "piece": "black_lake",
+     "pos": [
+      3,
+      0,
+      -7
+     ]
+    },
+    {
+     "piece": "black_lake",
+     "pos": [
+      3,
+      0,
+      -5
+     ]
+    },
+    {
+     "piece": "black_lake",
+     "pos": [
+      3,
+      0,
+      -3
+     ]
+    },
+    {
+     "piece": "black_lake",
+     "pos": [
+      5,
+      0,
+      -7
+     ]
+    },
+    {
+     "piece": "black_lake",
+     "pos": [
+      5,
+      0,
+      -5
+     ]
+    },
+    {
+     "piece": "black_lake",
+     "pos": [
+      5,
+      0,
+      -3
+     ]
+    },
+    {
+     "piece": "black_lake",
+     "pos": [
+      7,
+      0,
+      -7
+     ]
+    },
+    {
+     "piece": "black_lake",
+     "pos": [
+      7,
+      0,
+      -5
+     ]
+    },
+    {
+     "piece": "black_lake",
+     "pos": [
+      7,
+      0,
+      -3
+     ]
+    },
+    {
+     "piece": "jetty",
+     "pos": [
+      0,
+      0,
+      -2.0
+     ]
+    },
+    {
+     "piece": "willow_orb",
+     "pos": [
+      -5.8,
+      0,
+      1.4
+     ]
+    },
+    {
+     "piece": "willow_orb",
+     "pos": [
+      5.8,
+      0,
+      2.85
+     ]
+    },
+    {
+     "piece": "lantern_boat",
+     "pos": [
+      -2.2,
+      -0.05,
+      -3.4
+     ]
+    },
+    {
+     "piece": "lantern_boat",
+     "pos": [
+      2.6,
+      -0.05,
+      -5.0
+     ]
+    },
+    {
+     "piece": "reeds",
+     "pos": [
+      -6.2,
+      0,
+      -0.6
+     ]
+    },
+    {
+     "piece": "bubbly_spring",
+     "pos": [
+      -6.0,
+      0,
+      5.4
+     ]
+    },
+    {
+     "piece": "mist_ledge",
+     "pos": [
+      1.8499999999999999,
+      0,
+      5.0
+     ]
+    },
+    {
+     "piece": "mist_ledge",
+     "pos": [
+      4.95,
+      0,
+      5.0
+     ]
+    },
+    {
+     "piece": "mist_stair",
+     "pos": [
+      3.4,
+      0,
+      7.75
+     ]
+    },
+    {
+     "piece": "cold_fire_lamp",
+     "pos": [
+      -2.6,
+      0,
+      1.4
+     ]
+    },
+    {
+     "piece": "cold_fire_lamp",
+     "pos": [
+      6.4,
+      0,
+      0.4
+     ]
+    }
+   ]
+  },
+  "hh_archive": {
+   "pieces": [
+    {
+     "piece": "archive_shelf",
+     "pos": [
+      -5,
+      0,
+      -9.0
+     ]
+    },
+    {
+     "piece": "archive_shelf",
+     "pos": [
+      -3,
+      0,
+      -9.0
+     ]
+    },
+    {
+     "piece": "archive_shelf",
+     "pos": [
+      3,
+      0,
+      -9.0
+     ]
+    },
+    {
+     "piece": "archive_shelf",
+     "pos": [
+      5,
+      0,
+      -9.0
+     ]
+    },
+    {
+     "piece": "archive_shelf",
+     "pos": [
+      -7.0,
+      0,
+      -5
+     ]
+    },
+    {
+     "piece": "archive_shelf",
+     "pos": [
+      -7.0,
+      0,
+      -1
+     ]
+    },
+    {
+     "piece": "archive_shelf",
+     "pos": [
+      -7.0,
+      0,
+      3
+     ]
+    },
+    {
+     "piece": "archive_shelf",
+     "pos": [
+      7.0,
+      0,
+      -5
+     ]
+    },
+    {
+     "piece": "archive_shelf",
+     "pos": [
+      7.0,
+      0,
+      -1
+     ]
+    },
+    {
+     "piece": "archive_shelf",
+     "pos": [
+      7.0,
+      0,
+      3
+     ]
+    },
+    {
+     "piece": "ossuary_door",
+     "pos": [
+      0,
+      0,
+      -8.0
+     ]
+    },
+    {
+     "piece": "ledger_lectern",
+     "pos": [
+      0,
+      0,
+      -4.0
+     ]
+    },
+    {
+     "piece": "quillon_desk",
+     "pos": [
+      -5.0,
+      0,
+      -3.0
+     ]
+    },
+    {
+     "piece": "floating_candles",
+     "pos": [
+      -2.0,
+      0,
+      0.0
+     ]
+    },
+    {
+     "piece": "floating_candles",
+     "pos": [
+      4.65,
+      0,
+      2.6
+     ]
+    },
+    {
+     "piece": "mist_ledge",
+     "pos": [
+      0.6500000000000001,
+      0,
+      0.2
+     ]
+    },
+    {
+     "piece": "mist_ledge",
+     "pos": [
+      3.75,
+      0,
+      0.2
+     ]
+    },
+    {
+     "piece": "mist_stair",
+     "pos": [
+      2.2,
+      0,
+      2.95
+     ]
+    }
+   ]
+  },
+  "ossuary_o1": {
+   "pieces": [
+    {
+     "piece": "ossuary_wall",
+     "pos": [
+      -6,
+      0,
+      -6.9
+     ]
+    },
+    {
+     "piece": "ossuary_wall",
+     "pos": [
+      -4,
+      0,
+      -6.9
+     ]
+    },
+    {
+     "piece": "ossuary_wall",
+     "pos": [
+      -2,
+      0,
+      -6.9
+     ]
+    },
+    {
+     "piece": "ossuary_wall",
+     "pos": [
+      0,
+      0,
+      -6.9
+     ]
+    },
+    {
+     "piece": "ossuary_wall",
+     "pos": [
+      2,
+      0,
+      -6.9
+     ]
+    },
+    {
+     "piece": "ossuary_wall",
+     "pos": [
+      4,
+      0,
+      -6.9
+     ]
+    },
+    {
+     "piece": "ossuary_wall",
+     "pos": [
+      6,
+      0,
+      -6.9
+     ]
+    },
+    {
+     "piece": "ossuary_wall",
+     "pos": [
+      -6.9,
+      0,
+      -4
+     ]
+    },
+    {
+     "piece": "ossuary_wall",
+     "pos": [
+      -6.9,
+      0,
+      -2
+     ]
+    },
+    {
+     "piece": "ossuary_wall",
+     "pos": [
+      -6.9,
+      0,
+      0
+     ]
+    },
+    {
+     "piece": "ossuary_wall",
+     "pos": [
+      -6.9,
+      0,
+      2
+     ]
+    },
+    {
+     "piece": "ossuary_wall",
+     "pos": [
+      -6.9,
+      0,
+      4
+     ]
+    },
+    {
+     "piece": "mist_ledge",
+     "pos": [
+      2.45,
+      0,
+      -1.6
+     ]
+    },
+    {
+     "piece": "mist_ledge",
+     "pos": [
+      5.55,
+      0,
+      -1.6
+     ]
+    },
+    {
+     "piece": "mist_stair",
+     "pos": [
+      4.0,
+      0,
+      1.15
+     ]
+    },
+    {
+     "piece": "cold_fire_lamp",
+     "pos": [
+      4.6,
+      0,
+      4.4
+     ]
+    },
+    {
+     "piece": "cold_fire_lamp",
+     "pos": [
+      -4.6,
+      0,
+      4.4
+     ]
+    },
+    {
+     "piece": "ossuary_door",
+     "pos": [
+      0,
+      0,
+      -5.8
+     ]
+    },
+    {
+     "piece": "cold_fire_lamp",
+     "pos": [
+      -2.6,
+      0,
+      -3.4
+     ]
+    },
+    {
+     "piece": "cold_fire_lamp",
+     "pos": [
+      2.25,
+      0,
+      -3.75
+     ]
+    }
+   ]
+  },
+  "ossuary_o2": {
+   "pieces": [
+    {
+     "piece": "ossuary_wall",
+     "pos": [
+      -6,
+      0,
+      -6.9
+     ]
+    },
+    {
+     "piece": "ossuary_wall",
+     "pos": [
+      -4,
+      0,
+      -6.9
+     ]
+    },
+    {
+     "piece": "ossuary_wall",
+     "pos": [
+      -2,
+      0,
+      -6.9
+     ]
+    },
+    {
+     "piece": "ossuary_wall",
+     "pos": [
+      0,
+      0,
+      -6.9
+     ]
+    },
+    {
+     "piece": "ossuary_wall",
+     "pos": [
+      2,
+      0,
+      -6.9
+     ]
+    },
+    {
+     "piece": "ossuary_wall",
+     "pos": [
+      4,
+      0,
+      -6.9
+     ]
+    },
+    {
+     "piece": "ossuary_wall",
+     "pos": [
+      6,
+      0,
+      -6.9
+     ]
+    },
+    {
+     "piece": "ossuary_wall",
+     "pos": [
+      -6.9,
+      0,
+      -4
+     ]
+    },
+    {
+     "piece": "ossuary_wall",
+     "pos": [
+      -6.9,
+      0,
+      -2
+     ]
+    },
+    {
+     "piece": "ossuary_wall",
+     "pos": [
+      -6.9,
+      0,
+      0
+     ]
+    },
+    {
+     "piece": "ossuary_wall",
+     "pos": [
+      -6.9,
+      0,
+      2
+     ]
+    },
+    {
+     "piece": "ossuary_wall",
+     "pos": [
+      -6.9,
+      0,
+      4
+     ]
+    },
+    {
+     "piece": "mist_ledge",
+     "pos": [
+      -5.15,
+      0,
+      1.2
+     ]
+    },
+    {
+     "piece": "mist_ledge",
+     "pos": [
+      -2.05,
+      0,
+      1.2
+     ]
+    },
+    {
+     "piece": "mist_stair",
+     "pos": [
+      -3.6,
+      0,
+      3.95
+     ]
+    },
+    {
+     "piece": "cold_fire_lamp",
+     "pos": [
+      4.6,
+      0,
+      4.4
+     ]
+    },
+    {
+     "piece": "cold_fire_lamp",
+     "pos": [
+      -5.99,
+      0,
+      4.97
+     ]
+    },
+    {
+     "piece": "bone_niches",
+     "pos": [
+      -4,
+      0,
+      -6.6
+     ]
+    },
+    {
+     "piece": "bone_niches",
+     "pos": [
+      -2,
+      0,
+      -6.6
+     ]
+    },
+    {
+     "piece": "bone_niches",
+     "pos": [
+      0,
+      0,
+      -6.6
+     ]
+    },
+    {
+     "piece": "bone_niches",
+     "pos": [
+      2,
+      0,
+      -6.6
+     ]
+    },
+    {
+     "piece": "bone_niches",
+     "pos": [
+      4,
+      0,
+      -6.6
+     ]
+    },
+    {
+     "piece": "bubbly_spring",
+     "pos": [
+      5.0,
+      0,
+      -3.6
+     ]
+    }
+   ]
+  },
+  "ossuary_o3": {
+   "pieces": [
+    {
+     "piece": "ossuary_wall",
+     "pos": [
+      -6,
+      0,
+      -6.9
+     ]
+    },
+    {
+     "piece": "ossuary_wall",
+     "pos": [
+      -4,
+      0,
+      -6.9
+     ]
+    },
+    {
+     "piece": "ossuary_wall",
+     "pos": [
+      -2,
+      0,
+      -6.9
+     ]
+    },
+    {
+     "piece": "ossuary_wall",
+     "pos": [
+      0,
+      0,
+      -6.9
+     ]
+    },
+    {
+     "piece": "ossuary_wall",
+     "pos": [
+      2,
+      0,
+      -6.9
+     ]
+    },
+    {
+     "piece": "ossuary_wall",
+     "pos": [
+      4,
+      0,
+      -6.9
+     ]
+    },
+    {
+     "piece": "ossuary_wall",
+     "pos": [
+      6,
+      0,
+      -6.9
+     ]
+    },
+    {
+     "piece": "ossuary_wall",
+     "pos": [
+      -6.9,
+      0,
+      -4
+     ]
+    },
+    {
+     "piece": "ossuary_wall",
+     "pos": [
+      -6.9,
+      0,
+      -2
+     ]
+    },
+    {
+     "piece": "ossuary_wall",
+     "pos": [
+      -6.9,
+      0,
+      0
+     ]
+    },
+    {
+     "piece": "ossuary_wall",
+     "pos": [
+      -6.9,
+      0,
+      2
+     ]
+    },
+    {
+     "piece": "ossuary_wall",
+     "pos": [
+      -6.9,
+      0,
+      4
+     ]
+    },
+    {
+     "piece": "mist_ledge",
+     "pos": [
+      1.45,
+      0,
+      1.8
+     ]
+    },
+    {
+     "piece": "mist_ledge",
+     "pos": [
+      4.55,
+      0,
+      1.8
+     ]
+    },
+    {
+     "piece": "mist_stair",
+     "pos": [
+      3.0,
+      0,
+      4.55
+     ]
+    },
+    {
+     "piece": "cold_fire_lamp",
+     "pos": [
+      5.6,
+      0,
+      4.4
+     ]
+    },
+    {
+     "piece": "cold_fire_lamp",
+     "pos": [
+      -4.6,
+      0,
+      4.4
+     ]
+    },
+    {
+     "piece": "grave_lantern_post",
+     "pos": [
+      -3.0,
+      0,
+      -4.0
+     ]
+    },
+    {
+     "piece": "grave_lantern_post",
+     "pos": [
+      -1.0,
+      0,
+      -4.6
+     ]
+    },
+    {
+     "piece": "grave_lantern_post",
+     "pos": [
+      1.0,
+      0,
+      -4.0
+     ]
+    },
+    {
+     "piece": "grave_lantern_post",
+     "pos": [
+      3.0,
+      0,
+      -4.6
+     ]
+    },
+    {
+     "piece": "grave_lantern_post",
+     "pos": [
+      -2.0,
+      0,
+      -1.6
+     ]
+    },
+    {
+     "piece": "grave_lantern_post",
+     "pos": [
+      2.0,
+      0,
+      -1.6
+     ]
+    },
+    {
+     "piece": "soul_glass",
+     "pos": [
+      4.4,
+      0,
+      -1.0
+     ]
+    },
+    {
+     "piece": "name_cage",
+     "pos": [
+      -4.4,
+      0,
+      -1.0
+     ]
+    }
+   ]
+  },
+  "ossuary_o4": {
+   "pieces": [
+    {
+     "piece": "ossuary_wall",
+     "pos": [
+      -6,
+      0,
+      -6.9
+     ]
+    },
+    {
+     "piece": "ossuary_wall",
+     "pos": [
+      -4,
+      0,
+      -6.9
+     ]
+    },
+    {
+     "piece": "ossuary_wall",
+     "pos": [
+      -2,
+      0,
+      -6.9
+     ]
+    },
+    {
+     "piece": "ossuary_wall",
+     "pos": [
+      0,
+      0,
+      -6.9
+     ]
+    },
+    {
+     "piece": "ossuary_wall",
+     "pos": [
+      2,
+      0,
+      -6.9
+     ]
+    },
+    {
+     "piece": "ossuary_wall",
+     "pos": [
+      4,
+      0,
+      -6.9
+     ]
+    },
+    {
+     "piece": "ossuary_wall",
+     "pos": [
+      6,
+      0,
+      -6.9
+     ]
+    },
+    {
+     "piece": "ossuary_wall",
+     "pos": [
+      -6.9,
+      0,
+      -4
+     ]
+    },
+    {
+     "piece": "ossuary_wall",
+     "pos": [
+      -6.9,
+      0,
+      -2
+     ]
+    },
+    {
+     "piece": "ossuary_wall",
+     "pos": [
+      -6.9,
+      0,
+      0
+     ]
+    },
+    {
+     "piece": "ossuary_wall",
+     "pos": [
+      -6.9,
+      0,
+      2
+     ]
+    },
+    {
+     "piece": "ossuary_wall",
+     "pos": [
+      -6.9,
+      0,
+      4
+     ]
+    },
+    {
+     "piece": "mist_ledge",
+     "pos": [
+      -5.15,
+      0,
+      2.0
+     ]
+    },
+    {
+     "piece": "mist_ledge",
+     "pos": [
+      -2.05,
+      0,
+      2.0
+     ]
+    },
+    {
+     "piece": "mist_stair",
+     "pos": [
+      -3.6,
+      0,
+      4.75
+     ]
+    },
+    {
+     "piece": "cold_fire_lamp",
+     "pos": [
+      4.6,
+      0,
+      4.4
+     ]
+    },
+    {
+     "piece": "cold_fire_lamp",
+     "pos": [
+      -5.99,
+      0,
+      4.97
+     ]
+    },
+    {
+     "piece": "heart_slot",
+     "pos": [
+      -3.0,
+      0,
+      -4.4
+     ]
+    },
+    {
+     "piece": "heart_slot",
+     "pos": [
+      0.0,
+      0,
+      -4.4
+     ]
+    },
+    {
+     "piece": "heart_slot",
+     "pos": [
+      3.0,
+      0,
+      -4.4
+     ]
+    },
+    {
+     "piece": "soul_glass",
+     "pos": [
+      4.6,
+      0,
+      -1.6
+     ]
+    }
+   ]
+  },
+  "ossuary_o5": {
+   "pieces": [
+    {
+     "piece": "ossuary_wall",
+     "pos": [
+      -6,
+      0,
+      -6.9
+     ]
+    },
+    {
+     "piece": "ossuary_wall",
+     "pos": [
+      -4,
+      0,
+      -6.9
+     ]
+    },
+    {
+     "piece": "ossuary_wall",
+     "pos": [
+      -2,
+      0,
+      -6.9
+     ]
+    },
+    {
+     "piece": "ossuary_wall",
+     "pos": [
+      0,
+      0,
+      -6.9
+     ]
+    },
+    {
+     "piece": "ossuary_wall",
+     "pos": [
+      2,
+      0,
+      -6.9
+     ]
+    },
+    {
+     "piece": "ossuary_wall",
+     "pos": [
+      4,
+      0,
+      -6.9
+     ]
+    },
+    {
+     "piece": "ossuary_wall",
+     "pos": [
+      6,
+      0,
+      -6.9
+     ]
+    },
+    {
+     "piece": "ossuary_wall",
+     "pos": [
+      -6.9,
+      0,
+      -4
+     ]
+    },
+    {
+     "piece": "ossuary_wall",
+     "pos": [
+      -6.9,
+      0,
+      -2
+     ]
+    },
+    {
+     "piece": "ossuary_wall",
+     "pos": [
+      -6.9,
+      0,
+      0
+     ]
+    },
+    {
+     "piece": "ossuary_wall",
+     "pos": [
+      -6.9,
+      0,
+      2
+     ]
+    },
+    {
+     "piece": "ossuary_wall",
+     "pos": [
+      -6.9,
+      0,
+      4
+     ]
+    },
+    {
+     "piece": "mist_ledge",
+     "pos": [
+      2.45,
+      0,
+      1.6
+     ]
+    },
+    {
+     "piece": "mist_ledge",
+     "pos": [
+      5.55,
+      0,
+      1.6
+     ]
+    },
+    {
+     "piece": "mist_stair",
+     "pos": [
+      4.0,
+      0,
+      4.35
+     ]
+    },
+    {
+     "piece": "cold_fire_lamp",
+     "pos": [
+      6.37,
+      0,
+      6.17
+     ]
+    },
+    {
+     "piece": "cold_fire_lamp",
+     "pos": [
+      -4.6,
+      0,
+      4.4
+     ]
+    },
+    {
+     "piece": "salon_seat",
+     "pos": [
+      0,
+      0,
+      -5.0
+     ]
+    },
+    {
+     "piece": "name_cage",
+     "pos": [
+      4.2,
+      0,
+      -4.4
+     ]
+    }
+   ]
+  },
+  "ossuary_o6": {
+   "pieces": [
+    {
+     "piece": "ossuary_wall",
+     "pos": [
+      -6,
+      0,
+      -6.9
+     ]
+    },
+    {
+     "piece": "ossuary_wall",
+     "pos": [
+      -4,
+      0,
+      -6.9
+     ]
+    },
+    {
+     "piece": "ossuary_wall",
+     "pos": [
+      -2,
+      0,
+      -6.9
+     ]
+    },
+    {
+     "piece": "ossuary_wall",
+     "pos": [
+      0,
+      0,
+      -6.9
+     ]
+    },
+    {
+     "piece": "ossuary_wall",
+     "pos": [
+      2,
+      0,
+      -6.9
+     ]
+    },
+    {
+     "piece": "ossuary_wall",
+     "pos": [
+      4,
+      0,
+      -6.9
+     ]
+    },
+    {
+     "piece": "ossuary_wall",
+     "pos": [
+      6,
+      0,
+      -6.9
+     ]
+    },
+    {
+     "piece": "ossuary_wall",
+     "pos": [
+      -6.9,
+      0,
+      -4
+     ]
+    },
+    {
+     "piece": "ossuary_wall",
+     "pos": [
+      -6.9,
+      0,
+      -2
+     ]
+    },
+    {
+     "piece": "ossuary_wall",
+     "pos": [
+      -6.9,
+      0,
+      0
+     ]
+    },
+    {
+     "piece": "ossuary_wall",
+     "pos": [
+      -6.9,
+      0,
+      2
+     ]
+    },
+    {
+     "piece": "ossuary_wall",
+     "pos": [
+      -6.9,
+      0,
+      4
+     ]
+    },
+    {
+     "piece": "mist_ledge",
+     "pos": [
+      2.05,
+      0,
+      1.6
+     ]
+    },
+    {
+     "piece": "mist_ledge",
+     "pos": [
+      5.15,
+      0,
+      1.6
+     ]
+    },
+    {
+     "piece": "mist_stair",
+     "pos": [
+      3.6,
+      0,
+      4.35
+     ]
+    },
+    {
+     "piece": "cold_fire_lamp",
+     "pos": [
+      6.1,
+      0,
+      4.4
+     ]
+    },
+    {
+     "piece": "cold_fire_lamp",
+     "pos": [
+      -4.6,
+      0,
+      4.4
+     ]
+    },
+    {
+     "piece": "rhythm_door",
+     "pos": [
+      0,
+      0,
+      -6.0
+     ]
+    },
+    {
+     "piece": "bone_niches",
+     "pos": [
+      -4,
+      0,
+      -6.6
+     ]
+    },
+    {
+     "piece": "bone_niches",
+     "pos": [
+      4,
+      0,
+      -6.6
+     ]
+    }
+   ]
+  },
+  "ossuary_o7": {
+   "pieces": [
+    {
+     "piece": "ossuary_wall",
+     "pos": [
+      -6,
+      0,
+      -6.9
+     ]
+    },
+    {
+     "piece": "ossuary_wall",
+     "pos": [
+      -4,
+      0,
+      -6.9
+     ]
+    },
+    {
+     "piece": "ossuary_wall",
+     "pos": [
+      -2,
+      0,
+      -6.9
+     ]
+    },
+    {
+     "piece": "ossuary_wall",
+     "pos": [
+      0,
+      0,
+      -6.9
+     ]
+    },
+    {
+     "piece": "ossuary_wall",
+     "pos": [
+      2,
+      0,
+      -6.9
+     ]
+    },
+    {
+     "piece": "ossuary_wall",
+     "pos": [
+      4,
+      0,
+      -6.9
+     ]
+    },
+    {
+     "piece": "ossuary_wall",
+     "pos": [
+      6,
+      0,
+      -6.9
+     ]
+    },
+    {
+     "piece": "ossuary_wall",
+     "pos": [
+      -6.9,
+      0,
+      -4
+     ]
+    },
+    {
+     "piece": "ossuary_wall",
+     "pos": [
+      -6.9,
+      0,
+      -2
+     ]
+    },
+    {
+     "piece": "ossuary_wall",
+     "pos": [
+      -6.9,
+      0,
+      0
+     ]
+    },
+    {
+     "piece": "ossuary_wall",
+     "pos": [
+      -6.9,
+      0,
+      2
+     ]
+    },
+    {
+     "piece": "ossuary_wall",
+     "pos": [
+      -6.9,
+      0,
+      4
+     ]
+    },
+    {
+     "piece": "mist_ledge",
+     "pos": [
+      -5.35,
+      0,
+      1.8
+     ]
+    },
+    {
+     "piece": "mist_ledge",
+     "pos": [
+      -2.25,
+      0,
+      1.8
+     ]
+    },
+    {
+     "piece": "mist_stair",
+     "pos": [
+      -3.8,
+      0,
+      4.55
+     ]
+    },
+    {
+     "piece": "cold_fire_lamp",
+     "pos": [
+      4.6,
+      0,
+      4.4
+     ]
+    },
+    {
+     "piece": "cold_fire_lamp",
+     "pos": [
+      -6.22,
+      0,
+      5.07
+     ]
+    },
+    {
+     "piece": "lich_bier",
+     "pos": [
+      -2.4,
+      0,
+      -3.6
+     ]
+    },
+    {
+     "piece": "lich_bier",
+     "pos": [
+      2.4,
+      0,
+      -3.6
+     ]
+    },
+    {
+     "piece": "soul_glass",
+     "pos": [
+      0,
+      0,
+      -5.4
+     ]
+    },
+    {
+     "piece": "name_cage",
+     "pos": [
+      4.6,
+      0,
+      -0.6
+     ]
+    }
+   ]
+  },
+  "ossuary_o8": {
+   "pieces": [
+    {
+     "piece": "ossuary_wall",
+     "pos": [
+      -6,
+      0,
+      -6.9
+     ]
+    },
+    {
+     "piece": "ossuary_wall",
+     "pos": [
+      -4,
+      0,
+      -6.9
+     ]
+    },
+    {
+     "piece": "ossuary_wall",
+     "pos": [
+      -2,
+      0,
+      -6.9
+     ]
+    },
+    {
+     "piece": "ossuary_wall",
+     "pos": [
+      0,
+      0,
+      -6.9
+     ]
+    },
+    {
+     "piece": "ossuary_wall",
+     "pos": [
+      2,
+      0,
+      -6.9
+     ]
+    },
+    {
+     "piece": "ossuary_wall",
+     "pos": [
+      4,
+      0,
+      -6.9
+     ]
+    },
+    {
+     "piece": "ossuary_wall",
+     "pos": [
+      6,
+      0,
+      -6.9
+     ]
+    },
+    {
+     "piece": "ossuary_wall",
+     "pos": [
+      -6.9,
+      0,
+      -4
+     ]
+    },
+    {
+     "piece": "ossuary_wall",
+     "pos": [
+      -6.9,
+      0,
+      -2
+     ]
+    },
+    {
+     "piece": "ossuary_wall",
+     "pos": [
+      -6.9,
+      0,
+      0
+     ]
+    },
+    {
+     "piece": "ossuary_wall",
+     "pos": [
+      -6.9,
+      0,
+      2
+     ]
+    },
+    {
+     "piece": "ossuary_wall",
+     "pos": [
+      -6.9,
+      0,
+      4
+     ]
+    },
+    {
+     "piece": "mist_ledge",
+     "pos": [
+      -5.15,
+      0,
+      3.2
+     ]
+    },
+    {
+     "piece": "mist_ledge",
+     "pos": [
+      -2.05,
+      0,
+      3.2
+     ]
+    },
+    {
+     "piece": "mist_stair",
+     "pos": [
+      -3.6,
+      0,
+      5.95
+     ]
+    },
+    {
+     "piece": "cold_fire_lamp",
+     "pos": [
+      4.6,
+      0,
+      4.4
+     ]
+    },
+    {
+     "piece": "cold_fire_lamp",
+     "pos": [
+      -6.01,
+      0,
+      5.81
+     ]
+    },
+    {
+     "piece": "hh_waystone",
+     "pos": [
+      3.6,
+      0,
+      0.0
+     ]
+    },
+    {
+     "piece": "name_cage",
+     "pos": [
+      0,
+      0,
+      -4.4
+     ]
+    },
+    {
+     "piece": "lore_tablet",
+     "pos": [
+      -5.8,
+      0,
+      -2.0
+     ]
+    },
+    {
+     "piece": "lore_tablet",
+     "pos": [
+      -5.8,
+      0,
+      0.6
+     ]
+    },
+    {
+     "piece": "bubbly_spring",
+     "pos": [
+      4.8,
+      0,
+      -4.0
+     ]
+    }
+   ]
+  },
+  "ossuary_o9": {
+   "pieces": [
+    {
+     "piece": "ossuary_wall",
+     "pos": [
+      -7,
+      0,
+      -7.9
+     ]
+    },
+    {
+     "piece": "ossuary_wall",
+     "pos": [
+      -5,
+      0,
+      -7.9
+     ]
+    },
+    {
+     "piece": "ossuary_wall",
+     "pos": [
+      -3,
+      0,
+      -7.9
+     ]
+    },
+    {
+     "piece": "ossuary_wall",
+     "pos": [
+      -1,
+      0,
+      -7.9
+     ]
+    },
+    {
+     "piece": "ossuary_wall",
+     "pos": [
+      1,
+      0,
+      -7.9
+     ]
+    },
+    {
+     "piece": "ossuary_wall",
+     "pos": [
+      3,
+      0,
+      -7.9
+     ]
+    },
+    {
+     "piece": "ossuary_wall",
+     "pos": [
+      5,
+      0,
+      -7.9
+     ]
+    },
+    {
+     "piece": "ossuary_wall",
+     "pos": [
+      7,
+      0,
+      -7.9
+     ]
+    },
+    {
+     "piece": "ossuary_wall",
+     "pos": [
+      -7.9,
+      0,
+      -5
+     ]
+    },
+    {
+     "piece": "ossuary_wall",
+     "pos": [
+      -7.9,
+      0,
+      -3
+     ]
+    },
+    {
+     "piece": "ossuary_wall",
+     "pos": [
+      -7.9,
+      0,
+      -1
+     ]
+    },
+    {
+     "piece": "ossuary_wall",
+     "pos": [
+      -7.9,
+      0,
+      1
+     ]
+    },
+    {
+     "piece": "ossuary_wall",
+     "pos": [
+      -7.9,
+      0,
+      3
+     ]
+    },
+    {
+     "piece": "ossuary_wall",
+     "pos": [
+      -7.9,
+      0,
+      5
+     ]
+    },
+    {
+     "piece": "mist_ledge",
+     "pos": [
+      -5.95,
+      0,
+      3.0
+     ]
+    },
+    {
+     "piece": "mist_ledge",
+     "pos": [
+      -2.8500000000000005,
+      0,
+      3.0
+     ]
+    },
+    {
+     "piece": "mist_stair",
+     "pos": [
+      -4.4,
+      0,
+      5.75
+     ]
+    },
+    {
+     "piece": "cold_fire_lamp",
+     "pos": [
+      4.6,
+      0,
+      4.4
+     ]
+    },
+    {
+     "piece": "cold_fire_lamp",
+     "pos": [
+      -6.91,
+      0,
+      5.36
+     ]
+    },
+    {
+     "piece": "pale_throne",
+     "pos": [
+      0,
+      0,
+      -5.4
+     ]
+    },
+    {
+     "piece": "chain_anchor",
+     "pos": [
+      -6.6,
+      0,
+      -4.0
+     ]
+    },
+    {
+     "piece": "chain_anchor",
+     "pos": [
+      -6.6,
+      0,
+      0.0
+     ]
+    },
+    {
+     "piece": "chain_anchor",
+     "pos": [
+      -3.0,
+      0,
+      -7.4
+     ]
+    },
+    {
+     "piece": "chain_anchor",
+     "pos": [
+      3.0,
+      0,
+      -7.4
+     ]
+    }
+   ]
+  }
+ },
+ "placement_notes": {
+  "height": "1.34 m mist_ledge pair + ONE mist_stair in every area / room",
+  "keep_clear": "props/fx/spawns >= 1 m from ledge edges, off stair footprint +1 m",
+  "shadow": "hh_shadow mid-dark #4a4a6a / #5e6086",
+  "boss_stand": {
+   "vesperin (ossuary_o5)": [
+    0,
+    0,
+    -2.0
+   ],
+   "mordrath (ossuary_o9)": [
+    0,
+    0,
+    -1.4
+   ]
+  },
+  "pet": "inkling (hh_inkling, 0.6x, follows the hero)",
+  "fallen_ally": "no fixed sprite: uses the chosen ally's existing sheet; the dark 8th bridge lantern + O8 cage carry no name"
+ },
+ "luma_measured_on_renders": {
+  "helheim_night": 23.2,
+  "helheim_day": 59.0,
+  "hh_shore_night": 20.8,
+  "hh_archive_night": 24.0,
+  "ossuary_o1_night": 25.1,
+  "ossuary_o2_night": 23.5,
+  "ossuary_o3_night": 25.3,
+  "ossuary_o4_night": 22.6,
+  "ossuary_o5_night": 22.7,
+  "ossuary_o6_night": 23.6,
+  "ossuary_o7_night": 22.9,
+  "ossuary_o8_night": 22.5,
+  "ossuary_o9_night": 22.3
+ },
+ "neon": {
+  "sprites": {
+   "gloam_knight": [
+    "#a45cf0",
+    "#3a2458"
+   ],
+   "odric": [
+    "#a45cf0",
+    "#3a2458"
+   ],
+   "mordrath": [
+    "#a45cf0",
+    "#3a2458"
+   ],
+   "mordrath_p2": [
+    "#a45cf0",
+    "#3a2458"
+   ],
+   "mordrath_p3": [
+    "#a45cf0",
+    "#3a2458"
+   ]
+  },
+  "sheets": [
+   "hh_enemies",
+   "hh_elites",
+   "boss_mordrath"
+  ],
+  "safe_twins": [
+   "hh_enemies_safe",
+   "hh_elites_safe",
+   "boss_mordrath_safe"
+  ],
+  "allow_list_status": "pending: lead adds a scoped Helheim entry to hd2d-suite check-sprite (not edited by Art)"
+ },
+ "story_rulings": {
+  "hel_choice": "stance only (no item or stat change)",
+  "pale_cosmetic": "'pale' cosmetic return (no new art needed)",
+  "mordrath": "Mordrath removes one wave of adds",
+  "muspelheim_lock": "stays behind the flag"
+ },
+ "check_sprite": {
+  "hh_folk": {
+   "roles": 9,
+   "failures": 0,
+   "semi_transparent": 0,
+   "pass": true
+  },
+  "hh_inkling": {
+   "roles": 1,
+   "failures": 0,
+   "semi_transparent": 0,
+   "pass": true
+  },
+  "hh_enemies": {
+   "roles": 9,
+   "failures": 3555,
+   "semi_transparent": 0,
+   "pass": false
+  },
+  "hh_elites": {
+   "roles": 5,
+   "failures": 35010,
+   "semi_transparent": 0,
+   "pass": false
+  },
+  "boss_mordrath": {
+   "roles": 3,
+   "failures": 339201,
+   "semi_transparent": 0,
+   "pass": false
+  },
+  "hh_enemies_safe": {
+   "roles": 9,
+   "failures": 0,
+   "semi_transparent": 0,
+   "pass": true
+  },
+  "hh_elites_safe": {
+   "roles": 5,
+   "failures": 0,
+   "semi_transparent": 0,
+   "pass": true
+  },
+  "boss_mordrath_safe": {
+   "roles": 3,
+   "failures": 0,
+   "semi_transparent": 0,
+   "pass": true
+  }
+ }
+}
