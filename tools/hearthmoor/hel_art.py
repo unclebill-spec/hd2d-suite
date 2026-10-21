@@ -187,6 +187,7 @@ FLOORS = {"gloam_floor", "ossuary_floor", "pebble_shore"}
 # The Ossuary also gets prop variety from the Helheim kit itself (mourning_statue, lore_tablet) in O1's arrival view.
 FOREIGN = {"warm_lantern": "jotunheim", "dawn_flame_brazier": "asgard"}   # piece -> pack under games/hearthmoor/art/<pack>/kit
 EXTRA_PLACE = {"hh_shore": [("warm_lantern", [-6.4, 7.4], "fixed")],   # spots checked clear (walkable, flat, >2 m from actors / spawns / exits / ledges / props)
+               "ossuary2": [("dawn_flame_brazier", [-5.5, 3.0], "fixed")],   # approved 2026-10-21 08:18 (check_scene grades night_warm_frac), same 3 m cap
                "ossuary": [("dawn_flame_brazier", [-6.0, 3.5], "fixed"), ("mourning_statue", [5.45, 5.85], "fixed"), ("lore_tablet", [-5.4, 0.8], "fixed")]}
 PIECE_MOVE = {}    # (area, piece, x, z) -> (x, z): a prop moved off an actor / spawn / lamp (check_scene), rounded to 0.1
 NOCAST = set()     # (area, piece): its shadow fell across an NPC (check_scene atlas corr)
@@ -338,6 +339,32 @@ def spell_swap(area):
     raw = jp.read_text(); jp.write_text(json.dumps(j, indent=1) if "\n" in raw[:200] else json.dumps(j))
 
 
+# Approved 2026-10-21 08:18 (Cozy Builder): Gloamhaven only, the #2ab4ff / #d4a8ff glow effects are thinned (checkerboard dither = half alpha in
+# this pixel style; same colours, same shapes, neon still reads against the gloom) so the night frame stops clipping (check_scene no_bloom).
+# Area-local atlas only; nothing skipped. The runtime has no per-effect alpha (engine/effects.js is off-limits).
+GLOW_THIN = {"helheim": {"colours": [(0x2a, 0xb4, 0xff), (0xd4, 0xa8, 0xff)],
+                         "effects": ["cold_flame", "pool_coldfire", "pool_window", "pool_lilac", "lake_shimmer", "soul_light", "soul_motes", "violet_motes", "glow_orb_lilac", "lantern_float"]}}
+
+
+def glow_thin(area):
+    g = GLOW_THIN.get(area)
+    d = GAME / "areas" / area / "public/art/gamefx"
+    if not g or not (d / "gamefx.json").exists(): return
+    import numpy as np
+    m = json.loads((d / "gamefx.json").read_text()); C = m["cell"]
+    im = np.array(Image.open(d / "gamefx.png").convert("RGBA"))
+    yy, xx = np.mgrid[0:im.shape[0], 0:im.shape[1]]; odd = (xx + yy) % 2 == 1
+    for n in g["effects"]:
+        e = m["effects"].get(n)
+        if not e: continue
+        r0, r1, c1 = e["row"] * C, (e["row"] + 1) * C, e["frames"] * C
+        a = im[r0:r1, :c1]
+        for (r, gg, b) in g["colours"]:
+            hit = (a[..., 0] == r) & (a[..., 1] == gg) & (a[..., 2] == b) & (a[..., 3] > 0) & odd[r0:r1, :c1]
+            a[hit, 3] = 0
+    Image.fromarray(im).save(d / "gamefx.png")
+
+
 def place(area):
     import base64, math
     from array import array
@@ -463,6 +490,7 @@ def main():
         spell_swap(a)
         fx = gamefx(a)
         sf, cs = _shared(a) if fx else (False, False)
+        if fx: glow_thin(a)
         print(f"{a}: sprites + kit + props{' + gamefx' if fx else ' (no gamefx atlas)'}{' + stonefrost' if sf else ''}{' + caldera school' if cs else ''}")
     return 0
 

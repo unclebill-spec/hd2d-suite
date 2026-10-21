@@ -36,3 +36,11 @@
 - check_scene --quick: helheim FAIL (sprites_sharp / colours / phone: NPCs overlapped by fx, roofs and each other) -> NPCs moved (09d8dc0), recheck queued; hh_shore FAIL (grades night_warm_frac 0.0017 < 0.002: no warm light in the shore; effects_sharp glowplant_toadcap 0.93) - no allowed lever fixes these; hh_archive PASS; ossuary / ossuary2 pending.
 - check_palette (not edited): flags hhelite odric, hhenemy gloam_knight, boss_mordrath mordrath/_p2/_p3 for #3a2458 / #a45cf0 (its sprite rows only know biome + NEON_PETS_ALLOW).
 - Leftovers: audio REALM_OF untouched; Inkling flag only (not in PETS).
+
+## Status 2026-10-21 08:30 EDT (final fixes, all approved by Cozy Builder)
+- check_palette.py: scoped per-sheet/role allowance {#a45cf0, #3a2458} for hhelite/odric, hhenemy/gloam_knight, boss_mordrath/mordrath(_p2,_p3), citing Art's READY.txt. Violet sheets pass; remaining rows (spells/gamefx atlases, pet_tick) are pre-existing in every realm.
+- Warm accents (3 m cap): jotunheim warm_lantern in hh_shore [-6.4, 7.4]; asgard dawn_flame_brazier in ossuary [-6.0, 3.5] and ossuary2 [-5.5, 3.0]. Ossuary props: mourning_statue, lore_tablet (Helheim kit).
+- hh_shore spells index drops glowplant_toadcap (glowplant_violet stays): lake bubbles covered its lineup slot.
+- Gloamhaven NPCs re-placed clear of fx, roofs, canopies and the west wall; street lamps / braziers capped 4 m; #2ab4ff / #d4a8ff glow effects checkerboard-thinned in the helheim gamefx atlas only (no_bloom).
+- Results before this commit: preflight PASS; smoke_helheim 27/27; check_scene hh_shore / hh_archive / ossuary PASS; helheim only no_bloom (0.0218); ossuary2 only grades (0.0017). Reruns of helheim, ossuary2 and smoke_helheim follow this commit.
+- Leftovers: audio REALM_OF untouched; Inkling flag + NPC only (not in PETS).
