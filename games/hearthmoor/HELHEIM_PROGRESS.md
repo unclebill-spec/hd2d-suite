@@ -18,7 +18,7 @@
 | smoke_helheim + touched groups after the last code commit | todo |
 | check_scene --quick per area (lowres, one at a time) | todo |
 | pictures in /workspace/alf_qa/hel/ | todo |
-| Art follow-up (READY.txt update: violet tabards / chains, scoped #a45cf0 / #3a2458, bone-white walls) | waiting |
+| Art follow-up (READY 03:26): violet main sheets + scoped HH_NEON_ALLOW (5 roles, #a45cf0 / #3a2458) + bone-white walls pulled via hel_art.py | done |
 
 ## Decisions (final, from Bill)
 - `redeemable` really lives in `game/niflheim.js` (story 8.2, `export const redeemable`); helheim.js imports it (and `lockedBy`, which carries `NIFL_MUSP_LOCK`) from there. Not changed.

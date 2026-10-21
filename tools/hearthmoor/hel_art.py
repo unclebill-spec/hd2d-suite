@@ -34,7 +34,8 @@ TOWNS = {
     "ossuary": {}, "ossuary2": {},
 }
 # Scoped neon: EMPTY (README "Neon": no sprite uses neon). Only Art's exact scoped entries ever go here (role -> {hex}). Never wider.
-HEL_NEON_SCOPE = {}
+_HHV = {"#a45cf0", "#3a2458"}   # Art follow-up (READY 03:26, README "Neon flag"): violet tabards + chains, these 5 roles only
+HEL_NEON_SCOPE = {"gloam_knight": _HHV, "odric": _HHV, "mordrath": _HHV, "mordrath_p2": _HHV, "mordrath_p3": _HHV}
 # While the scope is empty the palette-safe twins (<sheet>_safe.json, violet drawn with the blue-shadow ramp) are installed when the pack ships them;
 # the neon sheets (violet tabards / chains) are used only once their exact scoped entries are in HEL_NEON_SCOPE.
 def SPR(name):
