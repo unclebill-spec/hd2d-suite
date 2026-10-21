@@ -1,0 +1,246 @@
+{
+ "tool": "hd2d boss_sheet (niflheim big frames)",
+ "biome": "cozy-village",
+ "frame": [
+  100,
+  112
+ ],
+ "pivot": [
+  50,
+  112
+ ],
+ "ground_row": 111,
+ "facings": [
+  "down",
+  "up",
+  "left",
+  "right"
+ ],
+ "anims": {
+  "idle": {
+   "start": 0,
+   "count": 4,
+   "fps": 3,
+   "loop": [
+    0,
+    1,
+    2,
+    1
+   ],
+   "blink": 3
+  },
+  "walk": {
+   "start": 4,
+   "count": 4,
+   "fps": 8
+  },
+  "cast": {
+   "start": 8,
+   "count": 4,
+   "fps": 6,
+   "loop": [
+    0,
+    1,
+    2,
+    2,
+    3,
+    3
+   ],
+   "casters_only": true
+  },
+  "attack": {
+   "start": 12,
+   "count": 4,
+   "fps": 10,
+   "loop": [
+    0,
+    1,
+    2,
+    2,
+    3
+   ],
+   "heroes_only": true
+  },
+  "defend": {
+   "start": 16,
+   "count": 4,
+   "fps": 6,
+   "loop": [
+    0,
+    1
+   ],
+   "hold": [
+    2,
+    3
+   ],
+   "heroes_only": true
+  },
+  "jump": {
+   "start": 20,
+   "count": 4,
+   "fps": 8,
+   "phases": [
+    "crouch",
+    "launch",
+    "airborne",
+    "land"
+   ],
+   "heroes_only": true
+  },
+  "die": {
+   "start": 24,
+   "count": 4,
+   "fps": 6,
+   "once": true,
+   "enemies_only": true
+  }
+ },
+ "cols": 28,
+ "size": [
+  2800,
+  2240
+ ],
+ "image": "hhelite.png",
+ "roles": {
+  "vesperin": {
+   "row": 0,
+   "kind": "enemy",
+   "scale": 3.0,
+   "desc": "MINI-BOSS Lord Vesperin (3x, O5): long black coat over a wine waistcoat + belted trousers, red-lined cape, red-lit eyes; NO plate. Mist-bat split = vesperin_bat.",
+   "anims": [
+    "idle",
+    "walk",
+    "attack",
+    "die"
+   ],
+   "size_bounds": [
+    [
+     10,
+     98
+    ],
+    [
+     8,
+     112
+    ]
+   ],
+   "caster": false,
+   "enemy": true,
+   "stats_hint": {
+    "tier": "miniboss",
+    "height_x_player": 3.0
+   }
+  },
+  "vesperin_bat": {
+   "row": 4,
+   "kind": "enemy",
+   "scale": 1.6,
+   "desc": "Vesperin's mist-bat (x3 at 50%): violet mist bat (palette blue-shadow); only the real one has hh_shadow.",
+   "anims": [
+    "idle",
+    "walk",
+    "attack",
+    "die"
+   ],
+   "size_bounds": [
+    [
+     10,
+     98
+    ],
+    [
+     8,
+     112
+    ]
+   ],
+   "caster": false,
+   "enemy": true,
+   "stats_hint": {
+    "tier": "miniboss_add",
+    "height_x_player": 1.6
+   }
+  },
+  "odric": {
+   "row": 8,
+   "kind": "enemy",
+   "scale": 3.0,
+   "desc": "Ser Odric Gravemantle (defiant mini-boss 3x): Gloam Knight, dark leather jerkin + violet tabard, greatsword; NO plate; yields at 25%.",
+   "anims": [
+    "idle",
+    "walk",
+    "attack",
+    "die"
+   ],
+   "size_bounds": [
+    [
+     10,
+     98
+    ],
+    [
+     8,
+     112
+    ]
+   ],
+   "caster": false,
+   "enemy": true,
+   "stats_hint": {
+    "tier": "miniboss",
+    "height_x_player": 3.0
+   }
+  },
+  "gravelamp": {
+   "row": 12,
+   "kind": "enemy",
+   "scale": 2.0,
+   "desc": "gravelamp (rare 2x): grave lantern elder, spits cold-fire wisps.",
+   "anims": [
+    "idle",
+    "walk",
+    "attack",
+    "die"
+   ],
+   "size_bounds": [
+    [
+     10,
+     98
+    ],
+    [
+     8,
+     112
+    ]
+   ],
+   "caster": false,
+   "enemy": true,
+   "stats_hint": {
+    "tier": "rare",
+    "height_x_player": 2.0
+   }
+  },
+  "hollowchoir": {
+   "row": 16,
+   "kind": "enemy",
+   "scale": 3.0,
+   "desc": "hollowchoir (rare 3x): chorus of fused wraiths in a column (violet = fx), dirge aura.",
+   "anims": [
+    "idle",
+    "walk",
+    "attack",
+    "die"
+   ],
+   "size_bounds": [
+    [
+     10,
+     98
+    ],
+    [
+     8,
+     112
+    ]
+   ],
+   "caster": false,
+   "enemy": true,
+   "stats_hint": {
+    "tier": "rare",
+    "height_x_player": 3.0
+   }
+  }
+ }
+}

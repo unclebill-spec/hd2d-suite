@@ -59,6 +59,11 @@ def main():
             fails.append(f"{label}: {path.relative_to(GAME) if GAME in path.parents else path}{what} off-palette "
                          + ", ".join(f"{k}x{v}" for k, v in sorted(off.items(), key=lambda kv: -kv[1])[:6]))
 
+    # [HELHEIM] one-time scoped exception approved by the check's owner (Cozy Builder, 2026-10-21), per Art's Helheim READY note
+    # (/workspace/hearthmoor-staging/art/helheim/READY.txt): violet #a45cf0 / #3a2458 on these sheet + role rows only. No global allowance.
+    HH_SHEET_NEON = {(sheet, role): {"#a45cf0", "#3a2458"} for sheet, role in (
+        ("hhelite", "odric"), ("hhenemy", "gloam_knight"),
+        ("boss_mordrath", "mordrath"), ("boss_mordrath", "mordrath_p2"), ("boss_mordrath", "mordrath_p3"))}
     fx_ok = pal | NEON | ORB_NEON
     for ar in areas:
         art = GAME / "areas" / ar / "public/art"
@@ -78,6 +83,7 @@ def main():
                 if "row" not in rv or rv.get("sheet"):
                     continue
                 allowed = pal | set(cs.NEON_PETS_ALLOW.get(r, ()))
+                allowed |= HH_SHEET_NEON.get((p.stem, r), set())
                 if r.startswith(("orb_", "glow_orb")):
                     allowed |= NEON | ORB_NEON
                 n += 1

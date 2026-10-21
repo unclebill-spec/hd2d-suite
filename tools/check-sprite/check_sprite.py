@@ -62,6 +62,8 @@ MUSP_NEON_ALLOW = {"pet_kindle": {"#a81c22", "#e0302a", "#ff5a4a"}}
 # [NIFLHEIM] Scoped palette exception, EMPTY until Hearthmoor Art's README names it (expected: at most the companion role "hrefna", her cold-fire lantern glow, and only the NEON blue hexes
 # #3fb8ff / #e8f6ff of spells.py NEON, on glow pixels). An empty table allows nothing: any off-palette colour on any role still fails. Fill it in with the exact hexes (and ruling) when the pack lands; never widen it to another role.
 NIFL_NEON_ALLOW = {}
+# [HELHEIM] Scoped palette exception (Art follow-up READY 2026-10-21 03:26, README "Neon flag"; lead ruling): true violet tabards / chains, ONLY these 5 roles, ONLY these 2 hexes.
+HH_NEON_ALLOW = {r: {"#a45cf0", "#3a2458"} for r in ("gloam_knight", "odric", "mordrath", "mordrath_p2", "mordrath_p3")}
 
 
 def check(atlas_path, json_path=None, biome=None, max_colors=20, project=None):
@@ -103,7 +105,7 @@ def check(atlas_path, json_path=None, biome=None, max_colors=20, project=None):
                         opaque.append((x, y))
                         c = _hex(p)
                         colors.add(c)
-                        if c not in palette and c not in LUMI_NEON_ALLOW.get(role, ()) and c not in SVART_NEON_ALLOW.get(role, ()) and c not in JOT_NEON_ALLOW.get(role, ()) and c not in CC_NEON_ALLOW.get(role, ()) and c not in MUSP_NEON_ALLOW.get(role, ()) and c not in NIFL_NEON_ALLOW.get(role, ()) and c not in NEON_PETS_ALLOW.get(role, ()) and not (role.startswith(("orb_", "glow_orb")) and c in ORB_NEON):  # [ALFHEIM] + LUMI_NEON_ALLOW
+                        if c not in palette and c not in LUMI_NEON_ALLOW.get(role, ()) and c not in SVART_NEON_ALLOW.get(role, ()) and c not in JOT_NEON_ALLOW.get(role, ()) and c not in CC_NEON_ALLOW.get(role, ()) and c not in MUSP_NEON_ALLOW.get(role, ()) and c not in NIFL_NEON_ALLOW.get(role, ()) and c not in HH_NEON_ALLOW.get(role, ()) and c not in NEON_PETS_ALLOW.get(role, ()) and not (role.startswith(("orb_", "glow_orb")) and c in ORB_NEON):  # [ALFHEIM] + LUMI_NEON_ALLOW
                             rr["issues"].append(f"{fr['name']}: colour {c} not in {biome}")
             if not opaque:
                 rr["issues"].append(f"{fr['name']}: empty frame")

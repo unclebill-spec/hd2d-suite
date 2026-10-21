@@ -1,0 +1,1752 @@
+{
+ "tool": "hd2d portal",
+ "biome": "cozy-village",
+ "seed": 104,
+ "cell": 48,
+ "cast_sets": {
+  "stonefrost_ii": [
+   [
+    "stonefrost_cast_ii",
+    "hands"
+   ]
+  ],
+  "stonefrost_iii": [
+   [
+    "stonefrost_cast_iii",
+    "hands"
+   ]
+  ]
+ },
+ "cycle": [],
+ "image": "gamefx.png",
+ "size": [
+  384,
+  3600
+ ],
+ "effects": {
+  "quest_mark": {
+   "row": 54,
+   "frames": 4,
+   "fps": 3,
+   "loop": true,
+   "loop_from": 0,
+   "loops": 1,
+   "kind": "billboard",
+   "pivot": [
+    24,
+    47
+   ],
+   "lift": 2.05,
+   "glow": true,
+   "light": null,
+   "speed": null,
+   "travel": null,
+   "then": null,
+   "duration": 9999
+  },
+  "quest_turnin": {
+   "row": 55,
+   "frames": 4,
+   "fps": 3,
+   "loop": true,
+   "loop_from": 0,
+   "loops": 1,
+   "kind": "billboard",
+   "pivot": [
+    24,
+    47
+   ],
+   "lift": 2.05,
+   "glow": true,
+   "light": null,
+   "speed": null,
+   "travel": null,
+   "then": null,
+   "duration": 9999
+  },
+  "pool_violet": {
+   "row": 1,
+   "frames": 6,
+   "fps": 4,
+   "loop": true,
+   "loop_from": 0,
+   "loops": 1,
+   "kind": "decal",
+   "pivot": [
+    24,
+    24
+   ],
+   "lift": 0.02,
+   "glow": true,
+   "light": null,
+   "speed": null,
+   "travel": null,
+   "then": null,
+   "duration": 9999,
+   "notes": "violet pool: temple stained glass, G3, dark orbs"
+  },
+  "neon_fireflies_blue": {
+   "row": 2,
+   "frames": 8,
+   "fps": 6,
+   "loop": true,
+   "loop_from": 0,
+   "loops": 1,
+   "kind": "billboard",
+   "pivot": [
+    24,
+    47
+   ],
+   "lift": 0.8,
+   "glow": true,
+   "light": null,
+   "speed": null,
+   "travel": null,
+   "then": null,
+   "duration": 9999,
+   "notes": "cold-blue sparks / wisps (skyfield, storm gallery)"
+  },
+  "neon_fireflies_violet": {
+   "row": 3,
+   "frames": 8,
+   "fps": 6,
+   "loop": true,
+   "loop_from": 0,
+   "loops": 1,
+   "kind": "billboard",
+   "pivot": [
+    24,
+    47
+   ],
+   "lift": 0.8,
+   "glow": true,
+   "light": null,
+   "speed": null,
+   "travel": null,
+   "then": null,
+   "duration": 9999,
+   "notes": "violet wisps (temple, G3)"
+  },
+  "cold_flame": {
+   "row": 4,
+   "frames": 8,
+   "fps": 10,
+   "loop": true,
+   "loop_from": 0,
+   "loops": 1,
+   "kind": "billboard",
+   "pivot": [
+    24,
+    44
+   ],
+   "lift": 0.1,
+   "glow": true,
+   "light": {
+    "color": "#2ab4ff",
+    "intensity": 0.9,
+    "range": 3.5,
+    "pool": "pool_cold"
+   },
+   "speed": null,
+   "travel": null,
+   "then": null,
+   "duration": 9999,
+   "notes": "rime-glass cold flame (dark altar, rimed lamps)"
+  },
+  "spring_bubbles": {
+   "row": 5,
+   "frames": 8,
+   "fps": 6,
+   "loop": true,
+   "loop_from": 0,
+   "loops": 1,
+   "kind": "billboard",
+   "pivot": [
+    24,
+    44
+   ],
+   "lift": 0.0,
+   "glow": true,
+   "light": null,
+   "speed": null,
+   "travel": null,
+   "then": null,
+   "duration": 9999,
+   "notes": "gold-lit spring fizz over the marble_spring basin (with pool_gold)"
+  },
+  "glow_orb_blue": {
+   "row": 6,
+   "frames": 8,
+   "fps": 6,
+   "loop": true,
+   "loop_from": 0,
+   "loops": 1,
+   "kind": "billboard",
+   "pivot": [
+    24,
+    33
+   ],
+   "lift": 1.4,
+   "glow": true,
+   "light": {
+    "color": "#a6ecff",
+    "intensity": 0.7,
+    "range": 3.0,
+    "pool": "pool_cold"
+   },
+   "speed": null,
+   "travel": null,
+   "then": null,
+   "duration": 9999,
+   "notes": "floating glow orb, hover 1.1-2.2 m"
+  },
+  "glow_orb_violet": {
+   "row": 7,
+   "frames": 8,
+   "fps": 6,
+   "loop": true,
+   "loop_from": 0,
+   "loops": 1,
+   "kind": "billboard",
+   "pivot": [
+    24,
+    33
+   ],
+   "lift": 1.4,
+   "glow": true,
+   "light": {
+    "color": "#d4a8ff",
+    "intensity": 0.7,
+    "range": 3.0,
+    "pool": "pool_violet"
+   },
+   "speed": null,
+   "travel": null,
+   "then": null,
+   "duration": 9999,
+   "notes": "floating glow orb, hover 1.1-2.2 m"
+  },
+  "beam_ring": {
+   "row": 8,
+   "frames": 6,
+   "fps": 8,
+   "loop": false,
+   "loop_from": 0,
+   "loops": 1,
+   "kind": "decal",
+   "pivot": [
+    24,
+    24
+   ],
+   "lift": 0.03,
+   "glow": true,
+   "light": null,
+   "speed": null,
+   "travel": null,
+   "then": null,
+   "duration": 0.75,
+   "notes": "RED ring telegraph before slams / judgement (Aurelion, Severin)"
+  },
+  "pool_spirit": {
+   "row": 9,
+   "frames": 6,
+   "fps": 4,
+   "loop": true,
+   "loop_from": 0,
+   "loops": 1,
+   "kind": "decal",
+   "pivot": [
+    24,
+    24
+   ],
+   "lift": 0.02,
+   "glow": true,
+   "light": null,
+   "speed": null,
+   "travel": null,
+   "then": null,
+   "duration": 9999,
+   "notes": "spirit-blue misty glow pool (lamps, pillars, pools)"
+  },
+  "pool_warm": {
+   "row": 10,
+   "frames": 6,
+   "fps": 4,
+   "loop": true,
+   "loop_from": 0,
+   "loops": 1,
+   "kind": "decal",
+   "pivot": [
+    24,
+    24
+   ],
+   "lift": 0.02,
+   "glow": true,
+   "light": null,
+   "speed": null,
+   "travel": null,
+   "then": null,
+   "duration": 9999,
+   "notes": "soft pale-warm pool (trader lamps, hearth windows): one per 6-8 m so the grade is never all blue"
+  },
+  "mist_drift": {
+   "row": 11,
+   "frames": 8,
+   "fps": 3,
+   "loop": true,
+   "loop_from": 0,
+   "loops": 1,
+   "kind": "decal",
+   "pivot": [
+    24,
+    24
+   ],
+   "lift": 0.05,
+   "glow": true,
+   "light": null,
+   "speed": null,
+   "travel": null,
+   "then": null,
+   "duration": 9999,
+   "notes": "pale ground mist (signature of the city); off stairs and spawns"
+  },
+  "mist_violet": {
+   "row": 12,
+   "frames": 8,
+   "fps": 3,
+   "loop": true,
+   "loop_from": 0,
+   "loops": 1,
+   "kind": "decal",
+   "pivot": [
+    24,
+    24
+   ],
+   "lift": 0.05,
+   "glow": true,
+   "light": null,
+   "speed": null,
+   "travel": null,
+   "then": null,
+   "duration": 9999,
+   "notes": "violet mist halo (memorials, boss)"
+  },
+  "glow_fog": {
+   "row": 13,
+   "frames": 8,
+   "fps": 3,
+   "loop": true,
+   "loop_from": 0,
+   "loops": 1,
+   "kind": "decal",
+   "pivot": [
+    24,
+    24
+   ],
+   "lift": 0.05,
+   "glow": true,
+   "light": null,
+   "speed": null,
+   "travel": null,
+   "then": null,
+   "duration": 9999,
+   "notes": "glowing ground fog over the misty pools"
+  },
+  "wisps_blue": {
+   "row": 14,
+   "frames": 8,
+   "fps": 8,
+   "loop": true,
+   "loop_from": 0,
+   "loops": 1,
+   "kind": "billboard",
+   "pivot": [
+    24,
+    24
+   ],
+   "lift": 1.2,
+   "glow": true,
+   "light": null,
+   "speed": null,
+   "travel": null,
+   "then": null,
+   "duration": 9999,
+   "notes": "spirit-blue wisps circling (city air, pools)"
+  },
+  "wisps_violet": {
+   "row": 15,
+   "frames": 8,
+   "fps": 8,
+   "loop": true,
+   "loop_from": 0,
+   "loops": 1,
+   "kind": "billboard",
+   "pivot": [
+    24,
+    24
+   ],
+   "lift": 1.2,
+   "glow": true,
+   "light": null,
+   "speed": null,
+   "travel": null,
+   "then": null,
+   "duration": 9999,
+   "notes": "violet wisps (memorials, vault)"
+  },
+  "spirit_flame": {
+   "row": 16,
+   "frames": 8,
+   "fps": 10,
+   "loop": true,
+   "loop_from": 0,
+   "loops": 1,
+   "kind": "billboard",
+   "pivot": [
+    24,
+    44
+   ],
+   "lift": 0.1,
+   "glow": true,
+   "light": {
+    "color": "#2ab4ff",
+    "intensity": 1.0,
+    "range": 4.0,
+    "pool": "pool_spirit"
+   },
+   "speed": null,
+   "travel": null,
+   "then": null,
+   "duration": 9999,
+   "notes": "spirit-blue flame (spirit_brazier, spirit_lamp)"
+  },
+  "violet_flame": {
+   "row": 17,
+   "frames": 8,
+   "fps": 10,
+   "loop": true,
+   "loop_from": 0,
+   "loops": 1,
+   "kind": "billboard",
+   "pivot": [
+    24,
+    44
+   ],
+   "lift": 0.1,
+   "glow": true,
+   "light": {
+    "color": "#a45cf0",
+    "intensity": 0.9,
+    "range": 3.5,
+    "pool": "pool_violet"
+   },
+   "speed": null,
+   "travel": null,
+   "then": null,
+   "duration": 9999,
+   "notes": "violet flame (violet_lamp, memory_altar)"
+  },
+  "spirit_burst": {
+   "row": 18,
+   "frames": 8,
+   "fps": 10,
+   "loop": false,
+   "loop_from": 0,
+   "loops": 1,
+   "kind": "billboard",
+   "pivot": [
+    24,
+    24
+   ],
+   "lift": 1.6,
+   "glow": true,
+   "light": null,
+   "speed": null,
+   "travel": null,
+   "then": null,
+   "duration": 0.8,
+   "notes": "spirit burst (boss cast, wraith death)"
+  },
+  "soul_rise": {
+   "row": 19,
+   "frames": 8,
+   "fps": 8,
+   "loop": false,
+   "loop_from": 0,
+   "loops": 1,
+   "kind": "billboard",
+   "pivot": [
+    24,
+    44
+   ],
+   "lift": 0.3,
+   "glow": true,
+   "light": null,
+   "speed": null,
+   "travel": null,
+   "then": null,
+   "duration": 1.0,
+   "notes": "a freed soul rising (wraith die, memorial ring); gentle, not creepy"
+  },
+  "pool_coldfire": {
+   "row": 20,
+   "frames": 6,
+   "fps": 4,
+   "loop": true,
+   "loop_from": 0,
+   "loops": 1,
+   "kind": "decal",
+   "pivot": [
+    24,
+    24
+   ],
+   "lift": 0.02,
+   "glow": true,
+   "light": null,
+   "speed": null,
+   "travel": null,
+   "then": null,
+   "duration": 9999,
+   "notes": "neon-blue cold-fire pool under every street lamp + grave lantern (#3fb8ff)"
+  },
+  "pool_window": {
+   "row": 21,
+   "frames": 4,
+   "fps": 4,
+   "loop": true,
+   "loop_from": 0,
+   "loops": 1,
+   "kind": "decal",
+   "pivot": [
+    24,
+    24
+   ],
+   "lift": 0.02,
+   "glow": true,
+   "light": null,
+   "speed": null,
+   "travel": null,
+   "then": null,
+   "duration": 9999,
+   "notes": "small violet window spill (r 3 m) in front of every lit window"
+  },
+  "pool_lilac": {
+   "row": 22,
+   "frames": 6,
+   "fps": 4,
+   "loop": true,
+   "loop_from": 0,
+   "loops": 1,
+   "kind": "decal",
+   "pivot": [
+    24,
+    24
+   ],
+   "lift": 0.02,
+   "glow": true,
+   "light": null,
+   "speed": null,
+   "travel": null,
+   "then": null,
+   "duration": 9999,
+   "notes": "lilac pool under willow orbs / soul-glass"
+  },
+  "pool_red": {
+   "row": 23,
+   "frames": 6,
+   "fps": 4,
+   "loop": true,
+   "loop_from": 0,
+   "loops": 1,
+   "kind": "decal",
+   "pivot": [
+    24,
+    24
+   ],
+   "lift": 0.02,
+   "glow": true,
+   "light": null,
+   "speed": null,
+   "travel": null,
+   "then": null,
+   "duration": 9999,
+   "notes": "RED = danger only: Vesperin, Mordrath's crown"
+  },
+  "lake_shimmer": {
+   "row": 24,
+   "frames": 6,
+   "fps": 3,
+   "loop": true,
+   "loop_from": 0,
+   "loops": 1,
+   "kind": "decal",
+   "pivot": [
+    24,
+    24
+   ],
+   "lift": -0.08,
+   "glow": true,
+   "light": null,
+   "speed": null,
+   "travel": null,
+   "then": null,
+   "duration": 9999,
+   "notes": "violet reflections on the black lake (lift -0.08)"
+  },
+  "spirit_rose_mist": {
+   "row": 25,
+   "frames": 8,
+   "fps": 3,
+   "loop": true,
+   "loop_from": 0,
+   "loops": 1,
+   "kind": "decal",
+   "pivot": [
+    24,
+    24
+   ],
+   "lift": 0.05,
+   "glow": true,
+   "light": null,
+   "speed": null,
+   "travel": null,
+   "then": null,
+   "duration": 9999,
+   "notes": "spirit-rose mist at Hel's arch (arrival)"
+  },
+  "gloam_fog": {
+   "row": 26,
+   "frames": 8,
+   "fps": 3,
+   "loop": true,
+   "loop_from": 0,
+   "loops": 1,
+   "kind": "decal",
+   "pivot": [
+    24,
+    24
+   ],
+   "lift": 0.05,
+   "glow": true,
+   "light": null,
+   "speed": null,
+   "travel": null,
+   "then": null,
+   "duration": 9999,
+   "notes": "weather gloam_fog (fog 0.7): violet-grey ground fog; off stairs + spawns"
+  },
+  "soul_light": {
+   "row": 27,
+   "frames": 8,
+   "fps": 6,
+   "loop": true,
+   "loop_from": 0,
+   "loops": 1,
+   "kind": "billboard",
+   "pivot": [
+    24,
+    47
+   ],
+   "lift": 1.2,
+   "glow": true,
+   "light": null,
+   "speed": null,
+   "travel": null,
+   "then": null,
+   "duration": 9999,
+   "notes": "weather soul_lights: a single wandering light that leads to a secret (3 per night)"
+  },
+  "soul_motes": {
+   "row": 28,
+   "frames": 8,
+   "fps": 6,
+   "loop": true,
+   "loop_from": 0,
+   "loops": 1,
+   "kind": "billboard",
+   "pivot": [
+    24,
+    47
+   ],
+   "lift": 0.8,
+   "glow": true,
+   "light": null,
+   "speed": null,
+   "travel": null,
+   "then": null,
+   "duration": 9999,
+   "notes": "violet soul motes (ambient, Ledger, P3 heal motes)"
+  },
+  "violet_motes": {
+   "row": 29,
+   "frames": 8,
+   "fps": 6,
+   "loop": true,
+   "loop_from": 0,
+   "loops": 1,
+   "kind": "billboard",
+   "pivot": [
+    24,
+    47
+   ],
+   "lift": 0.4,
+   "glow": true,
+   "light": null,
+   "speed": null,
+   "travel": null,
+   "then": null,
+   "duration": 9999,
+   "notes": "Inkling's pet fx (PETS.inkling.fx = violet_motes)"
+  },
+  "glow_orb_lilac": {
+   "row": 30,
+   "frames": 6,
+   "fps": 4,
+   "loop": true,
+   "loop_from": 0,
+   "loops": 1,
+   "kind": "billboard",
+   "pivot": [
+    24,
+    30
+   ],
+   "lift": 1.8,
+   "glow": true,
+   "light": {
+    "color": "#d6b8ff",
+    "intensity": 0.6,
+    "range": 3.0,
+    "pool": "pool_lilac"
+   },
+   "speed": null,
+   "travel": null,
+   "then": null,
+   "duration": 9999,
+   "notes": "lilac willow / porch orb #d6b8ff, bobs gently"
+  },
+  "cage_break": {
+   "row": 31,
+   "frames": 8,
+   "fps": 10,
+   "loop": false,
+   "loop_from": 0,
+   "loops": 1,
+   "kind": "billboard",
+   "pivot": [
+    24,
+    24
+   ],
+   "lift": 1.0,
+   "glow": true,
+   "light": null,
+   "speed": null,
+   "travel": null,
+   "then": null,
+   "duration": 0.8,
+   "notes": "name-cage breaks (os_n1..3): violet burst, then name_moths"
+  },
+  "name_moths": {
+   "row": 32,
+   "frames": 8,
+   "fps": 8,
+   "loop": true,
+   "loop_from": 0,
+   "loops": 1,
+   "kind": "billboard",
+   "pivot": [
+    24,
+    40
+   ],
+   "lift": 1.2,
+   "glow": true,
+   "light": null,
+   "speed": null,
+   "travel": null,
+   "then": null,
+   "duration": 9999,
+   "notes": "freed names rise like moths (cage break, Mordrath outro)"
+  },
+  "eira_outline": {
+   "row": 33,
+   "frames": 8,
+   "fps": 6,
+   "loop": true,
+   "loop_from": 0,
+   "loops": 1,
+   "kind": "billboard",
+   "pivot": [
+    24,
+    38
+   ],
+   "lift": 0.0,
+   "glow": true,
+   "light": {
+    "color": "#a45cf0",
+    "intensity": 0.6,
+    "range": 3.0,
+    "pool": "pool_window"
+   },
+   "speed": null,
+   "travel": null,
+   "then": null,
+   "duration": 9999,
+   "notes": "Eira's soft glowing outline over eira_spirit"
+  },
+  "hel_light": {
+   "row": 34,
+   "frames": 2,
+   "fps": 2,
+   "loop": true,
+   "loop_from": 0,
+   "loops": 1,
+   "kind": "billboard",
+   "pivot": [
+    24,
+    24
+   ],
+   "lift": 1.9,
+   "glow": true,
+   "light": null,
+   "speed": null,
+   "travel": null,
+   "then": null,
+   "duration": 9999,
+   "notes": "Hel's half-face violet light (small, on her lit side)"
+  },
+  "lantern_float": {
+   "row": 35,
+   "frames": 8,
+   "fps": 6,
+   "loop": true,
+   "loop_from": 0,
+   "loops": 1,
+   "kind": "billboard",
+   "pivot": [
+    24,
+    22
+   ],
+   "lift": 0.4,
+   "glow": true,
+   "light": {
+    "color": "#2ab4ff",
+    "intensity": 0.8,
+    "range": 3.5,
+    "pool": "pool_coldfire"
+   },
+   "speed": null,
+   "travel": null,
+   "then": null,
+   "duration": 9999,
+   "notes": "Lantern-Boat Night: a lantern floated on the lake"
+  },
+  "glaive_arc": {
+   "row": 36,
+   "frames": 6,
+   "fps": 10,
+   "loop": false,
+   "loop_from": 0,
+   "loops": 1,
+   "kind": "decal",
+   "pivot": [
+    24,
+    24
+   ],
+   "lift": 0.03,
+   "glow": true,
+   "light": null,
+   "speed": null,
+   "travel": null,
+   "then": null,
+   "duration": 0.6,
+   "notes": "Mordrath P1 glaive sweep tell: violet arc, 1 s (scale 3x)"
+  },
+  "telegraph_line": {
+   "row": 37,
+   "frames": 4,
+   "fps": 8,
+   "loop": true,
+   "loop_from": 0,
+   "loops": 1,
+   "kind": "decal",
+   "pivot": [
+    0,
+    24
+   ],
+   "lift": 0.03,
+   "glow": true,
+   "light": null,
+   "speed": null,
+   "travel": null,
+   "then": null,
+   "duration": 9999,
+   "notes": "RED line: name-chain lash path from a chain_anchor (1.5 s)"
+  },
+  "hunt_ring": {
+   "row": 38,
+   "frames": 6,
+   "fps": 8,
+   "loop": false,
+   "loop_from": 0,
+   "loops": 1,
+   "kind": "decal",
+   "pivot": [
+    24,
+    24
+   ],
+   "lift": 0.03,
+   "glow": true,
+   "light": null,
+   "speed": null,
+   "travel": null,
+   "then": null,
+   "duration": 0.75,
+   "notes": "Mordrath P2 hunt: red ring on the player, then a lunge; Vesperin curtain tell"
+  },
+  "crown_flare": {
+   "row": 39,
+   "frames": 6,
+   "fps": 6,
+   "loop": false,
+   "loop_from": 0,
+   "loops": 1,
+   "kind": "decal",
+   "pivot": [
+    24,
+    24
+   ],
+   "lift": 0.03,
+   "glow": true,
+   "light": null,
+   "speed": null,
+   "travel": null,
+   "then": null,
+   "duration": 1.0,
+   "notes": "Mordrath P3 crown flare: red over HALF the arena (scale 8x, flip for the other half), 2 s"
+  },
+  "violet_smoke_wings": {
+   "row": 40,
+   "frames": 8,
+   "fps": 6,
+   "loop": true,
+   "loop_from": 0,
+   "loops": 1,
+   "kind": "billboard",
+   "pivot": [
+    24,
+    24
+   ],
+   "lift": 4.5,
+   "glow": true,
+   "light": null,
+   "speed": null,
+   "travel": null,
+   "then": null,
+   "duration": 9999,
+   "notes": "Mordrath's wings of violet smoke (behind his shoulders, scale 4x)"
+  },
+  "ash_light": {
+   "row": 41,
+   "frames": 8,
+   "fps": 8,
+   "loop": false,
+   "loop_from": 0,
+   "loops": 1,
+   "kind": "billboard",
+   "pivot": [
+    24,
+    44
+   ],
+   "lift": 0.5,
+   "glow": true,
+   "light": null,
+   "speed": null,
+   "travel": null,
+   "then": null,
+   "duration": 1.0,
+   "notes": "Mordrath / Vesperin defeat: breaks into ash-white light (no gore)"
+  },
+  "red_mist_fade": {
+   "row": 42,
+   "frames": 8,
+   "fps": 8,
+   "loop": false,
+   "loop_from": 0,
+   "loops": 1,
+   "kind": "billboard",
+   "pivot": [
+    24,
+    30
+   ],
+   "lift": 1.0,
+   "glow": true,
+   "light": null,
+   "speed": null,
+   "travel": null,
+   "then": null,
+   "duration": 1.0,
+   "notes": "Vesperin yields: fades into red mist"
+  },
+  "bat_dash": {
+   "row": 43,
+   "frames": 6,
+   "fps": 12,
+   "loop": true,
+   "loop_from": 0,
+   "loops": 1,
+   "kind": "billboard",
+   "pivot": [
+    0,
+    24
+   ],
+   "lift": 1.6,
+   "glow": true,
+   "light": null,
+   "speed": null,
+   "travel": null,
+   "then": null,
+   "duration": 9999,
+   "notes": "Vesperin bat-shaped mist dash (violet), flies right"
+  },
+  "soul_bolt": {
+   "row": 44,
+   "frames": 6,
+   "fps": 12,
+   "loop": true,
+   "loop_from": 0,
+   "loops": 1,
+   "kind": "billboard",
+   "pivot": [
+    24,
+    24
+   ],
+   "lift": 0.9,
+   "glow": true,
+   "light": null,
+   "speed": null,
+   "travel": null,
+   "then": null,
+   "duration": 9999,
+   "notes": "Gloam school I: Soul Bolt (violet, pierces)"
+  },
+  "grave_grasp": {
+   "row": 45,
+   "frames": 8,
+   "fps": 10,
+   "loop": false,
+   "loop_from": 0,
+   "loops": 1,
+   "kind": "billboard",
+   "pivot": [
+    24,
+    44
+   ],
+   "lift": 0.0,
+   "glow": true,
+   "light": null,
+   "speed": null,
+   "travel": null,
+   "then": null,
+   "duration": 0.8,
+   "notes": "Gloam school I: Grave Grasp (spectral hands hold 2 s)"
+  },
+  "lantern_ward": {
+   "row": 46,
+   "frames": 6,
+   "fps": 6,
+   "loop": true,
+   "loop_from": 0,
+   "loops": 1,
+   "kind": "decal",
+   "pivot": [
+    24,
+    24
+   ],
+   "lift": 0.03,
+   "glow": true,
+   "light": null,
+   "speed": null,
+   "travel": null,
+   "then": null,
+   "duration": 9999,
+   "notes": "Gloam school II: Lantern Ward ring (shades can't enter, 6 s)"
+  },
+  "cold_wisp": {
+   "row": 47,
+   "frames": 8,
+   "fps": 10,
+   "loop": true,
+   "loop_from": 0,
+   "loops": 1,
+   "kind": "billboard",
+   "pivot": [
+    24,
+    47
+   ],
+   "lift": 1.0,
+   "glow": true,
+   "light": null,
+   "speed": null,
+   "travel": null,
+   "then": null,
+   "duration": 9999,
+   "notes": "gravelamp spits cold-fire wisps"
+  },
+  "dirge_aura": {
+   "row": 48,
+   "frames": 6,
+   "fps": 4,
+   "loop": true,
+   "loop_from": 0,
+   "loops": 1,
+   "kind": "decal",
+   "pivot": [
+    24,
+    24
+   ],
+   "lift": 0.03,
+   "glow": true,
+   "light": null,
+   "speed": null,
+   "travel": null,
+   "then": null,
+   "duration": 9999,
+   "notes": "hollowchoir dirge (slow aura)"
+  },
+  "soul_glow": {
+   "row": 49,
+   "frames": 4,
+   "fps": 4,
+   "loop": true,
+   "loop_from": 0,
+   "loops": 1,
+   "kind": "billboard",
+   "pivot": [
+    24,
+    24
+   ],
+   "lift": 0.6,
+   "glow": true,
+   "light": null,
+   "speed": null,
+   "travel": null,
+   "then": null,
+   "duration": 9999,
+   "notes": "soul_wraith neon-blue glow halo (behind the palette sprite)"
+  },
+  "gloamreaver_mark": {
+   "row": 50,
+   "frames": 4,
+   "fps": 8,
+   "loop": true,
+   "loop_from": 0,
+   "loops": 1,
+   "kind": "decal",
+   "pivot": [
+    24,
+    24
+   ],
+   "lift": 0.03,
+   "glow": true,
+   "light": null,
+   "speed": null,
+   "travel": null,
+   "then": null,
+   "duration": 9999,
+   "notes": "Gloamreaver hit mark; leaves a soul mote"
+  },
+  "spring_fizz": {
+   "row": 51,
+   "frames": 8,
+   "fps": 6,
+   "loop": true,
+   "loop_from": 0,
+   "loops": 1,
+   "kind": "billboard",
+   "pivot": [
+    24,
+    44
+   ],
+   "lift": 0.0,
+   "glow": true,
+   "light": null,
+   "speed": null,
+   "travel": null,
+   "then": null,
+   "duration": 9999,
+   "notes": "hidden spring fizz (hh_spring / ls_spring / os_spring), lit violet from below (with pool_window)"
+  },
+  "hh_shadow": {
+   "row": 52,
+   "frames": 4,
+   "fps": 1,
+   "loop": true,
+   "loop_from": 0,
+   "loops": 1,
+   "kind": "decal",
+   "pivot": [
+    24,
+    24
+   ],
+   "lift": 0.02,
+   "glow": true,
+   "light": null,
+   "speed": null,
+   "travel": null,
+   "then": null,
+   "duration": 9999,
+   "notes": "ground shadow MID-DARK #4a4060 / #5e5480 (no near-black); real Vesperin + Mordrath only; scale 2.5x"
+  },
+  "slam_ring": {
+   "row": 53,
+   "frames": 8,
+   "fps": 12,
+   "loop": false,
+   "loop_from": 0,
+   "loops": 1,
+   "kind": "decal",
+   "pivot": [
+    24,
+    24
+   ],
+   "lift": 0.03,
+   "glow": true,
+   "light": null,
+   "speed": null,
+   "travel": null,
+   "then": null,
+   "duration": 0.667,
+   "notes": "Odric / garnet golem slam ring"
+  },
+  "stonefrost_cast_ii": {
+   "row": 56,
+   "frames": 6,
+   "fps": 12,
+   "loop": false,
+   "loop_from": 0,
+   "loops": 1,
+   "kind": "billboard",
+   "pivot": [
+    24,
+    30
+   ],
+   "lift": 1.0,
+   "glow": true,
+   "light": {
+    "color": "#a6ecff",
+    "intensity": 5,
+    "range": 3.5,
+    "curve": [
+     0.4,
+     0.8,
+     1,
+     0.9,
+     0.6,
+     0.2
+    ]
+   },
+   "speed": null,
+   "travel": null,
+   "then": null,
+   "duration": 0.5,
+   "notes": "Stonefrost II cast flare at the hands: floating rune sigil (triangle) + rising motes + sparkles (NEON blue/teal)"
+  },
+  "stonefrost_bolt_ii": {
+   "row": 57,
+   "frames": 6,
+   "fps": 12,
+   "loop": true,
+   "loop_from": 0,
+   "loops": 1,
+   "kind": "projectile",
+   "pivot": [
+    24,
+    24
+   ],
+   "lift": 1.0,
+   "glow": true,
+   "light": {
+    "color": "#2ab4ff",
+    "intensity": 4,
+    "range": 3.5,
+    "curve": [
+     1,
+     1,
+     1,
+     1,
+     1,
+     1
+    ]
+   },
+   "speed": 8.0,
+   "travel": 6.0,
+   "then": "stonefrost_impact_ii",
+   "duration": 0.5,
+   "notes": "Stonefrost II boulder rimed in glowing ice crystals, sparkles around it; replaces seed_bomb for tier II"
+  },
+  "stonefrost_impact_ii": {
+   "row": 58,
+   "frames": 7,
+   "fps": 14,
+   "loop": false,
+   "loop_from": 0,
+   "loops": 1,
+   "kind": "billboard",
+   "pivot": [
+    24,
+    41
+   ],
+   "lift": 0.0,
+   "glow": true,
+   "light": {
+    "color": "#a6ecff",
+    "intensity": 8,
+    "range": 4.0,
+    "curve": [
+     1,
+     1,
+     0.7,
+     0.45,
+     0.25,
+     0.1,
+     0
+    ]
+   },
+   "speed": null,
+   "travel": null,
+   "then": null,
+   "duration": 0.5,
+   "notes": "Stonefrost II impact: white-blue flash, snow ring, ice shards, stone chips, sparkles (radius ~1.9 m at 18 px/m x2)"
+  },
+  "stonefrost_rune_ii": {
+   "row": 59,
+   "frames": 8,
+   "fps": 12,
+   "loop": false,
+   "loop_from": 0,
+   "loops": 1,
+   "kind": "decal",
+   "pivot": [
+    24,
+    24
+   ],
+   "lift": 0.03,
+   "glow": true,
+   "light": {
+    "color": "#2ab4ff",
+    "intensity": 3.0,
+    "range": 3,
+    "curve": [
+     0.2,
+     0.4,
+     0.6,
+     0.8,
+     0.8,
+     0.8,
+     1,
+     1
+    ]
+   },
+   "speed": null,
+   "travel": null,
+   "then": null,
+   "duration": 0.667,
+   "notes": "Stonefrost II Frost Rune trap decal: draws in over frames 0-3, frame 5 = armed (engine holds frame 5 like rune_trap); larger, brighter and with an outer ring per tier"
+  },
+  "stonefrost_burst_ii": {
+   "row": 60,
+   "frames": 6,
+   "fps": 14,
+   "loop": false,
+   "loop_from": 0,
+   "loops": 1,
+   "kind": "billboard",
+   "pivot": [
+    24,
+    43
+   ],
+   "lift": 0.0,
+   "glow": true,
+   "light": {
+    "color": "#a6ecff",
+    "intensity": 9,
+    "range": 4.5,
+    "curve": [
+     0.6,
+     1,
+     1,
+     0.7,
+     0.4,
+     0.1
+    ]
+   },
+   "speed": null,
+   "travel": null,
+   "then": null,
+   "duration": 0.429,
+   "notes": "Stonefrost II trap trigger: pillar of cold light + shards (replaces glyph_burst)"
+  },
+  "stonefrost_cast_iii": {
+   "row": 61,
+   "frames": 6,
+   "fps": 12,
+   "loop": false,
+   "loop_from": 0,
+   "loops": 1,
+   "kind": "billboard",
+   "pivot": [
+    24,
+    30
+   ],
+   "lift": 1.0,
+   "glow": true,
+   "light": {
+    "color": "#a6ecff",
+    "intensity": 7,
+    "range": 4.5,
+    "curve": [
+     0.4,
+     0.8,
+     1,
+     0.9,
+     0.6,
+     0.2
+    ]
+   },
+   "speed": null,
+   "travel": null,
+   "then": null,
+   "duration": 0.5,
+   "notes": "Stonefrost III cast flare at the hands: floating rune sigil (hexagram) + rising motes + sparkles (NEON blue/teal)"
+  },
+  "stonefrost_bolt_iii": {
+   "row": 62,
+   "frames": 6,
+   "fps": 12,
+   "loop": true,
+   "loop_from": 0,
+   "loops": 1,
+   "kind": "projectile",
+   "pivot": [
+    24,
+    24
+   ],
+   "lift": 1.0,
+   "glow": true,
+   "light": {
+    "color": "#2ab4ff",
+    "intensity": 6,
+    "range": 4.7,
+    "curve": [
+     1,
+     1,
+     1,
+     1,
+     1,
+     1
+    ]
+   },
+   "speed": 7.5,
+   "travel": 7.5,
+   "then": "stonefrost_impact_iii",
+   "duration": 0.5,
+   "notes": "Stonefrost III boulder rimed in glowing ice crystals, sparkles around it; replaces seed_bomb for tier III"
+  },
+  "stonefrost_impact_iii": {
+   "row": 63,
+   "frames": 7,
+   "fps": 14,
+   "loop": false,
+   "loop_from": 0,
+   "loops": 1,
+   "kind": "billboard",
+   "pivot": [
+    24,
+    41
+   ],
+   "lift": 0.0,
+   "glow": true,
+   "light": {
+    "color": "#a6ecff",
+    "intensity": 11,
+    "range": 5.5,
+    "curve": [
+     1,
+     1,
+     0.7,
+     0.45,
+     0.25,
+     0.1,
+     0
+    ]
+   },
+   "speed": null,
+   "travel": null,
+   "then": null,
+   "duration": 0.5,
+   "notes": "Stonefrost III impact: white-blue flash, snow ring, ice shards, stone chips, sparkles (radius ~2.4 m at 18 px/m x2)"
+  },
+  "stonefrost_rune_iii": {
+   "row": 64,
+   "frames": 8,
+   "fps": 12,
+   "loop": false,
+   "loop_from": 0,
+   "loops": 1,
+   "kind": "decal",
+   "pivot": [
+    24,
+    24
+   ],
+   "lift": 0.03,
+   "glow": true,
+   "light": {
+    "color": "#2ab4ff",
+    "intensity": 4.5,
+    "range": 4,
+    "curve": [
+     0.2,
+     0.4,
+     0.6,
+     0.8,
+     0.8,
+     0.8,
+     1,
+     1
+    ]
+   },
+   "speed": null,
+   "travel": null,
+   "then": null,
+   "duration": 0.667,
+   "notes": "Stonefrost III Frost Rune trap decal: draws in over frames 0-3, frame 5 = armed (engine holds frame 5 like rune_trap); larger, brighter and with an outer ring per tier"
+  },
+  "stonefrost_burst_iii": {
+   "row": 65,
+   "frames": 6,
+   "fps": 14,
+   "loop": false,
+   "loop_from": 0,
+   "loops": 1,
+   "kind": "billboard",
+   "pivot": [
+    24,
+    43
+   ],
+   "lift": 0.0,
+   "glow": true,
+   "light": {
+    "color": "#a6ecff",
+    "intensity": 11,
+    "range": 6.0,
+    "curve": [
+     0.6,
+     1,
+     1,
+     0.7,
+     0.4,
+     0.1
+    ]
+   },
+   "speed": null,
+   "travel": null,
+   "then": null,
+   "duration": 0.429,
+   "notes": "Stonefrost III trap trigger: pillar of cold light + shards (replaces glyph_burst)"
+  },
+  "fire_wave": {
+   "row": 66,
+   "frames": 8,
+   "fps": 12,
+   "loop": false,
+   "loop_from": 0,
+   "loops": 1,
+   "kind": "billboard",
+   "pivot": [
+    24,
+    40
+   ],
+   "lift": 0.4,
+   "glow": true,
+   "light": null,
+   "speed": null,
+   "travel": null,
+   "then": null,
+   "duration": 0.667,
+   "notes": "Fire Wave (crescent of flame, sweeps right; flip for left)"
+  },
+  "magma_pool": {
+   "row": 67,
+   "frames": 6,
+   "fps": 6,
+   "loop": true,
+   "loop_from": 0,
+   "loops": 1,
+   "kind": "decal",
+   "pivot": [
+    24,
+    24
+   ],
+   "lift": 0.03,
+   "glow": true,
+   "light": {
+    "color": "#ff7a1a",
+    "intensity": 1.0,
+    "range": 3.0
+   },
+   "speed": null,
+   "travel": null,
+   "then": null,
+   "duration": 9999,
+   "notes": "Magma Pool (damaging ground pool, r ~ 2-3 m; also Vharzul's rising lava edge when tiled)"
+  },
+  "ember_swarm": {
+   "row": 68,
+   "frames": 8,
+   "fps": 12,
+   "loop": true,
+   "loop_from": 0,
+   "loops": 1,
+   "kind": "billboard",
+   "pivot": [
+    24,
+    30
+   ],
+   "lift": 0.8,
+   "glow": true,
+   "light": null,
+   "speed": null,
+   "travel": null,
+   "then": null,
+   "duration": 9999,
+   "notes": "Ember Swarm: a cloud of orbiting embers"
+  },
+  "flame_ward": {
+   "row": 69,
+   "frames": 8,
+   "fps": 10,
+   "loop": true,
+   "loop_from": 0,
+   "loops": 1,
+   "kind": "billboard",
+   "pivot": [
+    24,
+    38
+   ],
+   "lift": 0.0,
+   "glow": true,
+   "light": null,
+   "speed": null,
+   "travel": null,
+   "then": null,
+   "duration": 9999,
+   "notes": "Flame Ward: a ring of small flames around the caster (shield)"
+  },
+  "hound_summon": {
+   "row": 70,
+   "frames": 8,
+   "fps": 10,
+   "loop": false,
+   "loop_from": 0,
+   "loops": 1,
+   "kind": "billboard",
+   "pivot": [
+    24,
+    30
+   ],
+   "lift": 0.0,
+   "glow": true,
+   "light": null,
+   "speed": null,
+   "travel": null,
+   "then": null,
+   "duration": 0.8,
+   "notes": "Magma Hound summon / alpha's call: a lava ring with a column rising"
+  },
+  "fire_wave_l": {
+   "row": 71,
+   "frames": 8,
+   "fps": 12,
+   "loop": false,
+   "loop_from": 0,
+   "loops": 1,
+   "kind": "billboard",
+   "pivot": [
+    24,
+    40
+   ],
+   "lift": 0.4,
+   "glow": true,
+   "light": null,
+   "speed": null,
+   "travel": null,
+   "then": null,
+   "duration": 0.667,
+   "notes": "Fire Wave (l), derived by musp_art.school from fire_wave"
+  },
+  "fire_wave_d": {
+   "row": 72,
+   "frames": 8,
+   "fps": 12,
+   "loop": false,
+   "loop_from": 0,
+   "loops": 1,
+   "kind": "billboard",
+   "pivot": [
+    24,
+    24
+   ],
+   "lift": 0.4,
+   "glow": true,
+   "light": null,
+   "speed": null,
+   "travel": null,
+   "then": null,
+   "duration": 0.667,
+   "notes": "Fire Wave (d), derived by musp_art.school from fire_wave"
+  },
+  "fire_wave_u": {
+   "row": 73,
+   "frames": 8,
+   "fps": 12,
+   "loop": false,
+   "loop_from": 0,
+   "loops": 1,
+   "kind": "billboard",
+   "pivot": [
+    24,
+    24
+   ],
+   "lift": 0.4,
+   "glow": true,
+   "light": null,
+   "speed": null,
+   "travel": null,
+   "then": null,
+   "duration": 0.667,
+   "notes": "Fire Wave (u), derived by musp_art.school from fire_wave"
+  },
+  "ember_mote": {
+   "frames": 4,
+   "fps": 10,
+   "loop": true,
+   "loop_from": 0,
+   "loops": 1,
+   "kind": "billboard",
+   "pivot": [
+    24,
+    24
+   ],
+   "lift": 0.8,
+   "glow": true,
+   "light": null,
+   "speed": null,
+   "travel": null,
+   "then": null,
+   "duration": 9999,
+   "notes": "Ember Swarm: one mote (drawn by musp_art.school in the swarm's colours)",
+   "row": 74
+  }
+ },
+ "stonefrost_from": 2688,
+ "caldera_from": 3168
+}

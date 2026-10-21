@@ -36,6 +36,9 @@ if os.environ.get("HM_NIFL_SKELETON") or Path("/workspace/hearthmoor-staging/art
 # [ASGARD] the realm's areas join the build only once the art pack is ready (staging art/asgard/READY.txt) and their specs exist: no READY.txt, no change.
 if Path("/workspace/hearthmoor-staging/art/asgard/READY.txt").exists():
     AREAS += [a for a in ("asgard", "gs_hall", "gs_temple", "reliquary", "reliquary2") if (Path(__file__).resolve().parent / "areas" / "src" / f"{a}.json").exists()]
+# [HELHEIM] the realm's areas join the build only once the art pack is ready (staging art/helheim/READY.txt) and their specs exist: no READY.txt, no change.
+if Path("/workspace/hearthmoor-staging/art/helheim/READY.txt").exists():
+    AREAS += [a for a in ("helheim", "hh_shore", "hh_archive", "ossuary", "ossuary2") if (Path(__file__).resolve().parent / "areas" / "src" / f"{a}.json").exists()]
 TMP = Path(os.environ.get("HM_BUILD_TMP", "/tmp/hearthmoor_build"))   # [ALFHEIM] private build dir per worker
 
 

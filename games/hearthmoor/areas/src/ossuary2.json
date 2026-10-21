@@ -1,0 +1,337 @@
+{
+ "seed": 465,
+ "biome": "cozy-village",
+ "time": {
+  "start": "night",
+  "speed": 0.0016
+ },
+ "spells": true,
+ "boss_roles": [],
+ "camera": {
+  "fov": 24,
+  "pitch": 36,
+  "distance": 33,
+  "zoom": [
+   24,
+   44
+  ],
+  "look": [
+   0,
+   0,
+   -2.4
+  ],
+  "bounds": [
+   -6.6,
+   -48.0,
+   6.6,
+   12.0
+  ]
+ },
+ "hedges": [],
+ "trees": [],
+ "backdrop": {},
+ "decks": [],
+ "blocks": [],
+ "buildings": [],
+ "name": "The Ossuary of Whispers: the Pale Throne",
+ "about": "Helheim's dungeon, rooms O6-O9 (story 7): the Choir Loft, the Sleeping Liches, Mordrath's Vault (a waystone) and the Pale Throne (Mordrath, the Pale Sovereign).",
+ "sprite_roles": [
+  "actors",
+  "heroes",
+  "combat",
+  "lanternseller",
+  "dwarftrader",
+  "poolkeeper",
+  "wispcatcher",
+  "elffolk",
+  "elffolk2",
+  "innkeeper",
+  "shopkeeper",
+  "nightmerchant",
+  "gnome"
+ ],
+ "ground": {
+  "size": [
+   80,
+   150
+  ],
+  "mat": "stone",
+  "walk": [
+   -8.0,
+   -50.8,
+   8.0,
+   12.4
+  ]
+ },
+ "slabs": [],
+ "terraces": [
+  {
+   "name": "plat_o6",
+   "rect": [
+    0.5,
+    0.55,
+    6.7,
+    2.65
+   ],
+   "h": 1.34,
+   "top": "plaster",
+   "gaps": [
+    [
+     2.3,
+     4.9
+    ]
+   ]
+  },
+  {
+   "name": "plat_o7",
+   "rect": [
+    -6.9,
+    -13.25,
+    -0.7,
+    -11.15
+   ],
+   "h": 1.34,
+   "top": "plaster",
+   "gaps": [
+    [
+     -5.1,
+     -2.5
+    ]
+   ]
+  },
+  {
+   "name": "plat_o8",
+   "rect": [
+    -6.7,
+    -25.85,
+    -0.5,
+    -23.75
+   ],
+   "h": 1.34,
+   "top": "plaster",
+   "gaps": [
+    [
+     -4.9,
+     -2.3
+    ]
+   ]
+  },
+  {
+   "name": "plat_o9",
+   "rect": [
+    -7.5,
+    -40.05,
+    -1.3,
+    -37.95
+   ],
+   "h": 1.34,
+   "top": "plaster",
+   "gaps": [
+    [
+     -5.7,
+     -3.1
+    ]
+   ]
+  },
+  {
+   "name": "wall_w",
+   "rect": [
+    -30,
+    -76.0,
+    -8.2,
+    13
+   ],
+   "h": 5.0,
+   "top": "stone",
+   "coping": true
+  },
+  {
+   "name": "wall_e",
+   "rect": [
+    8.2,
+    -76.0,
+    30,
+    13
+   ],
+   "h": 5.0,
+   "top": "stone",
+   "coping": true
+  },
+  {
+   "name": "wall_n",
+   "rect": [
+    -30,
+    -76.0,
+    30,
+    -49.4
+   ],
+   "h": 5.0,
+   "top": "stone",
+   "coping": true
+  }
+ ],
+ "stairs": [
+  {
+   "name": "stair_plat_o6",
+   "x": 3.6,
+   "z_top": 2.65,
+   "width": 2.6,
+   "rise": 1.34,
+   "base": 0.0
+  },
+  {
+   "name": "stair_plat_o7",
+   "x": -3.8,
+   "z_top": -11.15,
+   "width": 2.6,
+   "rise": 1.34,
+   "base": 0.0
+  },
+  {
+   "name": "stair_plat_o8",
+   "x": -3.6,
+   "z_top": -23.75,
+   "width": 2.6,
+   "rise": 1.34,
+   "base": 0.0
+  },
+  {
+   "name": "stair_plat_o9",
+   "x": -4.4,
+   "z_top": -37.95,
+   "width": 2.6,
+   "rise": 1.34,
+   "base": 0.0
+  }
+ ],
+ "props": [],
+ "emitters": [
+  {
+   "preset": "fireflies",
+   "pos": [
+    0,
+    1.6,
+    0.0
+   ],
+   "area": [
+    14,
+    1.6,
+    12
+   ],
+   "min_gate": 0.0
+  }
+ ],
+ "actors": [],
+ "player": {
+  "role": "traveler",
+  "pos": [
+   0.0,
+   8.4
+  ],
+  "facing": "up"
+ },
+ "fx": [],
+ "grades": {
+  "day": {
+   "fog_color": "#9a94b0",
+   "sky_top": "#3a3060",
+   "sky_bottom": "#b8acd0",
+   "hemi_sky": "#dcd4ec",
+   "saturation": 0.9,
+   "bugs": 0.0,
+   "warmth": 0.0,
+   "exposure": 0.9,
+   "sun_intensity": 0.9,
+   "hemi_intensity": 0.75,
+   "sun_color": "#f0e8ff",
+   "lamp_intensity": 0.85
+  },
+  "dusk": {
+   "fog_color": "#2a2248",
+   "sky_top": "#221c44",
+   "sky_bottom": "#4e3a7a",
+   "exposure": 0.95,
+   "sun_intensity": 0.55,
+   "warmth": -0.05,
+   "sun_color": "#a49cf0",
+   "bugs": 0.5
+  },
+  "night": {
+   "fog_color": "#14102a",
+   "sky_top": "#0a0820",
+   "sky_bottom": "#261e48",
+   "hemi_sky": "#6656a4",
+   "bugs": 1.0,
+   "exposure": 1.0,
+   "sun_intensity": 0.4,
+   "hemi_intensity": 0.55,
+   "sun_color": "#9688dc"
+  }
+ },
+ "game": {
+  "id": "ossuary2",
+  "title": "The Ossuary of Whispers: the Pale Throne",
+  "exits": [
+   {
+    "rect": [
+     -1.5,
+     10.4,
+     1.5,
+     11.4
+    ],
+    "to": "ossuary",
+    "spawn": "from_os2",
+    "label": "back up to Vesperin's Salon"
+   }
+  ],
+  "portals": [],
+  "spawns": {
+   "start": [
+    0.0,
+    8.4,
+    "up"
+   ],
+   "from_os1": [
+    0.0,
+    8.4,
+    "up"
+   ],
+   "qa": [
+    0.0,
+    8.0,
+    "up"
+   ],
+   "o6": [
+    0.0,
+    5.0,
+    "up"
+   ],
+   "o7": [
+    0.0,
+    -9.0,
+    "up"
+   ],
+   "o8": [
+    0.0,
+    -23.0,
+    "up"
+   ],
+   "o9": [
+    0.0,
+    -37.0,
+    "up"
+   ],
+   "from_waystone": [
+    1.6,
+    -26.0,
+    "down"
+   ]
+  },
+  "waystone": {
+   "pos": [
+    3.6,
+    -28.0
+   ]
+  }
+ }
+}
