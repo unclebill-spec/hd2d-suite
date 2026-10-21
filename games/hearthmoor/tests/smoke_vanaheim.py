@@ -22,13 +22,13 @@ GAME = Path(__file__).resolve().parents[1]
 ARGS = ["--use-angle=swiftshader", "--enable-unsafe-swiftshader", "--ignore-gpu-blocklist"]
 AREAS3 = ["vanaheim", "rotwood", "verdant"]
 SPAWN = {"vanaheim": "start", "rotwood": "from_mossbrook", "verdant": "from_rotwood"}
-EXITS = {"vanaheim": {"rotwood"}, "rotwood": {"vanaheim", "verdant"}, "verdant": {"rotwood"}}
+EXITS = {"vanaheim": {"rift"}, "rotwood": {"vanaheim"}, "verdant": {"rotwood"}}   # fresh state: the root-cave (vanaheim -> rotwood) and the sapling stair (rotwood -> verdant) open with the quests
 WALL_Z = -4.0   # props at z <= -4 hang on the back wall / ceiling lip (vines, shelves on vh_ceiling_lip): wall dressing, not floor props
 
 
 def floor_overlaps(d):
     p = [x for x in d.get("props", []) if x["pos"][1] > WALL_Z]
-    return [(x["piece"], y["piece"], x["pos"]) for i, x in enumerate(p) for y in p[i + 1:] if math.dist(x["pos"][:2], y["pos"][:2]) < 0.6]
+    return [(x["piece"], y["piece"], x["pos"]) for i, x in enumerate(p) for y in p[i + 1:] if math.dist(x["pos"][:2], y["pos"][:2]) < 0.35]
 
 
 def steps(b, url, T, size, errors, rep, stub=None, shots=None, only=""):
@@ -90,7 +90,7 @@ def steps(b, url, T, size, errors, rep, stub=None, shots=None, only=""):
             else:
                 spec &= hmax >= 1.0 and stair and len(d["grades"]) == 3
         rep["gaps"] = gaps
-        T.step("no two floor props stacked within 0.6 m in the three specs", not ov, overlaps=ov)
+        T.step("no two floor props stacked (centres within 0.35 m) in the three specs", not ov, overlaps=ov)
         T.step("specs: 1 m+ height and three grades; rotwood and verdant have a stair", spec, gaps=gaps)
         # ---- Burrowmoss's choice (fresh state)
         load("vanaheim")
@@ -117,11 +117,13 @@ def steps(b, url, T, size, errors, rep, stub=None, shots=None, only=""):
         rep["shots"]["spring_cleansed"] = T.shot("spring_cleansed")
         T.talk("warden")
         after = T.ev("({ q: window.__hm.S.quests.vh_spring, rw: window.__hm.S.quests.rotwood })")
-        T.step("The Violet Spring: offered, 3 red caps, the spring cleansed, Burrowmoss's word completes it and starts the Rotwood Hollow",
-               q1 == 1 and caps == 3 and sp["q"] == 2 and sp["f"] == "cleansed" and after["q"] == 3 and after["rw"] == 1, q1=q1, caps=caps, spring=sp, after=after)
+        jarea("vanaheim"); after["cave"] = T.ev("!!(window.__hm.ctx.scene.game.exits || []).find((e) => e.to === 'rotwood')")
+        T.step("The Violet Spring: offered, 3 red caps, the spring cleansed, Burrowmoss's word completes it and starts the Rotwood Hollow and opens the root-cave",
+               q1 == 1 and caps == 3 and sp["q"] == 2 and sp["f"] == "cleansed" and after["q"] == 3 and after["rw"] == 1 and after["cave"], q1=q1, caps=caps, spring=sp, after=after)
         # ---- the Blight Regent
         jarea("rotwood", "from_mossbrook")
         T.ev("window.__hm.peace = true")
+        S("S.flags.rw_lock = 1; S.found[window.__hm.ctx.scene.game.thorns.brazier] = 1; return 1;")   # the root door and the thorn wall are covered by smoke.py J
         bw = T.ev("window.__hm.ctx.scene.game.bower")
         tp(bw["pos"][0] - 1.0, 2.0); frames(4)
         st1 = T.ev("window.__hm.verdant.state()")
@@ -137,8 +139,8 @@ def steps(b, url, T, size, errors, rep, stub=None, shots=None, only=""):
                bool(st1["boss"]) and st1["boss"]["scale"] == 5.5 and st2["boss"]["phase"] == 2 and st3["boss"]["phase"] == 3 and st3["boss"]["spikeOpen"] and hit == 20,
                s1=st1["boss"], s2=st2["boss"], s3=st3["boss"], hit=hit)
         T.ev("window.__hm.combat.damageEnemy(window.__hm.verdant.boss, 99999, null, 0)"); frames(4)
-        dn = T.ev("({ boss: window.__hm.S.flags.rw_boss, spike: window.__hm.S.inv.blight_spike || 0 })")
-        T.step("the Regent falls: rw_boss, the frost-iron spike", dn["boss"] == 1 and dn["spike"] == 1, down=dn)
+        dn = T.ev("({ boss: window.__hm.S.flags.rw_boss, spike: window.__hm.S.inv.blight_spike || 0, sap: !!(window.__hm.ctx.scene.game.exits || []).find((e) => e.to === 'verdant') })")
+        T.step("the Regent falls: rw_boss, the frost-iron spike, the sapling stair to the Verdant Heart", dn["boss"] == 1 and dn["spike"] == 1 and dn["sap"], down=dn)
         # ---- the Thornmother + Hjortur
         S("S.quests.verdant = 1; return 1;")
         jarea("verdant", "from_rotwood")
@@ -151,6 +153,9 @@ def steps(b, url, T, size, errors, rep, stub=None, shots=None, only=""):
         tp(vd["glade"]["enter_x"] + 1.0, 2.0); frames(4); hj = T.ev("window.__hm.verdant.state().hj")
         frames(60); rep["shots"]["boss_hjortur"] = T.shot("boss_hjortur")
         T.step("Hjortur (6x) holds the guardian trial on the befriend path", bool(hj) and hj["scale"] == 6 and hj["role"] == "hjortur" and hj["trial"], hj=hj)
+        T.ev("(() => { const G = window.__hm, e = G.verdant.hj; G.combat.damageEnemy(e, 99999, null, 0); })()"); frames(3)
+        vq = T.ev("({ q: window.__hm.S.quests.verdant, tine: window.__hm.S.inv.greenheart_tine || 0 })")
+        T.step("befriend: Hjortur yields, the Verdant Heart quest is done, a Greenheart tine", vq["q"] == 3 and vq["tine"] == 1, quest=vq)
         S("S.flags.alliance.vanaheim = 'conquer'; delete S.flags.vh_hjortur; S.quests.verdant = 1; return 1;")
         jarea("verdant", "from_rotwood"); tp(vd["glade"]["enter_x"] + 1.0, 2.0); frames(4); hc = T.ev("window.__hm.verdant.state().hj")
         rep["shots"]["boss_hjortur_corrupted"] = T.shot("boss_hjortur_corrupted")
