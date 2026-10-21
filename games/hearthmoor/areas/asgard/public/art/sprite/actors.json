@@ -114,14 +114,14 @@
    "desc": "Nessa (stall-keeper, 1x): layered tunics (wine under cream), wide belt with pouches."
   },
   "innkeeper": {
-   "sheet": "asfolk",
-   "row": 0,
+   "sheet": "axfolk",
+   "row": 4,
    "kind": "human",
    "anims": [
     "idle",
     "walk"
    ],
-   "desc": "Envoy Ingrith Goldrune (1x): cream tunic, belted blue trousers, gold-buckled belt, a gold-pinned blue cloak."
+   "desc": "Envoy Ingrith Goldrune (1x, story 5 roster): cream tunic, belted blue trousers, gold-buckled belt, boots, gold-pinned blue cloak, gold circlet, blonde bun."
   },
   "lanternseller": {
    "sheet": "assigrun",
@@ -25720,8 +25720,8 @@
    "enemy": true
   },
   "storm_centaur": {
-   "sheet": "asenemy",
-   "row": 8,
+   "sheet": "axcent",
+   "row": 0,
    "kind": "enemy",
    "anims": [
     "idle",
@@ -25822,6 +25822,27 @@
    ],
    "desc": "Elder light wraith (rare, 3x): tall gold shroud with a cracked halo; drinks lamp light.",
    "enemy": true
+  },
+  "as_guard": {
+   "sheet": "axfolk",
+   "row": 0,
+   "kind": "human",
+   "anims": [
+    "idle",
+    "walk"
+   ],
+   "desc": "Goldspire guard (1x): storm-blue tunic, leather jerkin under a gilded tabard, belted grey trousers, boots, leather cap, bracers, spear. Light gear, no plate.",
+   "enemy": true
+  },
+  "ingrith": {
+   "sheet": "axfolk",
+   "row": 4,
+   "kind": "human",
+   "anims": [
+    "idle",
+    "walk"
+   ],
+   "desc": "Envoy Ingrith Goldrune (1x, story 5 roster): cream tunic, belted blue trousers, gold-buckled belt, boots, gold-pinned blue cloak, gold circlet, blonde bun."
   }
  },
  "sheets": {
@@ -25848,6 +25869,14 @@
   "aselite": {
    "json": "aselite.json",
    "image": "aselite.png"
+  },
+  "axfolk": {
+   "json": "axfolk.json",
+   "image": "axfolk.png"
+  },
+  "axcent": {
+   "json": "axcent.json",
+   "image": "axcent.png"
   }
  }
 }

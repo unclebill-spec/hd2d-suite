@@ -310,32 +310,6 @@
     "height_x_player": 1.0
    }
   },
-  "innkeeper": {
-   "row": 0,
-   "kind": "human",
-   "scale": 1.0,
-   "desc": "Envoy Ingrith Goldrune (1x): cream tunic, belted blue trousers, gold-buckled belt, a gold-pinned blue cloak.",
-   "anims": [
-    "idle",
-    "walk"
-   ],
-   "size_bounds": [
-    [
-     10,
-     38
-    ],
-    [
-     8,
-     44
-    ]
-   ],
-   "caster": false,
-   "named": true,
-   "stats_hint": {
-    "tier": "npc",
-    "height_x_player": 1.0
-   }
-  },
   "dwarftrader": {
    "row": 24,
    "kind": "human",

@@ -21,11 +21,11 @@
  "image": "gamefx.png",
  "size": [
   384,
-  2736
+  2880
  ],
  "effects": {
   "quest_mark": {
-   "row": 36,
+   "row": 39,
    "frames": 4,
    "fps": 3,
    "loop": true,
@@ -45,7 +45,7 @@
    "duration": 9999
   },
   "quest_turnin": {
-   "row": 37,
+   "row": 40,
    "frames": 4,
    "fps": 3,
    "loop": true,
@@ -792,8 +792,71 @@
    "duration": 9999,
    "notes": "Sigrun raven guard: two ravens circling the hero (defence buff)"
   },
-  "stonefrost_cast_ii": {
+  "void_motes": {
+   "row": 36,
+   "frames": 8,
+   "fps": 6,
+   "loop": true,
+   "loop_from": 0,
+   "loops": 1,
+   "kind": "billboard",
+   "pivot": [
+    24,
+    47
+   ],
+   "lift": -1.0,
+   "glow": true,
+   "light": null,
+   "speed": null,
+   "travel": null,
+   "then": null,
+   "duration": 9999,
+   "notes": "G7: violet + pale motes rising out of the void (place at void floor level, y -2.4 .. -1)"
+  },
+  "void_pool": {
+   "row": 37,
+   "frames": 6,
+   "fps": 4,
+   "loop": true,
+   "loop_from": 0,
+   "loops": 1,
+   "kind": "decal",
+   "pivot": [
+    24,
+    24
+   ],
+   "lift": -2.35,
+   "glow": true,
+   "light": null,
+   "speed": null,
+   "travel": null,
+   "then": null,
+   "duration": 9999,
+   "notes": "G7: violet glow pool on the void floor (lift -2.35)"
+  },
+  "void_shade": {
    "row": 38,
+   "frames": 4,
+   "fps": 1,
+   "loop": true,
+   "loop_from": 0,
+   "loops": 1,
+   "kind": "decal",
+   "pivot": [
+    24,
+    24
+   ],
+   "lift": -2.36,
+   "glow": true,
+   "light": null,
+   "speed": null,
+   "travel": null,
+   "then": null,
+   "duration": 9999,
+   "notes": "G7: MID-DARK void shade #4a3a66 / #5e4c80 (no near-black), breaks up the void floor"
+  },
+  "stonefrost_cast_ii": {
+   "row": 41,
    "frames": 6,
    "fps": 12,
    "loop": false,
@@ -826,7 +889,7 @@
    "notes": "Stonefrost II cast flare at the hands: floating rune sigil (triangle) + rising motes + sparkles (NEON blue/teal)"
   },
   "stonefrost_bolt_ii": {
-   "row": 39,
+   "row": 42,
    "frames": 6,
    "fps": 12,
    "loop": true,
@@ -859,7 +922,7 @@
    "notes": "Stonefrost II boulder rimed in glowing ice crystals, sparkles around it; replaces seed_bomb for tier II"
   },
   "stonefrost_impact_ii": {
-   "row": 40,
+   "row": 43,
    "frames": 7,
    "fps": 14,
    "loop": false,
@@ -893,7 +956,7 @@
    "notes": "Stonefrost II impact: white-blue flash, snow ring, ice shards, stone chips, sparkles (radius ~1.9 m at 18 px/m x2)"
   },
   "stonefrost_rune_ii": {
-   "row": 41,
+   "row": 44,
    "frames": 8,
    "fps": 12,
    "loop": false,
@@ -928,7 +991,7 @@
    "notes": "Stonefrost II Frost Rune trap decal: draws in over frames 0-3, frame 5 = armed (engine holds frame 5 like rune_trap); larger, brighter and with an outer ring per tier"
   },
   "stonefrost_burst_ii": {
-   "row": 42,
+   "row": 45,
    "frames": 6,
    "fps": 14,
    "loop": false,
@@ -961,7 +1024,7 @@
    "notes": "Stonefrost II trap trigger: pillar of cold light + shards (replaces glyph_burst)"
   },
   "stonefrost_cast_iii": {
-   "row": 43,
+   "row": 46,
    "frames": 6,
    "fps": 12,
    "loop": false,
@@ -994,7 +1057,7 @@
    "notes": "Stonefrost III cast flare at the hands: floating rune sigil (hexagram) + rising motes + sparkles (NEON blue/teal)"
   },
   "stonefrost_bolt_iii": {
-   "row": 44,
+   "row": 47,
    "frames": 6,
    "fps": 12,
    "loop": true,
@@ -1027,7 +1090,7 @@
    "notes": "Stonefrost III boulder rimed in glowing ice crystals, sparkles around it; replaces seed_bomb for tier III"
   },
   "stonefrost_impact_iii": {
-   "row": 45,
+   "row": 48,
    "frames": 7,
    "fps": 14,
    "loop": false,
@@ -1061,7 +1124,7 @@
    "notes": "Stonefrost III impact: white-blue flash, snow ring, ice shards, stone chips, sparkles (radius ~2.4 m at 18 px/m x2)"
   },
   "stonefrost_rune_iii": {
-   "row": 46,
+   "row": 49,
    "frames": 8,
    "fps": 12,
    "loop": false,
@@ -1096,7 +1159,7 @@
    "notes": "Stonefrost III Frost Rune trap decal: draws in over frames 0-3, frame 5 = armed (engine holds frame 5 like rune_trap); larger, brighter and with an outer ring per tier"
   },
   "stonefrost_burst_iii": {
-   "row": 47,
+   "row": 50,
    "frames": 6,
    "fps": 14,
    "loop": false,
@@ -1129,7 +1192,7 @@
    "notes": "Stonefrost III trap trigger: pillar of cold light + shards (replaces glyph_burst)"
   },
   "fire_wave": {
-   "row": 48,
+   "row": 51,
    "frames": 8,
    "fps": 12,
    "loop": false,
@@ -1150,7 +1213,7 @@
    "notes": "Fire Wave (crescent of flame, sweeps right; flip for left)"
   },
   "magma_pool": {
-   "row": 49,
+   "row": 52,
    "frames": 6,
    "fps": 6,
    "loop": true,
@@ -1175,7 +1238,7 @@
    "notes": "Magma Pool (damaging ground pool, r ~ 2-3 m; also Vharzul's rising lava edge when tiled)"
   },
   "ember_swarm": {
-   "row": 50,
+   "row": 53,
    "frames": 8,
    "fps": 12,
    "loop": true,
@@ -1196,7 +1259,7 @@
    "notes": "Ember Swarm: a cloud of orbiting embers"
   },
   "flame_ward": {
-   "row": 51,
+   "row": 54,
    "frames": 8,
    "fps": 10,
    "loop": true,
@@ -1217,7 +1280,7 @@
    "notes": "Flame Ward: a ring of small flames around the caster (shield)"
   },
   "hound_summon": {
-   "row": 52,
+   "row": 55,
    "frames": 8,
    "fps": 10,
    "loop": false,
@@ -1238,7 +1301,7 @@
    "notes": "Magma Hound summon / alpha's call: a lava ring with a column rising"
   },
   "fire_wave_l": {
-   "row": 53,
+   "row": 56,
    "frames": 8,
    "fps": 12,
    "loop": false,
@@ -1259,7 +1322,7 @@
    "notes": "Fire Wave (l), derived by musp_art.school from fire_wave"
   },
   "fire_wave_d": {
-   "row": 54,
+   "row": 57,
    "frames": 8,
    "fps": 12,
    "loop": false,
@@ -1280,7 +1343,7 @@
    "notes": "Fire Wave (d), derived by musp_art.school from fire_wave"
   },
   "fire_wave_u": {
-   "row": 55,
+   "row": 58,
    "frames": 8,
    "fps": 12,
    "loop": false,
@@ -1319,9 +1382,9 @@
    "then": null,
    "duration": 9999,
    "notes": "Ember Swarm: one mote (drawn by musp_art.school in the swarm's colours)",
-   "row": 56
+   "row": 59
   }
  },
- "stonefrost_from": 1824,
- "caldera_from": 2304
+ "stonefrost_from": 1968,
+ "caldera_from": 2448
 }

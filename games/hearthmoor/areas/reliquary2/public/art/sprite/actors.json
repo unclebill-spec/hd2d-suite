@@ -27097,8 +27097,8 @@
    "enemy": true
   },
   "storm_centaur": {
-   "sheet": "asenemy",
-   "row": 8,
+   "sheet": "axcent",
+   "row": 0,
    "kind": "enemy",
    "anims": [
     "idle",
@@ -27215,8 +27215,8 @@
    "enemy": true
   },
   "aurelion_p3": {
-   "sheet": "boss_aurelion",
-   "row": 4,
+   "sheet": "axp3",
+   "row": 0,
    "kind": "enemy",
    "anims": [
     "idle",
@@ -27225,7 +27225,7 @@
     "attack",
     "die"
    ],
-   "desc": "Aurelion phase 3: drinking the Dawn-Flame - plate dulled, red leaks and gem (dawn_drink red ring fx, 3 s).",
+   "desc": "Aurelion phase 3 (REPLACEMENT, red): plate, cape and blade pushed to the crimson/rust ramp (roof_lo/roof/roof_hi), rose-lit seams and eyes; pair with fx dawn_flame_red + pool_red for the red glow.",
    "enemy": true
   },
   "aurelion_wraith": {
@@ -27249,6 +27249,27 @@
     "walk"
    ],
    "desc": "Aurelion rest / befriend pose (outro 6.4): on one knee, sword planted point-down. idle = breathing; walk slot = a slow shuffle variant of the kneel."
+  },
+  "as_guard": {
+   "sheet": "axfolk",
+   "row": 0,
+   "kind": "human",
+   "anims": [
+    "idle",
+    "walk"
+   ],
+   "desc": "Goldspire guard (1x): storm-blue tunic, leather jerkin under a gilded tabard, belted grey trousers, boots, leather cap, bracers, spear. Light gear, no plate.",
+   "enemy": true
+  },
+  "ingrith": {
+   "sheet": "axfolk",
+   "row": 4,
+   "kind": "human",
+   "anims": [
+    "idle",
+    "walk"
+   ],
+   "desc": "Envoy Ingrith Goldrune (1x, story 5 roster): cream tunic, belted blue trousers, gold-buckled belt, boots, gold-pinned blue cloak, gold circlet, blonde bun."
   }
  },
  "sheets": {
@@ -27279,6 +27300,18 @@
   "boss_aurelion": {
    "json": "boss_aurelion.json",
    "image": "boss_aurelion.png"
+  },
+  "axfolk": {
+   "json": "axfolk.json",
+   "image": "axfolk.png"
+  },
+  "axcent": {
+   "json": "axcent.json",
+   "image": "axcent.png"
+  },
+  "axp3": {
+   "json": "axp3.json",
+   "image": "axp3.png"
   }
  }
 }

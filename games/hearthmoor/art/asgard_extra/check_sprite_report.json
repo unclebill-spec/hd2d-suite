@@ -1,0 +1,61 @@
+{
+ "ax_folk": {
+  "atlas": "/workspace/hearthmoor-staging/art/asgard_extra/sprite/ax_folk.png",
+  "biome": "cozy-village",
+  "roles": {
+   "as_guard": {
+    "frames": 32,
+    "colors": 18,
+    "issues": []
+   },
+   "ingrith": {
+    "frames": 32,
+    "colors": 18,
+    "issues": []
+   }
+  },
+  "summary": {
+   "roles": 2,
+   "failures": 0,
+   "semi_transparent": 0,
+   "pass": true
+  },
+  "failures": []
+ },
+ "ax_aurelion_p3": {
+  "atlas": "/workspace/hearthmoor-staging/art/asgard_extra/sprite/ax_aurelion_p3.png",
+  "biome": "cozy-village",
+  "roles": {
+   "aurelion_p3": {
+    "frames": 80,
+    "colors": 6,
+    "issues": []
+   }
+  },
+  "summary": {
+   "roles": 1,
+   "failures": 0,
+   "semi_transparent": 0,
+   "pass": true
+  },
+  "failures": []
+ },
+ "ax_centaur": {
+  "atlas": "/workspace/hearthmoor-staging/art/asgard_extra/sprite/ax_centaur.png",
+  "biome": "cozy-village",
+  "roles": {
+   "storm_centaur": {
+    "frames": 64,
+    "colors": 15,
+    "issues": []
+   }
+  },
+  "summary": {
+   "roles": 1,
+   "failures": 0,
+   "semi_transparent": 0,
+   "pass": true
+  },
+  "failures": []
+ }
+}

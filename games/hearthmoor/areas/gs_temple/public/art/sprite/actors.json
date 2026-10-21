@@ -26637,8 +26637,8 @@
    "enemy": true
   },
   "storm_centaur": {
-   "sheet": "asenemy",
-   "row": 8,
+   "sheet": "axcent",
+   "row": 0,
    "kind": "enemy",
    "anims": [
     "idle",
@@ -26674,6 +26674,27 @@
    ],
    "desc": "Sigrun Stormwing (companion, 1.1x): storm-blue tunic, leather jerkin, belted trousers, boots, spear, dim palette light-wings (bright wings = fx sigrun_wings). walk = follow, attack = dive_strike, cast = raven_guard. NO pet.",
    "follower": true
+  },
+  "as_guard": {
+   "sheet": "axfolk",
+   "row": 0,
+   "kind": "human",
+   "anims": [
+    "idle",
+    "walk"
+   ],
+   "desc": "Goldspire guard (1x): storm-blue tunic, leather jerkin under a gilded tabard, belted grey trousers, boots, leather cap, bracers, spear. Light gear, no plate.",
+   "enemy": true
+  },
+  "ingrith": {
+   "sheet": "axfolk",
+   "row": 4,
+   "kind": "human",
+   "anims": [
+    "idle",
+    "walk"
+   ],
+   "desc": "Envoy Ingrith Goldrune (1x, story 5 roster): cream tunic, belted blue trousers, gold-buckled belt, boots, gold-pinned blue cloak, gold circlet, blonde bun."
   }
  },
  "sheets": {
@@ -26696,6 +26717,14 @@
   "assigrun": {
    "json": "assigrun.json",
    "image": "assigrun.png"
+  },
+  "axfolk": {
+   "json": "axfolk.json",
+   "image": "axfolk.png"
+  },
+  "axcent": {
+   "json": "axcent.json",
+   "image": "axcent.png"
   }
  }
 }

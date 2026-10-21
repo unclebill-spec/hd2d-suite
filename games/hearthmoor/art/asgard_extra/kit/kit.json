@@ -1,0 +1,92 @@
+{
+ "tool": "hd2d kit",
+ "biome": "cozy-village",
+ "seed": 1,
+ "sprite_height_m": 1.8,
+ "pieces": {
+  "void_floor": {
+   "file": "void_floor.glb",
+   "kind": "prop",
+   "tris": 108,
+   "size": [
+    2,
+    0.05,
+    2
+   ],
+   "markers": {
+    "lamps": [],
+    "chimneys": [],
+    "windows": [],
+    "doors": [],
+    "note": "G7 void: lay where the floor is missing (2.4 m below walk level); no collision walk; fall = respawn at last lit rune"
+   },
+   "blockers": [],
+   "fx": [
+    "void_pool",
+    "void_shade",
+    "void_motes"
+   ]
+  },
+  "void_rim": {
+   "file": "void_rim.glb",
+   "kind": "prop",
+   "tris": 36,
+   "size": [
+    2.0,
+    2.5,
+    0.45
+   ],
+   "markers": {
+    "lamps": [
+     [
+      0,
+      -0.6,
+      0.5
+     ]
+    ],
+    "chimneys": [],
+    "windows": [],
+    "doors": [],
+    "lamp_color": "#a45cf0",
+    "lamp_range": 3.0,
+    "lamp_fixed": 0.0,
+    "note": "void edge wall (face +z into the void); rot pi / +-pi/2 for the other sides; keep fx and spawns 1 m back from the lip",
+    "no_props_within_m": 1.0
+   },
+   "blockers": [],
+   "fx": [
+    "void_pool"
+   ]
+  },
+  "void_shard": {
+   "file": "void_shard.glb",
+   "kind": "prop",
+   "tris": 48,
+   "size": [
+    1.0,
+    0.8,
+    0.8
+   ],
+   "markers": {
+    "lamps": [
+     [
+      0,
+      0.3,
+      0.4
+     ]
+    ],
+    "chimneys": [],
+    "windows": [],
+    "doors": [],
+    "lamp_color": "#a45cf0",
+    "lamp_range": 2.5,
+    "lamp_fixed": 0.0,
+    "note": "floating marble shard in the void (y -1.4 .. -0.6); decorative, no collision; >= 1.5 m from the bridge"
+   },
+   "blockers": [],
+   "fx": [
+    "void_motes"
+   ]
+  }
+ }
+}
