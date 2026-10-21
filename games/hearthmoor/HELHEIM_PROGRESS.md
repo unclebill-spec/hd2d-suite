@@ -29,3 +29,10 @@
 
 ## Art notes
 - The staging pack changed after READY.txt (03:19): neon sheets for gloam_knight / odric / mordrath (#a45cf0, #3a2458) plus `_safe` twins. Until READY.txt updates, hel_art.py installs the `_safe` twins (HEL_NEON_SCOPE empty).
+
+## Status 2026-10-21 05:35 EDT
+- game/helheim.js (areas, quests, stance, talk, gate) + game/helheim_boss.js (foes, Vesperin, Mordrath): split into real modules after the single-file write hit a review error. game.js [HELHEIM] hooks; smoke.py [HELHEIM] block.
+- preflight PASS. smoke_helheim PASS 27/27 (alf_qa/hel/sm4). niflheim.js untouched (redeemable only imported), so smoke_niflheim not required.
+- check_scene --quick: helheim FAIL (sprites_sharp / colours / phone: NPCs overlapped by fx, roofs and each other) -> NPCs moved (09d8dc0), recheck queued; hh_shore FAIL (grades night_warm_frac 0.0017 < 0.002: no warm light in the shore; effects_sharp glowplant_toadcap 0.93) - no allowed lever fixes these; hh_archive PASS; ossuary / ossuary2 pending.
+- check_palette (not edited): flags hhelite odric, hhenemy gloam_knight, boss_mordrath mordrath/_p2/_p3 for #3a2458 / #a45cf0 (its sprite rows only know biome + NEON_PETS_ALLOW).
+- Leftovers: audio REALM_OF untouched; Inkling flag only (not in PETS).
