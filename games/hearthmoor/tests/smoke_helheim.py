@@ -131,7 +131,7 @@ def steps(b, url, T, size, errors, rep, stub=None, shots=None, only=""):
         T.step("Vesperin splits into mist-bats at 50 %", st["split"] and st["p2"], st=st)
         load("ossuary2", "&hhq=ossuary", spawn="o9")
         T.step("Mordrath spawns in O9", T.until("(() => { const B = window.__hm.hel.bosses; if (!B.boss) B.start('mordrath'); return !!B.boss && B.boss.which === 'mordrath'; })()", 30))
-        T.ev("(() => { const h = window.__hm.hel, c = window.__hd2d.ctx; h.moveTo(0, -36.6); c.player.rot = Math.PI; return 1; })()")   # frame the camera on him (8x, at [0, -43.4])
+        T.ev("(() => { const h = window.__hm.hel, c = window.__hd2d.ctx; window.__hm.S.flags.os_rhythm = 1; h.moveTo(0, -36.6); c.player.rot = Math.PI; return 1; })()")   # frame the camera on him (8x, at [0, -43.4])
         frames(20); rep["shots"]["boss_mordrath"] = T.shot("boss_mordrath")
         roles = []
         for fr in (1.0, 0.5, 0.2):
