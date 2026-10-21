@@ -318,7 +318,7 @@ QUICK = {
     "storm": "H", "storms": "H", "riftstorm": "H", "bounty": "H",
 }
 TIMING = FIX / "smoke_timing.json"   # seconds per segment from the last passing runs (shard balancing only)
-DEFAULT_SECONDS = {"A": 560, "B": 260, "C": 230, "D": 420, "E": 25, "F": 150, "G": 200, "H": 170, "I": 90, "J": 120, "K": 60, "L": 60, "M": 60}   # D ~7 min (music plays live in the Plaza only; other realms checked statically)
+DEFAULT_SECONDS = {"A": 560, "B": 260, "C": 230, "D": 5640, "E": 25, "F": 150, "G": 200, "H": 170, "I": 90, "J": 120, "K": 60, "L": 60, "M": 60}   # D: music step is Plaza-only + static (~20 s); the rest of D (realm content) dominates, re-measure from segd_trim.log
 
 
 def seg_seconds():
