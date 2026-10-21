@@ -177,7 +177,7 @@
    "role": "innkeeper",
    "name": "Hel",
    "pos": [
-    6.4,
+    3.15,
     -5.4
    ],
    "facing": "down",
@@ -192,7 +192,7 @@
    "role": "dwarftrader",
    "name": "Corvin Lanternmere",
    "pos": [
-    8.2,
+    9.45,
     -1.0
    ],
    "facing": "left",
@@ -207,8 +207,8 @@
    "role": "poolkeeper",
    "name": "Hettie Tallow",
    "pos": [
-    -4.6,
-    -0.6
+    -7.35,
+    1.4
    ],
    "facing": "right",
    "behavior": "idle",
@@ -222,8 +222,8 @@
    "role": "wispcatcher",
    "name": "Hollin",
    "pos": [
-    -8.4,
-    5.4
+    -3.65,
+    7.9
    ],
    "facing": "down",
    "behavior": "idle",
@@ -237,7 +237,7 @@
    "role": "shopkeeper",
    "name": "Old Marrow",
    "pos": [
-    -4.4,
+    -10.65,
     -1.8
    ],
    "facing": "down",
@@ -252,8 +252,8 @@
    "role": "elffolk",
    "name": "A Gloamhaven ghost",
    "pos": [
-    -4.6,
-    -6.6
+    -6.35,
+    -7.85
    ],
    "facing": "right",
    "behavior": "idle",
