@@ -30,7 +30,7 @@ export const ASG_AREAS = Object.keys(ASG_PLANNED);
 const OUTDOOR = { asgard: 1 };   // thunderstorms strike open ground only
 
 const PHASE_ROLE = { sentinelprime: ['sentinelprime', 'sentinel_p2', 'sentinel_p3'], aurelion: ['aurelion', 'aurelion', 'aurelion_p3'] };
-const ART_ROLE = { rune_construct: 'storm_sentinel', as_guard: 'gilded_inquisitor' };
+const ART_ROLE = { rune_construct: 'storm_sentinel' };   // as_guard has its own sheet now (asgard_extra ax_folk)
 const flags = (S) => (S.flags = S.flags || {});
 const F = (S) => S.flags || {};
 const q = (S, k) => (S.quests || {})[k] || 0;
@@ -98,7 +98,7 @@ Object.assign(ENEMIES, {
   storm_sentinel: { name: 'Storm sentinel', scale: 1.8, hp: 220, dmg: 18, speed: 0.8, reach: 2.1, windup: 1.0, cd: 2.4, aggro: 6, r: 0.65, push: 0.15, heavy: true, golem: true, element: 'lightning' },
   storm_centaur: { name: 'Storm-centaur lancer', scale: 1.6, hp: 140, dmg: 16, speed: 2.4, reach: 2.0, windup: 0.5, cd: 1.7, aggro: 8, r: 0.6, push: 0.4, element: 'lightning' },
   gilded_inquisitor: { name: 'Gilded Inquisitor', hp: 95, dmg: 14, speed: 1.9, reach: 1.5, windup: 0.4, cd: 1.5, aggro: 7.5, r: 0.4, push: 0.5, elite: true, bolt: 'bolt', element: 'light' },   // hooded tabard, mask, no plate
-  as_guard: { name: 'Goldspire guard', hp: 90, dmg: 12, speed: 1.8, reach: 1.5, windup: 0.5, cd: 1.6, aggro: 7, r: 0.4, push: 0.5 },   // the Thunder Toll's pillar guards (no guard sheet: the Inquisitor look stands in)
+  as_guard: { name: 'Goldspire guard', hp: 90, dmg: 12, speed: 1.8, reach: 1.5, windup: 0.5, cd: 1.6, aggro: 7, r: 0.4, push: 0.5 },   // the Thunder Toll's pillar guards (asgard_extra as_guard sheet)
   rune_construct: { name: 'Rune-construct', scale: 1.0, hp: 60, dmg: 9, speed: 1.2, reach: 1.5, windup: 0.8, cd: 2.2, aggro: 8, r: 0.45, push: 0.3, golem: true, element: 'lightning' },   // the Rune Trial (1x)
   storm_sentinel_gate: { name: 'Storm sentinel', scale: 2, hp: 300, dmg: 18, speed: 0.8, reach: 2.4, windup: 1.0, cd: 2.4, aggro: 9, r: 0.8, push: 0.15, heavy: true, golem: true, element: 'lightning', respawn: 1e9 },   // the naming (story 3.1)
   fridleif_boss: { name: 'Captain Fridleif Thunderhelm', scale: 3, hp: 420, dmg: 18, speed: 1.3, reach: 2.6, windup: 0.6, cd: 1.8, aggro: 9, r: 0.8, push: 0.2, heavy: true, boss: true, trial: true, respawn: 1e9 },   // conquer: yields

@@ -20,6 +20,10 @@ from PIL import Image
 GAME = Path(__file__).resolve().parents[2] / "games" / "hearthmoor"
 STAGING = Path("/workspace/hearthmoor-staging/art/asgard")
 ST = GAME / "art" / "asgard"
+# [ASGARD EXTRA] follow-up pack (README there): as_guard + ingrith (ax_folk), red P3 (ax_aurelion_p3 replaces aurelion_p3), bigger ax_centaur (replaces storm_centaur),
+# the G7 void kit (void_floor / void_rim / void_shard) and a superset as_fx atlas (+ void_motes / void_pool / void_shade). Copied to art/asgard_extra/ (add / overwrite only).
+STAGING_X = Path("/workspace/hearthmoor-staging/art/asgard_extra")
+STX = GAME / "art" / "asgard_extra"
 ARGS = [a for a in sys.argv[1:] if not a.startswith("--")]
 FORCE = "--force" in sys.argv
 PLANNED = ["asgard", "gs_hall", "gs_temple", "reliquary", "reliquary2"]   # story 2.1; the Reliquary is two corridors (like frozenspire / frozenspire2), see ASGARD_PROGRESS.md
@@ -27,7 +31,7 @@ AREAS = ARGS or PLANNED
 
 # stock actor role (what the area spec's actors use) -> the pack's role, per area (re-pointed only if the area's actors.json has that stock role).
 TOWNS = {
-    "asgard": {"innkeeper": "envoy_as", "dwarftrader": "as_trader", "wispcatcher": "groom", "lanternseller": "sigrun"},
+    "asgard": {"innkeeper": "ingrith", "dwarftrader": "as_trader", "wispcatcher": "groom", "lanternseller": "sigrun"},
     "gs_hall": {"innkeeper": "lordwarden", "wispcatcher": "runemaster", "elffolk": "fridleif"},
     "gs_temple": {"innkeeper": "priestess", "elffolk": "as_guide"},
     "reliquary": {}, "reliquary2": {"elffolk": "as_guide"},
@@ -37,21 +41,26 @@ FOES = ["light_wraith", "storm_sentinel", "storm_centaur", "gilded_inquisitor"]
 SHEETS = {  # sheet name -> (staging json, {area role: staging role}); every area gets these
     "asfolk": (ST / "sprite" / "as_folk.json", {r: r for r in FOLK}),
     "asenemy": (ST / "sprite" / "as_enemies.json", {r: r for r in FOES}),
-    "assigrun": (ST / "sprite" / "as_sigrun.json", {"sigrun": "sigrun"}),   # the companion (no pet in this realm); wings are the fx sigrun_wings (README decision 2)
+    "assigrun": (ST / "sprite" / "as_sigrun.json", {"sigrun": "sigrun"}),
+    "axfolk": (STX / "sprite" / "ax_folk.json", {"as_guard": "as_guard", "ingrith": "ingrith"}),   # extra: the Goldspire guards (the Thunder Toll foes) + Envoy Ingrith
+    "axcent": (STX / "sprite" / "ax_centaur.json", {"storm_centaur": "storm_centaur"}),   # extra: REPLACES asenemy's storm_centaur (later sheet wins)   # the companion (no pet in this realm); wings are the fx sigrun_wings (README decision 2)
 }
 IMAGE = {}   # sheet -> staging png when it is not the json's own image
 ELITES = ("aselite", (ST / "sprite" / "as_elites.json", {r: r for r in ("severin", "storm_sentinel_gate", "fridleif_boss", "centaurchamp", "elderwraith")}))
 EXTRA = {    # sheets only where the fight / scene is (their own frame size)
     "asgard": {ELITES[0]: ELITES[1]},      # the naming's gate sentinel, Fridleif (conquer), the sky-plain rares
     "reliquary": {ELITES[0]: ELITES[1], "boss_sentinel": (ST / "sprite" / "boss_sentinel.json", {r: r for r in ("sentinelprime", "sentinel_p2", "sentinel_p3")})},   # Severin G5, the 5x golem G4
-    "reliquary2": {ELITES[0]: ELITES[1], "boss_aurelion": (ST / "sprite" / "boss_aurelion.json", {r: r for r in ("aurelion", "aurelion_p3", "aurelion_wraith", "aurelion_rest")})},   # 7x; aurelion_rest is its own role (decision 1)
+    "reliquary2": {ELITES[0]: ELITES[1], "boss_aurelion": (ST / "sprite" / "boss_aurelion.json", {r: r for r in ("aurelion", "aurelion_p3", "aurelion_wraith", "aurelion_rest")}),
+                   "axp3": (STX / "sprite" / "ax_aurelion_p3.json", {"aurelion_p3": "aurelion_p3"})},   # extra: the red P3 REPLACES boss_aurelion's aurelion_p3 (no neon)   # 7x; aurelion_rest is its own role (decision 1)
     "gs_hall": {"boss_aurelion": (ST / "sprite" / "boss_aurelion.json", {"aurelion_rest": "aurelion_rest"})},   # befriend: his statue (the rest pose) in the Thunder Hall
 }
 # Scoped neon: EMPTY (README "Neon": no sprite uses neon). Never wider.
 ASG_NEON_SCOPE = {}
-FX_DROP = {}   # per-area placed decals left out when check_scene no_bloom names them: {area: {(effect, x, z)}}
+FX_DROP = {"reliquary2": {("pool_gold", 0.0, -17.0)}}   # the pack drops the G7 bridge gold pool (nothing sits on the bridge over the void)   # per-area placed decals left out when check_scene no_bloom names them: {area: {(effect, x, z)}}
 FX_SKIP = {"rain", "tile_flash"}   # flat one-colour frames: their crop never matches the atlas frame (check_scene gamefx_sharp atlas_corr 0.0). rain: the weather preset draws rain; tile_flash: the game uses strike_warning / rune_pulse. See ASGARD_PROGRESS.md
 FX_FILE = ("gamefx", "as_fx.json")
+ENEMY_ROLES = {"as_guard"}   # folk-sheet roles that only ever spawn as foes (the Thunder Toll guards)
+FXSRC = STX / "gamefx"   # the extra pack's as_fx is a superset of asgard/gamefx/as_fx (all rows + the G7 void rows)
 
 
 def neon_audit(src, sm, img_name, roles):
@@ -87,6 +96,9 @@ def copy_staging():
         return False
     ST.mkdir(parents=True, exist_ok=True)
     shutil.copytree(STAGING, ST, dirs_exist_ok=True)
+    if (STAGING_X / "READY.txt").exists():
+        STX.mkdir(parents=True, exist_ok=True)
+        shutil.copytree(STAGING_X, STX, dirs_exist_ok=True, ignore=shutil.ignore_patterns("__pycache__"))
     return True
 
 
@@ -112,7 +124,7 @@ def sprites(area):
             prev = m["roles"].get(ar, {})
             m["roles"][ar] = {"sheet": nm, "row": r["row"], "kind": r.get("kind", prev.get("kind", "creature")),
                               "anims": r.get("anims", ["idle", "walk"]), "desc": r.get("desc", ""),
-                              **({"enemy": True} if r.get("enemy") or prev.get("enemy") else {}),
+                              **({"enemy": True} if r.get("enemy") or prev.get("enemy") or ar in ENEMY_ROLES else {}),
                               **({"follower": True} if nm == "assigrun" else {})}
         (d / f"{nm}.json").write_text(json.dumps(out, indent=1))
         m["sheets"][nm] = {"json": f"{nm}.json", "image": f"{nm}.png"}
@@ -121,17 +133,17 @@ def sprites(area):
 
 def kit(area):
     d = GAME / "areas" / area / "public" / "art" / "kit"
-    for g in sorted((ST / "kit").glob("*.glb")):
+    for g in sorted((ST / "kit").glob("*.glb")) + sorted((STX / "kit").glob("*.glb")):
         shutil.copy2(g, d / g.name)
 
 
 def gamefx(area):
-    if not have(ST / "gamefx" / "as_fx.json"): return False
+    if not have(FXSRC / "as_fx.json"): return False
     d = GAME / "areas" / area / "public" / "art" / "gamefx"
     if not (d / "gamefx.json").exists() and not (d / "gamefx.base.json").exists():
         # no atlas yet (wispwood): start from an empty base so the staging rows are the whole atlas, and point the scene at it
         d.mkdir(parents=True, exist_ok=True)
-        sj = json.loads((ST / "gamefx" / "as_fx.json").read_text())
+        sj = json.loads((FXSRC / "as_fx.json").read_text())
         (d / "gamefx.base.json").write_text(json.dumps({k: sj[k] for k in ("tool", "biome", "seed", "cell", "cast_sets", "cycle")} | {"image": "gamefx.png", "size": [0, 0], "effects": {}}))
         Image.new("RGBA", (sj["cell"], sj["cell"]), (0, 0, 0, 0)).save(d / "gamefx.base.png")   # one blank row
         sp = GAME / "areas" / area / "scene.json"; sc = json.loads(sp.read_text())
@@ -140,9 +152,9 @@ def gamefx(area):
     bj, bp = d / "gamefx.base.json", d / "gamefx.base.png"
     if not bj.exists():
         shutil.copy2(d / "gamefx.json", bj); shutil.copy2(d / "gamefx.png", bp)
-    base, sj = json.loads(bj.read_text()), json.loads((ST / "gamefx" / "as_fx.json").read_text())
+    base, sj = json.loads(bj.read_text()), json.loads((FXSRC / "as_fx.json").read_text())
     assert base["cell"] == sj["cell"], "cell size mismatch"
-    bi, si = Image.open(bp).convert("RGBA"), Image.open(ST / "gamefx" / sj["image"]).convert("RGBA")
+    bi, si = Image.open(bp).convert("RGBA"), Image.open(FXSRC / sj["image"]).convert("RGBA")
     # the ! / ? quest-marker glyphs (quest_mark, quest_turnin) copied from the plaza atlas (same 48 px cell): the realm areas' atlases had none,
     # so the Niflheim NPC markers (Gudrun, Hrefna, Tove...) would spawn nothing
     pm = json.loads((GAME / "areas/plaza/public/art/gamefx/gamefx.json").read_text()); pim = Image.open(GAME / "areas/plaza/public/art/gamefx/gamefx.png").convert("RGBA")
@@ -186,6 +198,28 @@ SPIRE_ROOMS = {
 SPIRE_TOP = {"reliquary": -64.0, "reliquary2": -50.0}   # north end: where the corridor's back wall goes
 SPIRE_X = 7.9   # side wall line (marble_wall pieces), the spec's own wall blocks sit at 8.2
 VOID = {"reliquary2": [(-8.2, -19.0, -1.0, -12.5), (1.0, -19.0, 8.2, -12.5)]}   # G7's gold-lit void beside the Rune Bridge (the spec blocks it): no floor tiles there
+# G7 void (extra pack, README "G7 void placement"): void_floor tiles (their mesh sits 2.4 m down) over the void rects, void_rim on the lips (the mesh faces +z into the
+# void: rot pi on the south lip, 0 on the north lip, +-pi/2 on the bridge sides), void_shard floating >= 1.5 m from the bridge; motes / pools / shade + violet light stay in the void.
+def _void_pieces(area):
+    out = []
+    for (x0, z0, x1, z1) in VOID.get(area, []):
+        xs = [x0 + 1.0 + 2.0 * i for i in range(int((x1 - x0) / 2.0 + 0.5))]
+        zs = [z1 - 1.0 - 2.0 * j for j in range(int((z1 - z0) / 2.0 + 0.5))]
+        out += [("void_floor", [round(x, 2), round(z, 2)], "fixed", {}) for x in xs for z in zs]
+        out += [("void_rim", [round(x, 2), z1 - 0.2], "fixed", {"rot": 3.141592653589793}) for x in xs]   # just inside the lip, the glow face toward the void
+        out += [("void_rim", [round(x, 2), z0 + 0.2], "fixed", {}) for x in xs]
+        bx = x1 - 0.2 if x1 < 0 else x0 + 0.2   # the bridge-side lip
+        out += [("void_rim", [bx, round(z, 2)], "fixed", {"rot": (-1.5707963267948966 if x1 < 0 else 1.5707963267948966)}) for z in zs]
+    return out
+VOID_SHARDS = {"reliquary2": [(-4.4, -1.2, -17.2), (4.6, -0.8, -14.6), (-5.6, -1.5, -14.0), (3.4, -1.0, -17.6)]}
+VOID_FX = {"reliquary2": {"decals": [("void_pool", (-4.0, -17.0)), ("void_pool", (4.0, -14.4)), ("void_pool", (-5.0, -14.2)), ("void_pool", (5.4, -17.4)),
+                                     ("void_shade", (-2.6, -15.6)), ("void_shade", (2.8, -16.4)), ("void_shade", (-6.4, -16.8))],
+                          "bills": [("void_motes", (-3.4, -2.3, -15.2)), ("void_motes", (3.6, -2.3, -16.0)), ("void_motes", (-6.0, -2.3, -17.6))],
+                          "lights": [((-4.0, -1.6, -17.0), "#a45cf0", 4.5, 0.9), ((4.0, -1.6, -14.4), "#a45cf0", 4.5, 0.9), ((-5.0, -1.6, -14.2), "#a45cf0", 4.5, 0.9), ((5.4, -1.6, -17.4), "#a45cf0", 4.5, 0.9)]}}
+# G7: the ledge brazier (and its flame, pool, light) moved back from the void lip (it was 0.9 m from the z -12.5 edge; now 1.6 m, on the ledge). Matched at 0.1 m.
+SPOT_MOVE = {"reliquary2": {(-1.4, -11.6): (-2.4, -10.9)}}
+def _mv(area, x, z):
+    return SPOT_MOVE.get(area, {}).get((round(x, 1), round(z, 1)), (x, z))
 # corridor rooms: pieces that would close the corridor are left out (the G1 inner door: the Reliquary door stands in the Dawn Temple; back-wall windows across the middle)
 def _corridor_skip(key, name, x, z):
     if name == "reliquary_door": return True
@@ -218,7 +252,10 @@ def spire_layout(area):
             ex = {"rot": rot} if rot else {}
             if name in ("gold_orb_chain",): ex["y"] = y
             if (area, name, round(x, 1), round(z + zc, 1)) in PIECE_MOVE: x, z = PIECE_MOVE[(area, name, round(x, 1), round(z + zc, 1))]; z -= zc
-            out.append((name, [x, z + zc], "fixed", ex))
+            mx, mz = _mv(area, x, z + zc)
+            out.append((name, [mx, mz], "fixed", ex))
+    out += _void_pieces(area)
+    out += [("void_shard", [x, z], "fixed", {"y": y}) for (x, y, z) in VOID_SHARDS.get(area, [])]
     z = z_hi
     while z > z_lo - 0.1:   # side walls, the full length
         for sx in (-SPIRE_X, SPIRE_X):
@@ -246,7 +283,9 @@ def layout_lights(area):
     for key, zc in _rooms(area):
         if key not in lay: continue
         for (p, col, rng, fix) in lay[key].get("extra_lights", []):
-            out.append(((p[0], p[1], p[2] + zc), col, rng, fix))
+            mx, mz = _mv(area, p[0], p[2] + zc)
+            out.append(((mx, p[1], mz), col, rng, fix))
+    if area in VOID_FX: out += list(VOID_FX[area]["lights"])
     return out
 
 
@@ -265,11 +304,15 @@ def fx_table():
             if key not in lay: continue
             for d in lay[key].get("decals", []):
                 if d[0] in FX_SKIP or (d[0], round(d[1][0], 2), round(d[1][1] + zc, 2)) in FX_DROP.get(area, ()): continue
-                rows.append([d[0], [round(d[1][0], 2), round(d[1][1] + zc, 2)], 0])
+                mx, mz = _mv(area, d[1][0], d[1][1] + zc)
+                rows.append([d[0], [round(mx, 2), round(mz, 2)], 0])
             for b in lay[key].get("bills", []):
                 n, (x, y, z) = b[0], b[1]
                 if n in FX_SKIP or (n, round(x, 2), round(z + zc, 2)) in FX_DROP.get(area, ()): continue
-                rows.append([n, [round(x, 2), round(z + zc, 2)], round(y, 2)])
+                mx, mz = _mv(area, x, z + zc)
+                rows.append([n, [round(mx, 2), round(mz, 2)], round(y, 2)])
+        vf = VOID_FX.get(area, {})
+        rows += [[n, [x, z], 0] for n, (x, z) in vf.get("decals", [])] + [[n, [x, z], y] for n, (x, y, z) in vf.get("bills", [])]
         tab[area] = rows
     body = ",\n".join(f"  {a}: {json.dumps(r, separators=(',', ':'))}" for a, r in tab.items())
     FX_JS.write_text("// GENERATED by tools/hearthmoor/asg_art.py (fx_table): the pack's animated pools / flames / arcs / motes per area. Do not edit.\nexport const AS_FX = {\n" + body + ",\n};\n")
@@ -297,7 +340,7 @@ def layout_place(area):
 
 # Lamps dimmed in reach so they do not tint the few-colour sprites standing near them (check_scene colours) or blow the marble to 255 (no_bloom). Tune from check_scene.
 LAMP_CAP = {}
-NO_LIGHT = {("gs_temple", "temple_window")}   # (area, piece): lamps kept as glow sprites but not real point lights. The temple windows' panes clipped red at night (check_scene no_bloom)
+NO_LIGHT = {("gs_temple", "temple_window"), ("reliquary2", "void_rim")}   # + the 22 G7 void rims: glow strip only, the void's violet comes from its own four pools of light   # (area, piece): lamps kept as glow sprites but not real point lights. The temple windows' panes clipped red at night (check_scene no_bloom)
 EXTRA_CAP = {"gs_temple": 4.0}     # area -> cap for the pack's extra pools (range < 9). gs_temple: the violet window pools stacked on the window lamps (check_scene no_bloom, night)
 LAMP_CAP_AREA = {a: dict(LAMP_CAP) for a in PLANNED}
 LAMP_CAP_AREA["gs_temple"]["temple_window"] = 3.0   # the six violet windows clipped the night frame (check_scene no_bloom)
@@ -309,6 +352,7 @@ def place(area):
     from array import array
     sp = GAME / "areas" / area / "scene.json"; sc = json.loads(sp.read_text())
     pieces = json.loads((ST / "kit" / "kit.json").read_text())["pieces"]
+    if (STX / "kit" / "kit.json").exists(): pieces.update(json.loads((STX / "kit" / "kit.json").read_text())["pieces"])   # the G7 void pieces
     NOBLOCK = {n for n, p in pieces.items() if not p.get("blockers")} | WALK   # kit.json blockers [] = walkable / hanging: no blocker
     C = sc["collision"]; C.setdefault("base_data", C["data"])
     d = array("h"); d.frombytes(base64.b64decode(C["base_data"]))
