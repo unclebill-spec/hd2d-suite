@@ -109,15 +109,15 @@ def steps(b, url, T, size, errors, rep, stub=None, shots=None, only=""):
         S("S.flags.hh_mordrath = 0; return 1;"); w0 = hel("qaFinale(5)")
         S("S.flags.hh_mordrath = 1; return 1;"); w1 = hel("qaFinale(5)")
         T.step("Mordrath's fall removes exactly one finale wave", w0 == 5 and w1 == 4, w0=w0, w1=w1)
-        # pale return: cosmetic flag only, no stat change
-        S("S.flags.hh_mordrath = 0; S.flags.fallen_ally = 'dagna'; S.quests.hh_home = 2; return 1;")
+        # pale return: a cosmetic flag only. Same start state, walked home (kind) vs dragged (defiant): stats and max HP must match.
         load("helheim", "&hhq=defiant")
-        S("S.flags.fallen_ally = 'dagna'; S.quests.hh_home = 2; S.flags.hel = 'defiant'; return 1;")
-        before = T.ev("JSON.stringify(window.__hm.S.stats || window.__hm.S.hero_stats || null)")
-        hel("qaSpot('hh_drag')"); T.ev("(() => { const G = window.__hm; if (G.dlg && G.dlg.then) { const t = G.dlg.then; G.dropDialogue(); t(G); } })()"); frames(2)
-        after = T.ev("JSON.stringify(window.__hm.S.stats || window.__hm.S.hero_stats || null)")
-        a = sv()
-        T.step("dragged back by force returns pale (flag only), stats unchanged", a["pale"] and before == after and a["quests"]["hh_home"] == 3, pale=a["pale"])
+        S("S.flags.fallen_ally = 'dagna'; S.quests.hh_home = 2; S.flags.hel = 'defiant'; window.__hhSnap = JSON.stringify(S); return 1;")
+        RUN = "(() => { const G = window.__hm; G.hel.qaSpot('hh_drag'); if (G.dlg && G.dlg.then) { const t = G.dlg.then; G.dropDialogue(); t(G); } return 1; })()"
+        STAT = "JSON.stringify({ stats: window.__hm.S.stats || null, max: window.__hm.combat.maxHp() })"
+        T.ev(RUN); frames(2); pale_stats = T.ev(STAT); a = sv()
+        S("const o = JSON.parse(window.__hhSnap); for (const k of Object.keys(S)) delete S[k]; Object.assign(S, o); S.flags.hel = 'kind'; return 1;")
+        T.ev(RUN); frames(2); kind_stats = T.ev(STAT); k = sv()
+        T.step("dragged back by force returns pale (flag only): same stats / max HP as a kind return", a["pale"] and not k["pale"] and pale_stats == kind_stats and a["quests"]["hh_home"] == 3 and k["quests"]["hh_home"] == 3, pale=pale_stats, kind=kind_stats)
         # rooms
         for ar, sp in ROOMS:
             load(ar, "&hhq=done&hhfx=1", spawn=sp)
