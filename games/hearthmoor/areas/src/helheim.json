@@ -192,8 +192,8 @@
    "role": "dwarftrader",
    "name": "Corvin Lanternmere",
    "pos": [
-    9.95,
-    3.0
+    8.45,
+    8.25
    ],
    "facing": "left",
    "behavior": "idle",
@@ -207,8 +207,8 @@
    "role": "poolkeeper",
    "name": "Hettie Tallow",
    "pos": [
-    -10.6,
-    -1.1
+    -4.6,
+    10.4
    ],
    "facing": "right",
    "behavior": "idle",
@@ -237,8 +237,8 @@
    "role": "shopkeeper",
    "name": "Old Marrow",
    "pos": [
-    -10.65,
-    -3.8
+    4.1,
+    4.7
    ],
    "facing": "down",
    "behavior": "idle",
