@@ -1929,6 +1929,15 @@ def run(out, simscale=4, size=(960, 540), segs=SEGS):
                 rep["pass"] = False
                 rep["error"] = f"asgard: {e}"[:400]
         # [ASGARD] end
+        # [HELHEIM] begin: the Helheim realm (tests/smoke_helheim.py), own context again
+        if rep["pass"]:
+            try:
+                import smoke_helheim  # noqa: E402
+                smoke_helheim.steps(b, url, T, size, errors, rep, STUB, out)
+            except Exception as e:  # noqa: BLE001
+                rep["pass"] = False
+                rep["error"] = f"helheim: {e}"[:400]
+        # [HELHEIM] end
         # ---------------------------------------------------------- v1 save migration (old saves still load)
         if rep["pass"] and "E" in segs:
             seg_mark("E")
