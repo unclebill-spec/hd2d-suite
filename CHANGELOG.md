@@ -2,6 +2,12 @@
 
 Dates are America/New_York. Newest first. Keep this current with every change you push.
 
+## 2026-10-21 (America/New_York): Hearthmoor Asgard realm LIVE (merge of Master Builder 1e10448 + main 645be42 via hearthmoor-asgard-merge)
+
+- Asgard: Goldspire hub, gs_hall, gs_temple, reliquary, reliquary2 merged with main (smoke_asgard, smoke_niflheim, check_all --lowres on the 5 areas, check-sprite pass on the 6 actor sheets; the gamefx atlas is not an actor sheet).
+- Music: Asgard areas reuse the Alfheim track (no Asgard track yet).
+- Screenshot: docs/screenshots/asgard_goldspire.png
+
 ## 2026-10-21 (America/New_York): Hearthmoor realm music LIVE (merge of `hearthmoor-music` 0a9ca64 + main aa0c99f via `hearthmoor-music-merge`)
 - **Merge:** conflicts only in CHANGELOG.md (both entries kept) and `games/hearthmoor/sw.js` (regenerated with `build.write_pwa()`, precaches `audio/`). Smoke seg D default estimate raised to ~94 min (the music step visits every realm).
 - **Checks on the merge:** preflight PASS, `smoke_niflheim`, music static check (37 areas all mapped in `REALM_OF`, 8 tracks `audio/music/music_<t>.ogg` present and precached). The first preflight / smoke_niflheim run (Oct 20 16:08) failed with 'Could not create a WebGL context' (SwiftShader context failure while other browser jobs were running); no code cause, rerun holding both `browser.lock` and `browser-mb.lock`. The first static check looked for `<t>.ogg` instead of `music_<t>.ogg` (check bug, not a game bug).

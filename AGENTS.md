@@ -15,6 +15,7 @@ Hearthmoor batch 1 (6.2-6.5), batch 2 (6.6-6.8), the **Alfheim realm** (4 areas)
 - Testing policy: batch 3-4 additions with quick checks per change, then a full smoke + check_all before publishing. Secret scan before every push.
 
 - **Music (2026-10-19, live 2026-10-21 via `hearthmoor-music-merge`):** realm themes in `games/hearthmoor/audio/music/` (see `audio/README.md` for the area -> track map, `audio/LICENSES.md` ledger: every new audio file gets a row; CC0 / CC-BY only). `Ambient` in `game/audio.js` owns the music channel (`setBattle`, `setMusicVol`, `toggleMusic`, `musicState()`). New areas: add their id to `REALM_OF` in audio.js.
+- **Asgard (Master Builder `realm-asgard` 1e10448, merged 2026-10-21 via `hearthmoor-asgard-merge`):** Goldspire (`asgard`, `gs_hall`, `gs_temple`) and the Gilded Reliquary (`reliquary` G1-G5, `reliquary2` G6-G9); bosses Sentinel Prime (5x) and Aurelion (7x). Test: `tests/smoke_asgard.py`. Music: the five areas reuse the Alfheim track in `REALM_OF` until an Asgard track exists.
 
 ## Before you start / before you stop
 1. **`git pull` first**, every time you resume.
