@@ -2,6 +2,11 @@
 
 Dates are America/New_York. Newest first. Keep this current with every change you push.
 
+## 2026-10-21 (America/New_York): Hearthmoor Asgard extras LIVE (merge of Master Builder 99f9b16 + main 24879e7 via hearthmoor-asgx-merge)
+
+- New sprites: as_guard + ingrith (`axfolk`), the red Aurelion phase 3 (`axp3`, 7x), a bigger 1.6x storm_centaur (`axcent`) replacing the old one; the G7 void kit. Code: `swapRole` in `game/asgard.js` re-binds the atlas across same-grid sheets.
+- Merge: sw.js conflict regenerated with `build.write_pwa()`. Checks on the merged code: preflight, smoke_asgard, check_all --lowres on asgard/gs_hall/gs_temple/reliquary/reliquary2, check-sprite PASS on ax_folk/ax_centaur/ax_aurelion_p3; scale OK (Aurelion P3 200 px vs player 29 px = 6.9x; centaur 72 px = 2.5x). Screenshot `docs/screenshots/asgard_extras.png`.
+
 ## 2026-10-21 (America/New_York): Hearthmoor Asgard music track (branch `hearthmoor-asgard-music`)
 
 - New `audio/music/music_asgard.ogg` (procedural CC0, ~80 KB mono 22.05 kHz Vorbis, 8-bar seamless loop, 29.1 s): C major golden bells, regal choir, low drone, distant soft thunder rolls. Made by `tools/hearthmoor/gen_realm_music.py` (new `asgard` entry + `thunder` voice; optional track names after out_dir regenerate only those).
