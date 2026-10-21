@@ -709,7 +709,15 @@ export class Asgard {
   }
   call(text) { const F2 = this.G.svart && this.G.svart.follow; if (F2 && F2.on && F2.id === 'sigrun' && F2.bark) F2.bark(text); }
   swapRole(e, role) {
-    const A = this.ctx && this.ctx.actors, f = A && A.sheetOf && A.sheetOf(role), a = e.a; if (!f || f.S !== a.S) return false;
+    const A = this.ctx && this.ctx.actors, f = A && A.sheetOf && A.sheetOf(role), a = e.a; if (!f) return false;
+    const S0 = a.S || A.main;
+    if (f.S !== S0) {   // [ASGARD EXTRA] the red P3 lives on its own sheet (axp3, same 144x224 grid as boss_aurelion): re-bind the atlas in place
+      if (f.S.fw !== S0.fw || f.S.fh !== S0.fh) return false;
+      const u = a.mat.uniforms; u.uAtlas.value = f.S.tex; u.uPivot.value.set(f.S.pivot[0], f.S.pivot[1]);
+      if (a.xray) { a.xray.material.uniforms.uAtlas.value = f.S.tex; a.xray.material.uniforms.uPivot.value.set(f.S.pivot[0], f.S.pivot[1]); }
+      const ct = f.S.tex.clone(); ct.flipY = true; ct.needsUpdate = true; ct.repeat.set(f.S.fw / f.S.aw, f.S.fh / f.S.ah);
+      const dm = a.caster.customDepthMaterial; dm.map = ct; dm.needsUpdate = true; a.ctex.dispose(); a.ctex = ct; a.S = f.S;
+    }
     a.role = role; a.roleRow = f.role.row; a.kind = f.role.kind; a.anims = f.role.anims || ['idle', 'walk']; a.canCast = a.anims.includes('cast'); a.act = null; a.castT = 0; return true;
   }
   clearCopies(e) { for (const a of e.cl || []) { try { this.fxAt(this.ctx, 'wraith_split', a.x, a.y + 1.0, a.z, { duration: 0.8, fadeIn: 0 }); this.ctx.removeNpc(a); } catch (err) { /* gone */ } } e.cl = []; }
