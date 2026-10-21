@@ -320,6 +320,7 @@ LAMP_CAP = {"warm_lantern": 3.0, "dawn_flame_brazier": 3.0}   # the two approved
 NO_LIGHT = set()   # (area, piece): lamps kept as glow sprites but not real point lights
 EXTRA_CAP = {}     # area -> cap for the pack's extra pools (range < 9)
 LAMP_CAP_AREA = {a: dict(LAMP_CAP) for a in PLANNED}
+LAMP_CAP_AREA["helheim"].update(cold_fire_lamp=4.0, coldfire_brazier=4.0)   # the street lamps / braziers clipped the night frame after the NPC moves (check_scene no_bloom 0.0218 > 0.02)
 
 
 # check_scene effects_sharp lever (Cozy Builder, 2026-10-21): hh_shore's lake bubbles drift over the toadcap's lineup slot, so the shore's spells
