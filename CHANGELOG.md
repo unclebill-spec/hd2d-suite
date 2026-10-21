@@ -2,6 +2,11 @@
 
 Dates are America/New_York. Newest first. Keep this current with every change you push.
 
+## 2026-10-21 (America/New_York): Hearthmoor realm music LIVE (merge of `hearthmoor-music` 0a9ca64 + main aa0c99f via `hearthmoor-music-merge`)
+- **Merge:** conflicts only in CHANGELOG.md (both entries kept) and `games/hearthmoor/sw.js` (regenerated with `build.write_pwa()`, precaches `audio/`). Smoke seg D default estimate raised to ~94 min (the music step visits every realm).
+- **Checks on the merge:** preflight PASS, `smoke_niflheim`, music static check (37 areas all mapped in `REALM_OF`, 8 tracks `audio/music/music_<t>.ogg` present and precached). The first preflight / smoke_niflheim run (Oct 20 16:08) failed with 'Could not create a WebGL context' (SwiftShader context failure while other browser jobs were running); no code cause, rerun holding both `browser.lock` and `browser-mb.lock`. The first static check looked for `<t>.ogg` instead of `music_<t>.ogg` (check bug, not a game bug).
+- **Screenshot:** `docs/screenshots/music_options.png` (Options card with the music toggle and volume slider).
+
 ## 2026-10-19 (America/New_York): Hearthmoor realm music (branch hearthmoor-music)
 - `games/hearthmoor/audio/music/`: 8 procedural CC0 mono Vorbis loops (Midgard, Alfheim, Svartalfheim, Jotunheim, Muspelheim, Niflheim, battle, boss; ~525 KB) from `tools/hearthmoor/gen_realm_music.py`; ledger `audio/LICENSES.md`, area map `audio/README.md`.
 - `game/audio.js`: fetch + decodeAudioData loader, music bus with 1.6 s crossfades, loop by buffer length, ambient plucks / birds / pad ducked to 30% while music plays, synth-only fallback if a file fails; battle / boss switching from `combat.enemies` (chase / attack, 4 s linger; `D.boss` and not rare = boss).

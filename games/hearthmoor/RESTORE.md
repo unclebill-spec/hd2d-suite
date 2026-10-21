@@ -31,7 +31,7 @@ Repo handoff docs (in the suite root): [`AGENTS.md`](../../AGENTS.md), [`CHANGEL
   3. **Where's Pudding?:** Tib (Plaza) lost his cat. She is by the Mossglen shrine, and she follows you home through the gate. Reward: Tib's lucky acorn and the leaf gust charm.
 - **Look:** pixel billboard actors (20x32, 1 px ink outline, nearest-neighbour) in a lit 3D miniature. Locked 3/4 camera with mild tilt-shift, one warm key sun plus lamps, and sprite shadows. Day is warm, dusk is blue, night has orange windows. The HUD is parchment and carved wood. No bloom and no blurred sprites.
 - **Day cycle:** real-time, compressed: one whole day (day, dusk, night, dawn) takes 24 minutes (`?day=` seconds overrides). The time is saved with the game.
-- **Audio:** procedural WebAudio, no files. It has a soft pad, music-box plucks, birds by day, crickets at night, a shimmer in Mossglen, and chimes for pickups, errands and the portal.
+- **Audio:** procedural WebAudio ambience (soft pad, music-box plucks, birds by day, crickets at night, a shimmer in Mossglen, chimes for pickups, errands and the portal) plus realm music (2026-10-21): 8 CC0 Vorbis loops in `audio/music/` (six realms, battle, boss; ledger `audio/LICENSES.md`), 1.6 s crossfades, ambience ducked to 30% under music, Options `music: on/off` + volume slider; new areas need an entry in `REALM_OF` in `game/audio.js`.
 
 ## Controls
 
