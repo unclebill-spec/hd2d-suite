@@ -25,12 +25,24 @@ EXITS = {"helheim": {"hh_archive", "hh_shore", "bifrost"}, "hh_shore": {"helheim
 ROOMS = [("ossuary", f"o{i}") for i in range(1, 6)] + [("ossuary2", f"o{i}") for i in range(6, 10)]
 
 
+def _find(o, k):
+    if isinstance(o, dict):
+        if k in o:
+            yield o[k]
+        for v in o.values():
+            yield from _find(v, k)
+    elif isinstance(o, list):
+        for v in o:
+            yield from _find(v, k)
+
+
 def spec_ok(area):
-    s = json.loads((GAME / "areas" / "src" / f"{area}.json").read_text()) if (GAME / "areas" / "src" / f"{area}.json").exists() else None
-    if s is None:
-        return True, "spec json not found (built only)"
-    blob = json.dumps(s)
-    return ("stair" in blob and "ledge" in blob), "ledge+stair"
+    """real height: at least one terrace 1 m+ high and at least one stair (the Ossuary corridors: one raised platform + stair per room)"""
+    s = json.loads((GAME / "areas" / "src" / f"{area}.json").read_text())
+    ter, st = next(_find(s, "terraces"), []), next(_find(s, "stairs"), [])
+    rooms = {"ossuary": 5, "ossuary2": 4}.get(area, 1)
+    ok = sum(1 for t in ter if (t.get("h") or 0) >= 1.0) >= rooms and len(st) >= rooms
+    return ok, f"terraces>=1m {sum(1 for t in ter if (t.get('h') or 0) >= 1.0)}, stairs {len(st)}, need {rooms}"
 
 
 def steps(b, url, T, size, errors, rep, stub=None, shots=None, only=""):
