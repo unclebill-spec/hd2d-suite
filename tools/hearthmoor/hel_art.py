@@ -334,7 +334,7 @@ def spell_swap(area):
     j = json.loads(jp.read_text()); e = j.get("effects", j)
     for old, new in sw.items():
         if old in e and new in e: del e[old]
-    jp.write_text(json.dumps(j))
+    raw = jp.read_text(); jp.write_text(json.dumps(j, indent=1) if "\n" in raw[:200] else json.dumps(j))
 
 
 def place(area):
