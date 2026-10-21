@@ -2,6 +2,10 @@
 
 Dates are America/New_York. Newest first. Keep this current with every change you push.
 
+## 2026-10-21 (America/New_York): Hearthmoor Vanaheim smoke + Mossbrook terrace stair (Master Builder 8fd514c via hearthmoor-vana-merge)
+
+- New `tests/smoke_vanaheim.py` (20/20 PASS) and a Mossbrook terrace stair (`scene_stair_terrace.glb`); the height rule is now a hard fail. Checks: preflight, smoke_vanaheim, check_all --lowres on vanaheim/rotwood/verdant PASS.
+
 ## 2026-10-21 (America/New_York): Hearthmoor Asgard extras LIVE (merge of Master Builder 99f9b16 + main 24879e7 via hearthmoor-asgx-merge)
 
 - New sprites: as_guard + ingrith (`axfolk`), the red Aurelion phase 3 (`axp3`, 7x), a bigger 1.6x storm_centaur (`axcent`) replacing the old one; the G7 void kit. Code: `swapRole` in `game/asgard.js` re-binds the atlas across same-grid sheets.
