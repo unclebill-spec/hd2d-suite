@@ -2,6 +2,11 @@
 
 Dates are America/New_York. Newest first. Keep this current with every change you push.
 
+## 2026-10-21 (America/New_York): Hearthmoor Helheim LIVE (merge of Master Builder realm-helheim 1400dbc + main caa1177 via merge-helheim)
+
+- New realm Helheim: Gloamhaven, hh_shore, hh_archive, the Ossuary (ossuary/ossuary2); bosses Lord Vesperin (3x) and Mordrath, the Pale Sovereign (8x, 3 phases); scoped violet #a45cf0/#3a2458 on odric/gloam_knight/mordrath sheets only.
+- Merge: sw.js conflict regenerated with `build.write_pwa()`. Checks on the merged code: build.py exit 0, preflight + smoke_helheim; MB checks (check_scene x5, check_palette, secret scan) accepted. Screenshot `docs/screenshots/helheim_gloamhaven_night.png`.
+
 ## 2026-10-21 (America/New_York): Hearthmoor Vanaheim smoke + Mossbrook terrace stair (Master Builder 8fd514c via hearthmoor-vana-merge)
 
 - New `tests/smoke_vanaheim.py` (20/20 PASS) and a Mossbrook terrace stair (`scene_stair_terrace.glb`); the height rule is now a hard fail. Checks: preflight, smoke_vanaheim, check_all --lowres on vanaheim/rotwood/verdant PASS.
