@@ -83,15 +83,19 @@ def steps(b, url, T, size, errors, rep, stub=None, shots=None, only=""):
                 ov[ar] = o
             hmax = max(t["h"] for t in d["terraces"] if "wall" not in t["name"])
             stair = len(d.get("stairs", [])) >= 1
-            if ar == "vanaheim":
-                if not stair:
-                    gaps[ar] = f"terrace {hmax} m, no stair (pre-existing: the hub's raised ground is the back terrace)"
-                spec &= hmax >= 1.0 and len(d["grades"]) == 3
-            else:
-                spec &= hmax >= 1.0 and stair and len(d["grades"]) == 3
+            if not stair:
+                gaps[ar] = f"terrace {hmax} m, no stair"
+            spec &= hmax >= 1.0 and stair and len(d["grades"]) == 3
         rep["gaps"] = gaps
         T.step("no two floor props stacked (centres within 0.35 m) in the three specs", not ov, overlaps=ov)
-        T.step("specs: 1 m+ height and three grades; rotwood and verdant have a stair", spec, gaps=gaps)
+        T.step("specs: every area (the Mossbrook hub included) has a 1 m+ ledge with a stair and three grades", spec, gaps=gaps)
+        # ---- the Mossbrook hub stair is walkable up to the 2.4 m back terrace
+        load("vanaheim")
+        hs = json.loads((GAME / "areas" / "src" / "vanaheim.json").read_text())["stairs"][0]
+        tp(hs["x"], hs["z_top"] + 5.6); T.walk(hs["x"], hs["z_top"] - 1.2, 30); frames(4)
+        top = T.ev("(() => { const p = window.__hm.ctx.player; return { x: p.x, y: p.y, z: p.z }; })()")
+        rep["shots"]["hub_stair_top"] = T.shot("hub_stair_top")
+        T.step("Mossbrook: walking up the hub stair reaches the 2.4 m back terrace", top["y"] >= 2.3 and top["z"] < hs["z_top"], top=top, stair=hs)
         # ---- Burrowmoss's choice (fresh state)
         load("vanaheim")
         S("S.flags.alliance = {}; return 1;")
@@ -123,18 +127,24 @@ def steps(b, url, T, size, errors, rep, stub=None, shots=None, only=""):
         # ---- the Blight Regent
         jarea("rotwood", "from_mossbrook")
         T.ev("window.__hm.peace = true")
-        S("S.flags.rw_lock = 1; S.found[window.__hm.ctx.scene.game.thorns.brazier] = 1; return 1;")   # the root door and the thorn wall are covered by smoke.py J
+        light = "(id) => { const G = window.__hm, b = G.hollows.braziers.find((q) => q.id === id); G.hollows.spellAt(b.pos[0], b.pos[1]); return !!G.S.found[id]; }"
+        door = T.ev("window.__hm.ctx.scene.game.rootdoor")
+        lit = []
+        for bid in door["order"]:
+            lit.append(T.ev(f"({light})('{bid}')")); frames(3)
+        gal = T.ev(f"({light})(window.__hm.ctx.scene.game.thorns.brazier)"); frames(3)
+        T.step("the root door opens from its braziers cast-lit in the pulse order (rw_lock), the gallery brazier burns the thorns", all(lit) and gal and T.ev("!!window.__hm.S.flags.rw_lock"), lit=lit, gal=gal)
         bw = T.ev("window.__hm.ctx.scene.game.bower")
         tp(bw["pos"][0] - 1.0, 2.0); frames(4)
         st1 = T.ev("window.__hm.verdant.state()")
         frames(60); rep["shots"]["boss_regent_p1"] = T.shot("boss_regent_p1")
         T.ev("(() => { const G = window.__hm, e = G.verdant.boss; G.combat.damageEnemy(e, e.D.hp * 0.45, null, 0); })()"); frames(3)
         st2 = T.ev("window.__hm.verdant.state()")
-        T.ev("(() => { const G = window.__hm, e = G.verdant.boss; G.combat.damageEnemy(e, e.D.hp * 0.35, null, 0); G.verdant.pulseT = 3.0; })()"); frames(4)
-        st3 = T.ev("window.__hm.verdant.state()")
+        T.ev("(() => { const G = window.__hm, e = G.verdant.boss; G.combat.damageEnemy(e, e.D.hp * 0.35, null, 0); })()"); frames(4)
+        T.until("window.__hm.verdant.state().boss.spikeOpen", 30)   # the frost-iron spike pulses blue every 4 s (game time)
         rep["shots"]["boss_regent_p3"] = T.shot("boss_regent_p3")
-        hp0 = T.ev("window.__hm.verdant.boss.hp"); T.ev("window.__hm.combat.damageEnemy(window.__hm.verdant.boss, 10, null, 0)")
-        hit = hp0 - T.ev("window.__hm.verdant.boss.hp")
+        hz = T.ev("(() => { const G = window.__hm, e = G.verdant.boss, st = G.verdant.state(); if (!e.spikeOpen) return { st, hit: -1 }; const h0 = e.hp; G.combat.damageEnemy(e, 10, null, 0); return { st, hit: h0 - e.hp }; })()")
+        st3, hit = hz["st"], hz["hit"]
         T.step("the Blight Regent (5.5x): phase 2 < 60 %, phase 3 < 25 %, the blue pulse opens the frost-iron spike (double damage)",
                bool(st1["boss"]) and st1["boss"]["scale"] == 5.5 and st2["boss"]["phase"] == 2 and st3["boss"]["phase"] == 3 and st3["boss"]["spikeOpen"] and hit == 20,
                s1=st1["boss"], s2=st2["boss"], s3=st3["boss"], hit=hit)

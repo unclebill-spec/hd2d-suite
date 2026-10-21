@@ -86,10 +86,25 @@
    ],
    "h": 2.4,
    "top": "moss",
-   "coping": false
+   "coping": false,
+   "gaps": [
+    [
+     -8.95,
+     -6.65
+    ]
+   ]
   }
  ],
- "stairs": [],
+ "stairs": [
+  {
+   "name": "stair_terrace",
+   "x": -7.8,
+   "z_top": -9.6,
+   "width": 2.0,
+   "rise": 2.4,
+   "base": 0.0
+  }
+ ],
  "buildings": [],
  "props": [
   {
@@ -209,8 +224,8 @@
   {
    "piece": "fern_bush",
    "pos": [
-    -8.4,
-    -8.0
+    -10.4,
+    -8.6
    ]
   },
   {
