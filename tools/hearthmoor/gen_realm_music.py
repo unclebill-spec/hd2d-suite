@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Hearthmoor realm music (procedural, original work, CC0 1.0). Cozy gloom-and-glow: music box, chimes, soft choir, drones.
 Mono 22.05 kHz Vorbis. Each file is exactly N bars; note tails wrap to the start, so loop start 0 / loop end = file length.
-Usage: python3 tools/hearthmoor/gen_realm_music.py [out_dir]   (default games/hearthmoor/audio/music)"""
+Usage: python3 tools/hearthmoor/gen_realm_music.py [out_dir] [track ...]   (default games/hearthmoor/audio/music, all tracks)"""
 import numpy as np, subprocess, wave, sys, tempfile, os
 from pathlib import Path
 SR = 22050
@@ -15,6 +15,7 @@ T = {
  'jotunheim':    (52, [0, 2, 3, 5, 7, 8, 10], 60, 8, [0, 5, 3, 6], {'choir': 1.0, 'drone': 0.9, 'chime': 0.4}),
  'muspelheim':   (50, [0, 1, 4, 5, 7, 8, 10], 66, 8, [0, 1, 6, 0], {'drone': 1.0, 'bell': 0.7, 'pad': 0.6, 'box': 0.3}),
  'niflheim':     (59, [0, 2, 3, 5, 7, 8, 10], 54, 8, [0, 5, 2, 6], {'chime': 0.9, 'choir': 0.8, 'drone': 0.6}),
+ 'asgard':       (60, [0, 2, 4, 5, 7, 9, 11], 66, 8, [0, 5, 3, 4], {'bell': 0.8, 'choir': 0.8, 'drone': 0.6, 'thunder': 0.5, 'chime': 0.4}),   # C major, golden bells + regal choir, distant soft thunder
  'battle':       (52, [0, 2, 3, 5, 7, 8, 10], 120, 8, [0, 5, 6, 4], {'ost': 1.0, 'tom': 0.8, 'pad': 0.5, 'chime': 0.3}),
  'boss':         (48, [0, 2, 3, 5, 7, 8, 11], 104, 8, [0, 5, 1, 4], {'choir': 0.9, 'tom': 0.9, 'drone': 0.8, 'ost': 0.6}),
 }
@@ -70,6 +71,9 @@ def render(name, root, sc, bpm, bars, ch, V):
             pat = [0, 2, 4, 2, 7, 4, 2, 4]
             for i in range(16):
                 put(s0 + i*beat/4*SR, box(root + deg(sc, d + pat[i % 8]), int(SR*.5)), (.07 if i % 4 else .1) * V['ost'])
+        if 'thunder' in V and b % 4 == 3:   # distant storm: low muffled tom rolls on the last beat, swelled not struck
+            for i, bt in enumerate((2.5, 2.75, 3, 3.25, 3.5)):
+                put(s0 + bt*beat*SR, tom(int(SR*1.2), 55 + 4*i) * adsr(int(SR*1.2), .08, .9), (.06 + .03*i) * V['thunder'])
         if 'tom' in V:
             for i, (bt, f) in enumerate(((0, 80), (1.5, 95), (2, 80), (3, 110), (3.5, 95))):
                 put(s0 + bt*beat*SR, tom(int(SR*.6), f), (.28 if bt in (0, 2) else .17) * V['tom'])
@@ -84,4 +88,6 @@ def render(name, root, sc, bpm, bars, ch, V):
         subprocess.run(['ffmpeg', '-loglevel', 'error', '-y', '-i', wv, '-ac', '1', '-c:a', 'libvorbis', '-q:a', '0', '-map_metadata', '-1', str(OUT / f'music_{name}.ogg')], check=True)
     return round(L / SR, 3)
 if __name__ == '__main__':
-    for k, v in T.items(): print(k, render(k, *v), 's')
+    only = set(sys.argv[2:])
+    for k, v in T.items():
+        if not only or k in only: print(k, render(k, *v), 's')

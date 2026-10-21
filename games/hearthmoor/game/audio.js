@@ -17,9 +17,9 @@ for (const a of ['svartalfheim', 'forge_hall', 'glowmines', 'clockdeep', 'clockd
 for (const a of ['jotunheim', 'jt_hall', 'rimecaves', 'barrow', 'barrow2']) REALM_OF[a] = 'jotunheim';
 for (const a of ['muspelheim', 'mp_hall', 'lavafalls', 'caldera', 'caldera2']) REALM_OF[a] = 'muspelheim';
 for (const a of ['niflheim', 'nf_home', 'iceglow', 'frozenspire', 'frozenspire2', 'frozen_rift']) REALM_OF[a] = 'niflheim';
-for (const a of ['asgard', 'gs_hall', 'gs_temple', 'reliquary', 'reliquary2']) REALM_OF[a] = 'alfheim';   // Asgard: no own track yet, reuses Alfheim
+for (const a of ['asgard', 'gs_hall', 'gs_temple', 'reliquary', 'reliquary2']) REALM_OF[a] = 'asgard';
 export const MUSIC_REALMS = REALM_OF;
-export const MUSIC_TRACKS = ['midgard', 'alfheim', 'svartalfheim', 'jotunheim', 'muspelheim', 'niflheim', 'battle', 'boss'];
+export const MUSIC_TRACKS = ['midgard', 'alfheim', 'svartalfheim', 'jotunheim', 'muspelheim', 'niflheim', 'asgard', 'battle', 'boss'];
 const MUSIC_DIR = 'audio/music/';
 const DUCK = 0.3;        // ambient level while music plays (a ~70% duck)
 const XFADE = 1.6;       // crossfade seconds

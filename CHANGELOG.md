@@ -2,6 +2,11 @@
 
 Dates are America/New_York. Newest first. Keep this current with every change you push.
 
+## 2026-10-21 (America/New_York): Hearthmoor Asgard music track (branch `hearthmoor-asgard-music`)
+
+- New `audio/music/music_asgard.ogg` (procedural CC0, ~80 KB mono 22.05 kHz Vorbis, 8-bar seamless loop, 29.1 s): C major golden bells, regal choir, low drone, distant soft thunder rolls. Made by `tools/hearthmoor/gen_realm_music.py` (new `asgard` entry + `thunder` voice; optional track names after out_dir regenerate only those).
+- `game/audio.js`: asgard, gs_hall, gs_temple, reliquary, reliquary2 now map to `asgard` (was the Alfheim fallback); `MUSIC_TRACKS` gains `asgard`. audio/README.md, audio/LICENSES.md, RESTORE.md and sw.js precache (version bumped) updated.
+
 ## 2026-10-21 (America/New_York): Hearthmoor Asgard realm LIVE (merge of Master Builder 1e10448 + main 645be42 via hearthmoor-asgard-merge)
 
 - Asgard: Goldspire hub, gs_hall, gs_temple, reliquary, reliquary2 merged with main (smoke_asgard, smoke_niflheim, check_all --lowres on the 5 areas, check-sprite pass on the 6 actor sheets; the gamefx atlas is not an actor sheet).
