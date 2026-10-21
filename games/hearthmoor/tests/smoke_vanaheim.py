@@ -141,9 +141,11 @@ def steps(b, url, T, size, errors, rep, stub=None, shots=None, only=""):
         T.ev("(() => { const G = window.__hm, e = G.verdant.boss; G.combat.damageEnemy(e, e.D.hp * 0.45, null, 0); })()"); frames(3)
         st2 = T.ev("window.__hm.verdant.state()")
         T.ev("(() => { const G = window.__hm, e = G.verdant.boss; G.combat.damageEnemy(e, e.D.hp * 0.35, null, 0); })()"); frames(4)
-        T.until("window.__hm.verdant.state().boss.spikeOpen", 30)   # the frost-iron spike pulses blue every 4 s (game time)
+        # the frost-iron spike pulses blue every 4 s (game time): strike it inside the window, in the same page task that sees it open
+        # (a screenshot between "open" and the hit outlasts the 1.3 s window on a loaded box)
+        T.until("(() => { const G = window.__hm, e = G.verdant.boss; if (!e || !e.spikeOpen) return false; const st = G.verdant.state(), h0 = e.hp; G.combat.damageEnemy(e, 10, null, 0); window.__vhHit = { st, hit: h0 - e.hp }; return true; })()", 60)
+        hz = T.ev("window.__vhHit || { st: window.__hm.verdant.state(), hit: -1 }")
         rep["shots"]["boss_regent_p3"] = T.shot("boss_regent_p3")
-        hz = T.ev("(() => { const G = window.__hm, e = G.verdant.boss, st = G.verdant.state(); if (!e.spikeOpen) return { st, hit: -1 }; const h0 = e.hp; G.combat.damageEnemy(e, 10, null, 0); return { st, hit: h0 - e.hp }; })()")
         st3, hit = hz["st"], hz["hit"]
         T.step("the Blight Regent (5.5x): phase 2 < 60 %, phase 3 < 25 %, the blue pulse opens the frost-iron spike (double damage)",
                bool(st1["boss"]) and st1["boss"]["scale"] == 5.5 and st2["boss"]["phase"] == 2 and st3["boss"]["phase"] == 3 and st3["boss"]["spikeOpen"] and hit == 20,
