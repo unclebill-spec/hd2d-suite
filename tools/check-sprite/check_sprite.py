@@ -25,6 +25,9 @@ from PIL import Image  # noqa: E402
 
 from hd2d_common import load_biome, write_json  # noqa: E402
 
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+import art_checks  # noqa: E402
+
 
 def _hex(px):
     return "#%02x%02x%02x" % px[:3]
@@ -64,7 +67,7 @@ MUSP_NEON_ALLOW = {"pet_kindle": {"#a81c22", "#e0302a", "#ff5a4a"}}
 NIFL_NEON_ALLOW = {}
 
 
-def check(atlas_path, json_path=None, biome=None, max_colors=20, project=None):
+def check(atlas_path, json_path=None, biome=None, max_colors=20, project=None, allowlist=None):
     atlas_path = Path(atlas_path)
     json_path = Path(json_path) if json_path else atlas_path.with_suffix(".json")
     meta = json.loads(json_path.read_text())
@@ -78,7 +81,9 @@ def check(atlas_path, json_path=None, biome=None, max_colors=20, project=None):
     pivx = meta["pivot"][0]
     ground = meta.get("ground_row", fh - 1)
     failures, warnings = [], []
-    report = {"atlas": str(atlas_path), "biome": biome, "roles": {}, "summary": {}}
+    report = {"atlas": str(atlas_path), "biome": biome, "roles": {}, "summary": {}, "art_checks": {}}
+    allow = art_checks.load_allowlist() if allowlist is None else set(allowlist)
+    akey = art_checks.atlas_key(atlas_path)
 
     # global alpha check
     semi = sum(1 for y in range(H) for x in range(W) if 0 < px[x, y][3] < 255)
@@ -129,6 +134,16 @@ def check(atlas_path, json_path=None, biome=None, max_colors=20, project=None):
                 rr["issues"].append(f"{fr['name']}: feet centre {fc:.1f} vs pivot {pivx}")
             if fr["anim"] == "idle" and fr["i"] == 0:
                 facing_sigs[fr["facing"]] = tuple(sorted(oset)) + tuple(px[x0 + x, y0 + y] for x, y in sorted(oset))
+        # [checks-upgrade 2026-10-23] holes / limbs / outline1px / soft_alpha (art_checks.py; allowlist art_allowlist.txt)
+        for chk, msgs in art_checks.role_issues(px, info["frames"], fw, fh, ink).items():
+            if not msgs:
+                continue
+            k = f"{akey}::{role}::{chk}"
+            report["art_checks"][k] = {"allowlisted": k in allow, "n": len(msgs), "first": msgs[0]}
+            if k in allow:
+                warnings.append(f"{role}: [{chk}, allowlisted] {msgs[0]}")
+            else:
+                rr["issues"].append(f"[{chk}] {msgs[0]}" + (f" (+{len(msgs) - 1} more)" if len(msgs) > 1 else ""))
         if bad_outline:
             rr["issues"].append(f"{bad_outline} silhouette pixels are not the {ink} outline")
         rr["colors"] = len(colors)
@@ -160,6 +175,7 @@ def check(atlas_path, json_path=None, biome=None, max_colors=20, project=None):
     report["summary"] = {"roles": len(meta["roles"]), "failures": len(failures), "semi_transparent": semi,
                          "pass": not failures}
     report["failures"] = failures[:200]
+    report["warnings"] = warnings[:200]
     return report
 
 
