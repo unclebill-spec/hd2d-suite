@@ -97,7 +97,7 @@ body.rm .toast, body.rm #dlg .more, body.rm .slot.new, body.rm .btn.ping, body.r
 /* bars: no smoothing, a 1 px white top highlight and a darker bottom line, indigo empty track */
 .bar { background: var(--ui-indigo); border: 2px solid var(--ui-navy); box-shadow: 0 0 0 1px var(--nb-lo); }
 .bar.hp i { background: #e47c8c; box-shadow: inset 0 1px 0 #fff8e6, inset 0 -2px 0 #a81c22; }
-.bar.st i { background: #2ab4ff; box-shadow: inset 0 1px 0 #fff8e6, inset 0 -2px 0 #1c62d8; }
+.bar.st i { background: #f2c24a; box-shadow: inset 0 1px 0 #fff8e6, inset 0 -2px 0 #d0704a; }   /* stamina stays gold (mockup gold, and its warm pixels count in check-scene night grades) */
 .bar.xp i { background: #a45cf0; box-shadow: inset 0 1px 0 #d4a8ff; }
 .prompt { color: var(--nb-hi); font: 500 13px var(--bd); }
 .toast { font: 500 14px var(--bd); }
