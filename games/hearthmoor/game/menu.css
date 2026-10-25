@@ -187,3 +187,5 @@ body::after { content: url(../art/ui/pulse/highlight_f0.png) url(../art/ui/pulse
   url(../art/ui/pulse/highlight_f7.png) url(../art/ui/pulse/highlight_static.png) url(../art/ui/pulse/cursor_pulse.png) url(../art/ui/pulse/cursor_static.png);
   position: absolute; width: 0; height: 0; overflow: hidden; opacity: 0; pointer-events: none; }
 #opts .head .x, #log .head .x { margin-left: auto; }
+/* phones: the area-name chip stays one 12 px line so it never runs into the bag / clock / log chips (check-scene layout) */
+@media (max-width: 640px) { #hud .title { font: 400 12px/1.1 var(--bd); padding: 4px 8px; white-space: nowrap; max-width: 44vw; overflow: hidden; text-overflow: ellipsis; } }
