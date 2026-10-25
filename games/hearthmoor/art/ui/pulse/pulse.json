@@ -1,0 +1,44 @@
+{
+ "loop_ms": 2000,
+ "frames": 8,
+ "frame_ms": [
+  250,
+  250,
+  250,
+  250,
+  250,
+  250,
+  250,
+  250
+ ],
+ "easing": "stepped, ping-pong shades (no alpha)",
+ "cursor_pulse.png": {
+  "frame": [
+   12,
+   12
+  ],
+  "pivot": [
+   3,
+   6
+  ]
+ },
+ "highlight_pulse.png": {
+  "frame": [
+   48,
+   18
+  ],
+  "slice": {
+   "left": 2,
+   "right": 2,
+   "top": 2,
+   "bottom": 2
+  },
+  "note": "stretch horizontally with 9-slice, nearest"
+ },
+ "reduced_motion": {
+  "cursor": "cursor_static.png",
+  "highlight": "highlight_static.png",
+  "rule": "prefers-reduced-motion OR settings.reducedMotion -> static, no sparkle twinkle"
+ },
+ "applies_to": "selected item and cursor ONLY; frames, headers and sparkles in panels are static"
+}

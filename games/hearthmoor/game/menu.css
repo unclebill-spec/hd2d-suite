@@ -1,0 +1,189 @@
+/* Hearthmoor menu restyle (2026-10-25, docs/HD2D_COZY_STYLE_LOCK.md "Menu restyle"): Gravewake-style gloom-and-glow.
+   Loaded after game.css and overrides its parchment / carved-wood look for every menu, panel and HUD chip.
+   Frames (art/ui/frame_*.png, 48x48 nine-slice, 16 px margins) are drawn at integer scale only: x1 for HUD chips, x2 for panels.
+     night_glass  : default (title, save slots, dialogue, HUD, options, toasts, hero picker)
+     stone_violet : pause / hero screen (inventory, spellbook, gear, factions), quest + hunt log (rift / realm journal)
+     wood_rune    : in-world shops (Odo, Sefa, the bank, crafting counters) only
+   Fills are ui_navy #1a1d3a and ui_indigo #2a2458 (approved menu-only palette additions); lines, cursor and highlights
+   are the NEON neon-blue / violet sets. Frames stay static; only the selected item and the cursor pulse (2 s, 8 steps),
+   and both switch to the static frames under prefers-reduced-motion or Options > motion: reduced (body.rm).
+   Fonts (SIL OFL 1.1, art/ui/fonts/OFL-*.txt): Jacquarda Bastarda 9 for headers (9 px grid: 18 / 27 / 36 px), Pixelify Sans for body text. */
+@font-face { font-family: "Jacquarda Bastarda 9"; src: url(../art/ui/fonts/JacquardaBastarda9-Regular.ttf) format("truetype"); font-display: swap; }
+@font-face { font-family: "Pixelify Sans"; src: url(../art/ui/fonts/PixelifySans.ttf) format("truetype"); font-weight: 400 700; font-display: swap; }
+:root {
+  --ui-navy: #1a1d3a; --ui-indigo: #2a2458; --ui-dim: #1a1d3acc; --ui-veil: #1a1d3a88;
+  --nb: #2ab4ff; --nb-hi: #a6ecff; --nb-lo: #1c62d8; --vi: #a45cf0; --vi-hi: #d4a8ff; --vi-lo: #6a34b8;
+  --ui-text: #cfc2a6; --ui-text-hi: #fff8e6; --ui-mute: #9c8e7a; --ui-gold: #f2c24a;
+  --hd: "Jacquarda Bastarda 9", "Pixelify Sans", Georgia, serif; --bd: "Pixelify Sans", "Trebuchet MS", system-ui, sans-serif;
+  --f-night: url(../art/ui/frame_night_glass.png); --f-stone: url(../art/ui/frame_stone_violet.png); --f-wood: url(../art/ui/frame_wood_rune.png);
+  /* game.css colour tokens re-pointed so every leftover rule reads on the dark panels */
+  --ink: #1a1d3a; --parch: #2a2458; --parch-hi: #fff8e6; --parch-lo: #2a2458; --wood: #2a2458; --wood-hi: #a45cf0; --wood-lo: #1c62d8; --rose: #d4a8ff;
+}
+/* ---- shared panel recipes */
+#hud, #dlg, #log, #opts, #heroui, #shopui, #autolv, #titlescreen, #wheel, #rotate, #introSkip, #boot, #bossbar, #pad { font-family: var(--bd); }
+.chip, .prompt, .toast, .say, .etoast, #introSkip, #rotate, #bossbar, #wheel .slot {
+  background: var(--ui-navy); color: var(--ui-text-hi); border: 2px solid transparent; border-radius: 0; box-shadow: none;
+  border-image: var(--f-night) 16 fill / 16px / 0 stretch; image-rendering: pixelated; }
+.chip { padding: 5px 11px; }
+#log .card, #opts .card, #heroui .card, #shopui .card, #autolv .card, .plaque, #dlg .frame {
+  background: var(--ui-navy); color: var(--ui-text); border: 6px solid transparent; border-radius: 0; box-shadow: none;
+  border-image: var(--f-night) 16 fill / 32px / 0 stretch; image-rendering: pixelated; padding: 14px 16px 12px; box-sizing: border-box; }
+#heroui .card, #log .card { border-image-source: var(--f-stone); padding: 18px 20px 14px; }
+#shopui .card { border-image-source: var(--f-wood); padding: 20px 22px 14px; }
+/* dim veils behind modal panels: navy, never brown-black */
+#log, #opts, #autolv, #heroui, #shopui { background: var(--ui-veil); }
+#titlescreen { background: linear-gradient(#1a1d3a10, #1a1d3ab0); }
+#wheel { background: #1a1d3a55; }
+#boot { background: var(--ui-navy); color: var(--nb-hi); font: 400 18px var(--hd); }
+/* headers: Jacquarda Bastarda 9 in neon glow colours, hard 1 px drop line (no blur) */
+#log .head, #opts .head, #heroui .head, #shopui .head, #autolv .head {
+  background: transparent; box-shadow: inset 0 -2px 0 var(--ui-indigo); color: var(--vi-hi); padding: 2px 2px 6px; font: 400 18px/1.25 var(--hd); }
+#heroui .head, #log .head { color: var(--vi-hi); } #opts .head, #autolv .head { color: var(--nb-hi); } #shopui .head { color: #ffb24a; }
+#log .head span, #heroHead, #shopHead { font: 400 18px/1.25 var(--hd); }
+#log .head span#logCount { font: 400 12px var(--bd); color: var(--ui-text); }
+.plaque h1 { font: 400 54px/1.05 var(--hd); color: var(--nb-hi); letter-spacing: .02em; text-shadow: 0 3px 0 var(--nb-lo); margin-bottom: 4px; }
+.plaque h2 { font: 400 27px/1.1 var(--hd); color: var(--vi-hi); text-shadow: 0 2px 0 var(--vi-lo); }
+.plaque .sub { font: 400 13px var(--bd); color: var(--ui-text); }
+.plaque .info, .plaque .keys, .plaque .modetip, .plaque .tip { font-family: var(--bd); font-weight: 400; color: var(--ui-mute); }
+.plaque { color: var(--ui-text-hi); }
+/* close buttons */
+#log .x, #opts .head .x, #heroui .x, #shopui .x, #rotate button {
+  background: var(--ui-indigo); color: var(--nb-hi); border: 2px solid var(--nb-lo); border-radius: 0; font: 700 14px var(--bd); box-shadow: inset 0 1px 0 var(--vi-lo); }
+/* buttons: indigo insets with a neon line */
+.wbtn { background: var(--ui-indigo); color: var(--ui-text-hi); border: 2px solid var(--nb-lo); border-radius: 0; box-shadow: inset 0 1px 0 var(--vi-lo), 0 2px 0 var(--ui-navy);
+        font: 500 16px var(--bd); }
+.wbtn.sm { font: 500 13px var(--bd); }
+.wbtn:hover, .wbtn:focus-visible { border-color: var(--nb); outline: none; }
+.wbtn:active { box-shadow: inset 0 1px 0 var(--vi-lo); }
+.wbtn.warn { background: #622c24; border-color: #e0302a; color: var(--ui-text-hi); }
+.wbtn.on, #autolv .wbtn.on, #heroTabs .wbtn.on, #shopTabs .wbtn.on, #opts .wbtn.on { background: var(--vi-lo); color: var(--ui-text-hi); border-color: var(--vi); }
+.tip, #opts .lab, #log .spells, #log .rifts { font-family: var(--bd); font-weight: 400; color: var(--ui-mute); }
+#opts .lab { color: var(--nb-hi); font: 400 13px var(--bd); }
+#opts .musicvol input { accent-color: var(--nb); }
+/* ---- the selected item + cursor pulse (2 s, 8 x 250 ms steps; static peak frame for reduced motion) */
+@keyframes hmCursor { to { background-position: -192px 0; } }
+@keyframes hmHi { 0% { border-image-source: url(../art/ui/pulse/highlight_f0.png); } 12.5% { border-image-source: url(../art/ui/pulse/highlight_f1.png); }
+  25% { border-image-source: url(../art/ui/pulse/highlight_f2.png); } 37.5% { border-image-source: url(../art/ui/pulse/highlight_f3.png); }
+  50% { border-image-source: url(../art/ui/pulse/highlight_f4.png); } 62.5% { border-image-source: url(../art/ui/pulse/highlight_f5.png); }
+  75% { border-image-source: url(../art/ui/pulse/highlight_f6.png); } 87.5% { border-image-source: url(../art/ui/pulse/highlight_f7.png); } 100% { border-image-source: url(../art/ui/pulse/highlight_f0.png); } }
+#heroBody .row.sel, #shopBody .row.sel, #dlg .choice.sel, .slotcard.on, .card.sel, #wheel .slot.on {
+  position: relative; border: 2px solid transparent; border-image: url(../art/ui/pulse/highlight_f0.png) 2 fill / 4px / 0 stretch; animation: hmHi 2s step-end infinite; color: var(--ui-text-hi); }
+#heroBody .row.sel::before, #shopBody .row.sel::before, #dlg .choice.sel::before, .slotcard.on::before, #wheel .slot.on::before {
+  content: ""; position: absolute; left: -26px; top: 50%; margin-top: -12px; width: 24px; height: 24px; pointer-events: none;
+  background: url(../art/ui/pulse/cursor_pulse.png) 0 0 / 192px 24px no-repeat; image-rendering: pixelated; animation: hmCursor 2s steps(8) infinite; }
+#heroBody .row.sel::before, #shopBody .row.sel::before { left: -22px; }
+body.rm #heroBody .row.sel, body.rm #shopBody .row.sel, body.rm #dlg .choice.sel, body.rm .slotcard.on, body.rm .card.sel, body.rm #wheel .slot.on {
+  animation: none; border-image-source: url(../art/ui/pulse/highlight_static.png); }
+body.rm #heroBody .row.sel::before, body.rm #shopBody .row.sel::before, body.rm #dlg .choice.sel::before, body.rm .slotcard.on::before, body.rm #wheel .slot.on::before {
+  animation: none; background: url(../art/ui/pulse/cursor_static.png) 0 0 / 24px 24px no-repeat; }
+@media (prefers-reduced-motion: reduce) {
+  #heroBody .row.sel, #shopBody .row.sel, #dlg .choice.sel, .slotcard.on, .card.sel, #wheel .slot.on { animation: none; border-image-source: url(../art/ui/pulse/highlight_static.png); }
+  #heroBody .row.sel::before, #shopBody .row.sel::before, #dlg .choice.sel::before, .slotcard.on::before, #wheel .slot.on::before { animation: none; background: url(../art/ui/pulse/cursor_static.png) 0 0 / 24px 24px no-repeat; }
+  .toast { animation: none; } #dlg .more { animation: none; }
+}
+body.rm .toast, body.rm #dlg .more, body.rm .slot.new, body.rm .btn.ping, body.rm #hud .vitals.lvup, body.rm .vitals.low .bar.hp, body.rm .vitals.tired .bar.st { animation: none; }
+/* ---- HUD */
+#hud { color: var(--ui-text-hi); }
+#hud .title { font: 400 18px/1 var(--hd); color: var(--nb-hi); padding: 6px 12px 5px; }
+.clock { font: 500 13px var(--bd); } .dial { border-color: var(--nb-lo); }
+.btn.on { background: var(--vi-lo); }
+.hint { color: var(--ui-text); font-family: var(--bd); text-shadow: 0 1px 0 var(--ui-navy), 1px 0 0 var(--ui-navy), -1px 0 0 var(--ui-navy), 0 -1px 0 var(--ui-navy); }
+#hud .bag .empty { color: var(--ui-mute); opacity: 1; }
+.slot b, .rslot b { font-family: var(--bd); color: var(--ui-text-hi); text-shadow: 0 1px 0 var(--ui-navy), 1px 0 0 var(--ui-navy), -1px 0 0 var(--ui-navy), 0 -1px 0 var(--ui-navy); }
+#bag .gearchip { color: var(--ui-text); font-family: var(--bd); } #bag .goldchip { color: #ffb24a; font-family: var(--bd); }
+#hud .vitals { font: 700 10px var(--bd); }
+.vrow b, .vrow em { color: var(--nb-hi); } .vrow.lit { color: var(--ui-gold); }
+.vitals.glowlit { box-shadow: inset 0 0 0 2px var(--ui-gold); }
+/* bars: no smoothing, a 1 px white top highlight and a darker bottom line, indigo empty track */
+.bar { background: var(--ui-indigo); border: 2px solid var(--ui-navy); box-shadow: 0 0 0 1px var(--nb-lo); }
+.bar.hp i { background: #e47c8c; box-shadow: inset 0 1px 0 #fff8e6, inset 0 -2px 0 #a81c22; }
+.bar.st i { background: #2ab4ff; box-shadow: inset 0 1px 0 #fff8e6, inset 0 -2px 0 #1c62d8; }
+.bar.xp i { background: #a45cf0; box-shadow: inset 0 1px 0 #d4a8ff; }
+.prompt { color: var(--nb-hi); font: 500 13px var(--bd); }
+.toast { font: 500 14px var(--bd); }
+.toast b.storm { color: var(--vi-hi); font-family: var(--hd); font-weight: 400; }
+.say { font: 500 14px var(--bd); } .say b { color: var(--vi-hi); }
+#introSkip { color: var(--nb-hi); font: 500 14px/1 var(--bd); }
+#rotate { color: var(--ui-text-hi); font: 500 14px var(--bd); }
+#bossbar b { font: 400 18px/1.2 var(--hd); color: var(--vi-hi); text-shadow: 0 1px 0 var(--ui-navy); }
+#bossbar span { background: var(--ui-indigo); border: 1px solid var(--nb-lo); }
+#bossbar i { box-shadow: inset 0 1px 0 #fff8e6, inset 0 -2px 0 #c4502c; }
+.ebar { background: var(--ui-navy); border-color: var(--nb-lo); }
+/* touch pad: navy discs with a neon line (sizes and positions unchanged) */
+#pad .pb, #pad .pill { background: var(--ui-navy); border-color: var(--nb-lo); color: var(--ui-text-hi); font-family: var(--bd); }
+#pad .cluster.act .abtn .l { color: var(--nb-hi); font-family: var(--bd); }
+#pad .cluster.act .pb:active, #pad .cluster.act .guard.on { background: var(--ui-indigo); border-color: var(--nb); }
+#pad .knob { background: var(--ui-indigo); border-color: var(--nb); }
+#pad .stick { background: #1a1d3a55; border-color: #a6ecffaa; } #pad .stick.live { background: #1a1d3a77; } #pad .ring { border-color: #a6ecff77; }
+#pad .rail .rslot { background: var(--ui-navy); border-color: var(--nb-lo); border-radius: 0; }
+#pad .cluster.act .abtn[data-cd]::after { background: #1a1d3aaa; }
+/* spell wheel */
+#wheel .ring { border-color: #a6ecffaa; }
+#wheel .slot { color: var(--ui-text-hi); font: 500 12px var(--bd); }
+#wheel .slot.cur { outline: 2px solid var(--vi); }
+#wheel .mid { color: var(--nb-hi); font-family: var(--bd); text-shadow: 0 1px 0 var(--ui-navy), 1px 0 0 var(--ui-navy), -1px 0 0 var(--ui-navy), 0 -1px 0 var(--ui-navy); }
+/* ---- dialogue (night_glass): name tab, inset portrait, Pixelify page */
+#dlg .frame { padding: 16px 16px 10px 100px; }
+#dlg .face { left: 16px; top: 16px; background: var(--ui-indigo); border: 2px solid var(--nb-lo); box-shadow: none; }
+#dlg .name { top: -16px; left: 94px; background: var(--ui-navy); color: var(--nb-hi); border: 2px solid transparent; border-radius: 0; padding: 3px 12px 2px;
+  border-image: var(--f-night) 16 fill / 16px / 0 stretch; font: 400 18px/1.2 var(--hd); }
+#dlg .page { background: transparent; border: 0; box-shadow: none; padding: 4px 2px; }
+#dlg p { font: 400 16px/1.4 var(--bd); color: var(--ui-text-hi); }
+#dlg .foot { color: var(--nb-hi); font: 500 11px var(--bd); }
+#dlg .choice { background: var(--ui-indigo); color: var(--ui-text); border: 2px solid var(--ui-indigo); border-radius: 0; font: 500 14px/1.2 var(--bd); }
+#dlg .choice .k { background: var(--ui-navy); color: var(--nb-hi); border-radius: 0; font: 500 12px var(--bd); }
+#dlg .choice.sel .k { background: var(--vi-lo); color: var(--ui-text-hi); }
+@media (max-width: 640px) { #dlg .frame { padding-left: 92px; } #dlg .name { left: 86px; } #dlg p { font-size: 14px; } .plaque h1 { font-size: 36px; } }
+/* ---- quest + hunt log (stone_violet) */
+#log li { border-bottom: 2px solid var(--ui-indigo); font: 400 13px/1.35 var(--bd); color: var(--ui-text); }
+#log li b { font: 500 14px var(--bd); color: var(--vi-hi); }
+#log li.done b { color: #b2c464; }
+#log .hunt h4 { color: var(--nb-hi); font: 400 18px var(--hd); border-top: 2px solid var(--ui-indigo); }
+#log .hunt h4 span { font: 400 12px var(--bd); color: var(--ui-text); }
+#huntList li { color: var(--ui-text); } #huntList li i { border-color: var(--ui-navy); }
+/* ---- title, save slots and hero picker (night_glass) */
+.plaque { padding: 22px 30px 16px; }
+.slotcard { background: var(--ui-indigo); color: var(--ui-text-hi); border: 2px solid var(--nb-lo); border-radius: 0; box-shadow: none; font-family: var(--bd); }
+.slotcard .st b { color: var(--nb-hi); font-weight: 500; } .slotcard .st em { font-weight: 500; } .slotcard .st i { color: var(--ui-text); }
+.slotcard.empty .st em { color: var(--ui-mute); }
+.slotcard.on { background: var(--ui-indigo); }
+.card { background: var(--ui-indigo); color: var(--ui-text-hi); border: 2px solid var(--nb-lo); border-radius: 0; box-shadow: none; font: 500 12px var(--bd); }
+.card i { color: var(--ui-text); font-family: var(--bd); }
+.card.sel { background: var(--vi-lo); box-shadow: none; }
+.detail { background: var(--ui-indigo); color: var(--ui-text); border: 2px solid var(--nb-lo); border-radius: 0; font: 400 13px/1.4 var(--bd); }
+.detail b { font: 400 18px var(--hd); color: var(--vi-hi); }
+.detail .tag { background: var(--ui-navy); border-color: var(--nb-lo); border-radius: 0; color: var(--nb-hi); font-family: var(--bd); }
+.detail .tag.demigod { background: var(--vi-lo); color: var(--ui-text-hi); }
+.detail .kit { color: var(--nb-hi); font-family: var(--bd); }
+/* ---- hero screen (stats, skills, spellbook, gear + bag, factions; stone_violet) and shops (wood_rune) */
+#heroHead .tag, #shopHead .tag { background: var(--ui-indigo); color: var(--nb-hi); border-color: var(--nb-lo); border-radius: 0; font: 500 11px var(--bd); }
+#shopHead .tag.gold { background: var(--ui-indigo); color: #ffb24a; border-color: #ffb24a; }
+#heroHead .tag.ttl { background: var(--ui-navy); color: var(--ui-gold); border-color: var(--ui-gold); }
+#heroBody .pts, #shopBody .pts { color: var(--vi-hi); font: 500 12px var(--bd); }
+#heroBody .row, #shopBody .row { background: var(--ui-indigo); border: 2px solid var(--ui-indigo); border-radius: 0; color: var(--ui-text); font: 400 12px var(--bd); }
+#heroBody .row.got, #shopBody .row.got { background: #2c4c30; border-color: #2c4c30; }
+#heroBody .row em, #shopBody .row em { font-weight: 700; color: var(--ui-text-hi); }
+#heroBody .tierhd { color: var(--nb-hi); font: 400 18px var(--hd); text-transform: none; letter-spacing: 0; }
+#heroBody .tierhd.t3 { color: var(--vi-hi); }
+#heroBody .row.node.t3 { box-shadow: inset 3px 0 0 var(--ui-gold); }
+#shopBody .row.good .iname { color: var(--ui-text-hi); } #shopBody .row small, #heroBody .row.fac small { color: var(--ui-mute); font-family: var(--bd); }
+#heroBody .row.r0 .iname, #shopBody .row.r0 .iname { color: var(--ui-text); }
+#heroBody .row.r1 .iname, #heroBody .row.r1 u, #shopBody .row.r1 .iname, #shopBody .row.r1 u { color: #b2c464; }
+#heroBody .row.r2 .iname, #heroBody .row.r2 u, #shopBody .row.r2 .iname, #shopBody .row.r2 u { color: #2ab4ff; }
+#heroBody .row.r3 .iname, #heroBody .row.r3 u, #shopBody .row.r3 .iname, #shopBody .row.r3 u { color: #d4a8ff; }
+#heroBody .row.r4 .iname, #heroBody .row.r4 u, #shopBody .row.r4 .iname, #shopBody .row.r4 u { color: #ffb24a; }
+#heroBody .gemtag { background: var(--ui-navy); border-color: var(--nb-lo); border-radius: 0; color: var(--ui-text-hi); }
+#heroBody .gemtag.on { background: var(--ui-indigo); }
+#heroBody .pts.gems { color: var(--ui-text); }
+#heroBody .row.fac .fsw { border-color: var(--ui-navy); }
+#heroBody .row.fac .fbar { background: var(--ui-navy); border-color: var(--ui-navy); }
+#autolv .card p { color: var(--ui-text); font: 400 14px var(--bd); }
+#autolv .card p b { color: var(--nb-hi); }
+/* selected rows: violet fallback under the pulse frames (never the old cream), and preload every pulse step so a frame
+   swap never shows an unloaded image */
+#heroBody .row.sel, #shopBody .row.sel, #dlg .choice.sel, .slotcard.on, #wheel .slot.on { background: var(--vi-lo); }
+body::after { content: url(../art/ui/pulse/highlight_f0.png) url(../art/ui/pulse/highlight_f1.png) url(../art/ui/pulse/highlight_f2.png)
+  url(../art/ui/pulse/highlight_f3.png) url(../art/ui/pulse/highlight_f4.png) url(../art/ui/pulse/highlight_f5.png) url(../art/ui/pulse/highlight_f6.png)
+  url(../art/ui/pulse/highlight_f7.png) url(../art/ui/pulse/highlight_static.png) url(../art/ui/pulse/cursor_pulse.png) url(../art/ui/pulse/cursor_static.png);
+  position: absolute; width: 0; height: 0; overflow: hidden; opacity: 0; pointer-events: none; }
+#opts .head .x, #log .head .x { margin-left: auto; }

@@ -1,0 +1,23 @@
+{
+ "image": "frame_stone_violet.png",
+ "sheet": "panel_frames.png",
+ "sheet_rect": [
+  52,
+  0,
+  48,
+  48
+ ],
+ "tile": [
+  48,
+  48
+ ],
+ "slice": {
+  "left": 16,
+  "top": 16,
+  "right": 16,
+  "bottom": 16
+ },
+ "center": "stretch-or-tile (fill is flat ink, either works)",
+ "css": "border-image: url(frame_stone_violet.png) 16 fill / 32px / 0 stretch; image-rendering: pixelated;",
+ "native_scale_note": "draw at integer scale only (x2 at 640x360 UI = 32px corner on screen at 1080p x3)"
+}

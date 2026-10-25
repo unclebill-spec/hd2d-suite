@@ -15,6 +15,7 @@
 <link rel="apple-touch-icon" href="icons/icon-192.png">
 <link rel="stylesheet" href="engine/hud.css">
 <link rel="stylesheet" href="game/game.css">
+<link rel="stylesheet" href="game/menu.css">
 <script>window.HD2D_MANUAL = true;</script>
 <script type="importmap">
 { "imports": { "three": "./vendor/three.module.js", "three/addons/": "./vendor/addons/" } }
@@ -126,6 +127,7 @@
       <button class="wbtn sm" id="btnAuto">auto level: on</button>
       <button class="wbtn sm" id="btnWeather" title="Rain, mist and glints. Light (phones) halves them. R / controller Y in Options">weather: on</button>
       <button class="wbtn sm" id="btnGlow" title="Extra glow lights (spell pools, drops, lanterns). Phones: 2 is lighter on the GPU">glow lights: 3</button>
+      <button class="wbtn sm" id="btnMotion" title="Menu cursor and selection pulse. Reduced shows the static frames (also follows the system reduced-motion setting)">motion: full</button>
       <button class="wbtn sm" id="btnMode" title="Story: gentle, no faint penalty · Adventurer · Hero: harder, better loot">mode: Adventurer</button>
     </div>
     <label class="lab musicvol" for="musicVol">music volume <span id="musicVolN">60%</span><input id="musicVol" type="range" min="0" max="100" step="5" value="60" aria-label="music volume"></label>

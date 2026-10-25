@@ -7,6 +7,9 @@ approved neon accent where neon is allowed.
   orbs      orb lantern / glow-orb pieces (role or effect names starting orb_ / glow_orb): biome + NEON + ORB_NEON.
   sprites   areas/*/public/art/sprite/*.png (actors, pets, bosses): biome only, plus check_sprite's scoped
             NEON_PETS_ALLOW for the three pets. ORB_NEON is NOT allowed here.
+  menu/UI   art/ui/frame_*.png, art/ui/panel_frames.png, art/ui/pulse/*.png (the 2026-10 menu restyle frames, cursor and
+            highlight): biome + NEON + UI_FILLS. UI_FILLS (ui_navy #1a1d3a, ui_indigo #2a2458) are allowed ONLY here,
+            for UI frame / panel assets; nowhere else in the game (see docs/HD2D_COZY_STYLE_LOCK.md "Menu restyle").
 
 ORB_NEON (neon green #3cf08a and pink #ff4fc8, each with its _hi / _lo shade) came with the 2026-10 art packs
 (verdant_heart, orb_lanterns) for glow orbs, fireflies and bioluminescence. Bill's rule: effects and orbs only.
@@ -31,6 +34,7 @@ NEON = {"#e0302a", "#a81c22", "#ff5a4a",          # red
         "#5aec3c", "#c4ff8a", "#24a03a",          # moss green (moss-pup spores)
         "#2ab4ff", "#a6ecff", "#1c62d8",          # neon blue (portal / temple)
         "#5ab4f0", "#d8f4ff", "#2a6cb0"}          # cold fire (Sefa / Ravenhold: kit_harbor + kit_bifrost glow pixels)
+UI_FILLS = {"#1a1d3a", "#2a2458"}               # ui_navy, ui_indigo: menu/UI frames + panels only
 ORB_NEON = {"#3cf08a", "#b8ffd4", "#14a85a",      # neon green mid / hi / lo
             "#ff4fc8", "#ffb4ea", "#b82a8c"}      # neon pink mid / hi / lo
 
@@ -93,6 +97,9 @@ def main():
                                  + ", ".join(f"{k}x{v}" for k, v in sorted(off.items(), key=lambda kv: -kv[1])[:6]))
     for p in list((GAME / "art").glob("*/*fx*.png")) + [Path(x) for x in a.extra]:
         judge(p.resolve(), fx_ok, "effect")
+    ui = GAME / "art" / "ui"
+    for p in sorted(ui.glob("frame_*.png")) + sorted(ui.glob("panel_frames.png")) + sorted((ui / "pulse").glob("*.png")):
+        judge(p, pal | NEON | UI_FILLS, "menu/UI")
     print(f"palette: {n} atlases / sprite rows checked, {len(fails)} failing")
     for f in fails:
         print("  FAIL", f)

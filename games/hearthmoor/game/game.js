@@ -765,7 +765,18 @@ async function toggleGlow() {
 function syncWeatherBtn() { const b = $('btnWeather'), m = G.weather.mode; if (b) b.textContent = `weather: ${m}${m === 'light' ? ' (phone)' : ''}`; }
 function cycleWeather() { const m = G.weather.cycle(); syncWeatherBtn(); toast(`Weather: ${m}`, 1.4); return m; }
 G.cycleWeather = cycleWeather;
+// menu motion: full / reduced (static cursor + highlight). Saved per device (not in the save slot); the OS
+// prefers-reduced-motion setting also forces the static frames (game/menu.css).
+const MOTION_KEY = 'hearthmoor-reduced-motion';
+function reducedMotion() { return localStorage.getItem(MOTION_KEY) === '1' || matchMedia('(prefers-reduced-motion: reduce)').matches; }
+function syncMotion() {
+  const on = localStorage.getItem(MOTION_KEY) === '1'; document.body.classList.toggle('rm', on);
+  const b = $('btnMotion'); if (b) { b.textContent = `motion: ${reducedMotion() ? 'reduced' : 'full'}`; b.classList.toggle('on', on); }
+}
+function toggleMotion() { localStorage.setItem(MOTION_KEY, localStorage.getItem(MOTION_KEY) === '1' ? '0' : '1'); syncMotion(); toast(`Menu motion: ${reducedMotion() ? 'reduced' : 'full'}`, 1.4); }
+G.toggleMotion = toggleMotion; G.reducedMotion = reducedMotion;
 function wireOptions() {
+  $('btnMotion').onclick = () => toggleMotion(); syncMotion();
   $('btnGlow').onclick = () => toggleGlow(); syncGlowBtn();
   $('btnWeather').onclick = () => cycleWeather(); syncWeatherBtn();
   $('btnOpts').onclick = () => setOpts(!G.opts);
