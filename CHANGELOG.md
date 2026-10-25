@@ -2,6 +2,11 @@
 
 Dates are America/New_York. Newest first. Keep this current with every change you push.
 
+## 2026-10-25 (America/New_York): Hearthmoor menu restyle (branch `hearthmoor-menu-restyle`)
+
+- New menu look in `game/menu.css`: night_glass default frame (plus stone_violet/wood_rune), navy/indigo panel fills, Jacquarda Bastarda 9 titles + Pixelify Sans body, selected-item pulse, and a reduced-motion toggle (`btnMotion` in settings, `game.js`). New UI atlases in `art/ui/`; check_palette gains a menu/UI category (the 16 new atlases pass).
+- Fixes from check-scene: phone area chip is one 12px line (layout overlap); stamina bar stays gold (night_warm grade). sw.js precache and RESTORE.md updated. Before/after shots of every menu taken.
+
 ## 2026-10-21 (America/New_York): Hearthmoor Helheim LIVE (merge of Master Builder realm-helheim 1400dbc + main caa1177 via merge-helheim)
 
 - New realm Helheim: Gloamhaven, hh_shore, hh_archive, the Ossuary (ossuary/ossuary2); bosses Lord Vesperin (3x) and Mordrath, the Pale Sovereign (8x, 3 phases); scoped violet #a45cf0/#3a2458 on odric/gloam_knight/mordrath sheets only.
