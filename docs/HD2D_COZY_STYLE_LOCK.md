@@ -95,3 +95,5 @@ Applying the rules (not a new override): Bifrost Crossing's nine realm colours k
   - the day / dusk / night grades;
   - effects stay sharp;
   - the phone layout and input.
+
+- **Menu restyle (2026-10-25, Bill's ask of 2026-10-24 for a Gravewake-style gloom-and-glow menu look):** replaces the "parchment or carved wood" HUD line for menus. Panels use deep navy or indigo fills with neon blue or violet frame lines, cursors and highlights. night_glass is the default (title, dialogue, HUD), stone_violet is for pause, inventory and rift/realm menus, and wood_rune is only for in-world shops, home and crafting. Frames stay static; only the selected item and cursor pulse (about 2 s), and that's off when reduced motion is on. Fonts are Jacquarda Bastarda 9 for headers and Pixelify Sans for body text (both OFL, Hearthmoor-only). Assets are in hearthmoor-staging/art/menu-restyle/.
