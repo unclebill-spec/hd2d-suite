@@ -273,14 +273,15 @@ function closeSigil(G) {   // The Mirror Sigil done (story 3.3 / 4.3): the sigil
   G.setQuest('mp_sigil', 3); G.factions.add('embassy', MERIT.mp_sigil + (f.mp_prior ? MERIT.mp_rival : 0), 'mp_sigil'); gold(G, 40);   // the +20 is for a Niflheim conqueror (mood set before the Walk; the Walk itself raises the mood to 3)
   f.mp_cleared = 1; f.mp_peace = 1; S.evidence = { ...(S.evidence || {}), muspelheim: 'mirror_sigil' }; mark(G);
 }
-const WARDEN_OPTIONS = (S) => {   // Aska's choice (story 5.2). The befriend option is greyed (a locked label) when Niflheim is befriended or four realms already stand with you
+const WARDEN_OPTIONS = (S) => {   // Aska's choice (story 5.2 / muspelheim.md 1.1, Bill 2026-10-25): only the 4-ally cap greys befriend; a Niflheim friend (frost friend mark) may still befriend
   const lk = lockedBy(S), cap = allyCount(S) >= 4, opts = [];
-  if (lk || cap) opts.push({ label: lk ? '(Locked. You stand with Niflheim.)' : '(Four realms already stand with you.)', locked: true, pick: () => ({ pages: [lk ? 'A friend of the frost, in my hall. Say it quick.' : 'Your friends are many. Mine are few. Another time.'] }) });
+  if (cap) opts.push({ label: '(Four realms already stand with you.)', locked: true, pick: () => ({ pages: ['Your friends are many. Mine are few. Another time.'] }) });
   else opts.push({ label: 'A friend. Let me clear your name.', pick: () => ({ pages: ['Then walk my stones. Fire trusts feet.'],
-    then: (G) => { flags(G.S).mp_prior = mood(G.S) ? 1 : 0; ally(G.S).muspelheim = 'befriend'; lockRival(G.S, 'niflheim'); G.setQuest(mood(G.S) || emberBorn(G.S) ? 'mp_sigil' : 'mp_walk', 1); G.toast('Muspelheim: befriended', 2.2); mark(G); } }) });
+    then: (G) => { const ff = lockedBy(G.S); flags(G.S).mp_prior = mood(G.S) ? 1 : 0; if (ff) flags(G.S).mp_frostfriend = 1; ally(G.S).muspelheim = 'befriend'; lockRival(G.S, 'niflheim');
+      G.setQuest(!ff && (mood(G.S) || emberBorn(G.S)) ? 'mp_sigil' : 'mp_walk', 1); G.toast('Muspelheim: befriended', 2.2); mark(G); } }) });
   opts.push({ label: "Midgard's. Hand over the Ember Crown.", pick: () => ({ pages: ['So Midgard is a thief. Take the Crown. Choke on it.'],
     then: (G) => { ally(G.S).muspelheim = 'conquer'; moodUp(G.S, 'niflheim'); G.setQuest('mp_take', 1); G.toast('Muspelheim: conquered', 2.2); mark(G); } }) });
-  if (lk) opts.push({ label: '(Locked path) The Guild sent me with an offer.', pick: () => ({ pages: ['An offer. Hm. Hear my terms: the seals are failing, and I will not turn down hands.'],
+  if (lk) opts.push({ label: '(Frost friend) The Guild sent me with an offer.', pick: () => ({ pages: ['An offer. Hm. Hear my terms: the seals are failing, and I will not turn down hands.'],
     then: (G) => { flags(G.S).mp_contract = 1; flags(G.S).mh_terms = 1; G.setQuest('mp_hire', 1); mark(G); } }) });
   return opts;
 };
@@ -295,6 +296,14 @@ Object.assign(TALK, {
   warden_mp(S) {
     const f = F(S), al = (f.alliance || {}).muspelheim, st = (k) => q(S, k);
     if (al === 'befriend' || f.mp_contract) {
+      if (st('mp_walk') === 2 && f.mp_frostfriend && !f.mp_doorstep) {   // story 3.2a Cinder-Tea on the Doorstep (frost friend only); every answer is fine
+        const ans = (label, line) => ({ label, pick: () => ({ pages: [line], then: (G) => { flags(G.S).mp_doorstep = 1; finishWalk(G); } }) });
+        return { pages: ['You walked my stones with frost on your boots. They hissed the whole way. I enjoyed that.', 'Mistmere called us arsonists for a hundred winters. Now Mistmere sends me its friend. Why should fire trust a frost-friend?'],
+                 choice: { id: 'mp_doorstep', options: [
+                   ans("Because I'll ask you first. Same as I asked them.", "Ask first. Hm. That's a frost word. ...It's a good one. Drink your tea."),
+                   ans("Somebody framed you both. I'd like to find out who.", 'Both? Then the frost-witches got a sigil too? ...Drink. Then tell me everything.'),
+                   ans("(Shrug) The tea's good.", "It is. Svala's. Don't tell Mistmere we have nice things.") ] } };
+      }
       if (st('mp_walk') === 2) return { pages: ['Five stones, and no more than a hiss. Steady. Fire trusts feet.', 'Now the hard thing: the sigil Midgard blames us for. The Sigil Forge is behind my seat. Look at how it was made.'], then: finishWalk };
       if (st('mp_sigil') === 2 && sigil(S).done) return { pages: ['Blue from the middle out. A ledger that blushes. A flame that curls left.', 'So we were framed, by something that hates warmth. I will send a rider to Hearthmoor with the real seal.', mood(S) ? 'You broke the frost-witches? Then you are warm company. Sit.' : 'Cinderhold remembers who read the cast.'], then: closeSigil };
       if (st('mp_sigil') === 1) return { pages: [`The Sigil Forge is behind my seat. Three clues: the cooling bed, the ledger, the mould wall. ${sigil(S).n}/3.`] };
@@ -399,7 +408,7 @@ export class Muspelheim {
   }
   moveTo(x, z) { const c = this.ctx; if (!c) return; c.player.x = x; c.player.z = z; c.player.y = c.heightAt(x, z); }
 
-  // QA preset (smoke / screenshots): ?muq=open (gate only) | befriend | walk | sigil | kindle | conquer | contract | done | school (the Caldera done, befriend: Torka's lessons)
+  // QA preset (smoke / screenshots): ?muq=open (gate only) | befriend | frostfriend (Niflheim friend at the Walk turn-in, 3.2a) | walk | sigil | kindle | conquer | contract | done | school (the Caldera done, befriend: Torka's lessons)
   qaPreset() {
     const v = this.qs().get('muq'), S = this.G.S; if (!v || this.qaDone === v) return;
     this.qaDone = v;
@@ -409,6 +418,7 @@ export class Muspelheim {
     if (v === 'kindle') { ally(S).muspelheim = 'befriend'; open(); S.quests.mp_walk = 3; S.quests.mp_sigil = 3; flags(S).mp_cleared = 1; S.quests.mp_kindle = 1; }
     if (v === 'caldera') { ally(S).muspelheim = 'befriend'; open(); S.quests.mp_walk = 3; S.quests.mp_sigil = 3; flags(S).mp_cleared = 1; S.quests.caldera = 1; }
     if (v === 'conquer') { ally(S).muspelheim = 'conquer'; open(); S.quests.mp_take = 1; }
+    if (v === 'frostfriend') { flags(S).rivals = { ...(flags(S).rivals || {}), muspelheim: 'locked' }; flags(S).mp_frostfriend = 1; ally(S).muspelheim = 'befriend'; open(); S.quests.mp_walk = 2; flags(S).mw_stones = 1; }
     if (v === 'contract') { flags(S).rivals = { ...(flags(S).rivals || {}), muspelheim: 'locked' }; flags(S).mp_contract = 1; flags(S).mh_terms = 1; open(); S.quests.mp_hire = 1; }
     if (v === 'open') open();
     if (v === 'school') { ally(S).muspelheim = 'befriend'; open(); S.quests.mp_walk = 3; S.quests.mp_sigil = 3; flags(S).mp_cleared = 1; flags(S).mp_trusted = 1; S.quests.caldera = 3; flags(S).cd_bound = 1; }
