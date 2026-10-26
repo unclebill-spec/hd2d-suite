@@ -2,6 +2,13 @@
 
 Dates are America/New_York. Newest first. Keep this current with every change you push.
 
+## 2026-10-26 (America/New_York): menu restyle LIVE (04adc1c), Muspelheim 1.1 (branch `hearthmoor-mp-frostfriend`), handoff docs
+
+- Menu restyle published via publish-game.sh (main 2f79450 -> 04adc1c); game-qa live PASS. Extra fix: compact area chip on short landscape phones (ossuary2 844x390).
+- Muspelheim 1.1: only cap greys befriend; befriend sets `mp_frostfriend` instead of the Niflheim lock; Cinder-Tea on the Doorstep scene at mp_walk 2; `?muq=frostfriend` QA preset.
+- Root HANDOFF.md (RESUME HERE) and games/hearthmoor/BALANCE.md (numbers read from code).
+- Branches closed: asgard-extras, hearthmoor-asgx-merge (in main); cold-cauldron, hearthmoor-leftovers-wip (superseded; kept as tags archive/*); hearthmoor-menu-restyle (merged).
+
 ## 2026-10-25 (America/New_York): Hearthmoor menu restyle (branch `hearthmoor-menu-restyle`)
 
 - New menu look in `game/menu.css`: night_glass default frame (plus stone_violet/wood_rune), navy/indigo panel fills, Jacquarda Bastarda 9 titles + Pixelify Sans body, selected-item pulse, and a reduced-motion toggle (`btnMotion` in settings, `game.js`). New UI atlases in `art/ui/`; check_palette gains a menu/UI category (the 16 new atlases pass).
