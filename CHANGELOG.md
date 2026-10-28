@@ -2,6 +2,14 @@
 
 Dates are America/New_York. Newest first. Keep this current with every change you push.
 
+## 2026-10-28 (America/New_York): Hearthmoor Stage A (branch `hearthmoor-stagea-1028`, not live)
+
+- Niflheim option B: `NIFL_MUSP_LOCK = false`; befriending Muspelheim no longer locks Niflheim. `cinderProof` gates `redeemable` (a Muspelheim friend needs the Ember Witness; it does not count toward the 3 evidence). Doorstep greeting and Ending B line kept via `fireFriend`.
+- New quest The Ember Witness (`mp_witness`, story 3.13): Aska offers, find the core by Caldera wedge 2, Torka asks who made it, bring the copper plate to Gudrun (+40 Realm Favor).
+- Esc / pad B during the Lantern Eve intro closes the quest log first, skips only when nothing is open.
+- Options card: bottom padding includes `env(safe-area-inset-bottom)`, height capped with `dvh`.
+- HANDOFF docs: stale Pending merge line fixed; games/hearthmoor/HANDOFF.md has a RESUME HERE block.
+
 ## 2026-10-26 (America/New_York): menu restyle LIVE (04adc1c), Muspelheim 1.1 (branch `hearthmoor-mp-frostfriend`), handoff docs
 
 - Menu restyle published via publish-game.sh (main 2f79450 -> 04adc1c); game-qa live PASS. Extra fix: compact area chip on short landscape phones (ossuary2 844x390).
