@@ -619,7 +619,7 @@ const hooks = {
     if (G.shop) { G.shopUI.pad(name); return true; }
     if (G.opts) { if (name === 'y') cycleWeather(); else if (name === 'b' || name === 'start' || name === 'a') setOpts(false); return true; }
     if (G.busy || G.downed) return true;
-    if (G.intro.active && name === 'b') { G.intro.skip(); return true; }   // B skips the Lantern Eve opening
+    if (G.intro.active && name === 'b') { if (G.log) setLog(false); else G.intro.skip(); return true; }   // B closes the quest log on top first, else skips the Lantern Eve opening
     if (G.dlg && G.dlg.picking) { if (name === 'up') choiceMove(-1); else if (name === 'down') choiceMove(1); else if (name === 'a') choicePick(G.dlg.ci); else if (name === 'b') choiceCancel(); return true; }
     if (G.dlg) { if (name === 'a') advanceDialogue(); else if (name === 'b') closeDialogue(); return name !== 'select'; }
     if (G.log) { if (name === 'y' || name === 'rb' || name === 'lb') { setLog(false); setHeroUI(true); return true; } if (name === 'a' || name === 'b' || name === 'start') setLog(false); return name !== 'select'; }
@@ -924,7 +924,7 @@ function wire() {
       return;
     }
     if (G.asking) { if (k === 'y') askPick(true); else if (k === 'n' || k === 'escape') askPick(false); else if (k.startsWith('arrow') || k === 'a' || k === 'd') askMove(); else if (k === 'enter' || k === ' ') { e.preventDefault(); askPick(ASK.yes); } e.stopImmediatePropagation(); return; }
-    if (G.intro.active && k === 'escape' && !G.heroUI && !G.shop && !G.opts) { e.preventDefault(); e.stopImmediatePropagation(); G.intro.skip(); return; }   // Esc skips the opening
+    if (G.intro.active && k === 'escape' && !G.heroUI && !G.shop && !G.opts) { e.preventDefault(); e.stopImmediatePropagation(); if (G.log) setLog(false); else G.intro.skip(); return; }   // Esc closes the topmost layer (the quest log) first; only with nothing on top does it skip the opening
     if (G.heroUI) { e.stopImmediatePropagation(); heroKey(k, e); return; }
     if (G.shop) { e.stopImmediatePropagation(); G.shopUI.key(k, e); return; }
     if (k === 'u' && !hooks.blockInput()) { G.drinkTonic(); return; }
