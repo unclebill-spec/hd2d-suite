@@ -48,7 +48,7 @@ const gateRank = (S) => ((S.ranks || {}).gate || 0);   // the Guild rank (Rift M
 const armed = (S) => !!((S.gear || {}).weapon);
 
 Object.assign(REALM, { muspelheim: 'embassy', mp_hall: 'embassy', lavafalls: 'embassy', caldera: 'embassy', caldera2: 'embassy' });   // befriend = Realm Favor; conquer / contract pay 'gate' (Factions.realm wrap below)
-Object.assign(MERIT, { mp_gate: 60, ashtoll: 60, mp_contract: 60, caldera_c: 120, mp_walk: 40, mp_sigil: 60, mp_rival: 20, mp_kindle: 80, caldera: 120, emberfall: 40 });   // story 3.12
+Object.assign(MERIT, { mp_gate: 60, ashtoll: 60, mp_contract: 60, caldera_c: 120, mp_walk: 40, mp_sigil: 60, mp_rival: 20, mp_kindle: 80, caldera: 120, emberfall: 40, mp_witness: 40 });   // story 3.12
 {   // story 12: factions.realm() returns `gate` in the realm's areas when alliance.muspelheim === "conquer" or flags.mp_contract
   const realm0 = Factions.prototype.realm;
   Factions.prototype.realm = function realm() {
@@ -165,6 +165,7 @@ WX_HOOK.muspelheim = muspWx; WX_HOOK.lavafalls = muspWx; WX_HOOK.caldera = muspW
 
 // ------------------------------------------------------------------ items + Svala's stall (story 5.5, 11; prices are first guesses)
 Object.assign(ITEMS, {
+  ember_witness: { name: 'The Ember Witness', px: 'glowseed', about: '"Cinderhold blamed Mistmere for Lantern Eve. Cinderhold was wrong. Ask us anything." A palm-sized copper plate; the real seal glows red-violet in the stamp.' },   // story 3.13
   heat_key: { name: 'Heat-sealed key', px: 'glowseed', about: "A copper rod that went into the wrong kiln and came out hot. Carry it with the tongs. Halvard's, for the red arch." },
   ember_sigil_copy: { name: 'Ember-sigil (a copy)', px: 'glowseed', about: 'The false sigil from Lantern Eve. Look, do not wear: the flame curls the wrong way, and the core is cold blue.' },
   caldera_key: { name: 'Caldera Key', px: 'tonic', about: "Cinder-Captain Dagny's key-fire, forced from the Warden. It opens the Ember Caldera, no questions asked." },
@@ -242,6 +243,10 @@ Object.assign(QUESTS, {
     1: (S) => `Win a young ember lizard's trust: a cinder-berry a day, three days. ${Math.min(3, F(S).ml_berries || 0)}/3`,
     2: 'Ride one lap of the terraces. (Orm is still fitting the saddle: the lizard mount arrives with the mounts.)',
     3: 'Your lizard. Her name is Smoulder.' } },
+  mp_witness: { title: 'The Ember Witness', giver: 'Ember-Warden Aska Cindervane', story: true, steps: {   // story 3.13 (option B proof for Niflheim's Ending A); 3 = given to Gudrun
+    1: (S) => ((S.found || {}).ew_core ? 'Bring the blue core to Torka at the Sigil Forge.' : "Find what's left of the wedge in the Cold Seam (C5)."),
+    2: "Carry Cinderhold's word to Frost-Speaker Gudrun in Mistmere.",
+    3: 'Mistmere has Cinderhold\'s word. Fire asked first.' } },
   emberfall: { title: 'Emberfall', giver: 'Torka Ashgrip', bounty: true, steps: {
     1: (S) => { const g = S.emberfall || {}; return `Forge ${g.forge || 0}/3, dance ${g.dance ? 1 : 0}/1, coal run ${g.run ? 1 : 0}/1.`; },
     2: 'Collect your prize from Torka.', 3: 'Champion of Emberfall, until next week.' } },
@@ -273,6 +278,9 @@ function closeSigil(G) {   // The Mirror Sigil done (story 3.3 / 4.3): the sigil
   G.setQuest('mp_sigil', 3); G.factions.add('embassy', MERIT.mp_sigil + (f.mp_prior ? MERIT.mp_rival : 0), 'mp_sigil'); gold(G, 40);   // the +20 is for a Niflheim conqueror (mood set before the Walk; the Walk itself raises the mood to 3)
   f.mp_cleared = 1; f.mp_peace = 1; S.evidence = { ...(S.evidence || {}), muspelheim: 'mirror_sigil' }; mark(G);
 }
+// story 3.13: The Ember Witness is offered to a friend of both realms once the sigil is cleared and the C5 wedge melted
+const witnessOffer = (S) => { const a = F(S).alliance || {}; return a.muspelheim === 'befriend' && a.niflheim === 'befriend' && !!F(S).mp_cleared && !!(S.found || {}).cd_w2 && !(S.evidence || {}).cinderhold && !q(S, 'mp_witness'); };
+const witnessJudge = (S) => q(S, 'mp_witness') === 1 && !!(S.found || {}).ew_core;
 const WARDEN_OPTIONS = (S) => {   // Aska's choice (story 5.2 / muspelheim.md 1.1, Bill 2026-10-25): only the 4-ally cap greys befriend; a Niflheim friend (frost friend mark) may still befriend
   const lk = lockedBy(S), cap = allyCount(S) >= 4, opts = [];
   if (cap) opts.push({ label: '(Four realms already stand with you.)', locked: true, pick: () => ({ pages: ['Your friends are many. Mine are few. Another time.'] }) });
@@ -309,6 +317,7 @@ Object.assign(TALK, {
       if (st('mp_sigil') === 1) return { pages: [`The Sigil Forge is behind my seat. Three clues: the cooling bed, the ledger, the mould wall. ${sigil(S).n}/3.`] };
       if (st('caldera') === 2 && f.cd_bound) return { pages: ['The Flame sank into the Throne, and the chains lit? Then Vharzul sleeps. For now.', 'Cinderhold thanks you. Torka will teach you what the fire teaches.'],
         then: (G) => { G.setQuest('caldera', 3); G.factions.add(f.mp_contract ? 'gate' : 'embassy', f.mp_contract ? MERIT.caldera_c : MERIT.caldera, 'caldera'); gold(G, 150); if (f.mp_contract) G.setQuest('mp_hire', 3); flags(G.S).mp_resolved = 1; mark(G); } };
+      if (witnessOffer(S)) return { pages: ["We blamed Mistmere in the square. Loud. Fire doesn't whisper an apology.", 'Bring me what the wedge left. Torka will make it speak.'], then: (G) => { G.setQuest('mp_witness', 1); mark(G); } };
       if (al === 'befriend') return { pages: [st('mp_walk') === 1 ? 'Then walk my stones. Fire trusts feet.' : 'The fire is for everyone. Sit.'] };
       return { pages: ['Hear my terms: Grettir waits at the stables. He is burned, and he is right, mostly.'] };
     }
@@ -320,6 +329,10 @@ Object.assign(TALK, {
     const f = F(S), al = (f.alliance || {}).muspelheim;
     if (al === 'conquer') return { pages: ["You know the flame curls wrong. We all do.", 'The Caldera Key opens the door. It does not make the Throne agree.'] };
     if (!q(S, 'caldera') && (q(S, 'mp_sigil') >= 3 || f.mp_contract || al === 'conquer')) return { pages: ['Hot iron says what a smith won\'t. Let it.', "Veyra drove three frost wedges into the Throne's seals. Melt them with fire, then face what wakes."], then: (G) => { G.setQuest('caldera', 1); mark(G); } };
+    if (al === 'befriend' && witnessJudge(S)) return { pages: ['(Torka sets three things on the cooling bed: a real Warden\'s seal, the Lantern Eve fake, the blue core. The seal cools orange from the edge in; the fake and the core cool blue from the middle out, ringing the same frost note.)', 'Same hand. Same cold. Look at the curl.', 'So. Who made it?'],   // story 3.13 step 2
+      choice: { id: 'mp_witness_name', options: [
+        { label: "Veyra's. One hand framed you both.", pick: () => ({ pages: ['Then Aska writes it down. On copper. Fire forgets paper.'], then: (G) => { flags(G.S).sf_witness = 1; G.give('ember_witness', 1); G.setQuest('mp_witness', 2); mark(G); } }) },
+        { label: "Mistmere's Wardens.", pick: () => ({ pages: ["Look again. Wardens cast seals. They don't cast lies."] }) } ] } };
     const sc = school(S); if (sc) return sc;   // the Caldera school (I right after the Caldera, II / III as soon as the level allows)
     if (al === 'befriend' && q(S, 'caldera') === 3 && !q(S, 'mp_sword')) return { pages: ['The Throne sleeps. Good. There is a blade I have wanted to quench for a hundred winters. It needs three heart-coals.'], then: (G) => { G.setQuest('mp_sword', 1); mark(G); } };
     if (al === 'befriend' && q(S, 'mp_sword') === 2) return { pages: ['Three heart-coals. Good. Watch.', '(Torka sets the coals in the blade and quenches it. Blue runs down the fuller, once, and stays.)', 'Emberfang. Mind the cold line: it is a reminder.'],
@@ -362,6 +375,7 @@ MARKER_HOOKS.push((id, S) => {
   if (id === 'springkeeper' && al === 'befriend' && q(S, 'mp_sigil') >= 3 && !q(S, 'mp_kindle')) return 'quest_mark';
   if (id === 'forgejudge' && ((!q(S, 'caldera') && (q(S, 'mp_sigil') >= 3 || f.mp_contract || al === 'conquer')) || (al === 'befriend' && ((q(S, 'caldera') === 3 && !q(S, 'mp_sword')) || q(S, 'mp_sword') === 2)))) return 'quest_mark';
   if (id === 'forgejudge' && school(S)) return 'quest_mark';   // a Caldera school lesson is ready
+  if ((id === 'warden_mp' && witnessOffer(S)) || (id === 'forgejudge' && al === 'befriend' && witnessJudge(S))) return 'quest_mark';   // The Ember Witness (3.13)
   if (id === 'lizardman' && al === 'befriend' && ((!q(S, 'mp_lizard') && q(S, 'mp_walk') >= 3) || (q(S, 'mp_lizard') === 1 && (f.ml_lastDay ?? -1) < (S.day || 0) && (f.ml_berries || 0) < 3))) return 'quest_mark';
   if (id === 'envoy_mp' && al === 'conquer' && q(S, 'mp_take') === 1) return 'quest_mark';
   if (id === 'mp_guide' && f.mp_contract && f.mh_terms && !f.mh_grettir) return 'quest_mark';
@@ -606,6 +620,11 @@ export class Muspelheim {
         act: () => ((this.G.S.found || {})[k] ? this.look(k + '_m', 'The melted wedge', ['A black stain in the stone where the frost wedge was. The seal beside it glows.']) : this.look(k + '_w', "Veyra's frost wedge", ['A wedge of blue-white ice, driven into the seal by someone small and careful. It hums, cold, against the heat.', '(Any spell cast close by would melt it.)'])) });
     });
   }
+  witnessCore() {   // story 3.13 step 1: the melted C5 wedge left a blue core (caldera2 only)
+    const S = this.G.S, [a, x, z] = WEDGE.cd_w2; if (a !== this.area) return;
+    this.spot({ id: 'ew_core', pos: [x + 0.8, z], r: 1.6, label: 'a blue core in the rock (E / A)', show: () => q(S, 'mp_witness') === 1 && !!(S.found || {}).cd_w2 && !(S.found || {}).ew_core,
+      act: () => this.look('ew_core', 'A blue core', ['(Thumb-sized, glowing in the rock where the wedge melted. Kindle sniffs it.)', '"Cold. Wrong cold."'], () => { this.find('ew_core'); mark(this.G); }) });
+  }
   melt(k) {
     const c = this.ctx, S = this.G.S, w = WEDGE[k]; if (!c || !w || (S.found || {})[k]) return false;
     this.find(k); this.dropFx(this.wfx[k]); this.wfx[k] = null;
@@ -633,7 +652,7 @@ export class Muspelheim {
     this.spot({ id: 'cd_tab1', pos: [3.8, -14.4], r: 1.8, label: 'a seal tablet (E / A)', act: () => this.look('cd_t1', 'Seal tablet', ['"THE GLASS REMEMBERS FIRE. ONLY WHERE IT STILL GLOWS WILL IT BEAR YOU."', '(Warm lines of light run through the glass ahead. The dark panes between them look thin.)']) });
     this.spot({ id: 'cd_tab0', pos: [-3.6, 6.0], r: 1.8, label: 'a seal tablet (E / A)', act: () => this.look('cd_t0', 'Seal tablet', ['"THE WARDENS CUT THE THRONE A COLD SPRING, FAR DOWN. DRINK, AND THE FIRE FORGIVES YOU."', '(A scratched bird beneath it. Veyra\'s mark.)']) });
     GLASS.LIT.forEach((cols, r) => cols.forEach((col) => { const [x, z] = glassCentre(col, r); this.fxAt(ctx, 'pool_forge', x, ctx.heightAt(x, z), z); }));
-    this.wedges(ctx); this.hcSpots(ctx);
+    this.wedges(ctx); this.hcSpots(ctx); this.witnessCore();
     this.ambushed = !!(S.found || {}).cd_c1 || this.ambushed;
   }
   caldera1() {   // C1: two magma hounds come off the walls as you step onto the stair
@@ -650,7 +669,7 @@ export class Muspelheim {
   // ---- the Throne rooms C5-C9: Veyra's seam, the Kilnmother, springs + waystone, Vharzul
   deepRooms(ctx) {
     const G = this.G, S = G.S;
-    this.wedges(ctx); this.hcSpots(ctx);
+    this.wedges(ctx); this.hcSpots(ctx); this.witnessCore();
     this.spot({ id: 'cd_tab5', pos: [-3.8, 4.4], r: 1.8, label: 'a seal tablet (E / A)', act: () => this.look('cd_t5', 'Seal tablet', ['"THE COLD SEAM. WHERE A FIRE-KING SLEPT, SOMEONE HAS TAUGHT THE ROCK TO BE COLD."']) });
     this.spot({ id: 'cd_tab7', pos: [-6.6, -40.8], r: 1.8, label: 'a seal tablet (E / A)', act: () => this.look('cd_t7', 'Seal tablet', ['"VHARZUL EMBERTHRONE. HE HELD THE FIRE WHEN THE FIRE WAS A CHILD. LET HIM SLEEP, IF HE WILL."', '"THREE LAMPS IN HIS HALL. LET NONE BURN WHEN HE BREAKS."']) });
     this.spot({ id: 'cd_tab8', pos: [-1.0, -38.4], r: 1.8, label: 'a seal tablet (E / A)', act: () => this.look('cd_t8', 'Seal tablet', ['"THE WAYSTONE BURNS WHEN IT KNOWS YOU. COME BACK, WHEN YOU HAVE BEEN WARMED."']) });

@@ -6,7 +6,7 @@ Runs standalone (its own server + headless Chromium; HD2D_USER_DATA_DIR = Bill's
 after the main run, so the main run's save is untouched. Boots ?qa (fresh state, no saving) with &combat&peace. Waits are T.until / T.frames (no fixed sleeps).
 Covers (runtime tables, no built Niflheim area needed): the module is live (G.nifl); the shared-table registrations (10 quests, MERIT, foes incl. the three framed bosses and Veyra's 4 phases,
 rares, weather kinds, Hrefna's COMP + kit, Tove's stall, items, TALK); Bifrost's ice arch stays sealed while no area is built; the Muspelheim-lock flag (NIFL_MUSP_LOCK) and what it
-switches; Gudrun's choice in every variant (free, Muspelheim friend = locked label, Muspelheim conqueror = Lanterns skipped, 4-ally cap, conquer); the Cold Mark rules; the redeemable()
+switches; Gudrun's choice in every variant (free, Muspelheim friend = open with the doorstep line (option B), Muspelheim conqueror = Lanterns skipped, 4-ally cap, conquer); the Cold Mark rules; the redeemable()
 test; the three bosses' phase logic through qaBoss in any area; the realm's merit routing; the weather calendar split. File-level: the three skeleton specs (real height + stair), build.py /
 nifl_art.py waiting on READY.txt. When Niflheim areas are built the extra steps (area loads, gate portal, return spawn) run too.
 """
@@ -119,7 +119,7 @@ def steps(b, url, T, size, errors, rep, stub=None, shots=None):
         S("S.flags.vh_resolved = 'x'; S.flags.alf_resolved = 'befriend'; return 1;"); r2 = sv()["resolved"]
         S("S.flags.sv_resolved = 'x'; return 1;"); r3 = sv()["resolved"]
         T.step("resolvedCount counts the realm resolved flags (2, then 3 = the invitation)", r2 == 2 and r3 == 3, r2=r2, r3=r3)
-        T.step("the Muspelheim lock is ONE constant (NIFL_MUSP_LOCK, on by default)", nf("qaDefs()")["lock"] is True)
+        T.step("the Muspelheim lock is ONE constant (NIFL_MUSP_LOCK, off since option B 2026-10-25)", nf("qaDefs()")["lock"] is False)
         # ---- Gudrun's choice
         reset_state()
         t = nf("qaTalk('frostspeaker')")
@@ -131,14 +131,16 @@ def steps(b, url, T, size, errors, rep, stub=None, shots=None):
         nf("qaPick('Stand with Mistmere. Let me bring her home.')"); s1 = sv()
         T.step("a Muspelheim conqueror (mood 1) skips the Lanterns (done, favor paid) and starts The Cold Mark, and Gudrun says so",
                s1["quests"]["nf_lanterns"] == 3 and s1["quests"]["nf_cold"] == 1 and s1["flags"]["trusted"] and "broke the fire-throne" in (line or ""), qa=s1["quests"], line=line)
-        reset_state(); S("S.flags.rivals = { niflheim: 'locked' }; return 1;")
-        t = nf("qaTalk('frostspeaker')")
-        T.step("a Muspelheim friend: the befriend option is greyed with the locked label; conquer stays open; there is no contract option", t["choice"] == ["(Locked. You stand with Muspelheim.)", "Midgard's. Hand over the Spire Key."] and t["locked"] == ["(Locked. You stand with Muspelheim.)"], t=t)
-        nf("qaPick('(Locked. You stand with Muspelheim.)')"); s1 = sv()
-        T.step("picking the greyed option does nothing but talk", s1["alliance"] is None and s1["quests"]["nf_lanterns"] == 0 and s1["quests"]["nf_take"] == 0)
-        T.step("Hrefna will not join a Muspelheim friend (her line, no quest offer)", "light yours" in (nf("qaLine('hrefna')") or "") and sv()["quests"]["nf_hrefna"] == 0)
-        T.step("redeemable() is false for a Muspelheim friend even with everything else in place",
-               S("S.flags.alliance = { niflheim: 'befriend' }; S.flags.nf_vigil = 3; S.evidence = { a: 1, b: 1, c: 1 }; return 1;") is not None and sv()["lockedBy"] and not sv()["redeemable"])
+        reset_state(); S("S.flags.rivals = { niflheim: 'locked' }; S.flags.alliance = { muspelheim: 'befriend' }; return 1;")
+        t = nf("qaTalk('frostspeaker')"); line = nf("qaLine('frostspeaker')")
+        T.step("option B: a Muspelheim friend can befriend (no locked label, doorstep greeting), conquer stays open, no contract option",
+               t["choice"] == ["Stand with Mistmere. Let me bring her home.", "Midgard's. Hand over the Spire Key."] and not t["locked"] and "doorstep" in (line or ""), t=t, line=line)
+        T.step("option B: lockedBy() is false for a Muspelheim friend", not sv()["lockedBy"])
+        T.step("redeemable() is false for a Muspelheim friend without the Ember Witness (cinderProof), even with everything else in place",
+               S("S.flags.alliance = { muspelheim: 'befriend', niflheim: 'befriend' }; S.flags.nf_vigil = 3; S.evidence = { a: 1, b: 1, c: 1 }; return 1;") is not None and not sv()["redeemable"])
+        T.step("redeemable() is true once S.evidence.cinderhold = 'ember_witness' (the witness is extra, not one of the 3)",
+               S("S.evidence.cinderhold = 'ember_witness'; return 1;") is not None and sv()["redeemable"] and not (S("S.evidence = { a: 1, b: 1, cinderhold: 'ember_witness' }; return 1;") is not None and sv()["redeemable"]))
+        S("S.evidence = { a: 1, b: 1, c: 1 }; S.flags.alliance = { niflheim: 'befriend' }; return 1;")
         S("S.flags.rivals = {}; return 1;")
         T.step("redeemable(): befriend + Eira's Lanterns done + 3 evidence + no Breaker detour = true; one missing piece = false",
                sv()["redeemable"] and not (S("S.evidence = { a: 1, b: 1 }; return 1;") is not None and sv()["redeemable"]) and not (S("S.evidence = { a: 1, b: 1, c: 1 }; S.flags.rift_breaker = 1; return 1;") is not None and sv()["redeemable"]))
