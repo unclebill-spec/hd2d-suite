@@ -9,8 +9,8 @@ HD-2D cozy game (16-bit billboard actors in a lit 3D diorama). Live: unclebill-s
 ## Current state
 - Last commits on main (Oct 21): Asgard music track, Asgard areas, PWA + zip builds for asgard-merge / asgard-music.
 - Realm progress logs: repo root `*_PROGRESS.md` (Alfheim, Asgard, Jotunheim, Muspelheim, Svartalfheim) and `games/hearthmoor/NIFLHEIM_PROGRESS.md` (has a RESUME HERE block).
-- Oct 22 cleanup: 19 realm/merge worktrees whose commits were all in origin/main were removed (branches kept). Still on disk with unmerged work: `/workspace/hd2d-cauldron` (cold-cauldron, 5 uncommitted), `/workspace/hd2d-niflheim` (1 uncommitted), `/workspace/hd2d-suite-leftovers` (hearthmoor-leftovers-wip, not in main).
-- Unknown: which realm is next, open bugs.
+- Oct 22 cleanup: 19 realm/merge worktrees whose commits were all in origin/main were removed (branches kept). The leftover worktrees are resolved (2026-10-28, see Next action).
+- Next realm and open bugs: see Next action below and the root HANDOFF.md.
 
 ## Key paths
 - Game: `games/hearthmoor/` (build.py, engine/, areas/, art/, audio/, tests/, RESTORE.md)
@@ -18,7 +18,12 @@ HD-2D cozy game (16-bit billboard actors in a lit 3D diorama). Live: unclebill-s
 - Rules: repo `AGENTS.md`, `CHANGELOG.md`
 
 ## Next action
-Unknown. Owner: fill in the next realm/task and resolve the 3 leftover worktrees above.
+### RESUME HERE (2026-10-28)
+- Owner: HD-2D Cozy Builder.
+- Current branch: `hearthmoor-stagea-1028` (from origin/main ca3ef0b; pushed, NOT live): Niflheim option B (`NIFL_MUSP_LOCK = false`, `cinderProof` in `redeemable`), The Ember Witness (`mp_witness`, `S.evidence.cinderhold = 'ember_witness'`), Lantern Eve Esc/B closes the quest log before skipping, phone Options last-row padding.
+- The 3 old leftover worktrees are resolved: cold-cauldron and hearthmoor-leftovers-wip are archived as tags `archive/cold-cauldron` and `archive/hearthmoor-leftovers-wip`; the menu restyle and the Muspelheim frost-friend work are live.
+- NEXT: the Vanaheim realm from `/workspace/hearthmoor-staging/story/vanaheim.md` (needs a data.js `allyCount` export, `yieldAt` and `G.startBoss` hooks like verdant_heart). Boss Mother Nettlecrown's difficulty goes to Game Director BEFORE building.
+- Remaining merge queue: `ambient_barks.md`; Kindle / Hrefna optional lines.
 
 ## Inbox (non-owner bots append here: date, bot, staging path, one line)
 - 2026-10-23, checks-upgrade: check-sprite now also checks holes / limbs / 1px outline / soft alpha (current art allowlisted in tools/check-sprite/art_allowlist.txt); Hearthmoor Art usage: staging/HANDOFF-art-checks.md. Pre-publish secret scan now runs tools/checks/extra_secret_patterns.sh + gitleaks (branch checks-upgrade).
