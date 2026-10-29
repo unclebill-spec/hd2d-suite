@@ -2,6 +2,12 @@
 
 Dates are America/New_York. Newest first. Keep this current with every change you push.
 
+## 2026-10-28 (America/New_York): check-scene harness readiness fix (branch `hearthmoor-harness-1028`, not live)
+
+- check-scene no longer waits a blind 120 s for `__hd2d.ready`: it polls progress every 250 ms, fails at once on a page error, the game's "failed to load" boot text, or a WebGL-context failure, and on a real timeout reports frames drawn, boot text, last console lines and box load.
+- Root cause of the Stage A "37 areas time out": headless Chromium (SwiftShader) intermittently cannot create a WebGL context ("BindToCurrentSequence failed"); `boot()` throws, frames stay 0, ready never fires. A box/browser fault, not slow areas. check-scene now exits 3 (`WEBGL-UNAVAILABLE`) and check_all relaunches that area once.
+- `timing_s` per phase in check_scene.json and the log. `HD2D_EXTRA_CHROME_ARGS` (self-test only).
+
 ## 2026-10-28 (America/New_York): Hearthmoor Stage A (branch `hearthmoor-stagea-1028`, not live)
 
 - Niflheim option B: `NIFL_MUSP_LOCK = false`; befriending Muspelheim no longer locks Niflheim. `cinderProof` gates `redeemable` (a Muspelheim friend needs the Ember Witness; it does not count toward the 3 evidence). Doorstep greeting and Ending B line kept via `fireFriend`.
