@@ -75,8 +75,25 @@
       "h": 0.03
     }
   ],
-  "terraces": [],
-  "stairs": [],
+  "terraces": [
+    {
+      "name": "raised_bed",
+      "rect": [-12.3, -7.9, -5.4, -3.4],
+      "h": 1.0,
+      "top": "moss",
+      "gaps": [[-10.1, -7.5]]
+    }
+  ],
+  "stairs": [
+    {
+      "name": "stair_bed",
+      "x": -8.8,
+      "z_top": -3.4,
+      "width": 2.6,
+      "rise": 1.0,
+      "base": 0.0
+    }
+  ],
   "buildings": [],
   "props": [
     {
@@ -292,7 +309,7 @@
     {
       "piece": "blight_bloom",
       "pos": [
-        -12.4,
+        -11.8,
         -7
       ]
     },
@@ -306,7 +323,7 @@
     {
       "piece": "blight_bloom",
       "pos": [
-        -12.4,
+        -11.8,
         -4
       ]
     },
