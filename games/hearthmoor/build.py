@@ -612,13 +612,83 @@ def install_orb_lanterns(areas=AREAS):
     print(f"orb lanterns: {len(fxm['effects'])} orb effects in {', '.join(x for x in areas if x in ORB_AREAS)}")
 
 
+# ------------------------------------------------------------------ realm art (QA 2026-10-28): copy_areas() rebuilds each area from the assemble
+# output, which has none of the realm art the tools/hearthmoor/*_art.py installers wired in (kit .glb, extra sprite sheets, gamefx rows,
+# gamefx.base.*). Without this a clean build silently dropped ~1600 tracked files (4888 -> 3295). So: re-run the installers in their
+# documented order (realm installers, then jot --stonefrost-all, then musp --school-all LAST), then fail loudly if any git-tracked
+# file under a rebuilt area is still missing (HM_ALLOW_ART_DROP=1 to accept a drop on purpose).
+REALM_ART = [("alf_art.py", ["alfheim", "lumen_court", "wispwood", "prismvault"]),
+             ("svart_art.py", ["svartalfheim", "forge_hall", "glowmines", "clockdeep", "clockdeep2"]),
+             ("jot_art.py", ["jotunheim", "jt_hall", "rimecaves", "barrow", "barrow2"]),
+             ("musp_art.py", ["muspelheim", "mp_hall", "lavafalls", "caldera", "caldera2"]),
+             ("nifl_art.py", ["niflheim", "nf_home", "iceglow", "frozenspire", "frozenspire2", "frozen_rift"]),
+             ("asg_art.py", ["asgard", "gs_hall", "gs_temple", "reliquary", "reliquary2"]),
+             ("hel_art.py", ["helheim", "hh_shore", "hh_archive", "ossuary", "ossuary2"])]
+
+LUMI_AREAS = ["plaza", "lane", "mossglen", "hollows", "rift", "vanaheim", "ravenhold", "bifrost", "temple", "rotwood", "verdant", "forge",
+              "svartalfheim", "forge_hall", "glowmines", "clockdeep", "clockdeep2"]   # areas that ship alf_art's lumi_only sheet
+
+
+def tracked_files(areas):
+    """git-tracked files under areas/<a>/ (empty set outside a git checkout)"""
+    try:
+        out = subprocess.run(["git", "-C", str(GAME), "ls-files", "-z", "--", *[f"areas/{a}" for a in areas]],
+                             check=True, capture_output=True, text=True).stdout
+    except (OSError, subprocess.CalledProcessError):
+        return set()
+    return {f for f in out.split("\0") if f}
+
+
+def install_realms(areas=AREAS):
+    tools = SUITE / "tools" / "hearthmoor"
+    for script, realm in REALM_ART:
+        mine = [a for a in realm if a in areas]
+        if mine:
+            sh(sys.executable, tools / script, *mine)   # explicit areas: never an installer's "every built area" mode
+    # alf_art's no-argument mode also gives Lumi's sheet to every other area. The shipped tree has it only in the areas that existed
+    # back then (LUMI_AREAS), so re-add exactly those (alf_art's own lumi_only(), its run-on-import loops cut off).
+    lumi = [a for a in LUMI_AREAS if a in areas]
+    if lumi:
+        src = (tools / "alf_art.py").read_text().split("\nif not sys.argv[1:]:")[0]
+        argv, sys.argv = sys.argv, [str(tools / "alf_art.py"), "alfheim"]
+        try:
+            g = {"__file__": str(tools / "alf_art.py"), "__name__": "alf_lumi"}
+            exec(compile(src, str(tools / "alf_art.py"), "exec"), g)
+            for a in lumi:
+                g["lumi_only"](a)
+        finally:
+            sys.argv = argv
+        print(f"lumi sheet: {', '.join(lumi)}")
+    sh(sys.executable, tools / "jot_art.py", "--stonefrost-all")
+    sh(sys.executable, tools / "musp_art.py", "--school-all")   # RUN IT LAST (musp_art.py docstring)
+
+
+def check_no_art_drop(before):
+    gone = sorted(f for f in before if not (GAME / f).exists())
+    if not gone:
+        print(f"art check: all {len(before)} tracked area files present")
+        return
+    print(f"\nBUILD WARNING: {len(gone)} git-tracked area files are missing after the build (installed realm art?):", file=sys.stderr)
+    for f in gone[:40]:
+        print("  " + f, file=sys.stderr)
+    if len(gone) > 40:
+        print(f"  ... and {len(gone) - 40} more", file=sys.stderr)
+    if os.environ.get("HM_ALLOW_ART_DROP"):
+        print("HM_ALLOW_ART_DROP set: continuing.", file=sys.stderr)
+        return
+    print("Refusing to finish: do NOT commit this tree. Restore with `git checkout -- games/hearthmoor/areas` (or set HM_ALLOW_ART_DROP=1).", file=sys.stderr)
+    sys.exit(3)
+
+
 if __name__ == "__main__":
     ap = argparse.ArgumentParser()
     ap.add_argument("--no-zip", action="store_true")
     ap.add_argument("--skip-assemble", action="store_true")
     ap.add_argument("--areas", default=None, help="comma list: rebuild only these areas (the others stay as built)")
+    ap.add_argument("--no-realm-art", action="store_true", help="skip the tools/hearthmoor/*_art.py re-install (the drop check still runs)")
     a = ap.parse_args()
     only = a.areas.split(",") if a.areas else AREAS
+    before = tracked_files(only)
     if not a.skip_assemble:
         assemble(only)
     copy_areas(only)
@@ -628,6 +698,9 @@ if __name__ == "__main__":
     install_orb_lanterns(only)
     install_forge(only)
     install_cauldron(only)
+    if not a.no_realm_art:
+        install_realms(only)
+    check_no_art_drop(before)
     draw_icons()
     draw_button_icons()
     write_pwa()
