@@ -218,7 +218,7 @@ export async function boot(opts = {}) {
     const light = L.light !== false && i < (sMeta ? 7 : 8) ? new THREE.PointLight(new THREE.Color(L.color || biome.colors.lamp), 0, L.range || 7, 2.0) : null;
     if (light) { light.position.set(...L.pos); world.add(light); }
     const c = new THREE.Color(L.color || biome.colors.lamp);
-    return { kind: L.kind, pos: new THREE.Vector3(...L.pos), range: L.range || 9, light, power: 0, phase: i * 0.37, srgb: c.clone().convertLinearToSRGB(), glow: L.glow !== false, tint: L.color ? c : null, fixed: L.fixed ?? null };
+    return { kind: L.kind, pos: new THREE.Vector3(...L.pos), range: L.range || 9, light, power: 0, phase: i * 0.37, srgb: c.clone().convertLinearToSRGB(), glow: L.glow !== false, tint: L.color ? c : null, fixed: L.fixed ?? null, ignite: !!L.fix1028, flare: 0, lit: false };
   });
 
   // glows: game-placed point lights (spell light pools, glowing toadstools). A small fixed pool of real
@@ -726,7 +726,17 @@ export async function boot(opts = {}) {
       const fl = particles ? particles.flickerFrame(time, L.phase) : { intensity: 1 };
       L.power = lampOn * fl.intensity;
       L.frame = fl.frame;
-      if (L.light) { L.light.intensity = (L.fixed != null ? Math.max(L.fixed, L.power) : L.power) * (L.kind === 'lamp_post' ? 26 : 12); L.light.color.copy(L.tint || g.lamp_color); }
+      // fun pass (2026-10-29): a night warm lamp (fix1028) catches with a short swell + a few embers the first time
+      // the hero walks up to it; the steady light/grade afterwards is unchanged. Re-arms when the hero walks away.
+      let boost = 1; const now = performance.now();   // wall clock: the swell fades even when QA freezes game time
+      if (L.ignite) {
+        const near = lampOn > 0.2 && Math.hypot(player.x - L.pos.x, player.z - L.pos.z) < 2.6;
+        if (near && !L.lit) { L.lit = true; L.flare = 1; if (particles) particles.burst('embers', L.pos.x, L.pos.y, L.pos.z + 0.05, 6); }
+        else if (!near && L.lit && Math.hypot(player.x - L.pos.x, player.z - L.pos.z) > 4.5) L.lit = false;
+        if (L.flare > 0) { boost = 1 + 0.6 * L.flare; L.flare = Math.max(0, L.flare - (now - (L.lastT ?? now)) / 900); }
+        L.lastT = now;
+      }
+      if (L.light) { L.light.intensity = (L.fixed != null ? Math.max(L.fixed, L.power) : L.power) * (L.kind === 'lamp_post' ? 26 : 12) * boost; L.light.color.copy(L.tint || g.lamp_color); }
     }
     for (const m of slots.lamps) m.emissive.copy(g.lamp_color).multiplyScalar(0.25 + lampOn * 1.6);
     post.setGrade(g);
@@ -821,7 +831,7 @@ export async function boot(opts = {}) {
     const k = Number(Q.get('k')) || actors.pixelScale(camera, target, bufH);
     updateGlows(dt);
     actors.sync(camera, bufW, bufH, k, g, glows.length ? lamps.concat(glows) : lamps, sunDir);
-    if (particles) {
+    if (particles && !API._fxQuiet) {   // QA effects lineup: ambient particles frozen + hidden (see effectLineup)
       const statics = lamps.filter((L) => L.glow && L.power > 0.15).map((L) => ({ x: L.pos.x, y: L.pos.y, z: L.pos.z + 0.02, frame: L.frame, row: pMeta.presets.lamp_flicker.row }));
       particles.followPos.x = target.x; particles.followPos.z = target.z + 2;
       if (showcase === 'particles') updateShowcase(dt);
@@ -905,7 +915,11 @@ export async function boot(opts = {}) {
     showEffects: (v = true) => { if (effects) for (const f of effects.list) f.mesh.visible = v; },
     // QA: hide spell effects + particles so actor crops can be compared 1:1 with the atlas
     showOverlays: (v = true) => { API.showEffects(v); if (particles) particles.points.visible = v; },
-    hideActors: (h = true) => { for (const a of actors.list) { a.quad.visible = !h; a.caster.visible = !h; } },
+    hideActors: (h = true) => { for (const a of actors.list) { a.quad.visible = !h; a.caster.visible = !h; } if (!h) API.endLineup(); },
+    // QA only (effects lineup shot): ambient fireflies / dust motes drifting over the frozen lineup were scored as a soft
+    // effect (prismvault effects_sharp 0.909). Freeze + hide the ambient particle layer for the shot; gameplay never calls this.
+    quietAmbient: () => { if (!particles || API._fxQuiet) return; API._fxQuietVis = particles.points.visible; API._fxQuiet = true; particles.points.visible = false; },
+    endLineup: () => { if (!API._fxQuiet) return; API._fxQuiet = false; if (particles) particles.points.visible = API._fxQuietVis ?? true; },
     // QA lineup: every effect frozen on a chosen frame in a grid on open ground in front of the camera
     // paged (per > 0): a big atlas squeezed into one screen packs neighbours so tight they overlap (44 effects at 15 a
     // row put a billboard over the next decal's rim); check-scene walks effectPages(per) pages of `per` instead
@@ -921,6 +935,7 @@ export async function boot(opts = {}) {
     effectLineup: (frameFrac = 0.5, page = 0, per = 0) => {
       if (!effects) return [];
       effects.clear();
+      API.quietAmbient();
       if (gamefx) for (const f of gamefx.list) f.mesh.visible = false;   // quest tags / pickups must not sit over a spell
       let names = API.effectOrder();
       if (per > 0) names = names.slice(page * per, page * per + per);
@@ -931,9 +946,13 @@ export async function boot(opts = {}) {
       const dx = Math.min(2.4, 19.2 / cols);                   // and the row never gets wider than 8 cells at 2.4 m
       // rows 3.2 m apart, deeper (up to 6 m) when this camera squeezes 3.2 m into less than 1.35 cells on screen (only the rift: 118 px vs 132-141 elsewhere): on the
       // rift's far camera a front-row billboard reached up into the back-row ring behind it. Paged lineups only.
-      let rowDz = 3.2;
+      let rowDz = 3.2, lineY = null;
       if (per > 0) {
         const z0 = target.z - look.z + 0.6, gy = collide ? (collide.height(target.x, z0) ?? 0) : 0;
+        // one ground height for the whole paged lineup (the effects draw onTop, so the scene never hides them): per-cell
+        // heights put cells that landed on a wall / cross wall up to 3.6 m higher, squeezing a row into the row behind it
+        // (prismvault: back-row toadcap / violet aura under the 1.2 m cross wall row's bubbles / cold-fire pool, 33 px rows)
+        lineY = gy;
         const sy = (dz) => (new THREE.Vector3(target.x, gy, z0 - dz).project(camera).y * 0.5 + 0.5) * bufH;
         const gap = sy(3.2) - sy(0), need = 1.35 * effects.cell * (effects.k || 3);
         if (gap > 0 && gap < need) rowDz = Math.min(6, 3.2 * need / gap);
@@ -943,7 +962,7 @@ export async function boot(opts = {}) {
         const e = sMeta.effects[n];
         const x = target.x + ((i % cols) - (cols - 1) / 2) * dx;
         const z = target.z - look.z + 0.6 - Math.floor(i / cols) * rowDz;
-        const y = collide ? (collide.height(x, z) ?? 0) : 0;
+        const y = lineY ?? (collide ? (collide.height(x, z) ?? 0) : 0);
         effects.spawn(n, x, y, z, { frame: Math.min(e.frames - 1, Math.floor(e.frames * frameFrac)), onTop: true });
       });
       return names;
