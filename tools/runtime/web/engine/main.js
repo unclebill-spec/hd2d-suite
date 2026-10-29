@@ -821,7 +821,7 @@ export async function boot(opts = {}) {
     const k = Number(Q.get('k')) || actors.pixelScale(camera, target, bufH);
     updateGlows(dt);
     actors.sync(camera, bufW, bufH, k, g, glows.length ? lamps.concat(glows) : lamps, sunDir);
-    if (particles) {
+    if (particles && !API._fxQuiet) {   // QA effects lineup: ambient particles frozen + hidden (see effectLineup)
       const statics = lamps.filter((L) => L.glow && L.power > 0.15).map((L) => ({ x: L.pos.x, y: L.pos.y, z: L.pos.z + 0.02, frame: L.frame, row: pMeta.presets.lamp_flicker.row }));
       particles.followPos.x = target.x; particles.followPos.z = target.z + 2;
       if (showcase === 'particles') updateShowcase(dt);
@@ -905,7 +905,11 @@ export async function boot(opts = {}) {
     showEffects: (v = true) => { if (effects) for (const f of effects.list) f.mesh.visible = v; },
     // QA: hide spell effects + particles so actor crops can be compared 1:1 with the atlas
     showOverlays: (v = true) => { API.showEffects(v); if (particles) particles.points.visible = v; },
-    hideActors: (h = true) => { for (const a of actors.list) { a.quad.visible = !h; a.caster.visible = !h; } },
+    hideActors: (h = true) => { for (const a of actors.list) { a.quad.visible = !h; a.caster.visible = !h; } if (!h) API.endLineup(); },
+    // QA only (effects lineup shot): ambient fireflies / dust motes drifting over the frozen lineup were scored as a soft
+    // effect (prismvault effects_sharp 0.909). Freeze + hide the ambient particle layer for the shot; gameplay never calls this.
+    quietAmbient: () => { if (!particles || API._fxQuiet) return; API._fxQuietVis = particles.points.visible; API._fxQuiet = true; particles.points.visible = false; },
+    endLineup: () => { if (!API._fxQuiet) return; API._fxQuiet = false; if (particles) particles.points.visible = API._fxQuietVis ?? true; },
     // QA lineup: every effect frozen on a chosen frame in a grid on open ground in front of the camera
     // paged (per > 0): a big atlas squeezed into one screen packs neighbours so tight they overlap (44 effects at 15 a
     // row put a billboard over the next decal's rim); check-scene walks effectPages(per) pages of `per` instead
@@ -921,6 +925,7 @@ export async function boot(opts = {}) {
     effectLineup: (frameFrac = 0.5, page = 0, per = 0) => {
       if (!effects) return [];
       effects.clear();
+      API.quietAmbient();
       if (gamefx) for (const f of gamefx.list) f.mesh.visible = false;   // quest tags / pickups must not sit over a spell
       let names = API.effectOrder();
       if (per > 0) names = names.slice(page * per, page * per + per);
