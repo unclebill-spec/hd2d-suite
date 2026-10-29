@@ -5,6 +5,7 @@ import { TALK, QUESTS, ITEMS, MARKER_HOOKS } from './data.js';
 import { ENEMIES } from './heroes.js';
 import { XP } from './progress.js';
 import { SHOPS } from './shop.js';
+import { sfx, fx, shake, flash, rare } from './vanaheim_fun.js';   // fun pass juice
 
 const F_ = (S) => (S.flags || (S.flags = {}));
 const A = (S) => ((S.flags || {}).alliance || {}).vanaheim;
@@ -325,17 +326,17 @@ export class Vanaheim {
     const S = this.S, f = F_(S);
     const KNOTS = [[-5.4, -2.0], [3.0, 1.6], [8.8, -2.6]], SPRING = [-1.2, 1.4], FRY = [6.6, 3.2], SEALS = [[-7.0, 2.8], [0.0, -3.4], [7.4, 1.2]];
     KNOTS.forEach((pos, k) => this.spot({ pos, label: 'Burn the Thornhex knot', show: () => (S.quests || {}).vh_hex === 1 && !((f.vh_knot || {})[k]),
-      act: () => { f.vh_knot = { ...(f.vh_knot || {}), [k]: 1 }; f.vh_knots = Object.keys(f.vh_knot).length; this.G.give('hexknot', 1); ctx.effects && ctx.effects.spawn('earth_burst', pos[0], 0, pos[1]);
-        this.G.toast(`The knot hisses "elf-work" and burns blue. ${Math.min(3, f.vh_knots)}/3`, 2.2); this.G.refreshMarkers && this.G.refreshMarkers(); } }));
-    this.spot({ pos: SPRING, label: 'Scoop a fizzstone from the hidden spring', show: () => (S.quests || {}).vh_tobble === 1 && !(S.inv || {}).fizzstone, act: () => this.G.give('fizzstone', 1) });
+      act: () => { f.vh_knot = { ...(f.vh_knot || {}), [k]: 1 }; f.vh_knots = Object.keys(f.vh_knot).length; this.G.give('hexknot', 1); ctx.effects && ctx.effects.spawn('earth_burst', pos[0], 0, pos[1]); sfx(this.G, 'spell'); shake(this.G, 2, 180);
+        this.G.toast(rare() ? `The knot hisses "elf-work", then, quieter, "...and dwarf-work, honestly." ${Math.min(3, f.vh_knots)}/3` : `The knot hisses "elf-work" and burns blue. ${Math.min(3, f.vh_knots)}/3`, 2.2); this.G.refreshMarkers && this.G.refreshMarkers(); } }));
+    this.spot({ pos: SPRING, label: 'Scoop a fizzstone from the hidden spring', show: () => (S.quests || {}).vh_tobble === 1 && !(S.inv || {}).fizzstone, act: () => { this.G.give('fizzstone', 1); fx(ctx, ['sparkle_burst', 'quest_turnin'], SPRING[0], 0.3, SPRING[1]); if (rare(0.12)) this.G.toast('(The fizzstone burps. Politely.)', 1.8); } });
     this.spot({ pos: FRY, label: 'Ask a glow-fish fry to volunteer', show: () => (S.quests || {}).vh_tobble === 1 && !(S.inv || {}).glowfry, act: () => this.look('The Fizzing Steps', ['(A tiny fish glows cyan and swims into your jar. It seems thrilled.)'], (G) => G.give('glowfry', 1)) });
     SEALS.forEach((pos, k) => this.spot({ pos, label: 'Set a tithe-seal on the spring', show: () => (S.quests || {}).vh_tithe === 1 && !((f.vh_seal || {})[k]) && (S.inv || {}).tithe_seal,
-      act: () => { f.vh_seal = { ...(f.vh_seal || {}), [k]: 1 }; f.vh_seals = Object.keys(f.vh_seal).length; this.G.take('tithe_seal', 1); this.G.toast(`The spring goes quiet under the wax. ${f.vh_seals}/3`, 2.2); } }));
+      act: () => { f.vh_seal = { ...(f.vh_seal || {}), [k]: 1 }; f.vh_seals = Object.keys(f.vh_seal).length; this.G.take('tithe_seal', 1); sfx(this.G, 'save'); this.G.toast(`The spring goes quiet under the wax. ${f.vh_seals}/3`, 2.2); } }));
   }
   garden(ctx) {
     const S = this.S, f = F_(S), ROOTS = [[-2.8, -4.2], [6.2, -4.4], [6.4, 2.4]];
     ROOTS.forEach((pos, k) => this.spot({ pos, label: 'Cut the frost-thorn root', show: () => (S.quests || {}).vh_thorn === 1 && !((f.vh_root || {})[k]),
-      act: () => { f.vh_root = { ...(f.vh_root || {}), [k]: 1 }; f.vh_roots = Object.keys(f.vh_root).length; ctx.effects && ctx.effects.spawn('frost_puff', pos[0], 0.3, pos[1]);
+      act: () => { f.vh_root = { ...(f.vh_root || {}), [k]: 1 }; f.vh_roots = Object.keys(f.vh_root).length; ctx.effects && ctx.effects.spawn('frost_puff', pos[0], 0.3, pos[1]); sfx(this.G, 'hit'); shake(this.G, 2.5, 200);
         this.G.toast(`The root snaps, cold to the core. ${Math.min(3, f.vh_roots)}/3`, 2.2); } }));
     this.spot({ pos: [2.4, -1.4], r: 2.0, label: 'Nettlecrown\'s seed & tonic stall', show: () => f.vh_nettle === 'spared', act: () => this.G.shopUI && this.G.shopUI.show('nettle') });
     if (f.vh_nettle && ctx.npc && ctx.npc('nettlecrown') && f.vh_nettle !== 'spared') { const a = ctx.npc('nettlecrown'); a.quad && (a.quad.visible = false); a.noTalk = true; }
@@ -352,6 +353,7 @@ export class Vanaheim {
     e.onKill = () => { this.boss = null; };
     this.spawnAdds(NETTLE.adds[1], 'P1');
     if (A(this.S) === 'conquer') this.spawnHex();
+    sfx(G, 'summon'); shake(G, 4, 380); flash(G, e.a, 0.25);
     G.toast && G.toast('MOTHER NETTLECROWN\n\nThe thorns stand up like hackles.', 3.0);
     return e;
   }
@@ -371,8 +373,8 @@ export class Vanaheim {
     const D = e.D, floor = Math.ceil(D.hp * D.yieldAt);
     if (e.yieldedVh) return 0;
     const after = e.hp - dmg, f = after / D.hp;
-    if (e.phaseN === 1 && f < D.phases[0]) { e.phaseN = 2; this.G.toast && this.G.toast('Nettlecrown tears up her own hedges. The thorns close in.', 2.2); }
-    if (e.phaseN === 2 && f < D.phases[1]) { e.phaseN = 3; this.spawnAdds(NETTLE.adds[3], 'P3'); this.G.toast && this.G.toast('"Children! Mother needs you!"', 2.2); }
+    if (e.phaseN === 1 && f < D.phases[0]) { e.phaseN = 2; sfx(this.G, 'rumble'); shake(this.G, 4, 320); flash(this.G, e.a); this.G.toast && this.G.toast('Nettlecrown tears up her own hedges. The thorns close in.', 2.2); }
+    if (e.phaseN === 2 && f < D.phases[1]) { e.phaseN = 3; sfx(this.G, 'summon'); shake(this.G, 3, 260); flash(this.G, e.a); this.spawnAdds(NETTLE.adds[3], 'P3'); this.G.toast && this.G.toast('"Children! Mother needs you!"', 2.2); }
     if (!e.grabbed && f < D.grabAt) { e.grabbed = 1; this.grab(e); }
     if (after <= floor) { this.yieldNow(e); return Math.max(0, e.hp - floor); }
     return dmg;
@@ -380,12 +382,13 @@ export class Vanaheim {
   grab(e) {   // heartroot grab at 10 %: one rooting squeeze, stamina drained
     const G = this.G, C = G.combat, p = this.ctx.player;
     if (this.ctx.effects) this.ctx.effects.spawn('earth_burst', p.x, p.y, p.z + 0.05);
-    C.hurtPlayer(NETTLE.grabDmg, e.a, 0); C.st = 0;
+    C.hurtPlayer(NETTLE.grabDmg, e.a, 0); C.st = 0; shake(G, 6, 420);
     G.toast && G.toast('HEARTROOT GRAB! Roots burst up and squeeze. Roll free!', 2.4);
   }
   yieldNow(e) {
     const G = this.G; e.yieldedVh = true; e.state = 'idle'; e.a.act = null; e.cd = 1e9;
     this.clearAdds();
+    sfx(G, 'quest'); fx(this.ctx, ['sparkle_burst', 'quest_turnin', 'summon_poof'], e.a.x, e.a.y + 0.6, e.a.z + 0.05);
     G.toast && G.toast('Mother Nettlecrown yields.', 2.2);
     setTimeout(() => {
       const br = e.a && e.a.rect, face = br && /nettlecrown/.test(br.atlas || '') ? NETTLE.face : null;   // her own sheet: crown + face crop (placeholder role keeps the default crop)
@@ -393,7 +396,7 @@ export class Vanaheim {
       const npc = this.ctx && this.ctx.npc && this.ctx.npc('nettlecrown'); if (npc && npc.quad) { npc.quad.visible = true; npc.x = e.a.x; npc.z = e.a.z; }
       G.gainXP && G.gainXP(XP.nettlecrown, e.a);   // 600 XP (GD); the quiet kill skips combat's own XP + loot
       G.openDialogue({ id: 'nettlecrown', name: 'Mother Nettlecrown', rect: br, face }, VH_TALK.nettlecrown_after(G.S));
-    }, 900);
+    }, 650);   // fun pass: was 900 ms of dead air before her dialogue
   }
   qaTalk(id) { const e = TALK[id](this.S); return { pages: e.pages, options: e.choice ? e.choice.options.map((o) => o.label) : [] }; }
   qaYield() { const e = this.boss; if (!e) return; e.hp = Math.ceil(e.D.hp * 0.12); e.phaseN = 3; this.G.combat.damageEnemy(e, e.D.hp, null, 0); }
