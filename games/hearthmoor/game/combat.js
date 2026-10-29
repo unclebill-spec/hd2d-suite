@@ -608,6 +608,7 @@ export class Combat {
     p.speed = this.skin.sp;
     const T = STONE[2];
     if (g && g.meta.effects[T.cast]) g.spawn(T.cast, p.x, p.y, p.z + 0.06);
+    else if (ctx.effects && ctx.effects.meta.effects.impact) ctx.effects.spawn('impact', p.x, p.y, p.z + 0.06);   // no game-fx atlas (hollows, lane)
     if (g && g.meta.effects[T.rune]) this.skin.ring = g.spawn(T.rune, p.x, p.y, p.z + 0.03, { duration: S.t, frame: 5 });
     if (this.G.glow) this.G.glow.pool(p.x, p.z, '#b9c7d6', 0.5);
     this.G.toast('Stone Skin: the stone holds', 1.4);
@@ -636,7 +637,7 @@ export class Combat {
   doGolem(S) {
     const ctx = this.ctx, p = ctx.player, G = this.G, roles = ctx.actors.meta.roles;
     const ice = S.kind === 'igolem', GD = ice ? ICEGOLEM : GOLEM, role = (ice ? ICEGOLEM_ROLES : GOLEM_ROLES).find((r) => roles[r]);   // [NIFLHEIM-2] the Frostweave Ice Golem shares this path
-    if (!role) { this.cd[S.own || 'golem'] = 0; this.cd.spell = 0; return; }
+    if (!role) { this.cd[S.own || 'golem'] = 0; this.cd.spell = 0; if (ice) G.toast('No frost golem answers here.', 2.2); return; }
     if (this.summon) this.unsummon();
     const fv = FV[p.facing] || [0, 1], hp = Math.round(GD.hp * this.M.summonMul);
     const a = ctx.addNpc({ id: 'summon', role, name: GD.name, pos: [p.x + fv[0] * 1.0 + 0.3, p.z + fv[1] * 1.0], behavior: 'idle', turn: false, speed: GD.speed });
@@ -708,10 +709,11 @@ export class Combat {
     const ctx = this.ctx, p = ctx.player;
     for (const m of this.motes) if (m.f) m.f[0].remove(m.f[1]);
     this.motes = [];
-    const cloud = this.calSpawn('ember_swarm', p.x, p.y, p.z + 0.05, { duration: S.orbit + 0.2 });
+    const fb = (n, x, y, z, o) => ctx.effects && ctx.effects.meta.effects[n] ? [ctx.effects, ctx.effects.spawn(n, x, y, z, o)] : null;   // no game-fx atlas (hollows, lane): the spells atlas
+    const cloud = this.calSpawn('ember_swarm', p.x, p.y, p.z + 0.05, { duration: S.orbit + 0.2 }) || fb('summon_poof', p.x, p.y, p.z + 0.05, { duration: S.orbit + 0.2 });
     for (let i = 0; i < S.n; i++) {
       const a0 = i / S.n * Math.PI * 2;
-      this.motes.push({ i, a0, t: 0, state: 'orbit', x: p.x, z: p.z, y: p.y, target: null, f: this.calSpawn('ember_mote', p.x, p.y, p.z, { duration: S.orbit + 3.5 }), S });
+      this.motes.push({ i, a0, t: 0, state: 'orbit', x: p.x, z: p.z, y: p.y, target: null, f: this.calSpawn('ember_mote', p.x, p.y, p.z, { duration: S.orbit + 3.5 }) || fb('ember_pop', p.x, p.y, p.z, { duration: S.orbit + 3.5 }), S });
     }
     this.swarm = { cloud, t: S.orbit, hits: 0 };
     if (ctx.addGlow) this.swarm.light = ctx.addGlow(p.x, p.y, p.z, { color: LAVA, intensity: 5, range: 3.2, life: S.orbit + 1.0, fadeIn: 0.1, lift: 0.8 });
@@ -722,7 +724,7 @@ export class Combat {
   doWard(S) {
     const ctx = this.ctx, p = ctx.player;
     this.endWard();
-    this.ward = { t: S.t, take: S.take, refl: S.refl, f: this.calSpawn('flame_ward', p.x, p.y, p.z + 0.08, { duration: S.t }) };
+    this.ward = { t: S.t, take: S.take, refl: S.refl, f: this.calSpawn('flame_ward', p.x, p.y, p.z + 0.08, { duration: S.t }) || (ctx.effects && ctx.effects.meta.effects.rune_circle ? [ctx.effects, ctx.effects.spawn('rune_circle', p.x, p.y, p.z + 0.08, { duration: S.t })] : null) };
     if (ctx.addGlow) this.ward.light = ctx.addGlow(p.x, p.y, p.z, { color: LAVA, intensity: 4, range: 3.0, life: S.t, fadeIn: 0.2, lift: 0.7 });
     this.G.toast('Flame Ward: the fire forgets you', 1.4);
   }
