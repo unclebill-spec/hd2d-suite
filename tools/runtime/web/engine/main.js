@@ -218,7 +218,7 @@ export async function boot(opts = {}) {
     const light = L.light !== false && i < (sMeta ? 7 : 8) ? new THREE.PointLight(new THREE.Color(L.color || biome.colors.lamp), 0, L.range || 7, 2.0) : null;
     if (light) { light.position.set(...L.pos); world.add(light); }
     const c = new THREE.Color(L.color || biome.colors.lamp);
-    return { kind: L.kind, pos: new THREE.Vector3(...L.pos), range: L.range || 9, light, power: 0, phase: i * 0.37, srgb: c.clone().convertLinearToSRGB(), glow: L.glow !== false, tint: L.color ? c : null, fixed: L.fixed ?? null };
+    return { kind: L.kind, pos: new THREE.Vector3(...L.pos), range: L.range || 9, light, power: 0, phase: i * 0.37, srgb: c.clone().convertLinearToSRGB(), glow: L.glow !== false, tint: L.color ? c : null, fixed: L.fixed ?? null, ignite: !!L.fix1028, flare: 0, lit: false };
   });
 
   // glows: game-placed point lights (spell light pools, glowing toadstools). A small fixed pool of real
@@ -726,7 +726,17 @@ export async function boot(opts = {}) {
       const fl = particles ? particles.flickerFrame(time, L.phase) : { intensity: 1 };
       L.power = lampOn * fl.intensity;
       L.frame = fl.frame;
-      if (L.light) { L.light.intensity = (L.fixed != null ? Math.max(L.fixed, L.power) : L.power) * (L.kind === 'lamp_post' ? 26 : 12); L.light.color.copy(L.tint || g.lamp_color); }
+      // fun pass (2026-10-29): a night warm lamp (fix1028) catches with a short swell + a few embers the first time
+      // the hero walks up to it; the steady light/grade afterwards is unchanged. Re-arms when the hero walks away.
+      let boost = 1; const now = performance.now();   // wall clock: the swell fades even when QA freezes game time
+      if (L.ignite) {
+        const near = lampOn > 0.2 && Math.hypot(player.x - L.pos.x, player.z - L.pos.z) < 2.6;
+        if (near && !L.lit) { L.lit = true; L.flare = 1; if (particles) particles.burst('embers', L.pos.x, L.pos.y, L.pos.z + 0.05, 6); }
+        else if (!near && L.lit && Math.hypot(player.x - L.pos.x, player.z - L.pos.z) > 4.5) L.lit = false;
+        if (L.flare > 0) { boost = 1 + 0.6 * L.flare; L.flare = Math.max(0, L.flare - (now - (L.lastT ?? now)) / 900); }
+        L.lastT = now;
+      }
+      if (L.light) { L.light.intensity = (L.fixed != null ? Math.max(L.fixed, L.power) : L.power) * (L.kind === 'lamp_post' ? 26 : 12) * boost; L.light.color.copy(L.tint || g.lamp_color); }
     }
     for (const m of slots.lamps) m.emissive.copy(g.lamp_color).multiplyScalar(0.25 + lampOn * 1.6);
     post.setGrade(g);
