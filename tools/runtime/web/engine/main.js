@@ -936,9 +936,13 @@ export async function boot(opts = {}) {
       const dx = Math.min(2.4, 19.2 / cols);                   // and the row never gets wider than 8 cells at 2.4 m
       // rows 3.2 m apart, deeper (up to 6 m) when this camera squeezes 3.2 m into less than 1.35 cells on screen (only the rift: 118 px vs 132-141 elsewhere): on the
       // rift's far camera a front-row billboard reached up into the back-row ring behind it. Paged lineups only.
-      let rowDz = 3.2;
+      let rowDz = 3.2, lineY = null;
       if (per > 0) {
         const z0 = target.z - look.z + 0.6, gy = collide ? (collide.height(target.x, z0) ?? 0) : 0;
+        // one ground height for the whole paged lineup (the effects draw onTop, so the scene never hides them): per-cell
+        // heights put cells that landed on a wall / cross wall up to 3.6 m higher, squeezing a row into the row behind it
+        // (prismvault: back-row toadcap / violet aura under the 1.2 m cross wall row's bubbles / cold-fire pool, 33 px rows)
+        lineY = gy;
         const sy = (dz) => (new THREE.Vector3(target.x, gy, z0 - dz).project(camera).y * 0.5 + 0.5) * bufH;
         const gap = sy(3.2) - sy(0), need = 1.35 * effects.cell * (effects.k || 3);
         if (gap > 0 && gap < need) rowDz = Math.min(6, 3.2 * need / gap);
@@ -948,7 +952,7 @@ export async function boot(opts = {}) {
         const e = sMeta.effects[n];
         const x = target.x + ((i % cols) - (cols - 1) / 2) * dx;
         const z = target.z - look.z + 0.6 - Math.floor(i / cols) * rowDz;
-        const y = collide ? (collide.height(x, z) ?? 0) : 0;
+        const y = lineY ?? (collide ? (collide.height(x, z) ?? 0) : 0);
         effects.spawn(n, x, y, z, { frame: Math.min(e.frames - 1, Math.floor(e.frames * frameFrac)), onTop: true });
       });
       return names;
