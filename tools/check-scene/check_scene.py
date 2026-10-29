@@ -85,6 +85,8 @@ def sprite_check(shot, atlas, r, block_tol=6):
     k = int(r["k"]); fx, fy = r["frame"]; fw, fh = r["w"] // k, r["h"] // k
     x0, y0 = int(round(r["x"])), int(round(r["y"]))
     src = atlas[fy:fy + fh, fx:fx + fw]
+    if src.shape[0] != fh or src.shape[1] != fw or fh <= 0 or fw <= 0:   # frame lies (partly) outside its atlas: bad sheet data, a hard FAIL (never skipped)
+        return {"id": r["id"], "empty_crop": True, "fail": f"atlas crop [{fx},{fy},{fw},{fh}] outside the {atlas.shape[1]}x{atlas.shape[0]} atlas", "frame": [fx, fy]}
     H, W = shot.shape[:2]
     blocks, uniform, sv, dv = 0, 0, [], []
     for j in range(fh):
@@ -357,7 +359,8 @@ def phone_check(b, url, atlas, cam_spec, out, name, vw, vh, timeout=120, extras=
         ok_s = [a for a in res if "uniform_frac" in a]
         wu = min((a["uniform_frac"] for a in ok_s), default=0)
         wc = min((a["atlas_corr"] for a in ok_s), default=0)
-        r["sprites_sharp"] = {"pass": bool(ok_s) and wu >= 0.97 and wc >= 0.85, "checked": len(ok_s), "worst_uniform": wu, "worst_corr": wc,
+        bad_s = [a for a in res if a.get("empty_crop")]
+        r["sprites_sharp"] = {"pass": bool(ok_s) and not bad_s and wu >= 0.97 and wc >= 0.85, "checked": len(ok_s), "empty_crops": bad_s, "worst_uniform": wu, "worst_corr": wc,
                               "buffer": rects[0]["buf"] if rects else None,
                               "per_actor": [{"id": a.get("id"), "uniform_frac": a["uniform_frac"], "atlas_corr": a["atlas_corr"], "rect": a.get("rect")} for a in ok_s]}
         pg.evaluate("window.__hd2d.showOverlays && window.__hd2d.showOverlays(true)")
@@ -675,7 +678,8 @@ def run(root, out, size=(1280, 720), timeout=120, scene_dir="", params="", phone
     worst_u = min((a["uniform_frac"] for a in allspr), default=0)
     worst_c = min((a["atlas_corr"] for a in allspr), default=0)
     col_ratio = max((a["crop_colours"] / max(1, a["src_colours"]) for a in allspr), default=99)
-    C["sprites_sharp"] = {"pass": bool(allspr) and worst_u >= 0.97 and worst_c >= 0.85,
+    bad_spr = [a for t in TIMES for a in sprites[t]["actors"] if a.get("empty_crop")]
+    C["sprites_sharp"] = {"pass": bool(allspr) and not bad_spr and worst_u >= 0.97 and worst_c >= 0.85, "empty_crops": bad_spr,
                           "actors_checked": len(allspr), "worst_uniform_block_frac": worst_u, "worst_atlas_corr": worst_c,
                           "stable_capture": {t: sprites[t]["stable"] for t in TIMES},
                           "per_time": {t: [{k: v for k, v in a.items() if k != "_crop"} for a in sprites[t]["actors"]] for t in TIMES}}
@@ -732,7 +736,7 @@ def run(root, out, size=(1280, 720), timeout=120, scene_dir="", params="", phone
         wu = min((a["uniform_frac"] for a in ok_fx), default=0)
         wc = min((a["atlas_corr"] for a in ok_fx), default=0)
         sparse = sum(1 for a in fx["effects"] if a.get("skipped") == "sparse")
-        C["effects_sharp"] = {"pass": len(ok_fx) + sparse == fx["expected"] and len(ok_fx) > 0 and fx["expected"] > 0 and wu >= 0.97 and wc >= 0.85
+        C["effects_sharp"] = {"pass": not any(a.get("empty_crop") for a in fx["effects"]) and len(ok_fx) + sparse == fx["expected"] and len(ok_fx) > 0 and fx["expected"] > 0 and wu >= 0.97 and wc >= 0.85
                               and fx["near_white"] < 0.004 and fx["bright_frac"] < 0.03,
                               "effects_checked": len(ok_fx), "effects_sparse": sparse, "effects_spawned": fx["expected"],
                               "worst_uniform_block_frac": wu, "worst_atlas_corr": wc,
@@ -743,7 +747,7 @@ def run(root, out, size=(1280, 720), timeout=120, scene_dir="", params="", phone
         wu = min((a["uniform_frac"] for a in ok_g), default=0)
         wc = min((a["atlas_corr"] for a in ok_g), default=0)
         gsparse = sum(1 for a in gfx["effects"] if a.get("skipped") == "sparse")   # [ALFHEIM] count sparse frames like effects_sharp does (motes / flashes)
-        C["gamefx_sharp"] = {"pass": len(ok_g) + gsparse == gfx["expected"] and len(ok_g) > 0 and gfx["expected"] > 0 and wu >= 0.97 and wc >= 0.85
+        C["gamefx_sharp"] = {"pass": not any(a.get("empty_crop") for a in gfx["effects"]) and len(ok_g) + gsparse == gfx["expected"] and len(ok_g) > 0 and gfx["expected"] > 0 and wu >= 0.97 and wc >= 0.85
                              and gfx["near_white"] < 0.004 and gfx["bright_frac"] < 0.03,
                              "effects_checked": len(ok_g), "effects_sparse": gsparse, "effects_spawned": gfx["expected"], "worst_uniform_block_frac": wu,
                              "worst_atlas_corr": wc, "near_white": round(gfx["near_white"], 5), "bright_frac": round(gfx["bright_frac"], 5),
