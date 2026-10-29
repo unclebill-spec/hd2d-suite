@@ -8,9 +8,11 @@ export function fx(ctx, names, x, y, z) {
   for (const n of [].concat(names)) if (E.meta.effects[n]) return E.spawn(n, x, y, z);
   return null;
 }
+// shake / flash obey the Settings toggles (G.shakeOK / G.flashOK, which fold in reduced motion)
+function fxOK(G, k) { return G[k] ? G[k]() : !(G.reducedMotion && G.reducedMotion()); }
 let shakeT = 0;
 export function shake(G, amp = 3, ms = 220) {
-  if (G.reducedMotion && G.reducedMotion()) return;
+  if (!fxOK(G, 'shakeOK')) return;
   const v = document.getElementById('view'); if (!v || typeof requestAnimationFrame !== 'function') return;
   const id = ++shakeT, t0 = performance.now();
   const step = (now) => {
@@ -22,5 +24,5 @@ export function shake(G, amp = 3, ms = 220) {
   };
   requestAnimationFrame(step);
 }
-export function flash(G, a, t = 0.18) { if (a && !(G.reducedMotion && G.reducedMotion())) a.flashT = Math.max(a.flashT || 0, t); }
+export function flash(G, a, t = 0.18) { if (a && fxOK(G, 'flashOK')) a.flashT = Math.max(a.flashT || 0, t); }
 export function rare(p = 0.08) { return Math.random() < p; }

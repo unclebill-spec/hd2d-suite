@@ -147,7 +147,7 @@ export class Storms {
     const x = p.x + (Math.random() * 2 - 1) * 5, z = p.z - 3 - Math.random() * 4, y = ctx.heightAt(p.x, p.z) + 4.2 + Math.random() * 1.2;
     if (E) { E.spawn('rift_tear_minor', x, y, z, { duration: 1.1 + Math.random() * 0.6, fadeIn: 0.12 }); E.spawn('coldfire_motes', x * 0.5 + p.x * 0.5, y - 2.4, z + 1.5, { duration: 2.4 }); }
     const col = FLASH[Math.random() < 0.5 ? 0 : 1];
-    const l = ctx.addGlow ? ctx.addGlow(x, y - 1.2, z + 1.0, { color: col, intensity: 5 * k, range: 7, fadeIn: 0.02, lift: 0 }) : null;
+    const l = ctx.addGlow && !(this.G.flashOK && !this.G.flashOK()) ? ctx.addGlow(x, y - 1.2, z + 1.0, { color: col, intensity: 5 * k, range: 7, fadeIn: 0.02, lift: 0 }) : null;
     if (l) this.flashes.push({ l, t: 0, dur: 0.35 + Math.random() * 0.2 });
     this.G.audio && this.G.audio.sfx && this.G.audio.sfx('rumble');
     this.cracks = (this.cracks || 0) + 1;

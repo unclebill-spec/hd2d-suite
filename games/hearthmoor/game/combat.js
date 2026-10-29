@@ -118,6 +118,7 @@ export class Combat {
     return e;
   }
   alive() { return this.enemies.filter((e) => e.state !== 'dead' && e.state !== 'gone'); }
+  flashOK() { return this.G.flashOK ? this.G.flashOK() : true; }   // Settings: flashes toggle (fun pass)
   get peace() { return !!this.G.peace; }
   paused() { const G = this.G; return !!(G.title || G.busy || G.dlg || G.log || G.downed || G.picking); }
 
@@ -265,7 +266,7 @@ export class Combat {
     return mv;
   }
   floatBob(e) { if (e.D.float && e.state !== 'dead') e.a.lift = 0.16 + Math.sin(this.time * 2.6 + e.phase) * 0.07; }
-  ping(e) { const a = e.a; if (this.ctx.gamefx && this.ctx.gamefx.meta.effects.quest_bang) { /* reuse nothing: a quick flash says "noticed" */ } a.flashT = 0.08; }
+  ping(e) { const a = e.a; if (this.ctx.gamefx && this.ctx.gamefx.meta.effects.quest_bang) { /* reuse nothing: a quick flash says "noticed" */ } a.flashT = this.flashOK() ? 0.08 : 0; }
   beginAttack(e) {
     const a = e.a, p = this.ctx.player;
     this.ctx.actors.setFacingFromVec(a, p.x - a.x, p.z - a.z);
@@ -315,7 +316,7 @@ export class Combat {
     const ctx = this.ctx, a = e.a;
     if (e.mods && e.mods.hurt) dmg = e.mods.hurt(e, dmg);   // a Shielded rare's ward soaks part of the hit
     e.hp -= dmg;
-    a.flashT = 0.12;
+    a.flashT = this.flashOK() ? 0.12 : 0;
     this.number(dmg, a.x, a.y + (e.D.float ? 2.1 : 1.9), a.z, color);
     if (ctx.effects) ctx.effects.spawn('hit_spark', a.x, a.y + (e.a.lift || 0), a.z + 0.1);
     this.G.audio.sfx('hit');
@@ -381,7 +382,7 @@ export class Combat {
     } else G.audio.sfx('hurt');
     G.S.hp = Math.max(0, G.S.hp - dmg);
     if (foe && foe.state !== 'dead' && foe.state !== 'gone') this.ignite(foe, Math.max(1, Math.round(raw * this.ward.refl)));   // ... and 10 % of the blow comes back as a burn on whoever struck
-    p.flashT = 0.15; p.iframes = PLAYER.hitIframes;
+    p.flashT = this.flashOK() ? 0.15 : 0; p.iframes = PLAYER.hitIframes;
     this.number(dmg, p.x, p.y + 2.0, p.z, guarded ? PAL.sky : PAL.rose);
     this.shove(p, -dx, -dz, guarded ? push * 0.4 : push);
     if (G.S.hp <= 0) this.down();
@@ -927,7 +928,7 @@ export class Combat {
   }
   hurtSummon(dmg) {
     const s = this.summon; if (!s) return;
-    s.hp -= dmg; s.a.flashT = 0.12;
+    s.hp -= dmg; s.a.flashT = this.flashOK() ? 0.12 : 0;
     this.number(dmg, s.a.x, s.a.y + 1.3, s.a.z, PAL.rose);
     if (s.hp <= 0) this.unsummon();
   }

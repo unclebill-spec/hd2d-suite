@@ -551,6 +551,9 @@ function drawVitals(ctx) {
 }
 
 const hooks = {
+  // fun pass (2026-10-29): the engine's night-lamp catch plays the existing soft wind-shimmer chime; its light swell obeys the flashes toggle
+  onLampFlare: () => { G.audio.sfx('lampchime'); G.lampChimes = (G.lampChimes || 0) + 1; },
+  allowFlash: () => flashOK(),
   blockInput: () => !!(G.dlg || G.busy || G.title || G.log || G.downed || G.opts || G.picking || G.heroUI || G.shop || G.asking || WHEEL.open || G.hollows.busy() || G.intro.blocking()),
   rollMods: () => { const M = G.combat.M; return { speed: M.rollSpeed, iframes: M.rollIframes }; },
   onCast: (name) => {
@@ -779,10 +782,29 @@ function syncMotion() {
   const on = localStorage.getItem(MOTION_KEY) === '1'; document.body.classList.toggle('rm', on);
   const b = $('btnMotion'); if (b) { b.textContent = `motion: ${reducedMotion() ? 'reduced' : 'full'}`; b.classList.toggle('on', on); }
 }
-function toggleMotion() { localStorage.setItem(MOTION_KEY, localStorage.getItem(MOTION_KEY) === '1' ? '0' : '1'); syncMotion(); toast(`Menu motion: ${reducedMotion() ? 'reduced' : 'full'}`, 1.4); }
+function toggleMotion() { localStorage.setItem(MOTION_KEY, localStorage.getItem(MOTION_KEY) === '1' ? '0' : '1'); syncMotion(); syncFx(); toast(`Menu motion: ${reducedMotion() ? 'reduced' : 'full'}`, 1.4); }
 G.toggleMotion = toggleMotion; G.reducedMotion = reducedMotion;
+// fun pass (2026-10-29): separate screen shake / flashes toggles (saved per device with the other settings; a missing
+// key = on, so older saves and devices load unchanged). 'motion: reduced' and the OS reduced-motion setting are a
+// master switch: both read off while either is set.
+const SHAKE_KEY = 'hearthmoor-shake', FLASH_KEY = 'hearthmoor-flash';
+const prefOn = (k) => { try { return localStorage.getItem(k) !== '0'; } catch (e) { return true; } };
+function shakeOK() { return !reducedMotion() && prefOn(SHAKE_KEY); }
+function flashOK() { return !reducedMotion() && prefOn(FLASH_KEY); }
+function syncFx() {
+  const rm = reducedMotion();
+  for (const [id, k, lab] of [['btnShake', SHAKE_KEY, 'shake'], ['btnFlash', FLASH_KEY, 'flashes']]) {
+    const b = $(id); if (!b) continue;
+    b.textContent = `${lab}: ${rm ? 'off (motion)' : prefOn(k) ? 'on' : 'off'}`; b.classList.toggle('on', !rm && prefOn(k)); b.disabled = rm;
+  }
+}
+function toggleFx(k, lab) { try { localStorage.setItem(k, prefOn(k) ? '0' : '1'); } catch (e) { /* private mode */ } syncFx(); toast(`${lab}: ${prefOn(k) ? 'on' : 'off'}`, 1.4); }
+G.shakeOK = shakeOK; G.flashOK = flashOK;
+G.toggleShake = () => toggleFx(SHAKE_KEY, 'Screen shake'); G.toggleFlash = () => toggleFx(FLASH_KEY, 'Flashes');
 function wireOptions() {
   $('btnMotion').onclick = () => toggleMotion(); syncMotion();
+  $('btnShake').onclick = () => G.toggleShake(); $('btnFlash').onclick = () => G.toggleFlash(); syncFx();
+  matchMedia('(prefers-reduced-motion: reduce)').addEventListener?.('change', syncFx);
   $('btnGlow').onclick = () => toggleGlow(); syncGlowBtn();
   $('btnWeather').onclick = () => cycleWeather(); syncWeatherBtn();
   $('btnOpts').onclick = () => setOpts(!G.opts);

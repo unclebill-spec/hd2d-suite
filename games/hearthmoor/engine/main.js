@@ -104,7 +104,7 @@ function engineToast(msg, s = 2.4) {
 //   opts.spawn       {x, z, facing} player start override;  opts.player: player spec overrides (role, ...)
 //   opts.startT      clock time 0..1;  opts.clockSpeed: cycles per second
 //   opts.spellCycle  spells the player can cast (default: scene.spell_cycle or the spells atlas cycle)
-//   opts.hooks       { onInteract(ctx), onTalk(npc, ctx), onTap(hit, ctx), onFrame(dt, ctx), blockInput(),
+//   opts.hooks       { onLampFlare(lamp, ctx) + allowFlash() (night lamp catch: sound / flashes toggle), onInteract(ctx), onTalk(npc, ctx), onTap(hit, ctx), onFrame(dt, ctx), blockInput(),
 //                      onCast(name, ctx) -> false vetoes, onSummon(ctx), onDodge(ctx) -> false vetoes, onAct(name, ctx),
 //                      onPad(name, ctx), onPadRelease(name, ctx) }
 //   opts.castAdvance cast moves to the next spell (default true; a slot-based game passes false)
@@ -731,7 +731,7 @@ export async function boot(opts = {}) {
       let boost = 1; const now = performance.now();   // wall clock: the swell fades even when QA freezes game time
       if (L.ignite) {
         const near = lampOn > 0.2 && Math.hypot(player.x - L.pos.x, player.z - L.pos.z) < 2.6;
-        if (near && !L.lit) { L.lit = true; L.flare = 1; if (particles) particles.burst('embers', L.pos.x, L.pos.y, L.pos.z + 0.05, 6); }
+        if (near && !L.lit) { L.lit = true; L.flare = hooks.allowFlash && !hooks.allowFlash() ? 0 : 1; if (particles) particles.burst('embers', L.pos.x, L.pos.y, L.pos.z + 0.05, 6); if (hooks.onLampFlare) { try { hooks.onLampFlare(L, ctx); } catch (e) { /* game audio hook */ } } }
         else if (!near && L.lit && Math.hypot(player.x - L.pos.x, player.z - L.pos.z) > 4.5) L.lit = false;
         if (L.flare > 0) { boost = 1 + 0.6 * L.flare; L.flare = Math.max(0, L.flare - (now - (L.lastT ?? now)) / 900); }
         L.lastT = now;

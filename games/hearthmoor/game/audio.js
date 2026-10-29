@@ -153,6 +153,7 @@ export class Ambient {
     if (kind === 'pickup') { this.pluck(14, 0.08); this.pluck(19, 0.08, 0.09); }
     if (kind === 'quest') [0, 4, 7, 12].forEach((s, i) => this.pluck(s + 12, 0.08, i * 0.1));
     if (kind === 'blip') this.pluck(24, 0.02);
+    if (kind === 'lampchime') [19, 23, 26].forEach((s2, i) => this.pluck(s2 + 12, 0.03, i * 0.11));   // night lamp catches (engine onLampFlare): the Mossglen wind-shimmer chime, on the sfx bus so music doesn't duck it
     if (kind === 'save') this.pluck(12, 0.05);
     // combat: soft and woody, never harsh
     if (kind === 'swing') this.noise(0.08, 900, 2600, 0.05);
