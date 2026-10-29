@@ -59,6 +59,61 @@ def _serve(root):
     return srv
 
 
+READY_JS = """(() => { const h = window.__hd2d, b = document.getElementById('boot');
+  return { ready: !!(h && h.ready === true), api: !!h, frames: h ? (h.frames || 0) : -1, errors: h ? (h.errors || []).slice(0, 5) : [],
+           boot: b ? (b.textContent || '').slice(0, 160) : null, doc: document.readyState }; })()"""
+
+
+class LoadTimeout(RuntimeError):
+    pass
+
+
+class WebGLUnavailable(LoadTimeout):
+    """the headless browser could not create a WebGL context (SwiftShader GPU process), so the game never started:
+    a box/browser fault, not a game fault. main() exits 3 so check_all can relaunch instead of counting a failure."""
+
+
+def _box_load():
+    """one line of box state for a load failure: load average + the busiest processes (names only, no args)"""
+    import os, subprocess
+    try:
+        top = subprocess.run(["ps", "-eo", "pcpu,comm", "--sort=-pcpu"], capture_output=True, text=True, timeout=5).stdout.splitlines()[1:6]
+    except Exception:  # noqa: BLE001
+        top = []
+    return f"loadavg {os.getloadavg()[0]:.1f}/{os.cpu_count()} cpu; top: " + "; ".join(" ".join(t.split()) for t in top)
+
+
+def _wait_ready(pg, timeout, logs, where="main"):
+    """wait for window.__hd2d.ready, polling progress instead of one blind wait_for_function:
+    - fails at once on a page error, a WebGL-context failure (exit 3, see WebGLUnavailable), or the game's own 'failed to load' boot text;
+    - on timeout says how far the page got (api present? frames drawn? boot text) plus the box load, so a stall is
+      told apart from a crash or a slow-but-progressing load. Returns (seconds, last state)."""
+    import time
+    t0, st, last_f, last_move = time.time(), {}, -2, time.time()
+    while True:
+        try:
+            st = pg.evaluate(READY_JS)
+        except Exception as e:  # noqa: BLE001  (navigation in flight / target crashed)
+            if "crash" in str(e).lower() or "closed" in str(e).lower():
+                raise LoadTimeout(f"{where}: page died while loading: {e}") from None
+            st = {"eval_error": str(e)[:160]}
+        if st.get("ready"):
+            return round(time.time() - t0, 1), st
+        gl = [l for l in logs if "WebGL context" in l or "Error creating WebGL" in l]
+        if gl or "WebGL" in (st.get("boot") or ""):
+            raise WebGLUnavailable(f"{where}: WebGL context could not be created after {time.time() - t0:.1f} s "
+                                   f"({(gl or [st.get('boot')])[0][:240]}); {_box_load()}")
+        bad = [l for l in logs if l.startswith("PAGEERROR")] + list(st.get("errors") or [])
+        if bad or (st.get("boot") or "").startswith("Hearthmoor failed"):
+            raise LoadTimeout(f"{where}: JS error before ready after {time.time() - t0:.1f} s: {(bad or [st.get('boot')])[:3]}")
+        if st.get("frames", -1) != last_f:
+            last_f, last_move = st.get("frames", -1), time.time()
+        if time.time() - t0 > timeout:
+            raise LoadTimeout(f"{where}: not ready after {timeout} s (frames {last_f}, last frame change {time.time() - last_move:.0f} s ago, "
+                              f"state {st}); console: {logs[-8:]}; {_box_load()}")
+        pg.wait_for_timeout(250)
+
+
 def lum(a):
     a = a[..., :3].astype(np.float32)
     return a[..., 0] * 0.299 + a[..., 1] * 0.587 + a[..., 2] * 0.114
@@ -210,7 +265,7 @@ def _loading_gate(pg, cdp, url, timeout):
             rt.continue_()
         except Exception:  # noqa: BLE001
             pass
-    pg.wait_for_function("window.__hd2d && window.__hd2d.ready === true", timeout=timeout * 1000)
+    _wait_ready(pg, timeout, [], "phone loading_gate")
     p_ready = pg.evaluate(PPOS)
     pg.wait_for_timeout(1200)
     p_after = pg.evaluate(PPOS)
@@ -326,7 +381,7 @@ def phone_check(b, url, atlas, cam_spec, out, name, vw, vh, timeout=120, extras=
             r["loading_gate"] = _loading_gate(pg, cdp, url, timeout)
         else:
             pg.goto(url)
-        pg.wait_for_function("window.__hd2d && window.__hd2d.ready === true", timeout=timeout * 1000)
+        _wait_ready(pg, timeout, logs, f"phone {name}")
         pg.wait_for_timeout(800)
         lay = pg.evaluate(PHONE_LAYOUT_JS)
         outside = [e["id"] for e in lay["els"] if e["x"] < -0.5 or e["y"] < -0.5 or e["x"] + e["w"] > vw + 0.5 or e["y"] + e["h"] > vh + 0.5]
@@ -457,6 +512,7 @@ def _browser(p):
     <dir> for the main page, <dir>-<n> for each extra context) so parallel workers never share one; same checks."""
     import os
     args = ["--use-angle=swiftshader", "--enable-unsafe-swiftshader", "--ignore-gpu-blocklist"]
+    args += os.environ.get("HD2D_EXTRA_CHROME_ARGS", "").split()   # harness self-test only (e.g. --disable-webgl to exercise exit 3)
     udd = os.environ.get("HD2D_USER_DATA_DIR")
     if not udd:
         return p.chromium.launch(args=args)
@@ -497,6 +553,10 @@ def run(root, out, size=(1280, 720), timeout=120, scene_dir="", params="", phone
     port = srv.server_address[1]
     rep = {"root": str(root), "scene_dir": scene_dir, "params": params, "size": list(size), "checks": {}, "shots": {}, "notes": []}
     logs = []
+    T0 = time.time(); rep["timing_s"] = {}
+
+    def mark(name):   # seconds since the run started, per phase (in check_scene.json + printed)
+        rep["timing_s"][name] = round(time.time() - T0, 1)
     try:
         with sync_playwright() as p:
             b = _browser(p)
@@ -506,8 +566,9 @@ def run(root, out, size=(1280, 720), timeout=120, scene_dir="", params="", phone
             pg.on("console", lambda m: logs.append(f"{m.type}: {m.text}") if m.type == "error" else None)
             t0 = time.time()
             pg.goto(f"http://127.0.0.1:{port}/index.html?{pre}t=day&freeze&shot&hud=0")
-            pg.wait_for_function("window.__hd2d && window.__hd2d.ready === true", timeout=timeout * 1000)
+            _wait_ready(pg, timeout, logs, "main")
             rep["load_s"] = round(time.time() - t0, 1)
+            mark("load")
             stats = pg.evaluate("window.__hd2d.stats()")
             rep["stats"] = stats
 
@@ -557,6 +618,7 @@ def run(root, out, size=(1280, 720), timeout=120, scene_dir="", params="", phone
                         strip[:c.shape[0], x:x + c.shape[1]] = c; x += c.shape[1] + 8
                     Image.fromarray(strip).resize((strip.shape[1] * 2, strip.shape[0] * 2), Image.NEAREST).save(out / f"sprites_{tname}_2x.png")
 
+            mark("times_shot")
             # ---- spell effects: frozen lineup, sharp-pass crops
             fx = None
             if scene.get("spells"):
@@ -603,6 +665,7 @@ def run(root, out, size=(1280, 720), timeout=120, scene_dir="", params="", phone
                         strip[:c.shape[0], x:x + c.shape[1]] = c; x += c.shape[1] + 8
                     Image.fromarray(strip).resize((strip.shape[1] * 2, strip.shape[0] * 2), Image.NEAREST).save(out / "effects_2x.png")
 
+            mark("effects")
             # ---- game effects (portal, pickups, quest tags): same frozen lineup on the gamefx atlas
             gfx = None
             if scene.get("gamefx"):
@@ -634,6 +697,7 @@ def run(root, out, size=(1280, 720), timeout=120, scene_dir="", params="", phone
                     bf = max(bf, float((lum(gimg) > 225).mean()))
                 gfx = {"effects": gres, "expected": len(gres), "pages": pages, "near_white": nw, "bright_frac": bf}
 
+            mark("gamefx")
             # ---- action states: jump arc (quad lifts, shadow caster stays on the ground); heroes also attack/defend
             acts = None
             if pg.evaluate("typeof window.__hd2d.act === 'function'"):
@@ -643,6 +707,7 @@ def run(root, out, size=(1280, 720), timeout=120, scene_dir="", params="", phone
                 for nm in (("jump", "attack", "defend") if "attack" in acts["anims"] else ("jump",)):
                     acts[nm] = pg.evaluate(ACT_SAMPLE, [nm, ACT_STEPS[nm]])
 
+            mark("actions")
             # ---- camera lock under input
             pg.evaluate("window.__hd2d.setTime('day')")
             c0 = pg.evaluate("window.__hd2d.camState()")
@@ -661,6 +726,7 @@ def run(root, out, size=(1280, 720), timeout=120, scene_dir="", params="", phone
             c1 = pg.evaluate("window.__hd2d.camState()")
             errors = pg.evaluate("window.__hd2d.errors")
             phones = {}
+            mark("camera")
             pg.close()   # one SwiftShader page at a time: a busy second page makes touch timing flaky
             if phone:
                 purl = f"http://127.0.0.1:{port}/index.html?{pre}t=day&freeze&pad=1"
@@ -668,6 +734,7 @@ def run(root, out, size=(1280, 720), timeout=120, scene_dir="", params="", phone
                     phones[nm] = phone_check(b, purl, atlas, cam_spec, out, nm, vw, vh, timeout, extras=(nm == "portrait"))
                     if phones[nm].get("shot"):
                         rep["shots"][f"phone_{nm}"] = phones[nm]["shot"]
+                    mark(f"phone_{nm}")
             b.close()
     finally:
         srv.shutdown()
@@ -790,12 +857,18 @@ def main(argv=None):
     if a.quick and a.size == "1280x720":
         a.size = "960x540"
     w, h = (int(v) for v in a.size.split("x"))
-    rep = run(a.root, a.out or Path(a.root) / "shots", (w, h), scene_dir=a.scene_dir, params=a.params, phone=not a.no_phone)
+    try:
+        rep = run(a.root, a.out or Path(a.root) / "shots", (w, h), scene_dir=a.scene_dir, params=a.params, phone=not a.no_phone)
+    except LoadTimeout as e:   # the page never became ready: say why in one line instead of a traceback
+        kind = "WEBGL-UNAVAILABLE" if isinstance(e, WebGLUnavailable) else "LOAD-FAIL"
+        print(f"check-scene: {kind} {e}")
+        return 3 if isinstance(e, WebGLUnavailable) else 2
     for name, c in rep["checks"].items():
         brief = {k: v for k, v in c.items() if k not in ("pass", "per_time", "console", "per_effect")}
         if name == "phone":
             brief = {o: {k: (v.get("pass") if isinstance(v, dict) else v) for k, v in c[o].items() if k not in ("shot",)} for o in c if o != "pass"}
         print(f"  [{('EXEMPT' if c.get('exempt') else 'PASS') if c['pass'] else 'FAIL'}] {name:14s} {json.dumps(brief, default=lambda o: o.item() if hasattr(o, "item") else str(o))[:300]}")
+    print(f"  timing_s: {json.dumps(rep.get('timing_s', {}))}")
     print(f"check-scene: {'PASS' if rep['pass'] else 'FAIL'}  shots: {', '.join(rep['shots'].values())}")
     return 0 if rep["pass"] else 1
 
