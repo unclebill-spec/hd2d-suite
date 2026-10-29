@@ -77,3 +77,9 @@ Source of truth is the code; update this file when you change a number. Paths ar
 - Music: Mossbrook theme on vanaheim, vh_village, vh_garden, rotwood and verdant; the boss keeps music_boss.ogg.
 
 - Oct 28, 2026, Game Director: Nettlecrown neon look approved; scoped neon palette exception for this boss only, plus the vanaheim-gloom area palette.
+
+## 2026-10-29: GD fun-pass picks (GD approved Oct 29)
+
+- **Mother Nettlecrown** (GD approved Oct 29, unchanged): 1500 HP, 22 dmg, phases at 65 % and 35 %, yields at 5 %. Phase-3 "thorns close in" ring is visual only and behind `THORNS_CLOSE_IN` (default OFF, `game/vanaheim_fun.js`); no arena, hitbox, collision or damage change.
+- **Mossbrook coin-in-the-spring** (GD approved Oct 29; `vanaheim_fun.js` COIN): at the fizzing spring in vh_village (-1.2, 1.4), toss costs 1 Copper bit, or 1 gold if you have none (no toss when broke). Rare line chance 1 in 8 (12.5 %) per toss, repeatable. The Spring-Wish Penny (keepsake, no stats, existing Copper-bits icon) is given once per save: on the first rare line, or on the 8th toss at the latest. Flags: `vh_wish_tosses`, `vh_wish_rare`, `vh_wish_penny`.
+- **Bonus seed** (GD approved Oct 29; `vanaheim_fun.js` BONUS_SEED): Nettlecrown's Seed & Tonic Stall, 10 % chance per common-seed purchase (glow seed only) of +1 free glow seed; cap 1 bonus per in-game day (`S.day`), stored in the save as `flags.vh_bonus_day`. Tonics never roll.
