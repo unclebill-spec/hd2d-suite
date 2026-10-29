@@ -6,11 +6,11 @@ as before (same thresholds, same shots dir); --jobs only runs several of them at
 its own random port and writes its own shots/<area>/ folder, so parallel runs do not touch each other.
 
   python3 tests/check_all.py                       # every built area, one at a time
-  python3 tests/check_all.py --jobs 3              # 3 at a time (2-3 on a loaded 8-core box)
+  python3 tests/check_all.py --jobs 2              # 2 at a time if the box is idle (capped: see --no-cap)
   python3 tests/check_all.py --areas bifrost,temple --tries 2 --logdir /workspace/.hm-logs/cs
   python3 tests/check_all.py --quick temple        # alias for --areas temple
 
-Wrap it in the browser lock like every headless run:  flock /workspace/.hm-logs/browser.lock python3 tests/check_all.py --jobs 3
+Wrap it in the browser lock like every headless run:  flock /workspace/.hm-logs/browser.lock python3 tests/check_all.py
 Exit code 0 only when every area passed. A summary is written to <logdir>/check_all.json.
 """
 import argparse
@@ -64,6 +64,7 @@ def main():
     ap.add_argument("--lowres", action="store_true", help="check-scene --quick (960x540, same checks / pass rules): per-change runs; full size before publish")
     ap.add_argument("--changed", nargs="?", const="main", default="", help="only areas changed vs this git ref (default main): areas/src/<a>.json or areas/<a>/ in git diff")
     ap.add_argument("--jobs", type=int, default=1, help="check-scenes at once (default 1 = serial)")
+    ap.add_argument("--no-cap", action="store_true", help="do not cap --jobs by free CPU")
     ap.add_argument("--tries", type=int, default=1, help="tries per area (a retry re-runs the identical check)")
     ap.add_argument("--logdir", default=str(GAME / "tests" / "out" / "check_all"))
     ap.add_argument("--no-preflight", action="store_true", help="skip tests/preflight.sh (syntax + quick startup load)")
@@ -84,6 +85,15 @@ def main():
     missing = [x for x in want if x not in areas_built()]
     if missing:
         sys.exit(f"not built: {missing} (built: {areas_built()})")
+    if a.jobs > 1 and not a.no_cap:
+        # each SwiftShader check-scene page burns ~5 cores; 3 at once on an 8-core box shared with other agents starved
+        # the renderer so far that most areas never reached 6 frames (ready) inside 120 s. Cap by free CPU, never below 1.
+        import os
+        free = (os.cpu_count() or 1) - os.getloadavg()[0]
+        cap = max(1, int(free // 5))
+        if cap < a.jobs:
+            print(f"check_all: --jobs {a.jobs} capped to {cap} (loadavg {os.getloadavg()[0]:.1f} on {os.cpu_count()} cpus; --no-cap to override)", flush=True)
+            a.jobs = cap
     logdir = Path(a.logdir); logdir.mkdir(parents=True, exist_ok=True)
     lock = threading.Lock(); t0 = time.time()
     print(f"check_all: {len(want)} areas, jobs {a.jobs}, tries {a.tries}: {', '.join(want)}", flush=True)
