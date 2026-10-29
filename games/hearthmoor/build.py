@@ -730,7 +730,8 @@ def install_orb_lanterns(areas=AREAS):
 
 # ------------------------------------------------------------------ realm art (QA 2026-10-28): copy_areas() rebuilds each area from the assemble
 # output, which has none of the realm art the tools/hearthmoor/*_art.py installers wired in (kit .glb, extra sprite sheets, gamefx rows,
-# gamefx.base.*). Without this a clean build silently dropped ~1600 tracked files (4888 -> 3295). So: re-run the installers in their
+# gamefx.base.*). Without this a clean build silently dropped ~1600 tracked files (then 3295 of the tracked set; no fixed baseline: the
+# guard below compares against the live `git ls-files` set). So: re-run the installers in their
 # documented order (realm installers, then jot --stonefrost-all, then musp --school-all LAST), then fail loudly if any git-tracked
 # file under a rebuilt area is still missing (HM_ALLOW_ART_DROP=1 to accept a drop on purpose).
 REALM_ART = [("alf_art.py", ["alfheim", "lumen_court", "wispwood", "prismvault"]),
@@ -779,12 +780,41 @@ def install_realms(areas=AREAS):
     sh(sys.executable, tools / "musp_art.py", "--school-all")   # RUN IT LAST (musp_art.py docstring)
 
 
-def check_no_art_drop(before):
+# The tracked tree is the source of truth (publish ships `git archive main` as-is). Hand edits that live only in areas/<a>/ (e.g. the
+# fix1028 lanterns/braziers in scene.json, lumen_court's copied stone_lantern.glb) are not in areas/src/*.json nor in any installer,
+# so copy_areas()+installers can never regenerate them. So: snapshot every tracked area file before the build and put it back after.
+def snapshot_tracked(before):
+    snap = TMP / "_tracked_snapshot"
+    if snap.exists():
+        shutil.rmtree(snap)
+    for f in before:
+        if (GAME / f).is_file():
+            (snap / f).parent.mkdir(parents=True, exist_ok=True)
+            shutil.copy2(GAME / f, snap / f)
+    return snap
+
+
+def restore_tracked(before, snap):
+    n = 0
+    for f in sorted(before):
+        s, d = snap / f, GAME / f
+        if s.is_file() and (not d.is_file() or d.read_bytes() != s.read_bytes()):
+            d.parent.mkdir(parents=True, exist_ok=True)
+            shutil.copy2(s, d)
+            n += 1
+    print(f"tracked restore: {n} of {len(before)} tracked area files put back to their pre-build content")
+
+
+def check_no_art_drop(before, snap=None):
     gone = sorted(f for f in before if not (GAME / f).exists())
-    if not gone:
-        print(f"art check: all {len(before)} tracked area files present")
+    changed = sorted(f for f in before if snap is not None and (snap / f).is_file() and (GAME / f).is_file()
+                     and (GAME / f).read_bytes() != (snap / f).read_bytes())
+    if not gone and not changed:
+        print(f"art check: all {len(before)} tracked area files present and unchanged")
         return
-    print(f"\nBUILD WARNING: {len(gone)} git-tracked area files are missing after the build (installed realm art?):", file=sys.stderr)
+    gone = gone + changed
+    print(f"\nBUILD WARNING: {len(gone) - len(changed)} git-tracked area files are missing and {len(changed)} differ from their pre-build"
+          " content after the build (silent content drop?):", file=sys.stderr)
     for f in gone[:40]:
         print("  " + f, file=sys.stderr)
     if len(gone) > 40:
@@ -805,6 +835,7 @@ if __name__ == "__main__":
     a = ap.parse_args()
     only = a.areas.split(",") if a.areas else AREAS
     before = tracked_files(only)
+    snap = snapshot_tracked(before)
     if not a.skip_assemble:
         assemble(only)
     copy_areas(only)
@@ -817,7 +848,9 @@ if __name__ == "__main__":
     install_cauldron(only)
     if not a.no_realm_art:
         install_realms(only)
-    check_no_art_drop(before)
+    if not os.environ.get("HM_NO_TRACKED_RESTORE"):   # set it to see what the generators alone produce (the guard then reports the drift)
+        restore_tracked(before, snap)
+    check_no_art_drop(before, snap)
     draw_icons()
     draw_button_icons()
     write_pwa()
