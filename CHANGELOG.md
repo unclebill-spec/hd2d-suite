@@ -9,6 +9,7 @@ Dates are America/New_York. Newest first. Keep this current with every change yo
 - `install_vanaheim_stageb` in build.py syncs the staging pack by path, so a polished sheet drops in on rebuild.
 - Art (Hearthmoor Art batch): Nettlecrown neon sheet (approved, locked), thorn-nymph / Thornhex / Old Morel sheets, thorn-wall / frost-root / hex-knot kit, vh icons, vh_fx; vanaheim-gloom area palette + scoped Nettlecrown neon allow in check_sprite / check_palette.
 - Tests: smoke_vanaheim covers Stage B and is wired into smoke.py after Niflheim.
+- Review fixes: Mossbrook and the Thorngarden now have their own layouts (village lane, cottages, stalls, lamp-post hex-knots, villagers / bramble-walled arena with 4 thorn walls and 3 frost-thorn roots); Nettlecrown spawns at the arena centre, fully on screen; audio/LICENSES.md gains an Original works category (music_mossbrook.ogg, (c) Burning Bush Productions); smoke.py explicitly allows Mossbrook as the one shared theme (Vanaheim/Rotwood/Verdant).
 
 ## 2026-10-28 (America/New_York): Hearthmoor Stage A (branch `hearthmoor-stagea-1028`, not live)
 
