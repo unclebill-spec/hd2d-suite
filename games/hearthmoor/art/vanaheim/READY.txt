@@ -1,1 +1,1 @@
-Vanaheim art batch READY 2026-10-28 22:13 ET. Nettlecrown is a DRAFT pending Game Director look sign-off. Needs: vanaheim-gloom area palette + VANA_NEON_ALLOW nettlecrown entry. See README.md.
+Vanaheim art batch READY 2026-10-28 22:16 ET. Nettlecrown look approved by lead; polish pass applied. Needs: vanaheim-gloom area palette + VANA_NEON_ALLOW nettlecrown entry. See README.md.

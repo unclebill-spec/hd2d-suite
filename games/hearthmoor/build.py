@@ -7,6 +7,7 @@ import argparse
 import hashlib
 import os
 import json
+import re
 import shutil
 import subprocess
 import sys
@@ -534,7 +535,7 @@ def sync_vanaheim_art():
             continue
         (D / sub).mkdir(parents=True, exist_ok=True)
         for f in (S / sub).iterdir():
-            if f.is_file() and f.suffix in (".png", ".json", ".glb") and "contact_sheet" not in f.name:
+            if f.is_file() and f.suffix in (".png", ".json", ".glb") and "contact_sheet" not in f.name and not re.search(r"_(v\d+|polish\d*|backup\w*)\.", f.name):   # skip Art's backups
                 shutil.copy2(f, D / sub / f.name)
     for f in ("README.md", "READY.txt"):
         if (S / f).exists():

@@ -76,13 +76,13 @@
   4480,
   800
  ],
- "status": "DRAFT v2 for look sign-off",
+ "status": "v3 look approved by lead; polish pass applied",
  "roles": {
   "nettlecrown": {
    "row": 0,
    "kind": "enemy",
    "scale": 5.5,
-   "desc": "Mother Nettlecrown, the Thornhex (Vanaheim boss, 5.5x): dryad hedge-witch, black-violet briar gown + bodice over a deep teal under-robe and sash, thorn hood, frost-thorn crown with blue glowing cores, indigo bark-skin with violet rune-veins, briar staff. Magenta blossoms closed in idle/walk, opening in cast, open in thorn-lash (the tell). attack = thorn-lash, die = kneel/yield. No armour. Palette-safe twin (biome only).",
+   "desc": "Mother Nettlecrown, the Thornhex (Vanaheim boss, 5.5x; v3 look approved by lead + polish): dryad hedge-witch, indigo-black briar gown and narrow-waisted bodice with big slate briar vines, violet rim light and side thorns/vine hooks, deep teal under-robe and sash, wide thorn hood over a pale face (frost-blue glowing eyes, vine locks), frost-thorn crown wider than her head with blue glowing cores, draped tapered thorn-edged sleeves that sway in idle/walk, briar staff in her left hand. Cast = right palm up with spark; thorn-lash = 4-pose right-arm vine whip (violet rim, magenta tip glow); kneel/yield = sinks ~46 px, hem pools, crown tilts and its cores fade, staff laid diagonally. Magenta blossoms closed in idle/walk, opening in cast, open in thorn-lash (the tell). attack = thorn-lash, die = kneel/yield. No armour. Palette-safe twin (biome only).",
    "anims": [
     "idle",
     "walk",

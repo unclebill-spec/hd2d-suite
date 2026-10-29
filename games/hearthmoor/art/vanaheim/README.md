@@ -39,12 +39,12 @@ Our own audit: every pixel in every file is in the vanaheim-gloom lock.
 ## Known flaws
 hexknot icon reads a bit boxy; staff icon thin; circlet bloom is only 2-3 px; thornhex keeps the hedgewitch silhouette (by design); kit renders are small at night.
 
-## boss_nettlecrown (Mother Nettlecrown, the Thornhex) - DRAFT v3 for Game Director look sign-off
+## boss_nettlecrown (Mother Nettlecrown, the Thornhex) - v3 look APPROVED by lead (neon main sheet); polish pass applied
 - sprite/boss_nettlecrown_neon.png/.json = PRIMARY look (lead chose neon). sprite/boss_nettlecrown.png/.json = palette-safe fallback.
 - Layout = boss_veyra: 28 cols x 4 facings (down, up, left, right; right drawn, not mirrored), 160x200 frames, pivot (80,200), scale 5.5x.
 - Slots: idle 0-3, walk 4-7, cast 8-11 (blossoms open), thorn-lash in attack slot 12-15, kneel/yield in die slot 24-27.
 - Neon twin passes check-sprite and the palette check with VANA_NEON_ALLOW {#ff3fb4,#7fd8ff,#a45cf0,#3ff0ff,#b6ff4a} PLUS the vanaheim-gloom area palette (indigo-black gown #141a3a, teal under-robe #0c4a48/#127a6e). Allow entry alone is not enough. Local proof: python3 src/check_local.py.
-- Previews: nettlecrown_contact_sheet.png, nettlecrown_preview.gif. Backups: *_v2.*, src/gen_nettlecrown_v2.py, src/.gen_v1_backup.py.
-- Known flaws: flat sleeve slabs and stiff arms, thin kneel vines and whip in side views, safe twin low contrast, JSON description text not refreshed.
+- Previews: nettlecrown_contact_sheet.png, nettlecrown_preview.gif. Backups: *_polish1.*, *_v3.*, src/gen_nettlecrown_v3.py, *_v2.*, src/gen_nettlecrown_v2.py, src/.gen_v1_backup.py.
+- Known flaws (after polish 2): arms still fairly stiff (sleeves now flared and read as sleeves at 1x); kneel drooping vines thin; widest kneel hem/tendrils are trimmed by a 3 px frame safe-margin (slightly squared sides); cast staff raise is smaller than v3; safe twin low contrast.
 - 0 PixelLab gens for the whole batch.
 
