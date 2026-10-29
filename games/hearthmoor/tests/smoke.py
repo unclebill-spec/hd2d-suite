@@ -1827,9 +1827,13 @@ def run(out, simscale=4, size=(960, 540), segs=SEGS):
                 _miss = [t for t in _tr if not (_md / f"music_{t}.ogg").is_file()]
                 _realms = {"alfheim", "svartalfheim", "jotunheim", "muspelheim", "niflheim", "asgard"}
                 _bad = [a for a, t in _map.items() if t not in _tr]
-                T.step("music (static): every non-Midgard realm hub maps to its own theme, every mapped track is in MUSIC_TRACKS, every music_<track>.ogg exists",
-                       all(_map.get(r) == r for r in _realms) and _map.get("plaza") == "midgard" and set(_map.values()) | {"battle", "boss"} == set(_tr) and not _bad and not _miss,
-                       areas=len(_map), tracks=_tr, missing=_miss, bad=_bad)
+                # the one allowed shared theme (2026-10-28): Mossbrook covers the Vanaheim, Rotwood and Verdant areas, and only those
+                _shared = {"mossbrook": {"vanaheim", "vh_village", "vh_garden", "rotwood", "verdant"}}
+                _shr = {t: {a for a, x in _map.items() if x == t} for t in _shared}
+                _shok = all(_shr[t] == _shared[t] for t in _shared) and not (_realms & set().union(*_shared.values()))
+                T.step("music (static): every non-Midgard realm hub maps to its own theme (Mossbrook shared by Vanaheim/Rotwood/Verdant only), every mapped track is in MUSIC_TRACKS, every music_<track>.ogg exists",
+                       all(_map.get(r) == r for r in _realms) and _map.get("plaza") == "midgard" and set(_map.values()) | {"battle", "boss"} == set(_tr) and not _bad and not _miss and _shok,
+                       areas=len(_map), tracks=_tr, missing=_miss, bad=_bad, shared={t: sorted(v) for t, v in _shr.items()})
                 # touch: the moss gate's destination choice (errands done) takes a tap on a row
                 r = T.ev("window.__hm.ctx.scene.game.portals[0].rect")
                 T.ev(f"window.__hm.ctx.walkTo({(r[0] + r[2]) / 2}, {(r[1] + r[3]) / 2})")
