@@ -24,5 +24,7 @@ shots/
 iterations/
 
 # smoke checkpoints (written by passing segments A-C; a sharded run starts later segments from them) and check_all logs
-games/hearthmoor/tests/fixtures/
+games/hearthmoor/tests/fixtures/*
+# smoke_cp1.json is committed: smoke.py shard B starts from it, so a clean copy needs it (QA 2026-10-28; save-game state only, no secrets)
+!games/hearthmoor/tests/fixtures/smoke_cp1.json
 games/hearthmoor/tests/out/
