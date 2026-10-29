@@ -1932,6 +1932,15 @@ def run(out, simscale=4, size=(960, 540), segs=SEGS):
                 rep["pass"] = False
                 rep["error"] = f"niflheim: {e}"[:400]
         # [NIFLHEIM] end
+        # [VANAHEIM] begin: the Vanaheim realm incl. Stage B (tests/smoke_vanaheim.py), own context again
+        if rep["pass"]:
+            try:
+                import smoke_vanaheim  # noqa: E402
+                smoke_vanaheim.steps(b, url, T, size, errors, rep, STUB, out)
+            except Exception as e:  # noqa: BLE001
+                rep["pass"] = False
+                rep["error"] = f"vanaheim: {e}"[:400]
+        # [VANAHEIM] end
         # [ASGARD] begin: the Asgard realm (tests/smoke_asgard.py), own context again
         if rep["pass"]:
             try:

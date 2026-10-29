@@ -2,6 +2,13 @@
 
 Dates are America/New_York. Newest first. Keep this current with every change you push.
 
+## 2026-10-28 (America/New_York): Hearthmoor Vanaheim Stage B (branch `hearthmoor-vanaheim`, not live)
+
+- New areas Mossbrook (`vh_village`) and the Thorngarden (`vh_garden`); boss Mother Nettlecrown (1500 HP, phases 65/35 %, yields at 5 %, spare/conquer choice). Spring Wages contract for players at the ally cap. Spare gives the Bean-Circlet, the garden shop, frost bloom and an Embassy rank.
+- Tobble now unlocks from `vh_tobble`; Mossbrook music on the 5 Vanaheim areas.
+- Art: placeholder sprites (hedgewitch / sporeling) until staging `art/vanaheim/READY.txt`; `install_vanaheim_stageb` in build.py then installs the real sheets.
+- Tests: smoke_vanaheim covers Stage B and is wired into smoke.py after Niflheim.
+
 ## 2026-10-28 (America/New_York): Hearthmoor Stage A (branch `hearthmoor-stagea-1028`, not live)
 
 - Niflheim option B: `NIFL_MUSP_LOCK = false`; befriending Muspelheim no longer locks Niflheim. `cinderProof` gates `redeemable` (a Muspelheim friend needs the Ember Witness; it does not count toward the 3 evidence). Doorstep greeting and Ending B line kept via `fireFriend`.

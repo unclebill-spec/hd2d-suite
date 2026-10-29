@@ -392,6 +392,7 @@ export class Vanaheim {
       G.openDialogue({ id: 'nettlecrown', name: 'Mother Nettlecrown' }, VH_TALK.nettlecrown_after(G.S));
     }, 900);
   }
+  qaTalk(id) { const e = TALK[id](this.S); return { pages: e.pages, options: e.choice ? e.choice.options.map((o) => o.label) : [] }; }
   qaYield() { const e = this.boss; if (!e) return; e.hp = Math.ceil(e.D.hp * 0.12); e.phaseN = 3; this.G.combat.damageEnemy(e, e.D.hp, null, 0); }
   update(dt) {
     const C = this.G.combat; if (!this.ctx || !C) return;

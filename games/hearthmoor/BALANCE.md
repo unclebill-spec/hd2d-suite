@@ -63,3 +63,15 @@ Source of truth is the code; update this file when you change a number. Paths ar
 - Tempering (Tova, `UP`): +7 % per level; caps by rarity +2 / +4 / +6 / +8 / +10; cost +1 15g 2 iron ... +10 350g 12 iron 5 steel + golem core + rift shard; chance 100 % to +5, then 90 / 80 / 70 / 60 / 50 %; each fail adds heat (+15 % chance), 3 heat = sure.
 - Sockets: cap by rarity 0 / 1 / 2 / 3 / 3; punch costs 50g + 2 iron, 120g + 1 steel, 250g + 2 steel + rift shard. Scrap iron by rarity 1 / 2 / 3 / 4 / 6.
 - Faction merit (`MERIT`): errand 40, rifts 30 / 60 / 120, rare 50, boss 80, riddle 60, secret 40; ranks Stranger, Friend, Trusted, Honored, Champion, Legend.
+
+## 2026-10-28: Vanaheim Stage B (decider: Game Director; spare reward details from Hearthmoor Story)
+
+- **Mother Nettlecrown** (vh_garden, the Thorngarden): scale 5.5, 1500 HP, 22 dmg, phases at 65 % and 35 %, heartroot grab at 10 % (14 dmg), yields at 5 % (75 HP, never dies), then the `nettle_end` choice. No enrage. 600 XP.
+- Adds: 2 thorn-nymphs in P1, 2 more in P3 (32 XP each). The conquer path adds 1 Thornhex (70 XP) that heals her 20 HP every 6 s.
+- XP: Blight Regent 560, Hjortur 640.
+- Tobble unlocks when `vh_tobble` is done (moved from the Svartalfheim gate).
+- **Spring Wages** contract (players already at 4 allies): sets `vh_contract`, starts `vh_spring`, merit goes to the Gate faction, gives `blight_spike` evidence, 150 gold. No Tobble, no Mossheart Staff, no Growth school.
+- Hollis is dialogue only. The Nettlecrown sabotage hook is parked. Befriend sets `vh_thorn_pact`; finale code is untouched.
+- Mini-boss is Glenheart; the staff keeps the name "Mossheart Staff". "Moss Ward" replaces "bloom shield" (no such string existed in code yet; the Growth school is not built). The moss golem is the tier-3 summon upgrade.
+- **Spare reward** (should pay about what conquering does): her garden reopens as a seed and tonic shop (`nettle`: tonic, glowseed), plus `frost_bloom`, plus `nettle_circlet` "Nettlecrown's Bean-Circlet" (trinket: +2 HP/s resting regen; 5 thorn damage to the first enemy that hits you each fight; "Wear it. Things grow back. Even you."), and Embassy merit topped up to the next rank (NEED step), capped at Legend. Placeholder icon: alder_charm.
+- Music: Mossbrook theme on vanaheim, vh_village, vh_garden, rotwood and verdant; the boss keeps music_boss.ogg.

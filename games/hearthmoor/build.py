@@ -511,6 +511,42 @@ def install_verdant_heart(areas=AREAS):
     print(f"verdant heart: {len(VERDANT_SHEETS)} sheets + verdant fx / critters in {n} areas")
 
 
+# [VANAHEIM] Stage B: Mossbrook + the Thorngarden. The real sheets come from hearthmoor-staging/art/vanaheim/ once READY.txt
+# marks them done; until then the runtime draws PLACEHOLDERS (game/vanaheim.js PLACEHOLDER_ROLE: hedgewitch for Nettlecrown and
+# the Thornhex, sporeling for the thorn-nymphs) from the stock vanaheim atlas. Modeled on install_verdant_heart.
+VH_STAGEB_AREAS = ["vh_village", "vh_garden"]
+VH_STAGEB_SHEETS = {"boss_nettlecrown": ["nettlecrown"], "thornnymph": ["thornnymph"], "thornhex": ["thornhex"], "oldmorel": ["oldmorel"]}
+VH_STAGING = Path("/workspace/hearthmoor-staging/art/vanaheim")
+
+
+def install_vanaheim_stageb(areas=AREAS):
+    P = VH_STAGING
+    if not (P / "READY.txt").exists():
+        print("vanaheim stage B: art/vanaheim/READY.txt missing -> placeholders (hedgewitch / sporeling) stay"); return
+    n = 0
+    for a in areas:
+        if a not in VH_STAGEB_AREAS:
+            continue
+        root = GAME / "areas" / a
+        scene = json.loads((root / "scene.json").read_text())
+        sp = root / scene["atlas"]["json"]
+        am = json.loads(sp.read_text())
+        for sheet, roles in VH_STAGEB_SHEETS.items():
+            if not (P / "sprite" / f"{sheet}.json").exists():
+                continue
+            sj = json.loads((P / "sprite" / f"{sheet}.json").read_text())
+            shutil.copy2(P / "sprite" / f"{sheet}.png", sp.parent / f"{sheet}.png")
+            (sp.parent / f"{sheet}.json").write_text(json.dumps(sj, indent=1))
+            am.setdefault("sheets", {})[sheet] = {"json": f"{sheet}.json", "image": f"{sheet}.png"}
+            for r in roles:
+                rd = sj["roles"][r]
+                am["roles"][r] = {"sheet": sheet, "row": rd["row"], "kind": "enemy" if r != "oldmorel" else "human", "enemy": r != "oldmorel", "frame": sj["frame"],
+                                  "anims": rd.get("anims", ["idle", "walk", "attack", "die"]), **({"boss": True, "scale": rd["scale"]} if rd.get("boss") else {})}
+        sp.write_text(json.dumps(am, indent=1))
+        n += 1
+    print(f"vanaheim stage B: {len(VH_STAGEB_SHEETS)} sheets in {n} areas")
+
+
 ZIP_SKIP = ("areas/src", "tests/shots", "shots", "__pycache__")
 
 
@@ -626,6 +662,7 @@ if __name__ == "__main__":
     install_pets(only)
     install_old_temple(only)
     install_verdant_heart(only)
+    install_vanaheim_stageb(only)
     install_orb_lanterns(only)
     install_forge(only)
     install_cauldron(only)
