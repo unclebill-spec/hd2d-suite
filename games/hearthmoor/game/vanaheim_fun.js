@@ -31,7 +31,7 @@ export function rare(p = 0.08) { return Math.random() < p; }
 // #2 Nettlecrown phase 3: thorns visibly close in on the arena. Will hasn't decided: OFF by default.
 // FLIP HERE (true = on). QA override without editing: ?thorns=1 (or ?vhq=thorns). Visual only: existing spell
 // effects on a ring that creeps inward; no arena shrink, no collision, hitbox or damage change.
-export const THORNS_CLOSE_IN = false;
+export const THORNS_CLOSE_IN = true;
 export function thornsOn(qs) { return THORNS_CLOSE_IN || (qs && (qs.get('thorns') === '1' || qs.get('vhq') === 'thorns')); }
 export const THORN_RING = { from: 7.5, to: 5.0, secs: 6, every: 0.45, n: 10, fx: ['leaf_gust', 'earth_burst'] };
 export function thornRing(st, ctx, c, dt) {   // st: per-fight state { t, next }; c: arena centre [x, z]
