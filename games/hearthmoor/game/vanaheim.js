@@ -185,7 +185,7 @@ export const vhMarker = (S, id) => {
 };
 
 export const VH_ENEMIES = {
-  nettlecrown: { name: 'Mother Nettlecrown', scale: 5.5, hp: 1500, dmg: 22, speed: 0.9, reach: 5.0, windup: 0.8, cd: 2.0, aggro: 10, r: 1.5,
+  nettlecrown: { name: 'Mother Nettlecrown', scale: 5.5, hp: 1500, dmg: 22, speed: 0.9, reach: 5.0, windup: 0.8, cd: 2.0, aggro: 10, r: 1.5, framed: true,
                  push: 0.1, heavy: true, boss: true, minion: 'thornnymph', phases: [0.65, 0.35, 0.1], weak: 'crown', grabAt: 0.1,
                  yieldAt: 0.05, glow: '#7fd8ff', legendary: true, noRespawn: true },
   thornhex:    { name: 'Thornhex', scale: 1.0, hp: 120, dmg: 12, speed: 1.0, reach: 3.5, windup: 0.7, cd: 2.4, aggro: 8, r: 0.5,
