@@ -103,12 +103,12 @@
   "braziers": [],
   "spawns": {
    "start": [
-    -10.8,
+    -8.0,
     0.0,
     "right"
    ],
    "from_village": [
-    -10.8,
+    -8.0,
     0.0,
     "right"
    ],
@@ -1247,8 +1247,8 @@
  "player": {
   "role": "hedgewitch",
   "pos": [
-   -9.6,
-   0.6
+   -8.0,
+   0.0
   ],
   "facing": "down"
  },
