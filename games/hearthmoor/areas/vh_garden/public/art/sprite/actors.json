@@ -24835,6 +24835,25 @@
     "walk",
     "follow"
    ]
+  },
+  "nettlecrown": {
+   "sheet": "boss_nettlecrown",
+   "row": 0,
+   "kind": "enemy",
+   "enemy": true,
+   "frame": [
+    160,
+    200
+   ],
+   "anims": [
+    "idle",
+    "walk",
+    "cast",
+    "attack",
+    "die"
+   ],
+   "boss": true,
+   "scale": 5.5
   }
  },
  "sheets": {
@@ -24849,6 +24868,10 @@
   "tick": {
    "json": "tick.json",
    "image": "tick.png"
+  },
+  "boss_nettlecrown": {
+   "json": "boss_nettlecrown.json",
+   "image": "boss_nettlecrown.png"
   }
  }
 }

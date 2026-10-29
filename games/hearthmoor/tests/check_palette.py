@@ -88,6 +88,8 @@ def main():
                     continue
                 allowed = pal | set(cs.NEON_PETS_ALLOW.get(r, ()))
                 allowed |= HH_SHEET_NEON.get((p.stem, r), set())
+                if p.stem == "boss_nettlecrown":   # [VANAHEIM] scoped: this sheet + role only (check_sprite.VANA_NEON_ALLOW)
+                    allowed |= set(cs.VANA_NEON_ALLOW.get(r, ()))
                 if r.startswith(("orb_", "glow_orb")):
                     allowed |= NEON | ORB_NEON
                 n += 1

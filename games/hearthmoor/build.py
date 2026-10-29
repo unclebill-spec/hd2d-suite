@@ -521,8 +521,9 @@ VH_STAGING = Path("/workspace/hearthmoor-staging/art/vanaheim")
 
 def install_vanaheim_stageb(areas=AREAS):
     P = VH_STAGING
-    if not (P / "READY.txt").exists():
-        print("vanaheim stage B: art/vanaheim/READY.txt missing -> placeholders (hedgewitch / sporeling) stay"); return
+    ready = (P / "READY.txt").exists()
+    if not ready:
+        print("vanaheim stage B: READY.txt missing -> only the Nettlecrown DRAFT sheet installs; nymph / hex / morel stay placeholders")
     n = 0
     for a in areas:
         if a not in VH_STAGEB_AREAS:
@@ -532,10 +533,13 @@ def install_vanaheim_stageb(areas=AREAS):
         sp = root / scene["atlas"]["json"]
         am = json.loads(sp.read_text())
         for sheet, roles in VH_STAGEB_SHEETS.items():
-            if not (P / "sprite" / f"{sheet}.json").exists():
+            if not (P / "sprite" / f"{sheet}.json").exists() or (not ready and sheet != "boss_nettlecrown"):
                 continue
             sj = json.loads((P / "sprite" / f"{sheet}.json").read_text())
-            shutil.copy2(P / "sprite" / f"{sheet}.png", sp.parent / f"{sheet}.png")
+            src = P / "sprite" / f"{sheet}_neon.png"   # the neon look is the main one (v2 drops in at the same path); plain sheet = fallback
+            if not src.exists():
+                src = P / "sprite" / f"{sheet}.png"
+            shutil.copy2(src, sp.parent / f"{sheet}.png")
             (sp.parent / f"{sheet}.json").write_text(json.dumps(sj, indent=1))
             am.setdefault("sheets", {})[sheet] = {"json": f"{sheet}.json", "image": f"{sheet}.png"}
             for r in roles:
