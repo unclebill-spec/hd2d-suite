@@ -154,7 +154,7 @@ export class Svartalfheim {
     this.fest.attach(area); this.master.attach(area); this.foreman.attach(area);
     this.hushed(area);
     const S = this.G.S, gm = ctx.scene.game || (ctx.scene.game = {});
-    { const F = S.flags || {}; if ((F.alliance || {}).svartalfheim === 'befriend' && ((S.quests || {}).clockdeep || 0) >= 1) unlock(this.G, 'dagna'); if ((F.alliance || {}).vanaheim === 'befriend') unlock(this.G, 'tobble'); }
+    { const F = S.flags || {}; if ((F.alliance || {}).svartalfheim === 'befriend' && ((S.quests || {}).clockdeep || 0) >= 1) unlock(this.G, 'dagna'); if ((S.quests || {}).vh_tobble === 3 || (F.companions || {}).tobble) unlock(this.G, 'tobble'); /* [VANAHEIM] Q1: Small Brave Things (vh_tobble) adds him */ }
     if (area === 'forge_hall') {   // the lift stays shut until the Forge-Seal is in the bag
       gm.exits = (gm.exits || []).filter((e) => e.to !== 'clockdeep');
       if (hasSeal(S)) gm.exits.push({ ...LIFT });

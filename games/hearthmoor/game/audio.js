@@ -11,7 +11,8 @@ const ROOT = 349.23;   // F4
 const hz = (semi) => ROOT * Math.pow(2, semi / 12);
 // area id -> realm theme (every live area; an unknown id falls back to Midgard)
 const REALM_OF = {};
-for (const a of ['plaza', 'lane', 'mossglen', 'hollows', 'rift', 'vanaheim', 'ravenhold', 'bifrost', 'temple', 'rotwood', 'verdant', 'forge']) REALM_OF[a] = 'midgard';
+for (const a of ['plaza', 'lane', 'mossglen', 'hollows', 'rift', 'ravenhold', 'bifrost', 'temple', 'forge']) REALM_OF[a] = 'midgard';
+for (const a of ['vanaheim', 'vh_village', 'vh_garden', 'rotwood', 'verdant']) REALM_OF[a] = 'mossbrook';   // [VANAHEIM] music_mossbrook.ogg (Sound, 2026-10-28)
 for (const a of ['alfheim', 'lumen_court', 'wispwood', 'prismvault']) REALM_OF[a] = 'alfheim';
 for (const a of ['svartalfheim', 'forge_hall', 'glowmines', 'clockdeep', 'clockdeep2']) REALM_OF[a] = 'svartalfheim';
 for (const a of ['jotunheim', 'jt_hall', 'rimecaves', 'barrow', 'barrow2']) REALM_OF[a] = 'jotunheim';
@@ -19,7 +20,7 @@ for (const a of ['muspelheim', 'mp_hall', 'lavafalls', 'caldera', 'caldera2']) R
 for (const a of ['niflheim', 'nf_home', 'iceglow', 'frozenspire', 'frozenspire2', 'frozen_rift']) REALM_OF[a] = 'niflheim';
 for (const a of ['asgard', 'gs_hall', 'gs_temple', 'reliquary', 'reliquary2']) REALM_OF[a] = 'asgard';
 export const MUSIC_REALMS = REALM_OF;
-export const MUSIC_TRACKS = ['midgard', 'alfheim', 'svartalfheim', 'jotunheim', 'muspelheim', 'niflheim', 'asgard', 'battle', 'boss'];
+export const MUSIC_TRACKS = ['midgard', 'mossbrook', 'alfheim', 'svartalfheim', 'jotunheim', 'muspelheim', 'niflheim', 'asgard', 'battle', 'boss'];
 const MUSIC_DIR = 'audio/music/';
 const DUCK = 0.3;        // ambient level while music plays (a ~70% duck)
 const XFADE = 1.6;       // crossfade seconds

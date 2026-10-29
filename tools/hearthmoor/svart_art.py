@@ -174,7 +174,7 @@ PZ = {
         "gate": {"glb": "gear_wall", "pos": [3.0, -1.5], "kind": "ram"},
         "chest": {"pos": [3.7, -2.3], "gold": 70, "item": "deep_brass", "n": 2, "flag": "cd_chest_c6"}}],
 }
-TOBBLE_AREAS = ["clockdeep", "clockdeep2"]
+TOBBLE_AREAS = ["clockdeep", "clockdeep2", "vanaheim", "vh_village", "vh_garden", "rotwood", "verdant"]   # [VANAHEIM] Q1: he follows you home too
 
 
 def pz_points(area):

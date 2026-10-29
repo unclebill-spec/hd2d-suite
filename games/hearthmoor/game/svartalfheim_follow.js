@@ -7,6 +7,7 @@
 import { active, COMP } from './svartalfheim_companions.js';
 
 const SV = ['svartalfheim', 'forge_hall', 'glowmines', 'clockdeep', 'clockdeep2'];
+const TOBBLE_VH = ['vanaheim', 'vh_village', 'vh_garden', 'rotwood', 'verdant'];   // [VANAHEIM] Tobble's own sheet where svart_art.py installed it (TOBBLE_AREAS)
 export const KIT = {   // [MUSPELHEIM] exported so a realm module can add its companion's kit (muspelheim.js: kindle)
   dagna: { role: 'dagna', dist: 1.2, speed: 2.8, brawl: { dmg: 10, reach: 1.2, cd: 1.6, knock: 0.6 }, mend: { below: 0.3, heal: 40 }, light: '#f2a63a',
     follow: ['Walk where I walk. The floor here bites.', 'Your boots are Midgard-made. I can tell. They squeak.'] },
@@ -29,7 +30,7 @@ export class Follow {
     if (this.fainted) return;
     if (!k || !ctx.actors) return;
     if (id === 'dagna' && (area === 'forge_hall' || !SV.includes(area))) return;   // at her forge / no sheet in this atlas
-    const role = id === 'tobble' && SV.includes(area) ? 'tobble' : k.role;           // 'gnome' is Dagna's sheet in the realm areas: Tobble has his own sheet there (puzzles pack)
+    const role = id === 'tobble' && (SV.includes(area) || (TOBBLE_VH.includes(area) && ctx.actors.meta.roles.tobble)) ? 'tobble' : k.role;           // 'gnome' is Dagna's sheet in the realm areas: Tobble has his own sheet there (puzzles pack)
     if (!ctx.actors.meta.roles[role]) return;
     const p = ctx.player, x = p.x + 0.8, z = p.z + 0.4;
     this.sprite = ctx.actors.add({ role, id: 'comp_' + id, pos: [x, z], behavior: 'none', turn: false }); this.sprite.ai = true;
