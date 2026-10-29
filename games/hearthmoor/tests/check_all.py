@@ -35,7 +35,10 @@ def run_area(a, tries, logdir, lock, lowres=False):
     params = PARAMS.get(a, f"area={a}&qa&spawn=start")
     cmd = [str(SUITE / "bin" / "hd2d"), "check-scene", "games/hearthmoor", "--scene-dir", f"areas/{a}", "--params", params, "--out", f"games/hearthmoor/shots/{a}"] + (["--quick"] if lowres else [])
     res = {"area": a, "pass": False, "tries": 0}
-    for t in range(1, tries + 1):
+    relaunches = 0
+    for t in range(1, tries + 2):
+        if t > tries + relaunches:
+            break
         t0 = time.time(); log = logdir / f"cs_{a}_{t}.log"
         with open(log, "w") as fh:
             rc = subprocess.call(cmd, cwd=SUITE, stdout=fh, stderr=subprocess.STDOUT)
@@ -43,6 +46,10 @@ def run_area(a, tries, logdir, lock, lowres=False):
         tail = log.read_text(errors="replace").strip().splitlines()[-1:] or [""]
         with lock:
             print(f"[{a}] try {t}: {'PASS' if rc == 0 else 'FAIL'} in {res['seconds']} s  {tail[0][:140]}", flush=True)
+        if rc == 3 and relaunches == 0:   # check-scene: browser could not create a WebGL context (box fault): one fresh relaunch
+            relaunches = 1; res["webgl_relaunch"] = True
+            time.sleep(20)
+            continue
         if rc == 0:
             res["pass"] = True
             (logdir / f"cs_{a}.pass").write_text(str(t))
