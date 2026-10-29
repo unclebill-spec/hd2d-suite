@@ -198,6 +198,8 @@ export const VH_ENEMIES = {
 // Game Director's numbers (BALANCE.md 2026-10-28): Nettlecrown 1500 HP / 22 dmg / phases 65 % + 35 % / heartroot grab 10 % /
 // yields 5 % / 2 thorn-nymphs in P1 and P3 / conquer path +1 Thornhex (heals her 20) / no enrage / 600 XP.
 export const NETTLE = { adds: { 1: 2, 3: 2 }, healEvery: 6, grabDmg: 14, circle: [4.0, -2.2] };
+// Hearthmoor Art icons (art/vanaheim/icons, 16 px): drawn as images in the bag (game.js iconHTML)
+for (const k of ['hexknot', 'fizzstone', 'tithe_seal', 'frost_bloom', 'mossheart_staff', 'nettle_circlet']) if (ITEMS[k]) ITEMS[k].img = `art/vanaheim/icons/${k}.png`;
 const PLACEHOLDER_ROLE = { nettlecrown: 'hedgewitch', thornnymph: 'sporeling', thornhex: 'hedgewitch' };   // PLACEHOLDER until art/vanaheim/READY.txt
 export const VH_PLANNED = { vh_village: 'Mossbrook', vh_garden: 'The Thorngarden' };
 export const AREAS_VH = Object.fromEntries(Object.keys(VH_PLANNED).map((a) => [a, `areas/${a}/`]));

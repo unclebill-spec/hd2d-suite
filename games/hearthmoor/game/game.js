@@ -190,6 +190,7 @@ G.catHome = () => {
 const ICON = 32;   // 16 px icons drawn at 2x
 const PXURL = {};
 function iconHTML(id) {
+  if (ITEMS[id].img) return `<img class="ico" alt="" style="image-rendering:pixelated" src="${ITEMS[id].img}">`;   // [VANAHEIM] art-pack PNG icons
   if (ITEMS[id].px) { const u = PXURL[id] || (PXURL[id] = goodIconURL(ITEMS[id].px)); return `<img class="ico" alt="" src="${u}">`; }
   const i = ITEMS[id].icon; return `<span class="ico" style="background-position:-${i * ICON}px 0"></span>`;
 }

@@ -6,7 +6,7 @@
  "cell": 48,
  "size": [
   384,
-  1008
+  1104
  ],
  "effects": {
   "portal_vortex": {
@@ -428,8 +428,71 @@
    "travel": null,
    "then": null,
    "duration": 9999
+  },
+  "frost_sparkle": {
+   "row": 21,
+   "frames": 8,
+   "fps": 10,
+   "loop": true,
+   "kind": "billboard",
+   "pivot": [
+    12,
+    23
+   ],
+   "glow": true,
+   "light": {
+    "color": "#7fd8ff",
+    "range": 1.2
+   },
+   "notes": "hex_knot pickup + open frost_thorn_root"
+  },
+  "bud_pulse": {
+   "row": 22,
+   "frames": 8,
+   "fps": 8,
+   "loop": true,
+   "kind": "billboard",
+   "pivot": [
+    12,
+    23
+   ],
+   "glow": true,
+   "light": {
+    "color": "#ff3fb4",
+    "range": 1.0
+   },
+   "notes": "thornnymph / thorn tangle magenta motes"
+  },
+  "firefly_drift": {
+   "row": 23,
+   "frames": 8,
+   "fps": 6,
+   "loop": true,
+   "kind": "billboard",
+   "pivot": [
+    12,
+    23
+   ],
+   "glow": true,
+   "light": null,
+   "notes": "Mossbrook ambient fireflies"
+  },
+  "thorn_wall_tell": {
+   "row": 24,
+   "frames": 8,
+   "fps": 10,
+   "loop": true,
+   "kind": "decal",
+   "pivot": [
+    12,
+    12
+   ],
+   "glow": true,
+   "light": null,
+   "notes": "1 s violet tell line on the ground before a thorn_wall grows (tile along wall)"
   }
  },
  "cast_sets": {},
- "cycle": []
+ "cycle": [],
+ "vh_fx_from": 1008
 }

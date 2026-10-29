@@ -69,13 +69,32 @@ VANA_NEON_ALLOW = {"nettlecrown": {"#ff3fb4", "#7fd8ff", "#a45cf0", "#3ff0ff", "
 HH_NEON_ALLOW = {r: {"#a45cf0", "#3a2458"} for r in ("gloam_knight", "odric", "mordrath", "mordrath_p2", "mordrath_p3")}
 
 
+# [VANAHEIM] Area palette (like a custom biome): the Vanaheim Stage B areas and the staged Vanaheim art pack may also use the
+# vanaheim-gloom lock (games/hearthmoor/art/palette/vanaheim-gloom/biome.json, Hearthmoor Art 2026-10-28). Added on top of the
+# sheet's own biome, ONLY for files under these areas / that pack. Every other area is unchanged.
+VANA_AREA_BIOME = Path(__file__).resolve().parents[2] / "games/hearthmoor/art/palette/vanaheim-gloom/biome.json"
+VANA_AREA_KEYS = ("/areas/vh_village/", "/areas/vh_garden/", "/art/vanaheim/")
+
+
+def area_palette(path):
+    p = str(Path(path).resolve())
+    if any(k in p for k in VANA_AREA_KEYS) and VANA_AREA_BIOME.exists():
+        return set(json.loads(VANA_AREA_BIOME.read_text())["colors"].values())
+    return set()
+
+
 def check(atlas_path, json_path=None, biome=None, max_colors=20, project=None):
     atlas_path = Path(atlas_path)
     json_path = Path(json_path) if json_path else atlas_path.with_suffix(".json")
     meta = json.loads(json_path.read_text())
     biome = biome or meta.get("biome", "cozy-village")
-    palette = set(load_biome(biome, project)["colors"].values())
-    ink = load_biome(biome, project)["colors"]["ink"]
+    if biome == "vanaheim-gloom" and not project:   # [VANAHEIM] the registered area palette
+        bd = json.loads(VANA_AREA_BIOME.read_text())
+        biome = "cozy-village"
+    else:
+        bd = load_biome(biome, project)
+    palette = set(bd["colors"].values()) | set(load_biome(biome, project)["colors"].values()) | area_palette(atlas_path)
+    ink = bd["colors"]["ink"]
     im = Image.open(atlas_path).convert("RGBA")
     W, H = im.size
     px = im.load()

@@ -1,0 +1,215 @@
+{
+ "tool": "hd2d kit",
+ "biome": "cozy-village",
+ "seed": 1,
+ "sprite_height_m": 1.8,
+ "pieces": {
+  "thorn_wall_s1": {
+   "file": "thorn_wall_s1.glb",
+   "kind": "prop",
+   "tris": 408,
+   "size": [
+    2.0,
+    0.6,
+    0.5
+   ],
+   "markers": {
+    "lamps": [
+     [
+      0,
+      0.3,
+      0.3
+     ]
+    ],
+    "chimneys": [],
+    "windows": [],
+    "doors": [],
+    "lamp_color": "#7fd8ff",
+    "lamp_range": 2.0,
+    "growth_step": 1,
+    "height_m": 0.6,
+    "note": "2 m briar segment; swap s1->s2->s3 as it grows (boss P1 seed hex / P2 maze); violet tell decal runs along it 1 s before growth"
+   },
+   "blockers": [
+    [
+     -1,
+     -0.25,
+     1,
+     0.25
+    ]
+   ]
+  },
+  "thorn_wall_s2": {
+   "file": "thorn_wall_s2.glb",
+   "kind": "prop",
+   "tris": 876,
+   "size": [
+    2.0,
+    1.4,
+    0.5
+   ],
+   "markers": {
+    "lamps": [
+     [
+      0,
+      0.7,
+      0.3
+     ]
+    ],
+    "chimneys": [],
+    "windows": [],
+    "doors": [],
+    "lamp_color": "#7fd8ff",
+    "lamp_range": 2.5,
+    "growth_step": 2,
+    "height_m": 1.4,
+    "note": "2 m briar segment; swap s1->s2->s3 as it grows (boss P1 seed hex / P2 maze); violet tell decal runs along it 1 s before growth"
+   },
+   "blockers": [
+    [
+     -1,
+     -0.25,
+     1,
+     0.25
+    ]
+   ]
+  },
+  "thorn_wall_s3": {
+   "file": "thorn_wall_s3.glb",
+   "kind": "prop",
+   "tris": 1344,
+   "size": [
+    2.0,
+    2.2,
+    0.5
+   ],
+   "markers": {
+    "lamps": [
+     [
+      0,
+      1.1,
+      0.3
+     ]
+    ],
+    "chimneys": [],
+    "windows": [],
+    "doors": [],
+    "lamp_color": "#7fd8ff",
+    "lamp_range": 3.0,
+    "growth_step": 3,
+    "height_m": 2.2,
+    "note": "2 m briar segment; swap s1->s2->s3 as it grows (boss P1 seed hex / P2 maze); violet tell decal runs along it 1 s before growth"
+   },
+   "blockers": [
+    [
+     -1,
+     -0.25,
+     1,
+     0.25
+    ]
+   ]
+  },
+  "frost_thorn_root_open": {
+   "file": "frost_thorn_root_open.glb",
+   "kind": "prop",
+   "tris": 262,
+   "size": [
+    1.8,
+    0.7,
+    1.8
+   ],
+   "markers": {
+    "lamps": [
+     [
+      0,
+      0.5,
+      0
+     ]
+    ],
+    "chimneys": [],
+    "windows": [],
+    "doors": [],
+    "lamp_color": "#7fd8ff",
+    "lamp_range": 2.5,
+    "weak_point": {
+     "pos": [
+      0,
+      0.38,
+      0
+     ],
+     "radius_m": 0.3,
+     "note": "hit while open"
+    },
+    "note": "vh_thorn objective: cut 3 roots. Swap open <-> retracted on the root's timer"
+   },
+   "blockers": [
+    [
+     -0.6,
+     -0.6,
+     0.6,
+     0.6
+    ]
+   ]
+  },
+  "frost_thorn_root_retracted": {
+   "file": "frost_thorn_root_retracted.glb",
+   "kind": "prop",
+   "tris": 196,
+   "size": [
+    1.8,
+    0.7,
+    1.8
+   ],
+   "markers": {
+    "lamps": [
+     [
+      0,
+      0.4,
+      0.2
+     ]
+    ],
+    "chimneys": [],
+    "windows": [],
+    "doors": [],
+    "lamp_color": "#7fd8ff",
+    "lamp_range": 0.8,
+    "weak_point": null,
+    "note": "vh_thorn objective: cut 3 roots. Swap open <-> retracted on the root's timer"
+   },
+   "blockers": [
+    [
+     -0.6,
+     -0.6,
+     0.6,
+     0.6
+    ]
+   ]
+  },
+  "hex_knot": {
+   "file": "hex_knot.glb",
+   "kind": "prop",
+   "tris": 276,
+   "size": [
+    0.25,
+    0.3,
+    0.25
+   ],
+   "markers": {
+    "lamps": [
+     [
+      0,
+      0.16,
+      0
+     ]
+    ],
+    "chimneys": [],
+    "windows": [],
+    "doors": [],
+    "lamp_color": "#7fd8ff",
+    "lamp_range": 0.9,
+    "note": "vh_hex pickup x3 (village); bob + sparkle fx optional"
+   },
+   "blockers": []
+  }
+ }
+}

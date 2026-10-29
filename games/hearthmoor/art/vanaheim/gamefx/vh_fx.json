@@ -1,0 +1,78 @@
+{
+ "tool": "Hearthmoor Art procedural",
+ "palette": "vanaheim-gloom (glow colours only)",
+ "image": "vh_fx.png",
+ "cell": 24,
+ "size": [
+  192,
+  96
+ ],
+ "effects": {
+  "frost_sparkle": {
+   "row": 0,
+   "frames": 8,
+   "fps": 10,
+   "loop": true,
+   "kind": "billboard",
+   "pivot": [
+    12,
+    23
+   ],
+   "glow": true,
+   "light": {
+    "color": "#7fd8ff",
+    "range": 1.2
+   },
+   "strip": "strips/frost_sparkle.png",
+   "notes": "hex_knot pickup + open frost_thorn_root"
+  },
+  "bud_pulse": {
+   "row": 1,
+   "frames": 8,
+   "fps": 8,
+   "loop": true,
+   "kind": "billboard",
+   "pivot": [
+    12,
+    23
+   ],
+   "glow": true,
+   "light": {
+    "color": "#ff3fb4",
+    "range": 1.0
+   },
+   "strip": "strips/bud_pulse.png",
+   "notes": "thornnymph / thorn tangle magenta motes"
+  },
+  "firefly_drift": {
+   "row": 2,
+   "frames": 8,
+   "fps": 6,
+   "loop": true,
+   "kind": "billboard",
+   "pivot": [
+    12,
+    23
+   ],
+   "glow": true,
+   "light": null,
+   "strip": "strips/firefly_drift.png",
+   "notes": "Mossbrook ambient fireflies"
+  },
+  "thorn_wall_tell": {
+   "row": 3,
+   "frames": 8,
+   "fps": 10,
+   "loop": true,
+   "kind": "decal",
+   "pivot": [
+    12,
+    12
+   ],
+   "glow": true,
+   "light": null,
+   "strip": "strips/thorn_wall_tell.png",
+   "notes": "1 s violet tell line on the ground before a thorn_wall grows (tile along wall)"
+  }
+ }
+}

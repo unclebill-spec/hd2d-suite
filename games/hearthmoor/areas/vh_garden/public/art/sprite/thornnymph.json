@@ -1,0 +1,1076 @@
+{
+ "tool": "hd2d sprite (Hearthmoor Art vanaheim, procedural)",
+ "biome": "vanaheim-gloom",
+ "frame": [
+  20,
+  32
+ ],
+ "pivot": [
+  10,
+  32
+ ],
+ "ground_row": 31,
+ "facings": [
+  "down",
+  "up",
+  "left",
+  "right"
+ ],
+ "anims": {
+  "idle": {
+   "start": 0,
+   "count": 4,
+   "fps": 3,
+   "loop": [
+    0,
+    1,
+    2,
+    1
+   ],
+   "blink": 3
+  },
+  "walk": {
+   "start": 4,
+   "count": 4,
+   "fps": 8
+  },
+  "cast": {
+   "start": 8,
+   "count": 4,
+   "fps": 6,
+   "loop": [
+    0,
+    1,
+    2,
+    2,
+    3,
+    3
+   ],
+   "casters_only": true
+  },
+  "attack": {
+   "start": 12,
+   "count": 4,
+   "fps": 10,
+   "loop": [
+    0,
+    1,
+    2,
+    2,
+    3
+   ],
+   "heroes_only": true
+  },
+  "defend": {
+   "start": 16,
+   "count": 4,
+   "fps": 6,
+   "loop": [
+    0,
+    1
+   ],
+   "hold": [
+    2,
+    3
+   ],
+   "heroes_only": true
+  },
+  "jump": {
+   "start": 20,
+   "count": 4,
+   "fps": 8,
+   "phases": [
+    "crouch",
+    "launch",
+    "airborne",
+    "land"
+   ],
+   "heroes_only": true
+  },
+  "die": {
+   "start": 24,
+   "count": 4,
+   "fps": 6,
+   "once": true,
+   "enemies_only": true
+  }
+ },
+ "cols": 28,
+ "image": "thornnymph.png",
+ "size": [
+  560,
+  128
+ ],
+ "palette": {
+  "ink": "#0a0c1c",
+  "indigo": "#141a3a",
+  "slate": "#26305e",
+  "slate_hi": "#3c4a86",
+  "slate_lo": "#1c2248",
+  "moss": "#127a6e",
+  "moss_hi": "#2aa894",
+  "moss_lo": "#0c4a48",
+  "bark": "#1a1430",
+  "bark_rim": "#3a2a5e",
+  "rim": "#6a4aa8",
+  "shawl": "#5a3c96",
+  "mist": "#8a9ad0",
+  "pale": "#c8d4f0",
+  "white": "#f0f6ff",
+  "mag": "#ff3fb4",
+  "mag_hi": "#ffa8de",
+  "mag_lo": "#b02a80",
+  "cyan": "#3ff0ff",
+  "cyan_hi": "#c0fcff",
+  "lime": "#b6ff4a",
+  "vio": "#a45cf0",
+  "vio_hi": "#d4a8ff",
+  "frost": "#7fd8ff",
+  "frost_hi": "#e0f6ff"
+ },
+ "glow_colors": [
+  "#3ff0ff",
+  "#7fd8ff",
+  "#a45cf0",
+  "#b02a80",
+  "#b6ff4a",
+  "#c0fcff",
+  "#d4a8ff",
+  "#e0f6ff",
+  "#ff3fb4",
+  "#ffa8de"
+ ],
+ "roles": {
+  "thornnymph": {
+   "row": 0,
+   "kind": "enemy",
+   "desc": "Thorn-nymph (1x): corrupted spring nymph, slate spring-silk gown wrapped in black-violet thorn vines, pale mist skin, violet hair, thorn crown; magenta glow buds + eyes pulse (lo/mid/hi), a drifting magenta spark. Attack = thorn lash (frame 14 hit sparks). Die = gown crumples, frame 27 freed cyan spring-light.",
+   "size_bounds": [
+    [
+     6,
+     20
+    ],
+    [
+     6,
+     32
+    ]
+   ],
+   "caster": false,
+   "anims": [
+    "idle",
+    "walk",
+    "attack",
+    "die"
+   ],
+   "frames": [
+    {
+     "name": "thornnymph_down_idle0",
+     "facing": "down",
+     "anim": "idle",
+     "i": 0,
+     "x": 0,
+     "y": 0,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      10,
+      32
+     ]
+    },
+    {
+     "name": "thornnymph_down_idle1",
+     "facing": "down",
+     "anim": "idle",
+     "i": 1,
+     "x": 20,
+     "y": 0,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      30,
+      32
+     ]
+    },
+    {
+     "name": "thornnymph_down_idle2",
+     "facing": "down",
+     "anim": "idle",
+     "i": 2,
+     "x": 40,
+     "y": 0,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      50,
+      32
+     ]
+    },
+    {
+     "name": "thornnymph_down_idle3",
+     "facing": "down",
+     "anim": "idle",
+     "i": 3,
+     "x": 60,
+     "y": 0,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      70,
+      32
+     ]
+    },
+    {
+     "name": "thornnymph_down_walk0",
+     "facing": "down",
+     "anim": "walk",
+     "i": 0,
+     "x": 80,
+     "y": 0,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      90,
+      32
+     ]
+    },
+    {
+     "name": "thornnymph_down_walk1",
+     "facing": "down",
+     "anim": "walk",
+     "i": 1,
+     "x": 100,
+     "y": 0,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      110,
+      32
+     ]
+    },
+    {
+     "name": "thornnymph_down_walk2",
+     "facing": "down",
+     "anim": "walk",
+     "i": 2,
+     "x": 120,
+     "y": 0,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      130,
+      32
+     ]
+    },
+    {
+     "name": "thornnymph_down_walk3",
+     "facing": "down",
+     "anim": "walk",
+     "i": 3,
+     "x": 140,
+     "y": 0,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      150,
+      32
+     ]
+    },
+    {
+     "name": "thornnymph_down_attack0",
+     "facing": "down",
+     "anim": "attack",
+     "i": 0,
+     "x": 240,
+     "y": 0,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      250,
+      32
+     ]
+    },
+    {
+     "name": "thornnymph_down_attack1",
+     "facing": "down",
+     "anim": "attack",
+     "i": 1,
+     "x": 260,
+     "y": 0,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      270,
+      32
+     ]
+    },
+    {
+     "name": "thornnymph_down_attack2",
+     "facing": "down",
+     "anim": "attack",
+     "i": 2,
+     "x": 280,
+     "y": 0,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      290,
+      32
+     ]
+    },
+    {
+     "name": "thornnymph_down_attack3",
+     "facing": "down",
+     "anim": "attack",
+     "i": 3,
+     "x": 300,
+     "y": 0,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      310,
+      32
+     ]
+    },
+    {
+     "name": "thornnymph_down_die0",
+     "facing": "down",
+     "anim": "die",
+     "i": 0,
+     "x": 480,
+     "y": 0,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      490,
+      32
+     ]
+    },
+    {
+     "name": "thornnymph_down_die1",
+     "facing": "down",
+     "anim": "die",
+     "i": 1,
+     "x": 500,
+     "y": 0,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      510,
+      32
+     ]
+    },
+    {
+     "name": "thornnymph_down_die2",
+     "facing": "down",
+     "anim": "die",
+     "i": 2,
+     "x": 520,
+     "y": 0,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      530,
+      32
+     ]
+    },
+    {
+     "name": "thornnymph_down_die3",
+     "facing": "down",
+     "anim": "die",
+     "i": 3,
+     "x": 540,
+     "y": 0,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      550,
+      32
+     ]
+    },
+    {
+     "name": "thornnymph_up_idle0",
+     "facing": "up",
+     "anim": "idle",
+     "i": 0,
+     "x": 0,
+     "y": 32,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      10,
+      64
+     ]
+    },
+    {
+     "name": "thornnymph_up_idle1",
+     "facing": "up",
+     "anim": "idle",
+     "i": 1,
+     "x": 20,
+     "y": 32,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      30,
+      64
+     ]
+    },
+    {
+     "name": "thornnymph_up_idle2",
+     "facing": "up",
+     "anim": "idle",
+     "i": 2,
+     "x": 40,
+     "y": 32,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      50,
+      64
+     ]
+    },
+    {
+     "name": "thornnymph_up_idle3",
+     "facing": "up",
+     "anim": "idle",
+     "i": 3,
+     "x": 60,
+     "y": 32,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      70,
+      64
+     ]
+    },
+    {
+     "name": "thornnymph_up_walk0",
+     "facing": "up",
+     "anim": "walk",
+     "i": 0,
+     "x": 80,
+     "y": 32,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      90,
+      64
+     ]
+    },
+    {
+     "name": "thornnymph_up_walk1",
+     "facing": "up",
+     "anim": "walk",
+     "i": 1,
+     "x": 100,
+     "y": 32,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      110,
+      64
+     ]
+    },
+    {
+     "name": "thornnymph_up_walk2",
+     "facing": "up",
+     "anim": "walk",
+     "i": 2,
+     "x": 120,
+     "y": 32,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      130,
+      64
+     ]
+    },
+    {
+     "name": "thornnymph_up_walk3",
+     "facing": "up",
+     "anim": "walk",
+     "i": 3,
+     "x": 140,
+     "y": 32,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      150,
+      64
+     ]
+    },
+    {
+     "name": "thornnymph_up_attack0",
+     "facing": "up",
+     "anim": "attack",
+     "i": 0,
+     "x": 240,
+     "y": 32,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      250,
+      64
+     ]
+    },
+    {
+     "name": "thornnymph_up_attack1",
+     "facing": "up",
+     "anim": "attack",
+     "i": 1,
+     "x": 260,
+     "y": 32,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      270,
+      64
+     ]
+    },
+    {
+     "name": "thornnymph_up_attack2",
+     "facing": "up",
+     "anim": "attack",
+     "i": 2,
+     "x": 280,
+     "y": 32,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      290,
+      64
+     ]
+    },
+    {
+     "name": "thornnymph_up_attack3",
+     "facing": "up",
+     "anim": "attack",
+     "i": 3,
+     "x": 300,
+     "y": 32,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      310,
+      64
+     ]
+    },
+    {
+     "name": "thornnymph_up_die0",
+     "facing": "up",
+     "anim": "die",
+     "i": 0,
+     "x": 480,
+     "y": 32,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      490,
+      64
+     ]
+    },
+    {
+     "name": "thornnymph_up_die1",
+     "facing": "up",
+     "anim": "die",
+     "i": 1,
+     "x": 500,
+     "y": 32,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      510,
+      64
+     ]
+    },
+    {
+     "name": "thornnymph_up_die2",
+     "facing": "up",
+     "anim": "die",
+     "i": 2,
+     "x": 520,
+     "y": 32,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      530,
+      64
+     ]
+    },
+    {
+     "name": "thornnymph_up_die3",
+     "facing": "up",
+     "anim": "die",
+     "i": 3,
+     "x": 540,
+     "y": 32,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      550,
+      64
+     ]
+    },
+    {
+     "name": "thornnymph_left_idle0",
+     "facing": "left",
+     "anim": "idle",
+     "i": 0,
+     "x": 0,
+     "y": 64,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      10,
+      96
+     ]
+    },
+    {
+     "name": "thornnymph_left_idle1",
+     "facing": "left",
+     "anim": "idle",
+     "i": 1,
+     "x": 20,
+     "y": 64,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      30,
+      96
+     ]
+    },
+    {
+     "name": "thornnymph_left_idle2",
+     "facing": "left",
+     "anim": "idle",
+     "i": 2,
+     "x": 40,
+     "y": 64,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      50,
+      96
+     ]
+    },
+    {
+     "name": "thornnymph_left_idle3",
+     "facing": "left",
+     "anim": "idle",
+     "i": 3,
+     "x": 60,
+     "y": 64,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      70,
+      96
+     ]
+    },
+    {
+     "name": "thornnymph_left_walk0",
+     "facing": "left",
+     "anim": "walk",
+     "i": 0,
+     "x": 80,
+     "y": 64,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      90,
+      96
+     ]
+    },
+    {
+     "name": "thornnymph_left_walk1",
+     "facing": "left",
+     "anim": "walk",
+     "i": 1,
+     "x": 100,
+     "y": 64,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      110,
+      96
+     ]
+    },
+    {
+     "name": "thornnymph_left_walk2",
+     "facing": "left",
+     "anim": "walk",
+     "i": 2,
+     "x": 120,
+     "y": 64,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      130,
+      96
+     ]
+    },
+    {
+     "name": "thornnymph_left_walk3",
+     "facing": "left",
+     "anim": "walk",
+     "i": 3,
+     "x": 140,
+     "y": 64,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      150,
+      96
+     ]
+    },
+    {
+     "name": "thornnymph_left_attack0",
+     "facing": "left",
+     "anim": "attack",
+     "i": 0,
+     "x": 240,
+     "y": 64,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      250,
+      96
+     ]
+    },
+    {
+     "name": "thornnymph_left_attack1",
+     "facing": "left",
+     "anim": "attack",
+     "i": 1,
+     "x": 260,
+     "y": 64,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      270,
+      96
+     ]
+    },
+    {
+     "name": "thornnymph_left_attack2",
+     "facing": "left",
+     "anim": "attack",
+     "i": 2,
+     "x": 280,
+     "y": 64,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      290,
+      96
+     ]
+    },
+    {
+     "name": "thornnymph_left_attack3",
+     "facing": "left",
+     "anim": "attack",
+     "i": 3,
+     "x": 300,
+     "y": 64,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      310,
+      96
+     ]
+    },
+    {
+     "name": "thornnymph_left_die0",
+     "facing": "left",
+     "anim": "die",
+     "i": 0,
+     "x": 480,
+     "y": 64,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      490,
+      96
+     ]
+    },
+    {
+     "name": "thornnymph_left_die1",
+     "facing": "left",
+     "anim": "die",
+     "i": 1,
+     "x": 500,
+     "y": 64,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      510,
+      96
+     ]
+    },
+    {
+     "name": "thornnymph_left_die2",
+     "facing": "left",
+     "anim": "die",
+     "i": 2,
+     "x": 520,
+     "y": 64,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      530,
+      96
+     ]
+    },
+    {
+     "name": "thornnymph_left_die3",
+     "facing": "left",
+     "anim": "die",
+     "i": 3,
+     "x": 540,
+     "y": 64,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      550,
+      96
+     ]
+    },
+    {
+     "name": "thornnymph_right_idle0",
+     "facing": "right",
+     "anim": "idle",
+     "i": 0,
+     "x": 0,
+     "y": 96,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      10,
+      128
+     ]
+    },
+    {
+     "name": "thornnymph_right_idle1",
+     "facing": "right",
+     "anim": "idle",
+     "i": 1,
+     "x": 20,
+     "y": 96,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      30,
+      128
+     ]
+    },
+    {
+     "name": "thornnymph_right_idle2",
+     "facing": "right",
+     "anim": "idle",
+     "i": 2,
+     "x": 40,
+     "y": 96,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      50,
+      128
+     ]
+    },
+    {
+     "name": "thornnymph_right_idle3",
+     "facing": "right",
+     "anim": "idle",
+     "i": 3,
+     "x": 60,
+     "y": 96,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      70,
+      128
+     ]
+    },
+    {
+     "name": "thornnymph_right_walk0",
+     "facing": "right",
+     "anim": "walk",
+     "i": 0,
+     "x": 80,
+     "y": 96,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      90,
+      128
+     ]
+    },
+    {
+     "name": "thornnymph_right_walk1",
+     "facing": "right",
+     "anim": "walk",
+     "i": 1,
+     "x": 100,
+     "y": 96,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      110,
+      128
+     ]
+    },
+    {
+     "name": "thornnymph_right_walk2",
+     "facing": "right",
+     "anim": "walk",
+     "i": 2,
+     "x": 120,
+     "y": 96,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      130,
+      128
+     ]
+    },
+    {
+     "name": "thornnymph_right_walk3",
+     "facing": "right",
+     "anim": "walk",
+     "i": 3,
+     "x": 140,
+     "y": 96,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      150,
+      128
+     ]
+    },
+    {
+     "name": "thornnymph_right_attack0",
+     "facing": "right",
+     "anim": "attack",
+     "i": 0,
+     "x": 240,
+     "y": 96,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      250,
+      128
+     ]
+    },
+    {
+     "name": "thornnymph_right_attack1",
+     "facing": "right",
+     "anim": "attack",
+     "i": 1,
+     "x": 260,
+     "y": 96,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      270,
+      128
+     ]
+    },
+    {
+     "name": "thornnymph_right_attack2",
+     "facing": "right",
+     "anim": "attack",
+     "i": 2,
+     "x": 280,
+     "y": 96,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      290,
+      128
+     ]
+    },
+    {
+     "name": "thornnymph_right_attack3",
+     "facing": "right",
+     "anim": "attack",
+     "i": 3,
+     "x": 300,
+     "y": 96,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      310,
+      128
+     ]
+    },
+    {
+     "name": "thornnymph_right_die0",
+     "facing": "right",
+     "anim": "die",
+     "i": 0,
+     "x": 480,
+     "y": 96,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      490,
+      128
+     ]
+    },
+    {
+     "name": "thornnymph_right_die1",
+     "facing": "right",
+     "anim": "die",
+     "i": 1,
+     "x": 500,
+     "y": 96,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      510,
+      128
+     ]
+    },
+    {
+     "name": "thornnymph_right_die2",
+     "facing": "right",
+     "anim": "die",
+     "i": 2,
+     "x": 520,
+     "y": 96,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      530,
+      128
+     ]
+    },
+    {
+     "name": "thornnymph_right_die3",
+     "facing": "right",
+     "anim": "die",
+     "i": 3,
+     "x": 540,
+     "y": 96,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      550,
+      128
+     ]
+    }
+   ],
+   "enemy": true,
+   "light": {
+    "color": "#ff3fb4",
+    "intensity": 0.5,
+    "range": 1.4,
+    "lift": 0.9
+   },
+   "stats_hint": {
+    "tier": "common",
+    "height_x_player": 1.0
+   }
+  }
+ }
+}

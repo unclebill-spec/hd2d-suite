@@ -1,0 +1,60 @@
+{
+ "tool": "Hearthmoor Art vh icons (items.png / build.py draw_icons format)",
+ "biome": "vanaheim-gloom",
+ "cell": 16,
+ "image": "vh_icons.png",
+ "size": [
+  96,
+  16
+ ],
+ "icons": {
+  "hexknot": {
+   "index": 0,
+   "x": 0,
+   "y": 0,
+   "w": 16,
+   "h": 16,
+   "desc": "Hex-knot: black thorn twist, frost-blue bead (glow: bead)"
+  },
+  "fizzstone": {
+   "index": 1,
+   "x": 16,
+   "y": 0,
+   "w": 16,
+   "h": 16,
+   "desc": "Fizzstone: slate pebble, cyan bubbles (glow: bubbles + crack)"
+  },
+  "tithe_seal": {
+   "index": 2,
+   "x": 32,
+   "y": 0,
+   "w": 16,
+   "h": 16,
+   "desc": "Tithe-seal: Ravenhold violet wax, stamped spring (no glow)"
+  },
+  "frost_bloom": {
+   "index": 3,
+   "x": 48,
+   "y": 0,
+   "w": 16,
+   "h": 16,
+   "desc": "Frost bloom: black-violet thorn flower, frost-blue heart (glow: core)"
+  },
+  "mossheart_staff": {
+   "index": 4,
+   "x": 64,
+   "y": 0,
+   "w": 16,
+   "h": 16,
+   "desc": "Mossheart Staff (legendary): indigo staff, teal moss wrap, lime/cyan heart orb (glow: orb)"
+  },
+  "nettle_circlet": {
+   "index": 5,
+   "x": 80,
+   "y": 0,
+   "w": 16,
+   "h": 16,
+   "desc": "Nettlecrown's Bean-Circlet: woven bean-vine crown, one frost-blue glowing bloom (glow: bloom). Palette-safe twin nettle_circlet_safe.png (bloom in mist/pale)"
+  }
+ }
+}

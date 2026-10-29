@@ -1,0 +1,866 @@
+{
+ "tool": "hd2d sprite (Hearthmoor Art vanaheim, procedural)",
+ "biome": "vanaheim-gloom",
+ "frame": [
+  20,
+  32
+ ],
+ "pivot": [
+  10,
+  32
+ ],
+ "ground_row": 31,
+ "facings": [
+  "down",
+  "up",
+  "left",
+  "right"
+ ],
+ "anims": {
+  "idle": {
+   "start": 0,
+   "count": 4,
+   "fps": 3,
+   "loop": [
+    0,
+    1,
+    2,
+    1
+   ],
+   "blink": 3
+  },
+  "walk": {
+   "start": 4,
+   "count": 4,
+   "fps": 8
+  },
+  "cast": {
+   "start": 8,
+   "count": 4,
+   "fps": 6,
+   "loop": [
+    0,
+    1,
+    2,
+    2,
+    3,
+    3
+   ],
+   "casters_only": true
+  },
+  "attack": {
+   "start": 12,
+   "count": 4,
+   "fps": 10,
+   "loop": [
+    0,
+    1,
+    2,
+    2,
+    3
+   ],
+   "heroes_only": true
+  },
+  "defend": {
+   "start": 16,
+   "count": 4,
+   "fps": 6,
+   "loop": [
+    0,
+    1
+   ],
+   "hold": [
+    2,
+    3
+   ],
+   "heroes_only": true
+  },
+  "jump": {
+   "start": 20,
+   "count": 4,
+   "fps": 8,
+   "phases": [
+    "crouch",
+    "launch",
+    "airborne",
+    "land"
+   ],
+   "heroes_only": true
+  },
+  "die": {
+   "start": 24,
+   "count": 4,
+   "fps": 6,
+   "once": true,
+   "enemies_only": true
+  }
+ },
+ "cols": 12,
+ "image": "thornhex.png",
+ "size": [
+  240,
+  128
+ ],
+ "palette": {
+  "ink": "#0a0c1c",
+  "indigo": "#141a3a",
+  "slate": "#26305e",
+  "slate_hi": "#3c4a86",
+  "slate_lo": "#1c2248",
+  "moss": "#127a6e",
+  "moss_hi": "#2aa894",
+  "moss_lo": "#0c4a48",
+  "bark": "#1a1430",
+  "bark_rim": "#3a2a5e",
+  "rim": "#6a4aa8",
+  "shawl": "#5a3c96",
+  "mist": "#8a9ad0",
+  "pale": "#c8d4f0",
+  "white": "#f0f6ff",
+  "mag": "#ff3fb4",
+  "mag_hi": "#ffa8de",
+  "mag_lo": "#b02a80",
+  "cyan": "#3ff0ff",
+  "cyan_hi": "#c0fcff",
+  "lime": "#b6ff4a",
+  "vio": "#a45cf0",
+  "vio_hi": "#d4a8ff",
+  "frost": "#7fd8ff",
+  "frost_hi": "#e0f6ff"
+ },
+ "glow_colors": [
+  "#3ff0ff",
+  "#7fd8ff",
+  "#a45cf0",
+  "#b02a80",
+  "#b6ff4a",
+  "#c0fcff",
+  "#d4a8ff",
+  "#e0f6ff",
+  "#ff3fb4",
+  "#ffa8de"
+ ],
+ "roles": {
+  "thornhex": {
+   "row": 0,
+   "kind": "human",
+   "desc": "Thornhex (elite caster): palette remap of the plaza hedgewitch (demos/hearthmoor-plaza/.../hedgewitch.png). Black-violet briar cloak and hat, magenta blossom band, frost-blue accents, indigo-black staff.",
+   "size_bounds": [
+    [
+     14,
+     24
+    ],
+    [
+     24,
+     40
+    ]
+   ],
+   "caster": true,
+   "anims": [
+    "idle",
+    "walk",
+    "cast"
+   ],
+   "frames": [
+    {
+     "name": "thornhex_down_idle0",
+     "facing": "down",
+     "anim": "idle",
+     "i": 0,
+     "x": 0,
+     "y": 0,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      10,
+      32
+     ]
+    },
+    {
+     "name": "thornhex_down_idle1",
+     "facing": "down",
+     "anim": "idle",
+     "i": 1,
+     "x": 20,
+     "y": 0,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      30,
+      32
+     ]
+    },
+    {
+     "name": "thornhex_down_idle2",
+     "facing": "down",
+     "anim": "idle",
+     "i": 2,
+     "x": 40,
+     "y": 0,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      50,
+      32
+     ]
+    },
+    {
+     "name": "thornhex_down_idle3",
+     "facing": "down",
+     "anim": "idle",
+     "i": 3,
+     "x": 60,
+     "y": 0,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      70,
+      32
+     ]
+    },
+    {
+     "name": "thornhex_down_walk0",
+     "facing": "down",
+     "anim": "walk",
+     "i": 0,
+     "x": 80,
+     "y": 0,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      90,
+      32
+     ]
+    },
+    {
+     "name": "thornhex_down_walk1",
+     "facing": "down",
+     "anim": "walk",
+     "i": 1,
+     "x": 100,
+     "y": 0,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      110,
+      32
+     ]
+    },
+    {
+     "name": "thornhex_down_walk2",
+     "facing": "down",
+     "anim": "walk",
+     "i": 2,
+     "x": 120,
+     "y": 0,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      130,
+      32
+     ]
+    },
+    {
+     "name": "thornhex_down_walk3",
+     "facing": "down",
+     "anim": "walk",
+     "i": 3,
+     "x": 140,
+     "y": 0,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      150,
+      32
+     ]
+    },
+    {
+     "name": "thornhex_down_cast0",
+     "facing": "down",
+     "anim": "cast",
+     "i": 0,
+     "x": 160,
+     "y": 0,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      170,
+      32
+     ]
+    },
+    {
+     "name": "thornhex_down_cast1",
+     "facing": "down",
+     "anim": "cast",
+     "i": 1,
+     "x": 180,
+     "y": 0,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      190,
+      32
+     ]
+    },
+    {
+     "name": "thornhex_down_cast2",
+     "facing": "down",
+     "anim": "cast",
+     "i": 2,
+     "x": 200,
+     "y": 0,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      210,
+      32
+     ]
+    },
+    {
+     "name": "thornhex_down_cast3",
+     "facing": "down",
+     "anim": "cast",
+     "i": 3,
+     "x": 220,
+     "y": 0,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      230,
+      32
+     ]
+    },
+    {
+     "name": "thornhex_up_idle0",
+     "facing": "up",
+     "anim": "idle",
+     "i": 0,
+     "x": 0,
+     "y": 32,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      10,
+      64
+     ]
+    },
+    {
+     "name": "thornhex_up_idle1",
+     "facing": "up",
+     "anim": "idle",
+     "i": 1,
+     "x": 20,
+     "y": 32,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      30,
+      64
+     ]
+    },
+    {
+     "name": "thornhex_up_idle2",
+     "facing": "up",
+     "anim": "idle",
+     "i": 2,
+     "x": 40,
+     "y": 32,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      50,
+      64
+     ]
+    },
+    {
+     "name": "thornhex_up_idle3",
+     "facing": "up",
+     "anim": "idle",
+     "i": 3,
+     "x": 60,
+     "y": 32,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      70,
+      64
+     ]
+    },
+    {
+     "name": "thornhex_up_walk0",
+     "facing": "up",
+     "anim": "walk",
+     "i": 0,
+     "x": 80,
+     "y": 32,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      90,
+      64
+     ]
+    },
+    {
+     "name": "thornhex_up_walk1",
+     "facing": "up",
+     "anim": "walk",
+     "i": 1,
+     "x": 100,
+     "y": 32,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      110,
+      64
+     ]
+    },
+    {
+     "name": "thornhex_up_walk2",
+     "facing": "up",
+     "anim": "walk",
+     "i": 2,
+     "x": 120,
+     "y": 32,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      130,
+      64
+     ]
+    },
+    {
+     "name": "thornhex_up_walk3",
+     "facing": "up",
+     "anim": "walk",
+     "i": 3,
+     "x": 140,
+     "y": 32,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      150,
+      64
+     ]
+    },
+    {
+     "name": "thornhex_up_cast0",
+     "facing": "up",
+     "anim": "cast",
+     "i": 0,
+     "x": 160,
+     "y": 32,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      170,
+      64
+     ]
+    },
+    {
+     "name": "thornhex_up_cast1",
+     "facing": "up",
+     "anim": "cast",
+     "i": 1,
+     "x": 180,
+     "y": 32,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      190,
+      64
+     ]
+    },
+    {
+     "name": "thornhex_up_cast2",
+     "facing": "up",
+     "anim": "cast",
+     "i": 2,
+     "x": 200,
+     "y": 32,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      210,
+      64
+     ]
+    },
+    {
+     "name": "thornhex_up_cast3",
+     "facing": "up",
+     "anim": "cast",
+     "i": 3,
+     "x": 220,
+     "y": 32,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      230,
+      64
+     ]
+    },
+    {
+     "name": "thornhex_left_idle0",
+     "facing": "left",
+     "anim": "idle",
+     "i": 0,
+     "x": 0,
+     "y": 64,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      10,
+      96
+     ]
+    },
+    {
+     "name": "thornhex_left_idle1",
+     "facing": "left",
+     "anim": "idle",
+     "i": 1,
+     "x": 20,
+     "y": 64,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      30,
+      96
+     ]
+    },
+    {
+     "name": "thornhex_left_idle2",
+     "facing": "left",
+     "anim": "idle",
+     "i": 2,
+     "x": 40,
+     "y": 64,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      50,
+      96
+     ]
+    },
+    {
+     "name": "thornhex_left_idle3",
+     "facing": "left",
+     "anim": "idle",
+     "i": 3,
+     "x": 60,
+     "y": 64,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      70,
+      96
+     ]
+    },
+    {
+     "name": "thornhex_left_walk0",
+     "facing": "left",
+     "anim": "walk",
+     "i": 0,
+     "x": 80,
+     "y": 64,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      90,
+      96
+     ]
+    },
+    {
+     "name": "thornhex_left_walk1",
+     "facing": "left",
+     "anim": "walk",
+     "i": 1,
+     "x": 100,
+     "y": 64,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      110,
+      96
+     ]
+    },
+    {
+     "name": "thornhex_left_walk2",
+     "facing": "left",
+     "anim": "walk",
+     "i": 2,
+     "x": 120,
+     "y": 64,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      130,
+      96
+     ]
+    },
+    {
+     "name": "thornhex_left_walk3",
+     "facing": "left",
+     "anim": "walk",
+     "i": 3,
+     "x": 140,
+     "y": 64,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      150,
+      96
+     ]
+    },
+    {
+     "name": "thornhex_left_cast0",
+     "facing": "left",
+     "anim": "cast",
+     "i": 0,
+     "x": 160,
+     "y": 64,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      170,
+      96
+     ]
+    },
+    {
+     "name": "thornhex_left_cast1",
+     "facing": "left",
+     "anim": "cast",
+     "i": 1,
+     "x": 180,
+     "y": 64,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      190,
+      96
+     ]
+    },
+    {
+     "name": "thornhex_left_cast2",
+     "facing": "left",
+     "anim": "cast",
+     "i": 2,
+     "x": 200,
+     "y": 64,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      210,
+      96
+     ]
+    },
+    {
+     "name": "thornhex_left_cast3",
+     "facing": "left",
+     "anim": "cast",
+     "i": 3,
+     "x": 220,
+     "y": 64,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      230,
+      96
+     ]
+    },
+    {
+     "name": "thornhex_right_idle0",
+     "facing": "right",
+     "anim": "idle",
+     "i": 0,
+     "x": 0,
+     "y": 96,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      10,
+      128
+     ]
+    },
+    {
+     "name": "thornhex_right_idle1",
+     "facing": "right",
+     "anim": "idle",
+     "i": 1,
+     "x": 20,
+     "y": 96,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      30,
+      128
+     ]
+    },
+    {
+     "name": "thornhex_right_idle2",
+     "facing": "right",
+     "anim": "idle",
+     "i": 2,
+     "x": 40,
+     "y": 96,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      50,
+      128
+     ]
+    },
+    {
+     "name": "thornhex_right_idle3",
+     "facing": "right",
+     "anim": "idle",
+     "i": 3,
+     "x": 60,
+     "y": 96,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      70,
+      128
+     ]
+    },
+    {
+     "name": "thornhex_right_walk0",
+     "facing": "right",
+     "anim": "walk",
+     "i": 0,
+     "x": 80,
+     "y": 96,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      90,
+      128
+     ]
+    },
+    {
+     "name": "thornhex_right_walk1",
+     "facing": "right",
+     "anim": "walk",
+     "i": 1,
+     "x": 100,
+     "y": 96,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      110,
+      128
+     ]
+    },
+    {
+     "name": "thornhex_right_walk2",
+     "facing": "right",
+     "anim": "walk",
+     "i": 2,
+     "x": 120,
+     "y": 96,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      130,
+      128
+     ]
+    },
+    {
+     "name": "thornhex_right_walk3",
+     "facing": "right",
+     "anim": "walk",
+     "i": 3,
+     "x": 140,
+     "y": 96,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      150,
+      128
+     ]
+    },
+    {
+     "name": "thornhex_right_cast0",
+     "facing": "right",
+     "anim": "cast",
+     "i": 0,
+     "x": 160,
+     "y": 96,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      170,
+      128
+     ]
+    },
+    {
+     "name": "thornhex_right_cast1",
+     "facing": "right",
+     "anim": "cast",
+     "i": 1,
+     "x": 180,
+     "y": 96,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      190,
+      128
+     ]
+    },
+    {
+     "name": "thornhex_right_cast2",
+     "facing": "right",
+     "anim": "cast",
+     "i": 2,
+     "x": 200,
+     "y": 96,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      210,
+      128
+     ]
+    },
+    {
+     "name": "thornhex_right_cast3",
+     "facing": "right",
+     "anim": "cast",
+     "i": 3,
+     "x": 220,
+     "y": 96,
+     "w": 20,
+     "h": 32,
+     "pivot": [
+      230,
+      128
+     ]
+    }
+   ],
+   "enemy": true,
+   "elite": true,
+   "remap_of": "hedgewitch",
+   "remap": {
+    "#2a1e1c": "ink",
+    "#4c3a3e": "bark",
+    "#3e5a8c": "bark_rim",
+    "#f6ecd2": "slate_hi",
+    "#e6d2ac": "slate",
+    "#f2c4a0": "mist",
+    "#cc8c6c": "slate_hi",
+    "#7a4e2e": "indigo",
+    "#e47c8c": "mag",
+    "#6c8cd4": "frost",
+    "#6a5e56": "slate_lo",
+    "#f2c24a": "vio",
+    "#fff8e6": "frost_hi",
+    "#72a046": "moss_hi",
+    "#ffb24a": "mag_hi"
+   },
+   "light": {
+    "color": "#a45cf0",
+    "intensity": 0.5,
+    "range": 1.4,
+    "lift": 1.0
+   }
+  }
+ }
+}

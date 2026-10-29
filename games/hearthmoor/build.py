@@ -511,20 +511,44 @@ def install_verdant_heart(areas=AREAS):
     print(f"verdant heart: {len(VERDANT_SHEETS)} sheets + verdant fx / critters in {n} areas")
 
 
-# [VANAHEIM] Stage B: Mossbrook + the Thorngarden. The real sheets come from hearthmoor-staging/art/vanaheim/ once READY.txt
-# marks them done; until then the runtime draws PLACEHOLDERS (game/vanaheim.js PLACEHOLDER_ROLE: hedgewitch for Nettlecrown and
-# the Thornhex, sporeling for the thorn-nymphs) from the stock vanaheim atlas. Modeled on install_verdant_heart.
+# [VANAHEIM] Stage B: Mossbrook + the Thorngarden, Hearthmoor Art batch 2026-10-28 (staging art/vanaheim/README.md).
+# sync_vanaheim_art() copies the staging pack into games/hearthmoor/art/vanaheim/ (sprite, kit, icons, gamefx; never src/), so
+# Nettlecrown v2 (same paths, plus READY.txt) drops in by just re-running the build. boss_nettlecrown_neon.png is the main look,
+# boss_nettlecrown.png the fallback. Palette: vanaheim-gloom area palette (art/palette/vanaheim-gloom, check_sprite.area_palette).
 VH_STAGEB_AREAS = ["vh_village", "vh_garden"]
 VH_STAGEB_SHEETS = {"boss_nettlecrown": ["nettlecrown"], "thornnymph": ["thornnymph"], "thornhex": ["thornhex"], "oldmorel": ["oldmorel"]}
 VH_STAGING = Path("/workspace/hearthmoor-staging/art/vanaheim")
+VH_KIT = {   # static props (decor; the collision grid is unchanged)
+    "vh_village": [("hex_knot", p) for p in ((-6.0, -3.0), (2.4, 2.6), (8.2, -3.6))],
+    "vh_garden": [("frost_thorn_root_open", p) for p in ((-6.4, -2.6), (-1.0, 2.4), (3.0, -4.2))]
+                 + [("thorn_wall_s1", (-4.0, -7.4)), ("thorn_wall_s2", (-1.6, -7.8)), ("thorn_wall_s3", (8.6, -6.8)), ("thorn_wall_s2", (10.4, -5.2))],
+}
+
+
+def sync_vanaheim_art():
+    S, D = VH_STAGING, GAME / "art" / "vanaheim"
+    if not S.exists():
+        return
+    for sub in ("sprite", "kit", "icons", "gamefx", "gamefx/strips"):
+        if not (S / sub).exists():
+            continue
+        (D / sub).mkdir(parents=True, exist_ok=True)
+        for f in (S / sub).iterdir():
+            if f.is_file() and f.suffix in (".png", ".json", ".glb") and "contact_sheet" not in f.name:
+                shutil.copy2(f, D / sub / f.name)
+    for f in ("README.md", "READY.txt"):
+        if (S / f).exists():
+            shutil.copy2(S / f, D / f)
 
 
 def install_vanaheim_stageb(areas=AREAS):
-    P = VH_STAGING
-    ready = (P / "READY.txt").exists()
-    if not ready:
-        print("vanaheim stage B: READY.txt missing -> only the Nettlecrown DRAFT sheet installs; nymph / hex / morel stay placeholders")
-    n = 0
+    sync_vanaheim_art()
+    P = GAME / "art" / "vanaheim"
+    if not (P / "sprite").exists():
+        print("vanaheim stage B: no art pack -> placeholders (hedgewitch / sporeling)"); return
+    if not (P / "READY.txt").exists():
+        print("vanaheim stage B: READY.txt missing -> Nettlecrown is the DRAFT sheet (v2 at the same paths)")
+    n, used = 0, set()
     for a in areas:
         if a not in VH_STAGEB_AREAS:
             continue
@@ -533,22 +557,48 @@ def install_vanaheim_stageb(areas=AREAS):
         sp = root / scene["atlas"]["json"]
         am = json.loads(sp.read_text())
         for sheet, roles in VH_STAGEB_SHEETS.items():
-            if not (P / "sprite" / f"{sheet}.json").exists() or (not ready and sheet != "boss_nettlecrown"):
+            if not (P / "sprite" / f"{sheet}.json").exists():
                 continue
             sj = json.loads((P / "sprite" / f"{sheet}.json").read_text())
-            src = P / "sprite" / f"{sheet}_neon.png"   # the neon look is the main one (v2 drops in at the same path); plain sheet = fallback
+            src = P / "sprite" / f"{sheet}_neon.png"
             if not src.exists():
                 src = P / "sprite" / f"{sheet}.png"
             shutil.copy2(src, sp.parent / f"{sheet}.png")
             (sp.parent / f"{sheet}.json").write_text(json.dumps(sj, indent=1))
             am.setdefault("sheets", {})[sheet] = {"json": f"{sheet}.json", "image": f"{sheet}.png"}
+            used.add(sheet)
             for r in roles:
                 rd = sj["roles"][r]
-                am["roles"][r] = {"sheet": sheet, "row": rd["row"], "kind": "enemy" if r != "oldmorel" else "human", "enemy": r != "oldmorel", "frame": sj["frame"],
-                                  "anims": rd.get("anims", ["idle", "walk", "attack", "die"]), **({"boss": True, "scale": rd["scale"]} if rd.get("boss") else {})}
+                npc = r == "oldmorel"
+                am["roles"][r] = {"sheet": sheet, "row": rd["row"], "kind": "human" if npc else "enemy", "enemy": not npc, "frame": sj["frame"],
+                                  "anims": rd.get("anims", ["idle", "walk"] if npc else ["idle", "walk", "attack", "die"]), **({"boss": True, "scale": rd["scale"]} if rd.get("boss") else {})}
         sp.write_text(json.dumps(am, indent=1))
+        # area palette file (check-sprite --project areas/<a> --biome vanaheim-gloom works too)
+        pd = root / "public/art/palette/vanaheim-gloom"; pd.mkdir(parents=True, exist_ok=True)
+        shutil.copy2(GAME / "art/palette/vanaheim-gloom/biome.json", pd / "biome.json")
+        # kit props
+        kd = root / "public/art/kit"
+        objs = [o for o in scene.get("objects", []) if not o.get("vh_kit")]
+        for piece, (x, z) in VH_KIT.get(a, []):
+            if (P / "kit" / f"{piece}.glb").exists():
+                shutil.copy2(P / "kit" / f"{piece}.glb", kd / f"{piece}.glb")
+                objs.append({"glb": f"public/art/kit/{piece}.glb", "pos": [x, 0, z], "vh_kit": True})
+        scene["objects"] = objs
+        if "oldmorel" in am["roles"]:   # Old Morel (mushroom-folk grocer) is the cap-seller's look
+            for ac in scene.get("actors", []):
+                if ac.get("id") == "capseller":
+                    ac["role"] = "oldmorel"
+        (root / "scene.json").write_text(json.dumps(scene, indent=1))
+        # game fx (frost sparkle, bud pulse, firefly drift, thorn-wall tell)
+        if (P / "gamefx/vh_fx.json").exists():
+            jp = root / scene["gamefx"]["json"]; ip = root / scene["gamefx"]["image"]
+            m = json.loads(jp.read_text())
+            m = _append_atlas(ip, m, P / "gamefx/vh_fx.png", json.loads((P / "gamefx/vh_fx.json").read_text()), "effects", mark="vh_fx_from")   # crops at the mark: re-runs replace, never stack
+            for v in m["effects"].values():
+                v.pop("strip", None)
+            jp.write_text(json.dumps(m, indent=1))
         n += 1
-    print(f"vanaheim stage B: {len(VH_STAGEB_SHEETS)} sheets in {n} areas")
+    print(f"vanaheim stage B: sheets {sorted(used)}, kit + vh_fx + gloom palette in {n} areas")
 
 
 ZIP_SKIP = ("areas/src", "tests/shots", "shots", "__pycache__")

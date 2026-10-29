@@ -57,6 +57,7 @@ def main():
 
     def judge(path, allowed, label, what=""):
         nonlocal n
+        allowed = allowed | cs.area_palette(path)   # [VANAHEIM] vanaheim-gloom area palette (vh areas / staged pack only)
         n += 1
         off = {k: v for k, v in colours(path).items() if k not in allowed}
         if off:
@@ -86,7 +87,7 @@ def main():
             for r, rv in roles.items():
                 if "row" not in rv or rv.get("sheet"):
                     continue
-                allowed = pal | set(cs.NEON_PETS_ALLOW.get(r, ()))
+                allowed = pal | set(cs.NEON_PETS_ALLOW.get(r, ())) | cs.area_palette(p)
                 allowed |= HH_SHEET_NEON.get((p.stem, r), set())
                 if p.stem == "boss_nettlecrown":   # [VANAHEIM] scoped: this sheet + role only (check_sprite.VANA_NEON_ALLOW)
                     allowed |= set(cs.VANA_NEON_ALLOW.get(r, ()))
