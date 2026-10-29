@@ -128,6 +128,27 @@ PET_ROLES = ("pet_wisp", "pet_moth", "pet_fox", "pet_mosspup", "pet_tick")
 TICK = GAME / "art" / "svartalfheim" / "tick"   # [SVARTALFHEIM] Tick the clockwork owl: own 240x128 sheet (NEON primary) + 3 fx rows stacked under pets_fx
 
 
+def _recell48(png, meta, tmp):
+    """[VANAHEIM] vh_fx is drawn on 24 px cells but joins a 48 px gamefx atlas, and the engine reads every frame as
+    row * cell (one cell size per atlas). Same fix as _critters48: re-seat each frame 1:1 (no scaling, never upscaled,
+    same texel density) in a 48 px cell, horizontally centred; billboards stand on the cell floor, decals stay centred.
+    Pivots move with the pixels. Without this, rows 23-24 fell past the sheet (empty crops) and 21-22 read wrong pixels."""
+    m = json.loads(json.dumps(meta)); c = m["cell"]; C = 48
+    if c == C:
+        return png, m
+    src = Image.open(png).convert("RGBA")
+    fx = m["effects"]
+    rows = max(v["row"] for v in fx.values()) + 1; cols = max(v["frames"] for v in fx.values())
+    out = Image.new("RGBA", (cols * C, rows * C), (0, 0, 0, 0))
+    for v in fx.values():
+        ox = (C - c) // 2; oy = (C - c) // 2 if v.get("kind") == "decal" else C - c
+        for i in range(v["frames"]):
+            out.paste(src.crop((i * c, v["row"] * c, (i + 1) * c, (v["row"] + 1) * c)), (i * C + ox, v["row"] * C + oy))
+        v["pivot"] = [v["pivot"][0] + ox, v["pivot"][1] + oy]
+    out.save(tmp)
+    return tmp, {**m, "cell": C, "size": [out.size[0], out.size[1]]}
+
+
 def _append_atlas(img_path, meta, add_img, add_meta, key, rows_key=None, mark="pets_from"):
     base = Image.open(img_path).convert("RGBA")
     h0 = meta.get(mark, base.size[1])
@@ -594,7 +615,10 @@ def install_vanaheim_stageb(areas=AREAS):
         if (P / "gamefx/vh_fx.json").exists():
             jp = root / scene["gamefx"]["json"]; ip = root / scene["gamefx"]["image"]
             m = json.loads(jp.read_text())
-            m = _append_atlas(ip, m, P / "gamefx/vh_fx.png", json.loads((P / "gamefx/vh_fx.json").read_text()), "effects", mark="vh_fx_from")   # crops at the mark: re-runs replace, never stack
+            vp, vm = _recell48(P / "gamefx/vh_fx.png", json.loads((P / "gamefx/vh_fx.json").read_text()), root / "_vh_fx48.png")   # 24 px cells -> the atlas's 48
+            m = _append_atlas(ip, m, vp, vm, "effects", mark="vh_fx_from")   # crops at the mark: re-runs replace, never stack
+            if vp != P / "gamefx/vh_fx.png":
+                vp.unlink()
             for v in m["effects"].values():
                 v.pop("strip", None)
             jp.write_text(json.dumps(m, indent=1))
