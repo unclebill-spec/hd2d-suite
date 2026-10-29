@@ -197,7 +197,7 @@ export const VH_ENEMIES = {
 // =================================================================== Stage B wiring (Hearthmoor Cozy Builder, 2026-10-28)
 // Game Director's numbers (BALANCE.md 2026-10-28): Nettlecrown 1500 HP / 22 dmg / phases 65 % + 35 % / heartroot grab 10 % /
 // yields 5 % / 2 thorn-nymphs in P1 and P3 / conquer path +1 Thornhex (heals her 20) / no enrage / 600 XP.
-export const NETTLE = { adds: { 1: 2, 3: 2 }, healEvery: 6, grabDmg: 14, circle: [2.4, -1.0] };
+export const NETTLE = { adds: { 1: 2, 3: 2 }, healEvery: 6, grabDmg: 14, circle: [2.4, -1.0], face: [47, 20, 66, 66] };   // face: dialogue head crop inside her 160x200 idle-down frame
 // Hearthmoor Art icons (art/vanaheim/icons, 16 px): drawn as images in the bag (game.js iconHTML)
 for (const k of ['hexknot', 'fizzstone', 'tithe_seal', 'frost_bloom', 'mossheart_staff', 'nettle_circlet']) if (ITEMS[k]) ITEMS[k].img = `art/vanaheim/icons/${k}.png`;
 const PLACEHOLDER_ROLE = { nettlecrown: 'hedgewitch', thornnymph: 'sporeling', thornhex: 'hedgewitch' };   // PLACEHOLDER until art/vanaheim/READY.txt
@@ -388,10 +388,11 @@ export class Vanaheim {
     this.clearAdds();
     G.toast && G.toast('Mother Nettlecrown yields.', 2.2);
     setTimeout(() => {
+      const br = e.a && e.a.rect, face = br && /nettlecrown/.test(br.atlas || '') ? NETTLE.face : null;   // her own sheet: crown + face crop (placeholder role keeps the default crop)
       G.combat.kill(e, true); this.boss = null;
       const npc = this.ctx && this.ctx.npc && this.ctx.npc('nettlecrown'); if (npc && npc.quad) { npc.quad.visible = true; npc.x = e.a.x; npc.z = e.a.z; }
       G.gainXP && G.gainXP(XP.nettlecrown, e.a);   // 600 XP (GD); the quiet kill skips combat's own XP + loot
-      G.openDialogue({ id: 'nettlecrown', name: 'Mother Nettlecrown' }, VH_TALK.nettlecrown_after(G.S));
+      G.openDialogue({ id: 'nettlecrown', name: 'Mother Nettlecrown', rect: br, face }, VH_TALK.nettlecrown_after(G.S));
     }, 900);
   }
   qaTalk(id) { const e = TALK[id](this.S); return { pages: e.pages, options: e.choice ? e.choice.options.map((o) => o.label) : [] }; }

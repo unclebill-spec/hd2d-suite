@@ -345,6 +345,9 @@ function drawPortrait(npc) {
   const fw = r.w / r.k, fh = r.h / r.k;
   // the idle-down frame of this role row (column 0), cropped to the head and shoulders
   const fy = r.frame[1];
+  // [VANAHEIM] a tall boss frame names its own head crop (npc.face = [x, y, w, h] inside the sheet's first frame, idle-down), drawn 1:1 or integer-scaled
+  if (npc.face) { const [x, y, w, h] = npc.face, s = Math.max(1, Math.floor(Math.min(cv.width / w, cv.height / h)));
+    g.drawImage(img, x, y, w, h, Math.round((cv.width - w * s) / 2), cv.height - h * s, w * s, h * s); return; }
   const sh = Math.min(fh, 22), sy = fy + Math.max(0, fh - 34);
   const s = Math.floor(Math.min(cv.width / fw, cv.height / sh));
   g.drawImage(img, 0, sy, fw, sh, Math.round((cv.width - fw * s) / 2), cv.height - sh * s, fw * s, sh * s);
