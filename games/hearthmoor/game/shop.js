@@ -224,6 +224,7 @@ export class Shop {
       else {
         if (r.cant) { G.toast && G.toast(r.about || 'Sold out', 1.6); return false; }
         S.gold -= r.price; S.inv[r.id] = (S.inv[r.id] || 0) + 1;
+        if (SHOPS[this.open].onBuy) SHOPS[this.open].onBuy(G, r.id);   // per-shop extra (vanaheim.js: Nettlecrown's bonus seed)
         if (this.open === 'still' && r.id === 'redcap') { const st = stillStock(S); if (st.redcap > 0) st.redcap -= 1; }
       }
       G.toast && G.toast(`Bought ${r.name}`, 1.4); G.audio && G.audio.sfx('pickup');

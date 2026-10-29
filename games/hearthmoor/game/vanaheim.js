@@ -5,7 +5,7 @@ import { TALK, QUESTS, ITEMS, MARKER_HOOKS } from './data.js';
 import { ENEMIES } from './heroes.js';
 import { XP } from './progress.js';
 import { SHOPS } from './shop.js';
-import { sfx, fx, shake, flash, rare } from './vanaheim_fun.js';   // fun pass juice
+import { sfx, fx, shake, flash, rare, thornsOn, thornRing, tossCoin, bonusSeed } from './vanaheim_fun.js';   // fun pass juice
 
 const F_ = (S) => (S.flags || (S.flags = {}));
 const A = (S) => ((S.flags || {}).alliance || {}).vanaheim;
@@ -17,6 +17,7 @@ export const VH_ITEMS = {
   hexknot:    { name: 'Hex-knot', px: 'hexknot', about: 'A twist of black thorn around a frost-blue bead. It whispers "elf-work" if you hold it too long.' },
   fizzstone:  { name: 'Fizzstone', px: 'fizzstone', about: 'A pebble from a hidden spring. It never stops bubbling, even in your pocket.' },
   glowfry:    { name: 'Glow-fish fry', px: 'glowfry', about: 'A very small volunteer. It glows cyan when it is happy, which is always.' },
+  wish_penny: { name: 'Spring-Wish Penny', icon: 2, keepsake: true, about: 'Your own copper bit, given back by the fizzing spring. Still faintly bubbling. It does nothing at all, and it is very proud of that.' },
   tithe_seal: { name: 'Tithe-seal', px: 'tithe_seal', about: 'Ravenhold wax, stamped with a spring. Clerk Pike apologised while handing it over.' },
   frost_bloom:{ name: 'Frost bloom', px: 'frost_bloom', about: 'A thorn-flower frozen blue at the heart. The same cold as the spike.' },
   nettle_circlet: { name: 'Nettlecrown\'s Bean-Circlet', px: 'alder_charm', accessory: true, unique: true, regen: 2, thorns: 5,
@@ -213,6 +214,7 @@ Object.assign(ENEMIES, VH_ENEMIES);
 Object.assign(MERIT, VH_MERIT);
 Object.assign(XP, { blightregent: 560, hjortur: 640, nettlecrown: 600, thornhex: 70, thornnymph: 32 });   // GD: Regent ~560, Hjortur ~640 (combat fell back to 25)
 SHOPS.nettle = { name: 'Nettlecrown\'s Seed & Tonic Stall', keeper: 'Mother Nettlecrown, gardening again', goods: ['tonic', 'glowseed'], gear: { n: 0, rar: [] }, sellMul: 1 };   // the spare path: her garden reopens
+SHOPS.nettle.onBuy = (G, id) => bonusSeed(G, id);   // GD fun pass #4: bonus seed (vanaheim_fun.js BONUS_SEED)
 Object.assign(REALM, { vh_village: 'embassy', vh_garden: 'embassy' });
 Object.assign(VANAHEIM_AREAS, { vh_village: 1, vh_garden: 1 });
 Object.assign(TALK, VH_TALK, { capseller: () => ({ pages: ['Caps! Two for one on fizz days. Every day is a fizz day.'] }) });
@@ -300,6 +302,7 @@ export class Vanaheim {
   }
   look(name, pages, then) { this.G.openDialogue({ id: 'vh_look', name }, { pages, then }); }
   // ?vhq= QA preset: village | hex | thorn | fight | conquer | spare (yield dialogue open) | contract | cap | tobble
+  //   | coin (village; first toss is the rare line + penny) | seed (spared stall, 60 gold; first glowseed buy gives the bonus) | thorns (fight + P3 thorn ring)
   qaPreset() {
     const v = this.qs().get('vhq'), S = this.S; if (!v || this.qaDone === v) return;
     this.qaDone = v; const f = F_(S), al = (f.alliance = f.alliance || {}); S.quests = S.quests || {};
@@ -307,6 +310,9 @@ export class Vanaheim {
     if (v === 'village' || v === 'hex') { base(); if (v === 'hex') S.quests.vh_hex = 1; }
     if (v === 'tobble') { base(); S.quests.rotwood = 3; S.inv.fizzstone = 1; S.inv.glowfry = 1; }
     if (['thorn', 'fight', 'spare', 'conquer'].includes(v)) { base(); if (v === 'conquer') al.vanaheim = 'conquer'; S.quests.rotwood = 3; S.quests.vh_thorn = 1; f.vh_roots = 3; }
+    if (v === 'coin') { base(); S.inv.coin = Math.max(3, S.inv.coin || 0); }
+    if (v === 'seed') { base(); S.quests.rotwood = 3; S.quests.vh_thorn = 3; f.vh_nettle = 'spared'; S.gold = Math.max(60, S.gold || 0); delete f.vh_bonus_day; }
+    if (v === 'thorns') { base(); S.quests.rotwood = 3; S.quests.vh_thorn = 1; f.vh_roots = 3; }
     if (v === 'contract') { f.vh_contract = 1; S.quests.vh_spring = 1; }
     if (v === 'cap') { for (const r of ['alfheim', 'svartalfheim', 'jotunheim', 'muspelheim']) al[r] = 'befriend'; delete al.vanaheim; }
   }
@@ -319,7 +325,7 @@ export class Vanaheim {
     if (area === 'vh_village') this.village(ctx);
     if (area === 'vh_garden') this.garden(ctx);
     const v = this.qs().get('vhq');
-    if (area === 'vh_garden' && (v === 'fight' || v === 'spare') && !this.boss && !F_(this.S).vh_nettle) setTimeout(() => { this.startBoss('nettlecrown'); if (v === 'spare') this.qaYield(); }, 400);
+    if (area === 'vh_garden' && (v === 'fight' || v === 'spare' || v === 'thorns') && !this.boss && !F_(this.S).vh_nettle) setTimeout(() => { this.startBoss('nettlecrown'); if (v === 'spare') this.qaYield(); if (v === 'thorns') this.qaPhase3(); }, 400);
   }
   detach() { this.spots = []; this.adds = []; this.boss = null; this.ctx = null; this.area = null; }
   village(ctx) {
@@ -329,6 +335,7 @@ export class Vanaheim {
       act: () => { f.vh_knot = { ...(f.vh_knot || {}), [k]: 1 }; f.vh_knots = Object.keys(f.vh_knot).length; this.G.give('hexknot', 1); ctx.effects && ctx.effects.spawn('earth_burst', pos[0], 0, pos[1]); sfx(this.G, 'spell'); shake(this.G, 2, 180);
         this.G.toast(rare() ? `The knot hisses "elf-work", then, quieter, "...and dwarf-work, honestly." ${Math.min(3, f.vh_knots)}/3` : `The knot hisses "elf-work" and burns blue. ${Math.min(3, f.vh_knots)}/3`, 2.2); this.G.refreshMarkers && this.G.refreshMarkers(); } }));
     this.spot({ pos: SPRING, label: 'Scoop a fizzstone from the hidden spring', show: () => (S.quests || {}).vh_tobble === 1 && !(S.inv || {}).fizzstone, act: () => { this.G.give('fizzstone', 1); fx(ctx, ['sparkle_burst', 'quest_turnin'], SPRING[0], 0.3, SPRING[1]); if (rare(0.12)) this.G.toast('(The fizzstone burps. Politely.)', 1.8); } });
+    this.spot({ pos: SPRING, label: 'Toss a coin into the fizzing spring', show: () => !((S.quests || {}).vh_tobble === 1 && !(S.inv || {}).fizzstone), act: () => tossCoin(this.G, ctx, SPRING) });   // GD fun pass #3
     this.spot({ pos: FRY, label: 'Ask a glow-fish fry to volunteer', show: () => (S.quests || {}).vh_tobble === 1 && !(S.inv || {}).glowfry, act: () => this.look('The Fizzing Steps', ['(A tiny fish glows cyan and swims into your jar. It seems thrilled.)'], (G) => G.give('glowfry', 1)) });
     SEALS.forEach((pos, k) => this.spot({ pos, label: 'Set a tithe-seal on the spring', show: () => (S.quests || {}).vh_tithe === 1 && !((f.vh_seal || {})[k]) && (S.inv || {}).tithe_seal,
       act: () => { f.vh_seal = { ...(f.vh_seal || {}), [k]: 1 }; f.vh_seals = Object.keys(f.vh_seal).length; this.G.take('tithe_seal', 1); sfx(this.G, 'save'); this.G.toast(`The spring goes quiet under the wax. ${f.vh_seals}/3`, 2.2); } }));
@@ -348,7 +355,7 @@ export class Vanaheim {
     const npc = this.ctx.npc && this.ctx.npc('nettlecrown'); if (npc && npc.quad) npc.quad.visible = false; if (npc) npc.noTalk = true;
     const P = NETTLE.circle;
     const e = C.spawnEnemy({ id: 'nettlecrown', def: 'nettlecrown', role: this.role('nettlecrown'), pos: P.slice(), once: true, noRespawn: true }, true);
-    e.state = 'chase'; e.phaseN = 1; this.boss = e; this.thornUsed = false;
+    e.state = 'chase'; e.phaseN = 1; this.boss = e; this.thornUsed = false; this.thornSt = null;
     e.mods = { ...(e.mods || {}), hurt: (en, dmg) => this.nettleHurt(en, dmg) };
     e.onKill = () => { this.boss = null; };
     this.spawnAdds(NETTLE.adds[1], 'P1');
@@ -399,11 +406,13 @@ export class Vanaheim {
     }, 650);   // fun pass: was 900 ms of dead air before her dialogue
   }
   qaTalk(id) { const e = TALK[id](this.S); return { pages: e.pages, options: e.choice ? e.choice.options.map((o) => o.label) : [] }; }
+  qaPhase3() { const e = this.boss; if (!e) return; e.hp = Math.ceil(e.D.hp * (e.D.phases[1] + 0.01)); this.G.combat.damageEnemy(e, Math.ceil(e.D.hp * 0.02), null, 0); }
   qaYield() { const e = this.boss; if (!e) return; e.hp = Math.ceil(e.D.hp * 0.12); e.phaseN = 3; this.G.combat.damageEnemy(e, e.D.hp, null, 0); }
   update(dt) {
     const C = this.G.combat; if (!this.ctx || !C) return;
     if (this.thornUsed && !C.alive().some((x) => x.state === 'chase')) this.thornUsed = false;   // fight over: the circlet's thorns re-arm
     const h = this.hex, b = this.boss;
+    if (b && b.phaseN === 3 && !b.yieldedVh && b.state !== 'dead' && thornsOn(this.qs())) thornRing(this.thornSt || (this.thornSt = { t: 0, next: 0 }), this.ctx, NETTLE.circle, dt);   // #2, visual only (flag in vanaheim_fun.js)
     if (h && b && h.state !== 'dead' && h.state !== 'gone' && !b.yieldedVh) {
       h.healT = (h.healT || 0) + dt;
       if (h.healT > NETTLE.healEvery) { h.healT = 0; b.hp = Math.min(b.D.hp, b.hp + VH_ENEMIES.thornhex.healPulse); C.number && C.number(VH_ENEMIES.thornhex.healPulse, b.a.x, b.a.y + 2.4, b.a.z, '#5aec3c'); }
