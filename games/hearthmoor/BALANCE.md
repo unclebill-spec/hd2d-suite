@@ -75,3 +75,5 @@ Source of truth is the code; update this file when you change a number. Paths ar
 - Mini-boss is Glenheart; the staff keeps the name "Mossheart Staff". "Moss Ward" replaces "bloom shield" (no such string existed in code yet; the Growth school is not built). The moss golem is the tier-3 summon upgrade.
 - **Spare reward** (should pay about what conquering does): her garden reopens as a seed and tonic shop (`nettle`: tonic, glowseed), plus `frost_bloom`, plus `nettle_circlet` "Nettlecrown's Bean-Circlet" (trinket: +2 HP/s resting regen; 5 thorn damage to the first enemy that hits you each fight; "Wear it. Things grow back. Even you."), and Embassy merit topped up to the next rank (NEED step), capped at Legend. Placeholder icon: alder_charm.
 - Music: Mossbrook theme on vanaheim, vh_village, vh_garden, rotwood and verdant; the boss keeps music_boss.ogg.
+
+- Oct 28, 2026, Game Director: Nettlecrown neon look approved; scoped neon palette exception for this boss only, plus the vanaheim-gloom area palette.

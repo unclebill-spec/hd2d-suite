@@ -513,7 +513,7 @@ def install_verdant_heart(areas=AREAS):
 
 # [VANAHEIM] Stage B: Mossbrook + the Thorngarden, Hearthmoor Art batch 2026-10-28 (staging art/vanaheim/README.md).
 # sync_vanaheim_art() copies the staging pack into games/hearthmoor/art/vanaheim/ (sprite, kit, icons, gamefx; never src/), so
-# Nettlecrown v2 (same paths, plus READY.txt) drops in by just re-running the build. boss_nettlecrown_neon.png is the main look,
+# a polished Nettlecrown sheet at the same path drops in by re-running the build. boss_nettlecrown_neon.png is her APPROVED, locked main look,
 # boss_nettlecrown.png the fallback. Palette: vanaheim-gloom area palette (art/palette/vanaheim-gloom, check_sprite.area_palette).
 VH_STAGEB_AREAS = ["vh_village", "vh_garden"]
 VH_STAGEB_SHEETS = {"boss_nettlecrown": ["nettlecrown"], "thornnymph": ["thornnymph"], "thornhex": ["thornhex"], "oldmorel": ["oldmorel"]}
@@ -547,7 +547,7 @@ def install_vanaheim_stageb(areas=AREAS):
     if not (P / "sprite").exists():
         print("vanaheim stage B: no art pack -> placeholders (hedgewitch / sporeling)"); return
     if not (P / "READY.txt").exists():
-        print("vanaheim stage B: READY.txt missing -> Nettlecrown is the DRAFT sheet (v2 at the same paths)")
+        print("vanaheim stage B: READY.txt missing (pack still in progress)")
     n, used = 0, set()
     for a in areas:
         if a not in VH_STAGEB_AREAS:
