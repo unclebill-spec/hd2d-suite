@@ -850,8 +850,8 @@
    "role": "gnome",
    "name": "Tobble Capwhistle",
    "pos": [
-    4.6,
-    -6.4
+    4.4,
+    -1.2
    ],
    "facing": "down",
    "behavior": "idle",
@@ -895,7 +895,7 @@
    "role": "runeguard",
    "name": "Clerk Ansel Pike",
    "pos": [
-    -8.8,
+    -3.0,
     -2.6
    ],
    "facing": "right",
