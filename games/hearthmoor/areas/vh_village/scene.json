@@ -114,12 +114,12 @@
   "braziers": [],
   "spawns": {
    "start": [
-    -10.8,
+    -6.4,
     0.0,
     "right"
    ],
    "from_vanaheim": [
-    -10.8,
+    -6.4,
     0.0,
     "right"
    ],
@@ -954,7 +954,7 @@
  "player": {
   "role": "hedgewitch",
   "pos": [
-   -9.6,
+   -6.4,
    0.6
   ],
   "facing": "down"
