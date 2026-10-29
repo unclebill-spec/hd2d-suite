@@ -520,9 +520,9 @@ VH_STAGEB_AREAS = ["vh_village", "vh_garden"]
 VH_STAGEB_SHEETS = {"boss_nettlecrown": ["nettlecrown"], "thornnymph": ["thornnymph"], "thornhex": ["thornhex"], "oldmorel": ["oldmorel"]}
 VH_STAGING = Path("/workspace/hearthmoor-staging/art/vanaheim")
 VH_KIT = {   # static props (decor; the collision grid is unchanged)
-    "vh_village": [("hex_knot", p) for p in ((-6.0, -3.0), (2.4, 2.6), (8.2, -3.6))],
-    "vh_garden": [("frost_thorn_root_open", p) for p in ((-6.4, -2.6), (-1.0, 2.4), (3.0, -4.2))]
-                 + [("thorn_wall_s1", (-4.0, -7.4)), ("thorn_wall_s2", (-1.6, -7.8)), ("thorn_wall_s3", (8.6, -6.8)), ("thorn_wall_s2", (10.4, -5.2))],
+    "vh_village": [("hex_knot", p) for p in ((-5.4, -2.0), (3.0, 1.6), (8.8, -2.6))],
+    "vh_garden": [("frost_thorn_root_open", p) for p in ((-2.8, -4.2), (6.2, -4.4), (6.4, 2.4))]
+                 + [("thorn_wall_s1", (-3.0, -6.4)), ("thorn_wall_s2", (2.0, -7.0)), ("thorn_wall_s3", (7.0, -6.4)), ("thorn_wall_s2", (9.2, 0.0))],
 }
 
 
