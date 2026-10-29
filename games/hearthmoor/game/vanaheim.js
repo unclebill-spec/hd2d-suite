@@ -197,7 +197,7 @@ export const VH_ENEMIES = {
 // =================================================================== Stage B wiring (Hearthmoor Cozy Builder, 2026-10-28)
 // Game Director's numbers (BALANCE.md 2026-10-28): Nettlecrown 1500 HP / 22 dmg / phases 65 % + 35 % / heartroot grab 10 % /
 // yields 5 % / 2 thorn-nymphs in P1 and P3 / conquer path +1 Thornhex (heals her 20) / no enrage / 600 XP.
-export const NETTLE = { adds: { 1: 2, 3: 2 }, healEvery: 6, grabDmg: 14, circle: [4.0, -2.2] };
+export const NETTLE = { adds: { 1: 2, 3: 2 }, healEvery: 6, grabDmg: 14, circle: [2.4, -1.0] };
 // Hearthmoor Art icons (art/vanaheim/icons, 16 px): drawn as images in the bag (game.js iconHTML)
 for (const k of ['hexknot', 'fizzstone', 'tithe_seal', 'frost_bloom', 'mossheart_staff', 'nettle_circlet']) if (ITEMS[k]) ITEMS[k].img = `art/vanaheim/icons/${k}.png`;
 const PLACEHOLDER_ROLE = { nettlecrown: 'hedgewitch', thornnymph: 'sporeling', thornhex: 'hedgewitch' };   // PLACEHOLDER until art/vanaheim/READY.txt
@@ -323,7 +323,7 @@ export class Vanaheim {
   detach() { this.spots = []; this.adds = []; this.boss = null; this.ctx = null; this.area = null; }
   village(ctx) {
     const S = this.S, f = F_(S);
-    const KNOTS = [[-6.0, -3.0], [2.4, 2.6], [8.2, -3.6]], SPRING = [-1.2, 1.4], FRY = [6.6, 3.2], SEALS = [[-7.0, 2.8], [0.0, -3.4], [7.4, 1.2]];
+    const KNOTS = [[-5.4, -2.0], [3.0, 1.6], [8.8, -2.6]], SPRING = [-1.2, 1.4], FRY = [6.6, 3.2], SEALS = [[-7.0, 2.8], [0.0, -3.4], [7.4, 1.2]];
     KNOTS.forEach((pos, k) => this.spot({ pos, label: 'Burn the Thornhex knot', show: () => (S.quests || {}).vh_hex === 1 && !((f.vh_knot || {})[k]),
       act: () => { f.vh_knot = { ...(f.vh_knot || {}), [k]: 1 }; f.vh_knots = Object.keys(f.vh_knot).length; this.G.give('hexknot', 1); ctx.effects && ctx.effects.spawn('earth_burst', pos[0], 0, pos[1]);
         this.G.toast(`The knot hisses "elf-work" and burns blue. ${Math.min(3, f.vh_knots)}/3`, 2.2); this.G.refreshMarkers && this.G.refreshMarkers(); } }));
@@ -333,11 +333,11 @@ export class Vanaheim {
       act: () => { f.vh_seal = { ...(f.vh_seal || {}), [k]: 1 }; f.vh_seals = Object.keys(f.vh_seal).length; this.G.take('tithe_seal', 1); this.G.toast(`The spring goes quiet under the wax. ${f.vh_seals}/3`, 2.2); } }));
   }
   garden(ctx) {
-    const S = this.S, f = F_(S), ROOTS = [[-6.4, -2.6], [-1.0, 2.4], [3.0, -4.2]];
+    const S = this.S, f = F_(S), ROOTS = [[-2.8, -4.2], [6.2, -4.4], [6.4, 2.4]];
     ROOTS.forEach((pos, k) => this.spot({ pos, label: 'Cut the frost-thorn root', show: () => (S.quests || {}).vh_thorn === 1 && !((f.vh_root || {})[k]),
       act: () => { f.vh_root = { ...(f.vh_root || {}), [k]: 1 }; f.vh_roots = Object.keys(f.vh_root).length; ctx.effects && ctx.effects.spawn('frost_puff', pos[0], 0.3, pos[1]);
         this.G.toast(`The root snaps, cold to the core. ${Math.min(3, f.vh_roots)}/3`, 2.2); } }));
-    this.spot({ pos: [6.0, -3.6], r: 2.0, label: 'Nettlecrown\'s seed & tonic stall', show: () => f.vh_nettle === 'spared', act: () => this.G.shopUI && this.G.shopUI.show('nettle') });
+    this.spot({ pos: [2.4, -1.4], r: 2.0, label: 'Nettlecrown\'s seed & tonic stall', show: () => f.vh_nettle === 'spared', act: () => this.G.shopUI && this.G.shopUI.show('nettle') });
     if (f.vh_nettle && ctx.npc && ctx.npc('nettlecrown') && f.vh_nettle !== 'spared') { const a = ctx.npc('nettlecrown'); a.quad && (a.quad.visible = false); a.noTalk = true; }
   }
   // ---------------------------------------------------------------- the boss (Regent spawn pattern, verdant.js)
