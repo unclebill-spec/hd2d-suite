@@ -18,12 +18,11 @@ HD-2D cozy game (16-bit billboard actors in a lit 3D diorama). Live: unclebill-s
 - Rules: repo `AGENTS.md`, `CHANGELOG.md`
 
 ## Next action
-### RESUME HERE (2026-10-28)
-- Owner: HD-2D Cozy Builder.
-- Current branch: `hearthmoor-stagea-1028` (from origin/main ca3ef0b; pushed, NOT live): Niflheim option B (`NIFL_MUSP_LOCK = false`, `cinderProof` in `redeemable`), The Ember Witness (`mp_witness`, `S.evidence.cinderhold = 'ember_witness'`), Lantern Eve Esc/B closes the quest log before skipping, phone Options last-row padding.
-- The 3 old leftover worktrees are resolved: cold-cauldron and hearthmoor-leftovers-wip are archived as tags `archive/cold-cauldron` and `archive/hearthmoor-leftovers-wip`; the menu restyle and the Muspelheim frost-friend work are live.
-- NEXT: the Vanaheim realm from `/workspace/hearthmoor-staging/story/vanaheim.md` (needs a data.js `allyCount` export, `yieldAt` and `G.startBoss` hooks like verdant_heart). Boss Mother Nettlecrown's difficulty goes to Game Director BEFORE building.
-- Remaining merge queue: `ambient_barks.md`; Kindle / Hrefna optional lines.
+### RESUME HERE (2026-10-30)
+- Owner: HD-2D Cozy Builder. Live main: 4532c6e; rollback point: ca3ef0b.
+- Branch `hearthmoor-harness-1030` (from origin/main 4532c6e; pushed, NOT live): #11 harness work. Realm sub-smokes are smoke segments N-U (they used to run in every shard, so shards hit the 2400 s timeout); check-scene progress-polling ready wait + WebGL fail-fast (exit 3, check_all relaunches once) + check_all --jobs CPU cap (from harness-1028); Glenheart boss-bar check waits for the frame-driven bar redraw (BOSSBAR-TRACE log); Factions selected row keeps its faction edge (player-visible bug fix). Handoff: /workspace/.hm-logs/harness-1030/rule19-handoff.md.
+- NEXT: #2 Helheim, #3 Asgard, then #7, #8, #12, #10, #9, #5, #4, #6, with #13 store last. Vanaheim #1 runs with Art/Story in parallel. No housing.
+- Fun pass: n/a, test/harness only (except the player-visible bug fixes).
 - **Everything left to call Hearthmoor finished** (2026-10-28, from AGENTS.md, *_PROGRESS.md, STORY_SEEDS.md, staging story/art/sound):
   1. Vanaheim realm (Stage B, first playable ~Oct 31): game/vanaheim.js from staging vanaheim.md (paste-ready), Mother Nettlecrown, smoke_vanaheim.py; reuses areas vanaheim/rotwood/verdant, verdant.js, REALM_TEMPLATE. Needs a Vanaheim art pack (none in staging). L. Lead+Art+Story. GD call (Nettlecrown difficulty, vanaheim.md Q1-Q7).
   2. Helheim finish: realm is on main (5 areas, helheim.js) but HELHEIM_PROGRESS leaves smoke/QA rows todo, helheim + hh_* fail check-scene, no REALM_OF/music track, Inkling not in PETS. M. Lead+Sound+Art.
