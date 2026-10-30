@@ -5,7 +5,7 @@
 export const ATTRACT_IDLE_SEC = 40, ATTRACT_SCENE_SEC = 24;
 // live realms with their own SPAWNS (heroes.js) + the boss fight (Elder Golem in Mossglen). Locked / unfinished realms are not listed.
 export const ATTRACT_SCENES = [
-  { area: 'hollows', label: 'Toadstool Hollows' }, { area: 'rotwood', label: 'the Rotwood' },
+  { area: 'hollows', label: 'Toadstool Hollows' }, { area: 'rotwood', label: 'the Rotwood', at: [-25, 1.2] },
   { area: 'vanaheim', label: 'Vanaheim' }, { area: 'verdant', label: 'the Verdant' },
   { area: 'mossglen', label: 'Mossglen: the Elder Golem', boss: 'eldergolem' }];
 
@@ -25,6 +25,7 @@ export function makeAttract(G, host) {
     G.combat.defeated = {}; G.S.hp = null;
     try { await host.loadArea(sc.area, 'start'); } catch (e) { console.warn('attract: skip', sc.area, e && e.message); }
     busy = false;
+    if (sc.at && G.ctx && G.ctx.player) { const pl = G.ctx.player; pl.x = sc.at[0]; pl.z = sc.at[1]; if (G.ctx.heightAt) { const h = G.ctx.heightAt(pl.x, pl.z); if (Number.isFinite(h)) pl.y = h; } }   // demo start near the first fight (long walk-ins)
     if (!A.active) return;
     if (badge) badge.querySelector('b').textContent = sc.label;
   }
@@ -80,7 +81,7 @@ export function makeAttract(G, host) {
 
   let prevT = performance.now();
   function frame(now) {
-    const real = Math.min(1, Math.max(0, (now - prevT) / 1000)), dt = Math.min(0.1, real); prevT = now;   // timers use real time (slow GPUs run at a few fps); the pilot uses capped dt
+    A.fps = A.fps ? A.fps * 0.9 + 0.1 * (1000 / Math.max(1, now - prevT)) : 30; const real = Math.min(1, Math.max(0, (now - prevT) / 1000)), dt = Math.min(0.1, real); prevT = now;   // timers use real time (slow GPUs run at a few fps); the pilot uses capped dt
     if (!A.active) {
       // gamepad: any button counts as input on the title
       const pads = navigator.getGamepads ? [...navigator.getGamepads()].filter(Boolean) : [];
@@ -103,6 +104,6 @@ export function makeAttract(G, host) {
   for (const ev of ['keydown', 'pointerdown', 'mousedown', 'touchstart', 'wheel']) addEventListener(ev, poke, { capture: true, passive: false });
   addEventListener('mousemove', () => { if (!A.active) A.idle = 0; }, { capture: true });
   A.begin = begin; A.end = end;
-  A.state = () => ({ active: A.active, idle: +A.idle.toFixed(1), t: +A.t.toFixed(1), scene: A.scene && A.scene.area, busy, ...A.stats });
+  A.state = () => ({ active: A.active, idle: +A.idle.toFixed(1), t: +A.t.toFixed(1), scene: A.scene && A.scene.area, busy, fps: +(A.fps || 0).toFixed(1), ...A.stats });
   return A;
 }
