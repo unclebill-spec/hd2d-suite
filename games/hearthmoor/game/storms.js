@@ -150,7 +150,7 @@ export class Storms {
     const col = FLASH[Math.random() < 0.5 ? 0 : 1];
     const l = ctx.addGlow && !(this.G.flashOK && !this.G.flashOK()) ? ctx.addGlow(x, y - 1.2, z + 1.0, { color: col, intensity: 5 * k, range: 7, fadeIn: 0.02, lift: 0 }) : null;
     if (l) this.flashes.push({ l, t: 0, dur: 0.35 + Math.random() * 0.2 });
-    this.G.audio && this.G.audio.sfx && this.G.audio.sfx('rumble');
+    this.G.audio && this.G.audio.sfx && this.G.audio.sfx(Math.random() < 0.5 ? 'thunder' : 'rumble');
     this.cracks = (this.cracks || 0) + 1;
   }
   state() { const S = this.S; return { storm: this.F.storm || null, here: stormHere(S, this.area), sched: this.scheduled(), forced: this.forced ?? null, run: S.storm || null, after: this.F.stormAfter ?? null, cracks: this.cracks || 0, flashes: this.flashes.length }; }

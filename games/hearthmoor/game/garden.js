@@ -73,7 +73,7 @@ export class Garden {
     if (st === 0) {
       if (!(S.inv.glowseed > 0)) { G.toast && G.toast('An empty garden plot. Odo sells glow seeds.', 2.2); return true; }
       G.take('glowseed', 1); S.garden[p.id] = { day: S.day || 0, t: this.ctx.clock.t };
-      G.toast && G.toast(`Planted a glow seed. It will grow into a ${P.name} in ${GROW.bloom} days.`, 2.6); G.audio && G.audio.sfx('pickup');
+      G.toast && G.toast(`Planted a glow seed. It will grow into a ${P.name} in ${GROW.bloom} days.`, 2.6); G.audio && G.audio.sfx('plant');
     } else if (st < 3) {
       G.toast && G.toast(st === 1 ? 'A seed mound, humming faintly. Give it a day.' : `A glowing sprout. It blooms in about a day.`, 2.0);
       return true;
@@ -83,7 +83,7 @@ export class Garden {
       else { G.give(P.gives.item, P.gives.n + (G.forage ? G.forage() : 0)); }
       if (P.herb) G.give(P.herb, 1);   // 6.8: every bloom also gives its brewing herb
       if (this.ctx.effects) this.ctx.effects.spawn('sparkle_burst', p.x, this.ctx.heightAt(p.x, p.z), p.z + 0.1);
-      G.audio && G.audio.sfx('quest');
+      G.audio && G.audio.sfx('harvest');
       this.clear(p, true);
     }
     this.show(p); G.save && G.save();

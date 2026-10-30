@@ -27,6 +27,33 @@ const DUCK = 0.3;        // ambient level while music plays (a ~70% duck)
 const XFADE = 1.6;       // crossfade seconds
 const BATTLE_HOLD = 4;   // seconds the battle theme lingers after the last foe stops chasing
 
+
+// SFX Pack 2 (Sound, 2026-10-30; audio/sfx/pack2/, ledger audio/LICENSES.md). kind -> [files, gain on the master bus (0.5, so 1.0 = the
+// procedural sfx peak level ~ the EVENT_MAP "Vol" column), throttle ms, rate jitter]. A sample plays once loaded; until then (or if the
+// fetch fails) the kind falls back to its procedural branch via SFX_FALLBACK, so nothing goes silent.
+const SFX2 = 'audio/sfx/pack2/';
+export const SAMPLES = {
+  quest_progress: [['quest_progress'], 0.45, 150, 0], quest_new: [['quest_new'], 0.5, 150, 0], quest_complete: [['stinger_quest_complete'], 0.6, 300, 0],
+  summon: [['summon'], 0.55, 200, 0], shop_buy: [['shop_buy'], 0.5, 80, 0], bank: [['bank_coins'], 0.5, 80, 0],
+  craft: [['craft_done'], 0.55, 200, 0], craft_success: [['stinger_craft_success'], 0.6, 300, 0], plant: [['plant_seed'], 0.5, 120, 0], harvest: [['harvest'], 0.5, 120, 0],
+  stat_point: [['stat_point'], 0.45, 80, 0], equip: [['equip'], 0.5, 80, 0], gem_socket: [['gem_socket'], 0.5, 120, 0],
+  menu_open: [['menu_open'], 0.4, 120, 0], menu_close: [['menu_close'], 0.4, 120, 0], ui_error: [['ui_error'], 0.45, 200, 0], gate_locked: [['gate_locked'], 0.55, 600, 0],
+  thunder: [['thunder_far'], 0.5, 3000, 0], boss_crit: [['boss_crit'], 0.6, 120, 0.05], boss_phase: [['boss_phase'], 0.65, 800, 0],
+  soul: [['soul_pickup'], 0.5, 100, 0.05], gloam: [['gloam_wisp'], 0.4, 1500, 0],
+  hit: [['hit_juice_1', 'hit_juice_2', 'hit_juice_3'], 0.6, 60, 0.05], pickup: [['pickup_juice_1', 'pickup_juice_2', 'pickup_juice_3'], 0.5, 80, 0.05],
+  coin: [['coin_juice_1', 'coin_juice_2'], 0.5, 80, 0.05], blip: [['ui_click_juice_1', 'ui_click_juice_2'], 0.35, 50, 0],
+  discovery: [['stinger_discovery'], 0.6, 1000, 0], levelup: [['stinger_levelup'], 0.6, 500, 0], rare_pickup: [['stinger_rare_pickup'], 0.6, 300, 0],
+};
+// new kinds -> the procedural kind they used before Pack 2 (fallback while loading / on a failed fetch)
+export const SFX_FALLBACK = { quest_progress: 'pickup', quest_new: 'pickup', quest_complete: 'quest', shop_buy: 'pickup', bank: 'pickup', craft: 'quest', craft_success: 'quest',
+  plant: 'pickup', harvest: 'quest', stat_point: 'pickup', equip: 'pickup', gem_socket: 'quest', thunder: 'rumble', boss_crit: 'hit', boss_phase: 'rumble', soul: 'pickup',
+  coin: 'pickup', discovery: 'blip', levelup: 'quest', rare_pickup: 'quest' };
+// looped beds on the ambience bus (ducked with it): weather and area ambience, 1 s fades
+export const LOOPS = { rain_light: ['rain_light_loop', 0.35], rain_heavy: ['rain_heavy_loop', 0.4], snow: ['snow_hush_loop', 0.3],
+  amb_helheim: ['amb_helheim_loop', 0.35], amb_ossuary: ['amb_ossuary_loop', 0.35], amb_plaza: ['amb_plaza_loop', 0.3] };
+export const AMB_BED = { plaza: 'amb_plaza', helheim: 'amb_helheim', hh_shore: 'amb_helheim', hh_archive: 'amb_helheim', ossuary: 'amb_ossuary', ossuary2: 'amb_ossuary' };
+export const WEATHER_BED = { drizzle: 'rain_light', rain: 'rain_heavy', snow: 'snow' };
+
 export class Ambient {
   constructor() { this.ctx = null; this.muted = localStorage.getItem('hearthmoor-mute') === '1'; this.area = 'plaza'; this.night = 0; this.timers = [];
     const v = parseFloat(localStorage.getItem('hearthmoor-music-vol')); this.musicVol = Number.isFinite(v) ? Math.min(1, Math.max(0, v)) : 0.6;
@@ -39,6 +66,7 @@ export class Ambient {
     this.master = c.createGain(); this.master.gain.value = this.muted ? 0 : 0.5; this.master.connect(c.destination);
     // ambient bus (plucks, birds, crickets, shimmer): ducked while music plays; sfx stay on the master
     this.amb = c.createGain(); this.amb.gain.value = 1; this.amb.connect(this.master);
+    setTimeout(() => { this.preloadSamples(); const B = this.beds || {}; this.beds = {}; for (const k in B) this.bed(k, B[k].name); }, 0);   // SFX Pack 2
     this.musicBus = c.createGain(); this.musicBus.gain.value = this.musicGain(); this.musicBus.connect(this.master);
     // echo for the plucks
     this.echo = c.createDelay(1.0); this.echo.delayTime.value = 0.38;
@@ -149,8 +177,54 @@ export class Ambient {
     }
   }
   shimmer() { [19, 23, 26].forEach((s, i) => this.pluck(s + 12, 0.025, i * 0.11, true)); }
+
+  // ---- SFX Pack 2 samples ----
+  sbuf(file) {
+    const k = 's:' + file; if (this.bufs[k] !== undefined) return this.bufs[k];
+    this.bufs[k] = null;
+    fetch(SFX2 + file + '.ogg').then((r) => { if (!r.ok) throw new Error(r.status); return r.arrayBuffer(); })
+      .then((b) => this.ctx.decodeAudioData(b)).then((d) => { this.bufs[k] = d; }).catch(() => { this.failed[k] = 1; });
+    return null;
+  }
+  preloadSamples() { for (const k in SAMPLES) for (const f of SAMPLES[k][0]) this.sbuf(f); for (const k in LOOPS) this.sbuf(LOOPS[k][0]); }
+  sample(kind) {
+    const S = SAMPLES[kind]; if (!S || !this.ctx) return false;
+    const [files, vol, thr, jit] = S, now = performance.now(); this.lastS = this.lastS || {};
+    const L = this.lastS[kind] || (this.lastS[kind] = { t: -1e9, i: -1 });
+    if (now - L.t < thr) return true;   // throttled: swallow, don't fall back
+    let i = files.length > 1 ? Math.floor(Math.random() * (files.length - 1)) : 0; if (files.length > 1 && i >= L.i) i++;   // random pick, never the last one again
+    const buf = this.sbuf(files[i]); if (!buf) return false;
+    L.t = now; L.i = i;
+    const c = this.ctx, src = c.createBufferSource(), g = c.createGain(); src.buffer = buf;
+    if (jit) src.playbackRate.value = 1 + (Math.random() * 2 - 1) * jit;
+    g.gain.value = vol; src.connect(g); g.connect(this.master); src.start();
+    if (kind.startsWith('quest_complete') || kind === 'levelup' || kind === 'discovery' || kind === 'rare_pickup' || kind === 'craft_success') {   // stingers duck ambience ~6 dB
+      if (!this.ducked && this.amb) { const t = c.currentTime; for (const n of [this.amb, this.ambEcho]) { n.gain.setTargetAtTime(0.5, t, 0.05); n.gain.setTargetAtTime(1, t + buf.duration, 0.3); } }
+    }
+    return true;
+  }
+  bed(slot, name) {   // slot 'weather' | 'area': one looped bed each, 1 s cross-fade
+    this.beds = this.beds || {}; const cur = this.beds[slot];
+    if (cur && cur.name === name) return;
+    if (!this.ctx) { this.beds[slot] = { name, pending: true }; return; }
+    const t = this.ctx.currentTime;
+    if (cur && cur.g) { cur.g.gain.setTargetAtTime(0.0001, t, 0.33); const s0 = cur.src; setTimeout(() => { try { s0.stop(); } catch (e) { /* gone */ } }, 1500); }
+    this.beds[slot] = { name };
+    const L = name && LOOPS[name]; if (!L) return;
+    const go = () => {
+      const b = this.bufs['s:' + L[0]]; const me = this.beds[slot]; if (!me || me.name !== name) return;
+      if (!b) { if (!this.failed['s:' + L[0]]) setTimeout(go, 400); return; }
+      const src = this.ctx.createBufferSource(), g = this.ctx.createGain(); src.buffer = b; src.loop = true;
+      g.gain.setValueAtTime(0.0001, this.ctx.currentTime); g.gain.setTargetAtTime(L[1], this.ctx.currentTime, 0.33);
+      src.connect(g); g.connect(this.amb); src.start(); me.src = src; me.g = g;
+    };
+    this.sbuf(L[0]); go();
+  }
+  setWeather(kind) { this.bed('weather', WEATHER_BED[kind] || null); }
   sfx(kind) {
     if (!this.ctx || this.muted) return;
+    if (this.sample(kind)) return;
+    if (SFX_FALLBACK[kind]) kind = SFX_FALLBACK[kind];
     if (kind === 'pickup') { this.pluck(14, 0.08); this.pluck(19, 0.08, 0.09); }
     if (kind === 'quest') [0, 4, 7, 12].forEach((s, i) => this.pluck(s + 12, 0.08, i * 0.1));
     if (kind === 'blip') this.pluck(24, 0.02);
@@ -183,7 +257,7 @@ export class Ambient {
     f.frequency.setValueAtTime(f0, t); f.frequency.exponentialRampToValueAtTime(f1, t + dur);
     const g = c.createGain(); g.gain.value = vol; n.connect(f); f.connect(g); g.connect(this.master); n.start(t);
   }
-  setArea(a) { this.area = a; this.battle = this.boss = false; this.battleT = 0; this.pickMusic(); }
+  setArea(a) { this.area = a; this.bed('area', AMB_BED[a] || null); this.battle = this.boss = false; this.battleT = 0; this.pickMusic(); }
   setNight(n) { this.night = n; }
   toggle() {
     this.muted = !this.muted; localStorage.setItem('hearthmoor-mute', this.muted ? '1' : '0');

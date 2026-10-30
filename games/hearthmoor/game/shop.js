@@ -96,7 +96,7 @@ export class Shop {
     else if (r.kind === 'dep_gem') { S.gems[r.id] -= 1; b.gems[r.id] = (b.gems[r.id] || 0) + 1; }
     else if (r.kind === 'wd_gem') { b.gems[r.id] -= 1; if (!b.gems[r.id]) delete b.gems[r.id]; S.gems[r.id] = (S.gems[r.id] || 0) + 1; }
     writeBank(b); G.save && G.save();
-    G.toast && G.toast(`${r.kind.startsWith('dep') ? 'Banked' : 'Took out'} ${r.kind.endsWith('gold') ? r.n + ' gold' : r.name}`, 1.4); G.audio && G.audio.sfx('pickup');
+    G.toast && G.toast(`${r.kind.startsWith('dep') ? 'Banked' : 'Took out'} ${r.kind.endsWith('gold') ? r.n + ' gold' : r.name}`, 1.4); G.audio && G.audio.sfx('bank');
     G.drawBag && G.drawBag(); this.draw();
     return true;
   }
@@ -216,7 +216,7 @@ export class Shop {
       S.bag.splice(r.k, 1); S.gold = (S.gold || 0) + r.price; this.confirm = -1;
       G.toast && G.toast(`Sold ${r.name} for ${r.price} gold`, 1.6); G.audio && G.audio.sfx('pickup');
     } else {
-      if ((S.gold || 0) < r.price) { G.toast && G.toast('Not enough gold', 1.2); return false; }
+      if ((S.gold || 0) < r.price) { G.toast && G.toast('Not enough gold', 1.2); G.audio && G.audio.sfx('ui_error'); return false; }
       if (r.kind === 'gear') {
         if (S.bag.length >= LO.BAG_MAX) { G.toast && G.toast('Bag full', 1.2); return false; }
         S.gold -= r.price; S.bag.push(r.it); this.stock[this.open].splice(r.k, 1);
@@ -227,7 +227,7 @@ export class Shop {
         if (SHOPS[this.open].onBuy) SHOPS[this.open].onBuy(G, r.id);   // per-shop extra (vanaheim.js: Nettlecrown's bonus seed)
         if (this.open === 'still' && r.id === 'redcap') { const st = stillStock(S); if (st.redcap > 0) st.redcap -= 1; }
       }
-      G.toast && G.toast(`Bought ${r.name}`, 1.4); G.audio && G.audio.sfx('pickup');
+      G.toast && G.toast(`Bought ${r.name}`, 1.4); G.audio && G.audio.sfx('shop_buy');
       if (this.open === 'night' && r.kind !== 'good' && G.factions) G.factions.onSmuggle();   // Corsair merit, a little Hearth standing lost
     }
     G.drawBag && G.drawBag(); this.draw();

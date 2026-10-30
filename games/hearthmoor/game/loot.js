@@ -265,7 +265,7 @@ export class Loot {
     if (d.gold) { S.gold += d.gold; G.popText && G.popText(`+${d.gold}`, d, '#f2c24a'); }
     if (d.gem) { S.gems[d.gem] = (S.gems[d.gem] || 0) + 1; G.toast && G.toast(`<span style="color:${GEMS[d.gem].lo}">${GEMS[d.gem].name}</span>: a socket gem (G: gear page)`, 2.6, true); }
     if (d.it) { S.bag.push(d.it); G.toast && G.toast(`<span style="color:${RARITY[d.it.rar].lo}">${RARITY[d.it.rar].name}</span> ${d.it.name}`, 2.4, true); }
-    G.audio && G.audio.sfx('pickup');
+    G.audio && G.audio.sfx(d.it && d.it.rar >= 2 ? 'rare_pickup' : d.gold && !d.it && !d.gem ? 'coin' : 'pickup');   // SFX Pack 2 (rar >= 2: rare and up)
     if (d.light) d.light.kill = true;
     G.drawBag && G.drawBag();
     G.onLoot && G.onLoot(d);

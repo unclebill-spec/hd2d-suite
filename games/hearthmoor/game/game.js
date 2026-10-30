@@ -162,12 +162,13 @@ G.setQuest = (id, stage) => {
   // bounties (6.5 Storm Watch) repeat: no Hearth payout, never an errand, full XP the first time and half on repeats
   const B = !!QUESTS[id].bounty, kind = story ? 'Story quest' : B ? 'Bounty' : QUESTS[id].side ? 'Side quest' : 'Errand';   // side quests (the Stray Den) still pay the errand merit
   if (stage === 3 && was !== 3) {
-    toast(`${kind} done: ${QUESTS[id].title}`, 2.6); G.audio.sfx('quest');
+    toast(`${kind} done: ${QUESTS[id].title}`, 2.6); G.audio.sfx('quest_complete');
     const done = B ? (G.S.bountyDone = G.S.bountyDone || {}) : null, rep = B && done[id];
     G.gainXP(PR.XP.errand * (rep ? 0.5 : 1)); if (B) done[id] = (done[id] || 0) + 1;
     if (!story && !B) G.factions.onErrand();
   }
-  else if (!was && stage > 0) { toast(`New ${kind.toLowerCase()}: ${QUESTS[id].title}`, 2.6); G.audio.sfx('pickup'); flashLog(); }
+  else if (!was && stage > 0) { toast(`New ${kind.toLowerCase()}: ${QUESTS[id].title}`, 2.6); G.audio.sfx('quest_new'); flashLog(); }
+  else if (was && stage > was && stage < 3) G.audio.sfx('quest_progress');   // SFX Pack 2
   refreshMarkers(); save();
 };
 G.learn = (spell) => {
@@ -431,6 +432,7 @@ const SEAL_SAY = {
 };
 function sealedLook(ctx) {
   const g = sealedNear(ctx); if (!g) return false;
+  G.audio.sfx('gate_locked');   // SFX Pack 2
   if (g.district) {   // Ravenhold's district gates: their own text, "coming soon"; the Market gate is a story-quest step
     openDialogue({ id: 'sealed_' + g.id, name: `The gate to ${g.name} (sealed)` }, { pages: g.say || ['Sealed. Coming soon.'] });
     G.harbor.onSealedLook(g); return true;
@@ -681,7 +683,7 @@ function padWheel() {
 G.padWheel = PADW;
 function openWheel(x, y) {
   const ctx = G.ctx; if (!ctx || hooks.blockInput()) return;
-  WHEEL.open = true; WHEEL.x0 = x; WHEEL.y0 = y; WHEEL.sel = -1;
+  G.audio.sfx('menu_open'); WHEEL.open = true; WHEEL.x0 = x; WHEEL.y0 = y; WHEEL.sel = -1;
   const cyc = ctx.spellCycle(), cur = ctx.spellIndex();
   document.querySelectorAll('#wheel .slot').forEach((el, i) => { el.textContent = cyc[i] ? spellName(cyc[i]) : ''; el.classList.toggle('cur', i === cur); el.classList.remove('on'); });
   $('wheel').hidden = false;
@@ -698,7 +700,7 @@ function moveWheel(x, y) {
 }
 function closeWheel(cast) {
   if (!WHEEL.open) return;
-  WHEEL.open = false; $('wheel').hidden = true;
+  if (WHEEL.open) G.audio.sfx('menu_close'); WHEEL.open = false; $('wheel').hidden = true;
   const ctx = G.ctx; if (!ctx) return;
   ctx.setTimeScale(1);
   if (cast && WHEEL.sel >= 0) { ctx.selectSpell(WHEEL.sel); ctx.playerCast(); }
@@ -1133,7 +1135,7 @@ function levelUp() {
   G.S.hp = C.maxHp(); C.st = C.maxSt();
   if (ctx.effects) { ctx.effects.spawn('bloom_ring', p.x, p.y, p.z + 0.04); ctx.effects.spawn('sparkle_burst', p.x, p.y, p.z + 0.06); ctx.effects.spawn('light_orb', p.x, p.y + 0.4, p.z + 0.07); }
   if (ctx.burst) for (let i = 0; i < 3; i++) setTimeout(() => ctx.burst('sparkle', p.x, p.y + 1.0, p.z + 0.1), i * 160);
-  G.audio.sfx('quest');
+  G.audio.sfx('levelup');
   const pts = G.S.autoLevel ? '' : ` ${G.S.free} stat point${G.S.free === 1 ? '' : 's'} to spend (I).`;
   toast(`Level ${G.S.lv}!${pts}${G.S.sp ? ' A skill point is ready.' : ''}`, 3.0);
   $('vitals').classList.add('lvup'); setTimeout(() => $('vitals').classList.remove('lvup'), 1600);
@@ -1158,6 +1160,7 @@ function syncAutoBtn() { const b = $('btnAuto'); if (b) b.textContent = 'auto le
 const HUI = { tab: 0, i: 0 };
 function setHeroUI(open) {
   if (open && (G.title || G.busy || G.dlg || G.picking || G.shop)) return;
+  if (!!G.heroUI !== !!open) G.audio.sfx(open ? 'menu_open' : 'menu_close');   // SFX Pack 2
   G.heroUI = open; $('heroui').hidden = !open;
   if (open) { if (G.log) setLog(false); if (G.opts) setOpts(false); PR.ensure(G.S); drawHero(); }
 }
@@ -1178,7 +1181,7 @@ function drawHero() {
     body.innerHTML = `<p class="pts">${S.free} stat point${S.free === 1 ? '' : 's'} free${S.autoLevel ? ' · auto level is on (class picks)' : ''}</p>`
       + PR.STATS.map((st, k) => `<div class="row${k === HUI.i ? ' sel' : ''}" data-k="${k}"><b>${st.name}</b><em>${S.stats[st.id]}</em><span>${st.does}</span>`
       + `<button class="wbtn sm plus" data-stat="${st.id}" ${S.free ? '' : 'disabled'}>+</button></div>`).join('');
-    body.querySelectorAll('[data-stat]').forEach((b) => { b.onclick = (e) => { e.stopPropagation(); if (PR.spendStat(S, b.dataset.stat)) { G.audio.sfx('pickup'); save(); drawHero(); } }; });
+    body.querySelectorAll('[data-stat]').forEach((b) => { b.onclick = (e) => { e.stopPropagation(); if (PR.spendStat(S, b.dataset.stat)) { G.audio.sfx('stat_point'); save(); drawHero(); } }; });
   } else if (HUI.tab === 3) {
     LO.ensure(S);
     const eq = LO.SLOTS.map((sl) => [sl, S.gear[sl]]);
@@ -1199,7 +1202,7 @@ function drawHero() {
     body.querySelectorAll('[data-sock]').forEach((b) => { b.onclick = (e) => { e.stopPropagation(); HUI.i = +b.dataset.sock; heroSocket(); }; });
     const gc = $('gemCycle'); if (gc) gc.onclick = (e) => { e.stopPropagation(); gemCycle(); };
     const pf = $('petFeed'); if (pf) pf.onclick = (e) => { e.stopPropagation(); petFeed(); };
-    body.querySelectorAll('[data-eq]').forEach((b) => { b.onclick = (e) => { e.stopPropagation(); if (LO.equip(S, +b.dataset.eq)) { G.audio.sfx('pickup'); save(); drawHero(); } }; });
+    body.querySelectorAll('[data-eq]').forEach((b) => { b.onclick = (e) => { e.stopPropagation(); if (LO.equip(S, +b.dataset.eq)) { G.audio.sfx('equip'); save(); drawHero(); } }; });
     body.querySelectorAll('[data-uneq]').forEach((b) => { b.onclick = (e) => { e.stopPropagation(); if (LO.unequip(S, b.dataset.uneq)) { save(); drawHero(); } }; });
     body.querySelectorAll('[data-scrap]').forEach((b) => { b.onclick = (e) => { e.stopPropagation(); HUI.i = 3 + +b.dataset.scrap; heroScrap(); }; });
     const sel = body.querySelector('.row.sel'); if (sel && sel.scrollIntoView) sel.scrollIntoView({ block: 'nearest' });
@@ -1238,7 +1241,7 @@ function drawHero() {
         return head + `<div class="row node t${n.tier}${got ? ' got' : ''}${lock && !got ? ' locked' : ''}${k === HUI.i ? ' sel' : ''}" data-k="${k}"><b>${n.branch}</b><em>${n.name}</em><span>${n.desc}</span>`
           + `<button class="wbtn sm plus" data-node="${n.id}" ${lock ? 'disabled' : ''}>${got ? '✓' : lock || 'learn'}</button></div>`;
       }).join('');
-    body.querySelectorAll('[data-node]').forEach((b) => { b.onclick = (e) => { e.stopPropagation(); if (PR.learn(S, b.dataset.node)) { G.audio.sfx('quest'); save(); drawHero(); } }; });
+    body.querySelectorAll('[data-node]').forEach((b) => { b.onclick = (e) => { e.stopPropagation(); if (PR.learn(S, b.dataset.node)) { G.audio.sfx('stat_point'); save(); drawHero(); } }; });
     const sel = body.querySelector('.row.sel'); if (sel && sel.scrollIntoView) sel.scrollIntoView({ block: 'nearest' });
   }
   body.querySelectorAll('.row').forEach((r) => { r.onclick = () => { HUI.i = +r.dataset.k; drawHero(); }; });
@@ -1251,7 +1254,7 @@ function heroScrap() {
   drawBag();
   if (HUI.tab !== 3 || HUI.i < 3) return;
   const g = LO.scrap(G.S, HUI.i - 3);
-  if (g) { toast(`Scrapped for ${g} gold`, 1.4); G.audio.sfx('pickup'); HUI.i = Math.min(HUI.i, 2 + G.S.bag.length); save(); drawHero(); }
+  if (g) { toast(`Scrapped for ${g} gold`, 1.4); G.audio.sfx('coin'); HUI.i = Math.min(HUI.i, 2 + G.S.bag.length); save(); drawHero(); }
 }
 // sockets: put the chosen gem into the selected row's first empty socket (gems stay until a jeweler clears them)
 function gearAt(k) { const S = G.S; return k < 3 ? S.gear[LO.SLOTS[k]] : S.bag[k - 3]; }
@@ -1262,7 +1265,7 @@ function heroSocket() {
   if (!HUI.gem) { toast('No gems yet', 1.2); return false; }
   const name = LO.GEMS[HUI.gem].name;
   if (!LO.socketGem(G.S, it, HUI.gem)) return false;
-  toast(`${name} set into ${it.name}`, 1.8); G.audio.sfx('quest'); save(); drawHero();
+  toast(`${name} set into ${it.name}`, 1.8); G.audio.sfx('gem_socket'); save(); drawHero();
   return true;
 }
 function gemCycle() {

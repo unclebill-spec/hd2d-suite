@@ -232,7 +232,7 @@ export class Pets {
       this.sensed[q.id] = true; this.lastSense = { ...q };
       if (ctx.effects) ctx.effects.spawn('glitter', q.pos[0], ctx.heightAt(q.pos[0], q.pos[1]) + 0.2, q.pos[1] + 0.05, { duration: 2.4 });
       const lines = SECRET_SAY[this.S.pet.id] || SECRET_SAY.glowmoth; this.G.toast && this.G.toast(lines[Object.keys(this.sensed).length % lines.length].replace('{name}', this.S.pet.name), 2.6);
-      this.G.audio && this.G.audio.sfx('blip');
+      this.G.audio && this.G.audio.sfx('discovery');
     }
   }
   state() {

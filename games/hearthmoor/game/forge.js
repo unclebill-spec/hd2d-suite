@@ -207,7 +207,7 @@ export class Forge {
     return { pages: [`(${r.name} goes into the scrap bin.) +${r.gold} gold, +${r.iron} iron bits.${S.quests.temper === 1 && !F.tp_bellows ? ' Now work the bellows by the forge till she roars.' : ''}`] };
   }
   doSmelt() {
-    const G = this.G, ok = smelt(G.S); if (ok) { G.save && G.save(); G.audio && G.audio.sfx('quest'); }
+    const G = this.G, ok = smelt(G.S); if (ok) { G.save && G.save(); G.audio && G.audio.sfx('craft'); }
     return { pages: [ok ? '(Hiss. The iron goes in grey and comes out blue at the edges.) Two cold-steel ingots.' : `I need ${SMELT.iron} iron bits and a frost core for a smelt.`] };
   }
   // bellows by the left forge (First Temper): three pumps
@@ -276,7 +276,7 @@ export class Forge {
   doPunch(slot) {
     const G = this.G, it = (G.S.gear || {})[slot], r = punch(G.S, it);
     if (r.blocked) return { pages: [r.blocked] };
-    G.audio && G.audio.sfx('quest'); G.save && G.save();
+    G.audio && G.audio.sfx('craft'); G.save && G.save();
     return { pages: ['(Clink. Clink. A neat round socket, rimmed with copper.) There. Room for something shiny.'] };
   }
   doReroll(slot, stat, rnd) {

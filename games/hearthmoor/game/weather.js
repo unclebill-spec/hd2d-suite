@@ -83,6 +83,7 @@ export class Weather {
       if (P.emitters.length > n) this.ems.push(P.emitters[P.emitters.length - 1]);
     }
     this.kind = kind;
+    if (this.G.audio && this.G.audio.setWeather) this.G.audio.setWeather(kind);   // SFX Pack 2 rain / snow beds
     const el = document.getElementById('btnWeather'); if (el) el.textContent = `weather: ${this.mode}${this.mode === 'light' ? ' (phone)' : ''}`;
   }
   // light sources that shimmer on wet ground: {x, z, r, cool}
