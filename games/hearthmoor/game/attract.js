@@ -36,6 +36,7 @@ export function makeAttract(G, host) {
     snap = { S: JSON.stringify(G.S), defeated: JSON.stringify(G.combat.defeated || {}), area: G.area };
     lock(true); G.attract = true; G.title = false;
     G.S.cls = G.preview || G.S.cls || 'wildcaller'; G.S.autoLevel = true;
+    G.introNext = false; G.S.flags = G.S.flags || {}; G.S.flags.intro = G.S.flags.intro || 'skipped';   // demo copy only: no story intro
     host.hideTitle();
     badge = document.createElement('div'); badge.id = 'attractBadge';
     badge.innerHTML = '<span>DEMO</span> <b></b><em>press any key</em>';
@@ -58,6 +59,8 @@ export function makeAttract(G, host) {
 
   // the AI pilot: walk at the nearest foe (the party / pets follow the player), face it, swing, cast whatever spell is equipped
   function pilot(dt) {
+    if (G.dlg && G.dropDialogue) G.dropDialogue();   // no story dialogs / area intros in the demo
+    if (G.downed) G.downed = false;
     const ctx = G.ctx; if (!ctx || busy || !ctx.player) return;
     const p = ctx.player, max = G.combat.maxHp(); if (G.S.hp != null && G.S.hp < max * 0.5) G.S.hp = max;   // the demo hero never goes down
     let foes = G.combat.alive();
