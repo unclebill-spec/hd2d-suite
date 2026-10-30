@@ -13,11 +13,11 @@
 | build (HM_BUILD_TMP=/tmp/hel_build) | done |
 | hel_art.py installer (add / overwrite only) | done |
 | game/helheim.js + game.js hooks | in progress |
-| smoke_helheim.py | todo |
-| quick-load every area | todo |
-| smoke_helheim + touched groups after the last code commit | todo |
-| check_scene --quick per area (lowres, one at a time) | todo |
-| pictures in /workspace/alf_qa/hel/ | todo |
+| smoke_helheim.py | done (27 steps 2026-10-21; +music +Inkling steps 2026-10-30, smoke segment U) |
+| quick-load every area | done (smoke_helheim load loop, 5 areas) |
+| smoke_helheim + touched groups after the last code commit | queued 2026-10-30 on hearthmoor-helheim-1030 9c9dcd7 (/workspace/.hm-logs/helheim-1030/smoke_helheim1.log; behind EB's browser.lock QA run) |
+| check_scene per area (one at a time) | queued 2026-10-30 (/workspace/.hm-logs/helheim-1030/cs1_<area>.out); last known 10-21: hh_shore/hh_archive/ossuary PASS, helheim no_bloom 0.0218, ossuary2 grades 0.0017 |
+| pictures | smoke shots -> /workspace/qa-tmp/hm-helheim-1030/smoke/ (when the queued run lands) |
 | Art follow-up (READY 03:26): violet main sheets + scoped HH_NEON_ALLOW (5 roles, #a45cf0 / #3a2458) + bone-white walls pulled via hel_art.py | done |
 
 ## Decisions (final, from Bill)
@@ -44,3 +44,8 @@
 - Gloamhaven NPCs re-placed clear of fx, roofs, canopies and the west wall; street lamps / braziers capped 4 m; #2ab4ff / #d4a8ff glow effects checkerboard-thinned in the helheim gamefx atlas only (no_bloom).
 - Results before this commit: preflight PASS; smoke_helheim 27/27; check_scene hh_shore / hh_archive / ossuary PASS; helheim only no_bloom (0.0218); ossuary2 only grades (0.0017). Reruns of helheim, ossuary2 and smoke_helheim follow this commit.
 - Leftovers: audio REALM_OF untouched; Inkling flag + NPC only (not in PETS).
+
+## Status 2026-10-30 (branch hearthmoor-helheim-1030, HANDOFF item #2)
+- Music: REALM_OF helheim/hh_shore/hh_archive/ossuary/ossuary2 -> 'helheim' (audio/music/music_helheim.ogg, Sound's 84 bpm 3/4 waltz, 8-bar loop, 45 KB; LICENSES "Original works" row, (c) Burning Bush Productions). music_gloamhaven.ogg not used (no 'gloamhaven' area id; generic CC0 gloom); both stay in staging.
+- Inkling: PETS.inkling (gift pet, role pet_inkling on the hh_inkling sheet, glow #a45cf0, aura Gloam Sight = story 9.5 soulSight). Ferryman's hh_raven step 2 adds + swaps it in; saves with flags.inkling get S.pets.inkling (ensurePets); Mordrath's name-motes count the active pet. build.py install_inkling_pet puts the sheet in all 49 areas (after the tracked restore, idempotent).
+- Leftovers: none known in code; check-scene/smoke results pending (see table).
