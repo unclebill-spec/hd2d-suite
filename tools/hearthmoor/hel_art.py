@@ -192,7 +192,7 @@ FOREIGN = {"warm_lantern": "jotunheim", "dawn_flame_brazier": "asgard"}   # piec
 # >3.6 m exits, >1.5 m props) and off the walking lines.
 EXTRA_PLACE = {"hh_shore": [("warm_lantern", [-6.4, 7.4], "fixed"),   # spots checked clear (walkable, flat, >2 m from actors / spawns / exits / ledges / props)
                             ("dawn_flame_brazier", [6.0, 7.5], "fixed")],   # 2026-10-30: the floor corner right of the shore stair
-               "hh_archive": [("dawn_flame_brazier", [-5.1, 6.0], "fixed"), ("dawn_flame_brazier", [4.9, 6.0], "fixed")],   # 2026-10-30: front corners of the reading room
+               "hh_archive": [("warm_lantern", [-6.4, -3.4], "fixed"), ("warm_lantern", [1.6, -4.4], "fixed"), ("warm_lantern", [-3.4, -4.4], "fixed")],   # GD 2026-10-30: no Asgard braziers here; small lanterns at the reading desks (Quillon's desk, the Ledger lectern), blue flames stay dominant
                "ossuary2": [("dawn_flame_brazier", [-5.5, 3.0], "fixed"),   # approved 2026-10-21 08:18 (check_scene grades night_warm_frac), same 3 m cap
                             ("dawn_flame_brazier", [-7.5, 10.9], "fixed")],   # 2026-10-30: mirrors ossuary's fix1028 near brazier
                "ossuary": [("dawn_flame_brazier", [-6.0, 3.5], "fixed"), ("mourning_statue", [5.45, 5.85], "fixed"), ("lore_tablet", [-5.4, 0.8], "fixed")]}
