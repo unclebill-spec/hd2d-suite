@@ -831,10 +831,22 @@ def run(out, simscale=4, size=(960, 540), segs=SEGS):
                             " p.x = e.a.x + 4; p.z = e.a.z; p.y = c.heightAt(p.x, p.z); c.stopWalk(); C.enemyStrike(e); return c.effects.list.some((f) => f.name === 'bolt'); })()")
                 T.step("skeleton mage casts an arcane bolt from range", bolt)
                 T.ev("(() => { const C = window.__hm.combat, c = window.__hm.ctx, p = c.player; C.heal(999, true); p.iframes = 99; window.__hm.peace = false; C.godT = 0;"
-                     " const e = C.enemies.find((x) => x.id === 'mossheart'); p.x = e.a.x - 2.2; p.z = e.a.z; p.y = c.heightAt(p.x, p.z); c.stopWalk(); C.damageEnemy(e, 40, p); })()")
-                pg.wait_for_timeout(700)
+                     " const e = C.enemies.find((x) => x.id === 'mossheart');"
+                     # test-only trace (flaky 100% bar): Glenheart's hp / state / homeT / godT / fromHome before the hit and every 50 ms after it
+                     " const bb = (tag) => ({ tag, t: Math.round(performance.now()), hp: e.hp, state: e.state, homeT: +(e.homeT || 0).toFixed(2), godT: +C.godT.toFixed(2), peace: C.peace,"
+                     "   fromHome: +Math.hypot(e.a.x - e.home[0], e.a.z - e.home[1]).toFixed(2), d: +Math.hypot(p.x - e.a.x, p.z - e.a.z).toFixed(2), veil: !!C.veil });"
+                     " window.__bbTrace = [bb('before')]; clearInterval(window.__bbIv); window.__bbIv = setInterval(() => { window.__bbTrace.push(bb('tick')); if (window.__bbTrace.length > 40) clearInterval(window.__bbIv); }, 50);"
+                     " p.x = e.a.x - 2.2; p.z = e.a.z; p.y = c.heightAt(p.x, p.z); c.stopWalk(); C.damageEnemy(e, 40, p); window.__bbTrace.push(bb('hit')); })()")
+                # the bar is redrawn by the frame loop only (bossBar() each frame), so a fixed 700 ms sleep fails when a busy
+                # SwiftShader box renders < 2 fps (seen in --jobs 4 shard AGJM: state chase, w 100%). Wait on the bar itself.
+                try:
+                    pg.wait_for_function("(() => { const b = document.getElementById('bossbar'), i = b && b.querySelector('i'); return !!(i && i.style.width && i.style.width !== '100%'); })()", timeout=10000, polling=100)
+                except Exception:  # noqa: BLE001  the check below reports the state
+                    pass
                 boss = T.ev("(() => { const C = window.__hm.combat, e = C.enemies.find((x) => x.id === 'mossheart'), b = document.getElementById('bossbar');"
-                            " return { state: e.state, light: !!e.light, bar: !!(b && !b.hidden), label: b ? b.firstChild.textContent : '', w: b ? b.querySelector('i').style.width : '' }; })()")
+                            " return { state: e.state, light: !!e.light, bar: !!(b && !b.hidden), label: b ? b.firstChild.textContent : '', w: b ? b.querySelector('i').style.width : '', hp: e.hp, maxhp: e.D.hp }; })()")
+                bbt = T.ev("(() => { clearInterval(window.__bbIv); return window.__bbTrace || []; })()")
+                T.log(f"  [BOSSBAR-TRACE] {json.dumps([bbt[0], bbt[1]] + [x for i, x in enumerate(bbt[2:]) if i == 0 or x['state'] != bbt[i + 1]['state'] or x['hp'] != bbt[i + 1]['hp']] + bbt[-1:])}")
                 rep["shots"]["boss_fight"] = T.shot("boss_fight")
                 T.step("Glenheart (renamed from Mossheart): carries a rune light, a named boss bar shows when it fights", boss["light"] and boss["bar"] and "Glenheart" in boss["label"] and boss["w"] not in ("", "100%"), boss=boss)
                 big = T.ev("(() => { const R = window.__hd2d.actorRects(), m = R.find((r) => r.id === 'mossheart'), p = R.find((r) => r.id === 'player'), C = window.__hm.combat, e = C.enemies.find((x) => x.id === 'mossheart');"
