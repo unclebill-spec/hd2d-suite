@@ -15,9 +15,9 @@
 | game/helheim.js + game.js hooks | in progress |
 | smoke_helheim.py | done (27 steps 2026-10-21; +music +Inkling steps 2026-10-30, smoke segment U) |
 | quick-load every area | done (smoke_helheim load loop, 5 areas) |
-| smoke_helheim + touched groups after the last code commit | queued 2026-10-30 on hearthmoor-helheim-1030 9c9dcd7 (/workspace/.hm-logs/helheim-1030/smoke_helheim1.log; behind EB's browser.lock QA run) |
-| check_scene per area (one at a time) | queued 2026-10-30 (/workspace/.hm-logs/helheim-1030/cs1_<area>.out); last known 10-21: hh_shore/hh_archive/ossuary PASS, helheim no_bloom 0.0218, ossuary2 grades 0.0017 |
-| pictures | smoke shots -> /workspace/qa-tmp/hm-helheim-1030/smoke/ (when the queued run lands) |
+| smoke_helheim + touched groups after the last code commit | done 2026-10-30: PASS 29/29 on 69cb8d1 (tests2/smoke_helheim2.log). First run (tests1, 9c9dcd7) failed on a WebGL context error on the loaded box (infra, not game) |
+| check_scene per area (one at a time) | done 2026-10-30: helheim + ossuary PASS (tests1, 9c9dcd7); hh_shore / hh_archive / ossuary2 failed only grades.night_warm_frac -> night brazier accents (69cb8d1) -> all three PASS (tests2) |
+| pictures | smoke shots /workspace/qa-tmp/hm-helheim-1030/smoke/; picks at /workspace/qa-tmp/hm-helheim-1030/ (night_hh_archive_braziers, boss_mordrath, inkling, area_ossuary2) |
 | Art follow-up (READY 03:26): violet main sheets + scoped HH_NEON_ALLOW (5 roles, #a45cf0 / #3a2458) + bone-white walls pulled via hel_art.py | done |
 
 ## Decisions (final, from Bill)
@@ -48,4 +48,6 @@
 ## Status 2026-10-30 (branch hearthmoor-helheim-1030, HANDOFF item #2)
 - Music: REALM_OF helheim/hh_shore/hh_archive/ossuary/ossuary2 -> 'helheim' (audio/music/music_helheim.ogg, Sound's 84 bpm 3/4 waltz, 8-bar loop, 45 KB; LICENSES "Original works" row, (c) Burning Bush Productions). music_gloamhaven.ogg not used (no 'gloamhaven' area id; generic CC0 gloom); both stay in staging.
 - Inkling: PETS.inkling (gift pet, role pet_inkling on the hh_inkling sheet, glow #a45cf0, aura Gloam Sight = story 9.5 soulSight). Ferryman's hh_raven step 2 adds + swaps it in; saves with flags.inkling get S.pets.inkling (ensurePets); Mordrath's name-motes count the active pet. build.py install_inkling_pet puts the sheet in all 49 areas (after the tracked restore, idempotent).
-- Leftovers: none known in code; check-scene/smoke results pending (see table).
+- Night accents (69cb8d1): hel_art EXTRA_PLACE dawn_flame_brazier hh_shore +1, hh_archive +2, ossuary2 +1 (existing Asgard art); hel_art place() keeps fix1028 objects.
+- Zip/PWA rebuilt via build.py (4ee9952, cache hearthmoor-v1-45e68af29e). Rule 19 READY: /workspace/.hm-logs/helheim-1030/rule19-handoff.md.
+- Leftovers: none known; awaiting Rule 19 QA + Game Director OK on the night brazier look.
