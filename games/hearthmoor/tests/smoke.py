@@ -286,7 +286,7 @@ class Smoke:
 # segment before it saved (localStorage only: the same thing the serial run's reload + Continue restores from).
 # Every step still runs exactly once across the shards, with the same assertions and thresholds.
 FIX = Path(__file__).resolve().parent / "fixtures"
-SEGS = "ABCDEFGHIJKLM"
+SEGS = "ABCDEFGHIJKLMNOPQRSTU"
 SEG_INFO = {
     "A": "title, loading gate, Lantern Eve, errands, controller, Mossglen, leveling, combat, loot, rares + rifts, Hollows, garden (ends: K save in Mossglen -> cp1)",
     "B": "reload #1 + Continue, save slots, Pudding home, shop, bank, riddle, night merchant, factions, glow cap, weather, sockets, errand 2 (ends: K save in the Lane -> cp2)",
@@ -300,6 +300,14 @@ SEG_INFO = {
     "K": "Stage 6.6: glow-fish orb lanterns (buy, night catch, place at home + garden, night pools + light zones, day off, take back; continues cp3)",
     "L": "Stage 6.7: the Forge Quarter (gate after the Cold Altar, red forges + blue quench glow, Tova +1..+10 temper with caps / fail heat, Orri rune rerolls; continues cp3)",
     "M": "Stage 6.8: the Glowfrog Still + Cold Cauldron (Bryony quest, vent light, recipes, fizzle hint, yields, secret broth, timed brew mods, drink from the bag, Bloop's dew, 3/day caps, spring vial, garden herbs; continues cp3)",
+    "N": "Alfheim realm (tests/smoke_alfheim.py, own context)",
+    "O": "Svartalfheim realm (tests/smoke_svartalfheim.py, own context)",
+    "P": "Jotunheim realm (tests/smoke_jotunheim.py, own context)",
+    "Q": "Muspelheim realm (tests/smoke_muspelheim.py, own context)",
+    "R": "Niflheim realm (tests/smoke_niflheim.py, own context)",
+    "S": "Vanaheim realm incl. Stage B (tests/smoke_vanaheim.py, own context)",
+    "T": "Asgard realm (tests/smoke_asgard.py, own context)",
+    "U": "Helheim realm (tests/smoke_helheim.py, own context)",
     "I": "Stage 6.4 groundwork: Glenheart rename, trial-mode yield, 5-6x boss camera pull, Vanaheim conquer merit -> Rift Marks, heartwood sale to Sable (continues cp3)",
 }
 # --quick <area>: the segments that cover an area / feature (a per-change check; the batch still runs everything)
@@ -315,10 +323,11 @@ QUICK = {
     "still": "M", "alchemy": "M", "brew": "M", "nettle": "M",
     "forge": "L", "temper": "L", "reroll": "L",
     "lantern": "K", "lanterns": "K", "orb": "K", "glowfish": "K",
+    "alfheim": "N", "svartalfheim": "O", "jotunheim": "P", "muspelheim": "Q", "niflheim": "R", "vanaheim5": "S", "vhrealm": "S", "asgard": "T", "helheim": "U",
     "storm": "H", "storms": "H", "riftstorm": "H", "bounty": "H",
 }
 TIMING = FIX / "smoke_timing.json"   # seconds per segment from the last passing runs (shard balancing only)
-DEFAULT_SECONDS = {"A": 560, "B": 260, "C": 230, "D": 5640, "E": 25, "F": 150, "G": 200, "H": 170, "I": 90, "J": 120, "K": 60, "L": 60, "M": 60}   # D: music step is Plaza-only + static (~20 s); the rest of D (realm content) dominates, re-measure from segd_trim.log
+DEFAULT_SECONDS = {"A": 560, "B": 260, "C": 230, "D": 5640, "E": 25, "F": 150, "G": 200, "H": 170, "I": 90, "J": 120, "K": 60, "L": 60, "M": 60, "N": 40, "O": 275, "P": 320, "Q": 145, "R": 330, "S": 140, "T": 175, "U": 360}   # realm segments N-U measured 2026-10-30 (NOPQ 775 s, RSTU 1001 s)
 
 
 def seg_seconds():
@@ -1892,73 +1901,89 @@ def run(out, simscale=4, size=(960, 540), segs=SEGS):
                 rep["pass"] = False
                 rep["error"] = f"phone: {e}"[:400]
         # [ALFHEIM] begin: the Alfheim realm (tests/smoke_alfheim.py) in its own context, so the main run's save is untouched
-        if rep["pass"]:
+        if rep["pass"] and "N" in segs:   # segment N: realm smokes used to run in EVERY shard (shards timed out)
+            seg_mark("N")
             try:
                 import smoke_alfheim  # noqa: E402
                 smoke_alfheim.steps(b, url, T, size, errors, rep, STUB, out)
+                seg_done("N")
             except Exception as e:  # noqa: BLE001
                 rep["pass"] = False
                 rep["error"] = f"alfheim: {e}"[:400]
         # [ALFHEIM] end
         # [SVARTALFHEIM] begin: the Svartalfheim realm (tests/smoke_svartalfheim.py), own context again
-        if rep["pass"]:
+        if rep["pass"] and "O" in segs:   # segment O: realm smokes used to run in EVERY shard (shards timed out)
+            seg_mark("O")
             try:
                 import smoke_svartalfheim  # noqa: E402
                 smoke_svartalfheim.steps(b, url, T, size, errors, rep, STUB, out)
+                seg_done("O")
             except Exception as e:  # noqa: BLE001
                 rep["pass"] = False
                 rep["error"] = f"svartalfheim: {e}"[:400]
         # [SVARTALFHEIM] end
         # [JOTUNHEIM] begin: the Jotunheim realm (tests/smoke_jotunheim.py), own context again
-        if rep["pass"]:
+        if rep["pass"] and "P" in segs:   # segment P: realm smokes used to run in EVERY shard (shards timed out)
+            seg_mark("P")
             try:
                 import smoke_jotunheim  # noqa: E402
                 smoke_jotunheim.steps(b, url, T, size, errors, rep, STUB, out)
+                seg_done("P")
             except Exception as e:  # noqa: BLE001
                 rep["pass"] = False
                 rep["error"] = f"jotunheim: {e}"[:400]
         # [JOTUNHEIM] end
         # [MUSPELHEIM] begin: the Muspelheim realm (tests/smoke_muspelheim.py), own context again
-        if rep["pass"]:
+        if rep["pass"] and "Q" in segs:   # segment Q: realm smokes used to run in EVERY shard (shards timed out)
+            seg_mark("Q")
             try:
                 import smoke_muspelheim  # noqa: E402
                 smoke_muspelheim.steps(b, url, T, size, errors, rep, STUB, out)
+                seg_done("Q")
             except Exception as e:  # noqa: BLE001
                 rep["pass"] = False
                 rep["error"] = f"muspelheim: {e}"[:400]
         # [MUSPELHEIM] end
         # [NIFLHEIM] begin: the Niflheim realm (tests/smoke_niflheim.py), own context again
-        if rep["pass"]:
+        if rep["pass"] and "R" in segs:   # segment R: realm smokes used to run in EVERY shard (shards timed out)
+            seg_mark("R")
             try:
                 import smoke_niflheim  # noqa: E402
                 smoke_niflheim.steps(b, url, T, size, errors, rep, STUB, out)
+                seg_done("R")
             except Exception as e:  # noqa: BLE001
                 rep["pass"] = False
                 rep["error"] = f"niflheim: {e}"[:400]
         # [NIFLHEIM] end
         # [VANAHEIM] begin: the Vanaheim realm incl. Stage B (tests/smoke_vanaheim.py), own context again
-        if rep["pass"]:
+        if rep["pass"] and "S" in segs:   # segment S: realm smokes used to run in EVERY shard (shards timed out)
+            seg_mark("S")
             try:
                 import smoke_vanaheim  # noqa: E402
                 smoke_vanaheim.steps(b, url, T, size, errors, rep, STUB, out)
+                seg_done("S")
             except Exception as e:  # noqa: BLE001
                 rep["pass"] = False
                 rep["error"] = f"vanaheim: {e}"[:400]
         # [VANAHEIM] end
         # [ASGARD] begin: the Asgard realm (tests/smoke_asgard.py), own context again
-        if rep["pass"]:
+        if rep["pass"] and "T" in segs:   # segment T: realm smokes used to run in EVERY shard (shards timed out)
+            seg_mark("T")
             try:
                 import smoke_asgard  # noqa: E402
                 smoke_asgard.steps(b, url, T, size, errors, rep, STUB, out)
+                seg_done("T")
             except Exception as e:  # noqa: BLE001
                 rep["pass"] = False
                 rep["error"] = f"asgard: {e}"[:400]
         # [ASGARD] end
         # [HELHEIM] begin: the Helheim realm (tests/smoke_helheim.py), own context again
-        if rep["pass"]:
+        if rep["pass"] and "U" in segs:   # segment U: realm smokes used to run in EVERY shard (shards timed out)
+            seg_mark("U")
             try:
                 import smoke_helheim  # noqa: E402
                 smoke_helheim.steps(b, url, T, size, errors, rep, STUB, out)
+                seg_done("U")
             except Exception as e:  # noqa: BLE001
                 rep["pass"] = False
                 rep["error"] = f"helheim: {e}"[:400]
