@@ -21,5 +21,6 @@ Tracks made for Hearthmoor and owned by their maker. Not CC0. Approved for Heart
 | File | Source | Author | License | Credit line |
 |---|---|---|---|---|
 | music/music_mossbrook.ogg | delivered by Sound (hearthmoor-staging/sound/music/, 2026-10-28); plays in Vanaheim, Mossbrook, the Thorngarden, Rotwood and Verdant | Burning Bush Productions | original work made for Hearthmoor, (c) Burning Bush Productions | (c) Burning Bush Productions |
+| music/music_helheim.ogg | delivered by Sound (hearthmoor-staging/sound/music/, gen_helheim.py seed 1666, 2026-10-29); plays in Gloamhaven (helheim), the Shore, the Archive and the Ossuary (ossuary, ossuary2) | Burning Bush Productions | original work made for Hearthmoor, (c) Burning Bush Productions | (c) Burning Bush Productions |
 
 No third-party (CC0 / CC-BY) files are shipped yet. Add a row (with the source URL and the exact credit line) before adding one.

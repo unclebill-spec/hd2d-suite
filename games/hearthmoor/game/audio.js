@@ -19,8 +19,9 @@ for (const a of ['jotunheim', 'jt_hall', 'rimecaves', 'barrow', 'barrow2']) REAL
 for (const a of ['muspelheim', 'mp_hall', 'lavafalls', 'caldera', 'caldera2']) REALM_OF[a] = 'muspelheim';
 for (const a of ['niflheim', 'nf_home', 'iceglow', 'frozenspire', 'frozenspire2', 'frozen_rift']) REALM_OF[a] = 'niflheim';
 for (const a of ['asgard', 'gs_hall', 'gs_temple', 'reliquary', 'reliquary2']) REALM_OF[a] = 'asgard';
+for (const a of ['helheim', 'hh_shore', 'hh_archive', 'ossuary', 'ossuary2']) REALM_OF[a] = 'helheim';   // [HELHEIM] music_helheim.ogg (Sound, 2026-10-29; waltz, 8-bar loop)
 export const MUSIC_REALMS = REALM_OF;
-export const MUSIC_TRACKS = ['midgard', 'mossbrook', 'alfheim', 'svartalfheim', 'jotunheim', 'muspelheim', 'niflheim', 'asgard', 'battle', 'boss'];
+export const MUSIC_TRACKS = ['midgard', 'mossbrook', 'helheim', 'alfheim', 'svartalfheim', 'jotunheim', 'muspelheim', 'niflheim', 'asgard', 'battle', 'boss'];
 const MUSIC_DIR = 'audio/music/';
 const DUCK = 0.3;        // ambient level while music plays (a ~70% duck)
 const XFADE = 1.6;       // crossfade seconds
