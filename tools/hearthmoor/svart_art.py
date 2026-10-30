@@ -202,8 +202,8 @@ def puzzles(area):
     d = array("h"); d.frombytes(base64.b64decode(C["data"]))
     base = array("h"); base.frombytes(base64.b64decode(C["base_data"]))
     ox, oz, cl, W, H = C["origin"][0], C["origin"][1], C["cell"], C["w"], C["h"]
-    sc["objects"] = [o for o in sc["objects"] if not o.get("svart_pz")]
-    sc["lamps"] = [l for l in sc["lamps"] if not l.get("svart_pz")]
+    sc["objects"] = [o for o in sc["objects"] if not o.get("svart_pz") or o.get("fix1028")]
+    sc["lamps"] = [l for l in sc["lamps"] if not l.get("svart_pz") or l.get("fix1028")]
     idx = lambda x, z: int((z - oz) / cl) * W + int((x - ox) / cl)
     ground = lambda x, z: max(0, base[idx(x, z)]) / 100
 
@@ -303,8 +303,8 @@ def place(area):
     C = sc["collision"]; C.setdefault("base_data", C["data"])
     d = array("h"); d.frombytes(base64.b64decode(C["base_data"]))
     ox, oz, cl, W, H = C["origin"][0], C["origin"][1], C["cell"], C["w"], C["h"]
-    sc["objects"] = [o for o in sc["objects"] if not o.get("svart_art") and not o.get("svart_pz")]
-    sc["lamps"] = [l for l in sc["lamps"] if not l.get("svart_art") and not l.get("svart_pz")]
+    sc["objects"] = [o for o in sc["objects"] if not ((o.get("svart_art") or o.get("svart_pz")) and not o.get("fix1028"))]
+    sc["lamps"] = [l for l in sc["lamps"] if not ((l.get("svart_art") or l.get("svart_pz")) and not l.get("fix1028"))]
     g = sc["game"]
     keep = [(a["pos"][0], a["pos"][1], 1.6) for a in sc.get("actors", []) if "pos" in a]
     keep += [(v[0], v[1], 2.0) for v in g.get("spawns", {}).values()]

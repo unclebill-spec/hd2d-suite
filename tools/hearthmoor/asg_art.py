@@ -357,8 +357,8 @@ def place(area):
     C = sc["collision"]; C.setdefault("base_data", C["data"])
     d = array("h"); d.frombytes(base64.b64decode(C["base_data"]))
     ox, oz, cl, W, H = C["origin"][0], C["origin"][1], C["cell"], C["w"], C["h"]
-    sc["objects"] = [o for o in sc["objects"] if not o.get("asg_art")]
-    sc["lamps"] = [l for l in sc["lamps"] if not l.get("asg_art")]
+    sc["objects"] = [o for o in sc["objects"] if not o.get("asg_art") or o.get("fix1028")]  # keep hand-added Art fixes-1028 entries (they carry the installer tag too)
+    sc["lamps"] = [l for l in sc["lamps"] if not l.get("asg_art") or l.get("fix1028")]  # keep hand-added Art fixes-1028 entries (they carry the installer tag too)
     g = sc["game"]
     keep = [(a["pos"][0], a["pos"][1], 1.6) for a in sc.get("actors", []) if "pos" in a]
     keep += [(v[0], v[1], 2.0) for v in g.get("spawns", {}).values()]
