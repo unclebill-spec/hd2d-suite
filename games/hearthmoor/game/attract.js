@@ -5,9 +5,9 @@
 export const ATTRACT_IDLE_SEC = 40, ATTRACT_SCENE_SEC = 24;
 // live realms with their own SPAWNS (heroes.js) + the boss fight (Elder Golem in Mossglen). Locked / unfinished realms are not listed.
 export const ATTRACT_SCENES = [
-  { area: 'hollows', label: 'Toadstool Hollows' }, { area: 'rotwood', label: 'the Rotwood', at: [-25, 1.2] },
-  { area: 'vanaheim', label: 'Vanaheim' }, { area: 'verdant', label: 'the Verdant' },
-  { area: 'mossglen', label: 'Mossglen: the Elder Golem', boss: 'eldergolem' }];
+  { area: 'hollows', label: 'Toadstool Hollows', at: [-0.8, 4.4] }, { area: 'rotwood', label: 'the Rotwood', at: [-25, 1.2] },
+  { area: 'vanaheim', label: 'Vanaheim', at: [3.2, 0.4] }, { area: 'verdant', label: 'the Verdant', at: [0.5, 1.0] },
+  { area: 'mossglen', label: 'Mossglen: the Elder Golem', boss: 'eldergolem', at: [6.8, -0.4] }];
 
 export function makeAttract(G, host) {
   const A = { active: false, idle: 0, t: 0, scene: null, last: 0, order: [], i: 0, stats: { swings: 0, casts: 0, scenes: 0, dropped: 0 } };
@@ -99,7 +99,7 @@ export function makeAttract(G, host) {
   const poke = (e) => {
     A.idle = 0;
     if (!A.active || !e.isTrusted && !G.attractTestPoke) return;
-    e.preventDefault(); e.stopImmediatePropagation(); end();
+    e.preventDefault(); e.stopImmediatePropagation(); const t0 = e.timeStamp; end(); A.lastExit = { lag: Math.round(performance.now() - t0) };   // input event -> title shown (ms)
   };
   for (const ev of ['keydown', 'pointerdown', 'mousedown', 'touchstart', 'wheel']) addEventListener(ev, poke, { capture: true, passive: false });
   addEventListener('mousemove', () => { if (!A.active) A.idle = 0; }, { capture: true });
