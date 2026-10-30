@@ -189,8 +189,11 @@ body::after { content: url(../art/ui/pulse/highlight_f0.png) url(../art/ui/pulse
 #opts .head .x, #log .head .x { margin-left: auto; }
 /* phones (portrait, and short landscape where the buttons sit in a row along the top): the area-name chip stays one 12 px line
    so it never runs into the bag / clock / log chips (check-scene layout; ossuary2's long name hit btnLog at 844x390) */
-@media (max-width: 640px), (max-height: 460px) { #hud .title { font: 400 12px/1.1 var(--bd); padding: 4px 8px; white-space: nowrap; max-width: 44vw; overflow: hidden; text-overflow: ellipsis; } }
+@media (max-width: 640px), (max-height: 460px) { #hud .title { font: 400 12px/1.15 var(--bd); padding: 4px 8px; white-space: normal; max-width: 52vw; overflow: visible; text-overflow: clip; overflow-wrap: anywhere; } }
 /* Factions tab: the selected-row highlight above sets `border: 2px solid transparent` + a filled border-image, which hid the
    faction's signature left edge on the selected row (row 0 = the Hearth when the tab opens). Redraw the edge on ::after, above the frame. */
 #heroBody .row.fac.sel { border-left-color: var(--fc); }
 #heroBody .row.fac.sel::after { content: ""; position: absolute; left: 0; top: 0; bottom: 0; width: 6px; background: var(--fc); pointer-events: none; }
+
+/* phones: the keyboard-hint bar wraps instead of running off the right edge (desktop unchanged) */
+@media (max-width: 640px) { #hud .hint { white-space: normal; text-align: center; width: 94vw; max-width: 94vw; overflow: visible; text-overflow: clip; line-height: 1.3; } }

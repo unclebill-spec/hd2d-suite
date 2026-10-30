@@ -857,6 +857,7 @@ function pickShow() {
 }
 function drawPreviews(now) {
   if (!G.picking) return;
+  if (!PICK.img || !PICK.img.complete || !PICK.img.naturalWidth || !PICK.meta) { PICK.raf = requestAnimationFrame(drawPreviews); return; }   // atlas not loaded yet: drawImage would throw and stop the loop (frozen cards)
   const M = PICK.meta, fw = M.frame[0], fh = M.frame[1];
   document.querySelectorAll('#cards .card').forEach((c, i) => {
     const h = HEROES[i], r = M.roles[h.id]; if (!r) return;
