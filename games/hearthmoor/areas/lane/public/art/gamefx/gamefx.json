@@ -1,0 +1,168 @@
+{
+ "tool": "Hearthmoor Art procedural (gen_hl_fx.py)",
+ "biome": "cozy-village",
+ "palette": "cozy-village + approved NEON/ORB_NEON (effects rule)",
+ "area": "lane",
+ "look": "Lane: warm lamplit lane \u2014 gold/terracotta fire with neon-blue rune light and pink sparkle",
+ "cell": 48,
+ "image": "ln_fx.png",
+ "size": [
+  384,
+  288
+ ],
+ "cycle": [],
+ "cast_sets": {
+  "stonefrost_ii": [
+   [
+    "stonefrost_cast_ii",
+    "hands"
+   ]
+  ]
+ },
+ "effects": {
+  "ember_mote": {
+   "row": 0,
+   "frames": 4,
+   "fps": 10,
+   "loop": true,
+   "loop_from": 0,
+   "loops": 1,
+   "kind": "billboard",
+   "pivot": [
+    24,
+    24
+   ],
+   "lift": 0.8,
+   "glow": true,
+   "light": null,
+   "speed": null,
+   "travel": null,
+   "then": null,
+   "duration": 9999,
+   "strip": "strips/ember_mote.png",
+   "notes": "Ember Swarm: one mote (also magma_pool's ember)"
+  },
+  "ember_swarm": {
+   "row": 1,
+   "frames": 8,
+   "fps": 12,
+   "loop": true,
+   "loop_from": 0,
+   "loops": 1,
+   "kind": "billboard",
+   "pivot": [
+    24,
+    30
+   ],
+   "lift": 0.8,
+   "glow": true,
+   "light": {
+    "color": "#ffb24a",
+    "range": 1.4
+   },
+   "speed": null,
+   "travel": null,
+   "then": null,
+   "duration": 9999,
+   "strip": "strips/ember_swarm.png",
+   "notes": "Ember Swarm: a cloud of orbiting embers"
+  },
+  "flame_ward": {
+   "row": 2,
+   "frames": 8,
+   "fps": 10,
+   "loop": true,
+   "loop_from": 0,
+   "loops": 1,
+   "kind": "billboard",
+   "pivot": [
+    24,
+    38
+   ],
+   "lift": 0.0,
+   "glow": true,
+   "light": {
+    "color": "#ffb24a",
+    "range": 1.4
+   },
+   "speed": null,
+   "travel": null,
+   "then": null,
+   "duration": 9999,
+   "strip": "strips/flame_ward.png",
+   "notes": "Flame Ward: a ring of flames on an accent rune ring"
+  },
+  "stonefrost_cast_ii": {
+   "row": 3,
+   "frames": 8,
+   "fps": 12,
+   "loop": false,
+   "loop_from": 0,
+   "loops": 1,
+   "kind": "billboard",
+   "pivot": [
+    24,
+    40
+   ],
+   "lift": 0.0,
+   "glow": true,
+   "light": {
+    "color": "#2ab4ff",
+    "range": 1.4
+   },
+   "speed": null,
+   "travel": null,
+   "then": null,
+   "duration": 9999,
+   "strip": "strips/stonefrost_cast_ii.png",
+   "notes": "Stone Skin cast: shards close in, hit flash, sparkle"
+  },
+  "stonefrost_rune_ii": {
+   "row": 4,
+   "frames": 8,
+   "fps": 8,
+   "loop": true,
+   "loop_from": 0,
+   "loops": 1,
+   "kind": "decal",
+   "pivot": [
+    24,
+    24
+   ],
+   "lift": 0.0,
+   "glow": true,
+   "light": null,
+   "speed": null,
+   "travel": null,
+   "then": null,
+   "duration": 9999,
+   "strip": "strips/stonefrost_rune_ii.png",
+   "notes": "Stone Skin rune: pulsing ground ring (held for the skin's duration, frame 5 hold ok)"
+  },
+  "magma_pool": {
+   "row": 5,
+   "frames": 8,
+   "fps": 8,
+   "loop": true,
+   "loop_from": 0,
+   "loops": 1,
+   "kind": "decal",
+   "pivot": [
+    24,
+    30
+   ],
+   "lift": 0.0,
+   "glow": true,
+   "light": {
+    "color": "#ffb24a",
+    "range": 1.4
+   },
+   "speed": null,
+   "travel": null,
+   "then": null,
+   "duration": 9999,
+   "strip": "strips/magma_pool.png",
+   "notes": "magma pool decal with a bubble pop"
+  }
+ }
+}
