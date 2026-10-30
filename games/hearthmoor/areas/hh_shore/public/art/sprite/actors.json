@@ -26287,6 +26287,17 @@
    ],
    "desc": "Gloam Knight (elite 1x): dark leather jerkin + violet (palette blue-shadow) tabard, belted, spear; NO plate.",
    "enemy": true
+  },
+  "pet_inkling": {
+   "sheet": "hhinkling",
+   "row": 0,
+   "kind": "creature",
+   "pet": true,
+   "anims": [
+    "idle",
+    "walk",
+    "follow"
+   ]
   }
  },
  "sheets": {

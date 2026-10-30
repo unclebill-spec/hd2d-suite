@@ -23066,6 +23066,17 @@
    "desc": "Tobble (gnome follower): messy white hair and beard, tiny red white-spotted toadstool cap, green shirt under a gold vest, dark belt with buckle, blue trousers with red braces, striped socks, brown shoes. follow = walk cycle at 10 fps, offset one frame.",
    "pet": true,
    "follower": true
+  },
+  "pet_inkling": {
+   "sheet": "hhinkling",
+   "row": 0,
+   "kind": "creature",
+   "pet": true,
+   "anims": [
+    "idle",
+    "walk",
+    "follow"
+   ]
   }
  },
  "sheets": {
@@ -23100,6 +23111,10 @@
   "tobble": {
    "json": "tobble.json",
    "image": "tobble.png"
+  },
+  "hhinkling": {
+   "json": "hhinkling.json",
+   "image": "hhinkling.png"
   }
  }
 }

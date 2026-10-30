@@ -23063,6 +23063,17 @@
    ],
    "desc": "Avalanche (rare, 3x): an avalanche golem the size of a house; a rolling boulder that unfolds.",
    "enemy": true
+  },
+  "pet_inkling": {
+   "sheet": "hhinkling",
+   "row": 0,
+   "kind": "creature",
+   "pet": true,
+   "anims": [
+    "idle",
+    "walk",
+    "follow"
+   ]
   }
  },
  "sheets": {
@@ -23097,6 +23108,10 @@
   "jtelite": {
    "json": "jtelite.json",
    "image": "jtelite.png"
+  },
+  "hhinkling": {
+   "json": "hhinkling.json",
+   "image": "hhinkling.png"
   }
  }
 }

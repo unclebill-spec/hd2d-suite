@@ -26688,6 +26688,17 @@
    ],
    "desc": "Hrefna Frostveil (companion, 1x): slate tunic, short belted skirt over grey leggings, boots, blue scarf, cold-fire hand lantern (glow = fx / light). follow = walk, cast = ice lance / mist veil. NO pet in this realm.",
    "follower": true
+  },
+  "pet_inkling": {
+   "sheet": "hhinkling",
+   "row": 0,
+   "kind": "creature",
+   "pet": true,
+   "anims": [
+    "idle",
+    "walk",
+    "follow"
+   ]
   }
  },
  "sheets": {
@@ -26710,6 +26721,10 @@
   "nfhrefna": {
    "json": "nfhrefna.json",
    "image": "nfhrefna.png"
+  },
+  "hhinkling": {
+   "json": "hhinkling.json",
+   "image": "hhinkling.png"
   }
  }
 }

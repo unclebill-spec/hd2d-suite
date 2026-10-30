@@ -23076,6 +23076,17 @@
    ],
    "desc": "Rime Berserker Chief Ormgar (mini-boss, 3x): bear fur over a belted tunic, two big ice axes, frenzy at 50%.",
    "enemy": true
+  },
+  "pet_inkling": {
+   "sheet": "hhinkling",
+   "row": 0,
+   "kind": "creature",
+   "pet": true,
+   "anims": [
+    "idle",
+    "walk",
+    "follow"
+   ]
   }
  },
  "sheets": {
@@ -23114,6 +23125,10 @@
   "jtelite": {
    "json": "jtelite.json",
    "image": "jtelite.png"
+  },
+  "hhinkling": {
+   "json": "hhinkling.json",
+   "image": "hhinkling.png"
   }
  }
 }

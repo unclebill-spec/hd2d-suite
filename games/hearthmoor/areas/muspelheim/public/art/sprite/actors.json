@@ -26238,6 +26238,17 @@
    ],
    "desc": "Magma hound, gate foe (2x): the Caldera mouth guard; same coal hide, bigger, pounces.",
    "enemy": true
+  },
+  "pet_inkling": {
+   "sheet": "hhinkling",
+   "row": 0,
+   "kind": "creature",
+   "pet": true,
+   "anims": [
+    "idle",
+    "walk",
+    "follow"
+   ]
   }
  },
  "sheets": {
@@ -26272,6 +26283,10 @@
   "mpelite": {
    "json": "mpelite.json",
    "image": "mpelite.png"
+  },
+  "hhinkling": {
+   "json": "hhinkling.json",
+   "image": "hhinkling.png"
   }
  }
 }

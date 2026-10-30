@@ -26711,6 +26711,17 @@
    ],
    "desc": "Pyreling (rare, 3x): a flame elemental with a violet core; flicker-step and ember-burst.",
    "enemy": true
+  },
+  "pet_inkling": {
+   "sheet": "hhinkling",
+   "row": 0,
+   "kind": "creature",
+   "pet": true,
+   "anims": [
+    "idle",
+    "walk",
+    "follow"
+   ]
   }
  },
  "sheets": {
@@ -26745,6 +26756,10 @@
   "mpelite": {
    "json": "mpelite.json",
    "image": "mpelite.png"
+  },
+  "hhinkling": {
+   "json": "hhinkling.json",
+   "image": "hhinkling.png"
   }
  }
 }

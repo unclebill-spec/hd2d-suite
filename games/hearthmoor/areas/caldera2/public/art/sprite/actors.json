@@ -27644,6 +27644,17 @@
    ],
    "desc": "Kilnmother (mini-boss, 3x): fire golem of fused kiln brick and glass, leaking embers, throws a molten fist.",
    "enemy": true
+  },
+  "pet_inkling": {
+   "sheet": "hhinkling",
+   "row": 0,
+   "kind": "creature",
+   "pet": true,
+   "anims": [
+    "idle",
+    "walk",
+    "follow"
+   ]
   }
  },
  "sheets": {
@@ -27682,6 +27693,10 @@
   "mpelite": {
    "json": "mpelite.json",
    "image": "mpelite.png"
+  },
+  "hhinkling": {
+   "json": "hhinkling.json",
+   "image": "hhinkling.png"
   }
  }
 }

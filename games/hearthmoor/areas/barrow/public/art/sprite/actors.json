@@ -23037,6 +23037,17 @@
     "follow"
    ],
    "desc": "Flurry, the snow hare (Jotunheim pet): a white hare with long ears whose tips glow cold blue, a glowing tail puff and a faint chest glint; scampers on the ground, ears flat when she bounds (speed aura, finds hidden snow paths)"
+  },
+  "pet_inkling": {
+   "sheet": "hhinkling",
+   "row": 0,
+   "kind": "creature",
+   "pet": true,
+   "anims": [
+    "idle",
+    "walk",
+    "follow"
+   ]
   }
  },
  "sheets": {
@@ -23067,6 +23078,10 @@
   "flurry_safe": {
    "json": "flurry_safe.json",
    "image": "flurry_safe.png"
+  },
+  "hhinkling": {
+   "json": "hhinkling.json",
+   "image": "hhinkling.png"
   }
  }
 }

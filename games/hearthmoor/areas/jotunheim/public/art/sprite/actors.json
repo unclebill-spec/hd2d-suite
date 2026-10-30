@@ -23057,6 +23057,17 @@
     "walk"
    ],
    "desc": "Clatter, Brynja's young brown goat: a white blaze, short horns and a gold bell that clatters; the goat who chooses you (the mount comes later)"
+  },
+  "pet_inkling": {
+   "sheet": "hhinkling",
+   "row": 0,
+   "kind": "creature",
+   "pet": true,
+   "anims": [
+    "idle",
+    "walk",
+    "follow"
+   ]
   }
  },
  "sheets": {
@@ -23091,6 +23102,10 @@
   "jtgoat": {
    "json": "jtgoat.json",
    "image": "jtgoat.png"
+  },
+  "hhinkling": {
+   "json": "hhinkling.json",
+   "image": "hhinkling.png"
   }
  }
 }

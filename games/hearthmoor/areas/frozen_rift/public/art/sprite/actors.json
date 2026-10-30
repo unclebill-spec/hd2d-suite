@@ -27722,6 +27722,17 @@
    ],
    "desc": "Veyra mist clone (P1, x3): the P1 figure drained pale and dithered, NO breath-fog and NO shadow (the real one has both); Hrefna rings it violet.",
    "enemy": true
+  },
+  "pet_inkling": {
+   "sheet": "hhinkling",
+   "row": 0,
+   "kind": "creature",
+   "pet": true,
+   "anims": [
+    "idle",
+    "walk",
+    "follow"
+   ]
   }
  },
  "sheets": {
@@ -27752,6 +27763,10 @@
   "boss_veyra": {
    "json": "boss_veyra.json",
    "image": "boss_veyra.png"
+  },
+  "hhinkling": {
+   "json": "hhinkling.json",
+   "image": "hhinkling.png"
   }
  }
 }

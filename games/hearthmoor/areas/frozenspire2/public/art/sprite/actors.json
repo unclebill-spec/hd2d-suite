@@ -27226,6 +27226,17 @@
    ],
    "desc": "Kael phase 3 (25%): plate frosted white, red banners burn (fx), calls 2 Ice Wardens.",
    "enemy": true
+  },
+  "pet_inkling": {
+   "sheet": "hhinkling",
+   "row": 0,
+   "kind": "creature",
+   "pet": true,
+   "anims": [
+    "idle",
+    "walk",
+    "follow"
+   ]
   }
  },
  "sheets": {
@@ -27256,6 +27267,10 @@
   "boss_kael": {
    "json": "boss_kael.json",
    "image": "boss_kael.png"
+  },
+  "hhinkling": {
+   "json": "hhinkling.json",
+   "image": "hhinkling.png"
   }
  }
 }

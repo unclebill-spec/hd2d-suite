@@ -224,6 +224,37 @@ def install_pets(areas=AREAS):
     print(f"pets: sheet + {len(fxm['effects'])} effects + {len(ptm['presets'])} particle presets in {len(areas)} areas")
 
 
+INKLING = GAME / "art" / "helheim" / "sprite"   # [HELHEIM] Inkling the gloam raven (story 9.5): its own small sheet (hh_inkling, row 'inkling')
+
+
+def install_inkling_pet(areas=AREAS):
+    """[HELHEIM] Inkling joins the pets: the hh_inkling sheet (same files hel_art.py gives the Helheim areas as 'hhinkling')
+    and role pet_inkling in every area's actors.json. Additive and idempotent; it runs after the tracked restore, so the
+    tracked tree carries it (a second build is a no-op)."""
+    im = json.loads((INKLING / "hh_inkling.json").read_text())
+    row = im["roles"]["inkling"]["row"]
+    n = 0
+    for a in areas:
+        root = GAME / "areas" / a
+        if not (root / "scene.json").is_file():
+            continue
+        scene = json.loads((root / "scene.json").read_text())
+        sp = root / scene["atlas"]["json"]
+        am = json.loads(sp.read_text())
+        role = {"sheet": "hhinkling", "row": row, "kind": "creature", "pet": True, "anims": ["idle", "walk", "follow"]}
+        png, js = sp.parent / "hhinkling.png", sp.parent / "hhinkling.json"
+        if not png.is_file() or png.read_bytes() != (INKLING / "hh_inkling.png").read_bytes():
+            shutil.copy2(INKLING / "hh_inkling.png", png)
+        if not js.is_file():
+            js.write_text(json.dumps(im, indent=1))
+        if am.get("roles", {}).get("pet_inkling") == role and am.get("sheets", {}).get("hhinkling"):
+            continue
+        am.setdefault("sheets", {})["hhinkling"] = {"json": "hhinkling.json", "image": "hhinkling.png"}
+        am.setdefault("roles", {})["pet_inkling"] = role
+        sp.write_text(json.dumps(am, indent=1)); n += 1
+    print(f"inkling pet: role pet_inkling added in {n} of {len(areas)} areas")
+
+
 OLD_TEMPLE_AREAS = ["temple"]
 OLD_TEMPLE_ROLES = ["templekeeper", "archivist"]
 
@@ -851,6 +882,7 @@ if __name__ == "__main__":
     if not os.environ.get("HM_NO_TRACKED_RESTORE"):   # set it to see what the generators alone produce (the guard then reports the drift)
         restore_tracked(before, snap)
     check_no_art_drop(before, snap)
+    install_inkling_pet(only)
     draw_icons()
     draw_button_icons()
     write_pwa()

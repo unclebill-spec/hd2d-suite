@@ -148,7 +148,8 @@ Object.assign(TALK, {
     const st = q(S, 'hh_raven'), f = F(S);
     if (kind(S) && !st && q(S, 'hh_bridge') >= 3) return { pages: ['"Leave a raven a button on the jetty. Three nights."'], then: (G) => { G.setQuest('hh_raven', 1); G.give('button', 1); mark(G); } };
     if (st === 1 && (f.ik_lastDay ?? -1) < (S.day || 0) && !(S.inv || {}).button) return { pages: ['"Another button. Another night."'], then: (G) => G.give('button', 1) };
-    if (st === 2) return { pages: ['(A black raven with violet-tipped feathers waits on the willow.)'], then: (G) => { G.setQuest('hh_raven', 3); flags(G.S).inkling = 1; mark(G); } };
+    if (st === 2) return { pages: ['(A black raven with violet-tipped feathers waits on the willow.)'], then: (G) => { G.setQuest('hh_raven', 3); flags(G.S).inkling = 1; G.S.pets = G.S.pets || {}; G.S.pets.inkling = G.S.pets.inkling || { name: 'Inkling', bond: 1, fed: 0, lastFed: null };
+      if (G.pets) G.pets.swap('inkling'); else G.S.pet = { id: 'inkling', name: 'Inkling', bond: 1 }; G.toast && G.toast('✦ Inkling the gloam raven joined you. Aura: Gloam Sight. (Swap at the Stray Den.)', 3); mark(G); } };
     return { pages: ['"Living? Lovely. Mind your lamp, love."'] };
   },
   innghost(S) {

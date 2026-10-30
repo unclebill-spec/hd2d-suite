@@ -27774,6 +27774,17 @@
    ],
    "desc": "Mordrath, the Pale Sovereign (boss 8x): bone-white plate (the only plate in the arc) with gold-black trim, crown of red cold fire, violet-smoke wings (cape; smoke = fx), chains of names on the arms, tall pale glaive. P3 (25-0%): pulls names to heal (violet motes), crown flares (red half-arena ring); crown taller, gold trim burns red.",
    "enemy": true
+  },
+  "pet_inkling": {
+   "sheet": "hhinkling",
+   "row": 0,
+   "kind": "creature",
+   "pet": true,
+   "anims": [
+    "idle",
+    "walk",
+    "follow"
+   ]
   }
  },
  "sheets": {

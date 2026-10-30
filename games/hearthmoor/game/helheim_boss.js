@@ -93,7 +93,7 @@ export class HelBoss {
       if (e.p3) {
         if (this.bt2 <= 0 && near) { this.bt2 = 7.0; this.strike('crown', e.a.x + (p.x < e.a.x ? -4 : 4), e.a.z + 3.0, 28, 2.0, 5.0); }
         e.moteT = (e.moteT || 0) + dt;
-        if (!e.mote && e.moteT > 5) { e.moteT = 0; const S = G.S; e.mote = { t: 3.0, seen: !!(F(S).inkling || (S.inv || {}).living_lamp) }; }
+        if (!e.mote && e.moteT > 5) { e.moteT = 0; const S = G.S; e.mote = { t: 3.0, seen: !!(F(S).inkling || (S.pet && S.pet.id === 'inkling') || (S.inv || {}).living_lamp) }; }
         if (e.mote) { e.mote.t -= dt; if (e.mote.t <= 0) { e.hp = Math.min(e.D.hp * 0.25, e.hp + e.D.hp * 0.02); e.mote = null; } }
       }
     }

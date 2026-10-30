@@ -46,6 +46,7 @@ export const PET_STORM = {   // [onset, during, morning after]; {name} = the pet
   wispkit: ['({name} flares bright blue and won\'t leave your shoulder.)', '({name} hums louder with every crack, like it\'s arguing with the sky.)', '({name} dozes, glowing a tired, happy blue.)'],
   glowmoth: ['({name} tucks itself into your collar.)', '({name}\'s eyespots flash violet at every crack of the sky.)', '({name} shakes out its wings and dusts you, pleased.)'],
   lanternfox: ['({name}\'s ears flatten. The light-fish in its tail is racing.)', '({name} points its nose. Another tear, that way!)', '({name} sleeps with its tail over its nose. The fish sleeps too.)'],
+  inkling: ['({name} hunches its shoulders and glares at the sky.)', '({name} caws back at the thunder. It thinks it is winning.)', '({name} shakes out a feather and offers you a wet button.)'],   // [HELHEIM] fun pass
   mosspup: ['({name} growls at the sky, then hides behind your boot.)', '({name} digs a little burrow and peeks out of it.)', '({name} shakes off, spraying moss everywhere.)'],
 };
 const FLASH = ['#c03cc8', '#e0302a'];   // storm lightning: a short point-light flash, violet or red

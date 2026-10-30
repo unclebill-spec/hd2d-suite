@@ -26695,6 +26695,17 @@
     "walk"
    ],
    "desc": "Envoy Ingrith Goldrune (1x, story 5 roster): cream tunic, belted blue trousers, gold-buckled belt, boots, gold-pinned blue cloak, gold circlet, blonde bun."
+  },
+  "pet_inkling": {
+   "sheet": "hhinkling",
+   "row": 0,
+   "kind": "creature",
+   "pet": true,
+   "anims": [
+    "idle",
+    "walk",
+    "follow"
+   ]
   }
  },
  "sheets": {
@@ -26725,6 +26736,10 @@
   "axcent": {
    "json": "axcent.json",
    "image": "axcent.png"
+  },
+  "hhinkling": {
+   "json": "hhinkling.json",
+   "image": "hhinkling.png"
   }
  }
 }

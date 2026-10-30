@@ -24972,6 +24972,17 @@
    ],
    "desc": "hollowchoir (rare 3x): chorus of fused wraiths in a column (violet = fx), dirge aura.",
    "enemy": true
+  },
+  "pet_inkling": {
+   "sheet": "hhinkling",
+   "row": 0,
+   "kind": "creature",
+   "pet": true,
+   "anims": [
+    "idle",
+    "walk",
+    "follow"
+   ]
   }
  },
  "sheets": {

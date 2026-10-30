@@ -57,12 +57,25 @@ export const PETS = {
     about: 'A brass owl the size of a teacup, with cold-blue eyes and a gear that ticks in his chest. Hoots in clicks.',
     names: ['Tick', 'Cogsworth', 'Sprocket', 'Brassy', 'Whirr', 'Pinion', 'Tock', 'Bolt'],
   },
+  // [HELHEIM] Inkling the gloam raven (story helheim.md 9.5): chosen on the jetty after The Lantern Bridge (hh_raven, Corvin
+  // Lanternmere), never in the adopt list. Own sheet (art/helheim/sprite/hh_inkling, role pet_inkling). Aura per 9.5: it sees
+  // spirits and soul lights (Mordrath's violet name-motes show up; helheim_boss.js reads the flag / the active pet).
+  inkling: {
+    name: 'Inkling', species: 'gloam raven', role: 'pet_inkling', glow: '#a45cf0', gift: 'helheim',
+    hover: { lift: 0, bob: 0, hz: 0 },
+    light: { color: '#a45cf0', intensity: 3.0, range: 2.8, lift: 0.6, pulse: [0.8, 1.05, 0.6], r: 1.4 },
+    fx: { pool: 'violet_motes' },
+    aura: { id: 'gloam_sight', name: 'Gloam Sight', desc: 'Sees spirits and soul lights: Mordrath\'s stolen names glow where you can strike them.',
+            mods: { soulSight: 1 }, bond3: { soulSight: 1 } },
+    about: 'A small black raven with violet-tipped feathers and gold eyes. It collects buttons, and it can see the dead.',
+    names: ['Inkling', 'Button', 'Quill', 'Smudge', 'Sable', 'Nib', 'Soot', 'Vesper'],
+  },
 };
 export const PET_IDS = Object.keys(PETS);
 export const DEN = { biscuit: 6, adopt: 40, fedBond2: 3, fedBond3: 7, glowBoost: 60 };
 const DARK = (t) => t > 0.75 || t < 0.25;   // dusk into night to dawn (the Hollows brazier window)
 const DIM = { hollows: true, rift: true, ravenhold: true, bifrost: true };   // the Rift's gloom: pet light at every hour
-const SECRET_SAY = { tick: ['({name} clicks twice and points his whole head at the wall.)', 'Tick! Tick-tick!'], mosspup: ['({name} digs at the ground, ears up. Water down there?)', '({name} sits and stares at a wall. It hears fizzing.)'], glowmoth: ['({name} beats its wings at a blank wall. A hidden door?)', '({name} dusts the ground. Something fizzes below.)', '({name} hovers at a mushroom stem. Tiny door, tiny knock?)'] };
+const SECRET_SAY = { inkling: ['({name} caws once and taps the wall with its beak.)', '({name} drops a button by the wall. A gift? A hint?)'], tick: ['({name} clicks twice and points his whole head at the wall.)', 'Tick! Tick-tick!'], mosspup: ['({name} digs at the ground, ears up. Water down there?)', '({name} sits and stares at a wall. It hears fizzing.)'], glowmoth: ['({name} beats its wings at a blank wall. A hidden door?)', '({name} dusts the ground. Something fizzes below.)', '({name} hovers at a mushroom stem. Tiny door, tiny knock?)'] };
 
 // the active pet's aura mods (bond 3 uses the bigger numbers); folded into progress.mods() like gear
 export function petAura(S) {
@@ -87,7 +100,9 @@ export function petNames(S, id) {
 export const isNight = (t) => t > 0.75 || t < 0.25;
 // Forager's Nose: a chance of one more moonpetal / red cap / garden harvest (returns the extra count, 0 or 1)
 export function forageExtra(S, rnd = Math.random) { const f = petAura(S).forage || 0; return f && rnd() < f ? 1 : 0; }
-export function ensurePets(S) { S.pets = S.pets || {}; if (S.pet === undefined) S.pet = null; return S; }
+export function ensurePets(S) { S.pets = S.pets || {}; if (S.pet === undefined) S.pet = null;
+  if ((S.flags || {}).inkling && !S.pets.inkling) S.pets.inkling = { name: 'Inkling', bond: 1, fed: 0, lastFed: null };   // [HELHEIM] saves from before Inkling joined PETS
+  return S; }
 
 export class Pets {
   constructor(G) { this.G = G; this.ctx = null; this.a = null; this.t = 0; this.boostT = 0; this.sensed = {}; this.lit = false; this.lastSense = null; this.lastWarn = null; }

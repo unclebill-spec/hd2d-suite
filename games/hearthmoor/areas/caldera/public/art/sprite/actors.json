@@ -27605,6 +27605,17 @@
     "follow"
    ],
    "desc": "Kindle, the ember salamander (Cinderhold companion, ~0.5x player): charcoal-red hide, amber belly, a gold scarf, red-gold back spots that pulse like coals and a glowing coal at the tail tip; curls into a coal when she faints"
+  },
+  "pet_inkling": {
+   "sheet": "hhinkling",
+   "row": 0,
+   "kind": "creature",
+   "pet": true,
+   "anims": [
+    "idle",
+    "walk",
+    "follow"
+   ]
   }
  },
  "sheets": {
@@ -27635,6 +27646,10 @@
   "kindle_safe": {
    "json": "kindle_safe.json",
    "image": "kindle_safe.png"
+  },
+  "hhinkling": {
+   "json": "hhinkling.json",
+   "image": "hhinkling.png"
   }
  }
 }

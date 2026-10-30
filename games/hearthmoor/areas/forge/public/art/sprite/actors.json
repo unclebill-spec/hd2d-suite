@@ -24202,6 +24202,17 @@
     "walk"
    ],
    "desc": "Bloop, Bryony's glowing frog (The Cold Cauldron): a small teal-green frog with a pale belly, big shy eyes, a tiny smile and cold-blue glowing freckles on his brow and back; amber forge light on one side; sits by the Forge Quarter vents, hops when he follows"
+  },
+  "pet_inkling": {
+   "sheet": "hhinkling",
+   "row": 0,
+   "kind": "creature",
+   "pet": true,
+   "anims": [
+    "idle",
+    "walk",
+    "follow"
+   ]
   }
  },
  "sheets": {
@@ -24224,6 +24235,10 @@
   "bloop": {
    "json": "bloop.json",
    "image": "bloop.png"
+  },
+  "hhinkling": {
+   "json": "hhinkling.json",
+   "image": "hhinkling.png"
   }
  }
 }

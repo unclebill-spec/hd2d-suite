@@ -25369,6 +25369,17 @@
     "idle",
     "walk"
    ]
+  },
+  "pet_inkling": {
+   "sheet": "hhinkling",
+   "row": 0,
+   "kind": "creature",
+   "pet": true,
+   "anims": [
+    "idle",
+    "walk",
+    "follow"
+   ]
   }
  },
  "sheets": {
@@ -25399,6 +25410,10 @@
   "oldmorel": {
    "json": "oldmorel.json",
    "image": "oldmorel.png"
+  },
+  "hhinkling": {
+   "json": "hhinkling.json",
+   "image": "hhinkling.png"
   }
  }
 }

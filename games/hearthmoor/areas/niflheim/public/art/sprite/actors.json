@@ -25358,6 +25358,17 @@
    ],
    "desc": "Kael bat form (2x): one of Kael's three bat-shaped mist forms (phase 2); splits and returns.",
    "enemy": true
+  },
+  "pet_inkling": {
+   "sheet": "hhinkling",
+   "row": 0,
+   "kind": "creature",
+   "pet": true,
+   "anims": [
+    "idle",
+    "walk",
+    "follow"
+   ]
   }
  },
  "sheets": {
@@ -25384,6 +25395,10 @@
   "nfelite": {
    "json": "nfelite.json",
    "image": "nfelite.png"
+  },
+  "hhinkling": {
+   "json": "hhinkling.json",
+   "image": "hhinkling.png"
   }
  }
 }
