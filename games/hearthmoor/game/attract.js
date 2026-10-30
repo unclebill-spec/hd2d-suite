@@ -80,17 +80,17 @@ export function makeAttract(G, host) {
 
   let prevT = performance.now();
   function frame(now) {
-    const dt = Math.min(0.1, (now - prevT) / 1000); prevT = now;
+    const real = Math.min(1, Math.max(0, (now - prevT) / 1000)), dt = Math.min(0.1, real); prevT = now;   // timers use real time (slow GPUs run at a few fps); the pilot uses capped dt
     if (!A.active) {
       // gamepad: any button counts as input on the title
       const pads = navigator.getGamepads ? [...navigator.getGamepads()].filter(Boolean) : [];
       const any = pads.some((g) => g.buttons.some((b) => b.pressed)); if (any) A.idle = 0;
-      if (host.eligible()) { A.idle += dt; if (A.idle >= (G.attractIdle || ATTRACT_IDLE_SEC)) begin(); } else A.idle = 0;
+      if (host.eligible()) { A.idle += real; if (A.idle >= (G.attractIdle || ATTRACT_IDLE_SEC)) begin(); } else A.idle = 0;
     } else {
       const pads = navigator.getGamepads ? [...navigator.getGamepads()].filter(Boolean) : [];
       const n = pads.reduce((c, g) => c + g.buttons.filter((b) => b.pressed).length, 0);
       if (n > padPrev) { padPrev = n; end(); } else padPrev = n;
-      if (A.active) { A.t += dt; pilot(dt); if (!busy && A.t >= (G.attractScene || ATTRACT_SCENE_SEC)) next(); }
+      if (A.active) { A.t += real; pilot(dt); if (!busy && A.t >= (G.attractScene || ATTRACT_SCENE_SEC)) next(); }
     }
     requestAnimationFrame(frame);
   }

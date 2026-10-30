@@ -28,8 +28,10 @@ def main():
         before = pg.evaluate(dump)
         st = pg.evaluate("__hm.attractDemo.state()"); ok("title idle counting", not st["active"], **st)
         tw = time.time()
-        pg.wait_for_function("__hm.attractDemo.state().active", timeout=int((a.idle + 30) * 1000))
-        ok("demo starts after ~40 s idle", time.time() - tw >= a.idle - 3, waited=round(time.time() - tw, 1))
+        while not pg.evaluate("__hm.attractDemo.state().active"):   # log state every 10 s so a stall shows idle vs eligibility
+            if time.time() - tw > a.idle + 60: break
+            print("  waiting", round(time.time() - tw), pg.evaluate("[__hm.attractDemo.state(), __hm.title, __hm.picking, __hm.busy, __hm.opts, document.visibilityState]"), flush=True); time.sleep(10)
+        ok("demo starts after ~40 s idle", pg.evaluate("__hm.attractDemo.state().active") and time.time() - tw >= a.idle - 3, waited=round(time.time() - tw, 1))
         for k in range(a.scenes):
             pg.wait_for_function("(() => { const s = __hm.attractDemo.state(); return s.active && !s.busy && s.t > 1; })()", timeout=90000)
             hp0 = pg.evaluate("__hm.combat.alive().reduce((c, e) => c + e.hp, 0)")
