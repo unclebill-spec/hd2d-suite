@@ -75,6 +75,7 @@ export const PET_IDS = Object.keys(PETS);
 export const DEN = { biscuit: 6, adopt: 40, fedBond2: 3, fedBond3: 7, glowBoost: 60 };
 const DARK = (t) => t > 0.75 || t < 0.25;   // dusk into night to dawn (the Hollows brazier window)
 const DIM = { hollows: true, rift: true, ravenhold: true, bifrost: true };   // the Rift's gloom: pet light at every hour
+const HEL_HOME = { helheim: '({name} caws at the bridge lanterns: home.)', hh_shore: '({name} hops along the jetty, checking for buttons.)', hh_archive: '({name} perches on a ledger and pretends to read.)', ossuary: '({name} goes quiet and presses close. It sees them too.)', ossuary2: '({name} fluffs up, violet tips glowing, and stares into the dark.)' };
 const SECRET_SAY = { inkling: ['({name} caws once and taps the wall with its beak.)', '({name} drops a button by the wall. A gift? A hint?)'], tick: ['({name} clicks twice and points his whole head at the wall.)', 'Tick! Tick-tick!'], mosspup: ['({name} digs at the ground, ears up. Water down there?)', '({name} sits and stares at a wall. It hears fizzing.)'], glowmoth: ['({name} beats its wings at a blank wall. A hidden door?)', '({name} dusts the ground. Something fizzes below.)', '({name} hovers at a mushroom stem. Tiny door, tiny knock?)'] };
 
 // the active pet's aura mods (bond 3 uses the bigger numbers); folded into progress.mods() like gear
@@ -108,7 +109,9 @@ export class Pets {
   constructor(G) { this.G = G; this.ctx = null; this.a = null; this.t = 0; this.boostT = 0; this.sensed = {}; this.lit = false; this.lastSense = null; this.lastWarn = null; }
   get S() { return ensurePets(this.G.S); }
   def() { const p = this.S.pet; return p ? PETS[p.id] : null; }
-  attach(ctx, area) { this.ctx = ctx; this.area = area; this.sensed = {}; this.a = null; if (this.def()) this.spawn(); }
+  attach(ctx, area) { this.ctx = ctx; this.area = area; this.sensed = {}; this.a = null; if (this.def()) this.spawn();
+    const p = this.S.pet;   // [HELHEIM] fun pass: Inkling knows it's home in Gloamhaven and the Ossuary (once per area visit)
+    if (p && p.id === 'inkling' && HEL_HOME[area] && this.G.toast && !this.G.qaStill) this.G.toast(HEL_HOME[area].replace('{name}', p.name), 2.4); }
   detach() { this.despawn(); this.ctx = null; }
   dark() { const c = this.ctx; return !!c && (!!DIM[this.area] || (this.area === 'temple' && !(this.G.S.flags || {}).temple_lit) || DARK(c.clock.t)); }   // the Old Temple is dim until the relight (6.3)
   spawn() {
