@@ -92,3 +92,11 @@ Helheim night warm-light (GD, Oct 30 2026): hh_shore gets one Asgard brazier (pl
 - Sprite neon allow-list (tests/check_palette.py `SPRITE_NEON_GD1030`, each scoped to its own role like moth / fox / mosspup): lumi, tick, flurry, bloop, kindle, dagna/gnome. Hexes are the existing check_sprite.py scoped sets; nothing new.
 - Effects allow-list (`FX_GD1030`): one orange ramp #e8321e / #ff7a1a / #ffd27a and one teal ramp #16807f / #2fd0d0 / #a8fff0, taken exactly from the live gamefx.png sheets.
 - Result: 145 FAIL -> 54 FAIL (47 gamefx.png with other colours such as #eef6ff, #7fd4ff, #8a1a14, #6ad8e8; 7 Helheim/Vanaheim spells.png not covered by palette-fix-1030). Not fixed; open for Art / GD.
+
+## Title attract demo (Oct 30, 2026; game/attract.js)
+
+- Idle before the demo starts: 40 s on the title (`ATTRACT_IDLE_SEC`; mouse moves, keys, clicks, taps and pad buttons reset it). Demo off with `?noattract`; under automation it needs `?attract`.
+- Scene length: 24 s each (`ATTRACT_SCENE_SEC`, inside the 20-30 s spec); once every foe is down (after at least 4 s) the scene ends 2 s later. Scenes, shuffled, no repeat until all played: Toadstool Hollows, the Rotwood, Vanaheim, the Verdant, Mossglen boss fight (Elder Golem).
+- Demo AI: walks to the nearest foe, swings every 0.55-0.8 s in reach, casts the equipped spell every 2.2-3.4 s within 7 m. Demo hero HP refills below 50 %. No game numbers changed.
+- Sandbox: storage writes dropped, save() off, G.S + defeated map restored on exit; shake / flash / volume follow the saved options.
+- Rule 19 / Oct 30 (palette-fix-1030b): Art's 7 Helheim/Vanaheim spells.png installed (same 3-blue remap). check_palette: 54 FAIL -> 47 FAIL, all gamefx.png (left alone per GD); 0 spells.png fails left.
