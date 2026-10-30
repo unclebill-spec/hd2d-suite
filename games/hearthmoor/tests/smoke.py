@@ -327,7 +327,7 @@ QUICK = {
     "storm": "H", "storms": "H", "riftstorm": "H", "bounty": "H",
 }
 TIMING = FIX / "smoke_timing.json"   # seconds per segment from the last passing runs (shard balancing only)
-DEFAULT_SECONDS = {"A": 560, "B": 260, "C": 230, "D": 5640, "E": 25, "F": 150, "G": 200, "H": 170, "I": 90, "J": 120, "K": 60, "L": 60, "M": 60, "N": 40, "O": 275, "P": 320, "Q": 145, "R": 330, "S": 140, "T": 175, "U": 360}   # realm segments N-U measured 2026-10-30 (NOPQ 775 s, RSTU 1001 s)
+DEFAULT_SECONDS = {"A": 560, "B": 260, "C": 230, "D": 300, "E": 25, "F": 150, "G": 200, "H": 170, "I": 90, "J": 120, "K": 60, "L": 60, "M": 60, "N": 40, "O": 275, "P": 320, "Q": 145, "R": 330, "S": 140, "T": 175, "U": 360}   # realm segments N-U measured 2026-10-30 (NOPQ 775 s, RSTU 1001 s; D alone 293 s)
 
 
 def seg_seconds():
