@@ -118,6 +118,18 @@ def steps(b, url, T, size, errors, rep, stub=None, shots=None, only=""):
         S("const o = JSON.parse(window.__hhSnap); for (const k of Object.keys(S)) delete S[k]; Object.assign(S, o); S.flags.hel = 'kind'; return 1;")
         T.ev(RUN); frames(2); kind_stats = T.ev(STAT); k = sv()
         T.step("dragged back by force returns pale (flag only): same stats / max HP as a kind return", a["pale"] and not k["pale"] and pale_stats == kind_stats and a["quests"]["hh_home"] == 3 and k["quests"]["hh_home"] == 3, pale=pale_stats, kind=kind_stats)
+        # [HELHEIM finish 2026-10-30] music: every Helheim area plays music_helheim.ogg (REALM_OF), and the file is served
+        load("hh_shore", "&hhq=met")
+        mus = T.ev("(async () => { const A = window.__hm.audio; const r = await fetch('audio/music/music_helheim.ogg'); return { want: A.want(), area: A.area, ok: r.ok, n: (await r.arrayBuffer()).byteLength }; })()")
+        T.step("Helheim music: hh_shore wants the 'helheim' track and audio/music/music_helheim.ogg loads", mus["want"] == "helheim" and mus["ok"] and mus["n"] > 20000, mus=mus)
+        # Inkling: hh_raven step 2 -> the gloam raven joins as the active pet (PETS.inkling, own sheet, follows the hero)
+        load("helheim", "&hhq=met")
+        S("S.flags.hel = 'kind'; S.quests.hh_raven = 2; return 1;")
+        hel("qaTalk('ferryman')"); frames(12)
+        ik = T.ev("(() => { const G = window.__hm, P = G.pets; return { pet: G.S.pet && G.S.pet.id, owned: !!(G.S.pets || {}).inkling, q: G.S.quests.hh_raven, def: !!G.PETS.inkling, actor: !!(P.a && P.a.role === 'pet_inkling'), sheet: !!window.__hd2d.ctx.actors.sheetOf('pet_inkling') }; })()")
+        T.step("Inkling joins as the active pet (PETS.inkling, sheet pet_inkling, follower spawned)", ik["pet"] == "inkling" and ik["owned"] and ik["q"] == 3 and ik["def"] and ik["actor"] and ik["sheet"], ik=ik)
+        T.ev("(() => { const c = window.__hd2d.ctx; c.clock.t = 0.9; return 1; })()"); frames(20)
+        rep["shots"]["inkling"] = T.shot("inkling")
         # rooms
         for ar, sp in ROOMS:
             load(ar, "&hhq=done&hhfx=1", spawn=sp)
