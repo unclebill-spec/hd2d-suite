@@ -25,6 +25,7 @@ import os
 import functools
 import json
 import sys
+import tempfile
 import threading
 import time
 from http.server import SimpleHTTPRequestHandler, ThreadingHTTPServer
@@ -327,7 +328,51 @@ QUICK = {
     "storm": "H", "storms": "H", "riftstorm": "H", "bounty": "H",
 }
 TIMING = FIX / "smoke_timing.json"   # seconds per segment from the last passing runs (shard balancing only)
-DEFAULT_SECONDS = {"A": 560, "B": 260, "C": 230, "D": 300, "E": 25, "F": 150, "G": 200, "H": 170, "I": 90, "J": 120, "K": 60, "L": 60, "M": 60, "N": 40, "O": 275, "P": 320, "Q": 145, "R": 330, "S": 140, "T": 175, "U": 360}   # realm segments N-U measured 2026-10-30 (NOPQ 775 s, RSTU 1001 s; D alone 293 s)
+DEFAULT_SECONDS = {"A": 390, "B": 420, "C": 285, "D": 295, "E": 66, "F": 340, "G": 270, "H": 180, "I": 90, "J": 140, "K": 200, "L": 60, "M": 160, "N": 40, "O": 275, "P": 320, "Q": 145, "R": 330, "S": 140, "T": 310, "U": 360}   # worst measured per segment on a loaded box (harness-1030 logs + Oct 29 timing; NOPQ 775 s, RSTU 1001 s, A 309-385, B 420, D 293, T 307)
+# checkpoints: who writes each, who reads it. A shard that reads a checkpoint it can neither find (this run's dir or the
+# committed fixture) nor produce itself runs the producer chain first, so every shard is self-sufficient in a fresh clone.
+CP_PRODUCER = {"cp1": "A", "cp2": "B", "cp3": "C"}
+CP_NEEDS = {"B": "cp1", "C": "cp2", **{k: "cp3" for k in "DFGHIJKLM"}}
+CP_DIR = Path(os.environ.get("HM_CP_DIR") or (Path(tempfile.gettempdir()) / f"hm-smoke-cp-{os.getpid()}"))   # run-local checkpoints (never the tracked fixtures)
+
+
+def cp_path(name):
+    """this run's checkpoint if a segment before wrote one, else the committed fixture"""
+    p = CP_DIR / f"smoke_{name}.json"
+    return p if p.exists() else FIX / f"smoke_{name}.json"
+
+
+def with_producers(segs):
+    """add the producer segments a shard needs when their checkpoint is missing (e.g. a fresh clone without fixtures)"""
+    segs = set(segs)
+    changed = True
+    while changed:
+        changed = False
+        for k in sorted(segs):
+            cp = CP_NEEDS.get(k)
+            if cp and CP_PRODUCER[cp] not in segs and not cp_path(cp).exists():
+                segs.add(CP_PRODUCER[cp]); changed = True
+                print(f"smoke: {k} needs {cp}, none found: running {CP_PRODUCER[cp]} first", flush=True)
+    return "".join(k for k in SEGS if k in segs)
+
+
+# a smoke must leave the worktree as it found it: realm smokes run the art installers (e.g. musp_art.py rewrites
+# areas/caldera2/scene.json). Snapshot the tracked outputs and put them back after every segment.
+def _guard_files():
+    return sorted((GAME / "areas").glob("*/scene.json")) + sorted(FIX.glob("smoke_cp*.json"))
+
+
+def snapshot_tracked():
+    return {p: p.read_bytes() for p in _guard_files() if p.exists()}
+
+
+def restore_tracked(snap):
+    for p, b in snap.items():
+        try:
+            if p.read_bytes() != b:
+                p.write_bytes(b)
+        except FileNotFoundError:
+            p.write_bytes(b)
 
 
 def seg_seconds():
@@ -351,8 +396,9 @@ def plan_shards(n, segs=SEGS):
 def run(out, simscale=4, size=(960, 540), segs=SEGS):
     from playwright.sync_api import sync_playwright
     out.mkdir(parents=True, exist_ok=True)
-    segs = "".join(k for k in SEGS if k in segs)
+    segs = with_producers("".join(k for k in SEGS if k in segs))
     seg_rep = {}
+    SNAP = snapshot_tracked()
 
     def seg_mark(k):
         seg_rep[k] = {"start": round(time.time() - T_START, 1), "steps0": len(T.steps)}; T.seg = k
@@ -360,18 +406,19 @@ def run(out, simscale=4, size=(960, 540), segs=SEGS):
     def seg_done(k):
         r = seg_rep[k]; r["end"] = round(time.time() - T_START, 1); r["seconds"] = round(r["end"] - r["start"], 1)
         r["steps"] = len(T.steps) - r.pop("steps0"); r["pass"] = True
+        restore_tracked(SNAP)
 
     def cp_dump(page, name):
         """the segment passed: keep its end state (all of localStorage) as the next segment's start in a sharded run"""
         d = page.evaluate("Object.fromEntries(Object.keys(localStorage).map((k) => [k, localStorage.getItem(k)]))")
         (out / f"smoke_{name}.json").write_text(json.dumps(d, indent=1, sort_keys=True))
-        FIX.mkdir(exist_ok=True)
-        tmp = FIX / f".smoke_{name}.{time.time_ns()}.tmp"
-        tmp.write_text(json.dumps(d, indent=1, sort_keys=True)); tmp.replace(FIX / f"smoke_{name}.json")
+        CP_DIR.mkdir(parents=True, exist_ok=True)   # run-local, not the tracked fixture (a run must not dirty the worktree)
+        tmp = CP_DIR / f".smoke_{name}.{time.time_ns()}.tmp"
+        tmp.write_text(json.dumps(d, indent=1, sort_keys=True)); tmp.replace(CP_DIR / f"smoke_{name}.json")
 
     def cp_load(page, T_, url_, name):
         """start a segment from a checkpoint: open the title, swap in the saved localStorage (the title never saves)"""
-        d = json.loads((FIX / f"smoke_{name}.json").read_text())
+        d = json.loads(cp_path(name).read_text())
         log(f"  (segment starts from checkpoint {name}: {len(d)} localStorage keys)")
         if page is None:
             return d
@@ -2940,6 +2987,7 @@ def run(out, simscale=4, size=(960, 540), segs=SEGS):
             rep["pass"] = False; rep["error"] = f"JS errors: {errors[:3]}"
         b.close()
     srv.shutdown()
+    restore_tracked(SNAP)
     rep["seconds"] = round(time.time() - T_START, 1)
     rep["steps"] = T.steps
     (out / "smoke.json").write_text(json.dumps(rep, indent=1))

@@ -27,4 +27,6 @@ iterations/
 games/hearthmoor/tests/fixtures/*
 # smoke_cp1.json is committed: smoke.py shard B starts from it, so a clean copy needs it (QA 2026-10-28; save-game state only, no secrets)
 !games/hearthmoor/tests/fixtures/smoke_cp1.json
+!games/hearthmoor/tests/fixtures/smoke_cp2.json
+!games/hearthmoor/tests/fixtures/smoke_cp3.json
 games/hearthmoor/tests/out/
