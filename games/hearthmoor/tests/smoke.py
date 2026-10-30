@@ -866,12 +866,18 @@ def run(out, simscale=4, size=(960, 540), segs=SEGS):
                 for d in legs:
                     T.ev(f"(() => {{ const c = window.__hm.ctx, p = c.player; p.x = {d['x']}; p.z = {d['z']}; p.y = c.heightAt(p.x, p.z); c.stopWalk(); }})()"); pg.wait_for_timeout(500)
                 T.ev("(() => { const S = window.__hm.S, i = S.bag.findIndex((it) => it.rar === 4); if (i >= 0) window.__hm.LO.equip(S, i); })()")
-                pg.wait_for_timeout(500)
+                try:  # the aura is added/removed by the frame loop (loot update), so wait on it, not on a fixed sleep (slow frames under parallel shards)
+                    pg.wait_for_function("window.__hm.loot.auraOn() && !!document.querySelector('#fxlayer .loot.paura canvas')", timeout=10000, polling=100)
+                except Exception:  # noqa: BLE001  the step below reports it
+                    pass
                 aura = T.ev("window.__hm.loot.auraOn() && !!document.querySelector('#fxlayer .loot.paura canvas')")
                 rep["shots"]["legendary_aura"] = T.shot("legendary_aura")
                 T.step("a Legendary equipped: a neon aura + rune light follow the hero", len(T.S()["bag"]) >= nb and aura, aura=aura)
                 T.ev("(() => { const S = window.__hm.S; for (const k of ['weapon', 'armor', 'trinket']) if (S.gear[k] && S.gear[k].rar === 4) window.__hm.LO.unequip(S, k); window.__hm.ctx.player.iframes = 0; })()")
-                pg.wait_for_timeout(300)
+                try:  # the aura is added/removed by the frame loop (loot update), so wait on it, not on a fixed sleep (slow frames under parallel shards)
+                    pg.wait_for_function("!window.__hm.loot.auraOn()", timeout=10000, polling=100)
+                except Exception:  # noqa: BLE001  the step below reports it
+                    pass
                 T.step("unequipping the Legendary drops the aura", not T.ev("window.__hm.loot.auraOn()"))
                 # ---------------------------------------------------------- stage 5 part 2: procedural rares + random rifts
                 KILL = ("(() => { const G = window.__hm, C = G.combat, p = G.ctx.player; G.peace = true;"
@@ -2296,7 +2302,8 @@ def run(out, simscale=4, size=(960, 540), segs=SEGS):
                 pi, fi = T.talk("priestess")
                 S = T.S()
                 T.step("Mother Ilse takes the basket (5 pages): +40 Hearth Tokens (refuge), the Temple waystone attunes, 'The Cold Altar' moves on to the clues",
-                       pi == 5 and S["quests"]["altar"] == 2 and not S["inv"].get("reliefbasket") and S["merit"]["hearth"] == h0 + 40 and S["flags"]["ways"].get("temple") == 1, first=fi[:60])
+                       pi == 5 and S["quests"]["altar"] == 2 and not S["inv"].get("reliefbasket") and S["merit"]["hearth"] == h0 + 40 and S["flags"]["ways"].get("temple") == 1, first=fi[:60],
+                       got={"pages": pi, "altar": S["quests"].get("altar"), "basket": S["inv"].get("reliefbasket"), "hearth": [h0, S["merit"].get("hearth")], "way": S["flags"]["ways"].get("temple")})
                 T.talk("archivist")
                 got = []
                 for c in T.ev("window.__hm.ctx.scene.game.clues"):
