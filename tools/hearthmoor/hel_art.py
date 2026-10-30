@@ -186,8 +186,15 @@ FLOORS = {"gloam_floor", "ossuary_floor", "pebble_shore"}
 # capped small (LAMP_CAP below) so the gloom stays dominant; placed by the clear-spot search (keeps off actors, spawns, exits, paths) - no overlaps.
 # The Ossuary also gets prop variety from the Helheim kit itself (mourning_statue, lore_tablet) in O1's arrival view.
 FOREIGN = {"warm_lantern": "jotunheim", "dawn_flame_brazier": "asgard"}   # piece -> pack under games/hearthmoor/art/<pack>/kit
-EXTRA_PLACE = {"hh_shore": [("warm_lantern", [-6.4, 7.4], "fixed")],   # spots checked clear (walkable, flat, >2 m from actors / spawns / exits / ledges / props)
-               "ossuary2": [("dawn_flame_brazier", [-5.5, 3.0], "fixed")],   # approved 2026-10-21 08:18 (check_scene grades night_warm_frac), same 3 m cap
+# 2026-10-30 (Helheim finish, check_scene grades night_warm_frac 0.0015 / 0.0008 / 0.0016 < 0.002): more of the SAME two approved warm accents, 3 m cap.
+# ossuary2 gets the spot the fix1028 near brazier has in ossuary (same corridor geometry). The clear-spot search cannot be used here (the floor tiles placed
+# before EXTRA_PLACE fill `keep`), so the spots are "fixed", scanned clear on the collision grid (flat, unblocked 0.8 m around, >2 m actors, >2.2 m spawns,
+# >3.6 m exits, >1.5 m props) and off the walking lines.
+EXTRA_PLACE = {"hh_shore": [("warm_lantern", [-6.4, 7.4], "fixed"),   # spots checked clear (walkable, flat, >2 m from actors / spawns / exits / ledges / props)
+                            ("dawn_flame_brazier", [6.0, 7.5], "fixed")],   # 2026-10-30: the floor corner right of the shore stair
+               "hh_archive": [("dawn_flame_brazier", [-5.1, 6.0], "fixed"), ("dawn_flame_brazier", [4.9, 6.0], "fixed")],   # 2026-10-30: front corners of the reading room
+               "ossuary2": [("dawn_flame_brazier", [-5.5, 3.0], "fixed"),   # approved 2026-10-21 08:18 (check_scene grades night_warm_frac), same 3 m cap
+                            ("dawn_flame_brazier", [-7.5, 10.9], "fixed")],   # 2026-10-30: mirrors ossuary's fix1028 near brazier
                "ossuary": [("dawn_flame_brazier", [-6.0, 3.5], "fixed"), ("mourning_statue", [5.45, 5.85], "fixed"), ("lore_tablet", [-5.4, 0.8], "fixed")]}
 PIECE_MOVE = {}    # (area, piece, x, z) -> (x, z): a prop moved off an actor / spawn / lamp (check_scene), rounded to 0.1
 NOCAST = set()     # (area, piece): its shadow fell across an NPC (check_scene atlas corr)
@@ -376,7 +383,8 @@ def place(area):
     C = sc["collision"]; C.setdefault("base_data", C["data"])
     d = array("h"); d.frombytes(base64.b64decode(C["base_data"]))
     ox, oz, cl, W, H = C["origin"][0], C["origin"][1], C["cell"], C["w"], C["h"]
-    sc["objects"] = [o for o in sc["objects"] if not o.get("hel_art")]
+    # objects hand-added by Art fixes-1028 carry hel_art AND fix1028: keep them (no installer regenerates them; their lamps carry no hel_art tag either)
+    sc["objects"] = [o for o in sc["objects"] if not o.get("hel_art") or o.get("fix1028")]
     sc["lamps"] = [l for l in sc["lamps"] if not l.get("hel_art")]
     g = sc["game"]
     keep = [(a["pos"][0], a["pos"][1], 1.6) for a in sc.get("actors", []) if "pos" in a]
