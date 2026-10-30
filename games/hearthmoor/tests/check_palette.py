@@ -37,6 +37,14 @@ NEON = {"#e0302a", "#a81c22", "#ff5a4a",          # red
 UI_FILLS = {"#1a1d3a", "#2a2458"}               # ui_navy, ui_indigo: menu/UI frames + panels only
 ORB_NEON = {"#3cf08a", "#b8ffd4", "#14a85a",      # neon green mid / hi / lo
             "#ff4fc8", "#ffb4ea", "#b82a8c"}      # neon pink mid / hi / lo
+# GD call Oct 30, 2026: effects get exactly one orange ramp + one teal ramp, hexes taken as-is from the live gamefx.png sheets.
+FX_GD1030 = {"#e8321e", "#ff7a1a", "#ffd27a",     # orange lo / mid / hi (gamefx fire)
+             "#16807f", "#2fd0d0", "#a8fff0"}     # teal lo / mid / hi (gamefx water / spirit)
+# GD call Oct 30, 2026: sprite neon allow-list += the six named companions, each scoped to its own role, same as moth / fox / mosspup:
+# lumi (neon blue core + violet halo), tick (neon-blue eyes / core), flurry (neon-blue tips), bloop (blue frog glow),
+# kindle (neon-red spots), dagna/gnome (Dagna's neon-red ember hammer; her sheet row is named "gnome" in some areas).
+SPRITE_NEON_GD1030 = dict(cs.LUMI_NEON_ALLOW, **cs.SVART_NEON_ALLOW, **cs.JOT_NEON_ALLOW, **cs.CC_NEON_ALLOW, **cs.MUSP_NEON_ALLOW,
+                          gnome=cs.SVART_NEON_ALLOW["dagna"])
 
 
 def colours(path, box=None):
@@ -69,7 +77,7 @@ def main():
     HH_SHEET_NEON = {(sheet, role): {"#a45cf0", "#3a2458"} for sheet, role in (
         ("hhelite", "odric"), ("hhenemy", "gloam_knight"),
         ("boss_mordrath", "mordrath"), ("boss_mordrath", "mordrath_p2"), ("boss_mordrath", "mordrath_p3"))}
-    fx_ok = pal | NEON | ORB_NEON
+    fx_ok = pal | NEON | ORB_NEON | FX_GD1030
     for ar in areas:
         art = GAME / "areas" / ar / "public/art"
         for k in ("spells", "particles", "gamefx"):
@@ -87,7 +95,7 @@ def main():
             for r, rv in roles.items():
                 if "row" not in rv or rv.get("sheet"):
                     continue
-                allowed = pal | set(cs.NEON_PETS_ALLOW.get(r, ())) | cs.area_palette(p)
+                allowed = pal | set(cs.NEON_PETS_ALLOW.get(r, ())) | set(SPRITE_NEON_GD1030.get(r, ())) | cs.area_palette(p)
                 allowed |= HH_SHEET_NEON.get((p.stem, r), set())
                 if p.stem == "boss_nettlecrown":   # [VANAHEIM] scoped: this sheet + role only (check_sprite.VANA_NEON_ALLOW)
                     allowed |= set(cs.VANA_NEON_ALLOW.get(r, ()))

@@ -86,3 +86,9 @@ Source of truth is the code; update this file when you change a number. Paths ar
 - **Bonus seed** (GD approved Oct 29; `vanaheim_fun.js` BONUS_SEED): Nettlecrown's Seed & Tonic Stall, 10 % chance per common-seed purchase (glow seed only) of +1 free glow seed; cap 1 bonus per in-game day (`S.day`), stored in the save as `flags.vh_bonus_day`. Tonics never roll.
 
 Helheim night warm-light (GD, Oct 30 2026): hh_shore gets one Asgard brazier (plus one warm lantern) and ossuary2 gets two (the second added Oct 30, mirroring ossuary's fix1028 brazier); ossuary2's brazier light range is 3.5 m vs the 3 m cap elsewhere (Oct 30: night_warm_frac 0.0027 before, barely over the 0.002 grade; AFTER_PLACEHOLDER) (OK); hh_archive uses three small warm lanterns at the reading desks instead, blue flames stay dominant.
+
+## GD call Oct 30, 2026: palette check allow-lists
+
+- Sprite neon allow-list (tests/check_palette.py `SPRITE_NEON_GD1030`, each scoped to its own role like moth / fox / mosspup): lumi, tick, flurry, bloop, kindle, dagna/gnome. Hexes are the existing check_sprite.py scoped sets; nothing new.
+- Effects allow-list (`FX_GD1030`): one orange ramp #e8321e / #ff7a1a / #ffd27a and one teal ramp #16807f / #2fd0d0 / #a8fff0, taken exactly from the live gamefx.png sheets.
+- Result: 145 FAIL -> 54 FAIL (47 gamefx.png with other colours such as #eef6ff, #7fd4ff, #8a1a14, #6ad8e8; 7 Helheim/Vanaheim spells.png not covered by palette-fix-1030). Not fixed; open for Art / GD.
