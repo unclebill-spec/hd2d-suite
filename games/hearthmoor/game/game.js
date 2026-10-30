@@ -21,7 +21,8 @@ import { Temple } from './temple.js';
 import { Verdant } from './verdant.js';
 import { Ambient } from './audio.js';
 import * as PR from './progress.js';
-import { HEROES, HERO, SPELLS, SUMMONS, CHARM_DMG, CHARM_CD } from './heroes.js';
+import { HEROES, HERO, SPELLS, SUMMONS, CHARM_DMG, CHARM_CD, SPAWNS } from './heroes.js';
+import { makeAttract } from './attract.js';   // title attract demo (sec 19)
 import { Combat, framePullFor, isTrial } from './combat.js';
 import { Glow } from './glow.js';
 import { Hollows } from './hollows.js';
@@ -142,7 +143,7 @@ function slotSpell(k, dir = 1) {   // cycle slot k through the known spells (slo
 G.slotSpell = slotSpell; G.knownSpells = knownSpells;
 G.slots = slots;
 function save(note) {
-  if (QA || G.title) return false;
+  if (QA || G.title || G.attract) return false;   // the title attract demo never saves
   const p = G.ctx && G.ctx.player;
   if (p) G.S.pos = [+p.x.toFixed(2), +p.z.toFixed(2), p.facing];
   G.S.area = G.area; G.S.savedAt = new Date().toISOString();
@@ -1332,6 +1333,15 @@ async function main() {
   }
   if ($('pad')) $('btnPad') && $('btnPad').classList.toggle('on', document.body.classList.contains('padon'));
   G.ready = true;
+  if (!QA && !Q.has('noattract') && (!navigator.webdriver || Q.has('attract'))) {   // title attract demo (automation needs ?attract) (WILL-SPEC sec 19): game/attract.js
+    if (Q.get('attractIdle')) G.attractIdle = +Q.get('attractIdle');
+    G.attractDemo = makeAttract(G, {
+      eligible: () => G.title && !G.picking && !G.busy && !G.opts && G.ready && document.visibilityState === 'visible',
+      spawns: () => SPAWNS, loadArea: (a, sp) => loadArea(a, sp),
+      hideTitle: () => { $('titlescreen').hidden = true; document.body.classList.remove('titled'); $('vitals').hidden = false; },
+      showTitle: () => { $('titlescreen').hidden = false; document.body.classList.add('titled'); $('vitals').hidden = true; },
+    });
+  }
   if (!QA && 'serviceWorker' in navigator && location.protocol.startsWith('http') && !Q.has('nosw')) navigator.serviceWorker.register('sw.js').catch(() => {});
 }
 main().catch((e) => { console.error(e); const b = $('boot'); if (b) { b.classList.remove('gone'); b.textContent = 'Hearthmoor failed to load: ' + e.message; } });

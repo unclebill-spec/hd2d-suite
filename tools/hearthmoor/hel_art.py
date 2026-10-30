@@ -329,6 +329,9 @@ NO_LIGHT = set()   # (area, piece): lamps kept as glow sprites but not real poin
 EXTRA_CAP = {}     # area -> cap for the pack's extra pools (range < 9)
 LAMP_CAP_AREA = {a: dict(LAMP_CAP) for a in PLANNED}
 LAMP_CAP_AREA["ossuary2"].update(dawn_flame_brazier=3.5)   # 2026-10-30: both braziers +0.5 m (night_warm_frac 0.0027 barely over 0.002); blue stays dominant
+# GD yes Oct 30 2026: ossuary2 gets a small warm ground glow at the base of each of its two existing dawn_flame_braziers, the same kind of
+# small warm pool as the hh_archive warm_lantern lamps (colour #ffc866, short range). No new braziers, no new props, palette unchanged.
+GROUND_GLOW = {("ossuary2", "dawn_flame_brazier"): {"dy": 0.25, "dz": 0.55, "range": 2.6, "color": "#ffc866", "fixed": 0.5}}
 LAMP_CAP_AREA["helheim"].update(cold_fire_lamp=4.0, coldfire_brazier=4.0)   # the street lamps / braziers clipped the night frame after the NPC moves (check_scene no_bloom 0.0218 > 0.02)
 
 
@@ -458,6 +461,10 @@ def place(area):
         for lp in ([] if extra.get("hidden") else mk.get("lamps", [])):   # a hidden piece (cairn_toppled) is lit at runtime when the game shows it
             sc["lamps"].append({"pos": [x + lp[0], y + lp[1], z + lp[2]], "range": min(mk.get("lamp_range", 5.0), LAMP_CAP_AREA[area].get(name, 9.0)) if area in LAMP_CAP_AREA else mk.get("lamp_range", 5.0), "kind": name,
                                 "color": mk.get("lamp_color", "#3fb8ff"), "fixed": mk.get("lamp_fixed", 0.5), "hel_art": True, **({"light": False} if (area, name) in NO_LIGHT else {})})
+        gg = GROUND_GLOW.get((area, name))
+        if gg and not extra.get("hidden"):
+            sc["lamps"].append({"pos": [x, round(y + gg["dy"], 3), round(z + gg["dz"], 3)], "range": gg["range"], "kind": "warm_ground_glow",
+                                "color": gg["color"], "fixed": gg["fixed"], "hel_art": True})
         print(f"  {area}: {name} at ({x}, {z})")
     for (lx, ly, lz), col, rng, fix in layout_lights(area):   # the pack's extra pools of light (cold blue, teal, aurora, violet and the warm lantern / window every 6-8 m)
         if rng < 9.0: rng = min(rng, EXTRA_CAP.get(area, 99.0))
