@@ -260,6 +260,7 @@ const closeTemple = (G) => {
   if (!q(S, 'reliquary')) G.setQuest('reliquary', 1);
   mark(G);
 };
+const ilseTalk = TALK.priestess;   // the Old Temple's Mother Ilse shares the actor id 'priestess' with Sunna (gs_temple)
 Object.assign(TALK, {
   envoy_as(S) {   // Ingrith Goldrune: the offer (rank 3), the turn-in, the Thunder Toll (story 3.1, 5.1)
     const f = F(S), st = q(S, 'as_gate');
@@ -338,6 +339,10 @@ Object.assign(TALK, {
   as_a() { return { pages: ['"The halls used to be bright at midnight."'] }; },
   as_b(S) { return { pages: [["Mind the pillars in a storm.", "Fire did this, they say. I'm not so sure."][(S.day || 0) % 2]] }; },
 });
+{   // Sunna only answers inside Asgard; anywhere else 'priestess' is Mother Ilse (was: Sunna everywhere, so Ilse never took the relief basket)
+  const sunnaTalk = TALK.priestess;
+  TALK.priestess = function priestess(S, ...a) { return (AREAS_ASG[S.area] ? sunnaTalk : ilseTalk)(S, ...a); };
+}
 function embassyRankS(S) { return (S.ranks || {}).embassy || 0; }   // the stored rank (factions.rank migrates; the real check runs in `then`)
 function flameHomeG(G) { G.asg && G.asg.flameHome(); }
 MARKER_HOOKS.push((id, S) => {
@@ -345,7 +350,7 @@ MARKER_HOOKS.push((id, S) => {
   if (id === 'envoy_as' && (st('as_gate') === 2 || (conquer(S) && st('as_take') === 1 && !found(S, 'tt_p1')))) return 'quest_mark';
   if (id === 'lordwarden' && ((f.as_gate_open && !(f.alliance || {}).asgard && !f.as_contract) || st('as_trial') === 2 || st('as_temple') === 2 || st('thundermoot') === 2)) return 'quest_mark';
   if (id === 'runemaster' && ((st('as_trial') === 1 && (f.rt_runes || 0) >= TRIAL_NEED(S)) || st('as_hammer') === 2 || (befriend(S) && st('reliquary') >= 3 && !st('as_hammer')))) return 'quest_mark';
-  if (id === 'priestess' && !conquer(S) && st('reliquary') === 2 && f.gr_flame) return 'quest_mark';
+  if (id === 'priestess' && AREAS_ASG[S.area] && !conquer(S) && st('reliquary') === 2 && f.gr_flame) return 'quest_mark';
   if (id === 'sigrun' && befriend(S) && !st('as_sigrun') && st('as_temple') >= 3) return 'quest_mark';
   if (id === 'groom' && befriend(S) && ((!st('as_horse') && st('as_sigrun') >= 3) || (st('as_horse') === 1 && (f.ah_lastDay ?? -1) < (S.day || 0) && (f.ah_oats || 0) < 3))) return 'quest_mark';
   if (id === 'as_guide' && f.as_contract && (!f.sw_orla || (f.flame_home && st('as_hire') === 2))) return 'quest_mark';
