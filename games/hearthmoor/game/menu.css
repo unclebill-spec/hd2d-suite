@@ -190,6 +190,8 @@ body::after { content: url(../art/ui/pulse/highlight_f0.png) url(../art/ui/pulse
 /* phones (portrait, and short landscape where the buttons sit in a row along the top): the area-name chip stays one 12 px line
    so it never runs into the bag / clock / log chips (check-scene layout; ossuary2's long name hit btnLog at 844x390) */
 @media (max-width: 640px), (max-height: 460px) { #hud .title { font: 400 12px/1.15 var(--bd); padding: 4px 8px; white-space: normal; max-width: 52vw; overflow: visible; text-overflow: clip; overflow-wrap: anywhere; } }
+/* portrait: a wrapped (two-line) name must stay above the bag chip at top 42px (check-scene layout: 12px/1.15 overlapped bag by 8 px on ossuary2 at 390x844) */
+@media (max-width: 640px) { #hud .title { font-size: 11px; line-height: 1; padding: 2px 8px; } }
 /* Factions tab: the selected-row highlight above sets `border: 2px solid transparent` + a filled border-image, which hid the
    faction's signature left edge on the selected row (row 0 = the Hearth when the tab opens). Redraw the edge on ::after, above the frame. */
 #heroBody .row.fac.sel { border-left-color: var(--fc); }
