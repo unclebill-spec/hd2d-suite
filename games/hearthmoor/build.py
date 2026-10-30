@@ -657,17 +657,38 @@ def install_vanaheim_stageb(areas=AREAS):
     print(f"vanaheim stage B: sheets {sorted(used)}, kit + vh_fx + gloom palette in {n} areas")
 
 
-ZIP_SKIP = ("areas/src", "tests/shots", "shots", "__pycache__")
+ZIP_SKIP = ("areas/src", "tests", "shots", "__pycache__")
+# not loaded by the game (source renders, QA reports, contact sheets, build scripts): kept in git, left out of the zip
+ZIP_SKIP_PARTS = ("renders", "metadata")
+ZIP_SKIP_NAMES = ("contact_sheet.png", "check_sprite_report.json", "check_sprite_report_local_allow.json")
+
+
+def _zip_skip(rel):
+    if any(str(rel).startswith(s) or s in rel.parts for s in ZIP_SKIP) or rel.suffix == ".py" or rel.name in ZIP_SKIP_NAMES:
+        return True
+    return rel.parts[0] == "art" and len(rel.parts) > 2 and (rel.parts[2] in ZIP_SKIP_PARTS or rel.parts[2] == "src")
 
 
 def make_zip():
+    """the download zip. Each area ships its own copy of shared sheets/kits (areas/*/public); the zip stores the first copy
+    and the rest as relative symlinks (unzip / macOS Archive Utility restore them), which took it from 75 MB to well under 50."""
+    import hashlib, os, stat
     z = GAME.parent / "hearthmoor.zip"
-    with zipfile.ZipFile(z, "w", zipfile.ZIP_DEFLATED) as zf:
+    seen = {}
+    with zipfile.ZipFile(z, "w", zipfile.ZIP_DEFLATED, compresslevel=9) as zf:
         for p in sorted(GAME.rglob("*")):
             rel = p.relative_to(GAME)
-            if p.is_dir() or any(str(rel).startswith(s) or s in rel.parts for s in ZIP_SKIP):
+            if p.is_dir() or _zip_skip(rel):
                 continue
-            zf.write(p, Path("hearthmoor") / rel)
+            arc = Path("hearthmoor") / rel
+            d = hashlib.sha1(p.read_bytes()).hexdigest()
+            if d in seen and p.stat().st_size > 4096:
+                zi = zipfile.ZipInfo(str(arc), date_time=(2026, 1, 1, 0, 0, 0))
+                zi.create_system = 3; zi.external_attr = (stat.S_IFLNK | 0o777) << 16
+                zf.writestr(zi, os.path.relpath(seen[d], arc.parent))
+                continue
+            seen.setdefault(d, arc)
+            zf.write(p, arc)
         for p in sorted((GAME / "areas" / "src").glob("*.json")):
             zf.write(p, Path("hearthmoor") / p.relative_to(GAME))
     print(f"zip: {z} ({z.stat().st_size / 1e6:.1f} MB)")
