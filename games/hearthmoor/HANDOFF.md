@@ -18,14 +18,15 @@ HD-2D cozy game (16-bit billboard actors in a lit 3D diorama). Live: unclebill-s
 - Rules: repo `AGENTS.md`, `CHANGELOG.md`
 
 ## Next action
-### RESUME HERE (2026-10-30)
-- Owner: HD-2D Cozy Builder. Live main: 4532c6e; rollback point: ca3ef0b.
-- Branch `hearthmoor-harness-1030` (from origin/main 4532c6e; pushed, NOT live): #11 harness work. Realm sub-smokes are smoke segments N-U (they used to run in every shard, so shards hit the 2400 s timeout); check-scene progress-polling ready wait + WebGL fail-fast (exit 3, check_all relaunches once) + check_all --jobs CPU cap (from harness-1028); Glenheart boss-bar check waits for the frame-driven bar redraw (BOSSBAR-TRACE log); Factions selected row keeps its faction edge (player-visible bug fix). Handoff: /workspace/.hm-logs/harness-1030/rule19-handoff.md.
-- NEXT: #2 Helheim, #3 Asgard, then #7, #8, #12, #10, #9, #5, #4, #6, with #13 store last. Vanaheim #1 runs with Art/Story in parallel. No housing.
-- Fun pass: n/a, test/harness only (except the player-visible bug fixes).
+### RESUME HERE (2026-10-30, 15:00 ET)
+- Owner: HD-2D Cozy Builder. Live main: 60a1347 (harness-1030, published 2026-10-30 ~14:10 ET). Previous live: 4532c6e (tag `hearthmoor-rollback-20261030`).
+- Rollback (no force): in a /tmp worktree off origin/main (never in /workspace/hd2d-suite, which is on checks-upgrade), `git revert --no-edit 4532c6e..60a1347 && git push origin HEAD:main`, then in /workspace/hd2d-suite `git fetch origin main:main` and `/workspace/tools/publish-game.sh hearthmoor`. A force-push back to 4532c6e only with Will's OK. Not `git revert HEAD` (that undoes just the last commit). Tag a rollback point before every publish.
+- Branch `hearthmoor-helheim-1030` (#2 Helheim): Rule 19 PASS with notes at 11b2e19 (EB report /workspace/qa-reports/hearthmoor-helheim-1030-bc3f9fb-20261030.md). Waiting on GD's OK to publish. Archive uses three small warm lanterns (GD call, BALANCE.md).
+- NEXT: publish Helheim on GD's OK; then the next harness batch: shard 1/4 checkpoint bug (C needs smoke_cp2 from B in another shard), shard 4/4 > 2400 s, game.js:872 drawPreviews drawImage before PICK.img loads (hero preview cards can freeze; guard with rAF retry), Pixel 7 keyboard-hint bar cut off on the right, ossuary2 title ellipsis, hearthmoor.zip size (75 MB). Then #3 Asgard, #7, #8, #12, #10, #9, #5, #4, #6, with #13 store last. Vanaheim #1 with Art/Story in parallel. No housing.
+- Fun pass: done for Helheim (Inkling lines, motes).
 - **Everything left to call Hearthmoor finished** (2026-10-28, from AGENTS.md, *_PROGRESS.md, STORY_SEEDS.md, staging story/art/sound):
   1. Vanaheim realm (Stage B, first playable ~Oct 31): game/vanaheim.js from staging vanaheim.md (paste-ready), Mother Nettlecrown, smoke_vanaheim.py; reuses areas vanaheim/rotwood/verdant, verdant.js, REALM_TEMPLATE. Needs a Vanaheim art pack (none in staging). L. Lead+Art+Story. GD call (Nettlecrown difficulty, vanaheim.md Q1-Q7).
-  2. [READY FOR RULE 19 QA 2026-10-30, branch hearthmoor-helheim-1030, handoff /workspace/.hm-logs/helheim-1030/rule19-handoff.md] music + REALM_OF + LICENSES, Inkling in PETS, fun pass, night brazier accents (hh_shore/hh_archive/ossuary2). smoke_helheim 29/29, check-scene all 5 areas PASS. Base is harness-1030 (also in QA, not on main). Needs GD OK on the night brazier look (Archive).
+  2. [RULE 19 PASS 2026-10-30 at 11b2e19, branch hearthmoor-helheim-1030; awaiting GD publish OK] music + REALM_OF + LICENSES, Inkling in PETS, fun pass, night warm accents (brazier in hh_shore and ossuary2, three small lanterns in hh_archive). smoke_helheim 29/29, check-scene all 5 areas PASS. Base is harness-1030 (live 60a1347).
   3. Asgard leftovers: guard sprite (as_guard/Fridleif), Ingrith sprite at Bifrost, G7 void tiles, Thunder-Rune school + Stormcaller proc (combat.js kinds, like Frostweave), Thunder Moot events beyond text. M. Lead+Art. GD call (new looks).
   4. Final Veyra arc + endings: finale.md (Frozen Rift, climbWaves, 4 endings) and rift_breaker.md (Breaker path, rb_eve switch, Veyra companion); neither is in game code yet; reuses redeemable/finaleWaves/Ember Witness. Niflheim's Join-Veyra stub hooks in here. L. Lead+Story+Art+Sound. GD call (ending, final boss).
   5. Mounts (goat from Jotunheim, lizard from Muspelheim; deferred, "needs mounts"). M. Lead+Art. GD call (new looks).
