@@ -478,17 +478,29 @@ def run(out, simscale=4, size=(960, 540), segs=SEGS):
                 ew = T.ev("(() => { const e = window.__hm.combat.enemies.find((x) => x.id === 'eve_wraith'); return e ? [e.a.role, e.D.name, e.D.shy || false] : null; })()")
                 T.read_all()
                 T.step("a cold-fire wraith slips out of the tear (not light-shy: it fights under the lanterns)", ew and ew[0] == "wraith" and not ew[2] and T.ev("window.__hm.intro.state().step") == "fight", wraith=ew)
-                hits = 0
-                for _ in range(40):
+                hits, hp_trace, t_end = 0, [], time.time() + 120
+                # swing until the wraith falls, facing it every swing (it drifts, and the old loop only re-faced after a walk), and
+                # pace on the game clock: each R waits for the swing to finish instead of a fixed 450 ms (slow SwiftShader frames)
+                while time.time() < t_end and hits < 120:
                     if not T.ev("window.__hm.intro.state().wraith"):
                         break
-                    w = T.ev("(() => { const e = window.__hm.combat.enemies.find((x) => x.id === 'eve_wraith'); return e ? [e.a.x, e.a.z] : null; })()")
+                    w = T.ev("(() => { const e = window.__hm.combat.enemies.find((x) => x.id === 'eve_wraith'); return e ? [e.a.x, e.a.z, e.hp] : null; })()")
+                    if not w:
+                        pg.wait_for_timeout(200); continue
+                    if not hp_trace or hp_trace[-1] != w[2]:
+                        hp_trace.append(w[2])
                     p0 = T.pos()
-                    if w and math.hypot(w[0] - p0[0], w[1] - p0[1]) > 1.1:
-                        T.walk(w[0], w[1] + 0.7, 30)
-                        T.ev(f"window.__hm.ctx.player.facing = 'up'")
-                    pg.keyboard.press("r"); pg.wait_for_timeout(450); hits += 1
-                T.step("the first fight happens under the lanterns: R attacks land and the wraith falls", not T.ev("window.__hm.intro.state().wraith"), swings=hits)
+                    if math.hypot(w[0] - p0[0], w[1] - p0[1]) > 1.1:
+                        T.walk(w[0], w[1] + 0.7, 30); p0 = T.pos()
+                    dx, dz = w[0] - p0[0], w[1] - p0[1]
+                    T.ev(f"window.__hm.ctx.player.facing = '{('left' if dx < 0 else 'right') if abs(dx) > abs(dz) else ('up' if dz < 0 else 'down')}'")
+                    pg.keyboard.press("r"); hits += 1
+                    try:
+                        pg.wait_for_function("(() => { const p = window.__hm.ctx.player; return !(p.act && p.act.name === 'attack'); })()", timeout=3000, polling=50)
+                    except Exception:  # noqa: BLE001
+                        pass
+                    pg.wait_for_timeout(120)
+                T.step("the first fight happens under the lanterns: R attacks land and the wraith falls", not T.ev("window.__hm.intro.state().wraith") and len(hp_trace) >= 2, swings=hits, hp=hp_trace[:12])
                 for _ in range(40):
                     if not T.ev("window.__hm.intro.active"):
                         break
