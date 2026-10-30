@@ -190,3 +190,7 @@ body::after { content: url(../art/ui/pulse/highlight_f0.png) url(../art/ui/pulse
 /* phones (portrait, and short landscape where the buttons sit in a row along the top): the area-name chip stays one 12 px line
    so it never runs into the bag / clock / log chips (check-scene layout; ossuary2's long name hit btnLog at 844x390) */
 @media (max-width: 640px), (max-height: 460px) { #hud .title { font: 400 12px/1.1 var(--bd); padding: 4px 8px; white-space: nowrap; max-width: 44vw; overflow: hidden; text-overflow: ellipsis; } }
+/* Factions tab: the selected-row highlight above sets `border: 2px solid transparent` + a filled border-image, which hid the
+   faction's signature left edge on the selected row (row 0 = the Hearth when the tab opens). Redraw the edge on ::after, above the frame. */
+#heroBody .row.fac.sel { border-left-color: var(--fc); }
+#heroBody .row.fac.sel::after { content: ""; position: absolute; left: 0; top: 0; bottom: 0; width: 6px; background: var(--fc); pointer-events: none; }
