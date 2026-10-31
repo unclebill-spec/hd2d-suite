@@ -532,14 +532,16 @@ export class Asgard {
         if (this.cb[kt + 'a'] || this.cb[kt + 'b'] || this.cb[kt + 's']) return this.look(kt + '_busy', 'The rune-pillar', ['The guards are already on you.']);
         this.look(kt, 'The rune-pillar', ['(A rune-pillar crackling neon-blue. Two guards and a storm sentinel stand by it. They look up.)'], () => {
           let left = 3;
-          const dead = () => { if (--left > 0) return; this.find(kt); ['a', 'b', 's'].forEach((t) => delete this.cb[kt + t]); G.toast(`Rune-pillar ${i + 1} broken.`, 2.4); mark(G); };
+          const c = this.ctx, pop = (e) => { if (e && e.a && c) this.fxAt(c, 'rune_sparkles', e.a.x, e.a.y, e.a.z, { duration: 0.9, fadeIn: 0 }); };   // [ASGARD fun pass 2026-10-31] juice only: Art's thunder_rune fx
+          const dead = (e) => { pop(e); if (--left > 0) return; if (c) { const y = c.heightAt(x, z); this.fxAt(c, 'chain_rune', x, y, z, { duration: 1.0, fadeIn: 0 }); this.fxAt(c, 'impact_flash', x, y, z + 0.05, { duration: 0.6, fadeIn: 0 }); }
+            this.find(kt); ['a', 'b', 's'].forEach((t) => delete this.cb[kt + t]); G.toast(`Rune-pillar ${i + 1} broken.`, 2.4); mark(G); };
           this.foe({ id: kt + 'a', role: 'as_guard', pos: [x - 1.6, z - 1.4] }, dead); this.foe({ id: kt + 'b', role: 'as_guard', pos: [x + 1.6, z - 1.4] }, dead); this.foe({ id: kt + 's', role: 'storm_sentinel', pos: [x, z - 2.6] }, dead);
         });
       } });
     });
     this.spot({ id: 'tt_captain', pos: [0.0, 1.6], r: 2.0, label: "Captain Fridleif's post (E / A)", show: () => q(S, 'as_take') === 1 && found(S, 'tt_p1', 'tt_p2', 'tt_p3') >= 3 && !f.tt_fridleif && !this.cb.fridleif_boss, act: () => this.captain() });
     this.spot({ id: 'sw_feather', pos: FEATHER, r: 1.5, label: 'a gold feather on the roof edge (E / A)', show: () => q(S, 'as_sigrun') === 1 && !got('sw_feather'), act: () => this.look('sw_feather', 'A gold feather', ['(Caught on the roof edge, a feather of gold light, dim as a coal.)'], () => { this.find('sw_feather'); G.toast('Gold feather 1/3', 2.0); this.swCheck(); }) });
-    this.spot({ id: 'sw_raven', pos: RAVEN, r: 1.6, label: "whistle for Sigrun's raven (E / A)", show: () => q(S, 'as_sigrun') === 1 && !got('sw_raven'), act: () => this.look('sw_raven', "Sigrun's raven", ['(You whistle. Out over the Skyfield something dark turns, circles twice, and lands on your arm, heavier than it looks.)'], () => { this.find('sw_raven'); G.toast("Sigrun's raven 2/3", 2.0); this.swCheck(); }) });
+    this.spot({ id: 'sw_raven', pos: RAVEN, r: 1.6, label: "whistle for Sigrun's raven (E / A)", show: () => q(S, 'as_sigrun') === 1 && !got('sw_raven'), act: () => this.look('sw_raven', "Sigrun's raven", ['(You whistle. Out over the Skyfield something dark turns, circles twice, and lands on your arm, heavier than it looks.)'], () => { this.find('sw_raven'); if (this.ctx) this.fxAt(this.ctx, 'spirit_raven', RAVEN[0], this.ctx.heightAt(RAVEN[0], RAVEN[1]), RAVEN[1], { duration: 2.4 });   /* [ASGARD fun pass] Art's spirit_raven */ G.toast("Sigrun's raven 2/3", 2.0); this.swCheck(); }) });
     this.spot({ id: 'ah_horse', pos: HORSE, r: 1.8, label: () => (q(S, 'as_horse') === 2 ? 'the wild sky-horse: ride a lap (E / A)' : 'the wild sky-horse (E / A)'), show: () => q(S, 'as_horse') >= 1 && q(S, 'as_horse') < 3, act: () => this.horse() });
   }
   pillarStorm(i) {   // sw_storm: in a thunderstorm lightning re-lights her wings; in clear weather you ring all three pillars yourself
