@@ -13,7 +13,7 @@ NEON: the pack puts neon only in gamefx and the kit glow material (README "Neon"
 
 usage: python3 tools/hearthmoor/asg_art.py [--force] [area ...]      (then: cd games/hearthmoor && python3 -c "import build; build.write_pwa()")
 """
-import json, shutil, sys
+import json, os, shutil, sys
 from pathlib import Path
 from PIL import Image
 
@@ -24,6 +24,9 @@ ST = GAME / "art" / "asgard"
 # the G7 void kit (void_floor / void_rim / void_shard) and a superset as_fx atlas (+ void_motes / void_pool / void_shade). Copied to art/asgard_extra/ (add / overwrite only).
 STAGING_X = Path("/workspace/hearthmoor-staging/art/asgard_extra")
 STX = GAME / "art" / "asgard_extra"
+# [ASGARD NPCS 2026-10-31] final NPC pack (README there): guard-only cut an_guard (Ingrith rows left out), thunder_rune + spirit_raven fx. Committed in-repo, not re-copied from staging.
+STN = GAME / "art" / "asgard_npcs"
+NPC_FX = [STN / "gamefx" / "thunder_rune.json", STN / "gamefx" / "spirit_raven.json"]   # appended after the as_fx rows (48 px cells)
 ARGS = [a for a in sys.argv[1:] if not a.startswith("--")]
 FORCE = "--force" in sys.argv
 PLANNED = ["asgard", "gs_hall", "gs_temple", "reliquary", "reliquary2"]   # story 2.1; the Reliquary is two corridors (like frozenspire / frozenspire2), see ASGARD_PROGRESS.md
@@ -43,6 +46,7 @@ SHEETS = {  # sheet name -> (staging json, {area role: staging role}); every are
     "asenemy": (ST / "sprite" / "as_enemies.json", {r: r for r in FOES}),
     "assigrun": (ST / "sprite" / "as_sigrun.json", {"sigrun": "sigrun"}),
     "axfolk": (STX / "sprite" / "ax_folk.json", {"as_guard": "as_guard", "ingrith": "ingrith"}),   # extra: the Goldspire guards (the Thunder Toll foes) + Envoy Ingrith
+    "anguard": (STN / "sprite" / "an_guard.json", {"as_guard": "as_guard"}),   # [ASGARD NPCS 2026-10-31] final GD-approved guard REPLACES axfolk's as_guard (later sheet wins); Ingrith NOT installed (fix pending)
     "axcent": (STX / "sprite" / "ax_centaur.json", {"storm_centaur": "storm_centaur"}),   # extra: REPLACES asenemy's storm_centaur (later sheet wins)   # the companion (no pet in this realm); wings are the fx sigrun_wings (README decision 2)
 }
 IMAGE = {}   # sheet -> staging png when it is not the json's own image
@@ -92,7 +96,7 @@ def have(p):
 
 def copy_staging():
     """Copy the staging pack into art/asgard/ (add / overwrite only)."""
-    if not STAGING.exists():
+    if not STAGING.exists() or os.environ.get("HM_ASG_NO_STAGING"):   # [ASGARD NPCS 2026-10-31] skip: staging may hold Art's in-progress Ingrith regen; install only what is committed
         return False
     ST.mkdir(parents=True, exist_ok=True)
     shutil.copytree(STAGING, ST, dirs_exist_ok=True)
@@ -163,8 +167,19 @@ def gamefx(area):
     strip = Image.new("RGBA", (pim.width, c * len(mk)), (0, 0, 0, 0))
     for i, (_, e) in enumerate(mk):
         strip.paste(pim.crop((0, e["row"] * c, pim.width, (e["row"] + 1) * c)), (0, i * c))
-    im = Image.new("RGBA", (max(bi.width, si.width, strip.width), bi.height + si.height + strip.height), (0, 0, 0, 0))
-    im.paste(bi, (0, 0)); im.paste(si, (0, bi.height)); im.paste(strip, (0, bi.height + si.height)); im.save(d / "gamefx.png")
+    nx = [(json.loads(j.read_text()), j) for j in NPC_FX if j.exists()]
+    nxi = [Image.open(j.parent / nj["image"]).convert("RGBA") for nj, j in nx]
+    for nj, _ in nx: assert nj["cell"] == base["cell"], "npc fx cell size mismatch"
+    nh = sum(i.height for i in nxi)
+    im = Image.new("RGBA", (max([bi.width, si.width, strip.width] + [i.width for i in nxi]), bi.height + si.height + strip.height + nh), (0, 0, 0, 0))
+    im.paste(bi, (0, 0)); im.paste(si, (0, bi.height)); im.paste(strip, (0, bi.height + si.height))
+    y = bi.height + si.height + strip.height
+    for (nj, _), ni in zip(nx, nxi):
+        for k, e in nj["effects"].items():
+            if k in sj["effects"]: continue   # the realm pack's own row wins on a name clash
+            base["effects"][k] = {**{kk: vv for kk, vv in e.items() if kk not in ("frame_list", "strip")}, "row": e["row"] + y // base["cell"]}
+        im.paste(ni, (0, y)); y += ni.height
+    im.save(d / "gamefx.png")
     off = bi.height // base["cell"]
     for i, (k, e) in enumerate(mk):
         base["effects"][k] = {**{kk: vv for kk, vv in e.items() if kk != "frame_list"}, "row": off + si.height // c + i}

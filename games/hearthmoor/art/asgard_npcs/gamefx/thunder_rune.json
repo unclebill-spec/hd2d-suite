@@ -1,0 +1,756 @@
+{
+ "tool": "Hearthmoor Art gen_thunder_rune.py (procedural PIL, CPU)",
+ "biome": "cozy-village",
+ "status": "GD-approved 2026-10-30 (Asgard art)",
+ "seed": 7,
+ "image": "thunder_rune.png",
+ "cell": 48,
+ "size": [
+  384,
+  480
+ ],
+ "cast_sets": {
+  "rune_spear": [
+   "rune_glyph_pulse",
+   "rune_spear",
+   "impact_flash"
+  ],
+  "sky_lance": [
+   "sky_lance_mark",
+   "sky_lance_bolt",
+   "impact_flash"
+  ],
+  "rune_ward": [
+   "rune_glyph_pulse",
+   "rune_ward"
+  ],
+  "chain_rune": [
+   "rune_glyph_pulse",
+   "chain_rune",
+   "impact_flash"
+  ]
+ },
+ "cycle": [],
+ "effects": {
+  "rune_spear": {
+   "row": 0,
+   "frames": 6,
+   "fps": 14,
+   "loop": true,
+   "loop_from": 0,
+   "loops": 1,
+   "kind": "projectile",
+   "pivot": [
+    24,
+    24
+   ],
+   "lift": 1.0,
+   "glow": true,
+   "light": {
+    "color": "#2ab4ff",
+    "intensity": 1.0,
+    "range": 3.0
+   },
+   "speed": 9.0,
+   "travel": null,
+   "then": "impact_flash",
+   "duration": 9999,
+   "strip": "strips/rune_spear.png",
+   "frame_list": [
+    {
+     "x": 0,
+     "y": 0,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 48,
+     "y": 0,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 96,
+     "y": 0,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 144,
+     "y": 0,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 192,
+     "y": 0,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 240,
+     "y": 0,
+     "w": 48,
+     "h": 48
+    }
+   ],
+   "notes": "Rune Spear (tier I): neon-blue rune spear flying right, pierces; flip for left"
+  },
+  "sky_lance_mark": {
+   "row": 1,
+   "frames": 8,
+   "fps": 8,
+   "loop": false,
+   "loop_from": 0,
+   "loops": 1,
+   "kind": "decal",
+   "pivot": [
+    24,
+    24
+   ],
+   "lift": 0.03,
+   "glow": true,
+   "light": null,
+   "speed": null,
+   "travel": null,
+   "then": null,
+   "duration": 1.0,
+   "strip": "strips/sky_lance_mark.png",
+   "frame_list": [
+    {
+     "x": 0,
+     "y": 48,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 48,
+     "y": 48,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 96,
+     "y": 48,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 144,
+     "y": 48,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 192,
+     "y": 48,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 240,
+     "y": 48,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 288,
+     "y": 48,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 336,
+     "y": 48,
+     "w": 48,
+     "h": 48
+    }
+   ],
+   "notes": "Sky Lance (tier I) telegraph: violet ring closes on the marked spot over 1 s"
+  },
+  "sky_lance_bolt": {
+   "row": 2,
+   "frames": 8,
+   "fps": 14,
+   "loop": false,
+   "loop_from": 0,
+   "loops": 1,
+   "kind": "billboard",
+   "pivot": [
+    24,
+    47
+   ],
+   "lift": 0.0,
+   "glow": true,
+   "light": {
+    "color": "#a6ecff",
+    "intensity": 2.0,
+    "range": 5.0
+   },
+   "speed": null,
+   "travel": null,
+   "then": "impact_flash",
+   "duration": 0.571,
+   "strip": "strips/sky_lance_bolt.png",
+   "frame_list": [
+    {
+     "x": 0,
+     "y": 96,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 48,
+     "y": 96,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 96,
+     "y": 96,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 144,
+     "y": 96,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 192,
+     "y": 96,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 240,
+     "y": 96,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 288,
+     "y": 96,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 336,
+     "y": 96,
+     "w": 48,
+     "h": 48
+    }
+   ],
+   "notes": "Sky Lance strike (pivot = ground): white pop, 4-frame bolt flicker, ground ring + sparks"
+  },
+  "rune_ward": {
+   "row": 3,
+   "frames": 8,
+   "fps": 8,
+   "loop": true,
+   "loop_from": 0,
+   "loops": 1,
+   "kind": "decal",
+   "pivot": [
+    24,
+    24
+   ],
+   "lift": 0.03,
+   "glow": true,
+   "light": {
+    "color": "#a45cf0",
+    "intensity": 0.8,
+    "range": 4.0
+   },
+   "speed": null,
+   "travel": null,
+   "then": null,
+   "duration": 6.0,
+   "strip": "strips/rune_ward.png",
+   "frame_list": [
+    {
+     "x": 0,
+     "y": 144,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 48,
+     "y": 144,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 96,
+     "y": 144,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 144,
+     "y": 144,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 192,
+     "y": 144,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 240,
+     "y": 144,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 288,
+     "y": 144,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 336,
+     "y": 144,
+     "w": 48,
+     "h": 48
+    }
+   ],
+   "notes": "Rune Ward (tier II): gold rune circle (-30% dmg inside, 6 s), violet inner glow flicker; scale to ward radius"
+  },
+  "chain_rune": {
+   "row": 4,
+   "frames": 8,
+   "fps": 14,
+   "loop": false,
+   "loop_from": 0,
+   "loops": 1,
+   "kind": "billboard",
+   "pivot": [
+    24,
+    40
+   ],
+   "lift": 1.0,
+   "glow": true,
+   "light": {
+    "color": "#d4a8ff",
+    "intensity": 1.6,
+    "range": 3.0
+   },
+   "speed": null,
+   "travel": null,
+   "then": null,
+   "duration": 0.571,
+   "strip": "strips/chain_rune.png",
+   "frame_list": [
+    {
+     "x": 0,
+     "y": 192,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 48,
+     "y": 192,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 96,
+     "y": 192,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 144,
+     "y": 192,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 192,
+     "y": 192,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 240,
+     "y": 192,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 288,
+     "y": 192,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 336,
+     "y": 192,
+     "w": 48,
+     "h": 48
+    }
+   ],
+   "notes": "Chain Rune (tier II): rune mark + violet bolt on each foe it jumps to (play on 1+3 foes, 0.12 s apart). Reuses fx-library hm lightning_violet"
+  },
+  "rune_glyph_pulse": {
+   "row": 5,
+   "frames": 8,
+   "fps": 10,
+   "loop": true,
+   "loop_from": 0,
+   "loops": 1,
+   "kind": "billboard",
+   "pivot": [
+    24,
+    27
+   ],
+   "lift": 1.4,
+   "glow": true,
+   "light": {
+    "color": "#2ab4ff",
+    "intensity": 0.7,
+    "range": 2.5
+   },
+   "speed": null,
+   "travel": null,
+   "then": null,
+   "duration": 9999,
+   "strip": "strips/rune_glyph_pulse.png",
+   "frame_list": [
+    {
+     "x": 0,
+     "y": 240,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 48,
+     "y": 240,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 96,
+     "y": 240,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 144,
+     "y": 240,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 192,
+     "y": 240,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 240,
+     "y": 240,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 288,
+     "y": 240,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 336,
+     "y": 240,
+     "w": 48,
+     "h": 48
+    }
+   ],
+   "notes": "rune glyph pulse: cast tell over the caster's hand, Alrik's forge runes, rune locks"
+  },
+  "rune_sparkles": {
+   "row": 6,
+   "frames": 8,
+   "fps": 12,
+   "loop": true,
+   "loop_from": 0,
+   "loops": 1,
+   "kind": "billboard",
+   "pivot": [
+    24,
+    24
+   ],
+   "lift": 1.0,
+   "glow": true,
+   "light": null,
+   "speed": null,
+   "travel": null,
+   "then": null,
+   "duration": 9999,
+   "strip": "strips/rune_sparkles.png",
+   "frame_list": [
+    {
+     "x": 0,
+     "y": 288,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 48,
+     "y": 288,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 96,
+     "y": 288,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 144,
+     "y": 288,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 192,
+     "y": 288,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 240,
+     "y": 288,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 288,
+     "y": 288,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 336,
+     "y": 288,
+     "w": 48,
+     "h": 48
+    }
+   ],
+   "notes": "blue + violet sparkles with a gold twinkle (school pickups, scroll, spell learned). Reuses hm sparkle_blue/violet"
+  },
+  "impact_flash": {
+   "row": 7,
+   "frames": 6,
+   "fps": 20,
+   "loop": false,
+   "loop_from": 0,
+   "loops": 1,
+   "kind": "billboard",
+   "pivot": [
+    24,
+    24
+   ],
+   "lift": 1.0,
+   "glow": true,
+   "light": {
+    "color": "#a6ecff",
+    "intensity": 1.8,
+    "range": 3.0
+   },
+   "speed": null,
+   "travel": null,
+   "then": null,
+   "duration": 0.3,
+   "strip": "strips/impact_flash.png",
+   "frame_list": [
+    {
+     "x": 0,
+     "y": 336,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 48,
+     "y": 336,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 96,
+     "y": 336,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 144,
+     "y": 336,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 192,
+     "y": 336,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 240,
+     "y": 336,
+     "w": 48,
+     "h": 48
+    }
+   ],
+   "notes": "thunder hit flash: 1 white frame, then hm hit_flash_blue core + violet shock ring + rune shards"
+  },
+  "rune_aura_blue": {
+   "row": 8,
+   "frames": 8,
+   "fps": 8,
+   "loop": true,
+   "loop_from": 0,
+   "loops": 1,
+   "kind": "decal",
+   "pivot": [
+    24,
+    40
+   ],
+   "lift": 0.02,
+   "glow": true,
+   "light": null,
+   "speed": null,
+   "travel": null,
+   "then": null,
+   "duration": 9999,
+   "strip": "strips/rune_aura_blue.png",
+   "frame_list": [
+    {
+     "x": 0,
+     "y": 384,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 48,
+     "y": 384,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 96,
+     "y": 384,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 144,
+     "y": 384,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 192,
+     "y": 384,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 240,
+     "y": 384,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 288,
+     "y": 384,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 336,
+     "y": 384,
+     "w": 48,
+     "h": 48
+    }
+   ],
+   "notes": "as_guard ground glow (neon blue flicker + motes); sprite stays palette-only"
+  },
+  "rune_aura_violet": {
+   "row": 9,
+   "frames": 8,
+   "fps": 8,
+   "loop": true,
+   "loop_from": 0,
+   "loops": 1,
+   "kind": "decal",
+   "pivot": [
+    24,
+    40
+   ],
+   "lift": 0.02,
+   "glow": true,
+   "light": null,
+   "speed": null,
+   "travel": null,
+   "then": null,
+   "duration": 9999,
+   "strip": "strips/rune_aura_violet.png",
+   "frame_list": [
+    {
+     "x": 0,
+     "y": 432,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 48,
+     "y": 432,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 96,
+     "y": 432,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 144,
+     "y": 432,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 192,
+     "y": 432,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 240,
+     "y": 432,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 288,
+     "y": 432,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 336,
+     "y": 432,
+     "w": 48,
+     "h": 48
+    }
+   ],
+   "notes": "Ingrith ground glow (neon violet flicker + motes)"
+  }
+ }
+}

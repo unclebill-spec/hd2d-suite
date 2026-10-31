@@ -1,0 +1,12 @@
+  FAIL rune_spear  frames= 6 colours= 7  (628 issues: rune_spear_0: colour #a45cf0 not in cozy-village)
+  FAIL sky_lance_mark frames= 8 colours= 6  (1178 issues: sky_lance_mark_0: colour #d4a8ff not in cozy-village)
+  FAIL sky_lance_bolt frames= 8 colours= 5  (544 issues: sky_lance_bolt_1: colour #2ab4ff not in cozy-village)
+  FAIL rune_ward   frames= 8 colours= 5  (460 issues: rune_ward_0: colour #a45cf0 not in cozy-village)
+  FAIL chain_rune  frames= 8 colours= 7  (736 issues: chain_rune_0: colour #6a34b8 not in cozy-village)
+  FAIL rune_glyph_pulse frames= 8 colours= 7  (834 issues: rune_glyph_pulse_0: colour #6a34b8 not in cozy-village)
+  FAIL rune_sparkles frames= 8 colours= 8  (354 issues: rune_sparkles_0: colour #6a34b8 not in cozy-village)
+  FAIL impact_flash frames= 6 colours= 6  (1054 issues: impact_flash_0: colour #1c62d8 not in cozy-village)
+  FAIL rune_aura_blue frames= 8 colours= 4  (831 issues: rune_aura_blue_0: colour #a6ecff not in cozy-village)
+  FAIL rune_aura_violet frames= 8 colours= 4  (831 issues: rune_aura_violet_0: colour #d4a8ff not in cozy-village)
+check-sprite: FAIL (7450 failures, 0 semi-transparent px)
+ 

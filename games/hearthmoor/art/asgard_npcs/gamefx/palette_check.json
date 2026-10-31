@@ -1,0 +1,20 @@
+{
+ "atlas": "gamefx/thunder_rune.png",
+ "alpha_values": [
+  0,
+  255
+ ],
+ "colours": [
+  "#1c62d8",
+  "#2a1e1c",
+  "#2ab4ff",
+  "#6a34b8",
+  "#a45cf0",
+  "#a6ecff",
+  "#d4a8ff",
+  "#f2c24a",
+  "#ffb24a",
+  "#fff8e6"
+ ],
+ "repo_check_palette": "palette: 0 failing (tests/check_palette.py --extra)"
+}

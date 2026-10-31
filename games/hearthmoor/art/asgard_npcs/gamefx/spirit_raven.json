@@ -1,0 +1,85 @@
+{
+ "tool": "Hearthmoor Art recolour of asgard/gamefx/strips/raven_guard.png",
+ "status": "CANDIDATE",
+ "cell": 48,
+ "image": "spirit_raven.png",
+ "size": [
+  384,
+  48
+ ],
+ "filter": "nearest",
+ "effects": {
+  "spirit_raven": {
+   "row": 0,
+   "frames": 8,
+   "fps": 8,
+   "loop": true,
+   "loop_from": 0,
+   "loops": 1,
+   "kind": "billboard",
+   "pivot": [
+    24,
+    24
+   ],
+   "lift": 1.0,
+   "glow": true,
+   "light": null,
+   "speed": null,
+   "travel": null,
+   "then": null,
+   "duration": 9999,
+   "strip": "spirit_raven.png",
+   "frame_list": [
+    {
+     "x": 0,
+     "y": 0,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 48,
+     "y": 0,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 96,
+     "y": 0,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 144,
+     "y": 0,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 192,
+     "y": 0,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 240,
+     "y": 0,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 288,
+     "y": 0,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 336,
+     "y": 0,
+     "w": 48,
+     "h": 48
+    }
+   ],
+   "notes": "Spirit Raven (Thunder-Rune \u00a79.2): Sigrun raven_guard reused, ravens tinted warm grey #9c8e7a -> neon violet #a45cf0; blue ring unchanged"
+  }
+ }
+}

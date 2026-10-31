@@ -1,0 +1,583 @@
+{
+ "tool": "hd2d boss_sheet (niflheim big frames)",
+ "biome": "cozy-village",
+ "frame": [
+  40,
+  44
+ ],
+ "pivot": [
+  20,
+  44
+ ],
+ "ground_row": 43,
+ "facings": [
+  "down",
+  "up",
+  "left",
+  "right"
+ ],
+ "anims": {
+  "idle": {
+   "start": 0,
+   "count": 4,
+   "fps": 3,
+   "loop": [
+    0,
+    1,
+    2,
+    1
+   ],
+   "blink": 3
+  },
+  "walk": {
+   "start": 4,
+   "count": 4,
+   "fps": 8
+  },
+  "cast": {
+   "start": 8,
+   "count": 4,
+   "fps": 6,
+   "loop": [
+    0,
+    1,
+    2,
+    2,
+    3,
+    3
+   ],
+   "casters_only": true
+  },
+  "attack": {
+   "start": 12,
+   "count": 4,
+   "fps": 10,
+   "loop": [
+    0,
+    1,
+    2,
+    2,
+    3
+   ],
+   "heroes_only": true
+  },
+  "defend": {
+   "start": 16,
+   "count": 4,
+   "fps": 6,
+   "loop": [
+    0,
+    1
+   ],
+   "hold": [
+    2,
+    3
+   ],
+   "heroes_only": true
+  },
+  "jump": {
+   "start": 20,
+   "count": 4,
+   "fps": 8,
+   "phases": [
+    "crouch",
+    "launch",
+    "airborne",
+    "land"
+   ],
+   "heroes_only": true
+  },
+  "die": {
+   "start": 24,
+   "count": 4,
+   "fps": 6,
+   "once": true,
+   "enemies_only": true
+  }
+ },
+ "cols": 12,
+ "image": "an_guard.png",
+ "size": [
+  480,
+  176
+ ],
+ "roles": {
+  "as_guard": {
+   "row": 0,
+   "kind": "human",
+   "scale": 1.0,
+   "desc": "Goldspire guard (1x NPC/foe as_guard): navy tunic, dark jerkin under a dark tabard with gold trim + sky rune, black belt, grey-slate trousers, dark boots, navy cap with gold rim, spear. No plate. Pair fx thunder_rune:rune_aura_blue.",
+   "anims": [
+    "idle",
+    "walk"
+   ],
+   "size_bounds": [
+    [
+     10,
+     38
+    ],
+    [
+     8,
+     44
+    ]
+   ],
+   "caster": false,
+   "frames": [
+    {
+     "name": "as_guard_down_idle0",
+     "facing": "down",
+     "anim": "idle",
+     "i": 0,
+     "x": 0,
+     "y": 0,
+     "w": 40,
+     "h": 44,
+     "pivot": [
+      20,
+      44
+     ]
+    },
+    {
+     "name": "as_guard_down_idle1",
+     "facing": "down",
+     "anim": "idle",
+     "i": 1,
+     "x": 40,
+     "y": 0,
+     "w": 40,
+     "h": 44,
+     "pivot": [
+      60,
+      44
+     ]
+    },
+    {
+     "name": "as_guard_down_idle2",
+     "facing": "down",
+     "anim": "idle",
+     "i": 2,
+     "x": 80,
+     "y": 0,
+     "w": 40,
+     "h": 44,
+     "pivot": [
+      100,
+      44
+     ]
+    },
+    {
+     "name": "as_guard_down_idle3",
+     "facing": "down",
+     "anim": "idle",
+     "i": 3,
+     "x": 120,
+     "y": 0,
+     "w": 40,
+     "h": 44,
+     "pivot": [
+      140,
+      44
+     ]
+    },
+    {
+     "name": "as_guard_down_walk0",
+     "facing": "down",
+     "anim": "walk",
+     "i": 0,
+     "x": 160,
+     "y": 0,
+     "w": 40,
+     "h": 44,
+     "pivot": [
+      180,
+      44
+     ]
+    },
+    {
+     "name": "as_guard_down_walk1",
+     "facing": "down",
+     "anim": "walk",
+     "i": 1,
+     "x": 200,
+     "y": 0,
+     "w": 40,
+     "h": 44,
+     "pivot": [
+      220,
+      44
+     ]
+    },
+    {
+     "name": "as_guard_down_walk2",
+     "facing": "down",
+     "anim": "walk",
+     "i": 2,
+     "x": 240,
+     "y": 0,
+     "w": 40,
+     "h": 44,
+     "pivot": [
+      260,
+      44
+     ]
+    },
+    {
+     "name": "as_guard_down_walk3",
+     "facing": "down",
+     "anim": "walk",
+     "i": 3,
+     "x": 280,
+     "y": 0,
+     "w": 40,
+     "h": 44,
+     "pivot": [
+      300,
+      44
+     ]
+    },
+    {
+     "name": "as_guard_up_idle0",
+     "facing": "up",
+     "anim": "idle",
+     "i": 0,
+     "x": 0,
+     "y": 44,
+     "w": 40,
+     "h": 44,
+     "pivot": [
+      20,
+      88
+     ]
+    },
+    {
+     "name": "as_guard_up_idle1",
+     "facing": "up",
+     "anim": "idle",
+     "i": 1,
+     "x": 40,
+     "y": 44,
+     "w": 40,
+     "h": 44,
+     "pivot": [
+      60,
+      88
+     ]
+    },
+    {
+     "name": "as_guard_up_idle2",
+     "facing": "up",
+     "anim": "idle",
+     "i": 2,
+     "x": 80,
+     "y": 44,
+     "w": 40,
+     "h": 44,
+     "pivot": [
+      100,
+      88
+     ]
+    },
+    {
+     "name": "as_guard_up_idle3",
+     "facing": "up",
+     "anim": "idle",
+     "i": 3,
+     "x": 120,
+     "y": 44,
+     "w": 40,
+     "h": 44,
+     "pivot": [
+      140,
+      88
+     ]
+    },
+    {
+     "name": "as_guard_up_walk0",
+     "facing": "up",
+     "anim": "walk",
+     "i": 0,
+     "x": 160,
+     "y": 44,
+     "w": 40,
+     "h": 44,
+     "pivot": [
+      180,
+      88
+     ]
+    },
+    {
+     "name": "as_guard_up_walk1",
+     "facing": "up",
+     "anim": "walk",
+     "i": 1,
+     "x": 200,
+     "y": 44,
+     "w": 40,
+     "h": 44,
+     "pivot": [
+      220,
+      88
+     ]
+    },
+    {
+     "name": "as_guard_up_walk2",
+     "facing": "up",
+     "anim": "walk",
+     "i": 2,
+     "x": 240,
+     "y": 44,
+     "w": 40,
+     "h": 44,
+     "pivot": [
+      260,
+      88
+     ]
+    },
+    {
+     "name": "as_guard_up_walk3",
+     "facing": "up",
+     "anim": "walk",
+     "i": 3,
+     "x": 280,
+     "y": 44,
+     "w": 40,
+     "h": 44,
+     "pivot": [
+      300,
+      88
+     ]
+    },
+    {
+     "name": "as_guard_left_idle0",
+     "facing": "left",
+     "anim": "idle",
+     "i": 0,
+     "x": 0,
+     "y": 88,
+     "w": 40,
+     "h": 44,
+     "pivot": [
+      20,
+      132
+     ]
+    },
+    {
+     "name": "as_guard_left_idle1",
+     "facing": "left",
+     "anim": "idle",
+     "i": 1,
+     "x": 40,
+     "y": 88,
+     "w": 40,
+     "h": 44,
+     "pivot": [
+      60,
+      132
+     ]
+    },
+    {
+     "name": "as_guard_left_idle2",
+     "facing": "left",
+     "anim": "idle",
+     "i": 2,
+     "x": 80,
+     "y": 88,
+     "w": 40,
+     "h": 44,
+     "pivot": [
+      100,
+      132
+     ]
+    },
+    {
+     "name": "as_guard_left_idle3",
+     "facing": "left",
+     "anim": "idle",
+     "i": 3,
+     "x": 120,
+     "y": 88,
+     "w": 40,
+     "h": 44,
+     "pivot": [
+      140,
+      132
+     ]
+    },
+    {
+     "name": "as_guard_left_walk0",
+     "facing": "left",
+     "anim": "walk",
+     "i": 0,
+     "x": 160,
+     "y": 88,
+     "w": 40,
+     "h": 44,
+     "pivot": [
+      180,
+      132
+     ]
+    },
+    {
+     "name": "as_guard_left_walk1",
+     "facing": "left",
+     "anim": "walk",
+     "i": 1,
+     "x": 200,
+     "y": 88,
+     "w": 40,
+     "h": 44,
+     "pivot": [
+      220,
+      132
+     ]
+    },
+    {
+     "name": "as_guard_left_walk2",
+     "facing": "left",
+     "anim": "walk",
+     "i": 2,
+     "x": 240,
+     "y": 88,
+     "w": 40,
+     "h": 44,
+     "pivot": [
+      260,
+      132
+     ]
+    },
+    {
+     "name": "as_guard_left_walk3",
+     "facing": "left",
+     "anim": "walk",
+     "i": 3,
+     "x": 280,
+     "y": 88,
+     "w": 40,
+     "h": 44,
+     "pivot": [
+      300,
+      132
+     ]
+    },
+    {
+     "name": "as_guard_right_idle0",
+     "facing": "right",
+     "anim": "idle",
+     "i": 0,
+     "x": 0,
+     "y": 132,
+     "w": 40,
+     "h": 44,
+     "pivot": [
+      20,
+      176
+     ]
+    },
+    {
+     "name": "as_guard_right_idle1",
+     "facing": "right",
+     "anim": "idle",
+     "i": 1,
+     "x": 40,
+     "y": 132,
+     "w": 40,
+     "h": 44,
+     "pivot": [
+      60,
+      176
+     ]
+    },
+    {
+     "name": "as_guard_right_idle2",
+     "facing": "right",
+     "anim": "idle",
+     "i": 2,
+     "x": 80,
+     "y": 132,
+     "w": 40,
+     "h": 44,
+     "pivot": [
+      100,
+      176
+     ]
+    },
+    {
+     "name": "as_guard_right_idle3",
+     "facing": "right",
+     "anim": "idle",
+     "i": 3,
+     "x": 120,
+     "y": 132,
+     "w": 40,
+     "h": 44,
+     "pivot": [
+      140,
+      176
+     ]
+    },
+    {
+     "name": "as_guard_right_walk0",
+     "facing": "right",
+     "anim": "walk",
+     "i": 0,
+     "x": 160,
+     "y": 132,
+     "w": 40,
+     "h": 44,
+     "pivot": [
+      180,
+      176
+     ]
+    },
+    {
+     "name": "as_guard_right_walk1",
+     "facing": "right",
+     "anim": "walk",
+     "i": 1,
+     "x": 200,
+     "y": 132,
+     "w": 40,
+     "h": 44,
+     "pivot": [
+      220,
+      176
+     ]
+    },
+    {
+     "name": "as_guard_right_walk2",
+     "facing": "right",
+     "anim": "walk",
+     "i": 2,
+     "x": 240,
+     "y": 132,
+     "w": 40,
+     "h": 44,
+     "pivot": [
+      260,
+      176
+     ]
+    },
+    {
+     "name": "as_guard_right_walk3",
+     "facing": "right",
+     "anim": "walk",
+     "i": 3,
+     "x": 280,
+     "y": 132,
+     "w": 40,
+     "h": 44,
+     "pivot": [
+      300,
+      176
+     ]
+    }
+   ],
+   "named": true,
+   "stats_hint": {
+    "tier": "npc",
+    "height_x_player": 1.0
+   }
+  }
+ },
+ "note": "guard-only cut of Hearthmoor Art an_folk final (2026-10-30); ingrith rows left out on purpose (her fix is pending, see /workspace/hearthmoor-staging/story/ingrith_repo_fixes.md)"
+}

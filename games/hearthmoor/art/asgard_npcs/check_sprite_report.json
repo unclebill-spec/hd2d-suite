@@ -1,0 +1,27 @@
+{
+ "an_folk": {
+  "atlas": "/workspace/hearthmoor-staging/art/asgard-npcs/sprite/an_folk.png",
+  "biome": "cozy-village",
+  "roles": {
+   "as_guard": {
+    "frames": 32,
+    "colors": 15,
+    "issues": []
+   },
+   "ingrith": {
+    "frames": 32,
+    "colors": 15,
+    "issues": []
+   }
+  },
+  "summary": {
+   "roles": 2,
+   "failures": 0,
+   "semi_transparent": 0,
+   "pass": true
+  },
+  "art_checks": {},
+  "failures": [],
+  "warnings": []
+ }
+}
