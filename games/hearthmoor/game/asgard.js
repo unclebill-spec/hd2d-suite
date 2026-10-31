@@ -356,6 +356,44 @@ MARKER_HOOKS.push((id, S) => {
   if (id === 'as_guide' && f.as_contract && (!f.sw_orla || (f.flame_home && st('as_hire') === 2))) return 'quest_mark';
 });
 
+// ------------------------------------------------------------------ fun pass (Hearthmoor Story 2026-10-30): a few funny lines + one small secret. Wraps only; no shape changes.
+{
+  const rm0 = TALK.runemaster, tr0 = TALK.as_trader, gr0 = TALK.groom;
+  // the small secret: Alrik's "tolerable". Once, after the flame is home (befriend), he admits where the word comes from.
+  TALK.runemaster = function runemaster(S, ...a) {
+    const f = F(S);
+    if (befriend(S) && f.flame_home && q(S, 'as_trial') >= 3 && !f.as_alrik_secret && !(q(S, 'as_hammer') === 1 || q(S, 'as_hammer') === 2)) return { pages: [
+      '"Sit. You want to know why I only ever say \'tolerable\'?"',
+      '"The first rune I ever struck is on the Lord-Warden\'s high seat. Left arm, near the bottom. It\'s crooked."',
+      '"My master looked at it for a long time and said \'tolerable\'. I cried for a week. Then I kept saying it, so nobody else would have to hear it from a stranger."',
+      '"Tell anyone and I\'ll re-forge your boots. Here. A mead-cake. For your silence."',
+      '(Pressed into the top of the mead-cake is a tiny rune. It\'s crooked. It\'s tolerable.)'],
+      then: (G) => { flags(G.S).as_alrik_secret = 1; G.give('mead_cake', 1); G.toast('Secret: the crooked rune', 2.4); mark(G); } };
+    return rm0(S, ...a);
+  };
+  TALK.as_trader = function as_trader(S, ...a) {
+    const e = tr0(S, ...a);
+    if (F(S).as_dusk) return e;
+    const quip = ['"Storm-charms! Guaranteed against lightning, or your coin back. Nobody has ever come back to ask."',
+                  '"Mead-cakes. The Lord-Warden eats four a day and says it\'s for the bees."',
+                  '"Gold-glass lamps, now that the dark halls are a fashion. They are not a fashion."'][(S.day || 0) % 3];
+    return { ...e, pages: [quip] };
+  };
+  TALK.groom = function groom(S, ...a) {
+    const e = gr0(S, ...a);
+    if ((S.mounts || {}).skyhorse && !e.then) return { pages: ['"Skylark bit the Lord-Warden this morning. I\'ve never been prouder of anyone."'] };
+    return e;
+  };
+  TALK.as_a = function as_a(S) {
+    return { pages: [F(S).flame_home ? ['"The halls are bright again. My husband says he preferred the dark. He owes me forty mead-cakes."',
+      '"Hallgerd ran the stairs in the storm last night. Said it was a rune drill. It was a dare."'][(S.day || 0) % 2]
+      : '"The halls used to be bright at midnight."'] };
+  };
+  TALK.as_b = function as_b(S) {
+    return { pages: [["Mind the pillars in a storm.", "Fire did this, they say. I'm not so sure.", 'My cousin licked a rune-pillar on a dare. He hums now. All the time.'][(S.day || 0) % 3]] };
+  };
+}
+
 // ------------------------------------------------------------------ positions (authored against the built specs; gen_asgard.py)
 const PILLARS = [[-7.0, 3.0], [0.0, 4.5], [7.0, 3.0]];   // story 2.3: rune-pillars (Sigrun's storm, the Thunder Toll)
 const FEATHER = [2.6, -9.6];   // on the hall terrace roof edge (climb the stair)
