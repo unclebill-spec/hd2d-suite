@@ -57,7 +57,9 @@ export class Ambient {
   }
   // ---- music channel
   musicGain() { return this.musicMuted ? 0 : this.musicVol * 0.9; }
-  want() { return this.boss ? 'boss' : this.battle ? 'battle' : (REALM_OF[this.area] || 'midgard'); }
+  // [ASGARD 2026-10-31] per-boss music hook: a boss id maps to music_boss_<id>.ogg when that file exists (fetch ok), else music_boss.ogg. No new files shipped.
+  bossTrack() { const k = this.bossId && 'boss_' + this.bossId; return k && !this.failed[k] ? k : 'boss'; }
+  want() { return this.boss ? this.bossTrack() : this.battle ? 'battle' : (REALM_OF[this.area] || 'midgard'); }
   load(name) {
     if (this.bufs[name] || this.failed[name] || !this.ctx) return this.bufs[name] || null;
     this.bufs[name] = fetch(MUSIC_DIR + 'music_' + name + '.ogg').then((r) => { if (!r.ok) throw new Error(r.status); return r.arrayBuffer(); })
@@ -74,6 +76,7 @@ export class Ambient {
     const p = this.load(name); if (!p) { this.stopMusic(); return; }
     p.then((buf) => {
       if (tok !== this.pickTok || !this.ctx) return;
+      if (!buf && name !== 'boss' && name.startsWith('boss_')) { this.cur = null; this.pickMusic(); return; }   // no music_boss_<id>.ogg: fall back to music_boss.ogg
       if (!buf) { this.stopMusic(); return; }   // no file: the procedural pad + plucks carry on alone
       const c = this.ctx, t = c.currentTime, src = c.createBufferSource(), g = c.createGain();
       src.buffer = buf; src.loop = true; src.loopStart = 0; src.loopEnd = buf.duration;   // loop by buffer length: gapless
@@ -93,7 +96,8 @@ export class Ambient {
   setBattle(engaged, boss, dt = 0) {
     this.battleT = engaged ? BATTLE_HOLD : Math.max(0, this.battleT - dt);
     const b = this.battleT > 0, bs = b && (this.boss || (engaged && !!boss));
-    if (b !== this.battle || bs !== this.boss) { this.battle = b; this.boss = bs; this.pickMusic(); }
+    const id = bs ? (typeof boss === 'string' && engaged ? boss : this.bossId) : null;   // boss may be the boss id (string) or a plain true
+    if (b !== this.battle || bs !== this.boss || id !== this.bossId) { this.battle = b; this.boss = bs; this.bossId = id; this.pickMusic(); }
   }
   setMusicVol(v) {
     this.musicVol = Math.min(1, Math.max(0, v)); localStorage.setItem('hearthmoor-music-vol', String(this.musicVol)); this.applyMusic();
@@ -106,7 +110,7 @@ export class Ambient {
     else if (!this.cur || !this.cur.src) { this.cur = null; this.pickMusic(); }
   }
   musicState() { return { want: this.want(), track: this.cur && this.cur.src ? this.cur.name : null, vol: this.musicVol, muted: this.musicMuted, ducked: !!this.ducked,
-    amb: this.amb ? this.amb.gain.value : null, battle: this.battle, boss: this.boss, failed: Object.keys(this.failed) }; }
+    amb: this.amb ? this.amb.gain.value : null, battle: this.battle, boss: this.boss, bossId: this.bossId || null, failed: Object.keys(this.failed) }; }
   setChord() {
     const t = this.ctx.currentTime;
     CHORDS[this.chord].forEach((s, i) => { for (const o of this.voices[i]) o.frequency.setTargetAtTime(hz(s - 12), t, 0.8); });
@@ -183,7 +187,7 @@ export class Ambient {
     f.frequency.setValueAtTime(f0, t); f.frequency.exponentialRampToValueAtTime(f1, t + dur);
     const g = c.createGain(); g.gain.value = vol; n.connect(f); f.connect(g); g.connect(this.master); n.start(t);
   }
-  setArea(a) { this.area = a; this.battle = this.boss = false; this.battleT = 0; this.pickMusic(); }
+  setArea(a) { this.area = a; this.battle = this.boss = false; this.bossId = null; this.battleT = 0; this.pickMusic(); }
   setNight(n) { this.night = n; }
   toggle() {
     this.muted = !this.muted; localStorage.setItem('hearthmoor-mute', this.muted ? '1' : '0');

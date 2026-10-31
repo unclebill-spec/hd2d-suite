@@ -502,7 +502,8 @@ function onFrame(dt, ctx) {
   G.loot.update(dt); G.shopUI.update(dt); G.rares.update(dt); G.storms.update(dt); G.rifts.update(dt); G.pets.update(dt); G.temple.update(dt); G.verdant.update(dt); G.alfheim.update(dt); G.svart.update(dt); G.jot.update(dt); G.musp.update(dt); G.nifl.update(dt); G.vana.update(dt); G.asg.update(dt); G.hel.update(dt);   // [ALFHEIM]
   G.combat.update(dt, ctx);
   { const eng = G.combat.enemies.filter((e) => e.state === 'chase' || e.state === 'attack');   // music: battle / boss themes
-    G.audio.setBattle(eng.length > 0 && !G.downed, eng.some((e) => e.D.boss && !e.D.rare), dt); }
+    const bo = eng.find((e) => e.D.boss && !e.D.rare);   // [ASGARD 2026-10-31] pass the boss id: audio picks music_boss_<id>.ogg if it exists
+    G.audio.setBattle(eng.length > 0 && !G.downed, bo ? String((bo.sp && (bo.sp.def || bo.sp.role)) || bo.id || true) : false, dt); }
   drawVitals(ctx);
   if (G.title || G.busy) return;
   // exits + portals: arm once the player has stood outside every trigger (no bounce on arrival)
