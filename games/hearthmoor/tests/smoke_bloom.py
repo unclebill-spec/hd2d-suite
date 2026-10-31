@@ -13,7 +13,7 @@ from pathlib import Path
 
 GAME = Path(__file__).resolve().parents[1]
 ARGS = ["--use-angle=swiftshader", "--enable-unsafe-swiftshader", "--ignore-gpu-blocklist"]
-SIZES = {"desk": (1280, 720, False), "phone": (412, 915, True)}
+SIZES = {"desk": (640, 360, False), "phone": (360, 640, True)}   # light: small viewports, no simscale (GD 2026-10-31)
 
 
 class _Quiet(SimpleHTTPRequestHandler):
@@ -49,7 +49,7 @@ def run(pg, out, shots, name, kind, touch, log, checks):
     if touch:
         pg.tap("#bloomgame canvas")
     else:
-        pg.mouse.click(640, 360)
+        pg.mouse.click(320, 180)
     ok("stray tap scores nothing", pg.evaluate("window.__hm.bloom.judged.filter(Boolean).length") == 0)
     pg.evaluate(PLAY, [0, 1])
     first = pg.evaluate("window.__hm.bloom.times[0]")
@@ -86,7 +86,7 @@ def main():
     from playwright.sync_api import sync_playwright
     ap = argparse.ArgumentParser()
     ap.add_argument("--out", default=str(GAME / "shots" / "bloom_smoke"))
-    ap.add_argument("--simscale", type=int, default=4)
+    ap.add_argument("--simscale", type=int, default=0)
     a = ap.parse_args()
     out = Path(a.out); out.mkdir(parents=True, exist_ok=True)
     checks, errors, lines = [], [], []
@@ -95,11 +95,11 @@ def main():
     checks.append({"step": "unit: test_bloom_rules.mjs", "pass": u.returncode == 0}); log(f"unit tests: {'ok' if u.returncode == 0 else 'FAIL'}")
     srv = ThreadingHTTPServer(("127.0.0.1", 0), functools.partial(_Quiet, directory=str(GAME)))
     threading.Thread(target=srv.serve_forever, daemon=True).start()
-    base = f"http://127.0.0.1:{srv.server_address[1]}/index.html?nosw&peace&qa&combat&simscale={a.simscale}&area=vanaheim&spawn=start"
+    base = f"http://127.0.0.1:{srv.server_address[1]}/index.html?nosw&peace&qa&combat{'&simscale=%d' % a.simscale if a.simscale else ''}&area=vanaheim&spawn=start"
     t0, passed = time.time(), u.returncode == 0
     with sync_playwright() as p:
         udd = os.environ.get("HD2D_USER_DATA_DIR")   # same launch as smoke_vanaheim: the dedicated warm profile under the browser lock
-        pc = p.chromium.launch_persistent_context(udd, args=ARGS, viewport={"width": 1280, "height": 720}, has_touch=True) if udd else None
+        pc = p.chromium.launch_persistent_context(udd, args=ARGS, viewport={"width": 640, "height": 360}, has_touch=True) if udd else None
         b = None if udd else p.chromium.launch(args=ARGS)
         log(f"launch: {'persistent ' + udd if udd else 'fresh chromium.launch'}")
         for name, (w, h, touch) in SIZES.items():
