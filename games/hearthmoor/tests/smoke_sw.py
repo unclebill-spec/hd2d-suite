@@ -28,7 +28,7 @@ READY = "window.__hm && __hm.ready && document.getElementById('boot').classList.
 SAVE = {"v": 2, "cls": "wildcaller", "area": "rotwood", "pos": None, "hp": 30}
 
 def main():
-    ap = argparse.ArgumentParser(); ap.add_argument("--shots", default=""); ap.add_argument("--skip-fill", action="store_true"); a = ap.parse_args()
+    ap = argparse.ArgumentParser(); ap.add_argument("--shots", default=""); ap.add_argument("--skip-fill", action="store_true"); ap.add_argument("--throttle", type=float, default=0); a = ap.parse_args()
     shots = Path(a.shots) if a.shots else None
     if shots: shots.mkdir(parents=True, exist_ok=True)
     srv = ThreadingHTTPServer(("127.0.0.1", 0), functools.partial(throttled(Bucket(a.throttle)) if a.throttle else Quiet, directory=str(GAME)))
