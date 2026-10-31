@@ -96,7 +96,7 @@ def have(p):
 
 def copy_staging():
     """Copy the staging pack into art/asgard/ (add / overwrite only)."""
-    if not STAGING.exists() or os.environ.get("HM_ASG_NO_STAGING"):   # [ASGARD NPCS 2026-10-31] skip: staging may hold Art's in-progress Ingrith regen; install only what is committed
+    if not STAGING.exists() or not os.environ.get("HM_ASG_STAGING"):   # [ASGARD NPCS 2026-10-31] opt-in only (HM_ASG_STAGING=1): staging can hold Art's work in progress, so clean builds install only what is committed
         return False
     ST.mkdir(parents=True, exist_ok=True)
     shutil.copytree(STAGING, ST, dirs_exist_ok=True)
