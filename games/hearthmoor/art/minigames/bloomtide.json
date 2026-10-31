@@ -1,0 +1,41 @@
+{
+ "what": "Bloomtide harvest + dance minigames (Vanaheim Stage C). All sprites by Hearthmoor Art (final 2026-10-31, bloomtide/); backdrop + HUD text drawn in code from these colours.",
+ "palette_source": "cozy-village biome + check_palette NEON / ORB_NEON effect set (Game Director 2026-10-31); biome browns unused (ink = shared outline)",
+ "colors": {
+  "ink": "#2a1e1c",
+  "indigo": "#3e5a8c",
+  "slate": "#2a6cb0",
+  "slate_hi": "#6c8cd4",
+  "slate_lo": "#1c62d8",
+  "moss": "#72a046",
+  "moss_hi": "#b2c464",
+  "moss_lo": "#4a7234",
+  "rim": "#6a34b8",
+  "mist": "#94c0dc",
+  "pale": "#d8f4ff",
+  "white": "#fff8e6",
+  "cyan": "#2ab4ff",
+  "cyan_hi": "#a6ecff",
+  "vio": "#a45cf0",
+  "vio_hi": "#d4a8ff",
+  "frost": "#5ab4f0",
+  "frost_hi": "#d8f4ff",
+  "mag": "#ff4fc8",
+  "mag_hi": "#ffb4ea",
+  "lime": "#5aec3c"
+ },
+ "sprites": {
+  "caps": "art/minigames/bloomtide/bt_caps.png",
+  "basket": "art/minigames/bloomtide/bt_basket.png",
+  "glow_fx": "art/minigames/bloomtide/bt_glow_fx.png",
+  "sparkle_fx": "art/minigames/bloomtide/bt_sparkle_fx.png",
+  "liss_dance": "art/minigames/bloomtide/bt_liss_dance.png (row 0 cols 4-7)",
+  "liss_vh_idle": "art/minigames/bloomtide/liss_vh_idle.png (README option b, own sheet)"
+ },
+ "reused": [
+  "art/ui/frame_night_glass.png (CSS --f-night)",
+  "art/ui/fonts/PixelifySans.ttf",
+  "art/ui/fonts/JacquardaBastarda9-Regular.ttf"
+ ],
+ "rule": "No browns (Stage C)."
+}
