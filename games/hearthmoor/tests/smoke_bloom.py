@@ -7,7 +7,7 @@ a stray tap (no cue near) scores nothing; a timed run (keys on schedule, plus to
 flags.vh_bloom_games[kind] = true; hit-feedback + result shots; reduced motion is picked up; also the rules unit tests
 (node --test tests/test_bloom_rules.mjs) and 0 console errors. Exit 0 = pass.
 """
-import argparse, functools, json, subprocess, sys, threading, time
+import argparse, functools, json, os, subprocess, sys, threading, time
 from http.server import SimpleHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
 
@@ -91,23 +91,33 @@ def main():
     out = Path(a.out); out.mkdir(parents=True, exist_ok=True)
     checks, errors, lines = [], [], []
     log = lambda s: (print(s, flush=True), lines.append(s))  # noqa: E731
-    u = subprocess.run(["node", "--test", str(GAME / "tests" / "test_bloom_rules.mjs")], capture_output=True, text=True)
+    u = subprocess.run(["node", "--test", str(GAME / "tests" / "test_bloom_rules.mjs"), str(GAME / "tests" / "test_bloom_freeze.mjs")], capture_output=True, text=True)
     checks.append({"step": "unit: test_bloom_rules.mjs", "pass": u.returncode == 0}); log(f"unit tests: {'ok' if u.returncode == 0 else 'FAIL'}")
     srv = ThreadingHTTPServer(("127.0.0.1", 0), functools.partial(_Quiet, directory=str(GAME)))
     threading.Thread(target=srv.serve_forever, daemon=True).start()
-    base = f"http://127.0.0.1:{srv.server_address[1]}/index.html?nosw&peace&qa&simscale={a.simscale}&area=vanaheim&spawn=start"
+    base = f"http://127.0.0.1:{srv.server_address[1]}/index.html?nosw&peace&qa&combat&simscale={a.simscale}&area=vanaheim&spawn=start"
     t0, passed = time.time(), u.returncode == 0
     with sync_playwright() as p:
-        b = p.chromium.launch(args=ARGS)
+        udd = os.environ.get("HD2D_USER_DATA_DIR")   # same launch as smoke_vanaheim: the dedicated warm profile under the browser lock
+        pc = p.chromium.launch_persistent_context(udd, args=ARGS, viewport={"width": 1280, "height": 720}, has_touch=True) if udd else None
+        b = None if udd else p.chromium.launch(args=ARGS)
+        log(f"launch: {'persistent ' + udd if udd else 'fresh chromium.launch'}")
         for name, (w, h, touch) in SIZES.items():
-            cx = b.new_context(viewport={"width": w, "height": h}, has_touch=touch, is_mobile=touch, device_scale_factor=1)
-            pg = cx.new_page()
+            if pc:
+                cx = pc; pg = pc.new_page(); pg.set_viewport_size({"width": w, "height": h})
+            else:
+                cx = b.new_context(viewport={"width": w, "height": h}, has_touch=touch, is_mobile=touch, device_scale_factor=1)
+                pg = cx.new_page()
             pg.on("pageerror", lambda e: errors.append(f"PAGEERROR {e}"))
             pg.on("console", lambda m: errors.append(f"console.error {m.text}") if m.type == "error" else None)
             try:
-                pg.goto(base, timeout=150000)
-                pg.wait_for_function("window.__hm && window.__hm.area === 'vanaheim' && window.__hd2d && window.__hd2d.ready && !window.__hm.busy", timeout=150000)
-                pg.wait_for_timeout(1500)
+                tl = time.time(); pg.goto(base, timeout=150000); log(f"{name}: goto ok {time.time() - tl:.0f}s")
+                try:
+                    pg.wait_for_function("window.__hm && window.__hm.area === 'vanaheim' && window.__hd2d && window.__hd2d.ready && !window.__hm.busy", timeout=150000)
+                except Exception:
+                    log(f"{name}: READY TIMEOUT dump " + json.dumps(pg.evaluate("({area: window.__hm && window.__hm.area, busy: window.__hm && window.__hm.busy, hd2dReady: !!(window.__hd2d && window.__hd2d.ready), Gready: window.__hm && window.__hm.ready, title: window.__hm && window.__hm.title})")) + " errors=" + json.dumps(errors[:10]))
+                    raise
+                log(f"{name}: ready {time.time() - tl:.0f}s"); pg.wait_for_timeout(1500)
                 for kind in ("harvest", "dance"):
                     run(pg, out, out, name, kind, touch, log, checks)
                 pg.evaluate("localStorage.setItem('hearthmoor-reduced-motion', '1')")
@@ -118,8 +128,8 @@ def main():
                 passed = passed and rm is True
             except Exception as e:  # noqa: BLE001
                 passed = False; log(f"FAIL {name}: {str(e)[:300]}")
-            cx.close()
-        b.close()
+            pg.close() if pc else cx.close()
+        (pc or b).close()
     srv.shutdown()
     passed = passed and all(c["pass"] for c in checks) and not errors
     rep = {"pass": passed, "seconds": round(time.time() - t0, 1), "checks": checks, "errors": errors[:20]}
