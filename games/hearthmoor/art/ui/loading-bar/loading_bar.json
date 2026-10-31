@@ -1,0 +1,67 @@
+{
+ "base": "640x360 UI base (menu-restyle), draw at integer scale x3 (1920x1080) / x2 / x1, nearest-neighbour only",
+ "frame": {
+  "file": "frame.png",
+  "full_state": "frame_full.png",
+  "size": [
+   160,
+   14
+  ],
+  "nine_slice": {
+   "left": 6,
+   "right": 6,
+   "top": 4,
+   "bottom": 4
+  },
+  "center": "transparent track",
+  "track_rect": [
+   6,
+   4,
+   148,
+   6
+  ],
+  "track_bg_css": "#2a2458 (ui_indigo) behind the PNG"
+ },
+ "fill_tile": {
+  "file": "fill_tile.png",
+  "size": [
+   16,
+   6
+  ],
+  "tile": "repeat-x, clip to pct*track_w"
+ },
+ "shimmer": {
+  "file": "anim/fill_shimmer_8f.png",
+  "frames": 8,
+  "frame_size": [
+   16,
+   6
+  ],
+  "ms_per_frame": 90,
+  "loop": true,
+  "note": "each frame tiles; band scrolls 2px/frame"
+ },
+ "flash": {
+  "file": "anim/fill_flash_4f.png",
+  "frames": 4,
+  "frame_size": [
+   16,
+   6
+  ],
+  "ms_per_frame": 80,
+  "loop": false,
+  "with_frame": "frame_full.png during frames 0-2, then frame.png"
+ },
+ "endcap": {
+  "file": "anim/endcap_glow_4f.png",
+  "frames": 4,
+  "frame_size": [
+   4,
+   10
+  ],
+  "ms_per_frame": 120,
+  "loop": true,
+  "anchor": "x = track_x + fill_px - 3, y = track_y - 2; hide at 0% and 100%"
+ },
+ "reduced_motion": "use fill_tile.png, no endcap sparkle frame cycling (frame 0), flash frame 0 only"
+}
