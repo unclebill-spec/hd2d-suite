@@ -8,6 +8,10 @@ python3 tests/smoke.py           # headless end-to-end playthrough
 python3 build.py                 # rebuild from areas/src/*.json (needs /workspace/hd2d-suite)
 ```
 
+## Playing from the zip
+
+Unzip it, then serve the `hearthmoor` folder with a local web server and open the address it prints. Double-clicking `index.html` shows a blank page, because browsers block the game's files and offline cache on `file://`. Any static server works, for example `python -m http.server 8080` run inside the folder (then open http://localhost:8080/), or `./startup.sh` on Mac/Linux.
+
 See `RESTORE.md` for identity, controls, key files and the do-not-regress list. Zip: `../hearthmoor.zip`.
 QA shots: `shots/<area>/` (check-scene: day / dusk / night, effects, gamefx, phone portrait / landscape) and `tests/shots/` (smoke playthrough).
 
