@@ -37,14 +37,14 @@ def run(pg, out, shots, name, kind, touch, log, checks):
             raise AssertionError(label)
     before = pg.evaluate(SNAP)
     # 1. quit -> no penalty, nothing written
-    pg.evaluate(f"window.__r = null; window.__hm.startBloomGame('{kind}').then(r => window.__r = r)")
+    pg.evaluate(f"window.__r = null; window.__hm.startBloomGame('{kind}').then(r => window.__r = r); 0")
     pg.wait_for_selector("#bloomgame canvas"); ok("overlay open + busy", pg.evaluate("!!window.__hm.busy && !!window.__hm.bloom"))
     pg.wait_for_timeout(900); pg.keyboard.press("Escape"); pg.wait_for_function("window.__r !== null", timeout=10000)
     r = pg.evaluate("window.__r"); ok("quit -> won false", r["won"] is False, r)
     ok("quit: storage + state byte-unchanged", pg.evaluate(SNAP) == before)
     ok("overlay removed", pg.evaluate("!document.getElementById('bloomgame')"))
     # 2. stray tap + timed win
-    pg.evaluate(f"window.__r = null; window.__hm.startBloomGame('{kind}').then(r => window.__r = r)"); pg.wait_for_selector("#bloomgame canvas")
+    pg.evaluate(f"window.__r = null; window.__hm.startBloomGame('{kind}').then(r => window.__r = r); 0"); pg.wait_for_selector("#bloomgame canvas")
     pg.wait_for_timeout(300)
     if touch:
         pg.tap("#bloomgame canvas")
@@ -73,7 +73,7 @@ def run(pg, out, shots, name, kind, touch, log, checks):
     # 3. a losing run (tap every 3rd cue) stays unwon and writes nothing new
     pg.evaluate(f"(() => {{ const f = window.__hm.S.flags; f.vh_bloom_games = {{}}; }})()")
     s0 = pg.evaluate(SNAP)
-    pg.evaluate(f"window.__r = null; window.__hm.startBloomGame('{kind}').then(r => window.__r = r)"); pg.wait_for_selector("#bloomgame canvas")
+    pg.evaluate(f"window.__r = null; window.__hm.startBloomGame('{kind}').then(r => window.__r = r); 0"); pg.wait_for_selector("#bloomgame canvas")
     pg.evaluate(PLAY, [0, 3]); pg.wait_for_selector("#bloomgame .bres.on", timeout=40000)
     res = pg.evaluate("window.__hm.bloom.result"); ok("sparse run loses", not res["won"], res)
     pg.keyboard.press("Escape"); pg.wait_for_function("window.__r !== null", timeout=10000)
@@ -121,7 +121,7 @@ def main():
                 for kind in ("harvest", "dance"):
                     run(pg, out, out, name, kind, touch, log, checks)
                 pg.evaluate("localStorage.setItem('hearthmoor-reduced-motion', '1')")
-                pg.evaluate("window.__r = null; window.__hm.startBloomGame('harvest').then(r => window.__r = r)"); pg.wait_for_selector("#bloomgame canvas")
+                pg.evaluate("window.__r = null; window.__hm.startBloomGame('harvest').then(r => window.__r = r); 0"); pg.wait_for_selector("#bloomgame canvas")
                 rm = pg.evaluate("window.__hm.bloom.rm"); pg.keyboard.press("Escape"); pg.wait_for_function("window.__r !== null")
                 pg.evaluate("localStorage.removeItem('hearthmoor-reduced-motion')")
                 checks.append({"step": f"{name}: reduced motion respected", "pass": rm is True}); log(f"reduced motion: {rm}")
