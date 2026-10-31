@@ -169,8 +169,22 @@ export const VH_TALK = {
 
   nymph_vh(S) {
     if (A(S) === 'conquer') return { pages: ['(The water goes still and dark when you come near.)'] };
-    return { pages: ['Dance with the springs and they\'ll sing for you. Step on the fish and they won\'t.',
-                     'The violet made us sick. You made us well. Dance!'] };
+    const base = ['Dance with the springs and they\'ll sing for you. Step on the fish and they won\'t.',
+                  'The violet made us sick. You made us well. Dance!'];
+    // [VANAHEIM C] Bloomtide (spec 3.5: befriend, every 7 in-game days, at night). Liss opens vh_bloom; on a bloom-night
+    // at stage 1 she offers the two minigames still unwon via G.bloomAction({ act: 'bloom_game', kind }).
+    if (A(S) !== 'befriend') return { pages: base };
+    const q = S.quests || {};
+    if (!q.vh_bloom) return { pages: [...base, 'Every seventh night the springs bloom. Come find me then, and we\'ll harvest and dance.'],
+      then: (G) => { G.setQuest('vh_bloom', 1); G.refreshMarkers && G.refreshMarkers(); } };
+    if (q.vh_bloom !== 1) return { pages: base };
+    if (!bloomNight(S)) return { pages: ['Not tonight. Bloomtide comes every seventh night. The caps can feel it coming.'] };
+    const won = (S.flags || {}).vh_bloom_games || {};
+    const options = BLOOM_KINDS.filter((k) => !won[k]).map((kind) => ({ act: 'bloom_game', kind, label: BLOOM_LABEL[kind],
+      pick: (G) => { G.bloomAction({ act: 'bloom_game', kind }); return null; } }));
+    if (!options.length) return { pages: ['You harvested, you danced. The gnomes still want their riddles.'] };
+    options.push({ label: 'Later.', pick: () => null });
+    return { pages: ['It\'s Bloomtide! The caps are glowing. Harvest with me, or dance?'], choice: { id: 'vh_bloom_games', options } };
   },
 };
 
@@ -250,6 +264,13 @@ TALK.warden = (S) => {
 };
 
 const GREF = {};
+const BLOOM_KINDS = ['harvest', 'dance'], BLOOM_LABEL = { harvest: 'Glow-cap Harvest', dance: 'Spring Dance' };
+const BLOOM_NIGHT_T = (t) => t > 0.8 || t < 0.25;   // same night window as alfheim.js NIGHT
+// bloom-night = every 7th in-game day, at night (spec 3.5). ?bloomnight in the URL forces it for QA.
+function bloomNight(S) {
+  try { if (new URLSearchParams(location.search).has('bloomnight')) return true; } catch (e) { /* no location */ }
+  const ctx = GREF.vana && GREF.vana.ctx; return (S.day || 0) % 7 === 0 && !!(ctx && ctx.clock && BLOOM_NIGHT_T(ctx.clock.t));
+}
 function giveCirclet(G) {   // the spare reward (Hearthmoor Story): a unique trinket; regen maps onto progress.mods().regen (HP/s while not chased)
   const S = G.S; S.bag = S.bag || [];
   if ([...S.bag, ...Object.values(S.gear || {})].some((x) => x && x.unique === 'nettle_circlet')) return;

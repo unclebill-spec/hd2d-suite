@@ -255,6 +255,42 @@ def install_inkling_pet(areas=AREAS):
     print(f"inkling pet: role pet_inkling added in {n} of {len(areas)} areas")
 
 
+LISS = GAME / "art" / "minigames" / "bloomtide"   # [VANAHEIM C] Liss's own all-blue idle sheet (Hearthmoor Art, GD 2026-10-31)
+
+
+def install_liss_vh(areas=AREAS):
+    """[VANAHEIM C] README option (b): nymph_vh (Liss) uses her own sheet 'lissvh' (liss_vh_idle.png/.json) as role
+    liss_vh instead of the shared Seer rows (left untouched). Additive and idempotent, like install_inkling_pet."""
+    if not (LISS / "liss_vh_idle.json").is_file():
+        return
+    im = json.loads((LISS / "liss_vh_idle.json").read_text())
+    role = {"sheet": "lissvh", "row": im["roles"]["liss_vh"]["row"], "kind": "human", "enemy": False, "frame": im["frame"], "anims": ["idle"]}
+    n = 0
+    for a in areas:
+        root = GAME / "areas" / a
+        if a != "vh_village" or not (root / "scene.json").is_file():
+            continue
+        scene = json.loads((root / "scene.json").read_text())
+        sp = root / scene["atlas"]["json"]
+        am = json.loads(sp.read_text())
+        png, js = sp.parent / "lissvh.png", sp.parent / "lissvh.json"
+        if not png.is_file() or png.read_bytes() != (LISS / "liss_vh_idle.png").read_bytes():
+            shutil.copy2(LISS / "liss_vh_idle.png", png)
+        if not js.is_file() or json.loads(js.read_text()) != im:
+            js.write_text(json.dumps(im, indent=1))
+        if am.get("roles", {}).get("liss_vh") != role or not am.get("sheets", {}).get("lissvh"):
+            am.setdefault("sheets", {})["lissvh"] = {"json": "lissvh.json", "image": "lissvh.png"}
+            am.setdefault("roles", {})["liss_vh"] = role
+            sp.write_text(json.dumps(am, indent=1)); n += 1
+        changed = False
+        for ac in scene.get("actors", []):
+            if ac.get("id") == "nymph_vh" and ac.get("role") != "liss_vh":
+                ac["role"] = "liss_vh"; changed = True
+        if changed:
+            (root / "scene.json").write_text(json.dumps(scene, indent=1)); n += 1
+    print(f"liss_vh: {n} file updates")
+
+
 OLD_TEMPLE_AREAS = ["temple"]
 OLD_TEMPLE_ROLES = ["templekeeper", "archivist"]
 
@@ -883,6 +919,7 @@ if __name__ == "__main__":
         restore_tracked(before, snap)
     check_no_art_drop(before, snap)
     install_inkling_pet(only)
+    install_liss_vh(only)
     draw_icons()
     draw_button_icons()
     write_pwa()

@@ -25380,6 +25380,19 @@
     "walk",
     "follow"
    ]
+  },
+  "liss_vh": {
+   "sheet": "lissvh",
+   "row": 0,
+   "kind": "human",
+   "enemy": false,
+   "frame": [
+    20,
+    32
+   ],
+   "anims": [
+    "idle"
+   ]
   }
  },
  "sheets": {
@@ -25414,6 +25427,10 @@
   "hhinkling": {
    "json": "hhinkling.json",
    "image": "hhinkling.png"
+  },
+  "lissvh": {
+   "json": "lissvh.json",
+   "image": "lissvh.png"
   }
  }
 }
