@@ -49,13 +49,13 @@ export function freezeWorld(G) {
 
 // Hearthmoor Art sprites (art/minigames/bloomtide/, 16x16 caps + fx, 24x24 basket; cells = col*w, row*h, pivot bottom-centre)
 const ART_DIR = new URL('../../art/minigames/bloomtide/', import.meta.url);
-export const SHEETS = { caps: [16, 16], basket: [24, 24], glow_fx: [16, 16], sparkle_fx: [16, 16] };
+export const SHEETS = { caps: [16, 16], basket: [24, 24], glow_fx: [16, 16], sparkle_fx: [16, 16], liss_dance: [20, 32], liss_vh_idle: [20, 32] };
 export const CAP_ROWS = ['cap_blue', 'cap_violet', 'cap_frost'];
 export const ANIM = { pop: [90], perfect: [80, 80, 80, 120], glow: [70, 70, 70, 140], sparkle: 120, catch: 100 };   // ms, from the sheet JSONs
 const IMG = {};
 export function loadArt() {
   if (typeof Image === 'undefined') return;
-  for (const k of Object.keys(SHEETS)) if (!IMG[k]) { const im = new Image(); im.src = new URL(`bt_${k}.png`, ART_DIR).href; IMG[k] = im; }
+  for (const k of Object.keys(SHEETS)) if (!IMG[k]) { const im = new Image(); im.src = new URL(`${k.startsWith('liss_vh') ? k : 'bt_' + k}.png`, ART_DIR).href; IMG[k] = im; }
 }
 export function cell(g, sheet, row, col, cx, by, s = 1) {   // draw one cell with its bottom-centre pivot at (cx, by)
   const im = IMG[sheet], [w, h] = SHEETS[sheet]; if (!im || !im.complete || !im.naturalWidth) return false;
@@ -156,13 +156,12 @@ export function capSprite(g, cx, by, s, row, hit) {
   cell(g, 'caps', row, col, cx, by, s);
   if (hit && hit.grade === 'perfect') { const f = frameAt(ANIM.glow, hit.el); if (f >= 0) cell(g, 'glow_fx', 0, f, cx, by, s); }
 }
-// PLACEHOLDER (Liss, on hold for Art's violet nymph_vh recolour): swap drawLiss() for bt_liss_dance row 0 cols 4-7
-// (20x32, pivot 10,32, 180 ms/frame, retimed to the beat). Until then a plain violet stand-in from PAL.
-export function drawLiss(g, cx, by, beat) {
-  const sway = beat % 2 ? 1 : -1;
-  g.fillStyle = PAL.rim; g.fillRect(cx - 4 + sway, by - 20, 8, 14); g.fillStyle = PAL.vio; g.fillRect(cx - 3 + sway, by - 26, 6, 6);
-  g.fillStyle = PAL.vio_hi; g.fillRect(cx - 6 + sway * 2, by - 22 - (beat % 2) * 3, 2, 6); g.fillRect(cx + 4 + sway * 2, by - 22 - ((beat + 1) % 2) * 3, 2, 6);
-  g.fillStyle = PAL.rim; g.fillRect(cx - 3, by - 6, 2, 6); g.fillRect(cx + 1, by - 6, 2, 6);
+// Liss (liss_vh, all-blue, Hearthmoor Art final, GD 2026-10-31): README option (b), her own sheets loaded here, not the
+// shared Seer rows. Dance = bt_liss_dance row 0 (down) cols 4-7, retimed to 2 frames per beat of the song; before the
+// count-in / after the last cue she idles on liss_vh_idle row 0 (loop 0,1,2,1 at 3 fps). Pivot 10,32 = bottom-centre.
+export function drawLiss(g, cx, by, t, beatMs, dancing) {
+  if (dancing) return cell(g, 'liss_dance', 0, 4 + (Math.floor(t / (beatMs / 2)) % 4), cx, by, 1);
+  const loop = [0, 1, 2, 1]; return cell(g, 'liss_vh_idle', 0, loop[Math.floor(performance.now() / 333) % 4], cx, by, 1);
 }
 const GROUND = 112, CX = W / 2, CY = 82, LANE_X = W / 2, HIT_Y = 116;
 export const GEOM = { GROUND, CX, CY, LANE_X, HIT_Y };
@@ -206,7 +205,7 @@ function draw(st) {
     ring(g, PAL.cyan_hi, LANE_X, HIT_Y, 8);
     st.fx.target = [LANE_X, HIT_Y];
     { const L = st.last; if (L && L.grade === 'perfect' && t - L.at < 350) { const f = frameAt(ANIM.glow, t - L.at); if (f >= 0) cell(g, 'glow_fx', 0, f, LANE_X, HIT_Y + 8, 2); } }
-    drawLiss(g, LANE_X + 52, HIT_Y + 4, Math.max(0, Math.floor(t / (60000 / st.g.bpm))));
+    drawLiss(g, LANE_X + 52, HIT_Y + 4, Math.max(0, t), 60000 / st.g.bpm, t >= 0 && !st.done && t < times[times.length - 1] + 400);
     if (t < 0 || t < times[0] - 1000) { /* count-in drawn by the fun layer; base shows nothing */ }
   }
   for (const h of HOOKS) try { h.draw && h.draw(g, st); } catch (e) { /* juice never breaks play */ }

@@ -1,5 +1,5 @@
 {
- "what": "Bloomtide harvest + dance minigames (Vanaheim Stage C). Sprites by Hearthmoor Art (bloomtide/); backdrop, HUD text and the Liss stand-in drawn in code from these colours.",
+ "what": "Bloomtide harvest + dance minigames (Vanaheim Stage C). All sprites by Hearthmoor Art (final 2026-10-31, bloomtide/); backdrop + HUD text drawn in code from these colours.",
  "palette_source": "cozy-village biome + check_palette NEON / ORB_NEON effect set (Game Director 2026-10-31); biome browns unused (ink = shared outline)",
  "colors": {
   "ink": "#2a1e1c",
@@ -28,10 +28,9 @@
   "caps": "art/minigames/bloomtide/bt_caps.png",
   "basket": "art/minigames/bloomtide/bt_basket.png",
   "glow_fx": "art/minigames/bloomtide/bt_glow_fx.png",
-  "sparkle_fx": "art/minigames/bloomtide/bt_sparkle_fx.png"
- },
- "placeholders": {
-  "liss": "code-drawn violet stand-in (drawLiss in bloomtide.js); swap for bt_liss_dance row 0 cols 4-7 once Art's violet nymph_vh recolour lands"
+  "sparkle_fx": "art/minigames/bloomtide/bt_sparkle_fx.png",
+  "liss_dance": "art/minigames/bloomtide/bt_liss_dance.png (row 0 cols 4-7)",
+  "liss_vh_idle": "art/minigames/bloomtide/liss_vh_idle.png (README option b, own sheet)"
  },
  "reused": [
   "art/ui/frame_night_glass.png (CSS --f-night)",
