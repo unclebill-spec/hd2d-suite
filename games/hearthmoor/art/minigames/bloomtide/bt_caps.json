@@ -1,0 +1,351 @@
+{
+ "tool": "Hearthmoor Art bloomtide (tools/make.py, PIL CPU)",
+ "biome": "bloomtide-fx",
+ "facings": [
+  "down"
+ ],
+ "image": "bt_caps.png",
+ "frame": [
+  16,
+  16
+ ],
+ "pivot": [
+  8,
+  16
+ ],
+ "ground_row": 15,
+ "anims": {
+  "idle": {
+   "start": 0,
+   "count": 1,
+   "fps": 0
+  },
+  "walk": {
+   "start": 0,
+   "count": 0,
+   "note": "n/a (prop); present only for the check-sprite schema"
+  },
+  "pop": {
+   "start": 1,
+   "count": 1,
+   "ms": [
+    90
+   ],
+   "note": "show on a hit, then back to idle"
+  },
+  "perfect": {
+   "start": 2,
+   "count": 4,
+   "ms": [
+    80,
+    80,
+    80,
+    120
+   ],
+   "loop": false,
+   "note": "brighten-squash-brighten-settle; layer bt_glow_fx over it"
+  }
+ },
+ "roles": {
+  "cap_blue": {
+   "row": 0,
+   "kind": "prop",
+   "size_bounds": [
+    [
+     8,
+     16
+    ],
+    [
+     8,
+     16
+    ]
+   ],
+   "frames": [
+    {
+     "name": "cap_blue_idle",
+     "facing": "down",
+     "anim": "idle",
+     "i": 0,
+     "x": 0,
+     "y": 0,
+     "w": 16,
+     "h": 16,
+     "pivot": [
+      8,
+      16
+     ]
+    },
+    {
+     "name": "cap_blue_pop",
+     "facing": "down",
+     "anim": "idle",
+     "i": 1,
+     "x": 16,
+     "y": 0,
+     "w": 16,
+     "h": 16,
+     "pivot": [
+      24,
+      16
+     ]
+    },
+    {
+     "name": "cap_blue_perfect0",
+     "facing": "down",
+     "anim": "idle",
+     "i": 2,
+     "x": 32,
+     "y": 0,
+     "w": 16,
+     "h": 16,
+     "pivot": [
+      40,
+      16
+     ]
+    },
+    {
+     "name": "cap_blue_perfect1",
+     "facing": "down",
+     "anim": "idle",
+     "i": 3,
+     "x": 48,
+     "y": 0,
+     "w": 16,
+     "h": 16,
+     "pivot": [
+      56,
+      16
+     ]
+    },
+    {
+     "name": "cap_blue_perfect2",
+     "facing": "down",
+     "anim": "idle",
+     "i": 4,
+     "x": 64,
+     "y": 0,
+     "w": 16,
+     "h": 16,
+     "pivot": [
+      72,
+      16
+     ]
+    },
+    {
+     "name": "cap_blue_perfect3",
+     "facing": "down",
+     "anim": "idle",
+     "i": 5,
+     "x": 80,
+     "y": 0,
+     "w": 16,
+     "h": 16,
+     "pivot": [
+      88,
+      16
+     ]
+    }
+   ]
+  },
+  "cap_violet": {
+   "row": 1,
+   "kind": "prop",
+   "size_bounds": [
+    [
+     8,
+     16
+    ],
+    [
+     8,
+     16
+    ]
+   ],
+   "frames": [
+    {
+     "name": "cap_violet_idle",
+     "facing": "down",
+     "anim": "idle",
+     "i": 0,
+     "x": 0,
+     "y": 16,
+     "w": 16,
+     "h": 16,
+     "pivot": [
+      8,
+      32
+     ]
+    },
+    {
+     "name": "cap_violet_pop",
+     "facing": "down",
+     "anim": "idle",
+     "i": 1,
+     "x": 16,
+     "y": 16,
+     "w": 16,
+     "h": 16,
+     "pivot": [
+      24,
+      32
+     ]
+    },
+    {
+     "name": "cap_violet_perfect0",
+     "facing": "down",
+     "anim": "idle",
+     "i": 2,
+     "x": 32,
+     "y": 16,
+     "w": 16,
+     "h": 16,
+     "pivot": [
+      40,
+      32
+     ]
+    },
+    {
+     "name": "cap_violet_perfect1",
+     "facing": "down",
+     "anim": "idle",
+     "i": 3,
+     "x": 48,
+     "y": 16,
+     "w": 16,
+     "h": 16,
+     "pivot": [
+      56,
+      32
+     ]
+    },
+    {
+     "name": "cap_violet_perfect2",
+     "facing": "down",
+     "anim": "idle",
+     "i": 4,
+     "x": 64,
+     "y": 16,
+     "w": 16,
+     "h": 16,
+     "pivot": [
+      72,
+      32
+     ]
+    },
+    {
+     "name": "cap_violet_perfect3",
+     "facing": "down",
+     "anim": "idle",
+     "i": 5,
+     "x": 80,
+     "y": 16,
+     "w": 16,
+     "h": 16,
+     "pivot": [
+      88,
+      32
+     ]
+    }
+   ]
+  },
+  "cap_frost": {
+   "row": 2,
+   "kind": "prop",
+   "size_bounds": [
+    [
+     8,
+     16
+    ],
+    [
+     8,
+     16
+    ]
+   ],
+   "frames": [
+    {
+     "name": "cap_frost_idle",
+     "facing": "down",
+     "anim": "idle",
+     "i": 0,
+     "x": 0,
+     "y": 32,
+     "w": 16,
+     "h": 16,
+     "pivot": [
+      8,
+      48
+     ]
+    },
+    {
+     "name": "cap_frost_pop",
+     "facing": "down",
+     "anim": "idle",
+     "i": 1,
+     "x": 16,
+     "y": 32,
+     "w": 16,
+     "h": 16,
+     "pivot": [
+      24,
+      48
+     ]
+    },
+    {
+     "name": "cap_frost_perfect0",
+     "facing": "down",
+     "anim": "idle",
+     "i": 2,
+     "x": 32,
+     "y": 32,
+     "w": 16,
+     "h": 16,
+     "pivot": [
+      40,
+      48
+     ]
+    },
+    {
+     "name": "cap_frost_perfect1",
+     "facing": "down",
+     "anim": "idle",
+     "i": 3,
+     "x": 48,
+     "y": 32,
+     "w": 16,
+     "h": 16,
+     "pivot": [
+      56,
+      48
+     ]
+    },
+    {
+     "name": "cap_frost_perfect2",
+     "facing": "down",
+     "anim": "idle",
+     "i": 4,
+     "x": 64,
+     "y": 32,
+     "w": 16,
+     "h": 16,
+     "pivot": [
+      72,
+      48
+     ]
+    },
+    {
+     "name": "cap_frost_perfect3",
+     "facing": "down",
+     "anim": "idle",
+     "i": 5,
+     "x": 80,
+     "y": 32,
+     "w": 16,
+     "h": 16,
+     "pivot": [
+      88,
+      48
+     ]
+    }
+   ]
+  }
+ }
+}

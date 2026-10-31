@@ -1,0 +1,115 @@
+{
+ "tool": "Hearthmoor Art bloomtide (tools/make.py, PIL CPU)",
+ "biome": "bloomtide-fx",
+ "facings": [
+  "down"
+ ],
+ "image": "bt_glow_fx.png",
+ "kind": "fx",
+ "frame": [
+  16,
+  16
+ ],
+ "pivot": [
+  8,
+  16
+ ],
+ "ground_row": 15,
+ "desc": "perfect-hit glow: 3-frame expanding neon ring + sparkle burst; centre on the cap (frame centre = cap centre)",
+ "anims": {
+  "play": {
+   "start": 0,
+   "count": 4,
+   "ms": [
+    70,
+    70,
+    70,
+    140
+   ],
+   "loop": false
+  },
+  "idle": {
+   "start": 0,
+   "count": 1,
+   "note": "check-sprite schema"
+  },
+  "walk": {
+   "start": 0,
+   "count": 0
+  }
+ },
+ "roles": {
+  "glow_fx": {
+   "row": 0,
+   "kind": "prop",
+   "size_bounds": [
+    [
+     1,
+     16
+    ],
+    [
+     1,
+     16
+    ]
+   ],
+   "frames": [
+    {
+     "name": "glow_fx_0",
+     "facing": "down",
+     "anim": "idle",
+     "i": 0,
+     "x": 0,
+     "y": 0,
+     "w": 16,
+     "h": 16,
+     "pivot": [
+      8,
+      16
+     ]
+    },
+    {
+     "name": "glow_fx_1",
+     "facing": "down",
+     "anim": "idle",
+     "i": 1,
+     "x": 16,
+     "y": 0,
+     "w": 16,
+     "h": 16,
+     "pivot": [
+      24,
+      16
+     ]
+    },
+    {
+     "name": "glow_fx_2",
+     "facing": "down",
+     "anim": "idle",
+     "i": 2,
+     "x": 32,
+     "y": 0,
+     "w": 16,
+     "h": 16,
+     "pivot": [
+      40,
+      16
+     ]
+    },
+    {
+     "name": "glow_fx_3",
+     "facing": "down",
+     "anim": "idle",
+     "i": 3,
+     "x": 48,
+     "y": 0,
+     "w": 16,
+     "h": 16,
+     "pivot": [
+      56,
+      16
+     ]
+    }
+   ]
+  }
+ }
+}

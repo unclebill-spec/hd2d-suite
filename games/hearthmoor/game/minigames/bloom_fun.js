@@ -1,7 +1,7 @@
 // game/minigames/bloom_fun.js: FUN PASS for the Bloomtide minigames (juice only: popups, sparks, combo, count-in,
 // metronome, cap pop, result flair). No rule, number, control or palette changes; every colour comes from PAL.
 // Reduced motion (st.rm): no shake, no flying sparks, popups stay still.
-import { HOOKS, PAL, W, cap } from './bloomtide.js';
+import { HOOKS, PAL, W, cell, ANIM } from './bloomtide.js';
 
 const LABEL = { perfect: ['Perfect!', PAL.cyan_hi], good: ['Good', PAL.lime], miss: ['Miss', PAL.vio_hi] };
 const sfx = (st, k) => { try { st.G.audio && st.G.audio.sfx && st.G.audio.sfx(k); } catch (_) {} };
@@ -18,9 +18,9 @@ HOOKS.push({
       f.combo++; f.best = Math.max(f.best, f.combo);
       sfx(st, r.grade === 'perfect' ? 'pickup' : 'lampchime');
       if (st.kind === 'dance') pluck(st, r.grade === 'perfect' ? 12 : 7, 0.12);
-      if (st.kind === 'harvest') f.basket++;
+      if (st.kind === 'harvest') { f.basket++; f.caughtAt = st.t; }
       if (r.grade === 'perfect' && !st.rm) f.shake = 3;
-      const n = st.rm ? 0 : r.grade === 'perfect' ? 10 : 5;
+      const n = st.rm ? 0 : r.grade === 'perfect' ? 4 : 5;   // perfect: bt_glow_fx ring does most of the work
       for (let i = 0; i < n; i++) { const a = (i / n) * Math.PI * 2; f.sparks.push({ x, y, vx: Math.cos(a) * 0.9, vy: Math.sin(a) * 0.9 - 0.4, life: 18, c: i % 2 ? PAL.cyan : PAL.mag_hi }); }
     }
     const [txt, c] = LABEL[r.grade]; f.pops.push({ txt, c, x, y: y - 22, life: 34 });
@@ -39,9 +39,8 @@ HOOKS.push({
       if (b !== f.beat) { f.beat = b; pluck(st, b % 4 ? 0 : 5, 0.05); }
       const ph = (t % beatMs) / beatMs; if (ph < 0.15) { g.fillStyle = PAL.vio; g.fillRect(0, 0, W, 2); g.fillRect(0, 142, W, 2); }
     }
-    // basket of picked caps (harvest). PLACEHOLDER ART until Hearthmoor Art's basket sprite lands
-    if (st.kind === 'harvest') { g.fillStyle = PAL.slate_hi; g.fillRect(8, 104, 30, 10); g.fillStyle = PAL.rim; g.fillRect(8, 104, 30, 2);
-      for (let i = 0; i < f.basket; i++) cap(g, 12 + (i % 4) * 7, 103 - Math.floor(i / 4) * 4, 0.45, 1); }
+    // the violet wicker basket (Hearthmoor Art): catch squash on each pick, full once 3+ caps are in
+    if (st.kind === 'harvest') { const c = f.caughtAt != null && st.t - f.caughtAt < ANIM.catch; cell(g, 'basket', 0, (f.basket >= 3 ? 2 : 0) + (c ? 1 : 0), 24, 116, 1); }
     for (const s of f.sparks) { g.fillStyle = s.c; g.fillRect(Math.round(s.x), Math.round(s.y), 1, 1); s.x += s.vx; s.y += s.vy; s.vy += 0.04; s.life--; }
     f.sparks = f.sparks.filter((s) => s.life > 0);
     g.textAlign = 'center'; g.font = '12px "Pixelify Sans",monospace';

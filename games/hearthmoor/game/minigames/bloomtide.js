@@ -8,9 +8,11 @@
 import { GAMES, chart, tapAt, expire, score as scoreOf } from './bloom_rules.js';
 import('./bloom_fun.js').catch((e) => console.warn('bloom fun', e));   // juice layer (fun pass)
 
-export const PAL = { ink: '#0a0c1c', indigo: '#141a3a', slate: '#26305e', slate_hi: '#3c4a86', slate_lo: '#1c2248', moss: '#127a6e', moss_hi: '#2aa894', moss_lo: '#0c4a48',
-  rim: '#6a4aa8', mist: '#8a9ad0', pale: '#c8d4f0', white: '#f0f6ff', cyan: '#3ff0ff', cyan_hi: '#c0fcff', vio: '#a45cf0', vio_hi: '#d4a8ff',
-  frost: '#7fd8ff', frost_hi: '#e0f6ff', mag: '#ff3fb4', mag_hi: '#ffa8de', lime: '#b6ff4a' };   // = art/minigames/bloomtide.json (vanaheim-gloom lock)
+// cozy-village biome + the approved NEON / ORB_NEON effect set (tests/check_palette.py), Game Director 2026-10-31.
+// Key names kept from the first pass; only the values moved. Browns of the biome are not used (ink is the shared outline).
+export const PAL = { ink: '#2a1e1c', indigo: '#3e5a8c', slate: '#2a6cb0', slate_hi: '#6c8cd4', slate_lo: '#1c62d8', moss: '#72a046', moss_hi: '#b2c464', moss_lo: '#4a7234',
+  rim: '#6a34b8', mist: '#94c0dc', pale: '#d8f4ff', white: '#fff8e6', cyan: '#2ab4ff', cyan_hi: '#a6ecff', vio: '#a45cf0', vio_hi: '#d4a8ff',
+  frost: '#5ab4f0', frost_hi: '#d8f4ff', mag: '#ff4fc8', mag_hi: '#ffb4ea', lime: '#5aec3c' };   // = art/minigames/bloomtide.json
 export const W = 192, H = 144;   // logical pixels, drawn at an integer scale
 export const HOOKS = [];         // juice layers: { start(st), judge(st, r), draw(g, st), result(st, res), stop(st) }
 const call = (st, k, ...a) => { for (const h of HOOKS) try { h[k] && h[k](st, ...a); } catch (e) { console.warn('bloom hook', e); } };
@@ -21,14 +23,14 @@ export function reducedMotion(G) {
   return !!(G && G.shakeOK && !G.shakeOK());
 }
 const CSS = `
-#bloomgame{position:fixed;inset:0;z-index:60;display:flex;align-items:center;justify-content:center;background:rgba(10,12,28,.72);touch-action:none;user-select:none;-webkit-user-select:none;font-family:"Pixelify Sans",monospace;color:${PAL.pale}}
+#bloomgame{position:fixed;inset:0;z-index:60;display:flex;align-items:center;justify-content:center;background:rgba(42,30,28,.72);touch-action:none;user-select:none;-webkit-user-select:none;font-family:"Pixelify Sans",monospace;color:${PAL.pale}}
 #bloomgame .bpanel{position:relative;width:min(94vw,640px);border:16px solid transparent;border-image:var(--f-night,none) 16 fill stretch;background:${PAL.ink};image-rendering:pixelated;padding:4px}
 #bloomgame h2{margin:2px 0 4px;font:400 clamp(20px,4.6vw,30px) "Jacquarda Bastarda 9",serif;color:${PAL.cyan_hi};text-align:center;letter-spacing:1px}
 #bloomgame canvas{display:block;width:100%;image-rendering:pixelated;background:${PAL.indigo}}
 #bloomgame .bhud{display:flex;justify-content:space-between;font-size:clamp(13px,3.4vw,17px);margin:4px 2px 0;color:${PAL.mist}}
 #bloomgame .bhint{text-align:center;font-size:clamp(12px,3.2vw,15px);color:${PAL.mist};margin-top:4px}
 #bloomgame .bquit{position:absolute;top:-12px;right:-12px;width:34px;height:34px;border:2px solid ${PAL.rim};background:${PAL.slate};color:${PAL.pale};font:700 18px "Pixelify Sans",monospace;cursor:pointer}
-#bloomgame .bres{position:absolute;inset:0;display:none;flex-direction:column;align-items:center;justify-content:center;gap:6px;background:rgba(10,12,28,.86);text-align:center;padding:10px}
+#bloomgame .bres{position:absolute;inset:0;display:none;flex-direction:column;align-items:center;justify-content:center;gap:6px;background:rgba(42,30,28,.86);text-align:center;padding:10px}
 #bloomgame .bres.on{display:flex}
 #bloomgame .bres b{font:400 clamp(26px,6vw,40px) "Jacquarda Bastarda 9",serif;color:${PAL.cyan_hi}}
 #bloomgame .bres .lose{color:${PAL.vio_hi}}
@@ -45,12 +47,29 @@ export function freezeWorld(G) {
   return () => { G.busy = busy0; if (clk) clk.paused = clk0; };
 }
 
+// Hearthmoor Art sprites (art/minigames/bloomtide/, 16x16 caps + fx, 24x24 basket; cells = col*w, row*h, pivot bottom-centre)
+const ART_DIR = new URL('../../art/minigames/bloomtide/', import.meta.url);
+export const SHEETS = { caps: [16, 16], basket: [24, 24], glow_fx: [16, 16], sparkle_fx: [16, 16] };
+export const CAP_ROWS = ['cap_blue', 'cap_violet', 'cap_frost'];
+export const ANIM = { pop: [90], perfect: [80, 80, 80, 120], glow: [70, 70, 70, 140], sparkle: 120, catch: 100 };   // ms, from the sheet JSONs
+const IMG = {};
+export function loadArt() {
+  if (typeof Image === 'undefined') return;
+  for (const k of Object.keys(SHEETS)) if (!IMG[k]) { const im = new Image(); im.src = new URL(`bt_${k}.png`, ART_DIR).href; IMG[k] = im; }
+}
+export function cell(g, sheet, row, col, cx, by, s = 1) {   // draw one cell with its bottom-centre pivot at (cx, by)
+  const im = IMG[sheet], [w, h] = SHEETS[sheet]; if (!im || !im.complete || !im.naturalWidth) return false;
+  g.drawImage(im, col * w, row * h, w, h, Math.round(cx - (w * s) / 2), Math.round(by - h * s), w * s, h * s); return true;
+}
+export function frameAt(ms, el) { let a = 0; for (let i = 0; i < ms.length; i++) { a += ms[i]; if (el < a) return i; } return -1; }   // -1 = finished
+
 let active = null;
 export const isActive = () => !!active;
 
 export function startBloomGame(G, kind, opts = {}) {
   if (!GAMES[kind]) return Promise.reject(new Error(`bloom: unknown game ${kind}`));
   if (active) return active.promise;
+  loadArt();
   if (!document.getElementById('bloomcss')) { const s = el('style'); s.id = 'bloomcss'; s.textContent = CSS; document.head.appendChild(s); }
   const g = GAMES[kind], times = chart(kind);
   const st = { G, kind, g, times, judged: [], t: -1, t0: 0, done: false, rm: reducedMotion(G), pops: [], fx: {}, now: () => performance.now() };
@@ -129,18 +148,21 @@ export function startBloomGame(G, kind, opts = {}) {
 function px(g, c, x, y, w = 1, h = 1) { g.fillStyle = c; g.fillRect(Math.round(x), Math.round(y), w, h); }
 function disc(g, c, cx, cy, r) { g.fillStyle = c; for (let y = -r; y <= r; y++) { const w = Math.floor(Math.sqrt(r * r - y * y)); g.fillRect(Math.round(cx - w), Math.round(cy + y), w * 2 + 1, 1); } }
 function ring(g, c, cx, cy, r) { g.fillStyle = c; const n = Math.max(12, Math.round(r * 6)); for (let i = 0; i < n; i++) { const a = (i / n) * Math.PI * 2; g.fillRect(Math.round(cx + Math.cos(a) * r), Math.round(cy + Math.sin(a) * r), 1, 1); } }
-// PLACEHOLDER ART (Game Director call 4): cap(), bloom() and the code-drawn basket/backdrop stand in until Hearthmoor Art's
-// sprites land (mushroom caps, a Liss dance pose, a basket). Swap these draw calls for the sprites; keep PAL-only colours.
-export function cap(g, cx, cy, s = 1, lit = 1) {   // a cyan glow-cap (no browns): violet-slate stem, cyan cap, pale spots
-  const w = Math.round(9 * s), h = Math.round(5 * s);
-  px(g, PAL.mist, cx - Math.round(2 * s), cy, Math.round(4 * s), Math.round(7 * s)); px(g, PAL.pale, cx - Math.round(1 * s), cy, Math.max(1, Math.round(s)), Math.round(7 * s));
-  for (let y = 0; y < h; y++) { const ww = Math.round(w * Math.sqrt(1 - ((h - y) / (h + 1)) ** 2)); px(g, y < 1 ? PAL.cyan_hi : lit > 0.5 ? PAL.cyan : PAL.moss_hi, cx - ww, cy - h + y, ww * 2, 1); }
-  px(g, PAL.white, cx - Math.round(4 * s), cy - Math.round(3 * s), Math.max(1, Math.round(s)), Math.max(1, Math.round(s))); px(g, PAL.white, cx + Math.round(3 * s), cy - Math.round(2 * s), Math.max(1, Math.round(s)), Math.max(1, Math.round(s)));
+// cap sprite: idle, pop (on a good hit) or the perfect pulse + glow ring, from the time since the cue was judged
+export function capSprite(g, cx, by, s, row, hit) {
+  let col = 0;
+  if (hit && hit.grade === 'perfect') { const f = frameAt(ANIM.perfect, hit.el); col = f < 0 ? 0 : 2 + f; }
+  else if (hit && hit.grade === 'good') col = frameAt(ANIM.pop, hit.el) < 0 ? 0 : 1;
+  cell(g, 'caps', row, col, cx, by, s);
+  if (hit && hit.grade === 'perfect') { const f = frameAt(ANIM.glow, hit.el); if (f >= 0) cell(g, 'glow_fx', 0, f, cx, by, s); }
 }
-export function bloom(g, cx, cy, s = 1) {   // a blue night bloom: 4 frost petals, cyan heart
-  const r = Math.max(1, Math.round(2 * s));
-  for (const [dx, dy] of [[0, -1], [1, 0], [0, 1], [-1, 0]]) disc(g, PAL.frost, cx + dx * r * 1.4, cy + dy * r * 1.4, r);
-  disc(g, PAL.cyan_hi, cx, cy, Math.max(1, r - 1));
+// PLACEHOLDER (Liss, on hold for Art's violet nymph_vh recolour): swap drawLiss() for bt_liss_dance row 0 cols 4-7
+// (20x32, pivot 10,32, 180 ms/frame, retimed to the beat). Until then a plain violet stand-in from PAL.
+export function drawLiss(g, cx, by, beat) {
+  const sway = beat % 2 ? 1 : -1;
+  g.fillStyle = PAL.rim; g.fillRect(cx - 4 + sway, by - 20, 8, 14); g.fillStyle = PAL.vio; g.fillRect(cx - 3 + sway, by - 26, 6, 6);
+  g.fillStyle = PAL.vio_hi; g.fillRect(cx - 6 + sway * 2, by - 22 - (beat % 2) * 3, 2, 6); g.fillRect(cx + 4 + sway * 2, by - 22 - ((beat + 1) % 2) * 3, 2, 6);
+  g.fillStyle = PAL.rim; g.fillRect(cx - 3, by - 6, 2, 6); g.fillRect(cx + 1, by - 6, 2, 6);
 }
 const GROUND = 112, CX = W / 2, CY = 82, LANE_X = W / 2, HIT_Y = 116;
 export const GEOM = { GROUND, CX, CY, LANE_X, HIT_Y };
@@ -165,11 +187,12 @@ function draw(st) {
     if (cur < 0) cur = times.length - 1;
     for (let i = 0; i < times.length; i++) {   // the row of caps still to ripen, small, on the right
       if (judged[i] || i === cur) continue; const k = i - cur; if (k < 1 || k > 3) continue;
-      cap(g, CX + 30 + k * 18, GROUND - 1, 0.6, 0.2);
+      capSprite(g, CX + 30 + k * 18, GROUND, 1, i % 3, null);
     }
-    const tt = times[cur];
-    if (!judged[cur] && t >= 0) {
-      cap(g, CX, CY + 22, 1.6, t > tt - lead ? 1 : 0.3);
+    const tt = times[cur], L = st.last, lh = L && t - L.at < 400 ? { grade: L.grade, el: t - L.at } : null;
+    if (lh && judged[L.i]) capSprite(g, CX, CY + 30, 2, L.i % 3, lh);   // the cap just picked: pop / perfect pulse + glow
+    else if (!judged[cur] && t >= 0) {
+      capSprite(g, CX, CY + 30, 2, cur % 3, null);
       const k = Math.max(0, Math.min(1, (tt - t) / lead));
       if (t > tt - lead) { ring(g, PAL.vio_hi, CX, CY + 16, 14); ring(g, PAL.cyan, CX, CY + 16, 14 + k * 40); }
     }
@@ -178,10 +201,12 @@ function draw(st) {
     const lead = st.g.lead;
     for (let i = 0; i < times.length; i++) {
       if (judged[i]) continue; const k = (times[i] - t) / lead; if (k > 1 || k < -0.3) continue;
-      bloom(g, LANE_X, HIT_Y - k * (HIT_Y - 12), 1.4);
+      cell(g, 'sparkle_fx', 0, Math.floor(Math.max(0, t) / ANIM.sparkle) % 4, LANE_X, HIT_Y + 8 - k * (HIT_Y - 12), 1);   // falling bloom note
     }
     ring(g, PAL.cyan_hi, LANE_X, HIT_Y, 8);
     st.fx.target = [LANE_X, HIT_Y];
+    { const L = st.last; if (L && L.grade === 'perfect' && t - L.at < 350) { const f = frameAt(ANIM.glow, t - L.at); if (f >= 0) cell(g, 'glow_fx', 0, f, LANE_X, HIT_Y + 8, 2); } }
+    drawLiss(g, LANE_X + 52, HIT_Y + 4, Math.max(0, Math.floor(t / (60000 / st.g.bpm))));
     if (t < 0 || t < times[0] - 1000) { /* count-in drawn by the fun layer; base shows nothing */ }
   }
   for (const h of HOOKS) try { h.draw && h.draw(g, st); } catch (e) { /* juice never breaks play */ }

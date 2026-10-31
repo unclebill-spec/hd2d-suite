@@ -1,0 +1,121 @@
+{
+ "tool": "Hearthmoor Art bloomtide (tools/make.py, PIL CPU)",
+ "biome": "bloomtide-fx",
+ "facings": [
+  "down"
+ ],
+ "image": "bt_basket.png",
+ "frame": [
+  24,
+  24
+ ],
+ "pivot": [
+  12,
+  24
+ ],
+ "ground_row": 23,
+ "anims": {
+  "idle": {
+   "start": 0,
+   "count": 1
+  },
+  "walk": {
+   "start": 0,
+   "count": 0,
+   "note": "n/a (prop)"
+  },
+  "catch": {
+   "start": 1,
+   "count": 1,
+   "ms": [
+    100
+   ],
+   "note": "squash when a cap lands"
+  },
+  "idle_full": {
+   "start": 2,
+   "count": 1
+  },
+  "catch_full": {
+   "start": 3,
+   "count": 1,
+   "ms": [
+    100
+   ]
+  }
+ },
+ "roles": {
+  "basket": {
+   "row": 0,
+   "kind": "prop",
+   "size_bounds": [
+    [
+     16,
+     24
+    ],
+    [
+     12,
+     24
+    ]
+   ],
+   "frames": [
+    {
+     "name": "basket_idle",
+     "facing": "down",
+     "anim": "idle",
+     "i": 0,
+     "x": 0,
+     "y": 0,
+     "w": 24,
+     "h": 24,
+     "pivot": [
+      12,
+      24
+     ]
+    },
+    {
+     "name": "basket_catch",
+     "facing": "down",
+     "anim": "idle",
+     "i": 1,
+     "x": 24,
+     "y": 0,
+     "w": 24,
+     "h": 24,
+     "pivot": [
+      36,
+      24
+     ]
+    },
+    {
+     "name": "basket_full",
+     "facing": "down",
+     "anim": "idle",
+     "i": 2,
+     "x": 48,
+     "y": 0,
+     "w": 24,
+     "h": 24,
+     "pivot": [
+      60,
+      24
+     ]
+    },
+    {
+     "name": "basket_full_catch",
+     "facing": "down",
+     "anim": "idle",
+     "i": 3,
+     "x": 72,
+     "y": 0,
+     "w": 24,
+     "h": 24,
+     "pivot": [
+      84,
+      24
+     ]
+    }
+   ]
+  }
+ }
+}
