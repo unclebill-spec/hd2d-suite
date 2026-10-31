@@ -22,6 +22,7 @@ for (const a of ['asgard', 'gs_hall', 'gs_temple', 'reliquary', 'reliquary2']) R
 for (const a of ['helheim', 'hh_shore', 'hh_archive', 'ossuary', 'ossuary2']) REALM_OF[a] = 'helheim';   // [HELHEIM] music_helheim.ogg (Sound, 2026-10-29; waltz, 8-bar loop)
 export const MUSIC_REALMS = REALM_OF;
 export const MUSIC_TRACKS = ['midgard', 'mossbrook', 'helheim', 'alfheim', 'svartalfheim', 'jotunheim', 'muspelheim', 'niflheim', 'asgard', 'battle', 'boss'];
+export const BOSS_TRACKS = [];   // boss ids that ship music_boss_<id>.ogg (add an id here when its file lands; empty = every boss plays music_boss.ogg)
 const MUSIC_DIR = 'audio/music/';
 const DUCK = 0.3;        // ambient level while music plays (a ~70% duck)
 const XFADE = 1.6;       // crossfade seconds
@@ -58,7 +59,7 @@ export class Ambient {
   // ---- music channel
   musicGain() { return this.musicMuted ? 0 : this.musicVol * 0.9; }
   // [ASGARD 2026-10-31] per-boss music hook: a boss id maps to music_boss_<id>.ogg when that file exists (fetch ok), else music_boss.ogg. No new files shipped.
-  bossTrack() { const k = this.bossId && 'boss_' + this.bossId; return k && !this.failed[k] ? k : 'boss'; }
+  bossTrack() { const k = this.bossId && 'boss_' + this.bossId; return k && BOSS_TRACKS.includes(this.bossId) && !this.failed[k] ? k : 'boss'; }   // only ids with a shipped music_boss_<id>.ogg are requested (no 404s)
   want() { return this.boss ? this.bossTrack() : this.battle ? 'battle' : (REALM_OF[this.area] || 'midgard'); }
   load(name) {
     if (this.bufs[name] || this.failed[name] || !this.ctx) return this.bufs[name] || null;
