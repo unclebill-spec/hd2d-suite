@@ -1,0 +1,9 @@
+{
+ "what": "Bloomtide harvest + dance minigames (Vanaheim Stage C). No new pixel art: drawn in code from the locked vanaheim-gloom palette, framed with the existing UI frame and fonts.",
+ "palette_source": "art/palette/vanaheim-gloom/biome.json (Hearthmoor lock)",
+ "colors": { "ink": "#0a0c1c", "indigo": "#141a3a", "slate": "#26305e", "slate_hi": "#3c4a86", "slate_lo": "#1c2248", "moss": "#127a6e", "moss_hi": "#2aa894", "moss_lo": "#0c4a48",
+   "rim": "#6a4aa8", "mist": "#8a9ad0", "pale": "#c8d4f0", "white": "#f0f6ff", "cyan": "#3ff0ff", "cyan_hi": "#c0fcff", "vio": "#a45cf0", "vio_hi": "#d4a8ff",
+   "frost": "#7fd8ff", "frost_hi": "#e0f6ff", "mag": "#ff3fb4", "mag_hi": "#ffa8de", "lime": "#b6ff4a" },
+ "reused": ["art/ui/frame_night_glass.png (CSS --f-night)", "art/ui/fonts/PixelifySans.ttf", "art/ui/fonts/JacquardaBastarda9-Regular.ttf"],
+ "rule": "No browns (Stage C). Glow hexes only on glow pixels."
+}

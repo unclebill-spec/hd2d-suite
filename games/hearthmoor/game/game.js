@@ -13,6 +13,7 @@ import { Muspelheim, AREAS_MUSP, AREA_NAMES_MUSP } from './muspelheim.js';   // 
 import { Niflheim, AREAS_NIFL, AREA_NAMES_NIFL } from './niflheim.js';
 import { Vanaheim, AREAS_VH, AREA_NAMES_VH } from './vanaheim.js';   // [VANAHEIM] Stage B: Mossbrook village + the Thorngarden
 import { Asgard, AREAS_ASG, AREA_NAMES_ASG } from './asgard.js';   // [ASGARD]
+import { startBloomGame, bloomAction } from './minigames/bloomtide.js';   // [VANAHEIM C] Bloomtide harvest + dance minigames
 import { Helheim, AREAS_HEL, AREA_NAMES_HEL } from './helheim.js';   // [HELHEIM]   // [NIFLHEIM] skeleton: AREAS_NIFL is empty until areas are built
 const EXTRA_SPELLS = ['boulder_toss', 'frost_rune', 'stone_skin', 'cold_fire', 'stone_golem',   // [JOTUNHEIM] Stonefrost spells: drawn by combat from the game-fx atlas, so the engine's spells-atlas cycle filter must let them through
   'fire_wave', 'magma_pool', 'ember_swarm', 'flame_ward', 'magma_hound',   // [MUSPELHEIM-2] the Caldera school (Torka), the same path
@@ -101,6 +102,7 @@ G.weatherAt = weatherAt;   // smoke: the weather calendar
 G.loot = new LO.Loot(G); G.LO = LO; G.PR = PR;
 G.shopUI = new Shop(G); G.drinkTonic = () => drinkTonic(G);
 G.pets = new Pets(G); G.PETS = PETS; G.forage = () => forageExtra(G.S);   // Stage 6 part 2: glowing pets (the Stray Den)
+G.startBloomGame = (kind) => startBloomGame(G, kind); G.bloomAction = (o) => bloomAction(G, o);   // [VANAHEIM C] Liss: { act: 'bloom_game', kind }
 window.__hm = G;   // smoke tests + debugging
 
 // ------------------------------------------------------------------ save / load
