@@ -150,8 +150,8 @@ def wings(dim=True):
 
 
 NPCS = {
- "envoy_as": dict(scale=1.0, desc="Envoy Ingrith Goldrune (1x): cream tunic, belted blue trousers, gold-buckled belt, a gold-pinned blue cloak.",
-   P=dict(skin="skin", hair="flower_gold", hairstyle="bun", tunic="cream", trousers="slate", belt=("timber_lo", "ink"), buckle="flower_gold", extra=cloak())),
+ "envoy_as": dict(scale=1.0, desc="Envoy Ingrith Goldrune (1x): icy-blue tunic, belted blue trousers, silver-buckled belt, a gold-pinned icy-blue cloak, ash-silver hair.",
+   P=dict(skin="skin", hair="stone_hi", hairstyle="bun", tunic="icedeep", trousers="slate", belt=("timber_lo", "ink"), buckle="stone_hi", extra=cloak(("sky", "flower_blue", "cloth")))),
  "lordwarden": dict(scale=1.0, desc="Lord-Warden Hallgerd Sunmantle (1x): wine-red tunic, belted trousers, white fur mantle, rune circlet, short beard.",
    P=dict(skin="skin", hair="timber_hi", hairstyle="short", beard="short", beard_c=R["leather"], tunic="rust", trousers="grey", belt=("timber_lo", "ink"), buckle="flower_gold", extra=combine(mantle(), circlet))),
  "runemaster": dict(scale=1.0, desc="Rune-Master Alrik Runehammer (1x): leather apron over a grey tunic, belted trousers, rune-burned gloves, braided beard.",

@@ -6,7 +6,7 @@ Art seat, 2026-10-20. Rebuild: `cd src && python3 gen_extra.py && python3 void_g
 
 | file | roles | frame / grid |
 |---|---|---|
-| `sprite/ax_folk` | `as_guard` (1x): storm-blue tunic, leather jerkin under a gilded tabard, belted grey trousers, boots, leather cap, bracers, spear (light gear, no plate). `ingrith` (1x, Envoy Ingrith Goldrune per story §5 roster): cream tunic, belted blue trousers, gold buckle, boots, gold-pinned blue cloak, gold circlet | 40x44, same as `as_folk` (idle 0-3, walk 4-7) |
+| `sprite/ax_folk` | `as_guard` (1x): storm-blue tunic, leather jerkin under a gilded tabard, belted grey trousers, boots, leather cap, bracers, spear (light gear, no plate). `ingrith` (1x, Envoy Ingrith Goldrune per story §5 roster): icy-blue tunic, belted blue trousers, silver buckle, boots, gold-pinned icy-blue cloak, gold circlet, ash-silver bun | 40x44, same as `as_folk` (idle 0-3, walk 4-7) |
 | `sprite/ax_aurelion_p3` | `aurelion_p3` REPLACEMENT: plate, cape, blade and face remapped to the red ramp (mostly #9a4630 / #622c24 / #d0704a, rose #e47c8c seams + eyes, #4c3a3e shade); light #e8321e | 144x224, same grid as `boss_aurelion` (idle/walk/cast/attack/die) |
 | `sprite/ax_centaur` | `storm_centaur` REPLACEMENT with a bigger human torso (upper body 1.08x ht, was 0.78x) | 64x72, same grid as `as_enemies` |
 | `kit/` | `void_floor`, `void_rim`, `void_shard` (+ kit.json markers) | G7 void |
