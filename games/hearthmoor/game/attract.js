@@ -2,6 +2,21 @@
 // loop randomly picked live realms and boss fights with real combat driven by a small AI (walk to the nearest foe, swing, cast).
 // Sandboxed: every localStorage / sessionStorage write is dropped while it runs, the save state (G.S) and the combat "defeated" map
 // are snapshotted and put back, and save() is a no-op (G.attract). Any key, click, tap or pad button ends it at once.
+import { MUSIC_REALMS } from './audio.js';
+// DEMO badge captions per realm (Story, hearthmoor-staging/story/demo_captions.md, 2026-10-30). audio.js names Vanaheim's areas 'mossbrook'.
+export const DEMO_CAPTIONS = {
+  midgard: 'Hearthmoor: warm hearths, cold nights, big swords',
+  vanaheim: 'Mossbrook: gnomes, fizzing springs, rude mushrooms',
+  alfheim: 'Alfheim: violet light and very polite elves',
+  svartalfheim: 'Svartalfheim: dwarf forges under the mountain',
+  jotunheim: 'Jotunheim: frost giants who hug too hard',
+  muspelheim: 'Muspelheim: fire, lava, and a smith named Torka',
+  niflheim: "Niflheim: Veyra's frozen home. Bring a scarf",
+  asgard: 'Asgard: golden halls, valkyries, strict door rules',
+  helheim: 'Helheim: the dead are lovely. They waltz',
+};
+// boss scenes keep their own label (the boss name); everything else shows its realm caption
+export const captionFor = (sc) => (sc.boss ? sc.label : DEMO_CAPTIONS[MUSIC_REALMS[sc.area] === 'mossbrook' ? 'vanaheim' : MUSIC_REALMS[sc.area]] || sc.label);
 export const ATTRACT_IDLE_SEC = 40, ATTRACT_SCENE_SEC = 24;
 // live realms with their own SPAWNS (heroes.js) + the boss fight (Elder Golem in Mossglen). Locked / unfinished realms are not listed.
 export const ATTRACT_SCENES = [
@@ -27,7 +42,7 @@ export function makeAttract(G, host) {
     busy = false;
     if (sc.at && G.ctx && G.ctx.player) { const pl = G.ctx.player; pl.x = sc.at[0]; pl.z = sc.at[1]; if (G.ctx.heightAt) { const h = G.ctx.heightAt(pl.x, pl.z); if (Number.isFinite(h)) pl.y = h; } }   // demo start near the first fight (long walk-ins)
     if (!A.active) return;
-    if (badge) badge.querySelector('b').textContent = sc.label;
+    if (badge) badge.querySelector('b').textContent = captionFor(sc);
   }
   function next() { if (A.i >= A.order.length) { A.order = shuffle(live().slice()); A.i = 0; } const sc = A.order[A.i++]; if (sc) play(sc); }
 
@@ -41,7 +56,7 @@ export function makeAttract(G, host) {
     host.hideTitle();
     badge = document.createElement('div'); badge.id = 'attractBadge';
     badge.innerHTML = '<span>DEMO</span> <b></b><em>press any key</em>';
-    badge.style.cssText = 'position:fixed;left:50%;top:12px;transform:translateX(-50%);z-index:60;padding:6px 14px;border:2px solid #f0d9a0;background:rgba(26,29,58,.82);color:#f0d9a0;font:600 13px/1.3 monospace;letter-spacing:.06em;pointer-events:none;display:flex;gap:10px';
+    badge.style.cssText = 'position:fixed;left:50%;top:12px;transform:translateX(-50%);z-index:60;padding:6px 14px;border:2px solid #2ab4ff;background:rgba(26,29,58,.82);color:#a6ecff;box-shadow:0 0 8px rgba(42,180,255,.45);font:600 13px/1.3 monospace;letter-spacing:.06em;pointer-events:none;display:flex;gap:10px';
     document.body.appendChild(badge);
     A.order = []; A.i = 0; next();
   }
