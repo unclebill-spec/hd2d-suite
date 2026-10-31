@@ -27251,14 +27251,14 @@
    "desc": "Aurelion rest / befriend pose (outro 6.4): on one knee, sword planted point-down. idle = breathing; walk slot = a slow shuffle variant of the kneel."
   },
   "as_guard": {
-   "sheet": "axfolk",
+   "sheet": "anguard",
    "row": 0,
    "kind": "human",
    "anims": [
     "idle",
     "walk"
    ],
-   "desc": "Goldspire guard (1x): storm-blue tunic, leather jerkin under a gilded tabard, belted grey trousers, boots, leather cap, bracers, spear. Light gear, no plate.",
+   "desc": "Goldspire guard (1x NPC/foe as_guard): navy tunic, dark jerkin under a dark tabard with gold trim + sky rune, black belt, grey-slate trousers, dark boots, navy cap with gold rim, spear. No plate. Pair fx thunder_rune:rune_aura_blue.",
    "enemy": true
   },
   "ingrith": {
@@ -27327,6 +27327,10 @@
   "hhinkling": {
    "json": "hhinkling.json",
    "image": "hhinkling.png"
+  },
+  "anguard": {
+   "json": "anguard.json",
+   "image": "anguard.png"
   }
  }
 }

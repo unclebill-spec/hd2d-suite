@@ -21,9 +21,264 @@
  "image": "gamefx.png",
  "size": [
   384,
-  2880
+  3408
  ],
  "effects": {
+  "rune_spear": {
+   "row": 41,
+   "frames": 6,
+   "fps": 14,
+   "loop": true,
+   "loop_from": 0,
+   "loops": 1,
+   "kind": "projectile",
+   "pivot": [
+    24,
+    24
+   ],
+   "lift": 1.0,
+   "glow": true,
+   "light": {
+    "color": "#2ab4ff",
+    "intensity": 1.0,
+    "range": 3.0
+   },
+   "speed": 9.0,
+   "travel": null,
+   "then": "impact_flash",
+   "duration": 9999,
+   "notes": "Rune Spear (tier I): neon-blue rune spear flying right, pierces; flip for left"
+  },
+  "sky_lance_mark": {
+   "row": 42,
+   "frames": 8,
+   "fps": 8,
+   "loop": false,
+   "loop_from": 0,
+   "loops": 1,
+   "kind": "decal",
+   "pivot": [
+    24,
+    24
+   ],
+   "lift": 0.03,
+   "glow": true,
+   "light": null,
+   "speed": null,
+   "travel": null,
+   "then": null,
+   "duration": 1.0,
+   "notes": "Sky Lance (tier I) telegraph: violet ring closes on the marked spot over 1 s"
+  },
+  "sky_lance_bolt": {
+   "row": 43,
+   "frames": 8,
+   "fps": 14,
+   "loop": false,
+   "loop_from": 0,
+   "loops": 1,
+   "kind": "billboard",
+   "pivot": [
+    24,
+    47
+   ],
+   "lift": 0.0,
+   "glow": true,
+   "light": {
+    "color": "#a6ecff",
+    "intensity": 2.0,
+    "range": 5.0
+   },
+   "speed": null,
+   "travel": null,
+   "then": "impact_flash",
+   "duration": 0.571,
+   "notes": "Sky Lance strike (pivot = ground): white pop, 4-frame bolt flicker, ground ring + sparks"
+  },
+  "rune_ward": {
+   "row": 44,
+   "frames": 8,
+   "fps": 8,
+   "loop": true,
+   "loop_from": 0,
+   "loops": 1,
+   "kind": "decal",
+   "pivot": [
+    24,
+    24
+   ],
+   "lift": 0.03,
+   "glow": true,
+   "light": {
+    "color": "#a45cf0",
+    "intensity": 0.8,
+    "range": 4.0
+   },
+   "speed": null,
+   "travel": null,
+   "then": null,
+   "duration": 6.0,
+   "notes": "Rune Ward (tier II): gold rune circle (-30% dmg inside, 6 s), violet inner glow flicker; scale to ward radius"
+  },
+  "chain_rune": {
+   "row": 45,
+   "frames": 8,
+   "fps": 14,
+   "loop": false,
+   "loop_from": 0,
+   "loops": 1,
+   "kind": "billboard",
+   "pivot": [
+    24,
+    40
+   ],
+   "lift": 1.0,
+   "glow": true,
+   "light": {
+    "color": "#d4a8ff",
+    "intensity": 1.6,
+    "range": 3.0
+   },
+   "speed": null,
+   "travel": null,
+   "then": null,
+   "duration": 0.571,
+   "notes": "Chain Rune (tier II): rune mark + violet bolt on each foe it jumps to (play on 1+3 foes, 0.12 s apart). Reuses fx-library hm lightning_violet"
+  },
+  "rune_glyph_pulse": {
+   "row": 46,
+   "frames": 8,
+   "fps": 10,
+   "loop": true,
+   "loop_from": 0,
+   "loops": 1,
+   "kind": "billboard",
+   "pivot": [
+    24,
+    27
+   ],
+   "lift": 1.4,
+   "glow": true,
+   "light": {
+    "color": "#2ab4ff",
+    "intensity": 0.7,
+    "range": 2.5
+   },
+   "speed": null,
+   "travel": null,
+   "then": null,
+   "duration": 9999,
+   "notes": "rune glyph pulse: cast tell over the caster's hand, Alrik's forge runes, rune locks"
+  },
+  "rune_sparkles": {
+   "row": 47,
+   "frames": 8,
+   "fps": 12,
+   "loop": true,
+   "loop_from": 0,
+   "loops": 1,
+   "kind": "billboard",
+   "pivot": [
+    24,
+    24
+   ],
+   "lift": 1.0,
+   "glow": true,
+   "light": null,
+   "speed": null,
+   "travel": null,
+   "then": null,
+   "duration": 9999,
+   "notes": "blue + violet sparkles with a gold twinkle (school pickups, scroll, spell learned). Reuses hm sparkle_blue/violet"
+  },
+  "impact_flash": {
+   "row": 48,
+   "frames": 6,
+   "fps": 20,
+   "loop": false,
+   "loop_from": 0,
+   "loops": 1,
+   "kind": "billboard",
+   "pivot": [
+    24,
+    24
+   ],
+   "lift": 1.0,
+   "glow": true,
+   "light": {
+    "color": "#a6ecff",
+    "intensity": 1.8,
+    "range": 3.0
+   },
+   "speed": null,
+   "travel": null,
+   "then": null,
+   "duration": 0.3,
+   "notes": "thunder hit flash: 1 white frame, then hm hit_flash_blue core + violet shock ring + rune shards"
+  },
+  "rune_aura_blue": {
+   "row": 49,
+   "frames": 8,
+   "fps": 8,
+   "loop": true,
+   "loop_from": 0,
+   "loops": 1,
+   "kind": "decal",
+   "pivot": [
+    24,
+    40
+   ],
+   "lift": 0.02,
+   "glow": true,
+   "light": null,
+   "speed": null,
+   "travel": null,
+   "then": null,
+   "duration": 9999,
+   "notes": "as_guard ground glow (neon blue flicker + motes); sprite stays palette-only"
+  },
+  "rune_aura_violet": {
+   "row": 50,
+   "frames": 8,
+   "fps": 8,
+   "loop": true,
+   "loop_from": 0,
+   "loops": 1,
+   "kind": "decal",
+   "pivot": [
+    24,
+    40
+   ],
+   "lift": 0.02,
+   "glow": true,
+   "light": null,
+   "speed": null,
+   "travel": null,
+   "then": null,
+   "duration": 9999,
+   "notes": "Ingrith ground glow (neon violet flicker + motes)"
+  },
+  "spirit_raven": {
+   "row": 51,
+   "frames": 8,
+   "fps": 8,
+   "loop": true,
+   "loop_from": 0,
+   "loops": 1,
+   "kind": "billboard",
+   "pivot": [
+    24,
+    24
+   ],
+   "lift": 1.0,
+   "glow": true,
+   "light": null,
+   "speed": null,
+   "travel": null,
+   "then": null,
+   "duration": 9999,
+   "notes": "Spirit Raven (Thunder-Rune \u00a79.2): Sigrun raven_guard reused, ravens tinted warm grey #9c8e7a -> neon violet #a45cf0; blue ring unchanged"
+  },
   "quest_mark": {
    "row": 39,
    "frames": 4,
@@ -856,7 +1111,7 @@
    "notes": "G7: MID-DARK void shade #4a3a66 / #5e4c80 (no near-black), breaks up the void floor"
   },
   "stonefrost_cast_ii": {
-   "row": 41,
+   "row": 52,
    "frames": 6,
    "fps": 12,
    "loop": false,
@@ -889,7 +1144,7 @@
    "notes": "Stonefrost II cast flare at the hands: floating rune sigil (triangle) + rising motes + sparkles (NEON blue/teal)"
   },
   "stonefrost_bolt_ii": {
-   "row": 42,
+   "row": 53,
    "frames": 6,
    "fps": 12,
    "loop": true,
@@ -922,7 +1177,7 @@
    "notes": "Stonefrost II boulder rimed in glowing ice crystals, sparkles around it; replaces seed_bomb for tier II"
   },
   "stonefrost_impact_ii": {
-   "row": 43,
+   "row": 54,
    "frames": 7,
    "fps": 14,
    "loop": false,
@@ -956,7 +1211,7 @@
    "notes": "Stonefrost II impact: white-blue flash, snow ring, ice shards, stone chips, sparkles (radius ~1.9 m at 18 px/m x2)"
   },
   "stonefrost_rune_ii": {
-   "row": 44,
+   "row": 55,
    "frames": 8,
    "fps": 12,
    "loop": false,
@@ -991,7 +1246,7 @@
    "notes": "Stonefrost II Frost Rune trap decal: draws in over frames 0-3, frame 5 = armed (engine holds frame 5 like rune_trap); larger, brighter and with an outer ring per tier"
   },
   "stonefrost_burst_ii": {
-   "row": 45,
+   "row": 56,
    "frames": 6,
    "fps": 14,
    "loop": false,
@@ -1024,7 +1279,7 @@
    "notes": "Stonefrost II trap trigger: pillar of cold light + shards (replaces glyph_burst)"
   },
   "stonefrost_cast_iii": {
-   "row": 46,
+   "row": 57,
    "frames": 6,
    "fps": 12,
    "loop": false,
@@ -1057,7 +1312,7 @@
    "notes": "Stonefrost III cast flare at the hands: floating rune sigil (hexagram) + rising motes + sparkles (NEON blue/teal)"
   },
   "stonefrost_bolt_iii": {
-   "row": 47,
+   "row": 58,
    "frames": 6,
    "fps": 12,
    "loop": true,
@@ -1090,7 +1345,7 @@
    "notes": "Stonefrost III boulder rimed in glowing ice crystals, sparkles around it; replaces seed_bomb for tier III"
   },
   "stonefrost_impact_iii": {
-   "row": 48,
+   "row": 59,
    "frames": 7,
    "fps": 14,
    "loop": false,
@@ -1124,7 +1379,7 @@
    "notes": "Stonefrost III impact: white-blue flash, snow ring, ice shards, stone chips, sparkles (radius ~2.4 m at 18 px/m x2)"
   },
   "stonefrost_rune_iii": {
-   "row": 49,
+   "row": 60,
    "frames": 8,
    "fps": 12,
    "loop": false,
@@ -1159,7 +1414,7 @@
    "notes": "Stonefrost III Frost Rune trap decal: draws in over frames 0-3, frame 5 = armed (engine holds frame 5 like rune_trap); larger, brighter and with an outer ring per tier"
   },
   "stonefrost_burst_iii": {
-   "row": 50,
+   "row": 61,
    "frames": 6,
    "fps": 14,
    "loop": false,
@@ -1192,7 +1447,7 @@
    "notes": "Stonefrost III trap trigger: pillar of cold light + shards (replaces glyph_burst)"
   },
   "fire_wave": {
-   "row": 51,
+   "row": 62,
    "frames": 8,
    "fps": 12,
    "loop": false,
@@ -1213,7 +1468,7 @@
    "notes": "Fire Wave (crescent of flame, sweeps right; flip for left)"
   },
   "magma_pool": {
-   "row": 52,
+   "row": 63,
    "frames": 6,
    "fps": 6,
    "loop": true,
@@ -1238,7 +1493,7 @@
    "notes": "Magma Pool (damaging ground pool, r ~ 2-3 m; also Vharzul's rising lava edge when tiled)"
   },
   "ember_swarm": {
-   "row": 53,
+   "row": 64,
    "frames": 8,
    "fps": 12,
    "loop": true,
@@ -1259,7 +1514,7 @@
    "notes": "Ember Swarm: a cloud of orbiting embers"
   },
   "flame_ward": {
-   "row": 54,
+   "row": 65,
    "frames": 8,
    "fps": 10,
    "loop": true,
@@ -1280,7 +1535,7 @@
    "notes": "Flame Ward: a ring of small flames around the caster (shield)"
   },
   "hound_summon": {
-   "row": 55,
+   "row": 66,
    "frames": 8,
    "fps": 10,
    "loop": false,
@@ -1301,7 +1556,7 @@
    "notes": "Magma Hound summon / alpha's call: a lava ring with a column rising"
   },
   "fire_wave_l": {
-   "row": 56,
+   "row": 67,
    "frames": 8,
    "fps": 12,
    "loop": false,
@@ -1322,7 +1577,7 @@
    "notes": "Fire Wave (l), derived by musp_art.school from fire_wave"
   },
   "fire_wave_d": {
-   "row": 57,
+   "row": 68,
    "frames": 8,
    "fps": 12,
    "loop": false,
@@ -1343,7 +1598,7 @@
    "notes": "Fire Wave (d), derived by musp_art.school from fire_wave"
   },
   "fire_wave_u": {
-   "row": 58,
+   "row": 69,
    "frames": 8,
    "fps": 12,
    "loop": false,
@@ -1382,9 +1637,9 @@
    "then": null,
    "duration": 9999,
    "notes": "Ember Swarm: one mote (drawn by musp_art.school in the swarm's colours)",
-   "row": 59
+   "row": 70
   }
  },
- "stonefrost_from": 1968,
- "caldera_from": 2448
+ "stonefrost_from": 2496,
+ "caldera_from": 2976
 }
