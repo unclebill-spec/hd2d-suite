@@ -37,6 +37,14 @@ const CSS = `
 `;
 function el(tag, cls, html) { const e = document.createElement(tag); if (cls) e.className = cls; if (html != null) e.innerHTML = html; return e; }
 
+// World freeze (Game Director call 3): enemies already hold while G.busy (combat.paused() reads busy); the day clock does
+// not, so pause ctx.clock here and put back exactly what was there on close (win, lose or quit). No combat/area edits.
+export function freezeWorld(G) {
+  const busy0 = G.busy, clk = G.ctx && G.ctx.clock, clk0 = clk ? clk.paused : null;
+  G.busy = true; if (clk) clk.paused = true;
+  return () => { G.busy = busy0; if (clk) clk.paused = clk0; };
+}
+
 let active = null;
 export const isActive = () => !!active;
 
@@ -55,7 +63,7 @@ export function startBloomGame(G, kind, opts = {}) {
   panel.append(quit, el('h2', '', g.title), cv, hud, hint, res); root.append(panel); document.body.appendChild(root);
   Object.assign(st, { root, cv, hud, hint, res, gx: cv.getContext('2d') }); st.gx.imageSmoothingEnabled = false;
 
-  const busy0 = G.busy; G.busy = true; G.bloom = st;
+  const thaw = freezeWorld(G); G.bloom = st;
   let resolve; const promise = new Promise((r) => { resolve = r; });
   const finish = (won, quitted) => {
     if (st.done) return; st.done = true;
@@ -70,7 +78,7 @@ export function startBloomGame(G, kind, opts = {}) {
   };
   const close = () => {
     cancelAnimationFrame(st.raf); removeEventListener('keydown', onKey, true); call(st, 'stop');
-    root.remove(); G.busy = busy0; if (G.bloom === st) G.bloom = null; active = null;
+    root.remove(); thaw(); if (G.bloom === st) G.bloom = null; active = null;
     resolve({ won: !!st.result.won, score: st.result.quit ? 0 : st.result.score });
   };
   function showResult() {
@@ -121,6 +129,8 @@ export function startBloomGame(G, kind, opts = {}) {
 function px(g, c, x, y, w = 1, h = 1) { g.fillStyle = c; g.fillRect(Math.round(x), Math.round(y), w, h); }
 function disc(g, c, cx, cy, r) { g.fillStyle = c; for (let y = -r; y <= r; y++) { const w = Math.floor(Math.sqrt(r * r - y * y)); g.fillRect(Math.round(cx - w), Math.round(cy + y), w * 2 + 1, 1); } }
 function ring(g, c, cx, cy, r) { g.fillStyle = c; const n = Math.max(12, Math.round(r * 6)); for (let i = 0; i < n; i++) { const a = (i / n) * Math.PI * 2; g.fillRect(Math.round(cx + Math.cos(a) * r), Math.round(cy + Math.sin(a) * r), 1, 1); } }
+// PLACEHOLDER ART (Game Director call 4): cap(), bloom() and the code-drawn basket/backdrop stand in until Hearthmoor Art's
+// sprites land (mushroom caps, a Liss dance pose, a basket). Swap these draw calls for the sprites; keep PAL-only colours.
 export function cap(g, cx, cy, s = 1, lit = 1) {   // a cyan glow-cap (no browns): violet-slate stem, cyan cap, pale spots
   const w = Math.round(9 * s), h = Math.round(5 * s);
   px(g, PAL.mist, cx - Math.round(2 * s), cy, Math.round(4 * s), Math.round(7 * s)); px(g, PAL.pale, cx - Math.round(1 * s), cy, Math.max(1, Math.round(s)), Math.round(7 * s));

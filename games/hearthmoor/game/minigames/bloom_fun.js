@@ -39,7 +39,7 @@ HOOKS.push({
       if (b !== f.beat) { f.beat = b; pluck(st, b % 4 ? 0 : 5, 0.05); }
       const ph = (t % beatMs) / beatMs; if (ph < 0.15) { g.fillStyle = PAL.vio; g.fillRect(0, 0, W, 2); g.fillRect(0, 142, W, 2); }
     }
-    // basket of picked caps (harvest)
+    // basket of picked caps (harvest). PLACEHOLDER ART until Hearthmoor Art's basket sprite lands
     if (st.kind === 'harvest') { g.fillStyle = PAL.slate_hi; g.fillRect(8, 104, 30, 10); g.fillStyle = PAL.rim; g.fillRect(8, 104, 30, 2);
       for (let i = 0; i < f.basket; i++) cap(g, 12 + (i % 4) * 7, 103 - Math.floor(i / 4) * 4, 0.45, 1); }
     for (const s of f.sparks) { g.fillStyle = s.c; g.fillRect(Math.round(s.x), Math.round(s.y), 1, 1); s.x += s.vx; s.y += s.vy; s.vy += 0.04; s.life--; }
