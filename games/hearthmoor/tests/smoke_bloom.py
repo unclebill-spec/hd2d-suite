@@ -24,7 +24,9 @@ class _Quiet(SimpleHTTPRequestHandler):
         self.send_header("Cache-Control", "no-store"); super().end_headers()
 
 
-SNAP = "JSON.stringify({ls: Object.keys(localStorage).sort().map(k => [k, localStorage.getItem(k)]), S: window.__hm.S, busy: !!window.__hm.busy})"
+# localStorage only: live G.S ticks on its own (S.played playtime, S.t) even with no minigame open (EB Rule 19, GD: keep ticking)
+SNAP = "JSON.stringify(Object.keys(localStorage).sort().map(k => [k, localStorage.getItem(k)]))"
+SSNAP = "JSON.stringify(window.__hm.S)"
 # schedule one keydown per cue at its exact time (+off ms) from the game's t0; returns at once
 PLAY = """([off, every]) => { const st = window.__hm.bloom; const now = performance.now();
   st.times.forEach((t, i) => { if (i % every) return; setTimeout(() => dispatchEvent(new KeyboardEvent('keydown', {key: ' ', bubbles: true})), Math.max(0, st.t0 + t + off - now)); }); }"""
@@ -35,13 +37,13 @@ def run(pg, out, shots, name, kind, touch, log, checks):
         checks.append({"step": f"{name}/{kind}: {label}", "pass": bool(cond), "extra": str(extra)[:200]}); log(f"{'ok ' if cond else 'FAIL'} {name}/{kind}: {label} {extra}")
         if not cond:
             raise AssertionError(label)
-    before = pg.evaluate(SNAP)
+    before = pg.evaluate(SNAP); before_s = pg.evaluate(SSNAP)
     # 1. quit -> no penalty, nothing written
     pg.evaluate(f"window.__r = null; window.__hm.startBloomGame('{kind}').then(r => window.__r = r); 0")
     pg.wait_for_selector("#bloomgame canvas"); ok("overlay open + busy", pg.evaluate("!!window.__hm.busy && !!window.__hm.bloom"))
     pg.wait_for_timeout(900); pg.keyboard.press("Escape"); pg.wait_for_function("window.__r !== null", timeout=10000)
     r = pg.evaluate("window.__r"); ok("quit -> won false", r["won"] is False, r)
-    ok("quit: storage + state byte-unchanged", pg.evaluate(SNAP) == before)
+    ok("quit: localStorage byte-unchanged", pg.evaluate(SNAP) == before)
     ok("overlay removed", pg.evaluate("!document.getElementById('bloomgame')"))
     # 2. stray tap + timed win
     pg.evaluate(f"window.__r = null; window.__hm.startBloomGame('{kind}').then(r => window.__r = r); 0"); pg.wait_for_selector("#bloomgame canvas")
@@ -65,9 +67,11 @@ def run(pg, out, shots, name, kind, touch, log, checks):
         pg.keyboard.press("Enter")
     pg.wait_for_function("window.__r !== null", timeout=10000)
     r = pg.evaluate("window.__r"); ok("resolve {won, score}", r["won"] is True and r["score"] == res["score"], r)
-    after = json.loads(pg.evaluate("JSON.stringify(window.__hm.S)")); b = json.loads(before)["S"]
+    after = json.loads(pg.evaluate("JSON.stringify(window.__hm.S)")); b = json.loads(before_s)
     ok(f"flag vh_bloom_games.{kind} set", ((after.get("flags") or {}).get("vh_bloom_games") or {}).get(kind) is True)
     vb = (after.get("flags") or {}).pop("vh_bloom_games", None); (b.get("flags") or {}).pop("vh_bloom_games", None)
+    for o in (after, b):
+        o.pop("played", None); o.pop("t", None)   # ticking counters, not minigame writes
     ok("no other save change", after == b)
     ok("busy restored", pg.evaluate("!window.__hm.busy && !window.__hm.bloom"))
     # 3. a losing run (tap every 3rd cue) stays unwon and writes nothing new

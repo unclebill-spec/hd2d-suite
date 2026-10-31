@@ -110,10 +110,11 @@ export function startBloomGame(G, kind, opts = {}) {
   }
   function tap() {
     if (st.done) { if (st.result && !st.result.quit && st.now() - st.resultAt > 350) close(); return; }
-    if (st.t < 0) return;
-    const r = tapAt(times, st.judged, st.t);
+    const t = st.now() - st.t0;   // judge at tap time, not the last frame's st.t (was early by up to a frame)
+    if (t < 0) return;
+    const r = tapAt(times, st.judged, t);
     if (!r) { call(st, 'judge', { i: -1, grade: 'stray' }); return; }
-    st.judged[r.i] = r.grade; st.last = { ...r, at: st.t };
+    st.judged[r.i] = r.grade; st.last = { ...r, at: t };
     call(st, 'judge', r);
   }
   function onKey(e) {
