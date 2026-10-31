@@ -39,6 +39,8 @@ import { Factions, FACTIONS, IDS as FAC_IDS, RANKS as FAC_RANKS, NEED as FAC_NEE
 import * as LO from './loot.js';
 import { Shop, drinkTonic, goodIconURL } from './shop.js';
 import { Pets, PETS, ensurePets, petAura, forageExtra } from './pets.js';
+import { registerSW, startBootProgress, bootDone, startBackgroundFill, ensureArea } from './loader.js';   // GD call Oct 30: split precache + boot bar
+const CORE_AREAS = ['plaza', 'lane', 'mossglen', 'hollows'];   // = build.py CORE_AREAS (precached up front)
 
 // PWA install: catch the browser's prompt as early as possible (Chrome / Edge / Android); iPhone gets a tip instead
 let installEvt = null;
@@ -361,7 +363,16 @@ async function sceneOf(id) {
   return G.scenes[id];
 }
 async function loadArea(id, spawnKey, pos) {
-  const sc = await sceneOf(id);
+  // lazy areas: make sure the SW has the whole area (fetching what's missing); offline with files missing -> stay put, friendly note
+  if (!(await ensureArea(id, CORE_AREAS))) {
+    if (!G.game) throw new Error('this area is not downloaded yet: connect once to continue');
+    toast('The mists are thick that way… connect to the internet once to travel there.', 3.5); return false;
+  }
+  let sc;
+  try { sc = await sceneOf(id); } catch (e) {
+    if (!G.game) throw e;
+    toast('The mists are thick that way… connect to the internet once to travel there.', 3.5); return false;
+  }
   const gm = sc.game || {};
   let sp = pos ? { x: pos[0], z: pos[1], facing: pos[2] } : null;
   if (!sp) { const s = (gm.spawns || {})[spawnKey] || (gm.spawns || {}).start; if (s) sp = { x: s[0], z: s[1], facing: s[2] }; }
@@ -1112,9 +1123,10 @@ async function resume(s) {
   G.busy = true;
   $('fade').className = 'on';
   await new Promise((r) => setTimeout(r, 300));
-  await loadArea(s.area || 'plaza', 'start', s.pos);
+  const okArea = await loadArea(s.area || 'plaza', 'start', s.pos);
+  if (okArea === false) { G.S.area = G.area; G.S.pos = null; }   // offline + saved area not downloaded yet: play on where we are (the plaza)
   applyHero();
-  save();
+  if (okArea !== false) save();
   $('fade').className = '';
   G.busy = false;
   toast(`Welcome back. ${G.ctx.scene.name}, ${$('clocktxt').textContent}`, 2.6);
@@ -1319,6 +1331,8 @@ G.ask = { open: askAuto, pick: askPick };
 
 // ------------------------------------------------------------------ start
 async function main() {
+  const swOn = !QA && 'serviceWorker' in navigator && location.protocol.startsWith('http') && !Q.has('nosw');
+  startBootProgress(); registerSW(swOn);   // the SW installs the core set while the plaza boots; the bar shows real bytes / files
   wire();
   if (Q.has('reset')) localStorage.removeItem(slotKey(G.slot));
   if (Q.has('pad') || (matchMedia('(pointer: coarse)').matches && !Q.has('nopad') && !QA)) document.body.classList.add('padon');
@@ -1345,6 +1359,7 @@ async function main() {
       showTitle: () => { $('titlescreen').hidden = false; document.body.classList.add('titled'); $('vitals').hidden = true; },
     });
   }
-  if (!QA && 'serviceWorker' in navigator && location.protocol.startsWith('http') && !Q.has('nosw')) navigator.serviceWorker.register('sw.js').catch(() => {});
+  bootDone();
+  if (swOn && !Q.has('nofill')) setTimeout(() => startBackgroundFill(Number(Q.get('fillgap') || 60)), 4000);   // lazy areas + audio fill after play starts, throttled
 }
 main().catch((e) => { console.error(e); const b = $('boot'); if (b) { b.classList.remove('gone'); b.textContent = 'Hearthmoor failed to load: ' + e.message; } });

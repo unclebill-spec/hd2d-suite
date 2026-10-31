@@ -100,3 +100,4 @@ Helheim night warm-light (GD, Oct 30 2026): hh_shore gets one Asgard brazier (pl
 - Demo AI: walks to the nearest foe, swings every 0.55-0.8 s in reach, casts the equipped spell every 2.2-3.4 s within 7 m. Demo hero HP refills below 50 %. No game numbers changed.
 - Sandbox: storage writes dropped, save() off, G.S + defeated map restored on exit; shake / flash / volume follow the saved options.
 - Rule 19 / Oct 30 (palette-fix-1030b): Art's 7 Helheim/Vanaheim spells.png installed (same 3-blue remap). check_palette: 54 FAIL -> 47 FAIL, all gamefx.png (left alone per GD); 0 spells.png fails left.
+- GD call Oct 30: lighter precache + progress bar (sw.js install = 3.1 MB shell only; first realm plaza/lane/mossglen/hollows 40 MB filled right after activate; other areas + audio lazy + throttled background fill; boot bar game/loader.js drawBootProgress). No game numbers changed.
