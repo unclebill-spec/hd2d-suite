@@ -55,6 +55,15 @@ def circlet(cv, c):
     cv.set(c["hcx"], y, "sky")
 
 
+def circlet_band(cv, c):
+    """Ingrith (Story, 2026-10-31): gold circlet in every facing. Brow band front/side, a thin gold line across the back."""
+    if c["back"]:
+        y = c["hcy"] - c["hh"] * .62
+        cv.rect(c["hcx"] - c["hhw"] * .8, y, c["hcx"] + c["hhw"] * .8, y, "flower_gold")
+        return
+    circlet(cv, c)
+
+
 def gloves(cv, c):
     for hx, hy in c["hands"]:
         cv.rect(hx - 1, hy - 1, hx + 1, hy + 1, "timber_lo"); cv.set(hx, hy, "sky")
@@ -150,8 +159,8 @@ def wings(dim=True):
 
 
 NPCS = {
- "envoy_as": dict(scale=1.0, desc="Envoy Ingrith Goldrune (1x): icy-blue tunic, belted blue trousers, silver-buckled belt, a gold-pinned icy-blue cloak, ash-silver hair.",
-   P=dict(skin="skin", hair="stone_hi", hairstyle="bun", tunic="icedeep", trousers="slate", belt=("timber_lo", "ink"), buckle="stone_hi", extra=cloak(("sky", "flower_blue", "cloth")))),
+ "envoy_as": dict(scale=1.0, desc="Envoy Ingrith Goldrune (1x): icy-blue tunic, belted blue trousers, silver-buckled belt, a gold-pinned icy-blue cloak, ash-silver hair, gold circlet.",
+   P=dict(skin="skin", hair=("white", "sky", "flower_blue"), hairstyle="bun", tunic="icedeep", trousers="slate", belt=("timber_lo", "ink"), buckle="stone_hi", extra=combine(cloak(("sky", "flower_blue", "cloth")), circlet_band))),
  "lordwarden": dict(scale=1.0, desc="Lord-Warden Hallgerd Sunmantle (1x): wine-red tunic, belted trousers, white fur mantle, rune circlet, short beard.",
    P=dict(skin="skin", hair="timber_hi", hairstyle="short", beard="short", beard_c=R["leather"], tunic="rust", trousers="grey", belt=("timber_lo", "ink"), buckle="flower_gold", extra=combine(mantle(), circlet))),
  "runemaster": dict(scale=1.0, desc="Rune-Master Alrik Runehammer (1x): leather apron over a grey tunic, belted trousers, rune-burned gloves, braided beard.",
