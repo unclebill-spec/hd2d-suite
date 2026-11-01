@@ -55,3 +55,10 @@ HD-2D cozy game (16-bit billboard actors in a lit 3D diorama). Live: unclebill-s
 - IN PROGRESS: branch hearthmoor-vanaheim-c-merge = origin/main 6171246 + MB mb-vanaheim-c-1030 61bc1dd (merge 62dbe88), Liss/nymph_vh -> liss_vh Bloomtide options via G.bloomAction gated on vh_bloom 1 + bloom-night + befriend (58fa622), sw.js regen 6480 files, no .pyc (3d1aa1a).
 - Tests @3d1aa1a: unit/check_all/check_palette ok; liss_check PASS; direct asgard load identical to 6171246 (0.8 s, 0 errors); smoke shard 3 PASS. Shards 1, 2, 4 FAIL on load waits: page ready and not busy but __hd2d.frames stops counting (render stall), in a different area each time (asgard, reliquary, vh_garden, niflheim). Merge diff doesn't touch those paths. Verdict: likely harness/SwiftShader starvation, medium confidence; needs a control run of shard 2 on 6171246. Logs and findings: /workspace/.hm-logs/vanaheim-c-1031/.
 - NEXT: control shard 2 on 6171246, then EB Rule 19 on the merge SHA and GD OK. Then rebase N64's hearthmoor-sw-precache-split (81b180e). Attract demo HELD (82e71bb).
+
+## RESUME HERE (2026-11-01 01:10 ET, HD-2D Cozy Builder): PAUSED for usage (GD, weekly 100%)
+- Nothing running. Live main is still 6171246. Merge branch hearthmoor-vanaheim-c-merge is at this commit, on top of 8a9e7da.
+- Shard 4 retry PASSED on the merge. Shard 3 PASS. Shards 1 and 2 still show render stalls (frames stop counting).
+- The control run (shard 2 on 6171246) did NOT run: it was launched from the repo root (/tmp/hm-asg-r3/tests/smoke.py doesn't exist). On resume, run it from games/hearthmoor:
+  `cd /tmp/hm-asg-r3/games/hearthmoor && HM_IN_BROWSER_LOCK=1 flock /workspace/.hm-logs/browser.lock timeout 1500 python3 tests/smoke.py --shard 2/4 > /workspace/.hm-logs/vanaheim-c-1031/control-6171246-shard2.log 2>&1`
+- If the control stalls too, hand the merge SHA to EB for Rule 19. If it passes clean, debug the merge first. Wait for GD's go before resuming.
