@@ -27,8 +27,8 @@ def bracers(cv, c):
 
 GUARD = dict(skin="skin", hair="timber", hairstyle="short", tunic="slate", jerkin="leather", trousers="grey", belt=("timber_lo", "ink"), buckle="flower_gold",
              boots=("timber", "timber_lo"), extra=N.combine(N.tabard, cap, bracers, N.spear))
-INGRITH = dict(skin="skin", hair=("white", "sky", "flower_blue"), hairstyle="bun", tunic="icedeep", trousers="slate", trim="cloth", belt=("cloth", "ink"), buckle="white",
-               boots=("timber", "timber_lo"), extra=N.combine(N.cloak(("sky", "flower_blue", "cloth")), N.circlet_band))
+INGRITH = dict(skin="skin", hair=("white", "sky", "flower_blue"), hairstyle="bun", tunic="icedeep", trousers="slate", trim="cloth", belt=("cloth", "ink"), buckle="white", boot_hi="flower_blue",
+               boots=("cloth", "ink"), extra=N.combine(N.cloak(("sky", "flower_blue", "cloth")), N.circlet_band))
 
 
 def folk():

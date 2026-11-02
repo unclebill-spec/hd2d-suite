@@ -78,7 +78,7 @@ def giant(P, ht):
             fw = legw * (0.7 if not side else 1.05)
             fx = x_foot + (-fw * (0.35 if side else 0) if True else 0)
             cv.rect(x_foot - legw * .55, yf - bh, x_foot + legw * .55, yf, bs if not far else bl_)
-            cv.rect(x_foot - legw * .55, yf - bh, x_foot - legw * .55 + 1, yf, R["leather"][0] if not far else bl_)
+            cv.rect(x_foot - legw * .55, yf - bh, x_foot - legw * .55 + 1, yf, (P.get("boot_hi") or R["leather"][0]) if not far else bl_)
             cv.rect(x_foot - legw * .55, yf - 1, x_foot + legw * .55, yf, bl_)           # sole
             if side:
                 cv.rect(x_foot - legw * 1.1, yf - bh * .55, x_foot - legw * .3, yf, bs if not far else bl_)   # toe
