@@ -27,14 +27,14 @@ def bracers(cv, c):
 
 GUARD = dict(skin="skin", hair="timber", hairstyle="short", tunic="slate", jerkin="leather", trousers="grey", belt=("timber_lo", "ink"), buckle="flower_gold",
              boots=("timber", "timber_lo"), extra=N.combine(N.tabard, cap, bracers, N.spear))
-INGRITH = dict(skin="skin", hair=("white", "sky", "flower_blue"), hairstyle="bun", tunic="icedeep", trousers="slate", belt=("cloth", "ink"), buckle="stone_hi",
+INGRITH = dict(skin="skin", hair=("white", "sky", "flower_blue"), hairstyle="bun", tunic="icedeep", trousers="slate", trim="cloth", belt=("cloth", "ink"), buckle="white",
                boots=("timber", "timber_lo"), extra=N.combine(N.cloak(("sky", "flower_blue", "cloth")), N.circlet_band))
 
 
 def folk():
     d = dict(scale=1.0, anims=N.A2, named=True, stats_hint={"tier": "npc", "height_x_player": 1.0})
     return {"as_guard": dict(draw=giant(GUARD, N.Ht(1.0)), desc="Goldspire guard (1x): storm-blue tunic, leather jerkin under a gilded tabard, belted grey trousers, boots, leather cap, bracers, spear. Light gear, no plate.", **d),
-            "ingrith": dict(draw=giant(INGRITH, N.Ht(1.0)), desc="Envoy Ingrith Goldrune (1x, story 5 roster): icy-blue tunic, belted blue trousers, silver-buckled belt, boots, gold-pinned icy-blue cloak, gold circlet, ash-silver bun.", **d)}
+            "ingrith": dict(draw=giant(INGRITH, N.Ht(1.0)), desc="Envoy Ingrith Goldrune (1x, story 5 roster): icy-blue tunic, belted blue trousers, white-buckled belt, boots, gold-pinned icy-blue cloak, gold circlet, white and silver-blue bun.", **d)}
 
 
 # ---- red Aurelion P3: draw the gold figure, then remap every palette name to a red ramp (palette only -> passes check-sprite with no allow-list)

@@ -159,8 +159,8 @@ def wings(dim=True):
 
 
 NPCS = {
- "envoy_as": dict(scale=1.0, desc="Envoy Ingrith Goldrune (1x): icy-blue tunic, belted blue trousers, silver-buckled belt, a gold-pinned icy-blue cloak, ash-silver hair, gold circlet.",
-   P=dict(skin="skin", hair=("white", "sky", "flower_blue"), hairstyle="bun", tunic="icedeep", trousers="slate", belt=("timber_lo", "ink"), buckle="stone_hi", extra=combine(cloak(("sky", "flower_blue", "cloth")), circlet_band))),
+ "envoy_as": dict(scale=1.0, desc="Envoy Ingrith Goldrune (1x): icy-blue tunic, belted blue trousers, white-buckled belt, a gold-pinned icy-blue cloak, white and silver-blue hair, gold circlet.",
+   P=dict(skin="skin", hair=("white", "sky", "flower_blue"), hairstyle="bun", tunic="icedeep", trousers="slate", trim="cloth", belt=("timber_lo", "ink"), buckle="white", extra=combine(cloak(("sky", "flower_blue", "cloth")), circlet_band))),
  "lordwarden": dict(scale=1.0, desc="Lord-Warden Hallgerd Sunmantle (1x): wine-red tunic, belted trousers, white fur mantle, rune circlet, short beard.",
    P=dict(skin="skin", hair="timber_hi", hairstyle="short", beard="short", beard_c=R["leather"], tunic="rust", trousers="grey", belt=("timber_lo", "ink"), buckle="flower_gold", extra=combine(mantle(), circlet))),
  "runemaster": dict(scale=1.0, desc="Rune-Master Alrik Runehammer (1x): leather apron over a grey tunic, belted trousers, rune-burned gloves, braided beard.",

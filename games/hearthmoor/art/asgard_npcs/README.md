@@ -7,7 +7,7 @@ Spec sources: `hearthmoor-staging/story/asgard.md` §5 roster (envoy_as = Envoy 
 ## Sprites — `sprite/an_folk.png` + `an_folk.json` (480x352)
 as_folk layout: 40x44 frames, 12 cols; per role 4 facing rows (down/up/left/right), idle 0-3, walk 4-7 (32 frames per role). Scale 1x (standard NPC; neither is a boss/mini).
 - `as_guard` — slate tunic, dark jerkin/trousers, **dark navy tabard with a 1px gold border** (front: sides + hem; back and side views: hem only) + sky rune, navy cap w/ gold rim, cloth bracers (no armor suit), 1px spear.
-- `ingrith` — icy-blue tunic (GD-confirmed), dark trousers, **ash-silver hair/braids** (white/sky/stone_lo cool ramp, navy braid ties), gold only on the circlet + 1px cloak pin; sky belt buckle; blue cloak.
+- `ingrith` — icy-blue tunic (GD-confirmed), dark trousers, **white and silver-blue hair/braids** (white/sky/stone_lo cool ramp, navy braid ties), gold only on the circlet + 1px cloak pin; sky belt buckle; blue cloak.
 Sprites are cozy-village palette only (lock has no violet for sprites); the neon read comes from paired `rune_aura_blue` (guard) / `rune_aura_violet` (Ingrith) FX drawn under them.
 Checks: `hd2d check-sprite` PASS, 0 failures (`check_sprite_report.json`).
 
@@ -29,6 +29,6 @@ Guard back (up) view: gold tabard side borders removed, hem kept (same as side v
 - **Spirit Raven**: reuse Sigrun `raven_guard` (`art/asgard/gamefx/as_fx.json` row 34, `strips/raven_guard.png`). Its ravens were warm grey #9c8e7a (off the dark/neon lean), so a tinted copy is staged: `gamefx/spirit_raven.png/.json` (8f, 48px, loop; ravens → violet #a45cf0, blue ring kept). Palette check 0 failing, alpha {0,255}.
 
 ## Open questions
-1. ~~asgard.md §5 Ingrith look~~ RESOLVED: story §5 now has icy-blue tunic + ash-silver hair (GD 2026-10-30).
+1. ~~asgard.md §5 Ingrith look~~ RESOLVED: story §5 now has icy-blue tunic + white and silver-blue hair (GD 2026-10-30).
 
 Previews: `contact_sheet.png`, `preview.gif`. Generators: `src/gen_npcs.py`, `src/gen_thunder_rune.py`, `src/contact.py`. PixelLab: 0 gens.
