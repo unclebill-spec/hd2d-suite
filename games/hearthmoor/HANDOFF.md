@@ -62,3 +62,20 @@ HD-2D cozy game (16-bit billboard actors in a lit 3D diorama). Live: unclebill-s
 - The control run (shard 2 on 6171246) did NOT run: it was launched from the repo root (/tmp/hm-asg-r3/tests/smoke.py doesn't exist). On resume, run it from games/hearthmoor:
   `cd /tmp/hm-asg-r3/games/hearthmoor && HM_IN_BROWSER_LOCK=1 flock /workspace/.hm-logs/browser.lock timeout 1500 python3 tests/smoke.py --shard 2/4 > /workspace/.hm-logs/vanaheim-c-1031/control-6171246-shard2.log 2>&1`
 - If the control stalls too, hand the merge SHA to EB for Rule 19. If it passes clean, debug the merge first. Wait for GD's go before resuming.
+
+## RESUME HERE (2026-11-02, HD-2D Cozy Builder)
+
+Branch `hearthmoor-vhc-split` (not live; main untouched). Head: see the last commit on the branch (this HANDOFF commit sits on top of sw regen 2b17b50).
+Contents, on top of hearthmoor-vanaheim-c-merge 44586bc (live main 6171246 + Bloomtide 61bc1dd + Liss wiring):
+- 59baaab = cherry-pick -x of N64 04f8798 (split SW precache + loading bar via drawBootProgress). Conflicts: game.js (dropped the HELD attract-demo block, kept bootDone + startBackgroundFill; the old inline SW register is replaced by registerSW(swOn)), BALANCE.md (kept the Bloomtide art line, added only the precache GD-call line, dropped attract/palette-allowlist lines), sw.js (took N64's template, then regenerated).
+- 3cddc46 = cherry-pick -x of 81b180e (smoke_sw --throttle).
+- 80501ec sw regen; 99b2340 Ingrith Rev 4 (Art patch, 12 PNGs changed); 7c9283d sw regen; 873ecdd Ingrith Rev 4b (boots/belt strap #3e5a8c; as_giant.py optional boot_hi, default unchanged); 2b17b50 sw regen.
+- sw.js: install shell 110 files 3.15 MB, first realm 1450 files 40.5 MB, lazy 4905 files 193.4 MB. All URLs git-tracked, no .pyc, minigames + Asgard covered.
+- Art review images: /workspace/hearthmoor-staging/art/asgard-ingrith-fix/r4/before_after_r4.png and /workspace/hearthmoor-staging/art/asgard-ingrith-fix/r4b/before_after_r4b.png
+
+GD please test (one run):
+1. Full Rule 19 on this head.
+2. Offline/SW install check: shell ~3.15 MB should activate fast, then the first realm fill and the throttled lazy fill (live 6171246 took ~240 s to activate). tests/smoke_sw.py --throttle is available.
+3. Liss Bloomtide options (harvest + dance) in Vanaheim.
+4. Render-stall question from shards 1 and 2 at 3d1aa1a (frames counter stalls with ready true / busy false): see /workspace/.hm-logs/vanaheim-c-1031/findings.md. The control run on 6171246 never completed, so there is no clean baseline yet.
+Still open: Vanaheim C fixes (a) bloom_token/foresight_charm icons are staged at /workspace/hearthmoor-staging/art/vanaheim-icons/ but not wired (foresight_charm item not in code yet); (b) Vine Grasp root kind and (c) Moss Golem hound reuse: those spells aren't in game code on this branch yet (Systems).
