@@ -17,19 +17,20 @@ export const GOODS = {
   glowseed: { name: 'Glow seed', about: 'A seed that hums in the dark. Plant it in a garden plot (on the lower street of Bakery Lane by the lamp post, or in the Hollows): it blooms in two days.', price: 8 },
 };
 // buy price of a piece of gear by rarity (sell-back is a quarter of it, always more than scrapping)
-const GEAR_PRICE = [20, 45, 110, 260, 600];
+const GEAR_PRICE = [20, 110, 260, 600, 1200];   // gear14: Common, Rare, Epic, Legendary, Runeforged
+const SHOP_SLOTS = ['primary', 'chest', 'neck', 'helm', 'ringL', 'secondary', 'legs', 'cloak', 'feet', 'gloves', 'ranged', 'arms', 'belt'];
 export const buyPrice = (it) => Math.round(GEAR_PRICE[it.rar] * (1 + 0.05 * ((it.lv || 1) - 1)));
 export const sellPrice = (it, mul = 1) => Math.max(LO.RARITY[it.rar].scrap + 1, Math.round(buyPrice(it) * 0.25 * mul));
 
 export const SHOPS = {
-  hearthmoor: { name: "Odo's Wares", keeper: 'Odo the merchant', goods: ['tonic', 'glowseed', 'orblamp', 'glowfish'], gear: { n: 3, rar: [0, 0, 1] }, sellMul: 1 },
+  hearthmoor: { name: "Odo's Wares", keeper: 'Odo the merchant', goods: ['tonic', 'glowseed', 'orblamp', 'glowfish'], gear: { n: 3, rar: [0, 0, 0] }, sellMul: 1 },
   night: { name: 'The Lantern Pack', keeper: 'Sefa, the night merchant', goods: ['tonic'], gems: ['rift_shard', 'golem_core', 'frost_core', 'moon_opal'],
-           gear: { n: 2, rar: [2, 3], sockets: 1 }, sellMul: 1.2 },
+           gear: { n: 2, rar: [1, 2], sockets: 1 }, sellMul: 1.2 },
   // Ravenhold Harbor: Ida Wickmere's chandlery on the quay (cold-fire, rope, tonics; a rift shard when the boats bring one)
   // Bifrost Crossing: Signe Larkspur's Stray Den (biscuits only; unlocked by 'Strays of the Rift')
   den: { name: 'The Stray Den', keeper: 'Signe Larkspur, keeper of the Stray Den', goods: ['denbiscuit'], gear: { n: 0, rar: [] }, sellMul: 1 },
   harbor: { name: "Wickmere's Chandlery", keeper: 'Ida Wickmere, cold-fire chandler', goods: ['tonic', 'glowseed', 'glowfish'], gems: ['rift_shard'],
-            gear: { n: 3, rar: [0, 1, 1] }, sellMul: 1.1 },
+            gear: { n: 3, rar: [0, 0, 0] }, sellMul: 1.1 },
 };
 // the travelling night merchant: sets up by the well after dark, packs up at dawn (a neon-blue cold-fire lantern)
 export const NIGHT_MERCHANT = { plaza: { id: 'nightmerchant', role: 'nightmerchant', name: 'Sefa, the night merchant', pos: [-9.7, 1.7], facing: 'down',
@@ -43,8 +44,9 @@ export const BANK_MAX = 40;
 export const BANKER = { plaza: { id: 'banker', role: 'gnome', name: 'Bix Coppertuft, bank clerk', pos: [-6.0, 4.4], facing: 'down',
   say: ['The Nine Keys Bank. Shared vault, every hero welcome.'] } };
 export function readBank() {
-  try { const b = JSON.parse(localStorage.getItem(BANK_STORE)); if (b && b.v === 1) return { v: 1, items: b.items || [], gems: b.gems || {}, gold: b.gold || 0 }; } catch (e) { /* fresh */ }
-  return { v: 1, items: [], gems: {}, gold: 0 };
+  // gear14: v2 = 14-slot / 5-tier items; a v1 vault's items are mapped by LO.migrateItem (same key, idempotent per item)
+  try { const b = JSON.parse(localStorage.getItem(BANK_STORE)); if (b && (b.v === 1 || b.v === 2)) return { v: 2, items: (b.items || []).map(LO.migrateItem), gems: b.gems || {}, gold: b.gold || 0 }; } catch (e) { /* fresh */ }
+  return { v: 2, items: [], gems: {}, gold: 0 };
 }
 export const writeBank = (b) => localStorage.setItem(BANK_STORE, JSON.stringify(b));
 export const bankUsed = (b) => b.items.length + Object.values(b.gems).filter((n) => n > 0).length;
@@ -72,7 +74,7 @@ export class Shop {
   }
   bankRows() {
     const S = this.G.S, b = this.bank, full = bankUsed(b) >= BANK_MAX, gold = S.gold || 0;
-    const gearRow = (it, k, kind) => ({ kind, it, k, name: it.name, about: `${LO.RARITY[it.rar].name} ${it.slot} · ${LO.describe(it)}`, price: 0 });
+    const gearRow = (it, k, kind) => ({ kind, it, k, name: it.name, about: `${LO.RARITY[it.rar].name} ${LO.SLOT_LABEL[it.slot] || it.slot} · ${LO.describe(it)}`, price: 0 });
     if (this.tab === 0) return [
       { kind: 'dep_gold', n: Math.min(10, gold), name: 'Deposit 10 gold', about: `you carry ${gold} · banked gold is safe from a faint`, cant: !gold },
       { kind: 'dep_gold', n: gold, name: 'Deposit all gold', about: `${gold} gold`, cant: !gold },
@@ -134,7 +136,7 @@ export class Shop {
   stockOf(id) {
     const D = SHOPS[id], lv = this.G.S.lv || 1;
     if (!this.stock[id]) this.stock[id] = D.gear.rar.map((r, k) => {
-      const it = LO.makeItem(lv + (D.gear.sockets ? 1 : 0), r, LO.SLOTS[(k + (D.gear.sockets ? 1 : 0)) % 3]);
+      const it = LO.makeItem(lv + (D.gear.sockets ? 1 : 0), r, SHOP_SLOTS[(k * 4 + (D.gear.sockets ? 1 : 0) + Math.floor(Math.random() * 13)) % 13]);
       if (D.gear.sockets && it.gems.length < D.gear.sockets) it.gems = Array(D.gear.sockets).fill(null);   // the night stock always has a socket
       return it;
     });
@@ -153,9 +155,9 @@ export class Shop {
           price: Math.round(GOODS[g].price * mul), have: (S.inv[g] || 0), cant: sold, left };
       }),
               ...(D.gems || []).map((g) => ({ kind: 'gem', id: g, name: LO.GEMS[g].name, about: `socket gem · ${LO.GEMS[g].about}`, price: Math.round(LO.GEMS[g].price * mul), have: (S.gems[g] || 0) })),
-              ...this.stockOf(this.open).map((it, k) => ({ kind: 'gear', it, k, name: it.name, about: `${LO.RARITY[it.rar].name} ${it.slot} · ${LO.describe(it)}`, price: Math.round(buyPrice(it) * mul) }))];
+              ...this.stockOf(this.open).map((it, k) => ({ kind: 'gear', it, k, name: it.name, about: `${LO.RARITY[it.rar].name} ${LO.SLOT_LABEL[it.slot] || it.slot} · ${LO.describe(it)}`, price: Math.round(buyPrice(it) * mul) }))];
     }
-    return (S.bag || []).map((it, k) => ({ kind: 'sell', it, k, name: it.name, about: `${LO.RARITY[it.rar].name} ${it.slot} · ${LO.describe(it)}`, price: sellPrice(it, D.sellMul) }));
+    return (S.bag || []).map((it, k) => ({ kind: 'sell', it, k, name: it.name, about: `${LO.RARITY[it.rar].name} ${LO.SLOT_LABEL[it.slot] || it.slot} · ${LO.describe(it)}`, price: sellPrice(it, D.sellMul) }));
   }
   show(id) {
     const G = this.G;
@@ -212,7 +214,7 @@ export class Shop {
     const G = this.G, S = G.S, r = this.rows()[this.i]; if (!r) return false;
     if (SHOPS[this.open].bank) return this.bankAct(r);
     if (r.kind === 'sell') {
-      if (r.it.rar >= 3 && this.confirm !== this.i) { this.confirm = this.i; this.draw(); return false; }
+      if (r.it.rar >= LO.R_EPIC && this.confirm !== this.i) { this.confirm = this.i; this.draw(); return false; }
       S.bag.splice(r.k, 1); S.gold = (S.gold || 0) + r.price; this.confirm = -1;
       G.toast && G.toast(`Sold ${r.name} for ${r.price} gold`, 1.6); G.audio && G.audio.sfx('coin');
     } else {

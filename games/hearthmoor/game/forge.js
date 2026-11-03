@@ -4,9 +4,10 @@
 // (random 1 stone, chosen 2; keep new or old; per-item limit by rarity). Gloom and glow: red forge mouths, neon-blue
 // quench tanks (forge pack gamefx + point lights). Also: Sparks in the Street (the riot, 5), sockets via Orri (4), smelt /
 // scrap-for-iron (1.1, 2.5), The First Temper (6), cold-blue sparks on +7 / +10 weapons (2.3). Nettle + the Still: later.
-import { RARITY, scrap as lootScrap } from './loot.js';
-export const SOCKET = { cap: [0, 1, 2, 3, 3], punch: [{ gold: 50, iron: 2 }, { gold: 120, steel: 1 }, { gold: 250, steel: 2, gems: ['rift_shard'] }] };
-export const SCRAP_IRON = [1, 2, 3, 4, 6];
+import { RARITY, SLOTS, SLOT_W, SLOT_LABEL, scrap as lootScrap } from './loot.js';
+// gear14: caps per template tier [Common, Rare, Epic, Legendary, Runeforged]. Old Uncommon pieces became Common and keep any socket they had.
+export const SOCKET = { cap: [0, 2, 3, 3, 3], punch: [{ gold: 50, iron: 2 }, { gold: 120, steel: 1 }, { gold: 250, steel: 2, gems: ['rift_shard'] }] };
+export const SCRAP_IRON = [1, 3, 4, 6, 8];
 export const SMELT = { iron: 4, gem: 'frost_core', steel: 2 };
 export const RIOT = [
   { id: 'rioter1', flag: 'rt_gunnar', right: 0, name: 'Gunnar Saltbeck, fishmonger', role: 'fisher', pos: [-1.6, 1.6], shout: "Dwarf tongs at our altar! Who else in Ravenhold owns dwarf tongs? Eh?", calm: "...Frost on forge tools. Never warmed. Huh. No smith leaves cold tongs. I'm going home." },
@@ -20,7 +21,7 @@ export const rioterOn = (S, id) => { const r = RIOT.find((x) => x.id === id); re
 export const riotDone = (S) => ((S.quests || {}).forge_riot || 0) === 3;
 const BELLOWS = [-5.6, -8.4];
 export const UP = {
-  per: 0.07, cap: [2, 4, 6, 8, 10], heatBonus: 0.15, sure: 3,
+  per: 0.07, cap: [4, 6, 8, 10, 10], heatBonus: 0.15, sure: 3,
   cost: [null,
     { gold: 15, iron: 2, steel: 0, gems: [], chance: 1 }, { gold: 25, iron: 3, steel: 0, gems: [], chance: 1 },
     { gold: 40, iron: 4, steel: 0, gems: [], chance: 1 }, { gold: 60, iron: 5, steel: 1, gems: [], chance: 1 },
@@ -29,13 +30,16 @@ export const UP = {
     { gold: 270, iron: 10, steel: 4, gems: ['golem_core'], chance: 0.6 }, { gold: 350, iron: 12, steel: 5, gems: ['golem_core', 'rift_shard'], chance: 0.5 }],
 };
 export const REROLL = {
-  max: [1, 2, 3, 4, 5], cost: { random: 1, chosen: 2 },
+  max: [2, 3, 4, 5, 6], cost: { random: 1, chosen: 2 },
   pool: {
-    weapon: { meleeMul: 0.04, spellMul: 0.04, summonMul: 0.05, crit: 0.01, critDmg: 0.05, drain: 0.01 },
-    armor: { hpAdd: 8, guardMul: -0.015, stAdd: 4, regen: 0.3, healMul: 0.04 },
-    trinket: { crit: 0.01, stAdd: 4, summonMul: 0.05, spellCd: 0.015, stRegen: 0.04, healMul: 0.04 },
+    primary: { meleeMul: 0.04, spellMul: 0.04, summonMul: 0.05, crit: 0.01, critDmg: 0.05, drain: 0.01 },
+    chest: { hpAdd: 8, guardMul: -0.015, stAdd: 4, regen: 0.3, healMul: 0.04 },
+    neck: { crit: 0.01, stAdd: 4, summonMul: 0.05, spellCd: 0.015, stRegen: 0.04, healMul: 0.04 },
   },
 };
+// 14 slots share the three old pools: weapons / armour / jewellery
+export const SLOT_GROUP = [['Weapons', ['primary', 'secondary', 'ranged']], ['Armour', ['helm', 'chest', 'legs', 'feet', 'arms', 'gloves', 'belt', 'cloak']], ['Jewellery', ['neck', 'ringL', 'ringR']]];
+for (const [g, sl] of SLOT_GROUP) for (const k of sl) REROLL.pool[k] = REROLL.pool[g === 'Weapons' ? 'primary' : g === 'Armour' ? 'chest' : 'neck'];
 export const upK = (it) => 1 + UP.per * ((it && it.up) || 0);
 const TOVA_OK = [null, "There. Warm iron remembers being loved. It'll hold an edge for you now.", 'Plus two. A good honest piece. Common steel, uncommon care.',
   "Plus three. Hear that ring? That's the iron saying thank you.", "Cold-steel in the fold now. Feel the weight shift? It's listening to your hand.",
@@ -73,7 +77,7 @@ export function temper(S, it, rnd = Math.random) {
   it.heat = heat + 1;   // gold + gems refunded (never taken), iron + steel spent
   return { ok: false, up: to - 1, line: it.heat >= UP.sure - 1 ? "She's hot as she'll get. Next try takes, I'd stake my anvil on it." : TOVA_FAIL[Math.floor(rnd() * 3)], quench: to >= 7 };
 }
-const itemK = (it) => RARITY[it.rar].mul * (1 + ((it.lv || 1) - 1) * 0.06);
+const itemK = (it) => RARITY[it.rar].mul * (1 + ((it.lv || 1) - 1) * 0.06) * (SLOT_W[it.slot] || 1);
 // a reroll: replace `stat` (or a random one) with a fresh stat from the slot pool. Returns { old, neu } mods for the keep choice.
 export function rerollLock(S, it, chosen) {
   if (!it) return 'nothing equipped there';
@@ -84,7 +88,7 @@ export function rerollLock(S, it, chosen) {
 export function reroll(S, it, stat = null, rnd = Math.random) {
   const chosen = !!stat, why = rerollLock(S, it, chosen); if (why) return { blocked: why };
   const keys = Object.keys(it.mods), out = stat && keys.includes(stat) ? stat : keys[Math.floor(rnd() * keys.length)];
-  const pool = REROLL.pool[it.slot], free = Object.keys(pool).filter((k) => !keys.includes(k));
+  const pool = REROLL.pool[it.slot] || REROLL.pool.neck, free = Object.keys(pool).filter((k) => !keys.includes(k));
   const nk = free[Math.floor(rnd() * free.length)], raw = pool[nk] * itemK(it) * (0.8 + 0.4 * rnd());
   const v = ['hpAdd', 'stAdd'].includes(nk) ? Math.max(1, Math.round(raw)) : +raw.toFixed(3);
   S.inv.runestone -= REROLL.cost[chosen ? 'chosen' : 'random']; if (!S.inv.runestone) delete S.inv.runestone;
@@ -124,7 +128,9 @@ export function smelt(S) {
   S.inv.ironbit -= SMELT.iron; if (!S.inv.ironbit) delete S.inv.ironbit; S.gems[SMELT.gem] -= 1;
   S.inv.coldsteel = (S.inv.coldsteel || 0) + SMELT.steel; return true;
 }
-const SLOT_NAME = { weapon: 'weapon', armor: 'armour', trinket: 'trinket' };
+const SLOT_NAME = SLOT_LABEL;
+// 14 slots don't fit one dialogue list: pick a group first (Weapons / Armour / Jewellery), then the piece
+const slotPick = (id, ask, mk, back) => ({ pages: [ask], choice: { id, options: [...SLOT_GROUP.map(([g, sl]) => ({ label: g, pick: () => ({ pages: [ask], choice: { id: `${id}_${g.toLowerCase()}`, options: [...sl.map(mk), { label: back, cancel: true, pick: () => null }] } }) })), { label: back, cancel: true, pick: () => null }] } });
 export class Forge {
   constructor(G) { this.G = G; this.ctx = null; this.area = null; this.fx = []; this.lights = []; }
   attach(ctx, area) {
@@ -192,7 +198,8 @@ export class Forge {
       const cost = free && it && !it.up ? 'free (your first)' : `${c.gold} g · ${c.iron} iron${c.steel ? ` · ${c.steel} steel` : ''}${c.gems.length ? ` · ${c.gems.join(', ').replace(/_/g, ' ')}` : ''}`;
       return { label: it ? (why ? `${SLOT_NAME[slot]}: +${it.up || 0} ${it.name} (${why})` : `${SLOT_NAME[slot]}: +${to - 1} → +${to} · ${cost}`) : `${SLOT_NAME[slot]}: (empty)`, pick: () => this.doTemper(slot) };
     };
-    return { pages: [free ? 'Lay it on the anvil. This first one is on the house.' : 'Which piece?'], choice: { id: 'tova_temper', options: [opt('weapon'), opt('armor'), opt('trinket'), { label: 'Not yet', cancel: true, pick: () => null }] } };
+    if (free) { const sl = SLOTS.filter((k) => gear[k] && !gear[k].up); return { pages: ['Lay it on the anvil. This first one is on the house.'], choice: { id: 'tova_temper', options: [...(sl.length ? sl : ['primary']).slice(0, 6).map(opt), { label: 'Not yet', cancel: true, pick: () => null }] } }; }
+    return slotPick('tova_temper', 'Which piece?', opt, 'Not yet');
   }
   scrapMenu() {
     const S = this.G.S, bag = S.bag || [];
@@ -223,7 +230,7 @@ export class Forge {
   }
   // cold-blue sparks: a +7..+9 weapon throws a few on each swing, a +10 trails more and sheds a slow mote at rest
   update(dt) {
-    const ctx = this.ctx, w = ((this.G.S && this.G.S.gear) || {}).weapon; if (!ctx || !w || (w.up || 0) < 7 || !ctx.burst) return;
+    const ctx = this.ctx, w = ((this.G.S && this.G.S.gear) || {}).primary; if (!ctx || !w || (w.up || 0) < 7 || !ctx.burst) return;
     const p = ctx.player, sw = p.act && p.act.name === 'attack';
     if (sw && !this.swung) { const n = w.up >= 10 ? 5 : 2; for (let k = 0; k < n; k++) ctx.burst('wet_glint_cool', p.x + (k - n / 2) * 0.15, (p.y || 0) + 0.7, p.z + 0.1); this.sparks = (this.sparks || 0) + n; }
     this.swung = sw;
@@ -263,9 +270,9 @@ export class Forge {
       return { label: it ? `Socket · ${SLOT_NAME[slot]}: ${it.name} (${why ? why.split('.')[0] : (S.flags || {}).orri_socket ? 'free' : `${c.gold} g${c.iron ? ` · ${c.iron} iron` : ''}${c.steel ? ` · ${c.steel} steel` : ''}${c.gems ? ' · rift shard' : ''}`})` : `${SLOT_NAME[slot]}: (empty)`, pick: () => this.doPunch(slot) }; };
     return { pages: ["Rune bench. Pick a stat you don't love and let the stone decide. Or pay double and decide yourself."],
       choice: { id: 'orri', options: [
-        { label: 'Reroll a stat (1 rune-stone, random)', pick: () => ({ pages: ['Which piece?'], choice: { id: 'orri_rr', options: [opt('weapon', false), opt('armor', false), opt('trinket', false), { label: 'Not now', cancel: true, pick: () => null }] } }) },
-        { label: 'Reroll a stat you pick (2 rune-stones)', pick: () => ({ pages: ['Which piece?'], choice: { id: 'orri_rr2', options: [opt('weapon', true), opt('armor', true), opt('trinket', true), { label: 'Not now', cancel: true, pick: () => null }] } }) },
-        { label: 'Punch a socket', pick: () => ({ pages: ['Which piece gets a hole?'], choice: { id: 'orri_sock', options: [pk('weapon'), pk('armor'), pk('trinket'), { label: 'Not now', cancel: true, pick: () => null }] } }) },
+        { label: 'Reroll a stat (1 rune-stone, random)', pick: () => slotPick('orri_rr', 'Which piece?', (sl) => opt(sl, false), 'Not now') },
+        { label: 'Reroll a stat you pick (2 rune-stones)', pick: () => slotPick('orri_rr2', 'Which piece?', (sl) => opt(sl, true), 'Not now') },
+        { label: 'Punch a socket', pick: () => slotPick('orri_sock', 'Which piece gets a hole?', pk, 'Not now') },
         { label: 'Buy rune-stones', pick: () => { setTimeout(() => G.shopUI.show('runebench'), 0); return null; } },
         { label: 'Not now', cancel: true, pick: () => null }] } };
   }
