@@ -133,6 +133,9 @@ export async function boot(opts = {}) {
   const sImg = sMeta ? await loadImage(R(scene.spells.image)) : null;
   const gMeta = scene.gamefx ? await (await fetch(R(scene.gamefx.json))).json() : null;
   const gImg = gMeta ? await loadImage(R(scene.gamefx.image)) : null;
+  // [HMFX48] the shared fx-library atlas (art/fx/hm_fx48, 48 px cells, gamefx entry style), loaded for every area beside gamefx
+  const hMeta = await fetch('art/fx/hm_fx48.json').then((r) => (r.ok ? r.json() : null)).catch(() => null);
+  const hImg = hMeta ? await loadImage('art/fx/hm_fx48.png').catch(() => null) : null;
   if (!opts.keepTitle) document.title = scene.name;
   if ($('title')) $('title').textContent = scene.name;
   const canvas = opts.canvas || $('view');
@@ -281,6 +284,7 @@ export async function boot(opts = {}) {
   const effects = sMeta ? new Effects(world, sharp, sImg, sMeta) : null;
   // game art (portal vortex, ground rings, pickups): persistent looping billboards/decals, no extra lights
   const gamefx = gMeta ? new Effects(world, sharp, gImg, gMeta, 0) : null;
+  const hmfx = hMeta && hImg ? new Effects(world, sharp, hImg, hMeta, 0) : null;   // [HMFX48]
   const fxPlaced = {};
   if (gamefx) for (const f of scene.fx || []) fxPlaced[f.id || f.name] = gamefx.spawn(f.name, f.pos[0], f.pos[1], f.pos[2], { duration: Infinity });
   // spells the game draws itself (hooks.onCast returns false and combat spawns the fx from the game-fx atlas): they have no spells-atlas entry
@@ -802,6 +806,7 @@ export async function boot(opts = {}) {
     for (const a of npcs) updateNpc(a, dt);
     if (effects) effects.update(dt);
     if (gamefx) gamefx.update(dt);
+    if (hmfx) hmfx.update(dt);
     if (hooks.onFrame) hooks.onFrame(dt, ctx);
   }
   function frame() {
@@ -840,6 +845,7 @@ export async function boot(opts = {}) {
     }
     if (effects) effects.sync(camera, bufW, bufH, k, g.sprite_tint.clone().convertLinearToSRGB());
     if (gamefx) gamefx.sync(camera, bufW, bufH, k, g.sprite_tint.clone().convertLinearToSRGB());
+    if (hmfx) hmfx.sync(camera, bufW, bufH, k, g.sprite_tint.clone().convertLinearToSRGB());
     // focus band follows the player's screen row (the walk band)
     const pf = tmpV.set(player.x, player.y + 0.8, player.z).project(camera);
     post.mat.uniforms.uFocusY.value = THREE.MathUtils.clamp(pf.y * 0.5 + 0.5, 0.3, 0.7);
@@ -858,7 +864,7 @@ export async function boot(opts = {}) {
   const projV = new THREE.Vector3();
   const project = (x, y, z) => { const cr = canvas.getBoundingClientRect(); const p = projV.set(x, y, z).project(camera); return { x: cr.left + (p.x * 0.5 + 0.5) * cr.width, y: cr.top + (-p.y * 0.5 + 0.5) * cr.height, z: p.z }; };
   const ctx = {
-    scene, clock, camera, actors, player, npcs, collide, nav, effects, gamefx, fx: fxPlaced, particles, keys, project,
+    scene, clock, camera, actors, player, npcs, collide, nav, effects, gamefx, hmfx, fx: fxPlaced, particles, keys, project,
     walkTo: (x, z, extra) => walkPath(x, z, extra), stopWalk: () => { walkTo = null; }, walking: () => !!walkTo,
     castSpell, setSpellCycle: (c) => { spellCycle = (c || []).filter((n) => sMeta && (sMeta.cast_sets[n] || sMeta.effects[n] || extraSpell(n))); spellIdx = Math.min(spellIdx, Math.max(0, spellCycle.length - 1)); if ($('btnSpell')) $('btnSpell').hidden = !spellCycle.length; showSpell(); },
     spellCycle: () => spellCycle.slice(),

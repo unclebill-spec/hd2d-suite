@@ -21,6 +21,10 @@ const HOUND = { name: 'Magma hound', hp: 110, dmg: 13, reach: 1.4, speed: 2.6 };
 const HOUND_ROLES = ['magma_hound'];
 const SCHOOL_KIND = { root: 'nature', golem: 'nature', skin: 'nature', hound: 'nature', nova: 'light', chain: 'light', ward: 'light', spirits: 'dark', veil: 'dark', swarm: 'dark' };
 const spellSfx = (S) => { const sc = S.school || SCHOOL_KIND[S.kind]; return sc ? 'spell_' + sc : 'spell'; };
+// [HMFX48] cast flourishes from the shared hm_fx48 atlas, GD order: blue -> violet -> flame_blue (names matched to the Frostweave / Cold Fire spells)
+const HMFX_CAST = { lance: 'spell_cast_blue', fnova: 'impact_blue', igolem: 'portal_blue',   // blue
+  veil: 'buff_aura_violet', spirits: 'wisps_violet',                                          // violet
+  coldfire: 'flame_blue' };                                                                    // flame_blue (the cold fire)
 const HOUND_LOOK = { magma_hound: { name: 'Magma hound', color: null, toast: 'A Magma Hound shakes itself out of the lava!' },
   moss_golem: { name: 'Moss Golem', color: 0x7cff9a, toast: 'A Moss Golem heaves itself up out of the loam!' } };   // the realm's own hound sheet (every Muspelheim area carries it); elsewhere no hound answers
 const WAVE_FX = { right: 'fire_wave', left: 'fire_wave_l', up: 'fire_wave_u', down: 'fire_wave_d' };
@@ -485,7 +489,9 @@ export class Combat {
     const tgt = this.nearestEnemy(p, 7);
     if (tgt && !p.act) ctx.actors.setFacingFromVec(p, tgt.a.x - p.x, tgt.a.z - p.z);
     if (!p.act) p.castT = p.castDur;
-    G.audio.sfx(spellSfx(S));   // [SOUND] school -> spell_light / spell_dark / spell_nature (audio falls back to 'spell')
+    G.audio.sfx(spellSfx(S));
+    { const hx = ctx.hmfx, hn = HMFX_CAST[S.kind], hm = hx && hn && hx.meta.effects[hn];
+      if (hm) hx.spawn(hn, p.x, p.y, p.z + 0.06, hm.loop ? { duration: 1.2 } : {}); }   // [SOUND] school -> spell_light / spell_dark / spell_nature (audio falls back to 'spell')
     const fv = FV[p.facing] || [0, 1], fx = ctx.effects;
     if (!fx) return false;
     const T = S.stone ? this.stoneFx() : null;   // Boulder Toss / Frost Rune: tier II / III art + damage from the game-fx atlas

@@ -1,0 +1,3307 @@
+{
+ "tool": "Hearthmoor Art make_fx48.py (procedural, CPU, 0 PixelLab)",
+ "status": "READY",
+ "biome": "cozy-village",
+ "palette": "cozy-village + NEON + ORB_NEON (effects rule; same hexes as hm_fx)",
+ "image": "hm_fx48.png",
+ "cell": 48,
+ "size": [
+  384,
+  1920
+ ],
+ "filter": "nearest",
+ "effects": {
+  "glow_orb_blue": {
+   "row": 0,
+   "frames": 8,
+   "fps": 8,
+   "loop": true,
+   "loop_from": 0,
+   "loops": 1,
+   "kind": "billboard",
+   "pivot": [
+    24,
+    35
+   ],
+   "lift": 0.0,
+   "glow": true,
+   "light": {
+    "color": "#a6ecff",
+    "energy": 1.2,
+    "range": 1.6
+   },
+   "speed": null,
+   "travel": null,
+   "then": null,
+   "duration": 1.0,
+   "frame_list": [
+    {
+     "x": 0,
+     "y": 0,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 48,
+     "y": 0,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 96,
+     "y": 0,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 144,
+     "y": 0,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 192,
+     "y": 0,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 240,
+     "y": 0,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 288,
+     "y": 0,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 336,
+     "y": 0,
+     "w": 48,
+     "h": 48
+    }
+   ],
+   "strip": "strips/glow_orb_blue.png",
+   "ramp": [
+    "#2a1e1c",
+    "#1c62d8",
+    "#2ab4ff",
+    "#a6ecff",
+    "#fff8e6"
+   ],
+   "notes": "floating glow orb + pulsing light pool | 48 px: centred (+8,+8), 1 px glow halo, margin sparkles"
+  },
+  "glow_orb_violet": {
+   "row": 1,
+   "frames": 8,
+   "fps": 8,
+   "loop": true,
+   "loop_from": 0,
+   "loops": 1,
+   "kind": "billboard",
+   "pivot": [
+    24,
+    35
+   ],
+   "lift": 0.0,
+   "glow": true,
+   "light": {
+    "color": "#d4a8ff",
+    "energy": 1.2,
+    "range": 1.6
+   },
+   "speed": null,
+   "travel": null,
+   "then": null,
+   "duration": 1.0,
+   "frame_list": [
+    {
+     "x": 0,
+     "y": 48,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 48,
+     "y": 48,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 96,
+     "y": 48,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 144,
+     "y": 48,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 192,
+     "y": 48,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 240,
+     "y": 48,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 288,
+     "y": 48,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 336,
+     "y": 48,
+     "w": 48,
+     "h": 48
+    }
+   ],
+   "strip": "strips/glow_orb_violet.png",
+   "ramp": [
+    "#2a1e1c",
+    "#6a34b8",
+    "#a45cf0",
+    "#d4a8ff",
+    "#fff8e6"
+   ],
+   "notes": "floating glow orb + pulsing light pool | 48 px: centred (+8,+8), 1 px glow halo, margin sparkles"
+  },
+  "glow_orb_fire": {
+   "row": 2,
+   "frames": 8,
+   "fps": 8,
+   "loop": true,
+   "loop_from": 0,
+   "loops": 1,
+   "kind": "billboard",
+   "pivot": [
+    24,
+    35
+   ],
+   "lift": 0.0,
+   "glow": true,
+   "light": {
+    "color": "#f2c24a",
+    "energy": 1.2,
+    "range": 1.6
+   },
+   "speed": null,
+   "travel": null,
+   "then": null,
+   "duration": 1.0,
+   "frame_list": [
+    {
+     "x": 0,
+     "y": 96,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 48,
+     "y": 96,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 96,
+     "y": 96,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 144,
+     "y": 96,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 192,
+     "y": 96,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 240,
+     "y": 96,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 288,
+     "y": 96,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 336,
+     "y": 96,
+     "w": 48,
+     "h": 48
+    }
+   ],
+   "strip": "strips/glow_orb_fire.png",
+   "ramp": [
+    "#622c24",
+    "#e0302a",
+    "#ff5a4a",
+    "#f2c24a",
+    "#fff8e6"
+   ],
+   "notes": "floating glow orb + pulsing light pool | 48 px: centred (+8,+8), 1 px glow halo, margin sparkles"
+  },
+  "glow_orb_green": {
+   "row": 3,
+   "frames": 8,
+   "fps": 8,
+   "loop": true,
+   "loop_from": 0,
+   "loops": 1,
+   "kind": "billboard",
+   "pivot": [
+    24,
+    35
+   ],
+   "lift": 0.0,
+   "glow": true,
+   "light": {
+    "color": "#c4ff8a",
+    "energy": 1.2,
+    "range": 1.6
+   },
+   "speed": null,
+   "travel": null,
+   "then": null,
+   "duration": 1.0,
+   "frame_list": [
+    {
+     "x": 0,
+     "y": 144,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 48,
+     "y": 144,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 96,
+     "y": 144,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 144,
+     "y": 144,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 192,
+     "y": 144,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 240,
+     "y": 144,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 288,
+     "y": 144,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 336,
+     "y": 144,
+     "w": 48,
+     "h": 48
+    }
+   ],
+   "strip": "strips/glow_orb_green.png",
+   "ramp": [
+    "#2a1e1c",
+    "#24a03a",
+    "#5aec3c",
+    "#c4ff8a",
+    "#fff8e6"
+   ],
+   "notes": "floating glow orb + pulsing light pool | 48 px: centred (+8,+8), 1 px glow halo, margin sparkles"
+  },
+  "glow_orb_pink": {
+   "row": 4,
+   "frames": 8,
+   "fps": 8,
+   "loop": true,
+   "loop_from": 0,
+   "loops": 1,
+   "kind": "billboard",
+   "pivot": [
+    24,
+    35
+   ],
+   "lift": 0.0,
+   "glow": true,
+   "light": {
+    "color": "#ffb4ea",
+    "energy": 1.2,
+    "range": 1.6
+   },
+   "speed": null,
+   "travel": null,
+   "then": null,
+   "duration": 1.0,
+   "frame_list": [
+    {
+     "x": 0,
+     "y": 192,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 48,
+     "y": 192,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 96,
+     "y": 192,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 144,
+     "y": 192,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 192,
+     "y": 192,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 240,
+     "y": 192,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 288,
+     "y": 192,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 336,
+     "y": 192,
+     "w": 48,
+     "h": 48
+    }
+   ],
+   "strip": "strips/glow_orb_pink.png",
+   "ramp": [
+    "#2a1e1c",
+    "#b82a8c",
+    "#ff4fc8",
+    "#ffb4ea",
+    "#fff8e6"
+   ],
+   "notes": "floating glow orb + pulsing light pool | 48 px: centred (+8,+8), 1 px glow halo, margin sparkles"
+  },
+  "sparkle_gold": {
+   "row": 5,
+   "frames": 8,
+   "fps": 12,
+   "loop": true,
+   "loop_from": 0,
+   "loops": 1,
+   "kind": "billboard",
+   "pivot": [
+    24,
+    24
+   ],
+   "lift": 0.0,
+   "glow": true,
+   "light": null,
+   "speed": null,
+   "travel": null,
+   "then": null,
+   "duration": 0.667,
+   "frame_list": [
+    {
+     "x": 0,
+     "y": 240,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 48,
+     "y": 240,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 96,
+     "y": 240,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 144,
+     "y": 240,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 192,
+     "y": 240,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 240,
+     "y": 240,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 288,
+     "y": 240,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 336,
+     "y": 240,
+     "w": 48,
+     "h": 48
+    }
+   ],
+   "strip": "strips/sparkle_gold.png",
+   "ramp": [
+    "#622c24",
+    "#b07a44",
+    "#f2c24a",
+    "#e6d2ac",
+    "#fff8e6"
+   ],
+   "notes": "twinkle sparkles (pickups, rare items) | 48 px: centred (+8,+8), 1 px glow halo, margin sparkles"
+  },
+  "sparkle_blue": {
+   "row": 6,
+   "frames": 8,
+   "fps": 12,
+   "loop": true,
+   "loop_from": 0,
+   "loops": 1,
+   "kind": "billboard",
+   "pivot": [
+    24,
+    24
+   ],
+   "lift": 0.0,
+   "glow": true,
+   "light": null,
+   "speed": null,
+   "travel": null,
+   "then": null,
+   "duration": 0.667,
+   "frame_list": [
+    {
+     "x": 0,
+     "y": 288,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 48,
+     "y": 288,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 96,
+     "y": 288,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 144,
+     "y": 288,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 192,
+     "y": 288,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 240,
+     "y": 288,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 288,
+     "y": 288,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 336,
+     "y": 288,
+     "w": 48,
+     "h": 48
+    }
+   ],
+   "strip": "strips/sparkle_blue.png",
+   "ramp": [
+    "#2a1e1c",
+    "#1c62d8",
+    "#2ab4ff",
+    "#a6ecff",
+    "#fff8e6"
+   ],
+   "notes": "twinkle sparkles (pickups, rare items) | 48 px: centred (+8,+8), 1 px glow halo, margin sparkles"
+  },
+  "sparkle_violet": {
+   "row": 7,
+   "frames": 8,
+   "fps": 12,
+   "loop": true,
+   "loop_from": 0,
+   "loops": 1,
+   "kind": "billboard",
+   "pivot": [
+    24,
+    24
+   ],
+   "lift": 0.0,
+   "glow": true,
+   "light": null,
+   "speed": null,
+   "travel": null,
+   "then": null,
+   "duration": 0.667,
+   "frame_list": [
+    {
+     "x": 0,
+     "y": 336,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 48,
+     "y": 336,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 96,
+     "y": 336,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 144,
+     "y": 336,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 192,
+     "y": 336,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 240,
+     "y": 336,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 288,
+     "y": 336,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 336,
+     "y": 336,
+     "w": 48,
+     "h": 48
+    }
+   ],
+   "strip": "strips/sparkle_violet.png",
+   "ramp": [
+    "#2a1e1c",
+    "#6a34b8",
+    "#a45cf0",
+    "#d4a8ff",
+    "#fff8e6"
+   ],
+   "notes": "twinkle sparkles (pickups, rare items) | 48 px: centred (+8,+8), 1 px glow halo, margin sparkles"
+  },
+  "sparkle_pink": {
+   "row": 8,
+   "frames": 8,
+   "fps": 12,
+   "loop": true,
+   "loop_from": 0,
+   "loops": 1,
+   "kind": "billboard",
+   "pivot": [
+    24,
+    24
+   ],
+   "lift": 0.0,
+   "glow": true,
+   "light": null,
+   "speed": null,
+   "travel": null,
+   "then": null,
+   "duration": 0.667,
+   "frame_list": [
+    {
+     "x": 0,
+     "y": 384,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 48,
+     "y": 384,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 96,
+     "y": 384,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 144,
+     "y": 384,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 192,
+     "y": 384,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 240,
+     "y": 384,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 288,
+     "y": 384,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 336,
+     "y": 384,
+     "w": 48,
+     "h": 48
+    }
+   ],
+   "strip": "strips/sparkle_pink.png",
+   "ramp": [
+    "#2a1e1c",
+    "#b82a8c",
+    "#ff4fc8",
+    "#ffb4ea",
+    "#fff8e6"
+   ],
+   "notes": "twinkle sparkles (pickups, rare items) | 48 px: centred (+8,+8), 1 px glow halo, margin sparkles"
+  },
+  "spell_cast_blue": {
+   "row": 9,
+   "frames": 8,
+   "fps": 12,
+   "loop": false,
+   "loop_from": 0,
+   "loops": 1,
+   "kind": "billboard",
+   "pivot": [
+    24,
+    36
+   ],
+   "lift": 0.0,
+   "glow": true,
+   "light": {
+    "color": "#a6ecff",
+    "energy": 1.0,
+    "range": 1.6
+   },
+   "speed": null,
+   "travel": null,
+   "then": null,
+   "duration": 0.667,
+   "frame_list": [
+    {
+     "x": 0,
+     "y": 432,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 48,
+     "y": 432,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 96,
+     "y": 432,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 144,
+     "y": 432,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 192,
+     "y": 432,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 240,
+     "y": 432,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 288,
+     "y": 432,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 336,
+     "y": 432,
+     "w": 48,
+     "h": 48
+    }
+   ],
+   "strip": "strips/spell_cast_blue.png",
+   "ramp": [
+    "#2a1e1c",
+    "#1c62d8",
+    "#2ab4ff",
+    "#a6ecff",
+    "#fff8e6"
+   ],
+   "notes": "rune ring rises, motes spiral, flash f4-5 | 48 px: centred (+8,+8), 1 px glow halo, margin sparkles"
+  },
+  "spell_cast_violet": {
+   "row": 10,
+   "frames": 8,
+   "fps": 12,
+   "loop": false,
+   "loop_from": 0,
+   "loops": 1,
+   "kind": "billboard",
+   "pivot": [
+    24,
+    36
+   ],
+   "lift": 0.0,
+   "glow": true,
+   "light": {
+    "color": "#d4a8ff",
+    "energy": 1.0,
+    "range": 1.6
+   },
+   "speed": null,
+   "travel": null,
+   "then": null,
+   "duration": 0.667,
+   "frame_list": [
+    {
+     "x": 0,
+     "y": 480,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 48,
+     "y": 480,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 96,
+     "y": 480,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 144,
+     "y": 480,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 192,
+     "y": 480,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 240,
+     "y": 480,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 288,
+     "y": 480,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 336,
+     "y": 480,
+     "w": 48,
+     "h": 48
+    }
+   ],
+   "strip": "strips/spell_cast_violet.png",
+   "ramp": [
+    "#2a1e1c",
+    "#6a34b8",
+    "#a45cf0",
+    "#d4a8ff",
+    "#fff8e6"
+   ],
+   "notes": "rune ring rises, motes spiral, flash f4-5 | 48 px: centred (+8,+8), 1 px glow halo, margin sparkles"
+  },
+  "spell_cast_fire": {
+   "row": 11,
+   "frames": 8,
+   "fps": 12,
+   "loop": false,
+   "loop_from": 0,
+   "loops": 1,
+   "kind": "billboard",
+   "pivot": [
+    24,
+    36
+   ],
+   "lift": 0.0,
+   "glow": true,
+   "light": {
+    "color": "#f2c24a",
+    "energy": 1.0,
+    "range": 1.6
+   },
+   "speed": null,
+   "travel": null,
+   "then": null,
+   "duration": 0.667,
+   "frame_list": [
+    {
+     "x": 0,
+     "y": 528,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 48,
+     "y": 528,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 96,
+     "y": 528,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 144,
+     "y": 528,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 192,
+     "y": 528,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 240,
+     "y": 528,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 288,
+     "y": 528,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 336,
+     "y": 528,
+     "w": 48,
+     "h": 48
+    }
+   ],
+   "strip": "strips/spell_cast_fire.png",
+   "ramp": [
+    "#622c24",
+    "#e0302a",
+    "#ff5a4a",
+    "#f2c24a",
+    "#fff8e6"
+   ],
+   "notes": "rune ring rises, motes spiral, flash f4-5 | 48 px: centred (+8,+8), 1 px glow halo, margin sparkles"
+  },
+  "spell_cast_green": {
+   "row": 12,
+   "frames": 8,
+   "fps": 12,
+   "loop": false,
+   "loop_from": 0,
+   "loops": 1,
+   "kind": "billboard",
+   "pivot": [
+    24,
+    36
+   ],
+   "lift": 0.0,
+   "glow": true,
+   "light": {
+    "color": "#c4ff8a",
+    "energy": 1.0,
+    "range": 1.6
+   },
+   "speed": null,
+   "travel": null,
+   "then": null,
+   "duration": 0.667,
+   "frame_list": [
+    {
+     "x": 0,
+     "y": 576,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 48,
+     "y": 576,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 96,
+     "y": 576,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 144,
+     "y": 576,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 192,
+     "y": 576,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 240,
+     "y": 576,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 288,
+     "y": 576,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 336,
+     "y": 576,
+     "w": 48,
+     "h": 48
+    }
+   ],
+   "strip": "strips/spell_cast_green.png",
+   "ramp": [
+    "#2a1e1c",
+    "#24a03a",
+    "#5aec3c",
+    "#c4ff8a",
+    "#fff8e6"
+   ],
+   "notes": "rune ring rises, motes spiral, flash f4-5 | 48 px: centred (+8,+8), 1 px glow halo, margin sparkles"
+  },
+  "impact_blue": {
+   "row": 13,
+   "frames": 8,
+   "fps": 16,
+   "loop": false,
+   "loop_from": 0,
+   "loops": 1,
+   "kind": "billboard",
+   "pivot": [
+    24,
+    24
+   ],
+   "lift": 0.0,
+   "glow": true,
+   "light": {
+    "color": "#a6ecff",
+    "energy": 1.4,
+    "range": 1.6
+   },
+   "speed": null,
+   "travel": null,
+   "then": null,
+   "duration": 0.5,
+   "frame_list": [
+    {
+     "x": 0,
+     "y": 624,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 48,
+     "y": 624,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 96,
+     "y": 624,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 144,
+     "y": 624,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 192,
+     "y": 624,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 240,
+     "y": 624,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 288,
+     "y": 624,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 336,
+     "y": 624,
+     "w": 48,
+     "h": 48
+    }
+   ],
+   "strip": "strips/impact_blue.png",
+   "ramp": [
+    "#2a1e1c",
+    "#1c62d8",
+    "#2ab4ff",
+    "#a6ecff",
+    "#fff8e6"
+   ],
+   "notes": "burst ring + 8 rays | 48 px: centred (+8,+8), 1 px glow halo, margin sparkles"
+  },
+  "impact_violet": {
+   "row": 14,
+   "frames": 8,
+   "fps": 16,
+   "loop": false,
+   "loop_from": 0,
+   "loops": 1,
+   "kind": "billboard",
+   "pivot": [
+    24,
+    24
+   ],
+   "lift": 0.0,
+   "glow": true,
+   "light": {
+    "color": "#d4a8ff",
+    "energy": 1.4,
+    "range": 1.6
+   },
+   "speed": null,
+   "travel": null,
+   "then": null,
+   "duration": 0.5,
+   "frame_list": [
+    {
+     "x": 0,
+     "y": 672,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 48,
+     "y": 672,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 96,
+     "y": 672,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 144,
+     "y": 672,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 192,
+     "y": 672,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 240,
+     "y": 672,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 288,
+     "y": 672,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 336,
+     "y": 672,
+     "w": 48,
+     "h": 48
+    }
+   ],
+   "strip": "strips/impact_violet.png",
+   "ramp": [
+    "#2a1e1c",
+    "#6a34b8",
+    "#a45cf0",
+    "#d4a8ff",
+    "#fff8e6"
+   ],
+   "notes": "burst ring + 8 rays | 48 px: centred (+8,+8), 1 px glow halo, margin sparkles"
+  },
+  "impact_fire": {
+   "row": 15,
+   "frames": 8,
+   "fps": 16,
+   "loop": false,
+   "loop_from": 0,
+   "loops": 1,
+   "kind": "billboard",
+   "pivot": [
+    24,
+    24
+   ],
+   "lift": 0.0,
+   "glow": true,
+   "light": {
+    "color": "#f2c24a",
+    "energy": 1.4,
+    "range": 1.6
+   },
+   "speed": null,
+   "travel": null,
+   "then": null,
+   "duration": 0.5,
+   "frame_list": [
+    {
+     "x": 0,
+     "y": 720,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 48,
+     "y": 720,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 96,
+     "y": 720,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 144,
+     "y": 720,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 192,
+     "y": 720,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 240,
+     "y": 720,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 288,
+     "y": 720,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 336,
+     "y": 720,
+     "w": 48,
+     "h": 48
+    }
+   ],
+   "strip": "strips/impact_fire.png",
+   "ramp": [
+    "#622c24",
+    "#e0302a",
+    "#ff5a4a",
+    "#f2c24a",
+    "#fff8e6"
+   ],
+   "notes": "burst ring + 8 rays | 48 px: centred (+8,+8), 1 px glow halo, margin sparkles"
+  },
+  "impact_green": {
+   "row": 16,
+   "frames": 8,
+   "fps": 16,
+   "loop": false,
+   "loop_from": 0,
+   "loops": 1,
+   "kind": "billboard",
+   "pivot": [
+    24,
+    24
+   ],
+   "lift": 0.0,
+   "glow": true,
+   "light": {
+    "color": "#c4ff8a",
+    "energy": 1.4,
+    "range": 1.6
+   },
+   "speed": null,
+   "travel": null,
+   "then": null,
+   "duration": 0.5,
+   "frame_list": [
+    {
+     "x": 0,
+     "y": 768,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 48,
+     "y": 768,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 96,
+     "y": 768,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 144,
+     "y": 768,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 192,
+     "y": 768,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 240,
+     "y": 768,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 288,
+     "y": 768,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 336,
+     "y": 768,
+     "w": 48,
+     "h": 48
+    }
+   ],
+   "strip": "strips/impact_green.png",
+   "ramp": [
+    "#2a1e1c",
+    "#24a03a",
+    "#5aec3c",
+    "#c4ff8a",
+    "#fff8e6"
+   ],
+   "notes": "burst ring + 8 rays | 48 px: centred (+8,+8), 1 px glow halo, margin sparkles"
+  },
+  "hit_flash_fire": {
+   "row": 17,
+   "frames": 8,
+   "fps": 20,
+   "loop": false,
+   "loop_from": 0,
+   "loops": 1,
+   "kind": "billboard",
+   "pivot": [
+    24,
+    24
+   ],
+   "lift": 0.0,
+   "glow": true,
+   "light": {
+    "color": "#f2c24a",
+    "energy": 1.6,
+    "range": 1.6
+   },
+   "speed": null,
+   "travel": null,
+   "then": null,
+   "duration": 0.4,
+   "frame_list": [
+    {
+     "x": 0,
+     "y": 816,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 48,
+     "y": 816,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 96,
+     "y": 816,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 144,
+     "y": 816,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 192,
+     "y": 816,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 240,
+     "y": 816,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 288,
+     "y": 816,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 336,
+     "y": 816,
+     "w": 48,
+     "h": 48
+    }
+   ],
+   "strip": "strips/hit_flash_fire.png",
+   "ramp": [
+    "#622c24",
+    "#e0302a",
+    "#ff5a4a",
+    "#f2c24a",
+    "#fff8e6"
+   ],
+   "notes": "white-hot flash then hue ring | 48 px: centred (+8,+8), 1 px glow halo, margin sparkles"
+  },
+  "hit_flash_blue": {
+   "row": 18,
+   "frames": 8,
+   "fps": 20,
+   "loop": false,
+   "loop_from": 0,
+   "loops": 1,
+   "kind": "billboard",
+   "pivot": [
+    24,
+    24
+   ],
+   "lift": 0.0,
+   "glow": true,
+   "light": {
+    "color": "#a6ecff",
+    "energy": 1.6,
+    "range": 1.6
+   },
+   "speed": null,
+   "travel": null,
+   "then": null,
+   "duration": 0.4,
+   "frame_list": [
+    {
+     "x": 0,
+     "y": 864,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 48,
+     "y": 864,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 96,
+     "y": 864,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 144,
+     "y": 864,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 192,
+     "y": 864,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 240,
+     "y": 864,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 288,
+     "y": 864,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 336,
+     "y": 864,
+     "w": 48,
+     "h": 48
+    }
+   ],
+   "strip": "strips/hit_flash_blue.png",
+   "ramp": [
+    "#2a1e1c",
+    "#1c62d8",
+    "#2ab4ff",
+    "#a6ecff",
+    "#fff8e6"
+   ],
+   "notes": "white-hot flash then hue ring | 48 px: centred (+8,+8), 1 px glow halo, margin sparkles"
+  },
+  "hit_flash_violet": {
+   "row": 19,
+   "frames": 8,
+   "fps": 20,
+   "loop": false,
+   "loop_from": 0,
+   "loops": 1,
+   "kind": "billboard",
+   "pivot": [
+    24,
+    24
+   ],
+   "lift": 0.0,
+   "glow": true,
+   "light": {
+    "color": "#d4a8ff",
+    "energy": 1.6,
+    "range": 1.6
+   },
+   "speed": null,
+   "travel": null,
+   "then": null,
+   "duration": 0.4,
+   "frame_list": [
+    {
+     "x": 0,
+     "y": 912,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 48,
+     "y": 912,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 96,
+     "y": 912,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 144,
+     "y": 912,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 192,
+     "y": 912,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 240,
+     "y": 912,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 288,
+     "y": 912,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 336,
+     "y": 912,
+     "w": 48,
+     "h": 48
+    }
+   ],
+   "strip": "strips/hit_flash_violet.png",
+   "ramp": [
+    "#2a1e1c",
+    "#6a34b8",
+    "#a45cf0",
+    "#d4a8ff",
+    "#fff8e6"
+   ],
+   "notes": "white-hot flash then hue ring | 48 px: centred (+8,+8), 1 px glow halo, margin sparkles"
+  },
+  "flame_fire": {
+   "row": 20,
+   "frames": 8,
+   "fps": 10,
+   "loop": true,
+   "loop_from": 0,
+   "loops": 1,
+   "kind": "billboard",
+   "pivot": [
+    24,
+    37
+   ],
+   "lift": 0.0,
+   "glow": true,
+   "light": {
+    "color": "#f2c24a",
+    "energy": 1.0,
+    "range": 1.6
+   },
+   "speed": null,
+   "travel": null,
+   "then": null,
+   "duration": 0.8,
+   "frame_list": [
+    {
+     "x": 0,
+     "y": 960,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 48,
+     "y": 960,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 96,
+     "y": 960,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 144,
+     "y": 960,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 192,
+     "y": 960,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 240,
+     "y": 960,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 288,
+     "y": 960,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 336,
+     "y": 960,
+     "w": 48,
+     "h": 48
+    }
+   ],
+   "strip": "strips/flame_fire.png",
+   "ramp": [
+    "#622c24",
+    "#e0302a",
+    "#ff5a4a",
+    "#f2c24a",
+    "#fff8e6"
+   ],
+   "notes": "flickering flame with rising embers (blue = cold fire) | 48 px: centred (+8,+8), 1 px glow halo, margin sparkles"
+  },
+  "flame_blue": {
+   "row": 21,
+   "frames": 8,
+   "fps": 10,
+   "loop": true,
+   "loop_from": 0,
+   "loops": 1,
+   "kind": "billboard",
+   "pivot": [
+    24,
+    37
+   ],
+   "lift": 0.0,
+   "glow": true,
+   "light": {
+    "color": "#a6ecff",
+    "energy": 1.0,
+    "range": 1.6
+   },
+   "speed": null,
+   "travel": null,
+   "then": null,
+   "duration": 0.8,
+   "frame_list": [
+    {
+     "x": 0,
+     "y": 1008,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 48,
+     "y": 1008,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 96,
+     "y": 1008,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 144,
+     "y": 1008,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 192,
+     "y": 1008,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 240,
+     "y": 1008,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 288,
+     "y": 1008,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 336,
+     "y": 1008,
+     "w": 48,
+     "h": 48
+    }
+   ],
+   "strip": "strips/flame_blue.png",
+   "ramp": [
+    "#2a1e1c",
+    "#1c62d8",
+    "#2ab4ff",
+    "#a6ecff",
+    "#fff8e6"
+   ],
+   "notes": "flickering flame with rising embers (blue = cold fire) | 48 px: centred (+8,+8), 1 px glow halo, margin sparkles"
+  },
+  "flame_violet": {
+   "row": 22,
+   "frames": 8,
+   "fps": 10,
+   "loop": true,
+   "loop_from": 0,
+   "loops": 1,
+   "kind": "billboard",
+   "pivot": [
+    24,
+    37
+   ],
+   "lift": 0.0,
+   "glow": true,
+   "light": {
+    "color": "#d4a8ff",
+    "energy": 1.0,
+    "range": 1.6
+   },
+   "speed": null,
+   "travel": null,
+   "then": null,
+   "duration": 0.8,
+   "frame_list": [
+    {
+     "x": 0,
+     "y": 1056,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 48,
+     "y": 1056,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 96,
+     "y": 1056,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 144,
+     "y": 1056,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 192,
+     "y": 1056,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 240,
+     "y": 1056,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 288,
+     "y": 1056,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 336,
+     "y": 1056,
+     "w": 48,
+     "h": 48
+    }
+   ],
+   "strip": "strips/flame_violet.png",
+   "ramp": [
+    "#2a1e1c",
+    "#6a34b8",
+    "#a45cf0",
+    "#d4a8ff",
+    "#fff8e6"
+   ],
+   "notes": "flickering flame with rising embers (blue = cold fire) | 48 px: centred (+8,+8), 1 px glow halo, margin sparkles"
+  },
+  "flame_green": {
+   "row": 23,
+   "frames": 8,
+   "fps": 10,
+   "loop": true,
+   "loop_from": 0,
+   "loops": 1,
+   "kind": "billboard",
+   "pivot": [
+    24,
+    37
+   ],
+   "lift": 0.0,
+   "glow": true,
+   "light": {
+    "color": "#c4ff8a",
+    "energy": 1.0,
+    "range": 1.6
+   },
+   "speed": null,
+   "travel": null,
+   "then": null,
+   "duration": 0.8,
+   "frame_list": [
+    {
+     "x": 0,
+     "y": 1104,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 48,
+     "y": 1104,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 96,
+     "y": 1104,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 144,
+     "y": 1104,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 192,
+     "y": 1104,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 240,
+     "y": 1104,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 288,
+     "y": 1104,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 336,
+     "y": 1104,
+     "w": 48,
+     "h": 48
+    }
+   ],
+   "strip": "strips/flame_green.png",
+   "ramp": [
+    "#2a1e1c",
+    "#24a03a",
+    "#5aec3c",
+    "#c4ff8a",
+    "#fff8e6"
+   ],
+   "notes": "flickering flame with rising embers (blue = cold fire) | 48 px: centred (+8,+8), 1 px glow halo, margin sparkles"
+  },
+  "lightning_blue": {
+   "row": 24,
+   "frames": 8,
+   "fps": 14,
+   "loop": true,
+   "loop_from": 0,
+   "loops": 1,
+   "kind": "billboard",
+   "pivot": [
+    24,
+    37
+   ],
+   "lift": 0.0,
+   "glow": true,
+   "light": {
+    "color": "#a6ecff",
+    "energy": 2.0,
+    "range": 1.6
+   },
+   "speed": null,
+   "travel": null,
+   "then": null,
+   "duration": 0.571,
+   "frame_list": [
+    {
+     "x": 0,
+     "y": 1152,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 48,
+     "y": 1152,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 96,
+     "y": 1152,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 144,
+     "y": 1152,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 192,
+     "y": 1152,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 240,
+     "y": 1152,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 288,
+     "y": 1152,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 336,
+     "y": 1152,
+     "w": 48,
+     "h": 48
+    }
+   ],
+   "strip": "strips/lightning_blue.png",
+   "ramp": [
+    "#2a1e1c",
+    "#1c62d8",
+    "#2ab4ff",
+    "#a6ecff",
+    "#fff8e6"
+   ],
+   "notes": "jagged strike with fork + ground flash, 2-frame flicker | 48 px: centred (+8,+8), 1 px glow halo, margin sparkles"
+  },
+  "lightning_violet": {
+   "row": 25,
+   "frames": 8,
+   "fps": 14,
+   "loop": true,
+   "loop_from": 0,
+   "loops": 1,
+   "kind": "billboard",
+   "pivot": [
+    24,
+    37
+   ],
+   "lift": 0.0,
+   "glow": true,
+   "light": {
+    "color": "#d4a8ff",
+    "energy": 2.0,
+    "range": 1.6
+   },
+   "speed": null,
+   "travel": null,
+   "then": null,
+   "duration": 0.571,
+   "frame_list": [
+    {
+     "x": 0,
+     "y": 1200,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 48,
+     "y": 1200,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 96,
+     "y": 1200,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 144,
+     "y": 1200,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 192,
+     "y": 1200,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 240,
+     "y": 1200,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 288,
+     "y": 1200,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 336,
+     "y": 1200,
+     "w": 48,
+     "h": 48
+    }
+   ],
+   "strip": "strips/lightning_violet.png",
+   "ramp": [
+    "#2a1e1c",
+    "#6a34b8",
+    "#a45cf0",
+    "#d4a8ff",
+    "#fff8e6"
+   ],
+   "notes": "jagged strike with fork + ground flash, 2-frame flicker | 48 px: centred (+8,+8), 1 px glow halo, margin sparkles"
+  },
+  "heal_aura_green": {
+   "row": 26,
+   "frames": 8,
+   "fps": 10,
+   "loop": true,
+   "loop_from": 0,
+   "loops": 1,
+   "kind": "decal+billboard",
+   "pivot": [
+    24,
+    34
+   ],
+   "lift": 0.0,
+   "glow": true,
+   "light": {
+    "color": "#c4ff8a",
+    "energy": 0.8,
+    "range": 1.6
+   },
+   "speed": null,
+   "travel": null,
+   "then": null,
+   "duration": 0.8,
+   "frame_list": [
+    {
+     "x": 0,
+     "y": 1248,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 48,
+     "y": 1248,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 96,
+     "y": 1248,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 144,
+     "y": 1248,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 192,
+     "y": 1248,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 240,
+     "y": 1248,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 288,
+     "y": 1248,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 336,
+     "y": 1248,
+     "w": 48,
+     "h": 48
+    }
+   ],
+   "strip": "strips/heal_aura_green.png",
+   "ramp": [
+    "#2a1e1c",
+    "#24a03a",
+    "#5aec3c",
+    "#c4ff8a",
+    "#fff8e6"
+   ],
+   "notes": "ground ring + rising plus-sparkles | 48 px: centred (+8,+8), 1 px glow halo, margin sparkles"
+  },
+  "heal_aura_gold": {
+   "row": 27,
+   "frames": 8,
+   "fps": 10,
+   "loop": true,
+   "loop_from": 0,
+   "loops": 1,
+   "kind": "decal+billboard",
+   "pivot": [
+    24,
+    34
+   ],
+   "lift": 0.0,
+   "glow": true,
+   "light": {
+    "color": "#e6d2ac",
+    "energy": 0.8,
+    "range": 1.6
+   },
+   "speed": null,
+   "travel": null,
+   "then": null,
+   "duration": 0.8,
+   "frame_list": [
+    {
+     "x": 0,
+     "y": 1296,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 48,
+     "y": 1296,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 96,
+     "y": 1296,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 144,
+     "y": 1296,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 192,
+     "y": 1296,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 240,
+     "y": 1296,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 288,
+     "y": 1296,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 336,
+     "y": 1296,
+     "w": 48,
+     "h": 48
+    }
+   ],
+   "strip": "strips/heal_aura_gold.png",
+   "ramp": [
+    "#622c24",
+    "#b07a44",
+    "#f2c24a",
+    "#e6d2ac",
+    "#fff8e6"
+   ],
+   "notes": "ground ring + rising plus-sparkles | 48 px: centred (+8,+8), 1 px glow halo, margin sparkles"
+  },
+  "buff_aura_gold": {
+   "row": 28,
+   "frames": 8,
+   "fps": 10,
+   "loop": true,
+   "loop_from": 0,
+   "loops": 1,
+   "kind": "decal+billboard",
+   "pivot": [
+    24,
+    34
+   ],
+   "lift": 0.0,
+   "glow": true,
+   "light": {
+    "color": "#e6d2ac",
+    "energy": 0.8,
+    "range": 1.6
+   },
+   "speed": null,
+   "travel": null,
+   "then": null,
+   "duration": 0.8,
+   "frame_list": [
+    {
+     "x": 0,
+     "y": 1344,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 48,
+     "y": 1344,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 96,
+     "y": 1344,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 144,
+     "y": 1344,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 192,
+     "y": 1344,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 240,
+     "y": 1344,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 288,
+     "y": 1344,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 336,
+     "y": 1344,
+     "w": 48,
+     "h": 48
+    }
+   ],
+   "strip": "strips/buff_aura_gold.png",
+   "ramp": [
+    "#622c24",
+    "#b07a44",
+    "#f2c24a",
+    "#e6d2ac",
+    "#fff8e6"
+   ],
+   "notes": "ground ring + rising orbs | 48 px: centred (+8,+8), 1 px glow halo, margin sparkles"
+  },
+  "buff_aura_violet": {
+   "row": 29,
+   "frames": 8,
+   "fps": 10,
+   "loop": true,
+   "loop_from": 0,
+   "loops": 1,
+   "kind": "decal+billboard",
+   "pivot": [
+    24,
+    34
+   ],
+   "lift": 0.0,
+   "glow": true,
+   "light": {
+    "color": "#d4a8ff",
+    "energy": 0.8,
+    "range": 1.6
+   },
+   "speed": null,
+   "travel": null,
+   "then": null,
+   "duration": 0.8,
+   "frame_list": [
+    {
+     "x": 0,
+     "y": 1392,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 48,
+     "y": 1392,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 96,
+     "y": 1392,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 144,
+     "y": 1392,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 192,
+     "y": 1392,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 240,
+     "y": 1392,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 288,
+     "y": 1392,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 336,
+     "y": 1392,
+     "w": 48,
+     "h": 48
+    }
+   ],
+   "strip": "strips/buff_aura_violet.png",
+   "ramp": [
+    "#2a1e1c",
+    "#6a34b8",
+    "#a45cf0",
+    "#d4a8ff",
+    "#fff8e6"
+   ],
+   "notes": "ground ring + rising orbs | 48 px: centred (+8,+8), 1 px glow halo, margin sparkles"
+  },
+  "buff_aura_blue": {
+   "row": 30,
+   "frames": 8,
+   "fps": 10,
+   "loop": true,
+   "loop_from": 0,
+   "loops": 1,
+   "kind": "decal+billboard",
+   "pivot": [
+    24,
+    34
+   ],
+   "lift": 0.0,
+   "glow": true,
+   "light": {
+    "color": "#a6ecff",
+    "energy": 0.8,
+    "range": 1.6
+   },
+   "speed": null,
+   "travel": null,
+   "then": null,
+   "duration": 0.8,
+   "frame_list": [
+    {
+     "x": 0,
+     "y": 1440,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 48,
+     "y": 1440,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 96,
+     "y": 1440,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 144,
+     "y": 1440,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 192,
+     "y": 1440,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 240,
+     "y": 1440,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 288,
+     "y": 1440,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 336,
+     "y": 1440,
+     "w": 48,
+     "h": 48
+    }
+   ],
+   "strip": "strips/buff_aura_blue.png",
+   "ramp": [
+    "#2a1e1c",
+    "#1c62d8",
+    "#2ab4ff",
+    "#a6ecff",
+    "#fff8e6"
+   ],
+   "notes": "ground ring + rising orbs | 48 px: centred (+8,+8), 1 px glow halo, margin sparkles"
+  },
+  "portal_violet": {
+   "row": 31,
+   "frames": 8,
+   "fps": 10,
+   "loop": true,
+   "loop_from": 0,
+   "loops": 1,
+   "kind": "billboard",
+   "pivot": [
+    24,
+    24
+   ],
+   "lift": 0.0,
+   "glow": true,
+   "light": {
+    "color": "#d4a8ff",
+    "energy": 1.5,
+    "range": 1.6
+   },
+   "speed": null,
+   "travel": null,
+   "then": null,
+   "duration": 0.8,
+   "frame_list": [
+    {
+     "x": 0,
+     "y": 1488,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 48,
+     "y": 1488,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 96,
+     "y": 1488,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 144,
+     "y": 1488,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 192,
+     "y": 1488,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 240,
+     "y": 1488,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 288,
+     "y": 1488,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 336,
+     "y": 1488,
+     "w": 48,
+     "h": 48
+    }
+   ],
+   "strip": "strips/portal_violet.png",
+   "ramp": [
+    "#2a1e1c",
+    "#6a34b8",
+    "#a45cf0",
+    "#d4a8ff",
+    "#fff8e6"
+   ],
+   "notes": "swirling vortex with bright eye | 48 px: centred (+8,+8), 1 px glow halo, margin sparkles"
+  },
+  "portal_blue": {
+   "row": 32,
+   "frames": 8,
+   "fps": 10,
+   "loop": true,
+   "loop_from": 0,
+   "loops": 1,
+   "kind": "billboard",
+   "pivot": [
+    24,
+    24
+   ],
+   "lift": 0.0,
+   "glow": true,
+   "light": {
+    "color": "#a6ecff",
+    "energy": 1.5,
+    "range": 1.6
+   },
+   "speed": null,
+   "travel": null,
+   "then": null,
+   "duration": 0.8,
+   "frame_list": [
+    {
+     "x": 0,
+     "y": 1536,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 48,
+     "y": 1536,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 96,
+     "y": 1536,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 144,
+     "y": 1536,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 192,
+     "y": 1536,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 240,
+     "y": 1536,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 288,
+     "y": 1536,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 336,
+     "y": 1536,
+     "w": 48,
+     "h": 48
+    }
+   ],
+   "strip": "strips/portal_blue.png",
+   "ramp": [
+    "#2a1e1c",
+    "#1c62d8",
+    "#2ab4ff",
+    "#a6ecff",
+    "#fff8e6"
+   ],
+   "notes": "swirling vortex with bright eye | 48 px: centred (+8,+8), 1 px glow halo, margin sparkles"
+  },
+  "portal_pink": {
+   "row": 33,
+   "frames": 8,
+   "fps": 10,
+   "loop": true,
+   "loop_from": 0,
+   "loops": 1,
+   "kind": "billboard",
+   "pivot": [
+    24,
+    24
+   ],
+   "lift": 0.0,
+   "glow": true,
+   "light": {
+    "color": "#ffb4ea",
+    "energy": 1.5,
+    "range": 1.6
+   },
+   "speed": null,
+   "travel": null,
+   "then": null,
+   "duration": 0.8,
+   "frame_list": [
+    {
+     "x": 0,
+     "y": 1584,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 48,
+     "y": 1584,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 96,
+     "y": 1584,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 144,
+     "y": 1584,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 192,
+     "y": 1584,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 240,
+     "y": 1584,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 288,
+     "y": 1584,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 336,
+     "y": 1584,
+     "w": 48,
+     "h": 48
+    }
+   ],
+   "strip": "strips/portal_pink.png",
+   "ramp": [
+    "#2a1e1c",
+    "#b82a8c",
+    "#ff4fc8",
+    "#ffb4ea",
+    "#fff8e6"
+   ],
+   "notes": "swirling vortex with bright eye | 48 px: centred (+8,+8), 1 px glow halo, margin sparkles"
+  },
+  "magic_bolt_blue": {
+   "row": 34,
+   "frames": 8,
+   "fps": 12,
+   "loop": true,
+   "loop_from": 0,
+   "loops": 1,
+   "kind": "projectile",
+   "pivot": [
+    30,
+    24
+   ],
+   "lift": 0.0,
+   "glow": true,
+   "light": {
+    "color": "#a6ecff",
+    "energy": 1.0,
+    "range": 1.6
+   },
+   "speed": null,
+   "travel": null,
+   "then": null,
+   "duration": 0.667,
+   "frame_list": [
+    {
+     "x": 0,
+     "y": 1632,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 48,
+     "y": 1632,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 96,
+     "y": 1632,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 144,
+     "y": 1632,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 192,
+     "y": 1632,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 240,
+     "y": 1632,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 288,
+     "y": 1632,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 336,
+     "y": 1632,
+     "w": 48,
+     "h": 48
+    }
+   ],
+   "strip": "strips/magic_bolt_blue.png",
+   "ramp": [
+    "#2a1e1c",
+    "#1c62d8",
+    "#2ab4ff",
+    "#a6ecff",
+    "#fff8e6"
+   ],
+   "notes": "projectile head + trail, faces +x | 48 px: centred (+8,+8), 1 px glow halo, margin sparkles"
+  },
+  "magic_bolt_violet": {
+   "row": 35,
+   "frames": 8,
+   "fps": 12,
+   "loop": true,
+   "loop_from": 0,
+   "loops": 1,
+   "kind": "projectile",
+   "pivot": [
+    30,
+    24
+   ],
+   "lift": 0.0,
+   "glow": true,
+   "light": {
+    "color": "#d4a8ff",
+    "energy": 1.0,
+    "range": 1.6
+   },
+   "speed": null,
+   "travel": null,
+   "then": null,
+   "duration": 0.667,
+   "frame_list": [
+    {
+     "x": 0,
+     "y": 1680,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 48,
+     "y": 1680,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 96,
+     "y": 1680,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 144,
+     "y": 1680,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 192,
+     "y": 1680,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 240,
+     "y": 1680,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 288,
+     "y": 1680,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 336,
+     "y": 1680,
+     "w": 48,
+     "h": 48
+    }
+   ],
+   "strip": "strips/magic_bolt_violet.png",
+   "ramp": [
+    "#2a1e1c",
+    "#6a34b8",
+    "#a45cf0",
+    "#d4a8ff",
+    "#fff8e6"
+   ],
+   "notes": "projectile head + trail, faces +x | 48 px: centred (+8,+8), 1 px glow halo, margin sparkles"
+  },
+  "magic_bolt_fire": {
+   "row": 36,
+   "frames": 8,
+   "fps": 12,
+   "loop": true,
+   "loop_from": 0,
+   "loops": 1,
+   "kind": "projectile",
+   "pivot": [
+    30,
+    24
+   ],
+   "lift": 0.0,
+   "glow": true,
+   "light": {
+    "color": "#f2c24a",
+    "energy": 1.0,
+    "range": 1.6
+   },
+   "speed": null,
+   "travel": null,
+   "then": null,
+   "duration": 0.667,
+   "frame_list": [
+    {
+     "x": 0,
+     "y": 1728,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 48,
+     "y": 1728,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 96,
+     "y": 1728,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 144,
+     "y": 1728,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 192,
+     "y": 1728,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 240,
+     "y": 1728,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 288,
+     "y": 1728,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 336,
+     "y": 1728,
+     "w": 48,
+     "h": 48
+    }
+   ],
+   "strip": "strips/magic_bolt_fire.png",
+   "ramp": [
+    "#622c24",
+    "#e0302a",
+    "#ff5a4a",
+    "#f2c24a",
+    "#fff8e6"
+   ],
+   "notes": "projectile head + trail, faces +x | 48 px: centred (+8,+8), 1 px glow halo, margin sparkles"
+  },
+  "wisps_blue": {
+   "row": 37,
+   "frames": 8,
+   "fps": 6,
+   "loop": true,
+   "loop_from": 0,
+   "loops": 1,
+   "kind": "billboard",
+   "pivot": [
+    24,
+    24
+   ],
+   "lift": 0.0,
+   "glow": true,
+   "light": null,
+   "speed": null,
+   "travel": null,
+   "then": null,
+   "duration": 1.333,
+   "frame_list": [
+    {
+     "x": 0,
+     "y": 1776,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 48,
+     "y": 1776,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 96,
+     "y": 1776,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 144,
+     "y": 1776,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 192,
+     "y": 1776,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 240,
+     "y": 1776,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 288,
+     "y": 1776,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 336,
+     "y": 1776,
+     "w": 48,
+     "h": 48
+    }
+   ],
+   "strip": "strips/wisps_blue.png",
+   "ramp": [
+    "#2a1e1c",
+    "#1c62d8",
+    "#2ab4ff",
+    "#a6ecff",
+    "#fff8e6"
+   ],
+   "notes": "ambient firefly / wisp drift | 48 px: centred (+8,+8), 1 px glow halo, margin sparkles"
+  },
+  "wisps_green": {
+   "row": 38,
+   "frames": 8,
+   "fps": 6,
+   "loop": true,
+   "loop_from": 0,
+   "loops": 1,
+   "kind": "billboard",
+   "pivot": [
+    24,
+    24
+   ],
+   "lift": 0.0,
+   "glow": true,
+   "light": null,
+   "speed": null,
+   "travel": null,
+   "then": null,
+   "duration": 1.333,
+   "frame_list": [
+    {
+     "x": 0,
+     "y": 1824,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 48,
+     "y": 1824,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 96,
+     "y": 1824,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 144,
+     "y": 1824,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 192,
+     "y": 1824,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 240,
+     "y": 1824,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 288,
+     "y": 1824,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 336,
+     "y": 1824,
+     "w": 48,
+     "h": 48
+    }
+   ],
+   "strip": "strips/wisps_green.png",
+   "ramp": [
+    "#2a1e1c",
+    "#24a03a",
+    "#5aec3c",
+    "#c4ff8a",
+    "#fff8e6"
+   ],
+   "notes": "ambient firefly / wisp drift | 48 px: centred (+8,+8), 1 px glow halo, margin sparkles"
+  },
+  "wisps_violet": {
+   "row": 39,
+   "frames": 8,
+   "fps": 6,
+   "loop": true,
+   "loop_from": 0,
+   "loops": 1,
+   "kind": "billboard",
+   "pivot": [
+    24,
+    24
+   ],
+   "lift": 0.0,
+   "glow": true,
+   "light": null,
+   "speed": null,
+   "travel": null,
+   "then": null,
+   "duration": 1.333,
+   "frame_list": [
+    {
+     "x": 0,
+     "y": 1872,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 48,
+     "y": 1872,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 96,
+     "y": 1872,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 144,
+     "y": 1872,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 192,
+     "y": 1872,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 240,
+     "y": 1872,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 288,
+     "y": 1872,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 336,
+     "y": 1872,
+     "w": 48,
+     "h": 48
+    }
+   ],
+   "strip": "strips/wisps_violet.png",
+   "ramp": [
+    "#2a1e1c",
+    "#6a34b8",
+    "#a45cf0",
+    "#d4a8ff",
+    "#fff8e6"
+   ],
+   "notes": "ambient firefly / wisp drift | 48 px: centred (+8,+8), 1 px glow halo, margin sparkles"
+  }
+ }
+}
