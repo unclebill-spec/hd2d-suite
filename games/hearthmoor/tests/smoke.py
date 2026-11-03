@@ -62,6 +62,7 @@ def preflight(argv):
     os.environ["HM_PREFLIGHT_DONE"] = "1"   # shard workers / child smokes skip it
 
 
+FRESH_EVERY = int(os.environ.get("HM_FRESH_EVERY", "1"))   # fresh main browser context every N segments of A-C (0 = never); --fresh-every
 ARGS = ["--use-angle=swiftshader", "--enable-unsafe-swiftshader", "--ignore-gpu-blocklist"]
 
 
@@ -89,6 +90,33 @@ class Quiet(SimpleHTTPRequestHandler):
         pass
 
 
+def loadavg():
+    try:
+        return Path("/proc/loadavg").read_text().split()[:3]
+    except Exception:  # noqa: BLE001
+        return None
+
+
+def stall_rewait(wait_fn, frame_fn, f_start, on_stall, log, what=""):
+    """render-stall guard (harness only, same predicate): wait_fn() timed out. If the engine's frame counter did not advance
+    since f_start (SwiftShader starved under box load), call on_stall() for diagnostics and re-wait ONCE in place.
+    A stall that recovers on the re-wait is a warning (returns "recovered"); anything else re-raises the original timeout."""
+    try:
+        f_now = frame_fn()
+    except Exception:  # noqa: BLE001
+        f_now = None
+    if f_now is None or f_start is None or f_now > f_start:
+        return None   # frames were ticking (or unknown): a real timeout, not a stall
+    on_stall(f_start, f_now)
+    try:
+        wait_fn()
+    except Exception:
+        log(f"  [STALL-FAIL] frames stuck at {f_now} and the one re-wait also timed out: {what[:120]}")
+        raise
+    log(f"  [STALL-WARN] frames stalled at {f_now}, recovered on the one re-wait: {what[:120]}")
+    return "recovered"
+
+
 class Smoke:
     def __init__(self, pg, out, log):
         self.pg, self.out, self.log, self.steps = pg, out, log, []
@@ -97,6 +125,8 @@ class Smoke:
     def ev(self, js):
         return self.pg.evaluate(js)
 
+    stalls = []   # render-stall warnings/failures (diagnostics only; see stall_rewait)
+    STALL_REWAIT = os.environ.get("HM_STALL_REWAIT", "1") != "0"
     RETRY = True   # one immediate retry of a failing step (same check, same values); --no-retry turns it off
     retries = 0
 
@@ -135,10 +165,43 @@ class Smoke:
     def S(self):
         return self.ev("JSON.parse(JSON.stringify(window.__hm.S))")
 
+    def _frames_now(self):
+        try:
+            return self.ev("window.__hd2d ? (window.__hd2d.frames || 0) : null")
+        except Exception:  # noqa: BLE001
+            return None
+
+    def stall_dump(self, js, f_start, f_now):
+        """frames stall: frame count, time, segment/area, box load and a screenshot, then the caller re-waits once"""
+        try:
+            area = self.ev("window.__hm ? window.__hm.area : null")
+        except Exception:  # noqa: BLE001
+            area = None
+        d = {"frames_start": f_start, "frames_now": f_now, "time": time.strftime("%Y-%m-%d %H:%M:%S %z"), "t": round(time.time() - self.t0, 1),
+             "seg": getattr(self, "seg", ""), "area": area, "loadavg": loadavg(), "wait": js[:160]}
+        try:
+            d["shot"] = self.shot(f"stall_{getattr(self, 'seg', '')}_{time.strftime('%H%M%S')}")
+        except Exception:  # noqa: BLE001
+            d["shot"] = None
+        Smoke.stalls.append(d)
+        self.log(f"  [STALL] frame counter not advancing -> {json.dumps(d, default=str)[:600]}; re-waiting once")
+
     def wait(self, js, timeout=90):
+        f0 = self._frames_now() if Smoke.STALL_REWAIT else None
         try:
             self.pg.wait_for_function(js, timeout=timeout * 1000)
         except Exception:
+            if Smoke.STALL_REWAIT:
+                try:
+                    r = stall_rewait(lambda: self.pg.wait_for_function(js, timeout=timeout * 1000), self._frames_now, f0,
+                                     lambda a, b: self.stall_dump(js, a, b), self.log, js)
+                except Exception:
+                    Smoke.stalls[-1]["recovered"] = False
+                    self.dump_timeout(js)
+                    raise
+                if r == "recovered":
+                    Smoke.stalls[-1]["recovered"] = True
+                    return
             self.dump_timeout(js)
             raise
 
@@ -443,9 +506,28 @@ def run(out, simscale=4, size=(960, 540), segs=SEGS):
         pg.on("pageerror", lambda e: errors.append(f"PAGEERROR {e}"))
         pg.on("console", lambda m: errors.append(f"console.error {m.text}") if m.type == "error" else None)
         T = Smoke(pg, out, log)
+        in_ctx = [0]   # segments run in the current main context (A-C share it; D on already open their own)
+
+        def rotate(cp):
+            """fresh main browser context every FRESH_EVERY segments (long-lived SwiftShader contexts starve under load);
+            the new context starts from the checkpoint just written, exactly like a sharded run does"""
+            nonlocal ctx, pg
+            in_ctx[0] += 1
+            if FRESH_EVERY <= 0 or in_ctx[0] <= FRESH_EVERY:
+                return
+            in_ctx[0] = 1
+            ctx.close()
+            ctx = b.new_context(viewport={"width": size[0], "height": size[1]})
+            ctx.add_init_script(STUB)
+            pg = ctx.new_page()
+            pg.on("pageerror", lambda e: errors.append(f"PAGEERROR {e}"))
+            pg.on("console", lambda m: errors.append(f"console.error {m.text}") if m.type == "error" else None)
+            T.pg = pg
+            log(f"  (fresh browser context for segment {T.seg}, every {FRESH_EVERY}; load {loadavg()})")
+            cp_load(pg, T, url, cp)
         try:
             if "A" in segs:
-                seg_mark("A")
+                seg_mark("A"); rotate(None)
                 # ---------------------------------------------------------- title -> new game
                 # ---------------------------------------------------------- loading gate: input while assets load is ignored
                 held, hold = [], [True]
@@ -1173,7 +1255,7 @@ def run(out, simscale=4, size=(960, 540), segs=SEGS):
                 pos_before = T.pos()
                 seg_done("A"); cp_dump(pg, "cp1")
             if "B" in segs:
-                seg_mark("B")
+                seg_mark("B"); rotate("cp1") if "A" in segs else in_ctx.__setitem__(0, in_ctx[0] + 1)
                 if "A" not in segs:   # sharded: start from segment A's checkpoint (its K save in Mossglen)
                     cp = cp_load(pg, T, url, "cp1")
                     saved = json.loads(cp["hearthmoor-slot-1-v2"]); pos_before = saved["pos"][:2]
@@ -1448,7 +1530,7 @@ def run(out, simscale=4, size=(960, 540), segs=SEGS):
                 pg.keyboard.press("k"); pg.wait_for_timeout(300)
                 seg_done("B"); cp_dump(pg, "cp2")
             if "C" in segs:
-                seg_mark("C")
+                seg_mark("C"); rotate("cp2") if "B" in segs else in_ctx.__setitem__(0, in_ctx[0] + 1)
                 if "B" not in segs:   # sharded: start from segment B's checkpoint (its K save in Bakery Lane)
                     cp_load(pg, T, url, "cp2")
                 pg.reload()
@@ -2991,6 +3073,7 @@ def run(out, simscale=4, size=(960, 540), segs=SEGS):
     rep["seconds"] = round(time.time() - T_START, 1)
     rep["steps"] = T.steps
     (out / "smoke.json").write_text(json.dumps(rep, indent=1))
+    rep["stalls"] = Smoke.stalls; rep["fresh_every"] = FRESH_EVERY
     rep["retries"] = Smoke.retries; rep["commit"] = COMMIT
     log(f"smoke: {'PASS' if rep['pass'] else 'FAIL'} {sum(s['pass'] for s in T.steps)}/{len(T.steps)} steps in {rep['seconds']} s, retries {Smoke.retries} @ {COMMIT}" + (f"  ({rep.get('error')})" if not rep["pass"] else ""))
     return rep
@@ -3066,7 +3149,13 @@ if __name__ == "__main__":
     ap.add_argument("--list", action="store_true", help="list the segments, quick areas and the shard plan")
     ap.add_argument("--no-retry", action="store_true", help="a failing step fails at once (no one-shot retry)")
     ap.add_argument("--no-preflight", action="store_true", help="skip tests/preflight.sh")
+    ap.add_argument("--fresh-every", type=int, default=None, help="fresh main browser context every N segments (A-C; D on already use their own); default 1 or $HM_FRESH_EVERY; 0 = one context (old behaviour)")
+    ap.add_argument("--no-stall-rewait", action="store_true", help="a frames stall fails at once (no diagnostics + one re-wait); also HM_STALL_REWAIT=0")
     a = ap.parse_args()
+    if a.fresh_every is not None:
+        FRESH_EVERY = a.fresh_every; os.environ["HM_FRESH_EVERY"] = str(a.fresh_every)   # env reaches --jobs workers
+    if a.no_stall_rewait:
+        Smoke.STALL_REWAIT = False; os.environ["HM_STALL_REWAIT"] = "0"
     Smoke.RETRY = not a.no_retry
     if not a.list:
         preflight(sys.argv)
