@@ -24,6 +24,41 @@ export const MUSIC_REALMS = REALM_OF;
 export const MUSIC_TRACKS = ['midgard', 'mossbrook', 'helheim', 'alfheim', 'svartalfheim', 'jotunheim', 'muspelheim', 'niflheim', 'asgard', 'battle', 'boss'];
 export const BOSS_TRACKS = [];   // boss ids that ship music_boss_<id>.ogg (add an id here when its file lands; empty = every boss plays music_boss.ogg)
 const MUSIC_DIR = 'audio/music/';
+// [SFX FILES 2026-11-03] sample SFX (Hearthmoor Sound packs 1-3 + Bloomtide; ledger audio/LICENSES.md) in audio/sfx/.
+// kind -> [files (random-pick, no repeat of the last), volume, throttle ms, procedural fallback kind]. Lazy-loaded on first use and
+// decoded with the shared AudioContext; until a buffer is ready, or if every file fails, the procedural sound below plays instead.
+const SFX_DIR = 'audio/sfx/';
+const v = (b, n) => [b, ...Array.from({ length: n - 1 }, (_, i) => b.replace(/(\.ogg)$/, '') + '_' + (i + 2))];
+const SFX = {
+  swing: [['melee_swing'], 0.5, 0], hit: [[...v('melee_hit', 3), 'hit_juice_1', 'hit_juice_2', 'hit_juice_3'], 0.6, 60], hurt: [['hurt'], 0.6, 150],
+  guard: [['guard'], 0.55, 0], dodge: [['dodge'], 0.45, 0], defeat: [['defeat'], 0.55, 100], down: [['down'], 0.65, 0],
+  rumble: [['rumble', 'thunder_far'], 0.5, 3000], spell: [['spell_coldfire'], 0.5, 0],
+  spell_light: [['spell_light'], 0.5, 0, 'spell'], spell_dark: [['spell_dark'], 0.5, 0, 'spell'], spell_nature: [['spell_nature'], 0.5, 0, 'spell'],
+  heal: [['heal'], 0.45, 400, 'save'], pickup: [['loot_pickup', 'pickup_juice_1', 'pickup_juice_2', 'pickup_juice_3'], 0.5, 80],
+  coin: [['coin_pickup', 'coin_juice_1', 'coin_juice_2'], 0.5, 80, 'pickup'], chest: [['chest_open'], 0.6, 0, 'pickup'],
+  blip: [['ui_click', 'ui_click_juice_1', 'ui_click_juice_2'], 0.35, 50], save: [['ui_confirm'], 0.45, 0], confirm: [['ui_confirm'], 0.45, 0, 'save'],
+  levelup: [['levelup_chime'], 0.6, 0, 'quest'], portal: [['rift_open'], 0.55, 0], rift_seal: [['rift_seal'], 0.6, 0, 'quest'],
+  pet: [['pet_chirp'], 0.4, 1000, 'blip'], door: [['door'], 0.5, 0, 'blip'], splash: [['water_splash'], 0.5, 0, 'pickup'],
+  quest: [['stinger_quest_complete'], 0.55, 0], quest_progress: [['quest_progress'], 0.5, 0, 'quest'], quest_new: [['quest_new'], 0.5, 0, 'pickup'],
+  summon: [['summon'], 0.5, 0], buy: [['shop_buy'], 0.5, 0, 'pickup'], bank: [['bank_coins'], 0.5, 0, 'pickup'],
+  craft: [['craft_done'], 0.55, 0, 'quest'], craft_rare: [['stinger_craft_success'], 0.55, 0, 'quest'], plant: [['plant_seed'], 0.5, 0, 'pickup'],
+  harvest: [['harvest'], 0.5, 0, 'quest'], stat: [['stat_point'], 0.5, 0, 'pickup'], equip: [['equip'], 0.5, 0, 'pickup'], gem: [['gem_socket'], 0.5, 0, 'quest'],
+  menu_open: [['menu_open'], 0.4, 0, null], menu_close: [['menu_close'], 0.4, 0, null], error: [['ui_error'], 0.45, 0, 'blip'], gate_locked: [['gate_locked'], 0.5, 0, 'blip'],
+  boss_crit: [['boss_crit'], 0.55, 100, 'hit'], boss_phase: [['boss_phase'], 0.6, 0, 'rumble'], soul: [['soul_pickup'], 0.5, 80, 'pickup'], gloam: [['gloam_wisp'], 0.4, 1000, null],
+  discovery: [['stinger_discovery'], 0.55, 0, 'quest'], rare_pickup: [['stinger_rare_pickup'], 0.55, 0, 'pickup'],
+  thunder_rune: [['thunder_rune', 'thunder_rune_juice_1', 'thunder_rune_juice_2'], 0.55, 200, 'rumble'], raven: [v('raven_caw', 3), 0.35, 1500, null],
+  bloom_hit: [['harvest', 'pickup_juice_1', 'pickup_juice_2', 'pickup_juice_3'], 0.5, 0, 'lampchime'], bloom_perfect: [['bloom_perfect'], 0.55, 0, 'pickup'],
+  bloom_miss: [['bloom_miss'], 0.45, 0, 'blip'], bloom_win: [['stinger_quest_complete'], 0.55, 0, 'quest'], bloom_lose: [['bloom_lose'], 0.5, 0, 'blip'],
+};
+// area -> ambience bed (looped on the ambient bus, so music ducks it like the plucks); Asgard exteriors per pack3/README
+const BEDS = { asgard: 'amb_asgard_loop', gs_hall: 'amb_asgard_loop', gs_temple: 'amb_asgard_loop', reliquary: 'amb_asgard_loop', reliquary2: 'amb_asgard_loop',
+  helheim: 'amb_helheim_loop', hh_shore: 'amb_helheim_loop', ossuary: 'amb_ossuary_loop', ossuary2: 'amb_ossuary_loop', plaza: 'amb_plaza_loop' };
+for (const k of ['grass', 'stone', 'wood', 'snow']) SFX['step_' + k] = [v('footstep_' + k, 3), 0.25, 0, null];
+for (const k of ['dirt', 'water']) SFX['step_' + k] = [v('footstep_' + k, 2), 0.25, 0, null];
+// footstep surface by area (no per-tile lookup exists; EVENT_MAP default: halls wood, snow realms snow, dungeons stone, else grass)
+const SURF = (a) => /hall|home|forge|temple|_court|archive/.test(a) ? 'wood' : /^(niflheim|nf_|iceglow|frozen|jotunheim|jt_|rimecaves)/.test(a) ? 'snow'
+  : /hollows|ossuary|barrow|clockdeep|reliquary|glowmines|caldera|prismvault|rift/.test(a) ? 'stone' : /shore/.test(a) ? 'water' : /lane|rotwood|vh_garden/.test(a) ? 'dirt' : 'grass';
+const RAVEN_AREAS = { asgard: 1, ravenhold: 1 };   // ambient raven caws (pack3)
 const DUCK = 0.3;        // ambient level while music plays (a ~70% duck)
 const XFADE = 1.6;       // crossfade seconds
 const BATTLE_HOLD = 4;   // seconds the battle theme lingers after the last foe stops chasing
@@ -54,7 +89,7 @@ export class Ambient {
     this.chord = 0; this.setChord();
     this.loop(() => { this.chord = (this.chord + 1) % CHORDS.length; this.setChord(); }, 7000);
     this.tick();
-    this.pickMusic();
+    this.pickMusic(); this.bed(this.area);
   }
   // ---- music channel
   musicGain() { return this.musicMuted ? 0 : this.musicVol * 0.9; }
@@ -127,6 +162,7 @@ export class Ambient {
         if (this.night < 0.5 && Math.random() < 0.18) this.bird();
         if (this.night > 0.5 && Math.random() < 0.35) this.cricket();
         if (glade && Math.random() < 0.2) this.shimmer();
+        if (RAVEN_AREAS[this.area] && this.night < 0.5 && Math.random() < 0.04) this.sfx('raven');   // pack3 raven caw (Asgard / Ravenhold, by day)
       }
       this.tick();
     }, gap));
@@ -154,7 +190,48 @@ export class Ambient {
     }
   }
   shimmer() { [19, 23, 26].forEach((s, i) => this.pluck(s + 12, 0.025, i * 0.11, true)); }
+  // ---- sample SFX (files) with procedural fallback
+  sbuf(f) {
+    const k = this.sb || (this.sb = {});
+    if (!(f in k)) k[f] = fetch(SFX_DIR + f + '.ogg').then((r) => { if (!r.ok) throw new Error(r.status); return r.arrayBuffer(); })
+      .then((ab) => new Promise((ok, no) => this.ctx.decodeAudioData(ab, ok, no))).then((b) => (k[f] = b)).catch(() => (k[f] = null));
+    return k[f];
+  }
+  sample(kind) {   // true = handled by a file (or throttled); false = caller plays the procedural sound
+    const e = SFX[kind]; if (!e) return false;
+    const [files, vol, thr] = e, now = performance.now(), last = this.sLast || (this.sLast = {});
+    if (thr && now - (last[kind] || -1e9) < thr) return true;
+    files.forEach((f) => this.sbuf(f));
+    const ready = files.filter((f) => this.sb[f] instanceof AudioBuffer); if (!ready.length) return false;
+    const pick = this.sPick || (this.sPick = {}), pool = ready.length > 1 ? ready.filter((f) => f !== pick[kind]) : ready, f = pool[Math.floor(Math.random() * pool.length)];
+    pick[kind] = f; last[kind] = now;
+    const c = this.ctx, src = c.createBufferSource(), g = c.createGain();
+    src.buffer = this.sb[f]; src.playbackRate.value = 0.95 + Math.random() * 0.1; g.gain.value = vol;
+    src.connect(g); g.connect(this.master); src.start();
+    return true;
+  }
+  bed(area) {   // ambience bed loop for the area (fade 1 s), on the ducked ambient bus
+    const name = BEDS[area] || null; if (!this.ctx || (this.bedCur && this.bedCur.name === name)) return;
+    const t = this.ctx.currentTime;
+    if (this.bedCur && this.bedCur.src) { const o = this.bedCur; o.g.gain.setTargetAtTime(0.0001, t, 0.3); try { o.src.stop(t + 1.2); } catch (e) { /* stopped */ } }
+    this.bedCur = { name, src: null };
+    if (!name) return;
+    const cur = this.bedCur, p = this.sbuf(name);
+    Promise.resolve(p).then((b) => {
+      if (this.bedCur !== cur || !(b instanceof AudioBuffer)) return;
+      const c = this.ctx, src = c.createBufferSource(), g = c.createGain(), t2 = c.currentTime;
+      src.buffer = b; src.loop = true; g.gain.setValueAtTime(0.0001, t2); g.gain.linearRampToValueAtTime(0.5, t2 + 1);
+      src.connect(g); g.connect(this.amb); src.start(); cur.src = src; cur.g = g;
+    });
+  }
+  step() { this.sfx('step_' + SURF(this.area || 'plaza')); }   // per footfall from game.js (~0.32 s walk cadence)
   sfx(kind) {
+    if (!this.ctx || this.muted) return;
+    if (this.sample(kind)) return;
+    const e = SFX[kind]; if (e && e.length > 3) { if (e[3]) this.sfx0(e[3]); return; }   // new kinds: their procedural stand-in (null = silent)
+    this.sfx0(kind);
+  }
+  sfx0(kind) {
     if (!this.ctx || this.muted) return;
     if (kind === 'pickup') { this.pluck(14, 0.08); this.pluck(19, 0.08, 0.09); }
     if (kind === 'quest') [0, 4, 7, 12].forEach((s, i) => this.pluck(s + 12, 0.08, i * 0.1));
@@ -188,7 +265,7 @@ export class Ambient {
     f.frequency.setValueAtTime(f0, t); f.frequency.exponentialRampToValueAtTime(f1, t + dur);
     const g = c.createGain(); g.gain.value = vol; n.connect(f); f.connect(g); g.connect(this.master); n.start(t);
   }
-  setArea(a) { this.area = a; this.battle = this.boss = false; this.bossId = null; this.battleT = 0; this.pickMusic(); }
+  setArea(a) { this.area = a; this.battle = this.boss = false; this.bossId = null; this.battleT = 0; this.pickMusic(); this.bed(a); }
   setNight(n) { this.night = n; }
   toggle() {
     this.muted = !this.muted; localStorage.setItem('hearthmoor-mute', this.muted ? '1' : '0');
