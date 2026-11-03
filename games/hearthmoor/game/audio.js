@@ -75,8 +75,8 @@ export class Ambient {
     const AC = window.AudioContext || window.webkitAudioContext; if (!AC) return;
     const c = this.ctx = new AC();
     this.master = c.createGain(); this.master.gain.value = this.muted ? 0 : 0.5; this.master.connect(c.destination);
-    this.sfx = c.createGain(); this.sfx.gain.value = this.sfxVol; this.sfx.connect(this.master);   // sound-effects bus; music and ambience stay on their own buses
-    // ambient bus (plucks, birds, crickets, shimmer): ducked while music plays; sfx go through this.sfx into the master
+    this.sfxBus = c.createGain(); this.sfxBus.gain.value = this.sfxVol; this.sfxBus.connect(this.master);   // sound-effects bus; music and ambience stay on their own buses
+    // ambient bus (plucks, birds, crickets, shimmer): ducked while music plays; sfx go through this.sfxBus into the master
     this.amb = c.createGain(); this.amb.gain.value = 1; this.amb.connect(this.master);
     this.musicBus = c.createGain(); this.musicBus.gain.value = this.musicGain(); this.musicBus.connect(this.master);
     // echo for the plucks
@@ -144,7 +144,7 @@ export class Ambient {
   setSfxVol(v) {
     this.sfxVol = Math.min(1, Math.max(0, v));
     try { localStorage.setItem('hearthmoor-sfx-vol', String(this.sfxVol)); } catch (e) { /* private mode */ }
-    if (this.sfx && this.ctx) this.sfx.gain.setTargetAtTime(this.sfxVol, this.ctx.currentTime, 0.05);
+    if (this.sfxBus && this.ctx) this.sfxBus.gain.setTargetAtTime(this.sfxVol, this.ctx.currentTime, 0.05);
   }
   toggleMusic() { this.musicMuted = !this.musicMuted; localStorage.setItem('hearthmoor-music-mute', this.musicMuted ? '1' : '0'); this.applyMusic(); return this.musicMuted; }
   applyMusic() {
@@ -180,7 +180,7 @@ export class Ambient {
     if (!this.ctx) return;
     const c = this.ctx, t = c.currentTime + when, o = c.createOscillator(), g = c.createGain();
     o.type = 'sine'; o.frequency.value = hz(semi); this.env(g, t, 0.006, vol, 0.9);
-    o.connect(g); if (amb) g.connect(this.ambEcho); else { g.connect(this.sfx || this.master); g.connect(this.echo); } o.start(t); o.stop(t + 1.0);
+    o.connect(g); if (amb) g.connect(this.ambEcho); else { g.connect(this.sfxBus || this.master); g.connect(this.echo); } o.start(t); o.stop(t + 1.0);
   }
   bird() {
     const c = this.ctx, t = c.currentTime, o = c.createOscillator(), g = c.createGain();
@@ -215,7 +215,7 @@ export class Ambient {
     pick[kind] = f; last[kind] = now;
     const c = this.ctx, src = c.createBufferSource(), g = c.createGain();
     src.buffer = this.sb[f]; src.playbackRate.value = 0.95 + Math.random() * 0.1; g.gain.value = vol;
-    src.connect(g); g.connect(this.sfx || this.master); src.start();
+    src.connect(g); g.connect(this.sfxBus || this.master); src.start();
     return true;
   }
   bed(area) {   // ambience bed loop for the area (fade 1 s), on the ducked ambient bus
@@ -276,7 +276,7 @@ export class Ambient {
       for (let i = 0; i < d.length; i++) d[i] = (Math.random() * 2 - 1) * (1 - i / d.length);
       n.buffer = b; const f = c.createBiquadFilter(); f.type = 'bandpass'; f.Q.value = 3;
       f.frequency.setValueAtTime(300, t); f.frequency.exponentialRampToValueAtTime(2600, t + 0.8);
-      const g = c.createGain(); g.gain.value = 0.12; n.connect(f); f.connect(g); g.connect(this.sfx || this.master); n.start(t);
+      const g = c.createGain(); g.gain.value = 0.12; n.connect(f); f.connect(g); g.connect(this.sfxBus || this.master); n.start(t);
       [7, 12, 16, 19].forEach((s, i) => this.pluck(s + 12, 0.04, 0.1 + i * 0.08));
     }
   }
@@ -285,7 +285,7 @@ export class Ambient {
     for (let i = 0; i < d.length; i++) d[i] = (Math.random() * 2 - 1) * (1 - i / d.length);
     n.buffer = b; const f = c.createBiquadFilter(); f.type = 'bandpass'; f.Q.value = 2;
     f.frequency.setValueAtTime(f0, t); f.frequency.exponentialRampToValueAtTime(f1, t + dur);
-    const g = c.createGain(); g.gain.value = vol; n.connect(f); f.connect(g); g.connect(this.sfx || this.master); n.start(t);
+    const g = c.createGain(); g.gain.value = vol; n.connect(f); f.connect(g); g.connect(this.sfxBus || this.master); n.start(t);
   }
   setArea(a) { this.area = a; this.battle = this.boss = false; this.bossId = null; this.battleT = 0; this.pickMusic(); this.bed(a); }
   setNight(n) { this.night = n; }
