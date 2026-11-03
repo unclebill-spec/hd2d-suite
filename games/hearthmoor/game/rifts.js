@@ -7,10 +7,10 @@ import { RARE_AREAS, rngOf, hashStr } from './rares.js';
 import { STORM, STORM_OPEN, stormHere } from './storms.js';
 
 export const TIERS = [
-  { id: 'minor', name: 'Minor rift', roman: 'I', fx: 'rift_tear_minor', y: 0.35, light: '#6c8cd4', wave: 3, waves: 1, rare: 0.15, gold: 15, xp: 40, minRar: 1, shard: 0.25 },
-  { id: 'major', name: 'Major rift', roman: 'II', fx: 'rift_tear', y: 0.45, light: '#c03cc8', wave: 4, waves: 1, rare: 0.5, gold: 35, xp: 90, minRar: 2, shard: 0.6 },
+  { id: 'minor', name: 'Minor rift', roman: 'I', fx: 'rift_tear_minor', y: 0.35, light: '#6c8cd4', wave: 3, waves: 1, rare: 0.15, gold: 15, xp: 40, minRar: 0, shard: 0.25 },
+  { id: 'major', name: 'Major rift', roman: 'II', fx: 'rift_tear', y: 0.45, light: '#c03cc8', wave: 4, waves: 1, rare: 0.5, gold: 35, xp: 90, minRar: 1, shard: 0.6 },
   { id: 'abyssal', name: 'Abyssal rift', roman: 'III', fx: 'rift_tear_abyss', ring: 'rift_ring_abyss', y: 0.5, light: '#e0302a', wave: 4, waves: 2, rare: 1, rareTraits: 2,
-    gold: 80, xp: 200, minRar: 3, shard: 1 },
+    gold: 80, xp: 200, minRar: 2, shard: 1 },
 ];
 export const RIFT_AREAS = {
   mossglen: { foes: ['skeleton', 'wraith', 'golem', 'skelmage'], spots: [[1.6, 1.0], [-1.2, 5.6], [5.0, 2.6], [-2.6, 2.6]] },

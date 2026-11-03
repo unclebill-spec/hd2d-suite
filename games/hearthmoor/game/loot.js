@@ -308,7 +308,7 @@ export class Loot {
       const el = document.createElement('div'); el.className = 'loot paura';
       const cv = document.createElement('canvas'); cv.width = 26 * 3; cv.height = 13 * 3; cv.className = 'aura'; el.appendChild(cv);
       this.layer.appendChild(el);
-      const light = ctx.addGlow ? ctx.addGlow(p.x, p.y, p.z, { color: RARITY[4].col, intensity: 2.6, range: 2.6, lift: 0.5, fadeIn: 0.4 }) : null;
+      const light = ctx.addGlow ? ctx.addGlow(p.x, p.y, p.z, { color: RARITY[R_LEG].col, intensity: 2.6, range: 2.6, lift: 0.5, fadeIn: 0.4 }) : null;
       this.pa = { el, cv, light, frame: -1 };
     }
     const s = ctx.project(p.x, p.y + 0.03, p.z);

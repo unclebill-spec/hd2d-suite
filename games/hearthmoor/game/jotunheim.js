@@ -98,7 +98,7 @@ Object.assign(GOODS, {
   fur_mantle: { name: 'Fur cloak', about: 'Frost resist +20%. A mantle of goat-fur and bear-fur, sized for someone small.', price: 90 },
   coldfire_lantern: { name: 'Cold-fire lamp', about: 'Burns blue and never burns you. Light radius +2.', price: 55 },
 });
-SHOPS.jt_trader = { name: "Grimsa's Stall", keeper: 'Grimsa, giant trader', goods: ['tea', 'fur_mantle', 'coldfire_lantern', 'tonic'], gear: { n: 3, rar: [0, 1, 1] }, sellMul: 1 };
+SHOPS.jt_trader = { name: "Grimsa's Stall", keeper: 'Grimsa, giant trader', goods: ['tea', 'fur_mantle', 'coldfire_lantern', 'tonic'], gear: { n: 3, rar: [0, 0, 0] }, sellMul: 1 };
 
 // ------------------------------------------------------------------ quests (story 3.2)
 Object.assign(QUESTS, {
@@ -148,7 +148,7 @@ Object.assign(SPELL_NAMES, { boulder_toss: 'Boulder Toss', frost_rune: 'Frost Ru
 // ---- the Rimebreaker (story 3.8 / 9.1): a legendary weapon from Solvi after three heart-ice. Every 3rd melee hit with it freezes the foe for 1.5 s and rings a small ice wave.
 // Deviation: the engine has no charged attack yet, so the "charged hit throws an ice wave" half rides on the 3rd hit instead.
 export function RIMEBREAKER(S) {
-  const it = makeItem(Math.max(10, S.lv || 1), 4, 'weapon'), k = RARITY[4].mul * (1 + (it.lv - 1) * 0.06);
+  const it = makeItem(Math.max(10, S.lv || 1), 3, 'primary'), k = 3.5 * (1 + (it.lv - 1) * 0.06)   // 3.5 = the pre-gear14 Legendary mul, so this unique's stats are unchanged;
   it.name = 'The Rimebreaker'; it.fixed = true; it.unique = 'rimebreaker'; it.crafted = true;
   it.mods = { meleeMul: +(0.07 * k).toFixed(3), spellMul: +(0.03 * k).toFixed(3), crit: +(0.006 * k).toFixed(3) };
   it.gems = [null, null];
@@ -374,7 +374,7 @@ export class Jotunheim {
     if (G.combat && !G.combat.__rime) {   // the Rimebreaker: every 3rd melee hit freezes the foe 1.5 s and rings a small ice wave
       G.combat.__rime = 1; const d0 = G.combat.damageEnemy.bind(G.combat);
       G.combat.damageEnemy = (e, dmg, src, push, color) => {
-        const r = d0(e, dmg, src, push, color), C = G.combat, wp = ((G.S.gear || {}).weapon) || {};
+        const r = d0(e, dmg, src, push, color), C = G.combat, wp = ((G.S.gear || {}).primary) || {};
         if (r && push === 0.45 && wp.unique === 'rimebreaker' && C.ctx && src === C.ctx.player) {
           C.rimeN = (C.rimeN || 0) + 1;
           if (C.rimeN % 3 === 0) me.rimeFreeze(e);

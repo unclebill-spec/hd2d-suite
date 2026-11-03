@@ -285,17 +285,17 @@ function bloomHint(S) {
 const hasForesight = (S) => [...(S.bag || []), ...Object.values(S.gear || {})].some((x) => x && x.unique === 'foresight_charm');
 function giveForesight(G) {   // both Bloomtide games won (stand-in for the gnome star game, not on this branch); the crit buff lives in combat.hurtPlayer / out()
   const S = G.S; S.bag = S.bag || []; if (hasForesight(S)) return;
-  S.bag.push({ uid: `fore${Date.now().toString(36)}`, slot: 'trinket', name: 'Foresight Charm', rar: 3, lv: Math.max(1, S.lv || 1), unique: 'foresight_charm',
+  S.bag.push({ uid: `fore${Date.now().toString(36)}`, slot: 'neck', name: 'Foresight Charm', rar: 2, rv: 2, lv: Math.max(1, S.lv || 1), unique: 'foresight_charm',
     mods: {}, gems: [], img: 'art/vanaheim/icons/foresight_charm.png', about: VH_ITEMS.foresight_charm.about });
 }
 function giveCirclet(G) {   // the spare reward (Hearthmoor Story): a unique trinket; regen maps onto progress.mods().regen (HP/s while not chased)
   const S = G.S; S.bag = S.bag || [];
   if ([...S.bag, ...Object.values(S.gear || {})].some((x) => x && x.unique === 'nettle_circlet')) return;
-  S.bag.push({ uid: `nettle${Date.now().toString(36)}`, slot: 'trinket', name: 'Nettlecrown\'s Bean-Circlet', rar: 4, lv: Math.max(1, S.lv || 1), unique: 'nettle_circlet',
+  S.bag.push({ uid: `nettle${Date.now().toString(36)}`, slot: 'helm', name: 'Nettlecrown\'s Bean-Circlet', rar: 3, rv: 2, lv: Math.max(1, S.lv || 1), unique: 'nettle_circlet',
     mods: { regen: 2 }, gems: [], about: VH_ITEMS.nettle_circlet.about });
 }
 function endBossAdds(G) { const v = GREF.vana; if (v) v.clearAdds(); }
-export const wearsCirclet = (S) => !!(((S.gear || {}).trinket || {}).unique === 'nettle_circlet');
+export const wearsCirclet = (S) => Object.values(S.gear || {}).some((it) => it && it.unique === 'nettle_circlet');   // gear14: helm on new saves, neck on migrated ones
 
 export class Vanaheim {
   constructor(G) { this.G = G; GREF.vana = this; this.ctx = null; this.area = null; this.spots = []; this.boss = null; this.adds = []; this.qaDone = null; this.thornUsed = false;

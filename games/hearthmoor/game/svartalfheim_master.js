@@ -20,8 +20,8 @@ QUESTS.sv_master = { title: 'The Masterwork', giver: 'Tansy Brasswhistle', rippl
   3: 'You built a legendary treasure with your own hands. Somewhere, a very small engineer is very proud.',
 } };
 export function TINKERS_HEART(S) {
-  const it = makeItem(Math.max(10, S.lv || 1), 4, 'trinket');
-  const k = RARITY[4].mul * (1 + (it.lv - 1) * 0.06);
+  const it = makeItem(Math.max(10, S.lv || 1), 3, 'neck');
+  const k = 3.5 * (1 + (it.lv - 1) * 0.06)   // 3.5 = the pre-gear14 Legendary mul, so this unique's stats are unchanged;
   it.name = 'Tinker\'s Heart'; it.fixed = true; it.unique = 'wound_up'; it.crafted = true;
   it.mods = { stAdd: Math.round(4 * k), summonMul: +(0.03 * k).toFixed(3), crit: +(0.008 * k).toFixed(3) };
   it.gems = [null, null];

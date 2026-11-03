@@ -45,7 +45,7 @@ export const mood = (S) => ((F(S).realm_mood || {}).muspelheim || 0) >= 1;
 const emberBorn = (S) => S.hero === 'cinderknight';
 const runeReader = (S) => S.hero === 'runeguard';
 const gateRank = (S) => ((S.ranks || {}).gate || 0);   // the Guild rank (Rift Marks); `G.factions.rank('gate')` reads the same field
-const armed = (S) => !!((S.gear || {}).weapon);
+const armed = (S) => !!((S.gear || {}).primary);
 
 Object.assign(REALM, { muspelheim: 'embassy', mp_hall: 'embassy', lavafalls: 'embassy', caldera: 'embassy', caldera2: 'embassy' });   // befriend = Realm Favor; conquer / contract pay 'gate' (Factions.realm wrap below)
 Object.assign(MERIT, { mp_gate: 60, ashtoll: 60, mp_contract: 60, caldera_c: 120, mp_walk: 40, mp_sigil: 60, mp_rival: 20, mp_kindle: 80, caldera: 120, emberfall: 40, mp_witness: 40 });   // story 3.12
@@ -183,11 +183,11 @@ Object.assign(GOODS, {
   fire_ward: { name: 'Fire-ward charm', about: 'Fire resist +20%.', price: 85 },
   brazier_lamp: { name: 'Brazier-lamp', about: 'Burns like a little brazier. Light radius +2.', price: 55 },
 });
-SHOPS.mp_trader = { name: "Svala's Spice Braziers", keeper: 'Svala, spice trader', goods: ['cinder_tea', 'fire_ward', 'brazier_lamp', 'tonic'], gear: { n: 3, rar: [0, 1, 1] }, sellMul: 1 };
+SHOPS.mp_trader = { name: "Svala's Spice Braziers", keeper: 'Svala, spice trader', goods: ['cinder_tea', 'fire_ward', 'brazier_lamp', 'tonic'], gear: { n: 3, rar: [0, 0, 0] }, sellMul: 1 };
 // Emberfang (story 9.1): the legendary red-flame greatsword. Heavy hits ignite (burn 3 s), a charged slash throws a flame wave: the ignite rides on the combat hook that comes with
 // the Caldera build (like the Rimebreaker's 3rd-hit freeze); the engine has no charged attack yet.
 export function EMBERFANG(S) {
-  const it = makeItem(Math.max(10, S.lv || 1), 4, 'weapon'), k = RARITY[4].mul * (1 + (it.lv - 1) * 0.06);
+  const it = makeItem(Math.max(10, S.lv || 1), 3, 'primary'), k = 3.5 * (1 + (it.lv - 1) * 0.06)   // 3.5 = the pre-gear14 Legendary mul, so this unique's stats are unchanged;
   it.name = 'Emberfang'; it.fixed = true; it.unique = 'emberfang'; it.crafted = true;
   it.mods = { meleeMul: +(0.07 * k).toFixed(3), spellMul: +(0.03 * k).toFixed(3), crit: +(0.006 * k).toFixed(3) };
   it.gems = [null, null];

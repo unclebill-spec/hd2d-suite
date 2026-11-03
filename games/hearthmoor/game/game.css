@@ -226,15 +226,18 @@ body.tv #dlg { width: min(900px, 80vw); } body.tv #dlg p { font-size: 20px; }
 #heroBody .row.gear canvas.gicon { width: 30px; height: 30px; margin: -4px 0; }
 #heroBody .row.gear u, #shopBody .row.gear u { text-decoration: none; font-weight: 800; }
 #heroBody .row.gear .bb, #shopBody .row.gear .bb { display: flex; gap: 4px; }
-#heroBody .row.r0 .iname, #shopBody .row.r0 .iname { color: #5a4a3a; }#heroBody .row.r1 .iname, #heroBody .row.r1 u, #shopBody .row.r1 .iname, #shopBody .row.r1 u { color: #4a7234; }
-#heroBody .row.r2 .iname, #heroBody .row.r2 u, #shopBody .row.r2 .iname, #shopBody .row.r2 u { color: #3e5a8c; }#heroBody .row.r3 .iname, #heroBody .row.r3 u, #shopBody .row.r3 .iname, #shopBody .row.r3 u { color: #6a3e9a; }
-#heroBody .row.r4 .iname, #heroBody .row.r4 u, #shopBody .row.r4 .iname, #shopBody .row.r4 u { color: #b04a1c; }
-#heroBody .row.r3, #shopBody .row.r3 { border-color: #b07ce0; animation: epicGlow 1.6s steps(2) infinite; }
-#heroBody .row.r4, #shopBody .row.r4 { border-color: #f2a63a; animation: neon .6s steps(4) infinite; }
+#heroBody .row.r0 .iname, #shopBody .row.r0 .iname { color: #5a4a3a; }#heroBody .row.r1 .iname, #heroBody .row.r1 u, #shopBody .row.r1 .iname, #shopBody .row.r1 u { color: #1c62d8; }
+#heroBody .row.r2 .iname, #heroBody .row.r2 u, #shopBody .row.r2 .iname, #shopBody .row.r2 u { color: #6a34b8; }#heroBody .row.r3 .iname, #heroBody .row.r3 u, #shopBody .row.r3 .iname, #shopBody .row.r3 u { color: #9a5a10; }
+#heroBody .row.r4 .iname, #heroBody .row.r4 u, #shopBody .row.r4 .iname, #shopBody .row.r4 u { color: #b82a8c; }
+/* gear14 tiers: r0 Common, r1 Rare, r2 Epic, r3 Legendary, r4 Runeforged */
+#heroBody .row.r2, #shopBody .row.r2 { border-color: #b46cff; animation: epicGlow 1.6s steps(2) infinite; }
+#heroBody .row.r3, #shopBody .row.r3 { border-color: #ffc85a; animation: neon .6s steps(4) infinite; }
+#heroBody .row.r4, #shopBody .row.r4 { border-color: #ff2bd6; animation: runePulse 2.4s steps(6) infinite; }
 #heroBody .row.none, #shopBody .row.none { opacity: .7; }
-@keyframes epicGlow { 0% { box-shadow: 0 0 0 2px #b07ce055; } 100% { box-shadow: 0 0 0 2px #b07ce0aa; } }
-@keyframes neon { 0% { border-color: #f2a63a; box-shadow: 0 0 0 2px #f2c24a; } 25% { border-color: #f2c24a; box-shadow: 0 0 0 2px #fff8e6; }
-  50% { border-color: #fff8e6; box-shadow: 0 0 0 2px #e47c8c; } 75% { border-color: #e47c8c; box-shadow: 0 0 0 2px #f2a63a; } 100% { border-color: #f2a63a; box-shadow: 0 0 0 2px #f2c24a; } }
+@keyframes epicGlow { 0% { box-shadow: 0 0 0 2px #b46cff55; } 100% { box-shadow: 0 0 0 2px #b46cffaa; } }
+@keyframes runePulse { 0%, 100% { box-shadow: 0 0 0 2px #b82a8c66; } 50% { box-shadow: 0 0 0 2px #ff2bd6, 0 0 10px 2px #ffb4ea99; } }
+@keyframes neon { 0% { border-color: #ffc85a; box-shadow: 0 0 0 2px #f2c24a; } 25% { border-color: #f2c24a; box-shadow: 0 0 0 2px #fff8e6; }
+  50% { border-color: #fff8e6; box-shadow: 0 0 0 2px #ffc85a; } 75% { border-color: #ffc85a; box-shadow: 0 0 0 2px #b07a2a; } 100% { border-color: #ffc85a; box-shadow: 0 0 0 2px #f2c24a; } }
 @media (prefers-reduced-motion: reduce) {#heroBody .row.r3, #heroBody .row.r4, .loot.purse .icon, #shopBody .row.r3, #shopBody .row.r4 { animation: none; } }
 #bag .gearchip, #bag .goldchip { display: inline-flex; align-items: center; margin-left: 6px; font: 800 12px system-ui; color: #3a2a1c; }
 #bag .goldchip { color: #9a4630; }

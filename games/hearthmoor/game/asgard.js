@@ -163,9 +163,9 @@ Object.assign(GOODS, {
   gold_lamp: { name: 'Gold-glass lamp', about: 'Light radius +2.', price: 60 },
   cloak_pin: { name: 'Cloak pin', about: 'Cosmetic.', price: 30 },
 });
-SHOPS.as_trader = { name: "Nessa's Stall", keeper: 'Nessa', goods: ['mead_cake', 'storm_charm', 'gold_lamp', 'cloak_pin', 'tonic'], gear: { n: 3, rar: [0, 1, 1] }, sellMul: 1 };   // +25 % in Dusk Goldspire (priceMul wrap)
+SHOPS.as_trader = { name: "Nessa's Stall", keeper: 'Nessa', goods: ['mead_cake', 'storm_charm', 'gold_lamp', 'cloak_pin', 'tonic'], gear: { n: 3, rar: [0, 0, 0] }, sellMul: 1 };   // +25 % in Dusk Goldspire (priceMul wrap)
 export function STORMCALLER(S) {   // story 9.1: a neon-blue thunder hammer (the chain-lightning proc is a combat.js kind: a leftover)
-  const it = makeItem(Math.max(10, S.lv || 1), 4, 'weapon'), k = RARITY[4].mul * (1 + (it.lv - 1) * 0.06);
+  const it = makeItem(Math.max(10, S.lv || 1), 3, 'primary'), k = 3.5 * (1 + (it.lv - 1) * 0.06)   // 3.5 = the pre-gear14 Legendary mul, so this unique's stats are unchanged;
   it.name = 'Stormcaller'; it.fixed = true; it.unique = 'stormcaller'; it.crafted = true;
   it.mods = { meleeMul: +(0.08 * k).toFixed(3), spellMul: +(0.03 * k).toFixed(3), crit: +(0.005 * k).toFixed(3) };
   it.gems = [null, null];
