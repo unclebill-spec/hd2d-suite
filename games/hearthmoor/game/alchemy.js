@@ -243,7 +243,7 @@ export class Alchemy {
       G.save && G.save(); return { pages: ['(Old Gurgle fizzles grey. Nothing is used.)', h ? HINTS[h] : 'Hm. Not that. Try another mix.'] };
     }
     if (gf && gf.meta.effects.brew_puff_blue) gf.spawn('brew_puff_blue', x, this.ctx.heightAt(x, z) + 0.9, z + 0.1);
-    G.audio && G.audio.sfx('quest'); G.save && G.save();
+    G.audio && G.audio.sfx('craft'); G.save && G.save();
     const B = BREWS[r.id];
     if (r.isNew) G.toast && G.toast(`NEW RECIPE: ${B.name}`, 2.6);
     return { pages: [r.isNew ? FOUND[r.id] : r.n > 1 ? `${B.name} ×${r.n}. Old Gurgle was feeling generous.` : `${B.name}. Bottled.`] };

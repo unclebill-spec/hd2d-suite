@@ -61,7 +61,7 @@ export class Lanterns {
     if (f) {
       if (!NIGHT(ctx.clock.t)) { G.toast && G.toast('Dark water. The glow-fish only rise after dusk.', 2.2); return true; }
       if (S.fishDay[f.id] === (S.day || 0)) { G.toast && G.toast('The glow-fish here have scattered. Try again tomorrow night.', 2.2); return true; }
-      S.fishDay[f.id] = S.day || 0; G.give('glowfish', 1); G.audio && G.audio.sfx('pickup');
+      S.fishDay[f.id] = S.day || 0; G.give('glowfish', 1); G.audio && G.audio.sfx('splash');
       ctx.effects && ctx.effects.spawn('sparkle_burst', f.x, ctx.heightAt(f.x, f.z), f.z + 0.1);
       G.save && G.save(); return true;
     }

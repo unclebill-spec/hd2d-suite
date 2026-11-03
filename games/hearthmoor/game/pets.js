@@ -157,6 +157,7 @@ export class Pets {
     const S = this.S, P = PETS[id]; if (!P) return false;
     S.pets[id] = S.pets[id] || { name: name || P.name, bond: 1, fed: 0, lastFed: null };
     if (name) S.pets[id].name = name;
+    this.G && this.G.audio && this.G.audio.sfx('pet');   // [SFX 2026-11-03] pet_chirp.ogg
     return this.swap(id);
   }
   swap(id) {
@@ -232,7 +233,7 @@ export class Pets {
       this.sensed[q.id] = true; this.lastSense = { ...q };
       if (ctx.effects) ctx.effects.spawn('glitter', q.pos[0], ctx.heightAt(q.pos[0], q.pos[1]) + 0.2, q.pos[1] + 0.05, { duration: 2.4 });
       const lines = SECRET_SAY[this.S.pet.id] || SECRET_SAY.glowmoth; this.G.toast && this.G.toast(lines[Object.keys(this.sensed).length % lines.length].replace('{name}', this.S.pet.name), 2.6);
-      this.G.audio && this.G.audio.sfx('blip');
+      this.G.audio && this.G.audio.sfx('discovery');
     }
   }
   state() {

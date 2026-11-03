@@ -148,7 +148,7 @@ export class Rifts {
       if (Math.random() < T.shard) G.loot.drop(R.pos[0], R.pos[1] - 0.4, { gem: 'rift_shard' });
     }
     G.gainXP && G.gainXP(T.xp, { x: R.pos[0], y: R.y, z: R.pos[1] });
-    G.audio && G.audio.sfx('quest');
+    G.audio && G.audio.sfx('rift_seal');
     if (R.storm && G.storms) G.storms.onSeal(T);   // the storm count, its toasts, Storm Watch 1 -> 2
     else G.toast && G.toast(`${T.name} sealed! +${T.xp} XP and the rift's spoils.`, 2.8);
     G.drawHunt && G.drawHunt();

@@ -170,7 +170,7 @@ G.setQuest = (id, stage) => {
     G.gainXP(PR.XP.errand * (rep ? 0.5 : 1)); if (B) done[id] = (done[id] || 0) + 1;
     if (!story && !B) G.factions.onErrand();
   }
-  else if (!was && stage > 0) { toast(`New ${kind.toLowerCase()}: ${QUESTS[id].title}`, 2.6); G.audio.sfx('pickup'); flashLog(); }
+  else if (!was && stage > 0) { toast(`New ${kind.toLowerCase()}: ${QUESTS[id].title}`, 2.6); G.audio.sfx('quest_new'); flashLog(); }
   refreshMarkers(); save();
 };
 G.learn = (spell) => {
@@ -455,6 +455,7 @@ function sealedLook(ctx) {
 async function go(to, spawnKey, how) {
   if (G.busy) return; G.busy = true;
   const f = $('fade'); f.className = how === 'portal' ? 'portal on' : 'on';
+  if (how !== 'portal') G.audio.sfx('door');
   if (how === 'portal') { G.audio.sfx('portal'); const p = G.ctx.player; G.ctx.effects && G.ctx.effects.spawn('sparkle_burst', p.x, p.y, p.z); }
   await new Promise((r) => setTimeout(r, how === 'portal' ? 620 : 380));
   G.S.pos = null;
@@ -517,6 +518,9 @@ function onFrame(dt, ctx) {
   { const eng = G.combat.enemies.filter((e) => e.state === 'chase' || e.state === 'attack');   // music: battle / boss themes
     const bo = eng.find((e) => e.D.boss && !e.D.rare);   // [ASGARD 2026-10-31] pass the boss id: audio picks music_boss_<id>.ogg if it exists
     G.audio.setBattle(eng.length > 0 && !G.downed, bo ? String((bo.sp && (bo.sp.def || bo.sp.role)) || bo.id || true) : false, dt); }
+  { const pl = ctx && ctx.player, q = G.stepP, d = pl && q ? Math.hypot(pl.x - q[0], pl.z - q[1]) : 0;   // [SFX 2026-11-03] footsteps (audio/sfx footstep_*): a step every ~0.32 s while walking
+    if (pl) G.stepP = [pl.x, pl.z]; const walk = d > 0.004 && d < 1 && !G.title && !G.busy && !G.dlg;
+    G.stepT = walk ? (G.stepT || 0) + dt : 0.2; if (walk && G.stepT >= 0.32) { G.stepT = 0; G.audio.step && G.audio.step(); } }
   drawVitals(ctx);
   if (G.title || G.busy) return;
   // exits + portals: arm once the player has stood outside every trigger (no bounce on arrival)
@@ -1147,7 +1151,7 @@ function levelUp() {
   G.S.hp = C.maxHp(); C.st = C.maxSt();
   if (ctx.effects) { ctx.effects.spawn('bloom_ring', p.x, p.y, p.z + 0.04); ctx.effects.spawn('sparkle_burst', p.x, p.y, p.z + 0.06); ctx.effects.spawn('light_orb', p.x, p.y + 0.4, p.z + 0.07); }
   if (ctx.burst) for (let i = 0; i < 3; i++) setTimeout(() => ctx.burst('sparkle', p.x, p.y + 1.0, p.z + 0.1), i * 160);
-  G.audio.sfx('quest');
+  G.audio.sfx('levelup');
   const pts = G.S.autoLevel ? '' : ` ${G.S.free} stat point${G.S.free === 1 ? '' : 's'} to spend (I).`;
   toast(`Level ${G.S.lv}!${pts}${G.S.sp ? ' A skill point is ready.' : ''}`, 3.0);
   $('vitals').classList.add('lvup'); setTimeout(() => $('vitals').classList.remove('lvup'), 1600);
@@ -1192,7 +1196,7 @@ function drawHero() {
     body.innerHTML = `<p class="pts">${S.free} stat point${S.free === 1 ? '' : 's'} free${S.autoLevel ? ' · auto level is on (class picks)' : ''}</p>`
       + PR.STATS.map((st, k) => `<div class="row${k === HUI.i ? ' sel' : ''}" data-k="${k}"><b>${st.name}</b><em>${S.stats[st.id]}</em><span>${st.does}</span>`
       + `<button class="wbtn sm plus" data-stat="${st.id}" ${S.free ? '' : 'disabled'}>+</button></div>`).join('');
-    body.querySelectorAll('[data-stat]').forEach((b) => { b.onclick = (e) => { e.stopPropagation(); if (PR.spendStat(S, b.dataset.stat)) { G.audio.sfx('pickup'); save(); drawHero(); } }; });
+    body.querySelectorAll('[data-stat]').forEach((b) => { b.onclick = (e) => { e.stopPropagation(); if (PR.spendStat(S, b.dataset.stat)) { G.audio.sfx('stat'); save(); drawHero(); } }; });
   } else if (HUI.tab === 3) {
     LO.ensure(S);
     const eq = LO.SLOTS.map((sl) => [sl, S.gear[sl]]);
@@ -1213,7 +1217,7 @@ function drawHero() {
     body.querySelectorAll('[data-sock]').forEach((b) => { b.onclick = (e) => { e.stopPropagation(); HUI.i = +b.dataset.sock; heroSocket(); }; });
     const gc = $('gemCycle'); if (gc) gc.onclick = (e) => { e.stopPropagation(); gemCycle(); };
     const pf = $('petFeed'); if (pf) pf.onclick = (e) => { e.stopPropagation(); petFeed(); };
-    body.querySelectorAll('[data-eq]').forEach((b) => { b.onclick = (e) => { e.stopPropagation(); if (LO.equip(S, +b.dataset.eq)) { G.audio.sfx('pickup'); save(); drawHero(); } }; });
+    body.querySelectorAll('[data-eq]').forEach((b) => { b.onclick = (e) => { e.stopPropagation(); if (LO.equip(S, +b.dataset.eq)) { G.audio.sfx('equip'); save(); drawHero(); } }; });
     body.querySelectorAll('[data-uneq]').forEach((b) => { b.onclick = (e) => { e.stopPropagation(); if (LO.unequip(S, b.dataset.uneq)) { save(); drawHero(); } }; });
     body.querySelectorAll('[data-scrap]').forEach((b) => { b.onclick = (e) => { e.stopPropagation(); HUI.i = 3 + +b.dataset.scrap; heroScrap(); }; });
     const sel = body.querySelector('.row.sel'); if (sel && sel.scrollIntoView) sel.scrollIntoView({ block: 'nearest' });
@@ -1252,7 +1256,7 @@ function drawHero() {
         return head + `<div class="row node t${n.tier}${got ? ' got' : ''}${lock && !got ? ' locked' : ''}${k === HUI.i ? ' sel' : ''}" data-k="${k}"><b>${n.branch}</b><em>${n.name}</em><span>${n.desc}</span>`
           + `<button class="wbtn sm plus" data-node="${n.id}" ${lock ? 'disabled' : ''}>${got ? '✓' : lock || 'learn'}</button></div>`;
       }).join('');
-    body.querySelectorAll('[data-node]').forEach((b) => { b.onclick = (e) => { e.stopPropagation(); if (PR.learn(S, b.dataset.node)) { G.audio.sfx('quest'); save(); drawHero(); } }; });
+    body.querySelectorAll('[data-node]').forEach((b) => { b.onclick = (e) => { e.stopPropagation(); if (PR.learn(S, b.dataset.node)) { G.audio.sfx('stat'); save(); drawHero(); } }; });
     const sel = body.querySelector('.row.sel'); if (sel && sel.scrollIntoView) sel.scrollIntoView({ block: 'nearest' });
   }
   body.querySelectorAll('.row').forEach((r) => { r.onclick = () => { HUI.i = +r.dataset.k; drawHero(); }; });
@@ -1265,7 +1269,7 @@ function heroScrap() {
   drawBag();
   if (HUI.tab !== 3 || HUI.i < 3) return;
   const g = LO.scrap(G.S, HUI.i - 3);
-  if (g) { toast(`Scrapped for ${g} gold`, 1.4); G.audio.sfx('pickup'); HUI.i = Math.min(HUI.i, 2 + G.S.bag.length); save(); drawHero(); }
+  if (g) { toast(`Scrapped for ${g} gold`, 1.4); G.audio.sfx('coin'); HUI.i = Math.min(HUI.i, 2 + G.S.bag.length); save(); drawHero(); }
 }
 // sockets: put the chosen gem into the selected row's first empty socket (gems stay until a jeweler clears them)
 function gearAt(k) { const S = G.S; return k < 3 ? S.gear[LO.SLOTS[k]] : S.bag[k - 3]; }
@@ -1276,7 +1280,7 @@ function heroSocket() {
   if (!HUI.gem) { toast('No gems yet', 1.2); return false; }
   const name = LO.GEMS[HUI.gem].name;
   if (!LO.socketGem(G.S, it, HUI.gem)) return false;
-  toast(`${name} set into ${it.name}`, 1.8); G.audio.sfx('quest'); save(); drawHero();
+  toast(`${name} set into ${it.name}`, 1.8); G.audio.sfx('gem'); save(); drawHero();
   return true;
 }
 function gemCycle() {

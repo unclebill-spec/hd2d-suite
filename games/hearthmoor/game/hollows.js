@@ -54,7 +54,7 @@ export class Hollows {
       if (d.item) G.give(d.item, 1);
       if (ctx.effects) ctx.effects.spawn('glitter', d.pos[0], ctx.heightAt(d.pos[0], d.pos[1]) + 0.1, d.pos[1] + 0.1, { duration: 1.2 });
       G.toast && G.toast(`The gnome door creaks open: a little chest! +${d.gold || 0} gold${d.item ? ' and a ' + (G.itemName ? G.itemName(d.item) : d.item) : ''}`, 2.8);
-      G.audio && G.audio.sfx('pickup');
+      G.audio && G.audio.sfx('chest');
       return true;
     }
     S.found[key] = (S.found[key] || 0) + 1;

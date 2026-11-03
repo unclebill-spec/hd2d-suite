@@ -547,6 +547,7 @@ export class Asgard {
   pillarStorm(i) {   // sw_storm: in a thunderstorm lightning re-lights her wings; in clear weather you ring all three pillars yourself
     const G = this.G, S = G.S, f = flags(S), storm = !!(G.weather && G.weather.kind === 'thunderstorm');
     if (storm) return this.look('sw_storm', 'The rune-pillar', ['(You stand with Sigrun on the pillar step. The bolt comes down, and her wings take it: gold, edged neon-blue, wide as the street.)'], () => { this.find('sw_storm'); this.swCheck(); });
+    G.audio && G.audio.sfx('thunder_rune');   // [SFX 2026-11-03] rune pillar rung
     f.sw_rung = { ...(f.sw_rung || {}), [i]: 1 }; const n = Object.keys(f.sw_rung).length;
     if (n < 3) return this.look('sw_ring' + i, 'The rune-pillar', [`(You strike the pillar. It rings, and the blue runes climb. ${n}/3.)`]);
     this.look('sw_storm', 'The rune-pillars', ['(The third pillar rings and the arcs jump pillar to pillar to Sigrun. Her wings take the light.)'], () => { this.find('sw_storm'); this.swCheck(); });
@@ -594,7 +595,8 @@ export class Asgard {
   trialStrike() {
     const G = this.G, t = this.trial; if (!t) return;
     if (!t.lit) { G.toast('Not yet. Wait for the gold.', 1.4); return; }
-    t.lit = false; t.t = 1.6; t.n++; flags(G.S).rt_runes = t.n; this.fxAt(this.ctx, 'relight_burst', FORGE[0], this.ctx.heightAt(...FORGE) + 1.2, FORGE[1], { duration: 0.6, fadeIn: 0 });
+    t.lit = false; t.t = 1.6; t.n++; flags(G.S).rt_runes = t.n; G.audio && G.audio.sfx('thunder_rune');   // [SFX 2026-11-03] pack3 thunder_rune x3
+    this.fxAt(this.ctx, 'relight_burst', FORGE[0], this.ctx.heightAt(...FORGE) + 1.2, FORGE[1], { duration: 0.6, fadeIn: 0 });
     G.toast(`Rune ${t.n}/${TRIAL_NEED(G.S)}`, 1.6);
     if (t.n >= TRIAL_NEED(G.S)) this.trialEnd();
   }
@@ -769,7 +771,8 @@ export class Asgard {
   tickBoss(dt) {
     const e = this.boss, c = this.ctx, G = this.G; if (!e || e.state === 'dead' || e.state === 'gone') return;
     const p = c.player, ph = this.phaseOf(e); e.phaseN = ph;
-    if (e.ph0 !== ph) { e.ph0 = ph; const r = PHASE_ROLE[e.which]; if (r && r[ph - 1]) this.swapRole(e, r[ph - 1]); }
+    if (e.ph0 !== ph) { if (e.ph0) G.audio && G.audio.sfx('boss_phase');   // [SFX 2026-11-03] pack2 boss_phase.ogg
+      e.ph0 = ph; const r = PHASE_ROLE[e.which]; if (r && r[ph - 1]) this.swapRole(e, r[ph - 1]); }
     this.bt -= dt; this.bt2 -= dt;
     const near = Math.hypot(e.a.x - p.x, e.a.z - p.z) < 16;
     if (e.which === 'severin') {

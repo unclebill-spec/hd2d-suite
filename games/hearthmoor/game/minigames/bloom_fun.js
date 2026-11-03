@@ -8,15 +8,15 @@ const sfx = (st, k) => { try { st.G.audio && st.G.audio.sfx && st.G.audio.sfx(k)
 const pluck = (st, s, v) => { try { st.G.audio && st.G.audio.pluck && st.G.audio.pluck(s, v, 0); } catch (_) {} };
 
 HOOKS.push({
-  start(st) { st.fun = { combo: 0, best: 0, pops: [], sparks: [], basket: 0, shake: 0, beat: -1, lastNow: st.now() }; },
+  start(st) { sfx(st, 'menu_open'); st.fun = { combo: 0, best: 0, pops: [], sparks: [], basket: 0, shake: 0, beat: -1, lastNow: st.now() }; },
   judge(st, r) {
     const f = st.fun; if (!f) return;
     if (r.grade === 'stray') return;   // stray taps: no penalty, no noise
     const [x, y] = st.fx.target || [W / 2, 80];
-    if (r.grade === 'miss') { f.combo = 0; sfx(st, 'blip'); }
+    if (r.grade === 'miss') { f.combo = 0; sfx(st, 'bloom_miss'); }
     else {
       f.combo++; f.best = Math.max(f.best, f.combo);
-      sfx(st, r.grade === 'perfect' ? 'pickup' : 'lampchime');
+      sfx(st, r.grade === 'perfect' ? 'bloom_perfect' : 'bloom_hit');   // [SFX 2026-11-03] Bloomtide files (sfx/bloomtide/README); procedural fallback = the old pickup / lampchime
       if (st.kind === 'dance') pluck(st, r.grade === 'perfect' ? 12 : 7, 0.12);
       if (st.kind === 'harvest') { f.basket++; f.caughtAt = st.t; }
       if (r.grade === 'perfect' && !st.rm) f.shake = 3;
@@ -50,8 +50,8 @@ HOOKS.push({
     g.textAlign = 'left';
   },
   result(st, r) {
-    const f = st.fun || {}; sfx(st, r.won ? 'quest' : 'blip');
+    const f = st.fun || {}; sfx(st, r.won ? 'bloom_win' : 'bloom_lose');
     setTimeout(() => { const p = st.res && st.res.querySelector('p'); if (p && f.best >= 2) p.insertAdjacentHTML('afterend', `<p style="color:${PAL.mag_hi}">Best combo x${f.best}</p>`); }, 0);
   },
-  stop(st) { if (st.cv) st.cv.style.transform = ''; },
+  stop(st) { sfx(st, 'menu_close'); if (st.cv) st.cv.style.transform = ''; },
 });

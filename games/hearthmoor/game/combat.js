@@ -389,6 +389,7 @@ export class Combat {
     return true;
   }
   heal(n, raw = false) {
+    if (n >= 3) this.G.audio && this.G.audio.sfx('heal');   // [SFX 2026-11-03] heal.ogg (throttled 400 ms in audio.js)
     const p = this.ctx.player;
     const was = this.G.S.hp;
     this.G.S.hp = Math.min(this.maxHp(), this.G.S.hp + n * (raw ? 1 : this.M.healMul));

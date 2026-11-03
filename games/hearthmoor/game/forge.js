@@ -207,7 +207,7 @@ export class Forge {
     return { pages: [`(${r.name} goes into the scrap bin.) +${r.gold} gold, +${r.iron} iron bits.${S.quests.temper === 1 && !F.tp_bellows ? ' Now work the bellows by the forge till she roars.' : ''}`] };
   }
   doSmelt() {
-    const G = this.G, ok = smelt(G.S); if (ok) { G.save && G.save(); G.audio && G.audio.sfx('quest'); }
+    const G = this.G, ok = smelt(G.S); if (ok) { G.save && G.save(); G.audio && G.audio.sfx('craft'); }
     return { pages: [ok ? '(Hiss. The iron goes in grey and comes out blue at the edges.) Two cold-steel ingots.' : `I need ${SMELT.iron} iron bits and a frost core for a smelt.`] };
   }
   // bellows by the left forge (First Temper): three pumps
@@ -240,7 +240,7 @@ export class Forge {
     if (r.blocked) return { pages: [/gold/.test(r.blocked) ? "Short on gold. The forge eats coal and coal costs coin. I'll keep the fire warm for you." : /iron|steel/.test(r.blocked) ? "Short on iron. Scrap something you've outgrown, and I'll sort the bits." : /cap/.test(r.blocked) ? "That's as far as this piece goes. A Common can't carry a Legendary's fire. Bring me something rarer." : `Not today: ${r.blocked}.`] };
     const a = (this.ctx.scene.game.anvils || [])[0];
     if (a) { this.burst('forge_sparks', a.pos[0], a.pos[1]); if (r.quench) { this.burst('forge_sparks', -1.8, -8.0); for (let k = 0; k < 4; k++) this.ctx.burst && this.ctx.burst('wet_glint_cool', -1.8 + (k - 1.5) * 0.3, this.ctx.heightAt(-1.8, -8.0) + 0.8, -7.6); } }
-    G.audio && G.audio.sfx(r.ok ? 'quest' : 'blip'); G.save && G.save();
+    G.audio && G.audio.sfx(r.ok ? 'craft_rare' : 'error'); G.save && G.save();
     return { pages: [r.line] };
   }
   orri() {
@@ -276,7 +276,7 @@ export class Forge {
   doPunch(slot) {
     const G = this.G, it = (G.S.gear || {})[slot], r = punch(G.S, it);
     if (r.blocked) return { pages: [r.blocked] };
-    G.audio && G.audio.sfx('quest'); G.save && G.save();
+    G.audio && G.audio.sfx('craft'); G.save && G.save();
     return { pages: ['(Clink. Clink. A neat round socket, rimmed with copper.) There. Room for something shiny.'] };
   }
   doReroll(slot, stat, rnd) {
