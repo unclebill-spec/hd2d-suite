@@ -128,7 +128,7 @@ export class Combat {
   alive() { return this.enemies.filter((e) => e.state !== 'dead' && e.state !== 'gone'); }
   flashOK() { return this.G.flashOK ? this.G.flashOK() : true; }   // Settings: flashes toggle (fun pass)
   get peace() { return !!this.G.peace; }
-  paused() { const G = this.G; return !!(G.title || G.busy || G.dlg || G.log || G.downed || G.picking); }
+  paused() { const G = this.G; return !!(G.title || G.busy || G.dlg || G.log || G.downed || G.picking || G.pause); }
 
   // ---------------------------------------------------------------- per frame (dt already slowed by the spell wheel)
   update(dt, ctx) {

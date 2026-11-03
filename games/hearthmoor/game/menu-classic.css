@@ -21,3 +21,48 @@ body.rm .toast, body.rm #dlg .more, body.rm .slot.new, body.rm .btn.ping, body.r
 /* Factions tab: selected row keeps its faction edge */
 #heroBody .row.fac.sel { border-left-color: var(--fc); }
 @media (max-width: 640px) { #hud .hint { white-space: normal; text-align: center; width: 94vw; max-width: 94vw; overflow: visible; text-overflow: clip; line-height: 1.3; } }
+
+/* pause menu: same parchment card as Options, parked over the field */
+#pause { position: fixed; inset: 0; z-index: 20; display: grid; place-items: center; background: #1b171655; }
+#pause[hidden] { display: none; }
+#pause .card { align-items: stretch; width: min(560px, 94vw); max-height: min(86vh, 640px); overflow: auto; padding: 0 0 8px;
+  background: var(--parch); border: 3px solid var(--wood-lo); border-radius: 5px; box-shadow: inset 0 0 0 2px var(--parch-hi), 0 4px 0 #1b1716a0;
+  cursor: url(../art/ui/cursor_arrow.png) 1 1, auto; }
+#pause .head { display: flex; align-items: center; gap: 8px; background: var(--wood); color: var(--parch-hi); padding: 6px 10px;
+  box-shadow: inset 0 -3px 0 var(--wood-lo), inset 0 2px 0 var(--wood-hi); font: 700 15px var(--ui-font); }
+#pause .head .x { margin-left: auto; background: var(--parch); border: 2px solid var(--wood-lo); border-radius: 3px; min-width: 32px; min-height: 32px; font: 700 14px var(--ui-font); color: var(--ink); }
+#pause .tabs { display: flex; flex-wrap: wrap; gap: 4px; padding: 8px 10px 0; }
+#pause .pane { padding: 4px 10px 8px; }
+#pause .pane[hidden] { display: none; }
+#pause h4 { margin: 8px 0 4px; color: var(--rose); font-size: 14px; }
+#pause table { width: 100%; border-collapse: collapse; font-size: 12px; color: var(--ink); }
+#pause th, #pause td { text-align: left; padding: 3px 6px; border-bottom: 1px solid var(--parch-lo); vertical-align: top; }
+#pause th { color: var(--wood); font-size: 11px; }
+#pause .sum { margin: 4px 0; color: var(--ink); font-size: 13px; line-height: 1.4; }
+#pause .sum b { color: var(--rose); }
+#pause .rowbtns, #pause .footbtns { display: flex; flex-wrap: wrap; gap: 6px; padding: 4px 0; }
+#pause .footbtns { padding: 2px 10px 0; }
+#pause .tip { margin: 4px 12px 0; color: var(--wood); font-size: 12px; }
+#pause .wbtn.pf { outline: 2px solid var(--rose); outline-offset: 1px; }
+#pause #opts { position: static; display: block; background: none; z-index: auto; inset: auto; width: auto; height: auto; }
+#pause #opts .card { width: auto; max-height: none; border: none; box-shadow: none; background: transparent; padding: 0; align-items: stretch; cursor: url(../art/ui/cursor_arrow.png) 1 1, auto; }
+#pause #opts .head { display: none; }
+
+/* corner map: bottom-left on a desktop, clear of the hint; top-right once the stick or a phone takes that corner */
+#minimap { position: absolute; left: max(10px, env(safe-area-inset-left)); bottom: 36px; width: 132px; height: 132px; box-sizing: border-box;
+  border: 3px solid var(--wood-lo); border-radius: 8px; background: var(--parch); box-shadow: inset 0 0 0 2px var(--parch-hi), 0 2px 0 #2a1e1680;
+  pointer-events: none; }
+#minimap[hidden], body.titled #minimap { display: none; }
+body.padon #minimap { left: auto; right: max(10px, env(safe-area-inset-right)); bottom: auto; top: 200px; width: 112px; height: 112px; }
+@media (pointer: coarse), (max-width: 720px) {
+  #minimap { left: auto; right: max(10px, env(safe-area-inset-right)); bottom: auto; top: 200px; width: 112px; height: 112px; }
+}
+@media (max-height: 460px) {
+  #minimap { left: auto; right: max(8px, env(safe-area-inset-right)); bottom: auto; top: max(48px, calc(env(safe-area-inset-top) + 38px)); width: 96px; height: 96px; }
+}
+@media (max-height: 360px) { #minimap { display: none !important; } }
+
+/* pixel cursors: arrow on the page, hand on controls. Later file, so these beat game.css cursor:pointer on the same selectors. */
+html, body, canvas, #view { cursor: url(../art/ui/cursor_arrow.png) 1 1, auto; }
+button, .btn, .wbtn, [role="button"], a, .slotcard, .card, input[type="range"] { cursor: url(../art/ui/cursor_hand.png) 8 1, pointer; }
+#dlg, #log .x, #opts .head .x, #hud .vitals, #dlg .choice, #introSkip, #rotate button { cursor: url(../art/ui/cursor_hand.png) 8 1, pointer; }
