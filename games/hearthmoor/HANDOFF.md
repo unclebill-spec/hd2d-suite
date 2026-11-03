@@ -3,6 +3,13 @@ _
 
 **Owner:** HD-2D Cozy Builder (single owner). Hearthmoor Art / Sound / Story and Master Builder drop work in `/workspace/hd2d-suite/staging/` (or `/workspace/hearthmoor-staging/`) and add a line under "Inbox" below instead of waking the owner.
 
+## RESUME HERE (2026-11-02, branch hearthmoor-tue-1103, HD-2D Cozy Builder)
+- Wired Hearthmoor Sound staging: 94 SFX in audio/sfx/ (Pack1/2/3 + Bloomtide) via sample loader in game/audio.js (variants, no-repeat, ±5% rate jitter, throttle, procedural fallback), ambience beds (asgard/helheim/ossuary/plaza), area-based footsteps, raven caws, call sites across game/*.js.
+- Music: helheim + mossbrook (already identical), asgard replaced with staging. music_attract NOT wired.
+- **music tracks need Will's ghost-vocal listen before publish**
+- Not wired yet: coldfire_crackle_loop (needs distance-faded loop mgr), rain/snow loops (need weather.js hook), stinger_levelup (levelup_chime used), spell school split (spell_light/dark/nature uncalled), soul, gloam, boss_crit, gate_locked, error deny branches, quest_progress, hero-screen menu open/close.
+- Not QA'd (Game Director does QA). Not merged to main.
+
 ## Goal
 HD-2D cozy game (16-bit billboard actors in a lit 3D diorama). Live: unclebill-spec.github.io/hd2d-suite/games/hearthmoor/. Repo: /workspace/hd2d-suite (github unclebill-spec/hd2d-suite).
 
