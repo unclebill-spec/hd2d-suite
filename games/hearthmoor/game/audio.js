@@ -63,6 +63,7 @@ const DUCK = 0.3;        // ambient level while music plays (a ~70% duck)
 const XFADE = 1.6;       // crossfade seconds
 const BATTLE_HOLD = 4;   // seconds the battle theme lingers after the last foe stops chasing
 
+const WX_LOOPS = { drizzle: 'rain_light_loop', rain: 'rain_heavy_loop', snow: 'snow_hush_loop' };   // [SOUND] weather.js kinds -> loop files
 export class Ambient {
   constructor() { this.ctx = null; this.muted = localStorage.getItem('hearthmoor-mute') === '1'; this.area = 'plaza'; this.night = 0; this.timers = [];
     const v = parseFloat(localStorage.getItem('hearthmoor-music-vol')); this.musicVol = Number.isFinite(v) ? Math.min(1, Math.max(0, v)) : 0.6;
@@ -221,6 +222,20 @@ export class Ambient {
       if (this.bedCur !== cur || !(b instanceof AudioBuffer)) return;
       const c = this.ctx, src = c.createBufferSource(), g = c.createGain(), t2 = c.currentTime;
       src.buffer = b; src.loop = true; g.gain.setValueAtTime(0.0001, t2); g.gain.linearRampToValueAtTime(0.5, t2 + 1);
+      src.connect(g); g.connect(this.amb); src.start(); cur.src = src; cur.g = g;
+    });
+  }
+  wx(kind) {   // [SOUND] weather loop layer (drizzle / rain / snow), on the ambient bus beside the area bed; fade 1 s
+    const name = WX_LOOPS[kind] || null; if (!this.ctx || (this.wxCur && this.wxCur.name === name)) return;
+    const t = this.ctx.currentTime;
+    if (this.wxCur && this.wxCur.src) { const o = this.wxCur; o.g.gain.setTargetAtTime(0.0001, t, 0.3); try { o.src.stop(t + 1.2); } catch (e) { /* stopped */ } }
+    this.wxCur = { name, src: null };
+    if (!name) return;
+    const cur = this.wxCur;
+    Promise.resolve(this.sbuf(name)).then((b) => {
+      if (this.wxCur !== cur || !(b instanceof AudioBuffer)) return;
+      const c = this.ctx, src = c.createBufferSource(), g = c.createGain(), t2 = c.currentTime;
+      src.buffer = b; src.loop = true; g.gain.setValueAtTime(0.0001, t2); g.gain.linearRampToValueAtTime(0.4, t2 + 1);
       src.connect(g); g.connect(this.amb); src.start(); cur.src = src; cur.g = g;
     });
   }
