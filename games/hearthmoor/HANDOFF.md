@@ -63,6 +63,20 @@ HD-2D cozy game (16-bit billboard actors in a lit 3D diorama). Live: unclebill-s
   `cd /tmp/hm-asg-r3/games/hearthmoor && HM_IN_BROWSER_LOCK=1 flock /workspace/.hm-logs/browser.lock timeout 1500 python3 tests/smoke.py --shard 2/4 > /workspace/.hm-logs/vanaheim-c-1031/control-6171246-shard2.log 2>&1`
 - If the control stalls too, hand the merge SHA to EB for Rule 19. If it passes clean, debug the merge first. Wait for GD's go before resuming.
 
+## RESUME HERE (2026-11-02 7:30 PM ET, Game Director): CHECK DAY fix list. Builders may resume.
+- vhc-split fb24caa: **full Rule 19 PASS with notes; GD sign-off, CLEARED TO PUBLISH (Cozy).** Report: /workspace/qa-reports/checkday-2026-11-02.md. Run cap for Nov 2 is used (2/2).
+Fix list, in priority order:
+1. Cozy: before publishing, tag main `hearthmoor-rollback-20261102-6171246`; then `tools/publish-game.sh hearthmoor` (use `--no-qa` if still Nov 2 ET, since its live game-qa would hit the cap) and send GD the live SHA. GD live-checks Tue (run 1/2).
+2. Cozy + Story: foresight_charm item code (ITEMS entry + effect per vanaheim_stage_c.md; Story name/desc); wire Art's staged bloom_token/foresight_charm icons (hearthmoor-staging/art/vanaheim-icons/).
+3. Cozy (Systems) + Art: Vine Grasp "root" kind (snare); reuse existing root/vine FX.
+4. Cozy + Art: Moss Golem summon reusing the hound minion rig/AI (copies owner stance); moss recolor of existing frames.
+5. Master Builder: smoke.py render-stall hardening (fresh context per area or per N areas; on a frames stall, dump + one re-wait). Then the 6171246 control baseline in a normal test slot.
+6. Nintendo 64 Style: the boot label "caching n / 110" sat at 1/110 while the bar grew, so make it count; optional "ready offline" toast after the first-realm fill (310 s at 200 kB/s). Retire hearthmoor-sw-precache-split / /tmp/hm-swsplit once live.
+7. Art: add Ingrith Rev 4b to masters APPROVED.md only after Will says yes.
+8. Story: Liss's befriended line should give a "next Bloomtide in N nights" hint.
+9. Sound: check that Bloomtide hit/perfect/miss/win use SFX Pack 2; SFX only, music on hold.
+10. Cozy, only if Will unholds it: fast-forward the attract demo (82e71bb) onto the new live head for Tue run 2.
+
 ## RESUME HERE (2026-11-02, HD-2D Cozy Builder)
 
 Branch `hearthmoor-vhc-split` (not live; main untouched). Head: see the last commit on the branch (this HANDOFF commit sits on top of sw regen 2b17b50).
