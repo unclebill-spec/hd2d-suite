@@ -91,7 +91,7 @@ Object.assign(ITEMS, {
   ghost_lantern: { name: 'Ghost-lantern', px: 'glowseed', about: 'Cosmetic.' },
 });
 Object.assign(GOODS, { violet_shawl: { name: 'Violet shawl', about: 'Cosmetic.', price: 30 }, button: { name: 'Bright button', about: 'Ravens like bright things.', price: 2 } });
-SHOPS.innghost = { name: 'The Last Hearth Inn', keeper: 'Hettie Tallow', goods: ['tonic', 'button', 'violet_shawl'], gear: { n: 2, rar: [0, 1] }, sellMul: 1 };
+SHOPS.innghost = { name: 'The Last Hearth Inn', keeper: 'Hettie Tallow', goods: ['tonic', 'button', 'violet_shawl'], gear: { n: 2, rar: [0, 0] }, sellMul: 1 };
 
 Object.assign(QUESTS, {
   hh_gate: { title: "Hel's Leave", giver: 'Envoy Ingrith Goldrune', story: true, steps: {

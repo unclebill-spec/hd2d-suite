@@ -65,7 +65,7 @@ Object.assign(ENEMIES, {
                 wave: { every: 3, r: 4.4, dmg: 16 }, prismShield: 0.9, beamWeak: true, glow: V, legendary: true, respawn: 1e9 },
   sylvaine: { name: 'Lady Sylvaine, the Light-Drinker', scale: 6, hp: 1700, dmg: 24, speed: 1.4, reach: 7.0, keep: 4.5, windup: 0.8, cd: 2.0, aggro: 12, r: 1.4, push: 0.2, ranged: true, float: true,
               boss: true, minion: 'prismshard', phases: [0.65, 0.3], drain: { dps: 8, heal: 2, range: 8 }, shield: 0.8, clones: 2, dark: { every: 10, lunge: 34 }, beamWeak: true,
-              glow: V, legendary: true, respawn: 1e9, bolt: 'prism_bolt', minRar: 3 },
+              glow: V, legendary: true, respawn: 1e9, bolt: 'prism_bolt', minRar: 2 },
   sylvaine_reflection: { name: 'A reflection of Sylvaine', scale: 6, hp: 60, dmg: 8, speed: 1.2, reach: 6.0, keep: 4.5, windup: 0.9, cd: 2.6, aggro: 12, r: 1.2, push: 0.2, ranged: true, float: true, bolt: 'prism_bolt' },
 });
 Object.assign(XP, { mirroryou: 72, prismshard: 32, willwisp: 26, crystalgolem: 58, mirrorduelist: 72, lightranger: 40, frostsentinel: 180, faelan: 200, lenswarden: 320, sylvaine: 800, sylvaine_reflection: 0 });
@@ -101,7 +101,7 @@ Object.assign(REALM, { alfheim: 'embassy', lumen_court: 'embassy', wispwood: 'em
 Object.assign(MERIT, { thaw: 60, claim: 60, alf_name: 60, apology: 20, alf_dim: 80, vault: 120, vault_c: 120, wispnight: 40 });
 GEMS.prism_core = { name: 'Prism core', col: '#6af0f0', lo: '#a45cf0', mods: { spellMul: 0.04, summonMul: 0.04, crit: 0.01 }, price: 130, about: '+4% spells · +4% summons · +1% crit' };
 if (!GEM_IDS.includes('prism_core')) GEM_IDS.push('prism_core');
-SHOPS.lumen = { name: 'Saelis\'s Lanterns', keeper: 'Saelis, lantern seller', goods: ['tonic', 'glowseed'], gems: ['moon_opal'], gear: { n: 3, rar: [1, 1, 2] }, sellMul: 1 };
+SHOPS.lumen = { name: 'Saelis\'s Lanterns', keeper: 'Saelis, lantern seller', goods: ['tonic', 'glowseed'], gems: ['moon_opal'], gear: { n: 3, rar: [0, 0, 1] }, sellMul: 1 };
 WAYS.alfheim = ['Lumenvale, the Glimmer Steps', 'alfheim', 'from_waystone'];
 Object.assign(ITEMS, {
   thawkey: { name: 'Keybearer\'s key', px: 'thawkey', about: 'Cut by the Guild for Alfheim\'s frozen seal. It hums near ice.' },
@@ -529,7 +529,7 @@ export class Alfheim {
   }
   shopTone() {
     const conquer = A(this.G.S) === 'conquer';
-    SHOPS.lumen.gear = { n: 3, rar: conquer ? [0, 0, 0] : [1, 1, 2] };
+    SHOPS.lumen.gear = { n: 3, rar: conquer ? [0, 0, 0] : [0, 0, 1] };
     SHOPS.lumen.gems = conquer ? [] : (this.G.S.quests.prismvault === 3 ? ['moon_opal', 'prism_core'] : ['moon_opal']);
   }
   // ---------------------------------------------------------------- the Moonlit Court

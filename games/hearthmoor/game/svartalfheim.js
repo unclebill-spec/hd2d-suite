@@ -62,7 +62,7 @@ Object.assign(ITEMS, {
   amethyst: { name: 'Amethyst', px: 'glowseed', about: 'Violet crystal from the mines. It catches rune-light and keeps a little.' },
   clock_spring: { name: 'Clock spring', px: 'tonic', about: 'The Foreman\'s mainspring. Still tightly wound. Mind your fingers.' },
 });
-SHOPS.tinker = { name: 'Brasswhistle\'s Tinkery', keeper: 'Tansy Brasswhistle, gnome tinker', goods: ['tonic', 'runestone', 'ironbit'], gems: ['golem_core'], gear: { n: 3, rar: [1, 1, 2] }, sellMul: 1 };
+SHOPS.tinker = { name: 'Brasswhistle\'s Tinkery', keeper: 'Tansy Brasswhistle, gnome tinker', goods: ['tonic', 'runestone', 'ironbit'], gems: ['golem_core'], gear: { n: 3, rar: [0, 0, 1] }, sellMul: 1 };
 
 // ------------------------------------------------------------------ talk (TALK is keyed by the actor id in the area spec)
 Object.assign(TALK, {

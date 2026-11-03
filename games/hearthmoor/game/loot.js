@@ -1,14 +1,51 @@
 // Hearthmoor loot (stage 2): five rarities, pixel loot beams, gold, a bag + three equipment slots.
 // Drops are crisp DOM pixel canvases pinned to the world (like the damage numbers): a beam column in the
 // rarity colour, Epic adds a faint stepped glow, Legendary an animated neon aura. No blur, no bloom.
+// gear14 (2026-11-03, Will: "the 14 slots and the 5 rarities, keep Hearthmoor's simpler stats"): the game-shell template's
+// 5 tiers (STATS.md 4.2 names / colours / drop table). Stat muls keep the live (6299ce7) values for the 4 shared tiers
+// (Common 1, Rare 1.9, Epic 2.6, Legendary 3.5) so, with GEAR_NORM, a full 14-piece kit matches the old 3-piece kit of the same tier;
+// Runeforged 4.4 sits one step above Legendary (~ +26%, the same ratio as Epic -> Legendary). w = drop weights [normal, elite (rares, rifts), boss] from the template table.
 export const RARITY = [
-  { id: 'common', name: 'Common', col: '#fff8e6', lo: '#c4a984', w: 52, mul: 1, scrap: 2 },
-  { id: 'uncommon', name: 'Uncommon', col: '#b2c464', lo: '#4a7234', w: 27, mul: 1.4, scrap: 4 },
-  { id: 'rare', name: 'Rare', col: '#6c8cd4', lo: '#3e5a8c', w: 13, mul: 1.9, scrap: 8 },
-  { id: 'epic', name: 'Epic', col: '#b07ce0', lo: '#6a3e9a', w: 6, mul: 2.6, scrap: 16 },
-  { id: 'legendary', name: 'Legendary', col: '#f2a63a', lo: '#c4502c', w: 2, mul: 3.5, scrap: 32 },
+  { id: 'common', name: 'Common', col: '#fff8e6', lo: '#c4a984', w: [80, 40, 0], mul: 1, scrap: 2 },
+  { id: 'rare', name: 'Rare', col: '#2ab4ff', lo: '#1c62d8', w: [17, 45, 38], mul: 1.9, scrap: 8 },
+  { id: 'epic', name: 'Epic', col: '#b46cff', lo: '#6a34b8', w: [3, 13, 40], mul: 2.6, scrap: 16 },
+  { id: 'legendary', name: 'Legendary', col: '#ffc85a', lo: '#b07a2a', w: [0, 2, 18], mul: 3.5, scrap: 32 },
+  { id: 'runeforged', name: 'Runeforged', col: '#ff2bd6', lo: '#b82a8c', hi: '#ffb4ea', w: [0, 0.2, 4], mul: 4.4, scrap: 48 },
 ];
-export const SLOTS = ['weapon', 'armor', 'trinket'];
+export const R_RARE = 1, R_EPIC = 2, R_LEG = 3, R_RUNE = 4;
+// the template's 14 slots (STATS.md 4.3); W = its slot weight, used only as a multiplier on the item's stat roll
+export const SLOTS = ['helm', 'neck', 'chest', 'legs', 'feet', 'arms', 'gloves', 'ringL', 'ringR', 'belt', 'cloak', 'primary', 'secondary', 'ranged'];
+export const SLOT_W = { helm: 0.8, neck: 0.6, chest: 1.0, legs: 0.9, feet: 0.6, arms: 0.6, gloves: 0.6, ringL: 0.5, ringR: 0.5, belt: 0.5, cloak: 0.6, primary: 1.0, secondary: 0.8, ranged: 0.6 };
+// gear14 power normalisation: the live 3-slot kit (weapon + armor + trinket) rolled each piece at weight 1 (sum 3, ~2 mods each);
+// every new slot also rolls ~2 mods, so a full 14-piece kit would carry sum(SLOT_W) = 9.6 "old pieces" of stats (3.2x).
+// GEAR_NORM = 3 / sum(SLOT_W) = 3 / 9.6 = 0.3125 scales every roll so a full kit totals ~ the old kit; slot weights keep their relative shape.
+// uniques (asgard / vanaheim literals) set their own mods and are not scaled.
+export const GEAR_NORM = 3 / SLOTS.reduce((a, sl) => a + SLOT_W[sl], 0);
+export const SLOT_LABEL = { helm: 'helm', neck: 'neck', chest: 'chest', legs: 'legs', feet: 'feet', arms: 'arms', gloves: 'gloves', ringL: 'ring (left)', ringR: 'ring (right)', belt: 'belt', cloak: 'cloak', primary: 'main hand', secondary: 'off-hand', ranged: 'ranged / charm' };
+const DROP_SLOTS = SLOTS.filter((s) => s !== 'ringR');   // rings roll once (as ringL) and equip into the free / weaker ring slot
+export const ringSlot = (sl) => sl === 'ringL' || sl === 'ringR';
+// ---- save migration (old 3-slot / 5-rarity gear -> 14 slots / template tiers). Each item gets rv: 2 so it is never mapped twice.
+// rarity: common -> common, uncommon -> common, rare -> rare, epic -> epic, legendary -> legendary (never downgrades rare+)
+const OLD_RAR = [0, 0, 1, 2, 3], OLD_SLOT = { weapon: 'primary', armor: 'chest', trinket: 'neck' };
+export function migrateItem(it) {
+  if (!it || typeof it !== 'object' || it.rv === 2) return it;
+  if (typeof it.rar === 'number') it.rar = OLD_RAR[Math.max(0, Math.min(4, it.rar))];
+  if (OLD_SLOT[it.slot]) it.slot = OLD_SLOT[it.slot];
+  it.rv = 2; return it;
+}
+export function migrateGear(S) {   // bag + equipped; gems, sockets (it.gems), temper (it.up) and rerolls (it.rr) are kept as-is
+  if (!S || typeof S !== 'object') return S;
+  if (Array.isArray(S.bag)) S.bag.forEach(migrateItem);
+  const g = S.gear && typeof S.gear === 'object' ? S.gear : {}, out = Object.fromEntries(SLOTS.map((sl) => [sl, null]));
+  for (const [k, it] of Object.entries(g)) {
+    if (!it) continue; migrateItem(it);
+    let to = OLD_SLOT[k] || k; if (ringSlot(to) && out[to]) to = to === 'ringL' ? 'ringR' : 'ringL';
+    if (!SLOTS.includes(to) || out[to]) { (S.bag = S.bag || []).push(it); continue; }
+    if (ringSlot(it.slot)) it.slot = to;
+    out[to] = it;
+  }
+  S.gear = out; return S;
+}
 // socket gems (stage 3): golem cores and rift shards are the high-tier ones; each glows in its colour on the item icon
 export const GEMS = {
   golem_core: { name: 'Golem core', col: '#f2a63a', lo: '#c4502c', mods: { hpAdd: 15, guardMul: -0.03 }, price: 150, about: '+15 HP · guard -3% dmg' },
@@ -17,9 +54,9 @@ export const GEMS = {
   moon_opal: { name: 'Moon opal', col: '#fff8e6', lo: '#c4a984', mods: { summonMul: 0.08 }, price: 90, about: '+8% summons' },
 };
 export const GEM_IDS = Object.keys(GEMS);
-// Rare: 0-2 sockets (mostly 0-1), Epic: 0-2 (mostly 1-2), Legendary: always 2
+// Rare: 0-2 sockets (mostly 0-1), Epic: 0-2 (mostly 1-2), Legendary: always 2, Runeforged: 2-3 (mostly 3)
 export function rollSockets(rar, rnd = Math.random) {
-  if (rar >= 4) return 2; if (rar === 3) return pickW(rnd, [25, 45, 30]); if (rar === 2) return pickW(rnd, [55, 35, 10]); return 0;
+  if (rar >= R_RUNE) return 2 + pickW(rnd, [30, 70]); if (rar === R_LEG) return 2; if (rar === R_EPIC) return pickW(rnd, [25, 45, 30]); if (rar === R_RARE) return pickW(rnd, [55, 35, 10]); return 0;
 }
 export function socketGem(S, it, gem) {
   if (!it || !GEMS[gem] || !((S.gems || {})[gem] > 0)) return false;
@@ -30,39 +67,120 @@ export function socketGem(S, it, gem) {
 export const BAG_MAX = 30;
 const INK = '#2a1e1c';
 const BASES = {
-  weapon: ['Oak Wand', 'Iron Sword', 'Hearth Staff', 'Ember Blade', 'Willow Bow', 'Rune Hammer'],
-  armor: ['Wool Tunic', 'Leather Jerkin', 'Moss Mail', 'Rune Coat', 'Bakers Apron', 'Lantern Cloak'],
-  trinket: ['Acorn Charm', 'Moon Locket', 'Glow Ring', 'Toadstool Brooch', 'Firefly Jar', 'Hearth Ember'],
+  helm: ['Wool Hood', 'Moss Cap', 'Rune Helm', 'Hearth Coif', 'Raven Helm', 'Birch Circlet'],
+  neck: ['Moon Locket', 'Acorn Charm', 'Toadstool Brooch', 'Amber Torc', 'Rune Pendant', 'Hearth Ember'],
+  chest: ['Wool Tunic', 'Leather Jerkin', 'Moss Mail', 'Rune Coat', 'Bakers Apron', 'Fjord Hauberk'],
+  legs: ['Wool Breeks', 'Leather Trews', 'Moss Greaves', 'Rune Leggings', 'Herders Breeches'],
+  feet: ['Felt Boots', 'Bog Walkers', 'Fur Boots', 'Rune Sabatons', 'Hearth Slippers'],
+  arms: ['Braided Bracers', 'Leather Vambraces', 'Rune Armbands', 'Moss Wraps', 'Smiths Sleeves'],
+  gloves: ['Knit Mittens', 'Leather Gloves', 'Rune Gauntlets', 'Gardeners Gloves', 'Forge Grips'],
+  ringL: ['Glow Ring', 'Birch Band', 'Rune Ring', 'Amber Loop', 'Moonstone Ring', 'Oath Ring'],
+  belt: ['Rope Belt', 'Leather Girdle', 'Rune Sash', 'Pouch Belt', 'Hearth Cord'],
+  cloak: ['Lantern Cloak', 'Wool Mantle', 'Raven Cape', 'Moss Shawl', 'Fjord Cloak'],
+  primary: ['Iron Sword', 'Hearth Staff', 'Ember Blade', 'Rune Hammer', 'Oak Wand', 'Bearded Axe'],
+  secondary: ['Oak Buckler', 'Linden Shield', 'Rune Tome', 'Glow Orb', 'Seax Knife', 'Ember Lantern'],
+  ranged: ['Willow Bow', 'Firefly Jar', 'Yew Longbow', 'Rune Sling', 'Feather Charm', 'Elk Horn Charm'],
 };
-const PREFIX = [['Plain', 'Worn', 'Sturdy'], ['Fine', 'Mossy', 'Bright'], ['Gleaming', 'Runed', 'Moonlit'], ['Starlit', 'Spellwoven', 'Twilight'], ['Sunfire', 'Elderglow', 'Rainbow']];
-// 8x8 icons: weapon / armor / trinket / gold (1 = rarity colour, 2 = light, 3 = dark)
+BASES.ringR = BASES.ringL;
+const PREFIX = [['Plain', 'Worn', 'Sturdy'], ['Gleaming', 'Runed', 'Moonlit'], ['Starlit', 'Spellwoven', 'Twilight'], ['Sunfire', 'Elderglow', 'Rainbow'], ['Runeforged', 'Allfather\'s', 'Rift-sung']];
+// per-slot stat rolls (Hearthmoor's own mods; picked to fit the template's "can roll" column). fix = always, opt = one of.
+// base values are the old weapon / armor / trinket rolls; each is x rarity mul x level x SLOT_W[slot].
+const HP = ['hpAdd', 8], ST = ['stAdd', 4], MEL = ['meleeMul', 0.04], SPL = ['spellMul', 0.04], CRIT = ['crit', 0.01], CDMG = ['critDmg', 0.05],
+  GRD = ['guardMul', -0.015], HEAL = ['healMul', 0.04], SUM = ['summonMul', 0.05], CD = ['spellCd', 0.015], STR = ['stRegen', 0.04], ROLL = ['rollSpeed', 0.04];
+export const ROLLS = {
+  helm: { fix: [HP], opt: [SPL, HEAL] },            // VIT, INT, SPI, max HP
+  neck: { fix: [CRIT], opt: [CDMG, MEL, SPL], epic: SUM },   // any primary, crit, crit dmg
+  chest: { fix: [HP, GRD], opt: [] },               // VIT, STR, max HP (the old armor roll)
+  legs: { fix: [HP], opt: [ST, MEL, SPL] },          // VIT, STR, DEX, AGI, INT, max HP
+  feet: { fix: [ST], opt: [ROLL, STR] },             // AGI, DEX, VIT, avoid / move
+  arms: { fix: [MEL], opt: [SPL, CD] },              // STR, DEX, INT, haste
+  gloves: { fix: [CRIT], opt: [MEL, SPL, CD] },      // STR, DEX, INT, crit, haste
+  ringL: { fix: [CRIT], opt: [CDMG, ST, MEL, SPL] }, // any primary, crit, crit dmg, stamina
+  belt: { fix: [HP, ST], opt: [] },                  // VIT, STR, max HP, max stamina
+  cloak: { fix: [STR], opt: [GRD, HEAL, ROLL] },      // AGI, SPI, avoid, move
+  primary: { fix: [MEL, SPL], opt: [], epic: CDMG }, // weapon damage, crit dmg (the old weapon roll)
+  secondary: { fix: [GRD], opt: [HP, SPL, HEAL] },   // shield VIT / tome-orb INT, SPI
+  ranged: { fix: [CRIT], opt: [CDMG, SUM, ST], epic: SUM },  // bow DEX, crit / charm (the old trinket summon roll)
+};
+ROLLS.ringR = ROLLS.ringL;
+// 8x8 icons (1 = rarity colour, 2 = light, 3 = dark); old ids weapon / armor / trinket kept for any stray caller
 const ICONS = {
-  weapon: ['......2.', '.....21.', '....21..', '...21...', '.321....', '..33....', '.3..3...', '........'],
-  armor: ['.11..11.', '.111111.', '..1221..', '..1111..', '..1111..', '..1331..', '..1..1..', '........'],
-  trinket: ['...33...', '..3..3..', '...11...', '..1221..', '.112211.', '..1111..', '...11...', '........'],
+  primary: ['......2.', '.....21.', '....21..', '...21...', '.321....', '..33....', '.3..3...', '........'],
+  chest: ['.11..11.', '.111111.', '..1221..', '..1111..', '..1111..', '..1331..', '..1..1..', '........'],
+  neck: ['...33...', '..3..3..', '...11...', '..1221..', '.112211.', '..1111..', '...11...', '........'],
+  helm: ['........', '..1111..', '.112211.', '.111111.', '.1.33.1.', '.1....1.', '........', '........'],
+  legs: ['..1111..', '..1111..', '..1..1..', '..1..1..', '..1..1..', '..2..2..', '.33..33.', '........'],
+  feet: ['........', '..11....', '..11....', '..11....', '..1211..', '..11111.', '..33333.', '........'],
+  arms: ['........', '.111....', '.1211...', '..1111..', '...1211.', '....111.', '........', '........'],
+  gloves: ['..1.1...', '.11111..', '.12111.1', '.111111.', '.11111..', '..333...', '..333...', '........'],
+  ringL: ['........', '...22...', '..3113..', '.1....1.', '.1....1.', '..1..1..', '...11...', '........'],
+  belt: ['........', '........', '11111111', '1112.111', '11133111', '........', '........', '........'],
+  cloak: ['...33...', '..1111..', '.112211.', '.111111.', '1111111.', '11111111', '1.1.1.11', '........'],
+  secondary: ['.111111.', '.122221.', '.121121.', '.121121.', '..1221..', '..1111..', '...11...', '........'],
+  ranged: ['..1.....', '.1.2....', '.1..2...', '1...2333', '.1..2...', '.1.2....', '..1.....', '........'],
   gold: ['........', '..1111..', '.112211.', '.121111.', '.111111.', '.111131.', '..1111..', '........'],
 };
+ICONS.ringR = ICONS.ringL; ICONS.weapon = ICONS.primary; ICONS.armor = ICONS.chest; ICONS.trinket = ICONS.neck;
 
 let uidN = 0;
 const pickW = (rnd, ws) => { let t = ws.reduce((a, b) => a + b, 0) * rnd(); for (let i = 0; i < ws.length; i++) { t -= ws[i]; if (t <= 0) return i; } return 0; };
 export function ensure(S) {
   if (!Array.isArray(S.bag)) S.bag = [];
-  if (!S.gear || typeof S.gear !== 'object') S.gear = { weapon: null, armor: null, trinket: null };
+  if (!S.gear || typeof S.gear !== 'object') S.gear = {};
+  if (Object.keys(S.gear).some((k) => !SLOTS.includes(k)) || S.bag.some((it) => it && it.rv !== 2) || Object.values(S.gear).some((it) => it && it.rv !== 2)) migrateGear(S);
+  for (const sl of SLOTS) if (!(sl in S.gear)) S.gear[sl] = null;
   if (typeof S.gold !== 'number') S.gold = (S.inv && S.inv.coin) || 0;
   if (!S.gems || typeof S.gems !== 'object') S.gems = {};
   return S;
 }
+// col: 0 = normal foes, 1 = elite (rares, rift rewards), 2 = boss (template drop table); luck (Hero mode) = +25% per tier above common
+export const rarityWeights = (col = 0, luck = 0, minRar = 0) => RARITY.map((x, i) => (i < minRar ? 0 : x.w[col] * (luck && i >= 1 ? 1.25 : 1)));
+export function rollRarity(col = 0, luck = 0, minRar = 0, rnd = Math.random) {
+  const ws = rarityWeights(col, luck, minRar);
+  return ws.some((w) => w > 0) ? pickW(rnd, ws) : Math.min(R_RUNE, minRar);
+}
 export function makeItem(lv = 1, rar = null, slot = null, rnd = Math.random, luck = 0) {
-  const r = rar ?? pickW(rnd, RARITY.map((x, i) => x.w * (luck && i >= 2 ? 1.6 : 1)));
-  const sl = slot || SLOTS[Math.floor(rnd() * 3)];
-  const R = RARITY[r], k = R.mul * (1 + (lv - 1) * 0.06);
+  const r = rar ?? rollRarity(0, luck, 0, rnd);
+  let sl = slot === 'weapon' ? 'primary' : slot === 'armor' ? 'chest' : slot === 'trinket' ? 'neck' : slot || DROP_SLOTS[Math.floor(rnd() * DROP_SLOTS.length)];
+  if (!ROLLS[sl]) sl = 'neck';
+  const R = RARITY[r], k = R.mul * (1 + (lv - 1) * 0.06) * SLOT_W[sl] * GEAR_NORM;
   const base = BASES[sl][Math.floor(rnd() * BASES[sl].length)], pre = PREFIX[r][Math.floor(rnd() * 3)];
-  const mods = {};
-  if (sl === 'weapon') { mods.meleeMul = +(0.04 * k).toFixed(3); mods.spellMul = +(0.04 * k).toFixed(3); }
-  else if (sl === 'armor') { mods.hpAdd = Math.round(8 * k); mods.guardMul = -+(0.015 * k).toFixed(3); }
-  else { mods.crit = +(0.01 * k).toFixed(3); mods.stAdd = Math.round(4 * k); if (r >= 3) mods.summonMul = +(0.05 * k).toFixed(3); }
+  const mods = {}, Rl = ROLLS[sl];
+  const add = ([key, v]) => { if (key in mods) return; mods[key] = ['hpAdd', 'stAdd'].includes(key) ? Math.max(1, Math.round(v * k)) : +(v * k).toFixed(3); };
+  Rl.fix.forEach(add);
+  if (Rl.opt.length) add(Rl.opt[Math.floor(rnd() * Rl.opt.length)]);
+  if (Rl.epic && r >= R_EPIC) add(Rl.epic);
   const n = rollSockets(r, rnd);
-  return { uid: `${Date.now().toString(36)}${(uidN++).toString(36)}`, slot: sl, name: `${pre} ${base}`, rar: r, lv, mods, gems: Array(n).fill(null) };
+  return { uid: `${Date.now().toString(36)}${(uidN++).toString(36)}`, slot: sl, name: `${pre} ${base}`, rar: r, lv, mods, gems: Array(n).fill(null), rv: 2 };
+}
+// a rough "how good is this piece" number (compare + the weaker-ring pick); same weights the tooltips show
+const SCORE = { hpAdd: 0.005, stAdd: 0.008, meleeMul: 1, spellMul: 1, crit: 3, critDmg: 0.6, guardMul: -2, healMul: 0.8, summonMul: 0.8, spellCd: 2, stRegen: 0.5, rollSpeed: 0.5, drain: 3, regen: 0.1 };
+export function score(it) {
+  if (!it) return 0; const k = 1 + 0.07 * (it.up || 0);
+  let t = 0; for (const [key, v] of Object.entries(it.mods || {})) t += (SCORE[key] ?? 0.5) * v * k;
+  for (const g of it.gems || []) if (g && GEMS[g]) for (const [key, v] of Object.entries(GEMS[g].mods)) t += (SCORE[key] ?? 0.5) * v;
+  return t;
+}
+// which gear slot a piece goes into: its own, or for a ring the free ring slot, else the weaker ring
+export function targetSlot(S, it) {
+  if (!it) return null; if (!ringSlot(it.slot)) return it.slot;
+  const g = (S && S.gear) || {};
+  if (!g.ringL) return 'ringL'; if (!g.ringR) return 'ringR';
+  return score(g.ringR) < score(g.ringL) ? 'ringR' : 'ringL';
+}
+// tooltip compare: "vs <equipped name>: +12% melee, -4 HP" against the same slot (rings: the weaker ring)
+const MOD_NAME = { meleeMul: ['% melee', 100], spellMul: ['% spells', 100], hpAdd: [' HP', 1], stAdd: [' stamina', 1], crit: ['% crit', 100], critDmg: ['% crit dmg', 100], guardMul: ['% guard dmg', 100], healMul: ['% healing', 100], summonMul: ['% summons', 100], spellCd: ['% spell cd', -100], stRegen: ['% st regen', 100], rollSpeed: ['% roll', 100], drain: ['% drain', 100], regen: [' HP/s', 1] };
+export function compare(S, it) {
+  const sl = targetSlot(S, it), cur = sl && (S.gear || {})[sl];
+  if (!cur || cur === it) return cur === it ? '' : `new for ${SLOT_LABEL[sl]}`;
+  const tot = (x) => { const m = {}; const k = 1 + 0.07 * (x.up || 0); for (const [key, v] of Object.entries(x.mods || {})) m[key] = (m[key] || 0) + v * k; for (const g of x.gems || []) if (g && GEMS[g]) for (const [key, v] of Object.entries(GEMS[g].mods)) m[key] = (m[key] || 0) + v; return m; };
+  const a = tot(it), b = tot(cur), keys = [...new Set([...Object.keys(a), ...Object.keys(b)])], out = [];
+  for (const key of keys) {
+    const N = MOD_NAME[key] || [` ${key}`, 1], d = ((a[key] || 0) - (b[key] || 0)) * N[1]; if (Math.abs(d) < 0.05) continue;
+    const better = key === 'guardMul' ? d < 0 : d > 0;
+    out.push(`<b class="${better ? 'up' : 'dn'}">${d > 0 ? '+' : ''}${Math.abs(d) >= 10 || N[1] === 1 ? Math.round(d) : d.toFixed(1)}${N[0]}</b>`);
+  }
+  return `vs ${cur.name}: ${out.length ? out.join(' ') : 'about the same'}`;
 }
 export function describe(it) {
   const k = 1 + 0.07 * (it.up || 0), m = Object.fromEntries(Object.entries(it.mods).map(([key, v]) => [key, ['hpAdd', 'stAdd'].includes(key) ? Math.round(v * k) : v * k])), out = [];
@@ -75,6 +193,7 @@ export function describe(it) {
   if (m.stAdd) out.push(`+${m.stAdd} stamina`);
   if (m.summonMul) out.push(`+${Math.round(m.summonMul * 100)}% summons`);
   if (m.critDmg) out.push(`+${Math.round(m.critDmg * 100)}% crit damage`);
+  if (m.rollSpeed) out.push(`+${Math.round(m.rollSpeed * 100)}% roll distance`);
   if (m.drain) out.push(`${(m.drain * 100).toFixed(1)}% life drain`);
   if (m.regen) out.push(`+${m.regen.toFixed(1)} HP/s resting`);
   if (m.healMul) out.push(`+${Math.round(m.healMul * 100)}% healing`);
@@ -99,7 +218,7 @@ export function gearMods(S, m) {   // fold equipped gear into progress.mods()
 // pixel art: icon canvas (8x8 at scale, 1 px ink outline) and beam canvas
 const SOCK_Y = { 1: [1], 2: [1, 6], 3: [0, 3, 6] };   // 6.7: Orri's 3rd socket (Epic / Legendary): top, middle, bottom
 export function iconCanvas(kind, rar, scale = 3, gems = null, up = 0) {
-  const R = RARITY[rar] || RARITY[0], rows = ICONS[kind] || ICONS.trinket;
+  const R = RARITY[rar] || RARITY[0], rows = ICONS[kind] || ICONS.neck;
   const cv = document.createElement('canvas'); cv.width = 10 * scale; cv.height = 10 * scale;
   const g = cv.getContext('2d'); g.imageSmoothingEnabled = false;
   const col = { 1: kind === 'gold' ? '#f2c24a' : R.col, 2: '#fff8e6', 3: kind === 'gold' ? '#c4502c' : R.lo };
@@ -130,7 +249,7 @@ function gemPaint(cv, g, px, id) {
   return cv;
 }
 function beamCanvas(rar, scale = 3, frame = 0) {
-  const R = RARITY[rar], H = rar >= 3 ? 34 : 26 + rar * 2;
+  const R = RARITY[rar], H = rar >= R_RUNE ? 38 : rar >= R_LEG ? 34 : 26 + rar * 3;
   const cv = document.createElement('canvas'); cv.width = 7 * scale; cv.height = H * scale;
   drawBeam(cv, rar, scale, frame);
   return cv;
@@ -146,13 +265,18 @@ function drawBeam(cv, rar, scale, frame) {
     if (keep(2)) px(2, y, R.col); if (keep(4)) px(4, y, R.col);
     if (t > 0.6 && (y + frame) % 2 === 0) { px(1, y, R.lo); px(5, y, R.lo); }
   }
+  if (rar >= R_RUNE) {   // Runeforged: a slow magenta pulse (about 2.4 s a breath) washes up the beam's core and edges
+    const p = 0.5 + 0.5 * Math.sin(frame * Math.PI * 2 / 24), on = p > 0.66 ? R.hi : p > 0.33 ? R.col : R.lo;
+    for (let y = 0; y < H; y++) if ((y + Math.floor(frame / 3)) % 3 === 0) { px(1, y, on); px(5, y, on); }
+    for (let y = Math.floor(H * (1 - p) * 0.8); y < H * 0.55; y++) px(3, y, on);
+  }
   if (rar >= 1) for (let k = 0; k < rar; k++) { const y = (Math.floor(frame * 1.5) + k * 7) % H; px(k % 2 ? 6 : 0, H - 1 - y, '#fff8e6'); }   // rising motes
 }
 // Legendary aura: a ring of neon pixels marching round the drop (4 frames, colours cycle)
-function drawAura(cv, scale, frame, epic, worn = false) {
+function drawAura(cv, scale, frame, epic, worn = false, rune = false) {
   const g = cv.getContext('2d'), W = cv.width / scale, Hh = cv.height / scale;
   g.clearRect(0, 0, cv.width, cv.height);
-  const cols = epic ? ['#b07ce0', '#e0c8f4', '#6a3e9a'] : ['#f2a63a', '#f2c24a', '#fff8e6', '#e47c8c'];
+  const cols = rune ? ['#ff2bd6', '#ffb4ea', '#fff8e6', '#b82a8c'] : epic ? ['#b46cff', '#e0c8f4', '#6a34b8'] : ['#ffc85a', '#f2c24a', '#fff8e6', '#b07a2a'];
   // worn (under the hero): the DOM layer sits over the sprite, so the back arc behind the legs is left out
   const px = (x, y, c) => { if (worn && y < Hh / 2 - 0.5 && Math.abs(x - W / 2) < 6) return; g.fillStyle = c; g.fillRect(Math.round(x) * scale, Math.round(y) * scale, scale, scale); };
   const ring = (rx, ry, n, skip, off) => {
@@ -184,28 +308,28 @@ export class Loot {
   // a Legendary equipped: the same marching neon ring under the hero's feet, plus a warm rune light that follows
   playerAura(fr) {
     const ctx = this.ctx, S = this.G.S, p = ctx.player;
-    const on = !!Object.values(S.gear || {}).some((it) => it && it.rar === 4) && !this.G.title;
+    const on = !!Object.values(S.gear || {}).some((it) => it && it.rar >= R_LEG) && !this.G.title;
     if (!on) { if (this.pa) { this.pa.el.remove(); if (this.pa.light) this.pa.light.kill = true; this.pa = null; } return; }
     if (!this.pa) {
       const el = document.createElement('div'); el.className = 'loot paura';
       const cv = document.createElement('canvas'); cv.width = 26 * 3; cv.height = 13 * 3; cv.className = 'aura'; el.appendChild(cv);
       this.layer.appendChild(el);
-      const light = ctx.addGlow ? ctx.addGlow(p.x, p.y, p.z, { color: RARITY[4].col, intensity: 2.6, range: 2.6, lift: 0.5, fadeIn: 0.4 }) : null;
+      const light = ctx.addGlow ? ctx.addGlow(p.x, p.y, p.z, { color: RARITY[R_LEG].col, intensity: 2.6, range: 2.6, lift: 0.5, fadeIn: 0.4 }) : null;
       this.pa = { el, cv, light, frame: -1 };
     }
     const s = ctx.project(p.x, p.y + 0.03, p.z);
     this.pa.el.style.transform = `translate(${Math.round(s.x)}px, ${Math.round(s.y)}px)`;
     this.pa.el.style.visibility = p.quad && !p.quad.visible ? 'hidden' : '';
     if (this.pa.light) this.pa.light.pos.set(p.x, p.y, p.z);
-    if (fr !== this.pa.frame) { this.pa.frame = fr; drawAura(this.pa.cv, 3, fr % 8, false, true); }
+    if (fr !== this.pa.frame) { this.pa.frame = fr; drawAura(this.pa.cv, 3, fr % 8, false, true, Object.values(this.G.S.gear || {}).some((it) => it && it.rar >= R_RUNE)); }
   }
   // an enemy went down: gold always, and sometimes an item (rarity weights, level-scaled)
   onKill(a, lv, o = {}) {
     const gold = 2 + Math.floor(Math.random() * 5) + (o.gold || 0);
     this.drop(a.x + 0.35, a.z + 0.2, { gold });
     const luck = this.G.S.mode === 'hero' ? 1 : 0;
-    if (o.legendary) {   // a boss: always a Legendary, and Glenheart's golem core
-      this.drop(a.x - 0.3, a.z + 0.35, { item: makeItem(lv + 1, 4, null, Math.random, luck) });
+    if (o.legendary) {   // a boss: always a Legendary (template boss odds: 4% it comes out Runeforged), and Glenheart's golem core
+      this.drop(a.x - 0.3, a.z + 0.35, { item: makeItem(lv + 1, Math.random() < 0.04 * (luck ? 1.25 : 1) ? R_RUNE : R_LEG, null, Math.random, luck) });
       this.drop(a.x + 0.1, a.z - 0.35, { gem: 'golem_core' });
       return;
     }
@@ -219,8 +343,8 @@ export class Loot {
     if (Math.random() < 0.6 + luck * 0.1) this.drop(a.x - 0.3, a.z + 0.35, { item: makeItem(lv, null, null, Math.random, luck) });
   }
   dropItem(x, z, lv, minRar = 0) {
-    const luck = this.G.S.mode === 'hero' ? 1 : 0, ws = RARITY.map((r, i) => (i >= minRar ? r.w : 0));
-    return this.drop(x, z, { item: makeItem(lv, pickW(Math.random, ws), null, Math.random, luck) });
+    const luck = this.G.S.mode === 'hero' ? 1 : 0;   // rares + rift rewards roll the template's elite column
+    return this.drop(x, z, { item: makeItem(lv, rollRarity(1, luck, minRar), null, Math.random, luck) });
   }
   drop(x, z, what) {
     const ctx = this.ctx; if (!ctx || !this.layer) return null;
@@ -229,11 +353,11 @@ export class Loot {
     const sc = 3;
     let beam = null, aura = null;
     if (it) { beam = beamCanvas(rar, sc); beam.className = 'beam'; el.appendChild(beam); }
-    if (rar >= 3) { aura = document.createElement('canvas'); aura.width = 26 * sc; aura.height = 13 * sc; aura.className = 'aura'; el.appendChild(aura); }
+    if (rar >= R_EPIC) { aura = document.createElement('canvas'); aura.width = 26 * sc; aura.height = 13 * sc; aura.className = 'aura'; el.appendChild(aura); }
     const icon = what.gem ? iconCanvas('gem', 0, sc, [what.gem]) : iconCanvas(it ? it.slot : 'gold', Math.max(0, rar), sc, it ? it.gems : null, it ? it.up || 0 : 0); icon.className = 'icon'; el.appendChild(icon);
     this.layer.appendChild(el);
     // Epic / Legendary drops also light the ground around them (a pooled point light, no bloom)
-    const light = rar >= 3 && ctx.addGlow ? ctx.addGlow(x, y, z, { color: RARITY[rar].col, intensity: rar === 4 ? 6 : 3.5, range: 2.8, lift: 0.45, fadeIn: 0.3 }) : null;
+    const light = rar >= R_EPIC && ctx.addGlow ? ctx.addGlow(x, y, z, { color: RARITY[rar].col, intensity: rar >= R_LEG ? 6 : 3.5, range: 2.8, lift: 0.45, fadeIn: 0.3 }) : null;
     const d = { x, y, z, it, gem: what.gem || null, gold: what.gold || 0, purse: !!what.purse, el, beam, aura, sc, frame: -1, t: 0, light };
     this.drops.push(d);
     return d;
@@ -251,7 +375,7 @@ export class Loot {
       if (fr !== d.frame) {
         d.frame = fr;
         if (d.beam) drawBeam(d.beam, d.it.rar, d.sc, fr);
-        if (d.aura) drawAura(d.aura, d.sc, fr % 8, d.it.rar === 3);
+        if (d.aura) drawAura(d.aura, d.sc, fr % 8, d.it.rar === R_EPIC, false, d.it.rar >= R_RUNE);
       }
     }
   }
@@ -265,7 +389,7 @@ export class Loot {
     if (d.gold) { S.gold += d.gold; G.popText && G.popText(`+${d.gold}`, d, '#f2c24a'); }
     if (d.gem) { S.gems[d.gem] = (S.gems[d.gem] || 0) + 1; G.toast && G.toast(`<span style="color:${GEMS[d.gem].lo}">${GEMS[d.gem].name}</span>: a socket gem (G: gear page)`, 2.6, true); }
     if (d.it) { S.bag.push(d.it); G.toast && G.toast(`<span style="color:${RARITY[d.it.rar].lo}">${RARITY[d.it.rar].name}</span> ${d.it.name}`, 2.4, true); }
-    G.audio && G.audio.sfx(d.it && d.it.rar >= 2 ? 'rare_pickup' : d.it || d.gem ? 'pickup' : d.gold ? 'coin' : 'pickup');   // [SFX 2026-11-03] RARITY[2] = rare and up: stinger; gold only: coin
+    G.audio && G.audio.sfx(d.it && d.it.rar >= R_RARE ? 'rare_pickup' : d.it || d.gem ? 'pickup' : d.gold ? 'coin' : 'pickup');   // [SFX 2026-11-03] RARITY[1] = rare and up: stinger; gold only: coin
     if (d.light) d.light.kill = true;
     G.drawBag && G.drawBag();
     G.onLoot && G.onLoot(d);
@@ -278,7 +402,8 @@ export class Loot {
 // bag / gear actions (the hero screen's Gear tab calls these)
 export function equip(S, i) {
   ensure(S); const it = S.bag[i]; if (!it) return false;
-  const cur = S.gear[it.slot]; S.gear[it.slot] = it; S.bag.splice(i, 1); if (cur) S.bag.splice(i, 0, cur);
+  const sl = targetSlot(S, it); if (ringSlot(sl)) it.slot = sl;   // rings: the free ring slot, else replace the weaker ring
+  const cur = S.gear[sl]; S.gear[sl] = it; S.bag.splice(i, 1); if (cur) S.bag.splice(i, 0, cur);
   return true;
 }
 export function unequip(S, slot) {

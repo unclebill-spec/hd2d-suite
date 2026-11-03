@@ -153,10 +153,10 @@ Object.assign(GOODS, {
   cold_lamp: { name: 'Cold-fire lamp', about: 'Burns without heat. Light radius +2.', price: 60 },
   fur_mantle: { name: 'Fur mantle', about: 'Cosmetic, and warm.', price: 90 },
 });
-SHOPS.nf_trader = { name: "Tove's Fish-Stall", keeper: 'Tove Lanternwright', goods: ['warm_tea', 'cold_lamp', 'fur_mantle', 'tonic'], gear: { n: 3, rar: [0, 1, 1] }, sellMul: 1 };   // +25 % in Hushed Mistmere (flags.nf_hushed, with the build)
+SHOPS.nf_trader = { name: "Tove's Fish-Stall", keeper: 'Tove Lanternwright', goods: ['warm_tea', 'cold_lamp', 'fur_mantle', 'tonic'], gear: { n: 3, rar: [0, 0, 0] }, sellMul: 1 };   // +25 % in Hushed Mistmere (flags.nf_hushed, with the build)
 // the Coldflame Lantern (story 9.1): Eira's lantern relit, a legendary staff (ice-bolt slow + freeze 1.5 s, charged frost nova, reveals clones / stalkers). Granted when nf_staff completes.
 export function COLDFLAME(S) {
-  const it = makeItem(Math.max(10, S.lv || 1), 4, 'weapon'), k = RARITY[4].mul * (1 + (it.lv - 1) * 0.06);
+  const it = makeItem(Math.max(10, S.lv || 1), 3, 'primary'), k = 3.5 * (1 + (it.lv - 1) * 0.06)   // 3.5 = the pre-gear14 Legendary mul, so this unique's stats are unchanged;
   it.name = 'Coldflame Lantern'; it.fixed = true; it.unique = 'coldflame_lantern'; it.crafted = true;
   it.mods = { meleeMul: +(0.02 * k).toFixed(3), spellMul: +(0.08 * k).toFixed(3), crit: +(0.005 * k).toFixed(3) };
   it.gems = [null, null];

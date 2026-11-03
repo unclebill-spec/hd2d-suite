@@ -48,7 +48,7 @@ export function makeRare(o = {}) {
   while (traits.length < nT) { const t = pick(r, keys); if (!traits.includes(t)) traits.push(t); }
   const B = BASES[base], E = ELEMENTS[el], lvK = 1 + Math.max(0, (o.lv || 1) - 1) * 0.06;
   const name = `${traits.map((t) => TRAITS[t].name).join(' ')} ${E.prefix} ${B.name}`;
-  const D = { ...B, name, hp: Math.round(B.hp * lvK * (nT > 1 ? 1.3 : 1)), dmg: Math.round(B.dmg * lvK), rare: true, glow: E.col, el, traits, minRar: nT > 1 ? 3 : 2 };
+  const D = { ...B, name, hp: Math.round(B.hp * lvK * (nT > 1 ? 1.3 : 1)), dmg: Math.round(B.dmg * lvK), rare: true, glow: E.col, el, traits, minRar: nT > 1 ? 2 : 1 };
   return { key: `${base}:${el}:${traits.join('+')}`, name, base, el, traits, D };
 }
 
