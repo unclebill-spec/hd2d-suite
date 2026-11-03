@@ -30,3 +30,24 @@ const counts = [0, 0, 0, 0, 0]; for (let i = 0; i < 20000; i++) counts[LO.rollRa
 console.log('boss-column sample (20k):', counts.map((c, i) => LO.RARITY[i].name + ' ' + (c / 200).toFixed(1) + '%').join(', '));
 const sl = new Set(); for (let i = 0; i < 2000; i++) sl.add(LO.makeItem(3, null, null).slot);
 ok(sl.size === 13 && !sl.has('ringR'), 'random drops cover 13 kinds (rings roll once): ' + [...sl].join(','));
+// balance: migrated per-piece totals vs a fresh same-tier same-slot drop (score, no gems / temper), and idempotence
+const oldItem = (sl, r, lv) => { const k = [1, 1.4, 1.9, 2.6, 3.5][r] * (1 + (lv - 1) * 0.06), mods = {};
+  if (sl === 'weapon') { mods.meleeMul = +(0.04 * k).toFixed(3); mods.spellMul = +(0.04 * k).toFixed(3); }
+  else if (sl === 'armor') { mods.hpAdd = Math.round(8 * k); mods.guardMul = -+(0.015 * k).toFixed(3); }
+  else { mods.crit = +(0.01 * k).toFixed(3); mods.stAdd = Math.round(4 * k); if (r >= 3) mods.summonMul = +(0.05 * k).toFixed(3); }
+  return { uid: 'o' + sl + r + lv, slot: sl, name: 'Old ' + sl, rar: r, lv, mods, gems: [] }; };
+let worst = 0;
+for (const sl of ['weapon', 'armor', 'trinket']) for (let r = 0; r < 5; r++) for (const lv of [1, 10, 20]) {
+  const m = LO.migrateItem(oldItem(sl, r, lv)); let f = 0; const N = 400; for (let i = 0; i < N; i++) f += LO.score(LO.makeItem(lv, m.rar, m.slot)) / N;
+  const gap = Math.abs(LO.score(m) / f - 1); worst = Math.max(worst, gap);
+  if (gap > 0.1) ok(false, `migrated ${sl} r${r} lv${lv} -> ${m.slot} ${LO.RARITY[m.rar].name}: ${LO.score(m).toFixed(4)} vs fresh ${f.toFixed(4)}`);
+}
+ok(worst <= 0.1, 'migrated pieces within 10% of a fresh same-slot / same-tier / same-level drop (worst ' + (worst * 100).toFixed(1) + '%)');
+const a = LO.migrateItem(oldItem('weapon', 4, 10)), snap = JSON.stringify(a); LO.migrateItem(a); LO.migrateItem(a);
+ok(JSON.stringify(a) === snap, 'idempotent rescale (migrateItem x3 = x1): ' + JSON.stringify(a.mods));
+const fresh = LO.makeItem(10, 2, 'helm'), fs = JSON.stringify(fresh); LO.migrateItem(fresh); ok(JSON.stringify(fresh) === fs, 'fresh v3 items never rescaled');
+const uq = { ...oldItem('weapon', 4, 10), fixed: true, unique: 'stormcaller' }, um = JSON.stringify(uq.mods); LO.migrateItem(uq); ok(JSON.stringify(uq.mods) === um, 'uniques keep fixed values');
+const kept = LO.migrateItem({ ...oldItem('armor', 1, 5), gems: ['golem_core', null], up: 4, rr: 1, name: 'Gleaming Moss Mail' });
+ok(kept.up === 4 && kept.rr === 1 && kept.gems[0] === 'golem_core' && kept.gems.length === 2 && kept.name === 'Gleaming Moss Mail', 'rescale keeps gems, sockets, temper, rerolls, name');
+const S2 = { v: 2, gear: { weapon: oldItem('weapon', 3, 8) }, bag: [oldItem('armor', 2, 8)] }; LO.ensure(S2); const s2 = JSON.stringify(S2); LO.ensure(S2); LO.migrateGear(S2);
+ok(JSON.stringify(S2) === s2 && S2.gear.primary.mods.meleeMul < 0.1, 'save-level rescale idempotent (equipped + bag): ' + JSON.stringify(S2.gear.primary.mods));

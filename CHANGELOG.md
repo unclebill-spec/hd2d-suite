@@ -2,6 +2,12 @@
 
 Dates are America/New_York. Newest first. Keep this current with every change you push.
 
+## 2026-11-03 (America/New_York): Hearthmoor bundle (branch `hearthmoor-bundle-1103`, not live)
+
+- Merged pause menu / minimap / cursor / classic menu colours (hearthmoor-pause-menu) with 14-slot / 5-rarity gear (hearthmoor-gear14); sw.js regenerated.
+- Save migration v2->v3 rescales migrated gear mods to the new per-piece norm (new/old rarity mul x SLOT_W x GEAR_NORM, trimmed to a fresh drop's expected score); uniques untouched; idempotent via rv: 2. Tests added to gear14_migration.mjs.
+- RESTORE.md / HD2D_COZY_STYLE_LOCK.md: classic parchment menus, pause menu, minimap, 14-slot gear protected. New games/hearthmoor/PATCH_NOTES.md.
+
 ## 2026-11-02 (America/New_York): Hearthmoor boot counter + offline note (branch `hearthmoor-boot-counter`, not live)
 
 - Boot "caching n / 110" label now counts up with the shell precache (page enables the SW message queue; SW posts every 8 files too). One-time "Ready to play offline" toast when the first realm is cached. sw.js regenerated.

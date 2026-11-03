@@ -27,13 +27,32 @@ export const ringSlot = (sl) => sl === 'ringL' || sl === 'ringR';
 // ---- save migration (old 3-slot / 5-rarity gear -> 14 slots / template tiers). Each item gets rv: 2 so it is never mapped twice.
 // rarity: common -> common, uncommon -> common, rare -> rare, epic -> epic, legendary -> legendary (never downgrades rare+)
 const OLD_RAR = [0, 0, 1, 2, 3], OLD_SLOT = { weapon: 'primary', armor: 'chest', trinket: 'neck' };
+// balance (Game Director, 2026-11-03): migrated mods are rescaled to the new per-piece norm so an old piece sits in line with a
+// fresh drop of the same slot / rarity / level: x (new rarity mul / old rarity mul) x SLOT_W[new slot] x GEAR_NORM.
+// Old pieces rolled at slot weight 1 with the old muls below. Uniques (it.fixed / it.unique) keep their literal values.
+// Gems, sockets, temper (it.up), rerolls (it.rr), names untouched; rv: 2 marks the item so it is never rescaled twice.
+const OLD_MUL = [1, 1.4, 1.9, 2.6, 3.5];
 export function migrateItem(it) {
   if (!it || typeof it !== 'object' || it.rv === 2) return it;
-  if (typeof it.rar === 'number') it.rar = OLD_RAR[Math.max(0, Math.min(4, it.rar))];
+  const oldR = typeof it.rar === 'number' ? Math.max(0, Math.min(4, it.rar)) : null;
+  if (oldR !== null) it.rar = OLD_RAR[oldR];
   if (OLD_SLOT[it.slot]) it.slot = OLD_SLOT[it.slot];
+  if (!it.fixed && !it.unique && oldR !== null && SLOT_W[it.slot] && it.mods && typeof it.mods === 'object') {
+    // base factor, then a uniform trim so the piece's score equals a fresh drop's expected score (old weapons lacked the
+    // Epic+ crit-dmg roll, old trinkets rolled stamina where necks roll crit dmg / melee / spells)
+    const f0 = (RARITY[it.rar].mul / OLD_MUL[oldR]) * SLOT_W[it.slot] * GEAR_NORM, raw = {};
+    for (const [key, v] of Object.entries(it.mods)) if (typeof v === 'number') raw[key] = v * f0;
+    const have = Object.entries(raw).reduce((a, [key, v]) => a + (SCORE[key] ?? 0.5) * v, 0), want = freshScore(it.slot, it.rar, it.lv || 1);
+    const g = have > 0 && want > 0 ? want / have : 1;
+    for (const [key, v] of Object.entries(raw)) it.mods[key] = ['hpAdd', 'stAdd'].includes(key) ? (v ? Math.sign(v) * Math.max(1, Math.round(Math.abs(v) * g)) : 0) : +(v * g).toFixed(3);
+    // integer HP / stamina rounding (min 1) can swing a tiny low-level piece by 20%+: put the leftover on its largest % mod
+    const fl = Object.keys(raw).filter((key) => !['hpAdd', 'stAdd'].includes(key) && SCORE[key]).sort((a, b) => Math.abs(SCORE[b] * raw[b]) - Math.abs(SCORE[a] * raw[a]))[0];
+    if (fl && want > 0) { const now = Object.entries(it.mods).reduce((a, [key, v]) => a + (key in raw ? (SCORE[key] ?? 0.5) * v : 0), 0), nv = it.mods[fl] + (want - now) / SCORE[fl];
+      if (Math.sign(nv) === Math.sign(it.mods[fl])) it.mods[fl] = +nv.toFixed(4); }
+  }
   it.rv = 2; return it;
 }
-export function migrateGear(S) {   // bag + equipped; gems, sockets (it.gems), temper (it.up) and rerolls (it.rr) are kept as-is
+export function migrateGear(S) {   // bag + equipped (the bank's vault maps its items via migrateItem on read); gems, sockets (it.gems), temper (it.up) and rerolls (it.rr) are kept as-is
   if (!S || typeof S !== 'object') return S;
   if (Array.isArray(S.bag)) S.bag.forEach(migrateItem);
   const g = S.gear && typeof S.gear === 'object' ? S.gear : {}, out = Object.fromEntries(SLOTS.map((sl) => [sl, null]));
@@ -152,6 +171,15 @@ export function makeItem(lv = 1, rar = null, slot = null, rnd = Math.random, luc
   if (Rl.epic && r >= R_EPIC) add(Rl.epic);
   const n = rollSockets(r, rnd);
   return { uid: `${Date.now().toString(36)}${(uidN++).toString(36)}`, slot: sl, name: `${pre} ${base}`, rar: r, lv, mods, gems: Array(n).fill(null), rv: 2 };
+}
+// expected score of a fresh makeItem(lv, r, sl) roll (fixed rolls + the mean optional roll + the Epic+ roll), no gems / temper
+function freshScore(sl, r, lv) {
+  const Rl = ROLLS[sl]; if (!Rl) return 0; const k = RARITY[r].mul * (1 + (lv - 1) * 0.06) * SLOT_W[sl] * GEAR_NORM;
+  const sc = ([key, v]) => (SCORE[key] ?? 0.5) * (['hpAdd', 'stAdd'].includes(key) ? Math.max(1, Math.round(v * k)) : +(v * k).toFixed(3));   // same rounding as makeItem
+  let t = Rl.fix.reduce((a, x) => a + sc(x), 0), keys = new Set(Rl.fix.map((x) => x[0]));
+  if (Rl.opt.length) t += Rl.opt.reduce((a, x) => a + (keys.has(x[0]) ? 0 : sc(x)), 0) / Rl.opt.length;
+  if (Rl.epic && r >= R_EPIC && !keys.has(Rl.epic[0])) t += sc(Rl.epic);
+  return t;
 }
 // a rough "how good is this piece" number (compare + the weaker-ring pick); same weights the tooltips show
 const SCORE = { hpAdd: 0.005, stAdd: 0.008, meleeMul: 1, spellMul: 1, crit: 3, critDmg: 0.6, guardMul: -2, healMul: 0.8, summonMul: 0.8, spellCd: 2, stRegen: 0.5, rollSpeed: 0.5, drain: 3, regen: 0.1 };
