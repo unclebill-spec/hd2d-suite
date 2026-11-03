@@ -62,7 +62,7 @@ const DAY_SECONDS = Number(Q.get('day') || 1440);  // one whole day = 24 real mi
 const $ = (id) => document.getElementById(id);
 
 // v2 adds the hero class (cls) and current HP; everything from v1 carries over unchanged
-const fresh = () => ({ v: 2, cls: null, hp: null, area: 'plaza', pos: null, t: 0.62, inv: {}, quests: { bread: 0, tea: 0, cat: 0 }, picked: {}, flags: {},
+const fresh = () => ({ v: 3, cls: null, hp: null, area: 'plaza', pos: null, t: 0.62, inv: {}, quests: { bread: 0, tea: 0, cat: 0 }, picked: {}, flags: {},
                        cat: 'glade', spells: ['sparkle_burst'], played: 0, savedAt: null, pet: null, pets: {} });
 
 const G = {
@@ -110,11 +110,11 @@ window.__hm = G;   // smoke tests + debugging
 // ------------------------------------------------------------------ save / load
 G.slot = Math.min(SLOT_N, Math.max(1, +(Q.get('slot') || localStorage.getItem(LAST_SLOT)) || 1));
 function readSave(n = G.slot) {
-  try { const s = JSON.parse(localStorage.getItem(slotKey(n))); if (s && s.v === 2) return s; } catch (e) { /* corrupt: fall through */ }
+  try { const s = JSON.parse(localStorage.getItem(slotKey(n))); if (s && (s.v === 2 || s.v === 3)) return LO.migrateGear(s); } catch (e) { /* corrupt: fall through */ }
   if (n !== 1 || localStorage.getItem(V1_DONE)) return null;
   try {   // migrate a v1 save: same fields, no class yet (Continue asks who you are, then carries on)
     const o = JSON.parse(localStorage.getItem(SLOT_V1));
-    if (o && o.v === 1) return { ...fresh(), ...o, v: 2, cls: null, hp: null, migrated: 1 };
+    if (o && o.v === 1) return { ...fresh(), ...o, v: 3, cls: null, hp: null, migrated: 1 };
   } catch (e) { /* ignore */ }
   return null;
 }
@@ -1121,7 +1121,7 @@ async function cont() {
   resume(s);
 }
 async function resume(s) {
-  G.S = { ...fresh(), ...s, v: 2 }; PR.ensure(G.S); facMigrate(G.S);   // older saves: merit from finished work
+  G.S = { ...fresh(), ...s, v: 3 }; LO.migrateGear(G.S); PR.ensure(G.S); facMigrate(G.S);   // older saves: merit from finished work
   G.introNext = false; if (G.S.flags && G.S.flags.intro === 'playing') G.S.flags.intro = 'skipped';   // Continue never replays the opening
   closeTitle();
   G.busy = true;
@@ -1200,26 +1200,26 @@ function drawHero() {
   } else if (HUI.tab === 3) {
     LO.ensure(S);
     const eq = LO.SLOTS.map((sl) => [sl, S.gear[sl]]);
-    HUI.n = 3 + S.bag.length;
-    const rowOf = (it, k, label, btns) => `<div class="row gear${it ? ' r' + it.rar : ' none'}${k === HUI.i ? ' sel' : ''}" data-k="${k}">`
-      + `<b>${label}</b><em class="iname">${it ? `<i class="ic" data-up="${it.up || 0}" data-ic="${it.slot}:${it.rar}:${(it.gems || []).map((g) => g || '-').join(',')}"></i>${it.name}` : '— empty —'}</em>`
-      + `<span>${it ? `<u>${LO.RARITY[it.rar].name}</u> · ${LO.describe(it)}` : ''}</span><span class="bb">${btns}</span></div>`;
+    const NE = LO.SLOTS.length; HUI.n = NE + S.bag.length;   // gear14: 14 equipped rows, then the bag
+    const rowOf = (it, k, label, btns, cmp = '') => `<div class="row gear${it ? ' r' + it.rar : ' none'}${k === HUI.i ? ' sel' : ''}" data-k="${k}">`
+      + `<b>${LO.SLOT_LABEL[label] || label}</b><em class="iname">${it ? `<i class="ic" data-up="${it.up || 0}" data-ic="${it.slot}:${it.rar}:${(it.gems || []).map((g) => g || '-').join(',')}"></i>${it.name}` : '— empty —'}</em>`
+      + `<span>${it ? `<u>${LO.RARITY[it.rar].name}</u> · ${LO.describe(it)}` : ''}${cmp ? `<small class="cmp">${cmp}</small>` : ''}</span><span class="bb">${btns}</span></div>`;
     const owned = LO.GEM_IDS.filter((g) => S.gems[g] > 0);
     if (!owned.includes(HUI.gem)) HUI.gem = owned[0] || null;
     const sockBtn = (it, k) => (it && (it.gems || []).includes(null) && HUI.gem ? `<button class="wbtn sm plus" data-sock="${k}">socket</button>` : '');
     body.innerHTML = petStrip(S) + `<p class="pts">Gold ${S.gold} · bag ${S.bag.length} / ${LO.BAG_MAX} · Enter / A equip · X scrap for gold</p>`
       + `<p class="pts gems">${owned.length ? `gems: ${owned.map((g) => `<span class="gemtag${g === HUI.gem ? ' on' : ''}" style="--gc:${LO.GEMS[g].col}">◆ ${LO.GEMS[g].name} ×${S.gems[g]}</span>`).join(' ')}`
         + ` <button class="wbtn sm" id="gemCycle">gem ▸</button> · R / Y socket into the chosen row · T / RT next gem` : 'gems: none yet (golem cores, rift shards: beat foes, or ask the night merchant)'}</p>`
-      + eq.map(([sl, it], k) => rowOf(it, k, sl, (it ? `<button class="wbtn sm plus" data-uneq="${sl}">take off</button>` : '') + sockBtn(it, k))).join('')
+      + `<div class="gear14">${eq.map(([sl, it], k) => rowOf(it, k, sl, (it ? `<button class="wbtn sm plus" data-uneq="${sl}">take off</button>` : '') + sockBtn(it, k))).join('')}</div>`
       + (S.bag.length ? '<p class="pts">bag</p>' : '<p class="pts">bag is empty: beat enemies, walk over the beams</p>')
-      + S.bag.map((it, i) => rowOf(it, 3 + i, it.slot, `<button class="wbtn sm plus" data-eq="${i}">equip</button>${sockBtn(it, 3 + i)}<button class="wbtn sm plus" data-scrap="${i}">scrap</button>`)).join('');
+      + S.bag.map((it, i) => rowOf(it, NE + i, LO.ringSlot(it.slot) ? 'ring' : it.slot, `<button class="wbtn sm plus" data-eq="${i}">equip</button>${sockBtn(it, NE + i)}<button class="wbtn sm plus" data-scrap="${i}">scrap</button>`, LO.compare(S, it))).join('');
     body.querySelectorAll('[data-ic]').forEach((el) => { const [sl, r, gs] = el.dataset.ic.split(':'); const cv = LO.iconCanvas(sl, +r, 3, gs ? gs.split(',').map((g) => (g === '-' ? null : g)) : null, +(el.dataset.up || 0)); el.replaceWith(cv); cv.className = 'gicon'; });
     body.querySelectorAll('[data-sock]').forEach((b) => { b.onclick = (e) => { e.stopPropagation(); HUI.i = +b.dataset.sock; heroSocket(); }; });
     const gc = $('gemCycle'); if (gc) gc.onclick = (e) => { e.stopPropagation(); gemCycle(); };
     const pf = $('petFeed'); if (pf) pf.onclick = (e) => { e.stopPropagation(); petFeed(); };
     body.querySelectorAll('[data-eq]').forEach((b) => { b.onclick = (e) => { e.stopPropagation(); if (LO.equip(S, +b.dataset.eq)) { G.audio.sfx('equip'); save(); drawHero(); } }; });
     body.querySelectorAll('[data-uneq]').forEach((b) => { b.onclick = (e) => { e.stopPropagation(); if (LO.unequip(S, b.dataset.uneq)) { save(); drawHero(); } }; });
-    body.querySelectorAll('[data-scrap]').forEach((b) => { b.onclick = (e) => { e.stopPropagation(); HUI.i = 3 + +b.dataset.scrap; heroScrap(); }; });
+    body.querySelectorAll('[data-scrap]').forEach((b) => { b.onclick = (e) => { e.stopPropagation(); HUI.i = LO.SLOTS.length + +b.dataset.scrap; heroScrap(); }; });
     const sel = body.querySelector('.row.sel'); if (sel && sel.scrollIntoView) sel.scrollIntoView({ block: 'nearest' });
   } else if (HUI.tab === 4) {
     facMigrate(S);
@@ -1267,12 +1267,12 @@ function heroAct() {
 }
 function heroScrap() {
   drawBag();
-  if (HUI.tab !== 3 || HUI.i < 3) return;
-  const g = LO.scrap(G.S, HUI.i - 3);
-  if (g) { toast(`Scrapped for ${g} gold`, 1.4); G.audio.sfx('coin'); HUI.i = Math.min(HUI.i, 2 + G.S.bag.length); save(); drawHero(); }
+  const NE = LO.SLOTS.length; if (HUI.tab !== 3 || HUI.i < NE) return;
+  const g = LO.scrap(G.S, HUI.i - NE);
+  if (g) { toast(`Scrapped for ${g} gold`, 1.4); G.audio.sfx('coin'); HUI.i = Math.min(HUI.i, NE - 1 + G.S.bag.length); save(); drawHero(); }
 }
 // sockets: put the chosen gem into the selected row's first empty socket (gems stay until a jeweler clears them)
-function gearAt(k) { const S = G.S; return k < 3 ? S.gear[LO.SLOTS[k]] : S.bag[k - 3]; }
+function gearAt(k) { const S = G.S, NE = LO.SLOTS.length; return k < NE ? S.gear[LO.SLOTS[k]] : S.bag[k - NE]; }
 function heroSocket() {
   if (HUI.tab !== 3) return false;
   const it = gearAt(HUI.i);

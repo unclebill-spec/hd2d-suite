@@ -320,3 +320,16 @@ body.tv #dlg { width: min(900px, 80vw); } body.tv #dlg p { font-size: 20px; }
 .toast b.storm { display: block; font-size: 19px; letter-spacing: 3px; color: #8a3c9a; margin-bottom: 2px; }   /* 6.5 rift storm onset / dawn banner */
 #opts .musicvol { display: flex; align-items: center; gap: 8px; }
 #opts .musicvol input { flex: 1; min-height: 28px; accent-color: var(--wood); }
+
+/* gear14: the 14 equipped slots as a two-column paper-doll list (one column on narrow / phone portrait) */
+#heroBody .gear14 { display: grid; grid-template-columns: 1fr 1fr; gap: 4px 8px; }
+#heroBody .gear14 .row.gear { grid-template-columns: 74px minmax(0, 1fr) auto; grid-template-areas: "slot name bb" "slot desc desc"; margin: 0; padding: 3px 6px; }
+#heroBody .gear14 .row.gear > b { grid-area: slot; align-self: center; font-size: 12px; }
+#heroBody .gear14 .row.gear > .iname { grid-area: name; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+#heroBody .gear14 .row.gear > span:not(.bb) { grid-area: desc; font-size: 11px; line-height: 1.25; }
+#heroBody .gear14 .row.gear > .bb { grid-area: bb; }
+#heroBody .gear14 .row.gear canvas.gicon { width: 24px; height: 24px; margin: -3px 0; }
+#heroBody .gear14 .row.none { opacity: .62; }
+#heroBody .row.gear small.cmp { display: block; font-size: 11px; opacity: .92; }
+#heroBody .row.gear small.cmp b.up { color: #2f8a3a; } #heroBody .row.gear small.cmp b.dn { color: #b04a1c; }
+@media (max-width: 700px), (orientation: portrait) and (max-width: 900px) { #heroBody .gear14 { grid-template-columns: 1fr; } }

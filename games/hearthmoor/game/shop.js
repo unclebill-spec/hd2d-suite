@@ -155,7 +155,7 @@ export class Shop {
           price: Math.round(GOODS[g].price * mul), have: (S.inv[g] || 0), cant: sold, left };
       }),
               ...(D.gems || []).map((g) => ({ kind: 'gem', id: g, name: LO.GEMS[g].name, about: `socket gem · ${LO.GEMS[g].about}`, price: Math.round(LO.GEMS[g].price * mul), have: (S.gems[g] || 0) })),
-              ...this.stockOf(this.open).map((it, k) => ({ kind: 'gear', it, k, name: it.name, about: `${LO.RARITY[it.rar].name} ${LO.SLOT_LABEL[it.slot] || it.slot} · ${LO.describe(it)}`, price: Math.round(buyPrice(it) * mul) }))];
+              ...this.stockOf(this.open).map((it, k) => ({ kind: 'gear', it, k, name: it.name, about: `${LO.RARITY[it.rar].name} ${LO.SLOT_LABEL[it.slot] || it.slot} · ${LO.describe(it)} · ${LO.compare(S, it).replace(/<[^>]+>/g, '')}`, price: Math.round(buyPrice(it) * mul) }))];
     }
     return (S.bag || []).map((it, k) => ({ kind: 'sell', it, k, name: it.name, about: `${LO.RARITY[it.rar].name} ${LO.SLOT_LABEL[it.slot] || it.slot} · ${LO.describe(it)}`, price: sellPrice(it, D.sellMul) }));
   }
