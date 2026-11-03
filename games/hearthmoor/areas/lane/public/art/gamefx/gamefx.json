@@ -8,7 +8,7 @@
  "image": "gamefx.png",
  "size": [
   384,
-  288
+  432
  ],
  "cycle": [],
  "cast_sets": {
@@ -20,8 +20,179 @@
   ]
  },
  "effects": {
-  "ember_mote": {
+  "fire_wave": {
    "row": 0,
+   "frames": 8,
+   "fps": 12,
+   "loop": false,
+   "loop_from": 0,
+   "loops": 1,
+   "kind": "billboard",
+   "pivot": [
+    24,
+    40
+   ],
+   "lift": 0.4,
+   "glow": true,
+   "light": null,
+   "speed": null,
+   "travel": null,
+   "then": null,
+   "duration": 0.667,
+   "notes": "Fire Wave (crescent of flame, sweeps right; flip for left)"
+  },
+  "magma_pool": {
+   "row": 1,
+   "frames": 6,
+   "fps": 6,
+   "loop": true,
+   "loop_from": 0,
+   "loops": 1,
+   "kind": "decal",
+   "pivot": [
+    24,
+    24
+   ],
+   "lift": 0.03,
+   "glow": true,
+   "light": {
+    "color": "#ff7a1a",
+    "intensity": 1.0,
+    "range": 3.0
+   },
+   "speed": null,
+   "travel": null,
+   "then": null,
+   "duration": 9999,
+   "notes": "Magma Pool (damaging ground pool, r ~ 2-3 m; also Vharzul's rising lava edge when tiled)"
+  },
+  "ember_swarm": {
+   "row": 2,
+   "frames": 8,
+   "fps": 12,
+   "loop": true,
+   "loop_from": 0,
+   "loops": 1,
+   "kind": "billboard",
+   "pivot": [
+    24,
+    30
+   ],
+   "lift": 0.8,
+   "glow": true,
+   "light": null,
+   "speed": null,
+   "travel": null,
+   "then": null,
+   "duration": 9999,
+   "notes": "Ember Swarm: a cloud of orbiting embers"
+  },
+  "flame_ward": {
+   "row": 3,
+   "frames": 8,
+   "fps": 10,
+   "loop": true,
+   "loop_from": 0,
+   "loops": 1,
+   "kind": "billboard",
+   "pivot": [
+    24,
+    38
+   ],
+   "lift": 0.0,
+   "glow": true,
+   "light": null,
+   "speed": null,
+   "travel": null,
+   "then": null,
+   "duration": 9999,
+   "notes": "Flame Ward: a ring of small flames around the caster (shield)"
+  },
+  "hound_summon": {
+   "row": 4,
+   "frames": 8,
+   "fps": 10,
+   "loop": false,
+   "loop_from": 0,
+   "loops": 1,
+   "kind": "billboard",
+   "pivot": [
+    24,
+    30
+   ],
+   "lift": 0.0,
+   "glow": true,
+   "light": null,
+   "speed": null,
+   "travel": null,
+   "then": null,
+   "duration": 0.8,
+   "notes": "Magma Hound summon / alpha's call: a lava ring with a column rising"
+  },
+  "fire_wave_l": {
+   "row": 5,
+   "frames": 8,
+   "fps": 12,
+   "loop": false,
+   "loop_from": 0,
+   "loops": 1,
+   "kind": "billboard",
+   "pivot": [
+    24,
+    40
+   ],
+   "lift": 0.4,
+   "glow": true,
+   "light": null,
+   "speed": null,
+   "travel": null,
+   "then": null,
+   "duration": 0.667,
+   "notes": "Fire Wave (l), derived by musp_art.school from fire_wave"
+  },
+  "fire_wave_d": {
+   "row": 6,
+   "frames": 8,
+   "fps": 12,
+   "loop": false,
+   "loop_from": 0,
+   "loops": 1,
+   "kind": "billboard",
+   "pivot": [
+    24,
+    24
+   ],
+   "lift": 0.4,
+   "glow": true,
+   "light": null,
+   "speed": null,
+   "travel": null,
+   "then": null,
+   "duration": 0.667,
+   "notes": "Fire Wave (d), derived by musp_art.school from fire_wave"
+  },
+  "fire_wave_u": {
+   "row": 7,
+   "frames": 8,
+   "fps": 12,
+   "loop": false,
+   "loop_from": 0,
+   "loops": 1,
+   "kind": "billboard",
+   "pivot": [
+    24,
+    24
+   ],
+   "lift": 0.4,
+   "glow": true,
+   "light": null,
+   "speed": null,
+   "travel": null,
+   "then": null,
+   "duration": 0.667,
+   "notes": "Fire Wave (u), derived by musp_art.school from fire_wave"
+  },
+  "ember_mote": {
    "frames": 4,
    "fps": 10,
    "loop": true,
@@ -39,130 +210,8 @@
    "travel": null,
    "then": null,
    "duration": 9999,
-   "strip": "strips/ember_mote.png",
-   "notes": "Ember Swarm: one mote (also magma_pool's ember)"
-  },
-  "ember_swarm": {
-   "row": 1,
-   "frames": 8,
-   "fps": 12,
-   "loop": true,
-   "loop_from": 0,
-   "loops": 1,
-   "kind": "billboard",
-   "pivot": [
-    24,
-    30
-   ],
-   "lift": 0.8,
-   "glow": true,
-   "light": {
-    "color": "#ffb24a",
-    "range": 1.4
-   },
-   "speed": null,
-   "travel": null,
-   "then": null,
-   "duration": 9999,
-   "strip": "strips/ember_swarm.png",
-   "notes": "Ember Swarm: a cloud of orbiting embers"
-  },
-  "flame_ward": {
-   "row": 2,
-   "frames": 8,
-   "fps": 10,
-   "loop": true,
-   "loop_from": 0,
-   "loops": 1,
-   "kind": "billboard",
-   "pivot": [
-    24,
-    38
-   ],
-   "lift": 0.0,
-   "glow": true,
-   "light": {
-    "color": "#ffb24a",
-    "range": 1.4
-   },
-   "speed": null,
-   "travel": null,
-   "then": null,
-   "duration": 9999,
-   "strip": "strips/flame_ward.png",
-   "notes": "Flame Ward: a ring of flames on an accent rune ring"
-  },
-  "stonefrost_cast_ii": {
-   "row": 3,
-   "frames": 8,
-   "fps": 12,
-   "loop": false,
-   "loop_from": 0,
-   "loops": 1,
-   "kind": "billboard",
-   "pivot": [
-    24,
-    40
-   ],
-   "lift": 0.0,
-   "glow": true,
-   "light": {
-    "color": "#2ab4ff",
-    "range": 1.4
-   },
-   "speed": null,
-   "travel": null,
-   "then": null,
-   "duration": 9999,
-   "strip": "strips/stonefrost_cast_ii.png",
-   "notes": "Stone Skin cast: shards close in, hit flash, sparkle"
-  },
-  "stonefrost_rune_ii": {
-   "row": 4,
-   "frames": 8,
-   "fps": 8,
-   "loop": true,
-   "loop_from": 0,
-   "loops": 1,
-   "kind": "decal",
-   "pivot": [
-    24,
-    24
-   ],
-   "lift": 0.0,
-   "glow": true,
-   "light": null,
-   "speed": null,
-   "travel": null,
-   "then": null,
-   "duration": 9999,
-   "strip": "strips/stonefrost_rune_ii.png",
-   "notes": "Stone Skin rune: pulsing ground ring (held for the skin's duration, frame 5 hold ok)"
-  },
-  "magma_pool": {
-   "row": 5,
-   "frames": 8,
-   "fps": 8,
-   "loop": true,
-   "loop_from": 0,
-   "loops": 1,
-   "kind": "decal",
-   "pivot": [
-    24,
-    30
-   ],
-   "lift": 0.0,
-   "glow": true,
-   "light": {
-    "color": "#ffb24a",
-    "range": 1.4
-   },
-   "speed": null,
-   "travel": null,
-   "then": null,
-   "duration": 9999,
-   "strip": "strips/magma_pool.png",
-   "notes": "magma pool decal with a bubble pop"
+   "notes": "Ember Swarm: one mote (drawn by musp_art.school in the swarm's colours)",
+   "row": 8
   }
  },
  "stonefrost_from": 0,
