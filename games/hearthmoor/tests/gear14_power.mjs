@@ -24,5 +24,5 @@ for (const [name, ro, rn] of pairs) for (const lv of [1, 10, 20]) {
   if (rn < 4) worst = Math.max(worst, Math.abs(r - 1));
   console.log(`| ${name} | ${lv} | ${units(o).toFixed(2)} | ${units(n).toFixed(2)} | ${r.toFixed(2)} | ${f2(o.hpAdd || 0)} / ${f2(o.meleeMul || 0)} / ${f2(o.crit || 0)} | ${f2(n.hpAdd || 0)} / ${f2(n.meleeMul || 0)} / ${f2(n.crit || 0)} |`);
 }
-console.log(`${worst < 0.35 ? 'PASS' : 'FAIL'} same-name tiers within 35% of the old kit (worst ${(worst * 100).toFixed(0)}%; rare/epic gaps are the template mul change 1.9->1.5, 2.6->2.0)`);
-process.exit(worst < 0.35 ? 0 : 1);
+console.log(`${worst < 0.10 ? 'PASS' : 'FAIL'} same-name tiers within 10% of the old kit (worst ${(worst * 100).toFixed(0)}%)`);
+process.exit(worst < 0.10 ? 0 : 1);

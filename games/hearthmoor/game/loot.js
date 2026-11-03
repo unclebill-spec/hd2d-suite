@@ -2,14 +2,15 @@
 // Drops are crisp DOM pixel canvases pinned to the world (like the damage numbers): a beam column in the
 // rarity colour, Epic adds a faint stepped glow, Legendary an animated neon aura. No blur, no bloom.
 // gear14 (2026-11-03, Will: "the 14 slots and the 5 rarities, keep Hearthmoor's simpler stats"): the game-shell template's
-// 5 tiers (STATS.md 4.2). mul = 1 + (template rarityMul - 1) * 5/3, so Runeforged = 3.5 = the old Legendary top end and the
-// top-to-bottom spread stays 3.5x. w = drop weights [normal, elite (rares, rifts), boss] from the template table.
+// 5 tiers (STATS.md 4.2 names / colours / drop table). Stat muls keep the live (6299ce7) values for the 4 shared tiers
+// (Common 1, Rare 1.9, Epic 2.6, Legendary 3.5) so, with GEAR_NORM, a full 14-piece kit matches the old 3-piece kit of the same tier;
+// Runeforged 4.4 sits one step above Legendary (~ +26%, the same ratio as Epic -> Legendary). w = drop weights [normal, elite (rares, rifts), boss] from the template table.
 export const RARITY = [
   { id: 'common', name: 'Common', col: '#fff8e6', lo: '#c4a984', w: [80, 40, 0], mul: 1, scrap: 2 },
-  { id: 'rare', name: 'Rare', col: '#2ab4ff', lo: '#1c62d8', w: [17, 45, 38], mul: 1.5, scrap: 8 },
-  { id: 'epic', name: 'Epic', col: '#b46cff', lo: '#6a34b8', w: [3, 13, 40], mul: 2.0, scrap: 16 },
-  { id: 'legendary', name: 'Legendary', col: '#ffc85a', lo: '#b07a2a', w: [0, 2, 18], mul: 2.67, scrap: 32 },
-  { id: 'runeforged', name: 'Runeforged', col: '#ff2bd6', lo: '#b82a8c', hi: '#ffb4ea', w: [0, 0.2, 4], mul: 3.5, scrap: 48 },
+  { id: 'rare', name: 'Rare', col: '#2ab4ff', lo: '#1c62d8', w: [17, 45, 38], mul: 1.9, scrap: 8 },
+  { id: 'epic', name: 'Epic', col: '#b46cff', lo: '#6a34b8', w: [3, 13, 40], mul: 2.6, scrap: 16 },
+  { id: 'legendary', name: 'Legendary', col: '#ffc85a', lo: '#b07a2a', w: [0, 2, 18], mul: 3.5, scrap: 32 },
+  { id: 'runeforged', name: 'Runeforged', col: '#ff2bd6', lo: '#b82a8c', hi: '#ffb4ea', w: [0, 0.2, 4], mul: 4.4, scrap: 48 },
 ];
 export const R_RARE = 1, R_EPIC = 2, R_LEG = 3, R_RUNE = 4;
 // the template's 14 slots (STATS.md 4.3); W = its slot weight, used only as a multiplier on the item's stat roll
