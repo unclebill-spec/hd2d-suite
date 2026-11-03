@@ -5,6 +5,7 @@
 // item by tier, rift shards). Ignored rifts close by themselves. Harder at night (one more foe per wave).
 import { RARE_AREAS, rngOf, hashStr } from './rares.js';
 import { STORM, STORM_OPEN, stormHere } from './storms.js';
+const HMFX_RIFT = { open: 'portal_violet', seal: 'portal_pink' }; // [HMFX48] rift open / seal
 
 export const TIERS = [
   { id: 'minor', name: 'Minor rift', roman: 'I', fx: 'rift_tear_minor', y: 0.35, light: '#6c8cd4', wave: 3, waves: 1, rare: 0.15, gold: 15, xp: 40, minRar: 0, shard: 0.25 },
@@ -63,6 +64,7 @@ export class Rifts {
       if (T.ring) R.fx.push(ctx.effects.spawn(T.ring, pos[0], y + 0.02, pos[1], { duration: 1e9, fadeIn: 0.5 }));
       ctx.effects.spawn('glyph_burst', pos[0], y, pos[1] + 0.05);
     }
+    { const hx = ctx.hmfx, hn = HMFX_RIFT.open, hm = hx && hn && hx.meta.effects[hn]; if (hm) hx.spawn(hn, pos[0], y, pos[1] + 0.06, hm.loop ? { duration: 1.2 } : {}); } // [HMFX48] rift open
     R.light = ctx.addGlow ? ctx.addGlow(pos[0], y + 0.8, pos[1] + 0.3, { color: T.light, intensity: 4 + tier * 1.5, range: 4 + tier, fadeIn: 0.6, lift: 0 }) : null;
     this.cur = R;
     G.audio && G.audio.sfx('portal');
@@ -139,6 +141,7 @@ export class Rifts {
     ctx.effects && ctx.effects.spawn('light_pool', R.pos[0], R.y + 0.02, R.pos[1]);
     this.timer = this.storm() ? STORM.every[0] + Math.random() * (STORM.every[1] - STORM.every[0]) : EVERY[0] + Math.random() * (EVERY[1] - EVERY[0]);
     if (!won) return;
+    { const hx = ctx.hmfx, hn = HMFX_RIFT.seal, hm = hx && hn && hx.meta.effects[hn]; if (hm) hx.spawn(hn, R.pos[0], R.y, R.pos[1] + 0.06, hm.loop ? { duration: 1.2 } : {}); } // [HMFX48] rift sealed
     const T = R.T, S = this.S;
     S.rifts = S.rifts || { minor: 0, major: 0, abyssal: 0 };
     S.rifts[T.id] = (S.rifts[T.id] || 0) + 1;

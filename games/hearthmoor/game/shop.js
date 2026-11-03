@@ -257,6 +257,7 @@ export class Shop {
   }
   qa() { return { open: this.open, tab: this.tab, i: this.i, rows: this.open ? this.rows().map((r) => ({ kind: r.kind, name: r.name, price: r.price })) : [] }; }
 }
+const HMFX_HEAL = { tonic: 'heal_aura_gold' }; // [HMFX48] hearth tonic
 // drink a Hearth tonic (U, right-stick click, tap the tonic in the bag)
 export function drinkTonic(G) {
   const S = G.S, C = G.combat;
@@ -265,6 +266,7 @@ export function drinkTonic(G) {
   S.inv.tonic -= 1; if (!S.inv.tonic) delete S.inv.tonic;
   C.heal(60, true); G.audio && G.audio.sfx('pickup');
   if (C.ctx.effects) C.ctx.effects.spawn('healing_petals', C.ctx.player.x, C.ctx.player.y, C.ctx.player.z + 0.05);
+  { const ctx = C.ctx, hx = ctx.hmfx, hn = HMFX_HEAL.tonic, hm = hx && hn && hx.meta.effects[hn]; if (hm) hx.spawn(hn, ctx.player.x, ctx.player.y, ctx.player.z + 0.06, hm.loop ? { duration: 1.2 } : {}); } // [HMFX48] tonic
   G.drawBag && G.drawBag();
   return true;
 }

@@ -25,6 +25,16 @@ const spellSfx = (S) => { const sc = S.school || SCHOOL_KIND[S.kind]; return sc 
 const HMFX_CAST = { lance: 'spell_cast_blue', fnova: 'impact_blue', igolem: 'portal_blue',   // blue
   veil: 'buff_aura_violet', spirits: 'wisps_violet',                                          // violet
   coldfire: 'flame_blue' };                                                                    // flame_blue (the cold fire)
+// [HMFX48] school casts the first pass left alone: fire/Caldera, nature, dark/gloam
+const HMFX_CAST2 = { firewave: 'spell_cast_fire', magma: 'spell_cast_fire', swarm: 'spell_cast_fire', hound: 'spell_cast_fire', pierce: 'spell_cast_fire', // [HMFX48]
+  'nature:hound': 'spell_cast_green', 'nature:root': 'spell_cast_green', golem: 'spell_cast_green', projectile: 'spell_cast_green', // [HMFX48]
+  veil: 'spell_cast_violet', spirits: 'spell_cast_violet' }; // [HMFX48]
+const HMFX_IMPACT = { fire: 'impact_fire', nature: 'impact_green', dark: 'impact_violet' }; // [HMFX48] impacts by element
+const HMFX_FLASH = { fire: 'hit_flash_fire', frost: 'hit_flash_blue', light: 'hit_flash_blue', dark: 'hit_flash_violet' }; // [HMFX48] hit flashes: fire, frost/light, dark
+const HMFX_BOLT = { lance: 'magic_bolt_blue', pierce: 'magic_bolt_fire', spirits: 'magic_bolt_violet' }; // [HMFX48] frost / fire / dark bolts
+const HMFX_ZAP = { chain: 'lightning_blue' }; // [HMFX48] chain lightning
+const HMFX_HEAL = { heal: 'heal_aura_green' }; // [HMFX48] bloom
+const HMFX_BUFF = { skin: 'buff_aura_gold', ward: 'buff_aura_gold' }; // [HMFX48] stone skin and flame ward
 const HOUND_LOOK = { magma_hound: { name: 'Magma hound', color: null, toast: 'A Magma Hound shakes itself out of the lava!' },
   moss_golem: { name: 'Moss Golem', color: 0x7cff9a, toast: 'A Moss Golem heaves itself up out of the loam!' } };   // the realm's own hound sheet (every Muspelheim area carries it); elsewhere no hound answers
 const WAVE_FX = { right: 'fire_wave', left: 'fire_wave_l', up: 'fire_wave_u', down: 'fire_wave_d' };
@@ -492,6 +502,7 @@ export class Combat {
     G.audio.sfx(spellSfx(S));
     { const hx = ctx.hmfx, hn = HMFX_CAST[S.kind], hm = hx && hn && hx.meta.effects[hn];
       if (hm) hx.spawn(hn, p.x, p.y, p.z + 0.06, hm.loop ? { duration: 1.2 } : {}); }   // [SOUND] school -> spell_light / spell_dark / spell_nature (audio falls back to 'spell')
+    { const hx = ctx.hmfx, hn = HMFX_CAST2[(S.school === 'nature' ? 'nature:' : '') + S.kind], hm = hx && hn && hx.meta.effects[hn]; if (hm) hx.spawn(hn, p.x, p.y, p.z + 0.06, hm.loop ? { duration: 1.2 } : {}); } // [HMFX48] school cast
     const fv = FV[p.facing] || [0, 1], fx = ctx.effects;
     if (!fx) return false;
     const T = S.stone ? this.stoneFx() : null;   // Boulder Toss / Frost Rune: tier II / III art + damage from the game-fx atlas
@@ -518,8 +529,10 @@ export class Combat {
       proj.f = fxo.spawn(fxn, p.x + fv[0] * 0.4, p.y, p.z + fv[1] * 0.4 + 0.05,
                         { to: [tx, ctx.heightAt(tx, tz), tz], onDone: (f) => { if (S.kind === 'projectile' && !proj.done) this.burst(proj, f.x, f.z, true); proj.done = true; if (S.kind === 'pierce' && this.G.glow) this.G.glow.pool(f.x, f.z, this.G.glow.colorOf(S.fx)); } });
       this.projs.push(proj);
+      if (S.kind === 'pierce') { const hx = ctx.hmfx, hn = HMFX_BOLT.pierce, hm = hx && hn && hx.meta.effects[hn]; if (hm) hx.spawn(hn, p.x, p.y, p.z + 0.06, hm.loop ? { duration: 1.2 } : {}); } // [HMFX48] fire bolt
     } else if (S.kind === 'nova') {
       fx.spawn('rune_slam', p.x, p.y, p.z + 0.05); fx.spawn('impact', p.x, p.y, p.z + 0.06);
+      { const hx = ctx.hmfx, hn = HMFX_FLASH.light, hm = hx && hn && hx.meta.effects[hn]; if (hm) hx.spawn(hn, p.x, p.y, p.z + 0.06, hm.loop ? { duration: 1.2 } : {}); } // [HMFX48] light hit
       if (this.G.glow) this.G.glow.pool(p.x, p.z, this.G.glow.colorOf('rune_slam'), 1.2);
       for (const e of this.alive()) if (dist(e.a, p) < S.radius + e.D.r) this.damageEnemy(e, this.out('spell', S.dmg), p, S.push, PAL.gold);
     } else if (S.kind === 'trap') {
@@ -534,12 +547,13 @@ export class Combat {
         if (!e) break;
         hitList.push(e);
         const dmg = this.out('spell', S.dmg * Math.pow(0.75, i));
-        this.later.push({ t, fn: () => { if (e.state !== 'dead' && e.state !== 'gone') { fx.spawn('sky_strike', e.a.x, e.a.y, e.a.z + 0.06); this.damageEnemy(e, dmg, p, 0.2, PAL.gold); if (i === 0 && this.G.glow) this.G.glow.pool(e.a.x, e.a.z, this.G.glow.colorOf('sky_strike')); } } });
+        this.later.push({ t, fn: () => { if (e.state !== 'dead' && e.state !== 'gone') { fx.spawn('sky_strike', e.a.x, e.a.y, e.a.z + 0.06); { const hx = ctx.hmfx, hn = HMFX_ZAP.chain, hm = hx && hn && hx.meta.effects[hn]; if (hm) hx.spawn(hn, e.a.x, e.a.y, e.a.z + 0.06, hm.loop ? { duration: 1.2 } : {}); } this.damageEnemy(e, dmg, p, 0.2, PAL.gold); if (i === 0 && this.G.glow) this.G.glow.pool(e.a.x, e.a.z, this.G.glow.colorOf('sky_strike')); } } }); // [HMFX48] chain lightning
         from = e.a; t += 0.16;
       }
-      if (!hitList.length) fx.spawn('sky_strike', p.x + fv[0] * 2, ctx.heightAt(p.x + fv[0] * 2, p.z + fv[1] * 2), p.z + fv[1] * 2 + 0.06);
+      if (!hitList.length) { fx.spawn('sky_strike', p.x + fv[0] * 2, ctx.heightAt(p.x + fv[0] * 2, p.z + fv[1] * 2), p.z + fv[1] * 2 + 0.06); { const hx = ctx.hmfx, hn = HMFX_ZAP.chain, hm = hx && hn && hx.meta.effects[hn]; if (hm) hx.spawn(hn, p.x + fv[0] * 2, ctx.heightAt(p.x + fv[0] * 2, p.z + fv[1] * 2), p.z + fv[1] * 2 + 0.06, hm.loop ? { duration: 1.2 } : {}); } } // [HMFX48] chain lightning
     } else if (S.kind === 'heal') {
       fx.spawn('bloom_ring', p.x, p.y, p.z + 0.05); fx.spawn('healing_petals', p.x, p.y, p.z + 0.06);
+      { const hx = ctx.hmfx, hn = HMFX_HEAL.heal, hm = hx && hn && hx.meta.effects[hn]; if (hm) hx.spawn(hn, p.x, p.y, p.z + 0.06, hm.loop ? { duration: 1.2 } : {}); } // [HMFX48] heal spell
       if (this.G.glow) this.G.glow.pool(p.x, p.z, this.G.glow.colorOf('bloom_ring'));
       this.heal(S.heal);
       if (this.summon) this.summon.hp = Math.min(this.summon.D.hp, this.summon.hp + S.heal);
@@ -558,6 +572,7 @@ export class Combat {
     }
     if (T && T.hit) { if (!hitFxAuto) T.g.spawn(T.hit, x, ctx.heightAt(x, z), z + 0.05); }
     else if (S.burst && ctx.effects) ctx.effects.spawn(S.burst, x, ctx.heightAt(x, z), z + 0.05);
+    if ((T && T.hit) || S.burst) { const hx = ctx.hmfx, hn = HMFX_IMPACT.nature, hm = hx && hn && hx.meta.effects[hn]; if (hm) hx.spawn(hn, x, ctx.heightAt(x, z), z + 0.06, hm.loop ? { duration: 1.2 } : {}); } // [HMFX48] nature impact
     const rad = S.radius * (T ? T.rad : 1);
     for (const e of this.alive()) if (Math.hypot(e.a.x - x, e.a.z - z) < rad + e.D.r) this.damageEnemy(e, this.out('spell', S.dmg * (proj.mul || 1) * (proj.small ? 0.5 : 1)), { x, z }, 0.4, PAL.gold);
   }
@@ -622,6 +637,7 @@ export class Combat {
     const T = STONE[2];
     if (g && g.meta.effects[T.cast]) g.spawn(T.cast, p.x, p.y, p.z + 0.06);
     else if (ctx.effects && ctx.effects.meta.effects.impact) ctx.effects.spawn('impact', p.x, p.y, p.z + 0.06);   // no game-fx atlas (hollows, lane)
+    { const hx = ctx.hmfx, hn = HMFX_BUFF.skin, hm = hx && hn && hx.meta.effects[hn]; if (hm) hx.spawn(hn, p.x, p.y, p.z + 0.06, hm.loop ? { duration: 1.2 } : {}); } // [HMFX48] stone skin
     if (g && g.meta.effects[T.rune]) this.skin.ring = g.spawn(T.rune, p.x, p.y, p.z + 0.03, { duration: S.t, frame: 5 });
     if (this.G.glow) this.G.glow.pool(p.x, p.z, '#b9c7d6', 0.5);
     this.G.toast('Stone Skin: the stone holds', 1.4);
@@ -689,6 +705,7 @@ export class Combat {
     for (let i = 0; i < 3; i++) {
       const d = 1.1 + i * 1.05, x = p.x + fv[0] * d, z = p.z + fv[1] * d;
       this.later.push({ t: i * 0.11, fn: () => { if (this.ctx !== ctx) return; if (!this.calSpawn(this.calFx(nm) ? nm : 'fire_wave', x, ctx.heightAt(x, z), z + 0.06, {}) && ctx.effects && ctx.effects.meta.effects.ember_pop) ctx.effects.spawn('ember_pop', x, ctx.heightAt(x, z), z + 0.06); } });   // no game-fx atlas (hollows, lane): the spells atlas' ember pop
+      this.later.push({ t: i * 0.11, fn: () => { if (this.ctx !== ctx) return; { const hx = ctx.hmfx, hn = HMFX_IMPACT.fire, hm = hx && hn && hx.meta.effects[hn]; if (hm) hx.spawn(hn, x, ctx.heightAt(x, z), z + 0.06, hm.loop ? { duration: 1.2 } : {}); } } }); // [HMFX48] fire impact
     }
     if (ctx.addGlow) ctx.addGlow(p.x + fv[0] * 2.2, p.y, p.z + fv[1] * 2.2, { color: LAVA, intensity: 9, range: 4.8, life: 0.7, fadeIn: 0.05, lift: 0.5 });
     if (G.hollows) G.hollows.spellAt(p.x + fv[0] * 2, p.z + fv[1] * 2);   // braziers in its path catch
@@ -699,6 +716,7 @@ export class Combat {
       if (d > 0.5 && (fv[0] * dx + fv[1] * dz) / d < S.arc) continue;
       hit.push(e);
       this.later.push({ t: Math.max(0, d - 0.6) / S.roll, fn: () => { if (this.ctx === ctx && e.state !== 'dead' && e.state !== 'gone') { this.damageEnemy(e, this.out('spell', S.dmg), p, S.push, PAL.gold); this.ignite(e, S.burn); } } });
+      this.later.push({ t: Math.max(0, d - 0.6) / S.roll, fn: () => { if (this.ctx === ctx && e.state !== 'dead' && e.state !== 'gone') { const hx = ctx.hmfx, hn = HMFX_FLASH.fire, hm = hx && hn && hx.meta.effects[hn]; if (hm) hx.spawn(hn, e.a.x, e.a.y, e.a.z + 0.06, hm.loop ? { duration: 1.2 } : {}); } } }); // [HMFX48] fire hit
     }
     this.lastWave = { n: hit.length, ids: hit.map((e) => e.id) };
   }
@@ -738,6 +756,7 @@ export class Combat {
     const ctx = this.ctx, p = ctx.player;
     this.endWard();
     this.ward = { t: S.t, take: S.take, refl: S.refl, f: this.calSpawn('flame_ward', p.x, p.y, p.z + 0.08, { duration: S.t }) || (ctx.effects && ctx.effects.meta.effects.rune_circle ? [ctx.effects, ctx.effects.spawn('rune_circle', p.x, p.y, p.z + 0.08, { duration: S.t })] : null) };
+    { const hx = ctx.hmfx, hn = HMFX_BUFF.ward, hm = hx && hn && hx.meta.effects[hn]; if (hm) hx.spawn(hn, p.x, p.y, p.z + 0.06, hm.loop ? { duration: 1.2 } : {}); } // [HMFX48] flame ward
     if (ctx.addGlow) this.ward.light = ctx.addGlow(p.x, p.y, p.z, { color: LAVA, intensity: 4, range: 3.0, life: S.t, fadeIn: 0.2, lift: 0.7 });
     this.G.toast('Flame Ward: the fire forgets you', 1.4);
   }
@@ -859,6 +878,7 @@ export class Combat {
     for (let i = 0; i < 4; i++) {
       const d = 1.0 + i * 1.6, x = p.x + fv[0] * d, z = p.z + fv[1] * d;
       this.later.push({ t: i * 0.07, fn: () => { if (this.ctx === ctx) this.frostFx('ice_lance', 'coldfire_bolt', x, ctx.heightAt(x, z) + 0.9, z + 0.06, { duration: 0.25, fadeIn: 0 }); } });
+      if (i === 0) this.later.push({ t: 0, fn: () => { if (this.ctx !== ctx) return; { const hx = ctx.hmfx, hn = HMFX_BOLT.lance, hm = hx && hn && hx.meta.effects[hn]; if (hm) hx.spawn(hn, x, ctx.heightAt(x, z), z + 0.06, hm.loop ? { duration: 1.2 } : {}); } } }); // [HMFX48] frost bolt
     }
     if (ctx.addGlow) ctx.addGlow(p.x + fv[0] * 3, p.y, p.z + fv[1] * 3, { color: FROST, intensity: 6, range: 4.0, life: 0.5, fadeIn: 0.05, lift: 0.8 });
     const hit = [];
@@ -867,6 +887,7 @@ export class Combat {
       if (along < 0 || along > S.range + e.D.r || side > 0.6 + e.D.r * 0.5 || Math.abs(e.a.y - p.y) > 1.2) continue;
       hit.push(e);
       this.later.push({ t: along / S.speed, fn: () => { if (this.ctx === ctx && e.state !== 'dead' && e.state !== 'gone') { this.damageEnemy(e, this.out('spell', S.dmg), p, S.push, PAL.sky); this.chill(e, S.chill); } } });
+      this.later.push({ t: along / S.speed, fn: () => { if (this.ctx === ctx && e.state !== 'dead' && e.state !== 'gone') { const hx = ctx.hmfx, hn = HMFX_FLASH.frost, hm = hx && hn && hx.meta.effects[hn]; if (hm) hx.spawn(hn, e.a.x, e.a.y, e.a.z + 0.06, hm.loop ? { duration: 1.2 } : {}); } } }); // [HMFX48] frost hit
     }
     this.lastLance = { n: hit.length, ids: hit.map((e) => e.id) };
   }
@@ -914,7 +935,10 @@ export class Combat {
       if ((s2.cd -= dt) <= 0) {
         const e = this.nearestEnemy(s2, s2.S.reach);
         s2.cd = s2.S.every;
-        if (e) { this.frostFx('ice_lance', 'coldfire_bolt', e.a.x, e.a.y + 0.6, e.a.z + 0.1, { duration: 0.3, fadeIn: 0 }); this.damageEnemy(e, this.out('summon', s2.S.dmg), s2, 0.1, PAL.sky); this.chill(e, 1.0); this.spiritHits++; }
+        if (e) { this.frostFx('ice_lance', 'coldfire_bolt', e.a.x, e.a.y + 0.6, e.a.z + 0.1, { duration: 0.3, fadeIn: 0 }); this.damageEnemy(e, this.out('summon', s2.S.dmg), s2, 0.1, PAL.sky); this.chill(e, 1.0); this.spiritHits++; // [HMFX48] dark spirit bolt
+          { const hx = ctx.hmfx, hn = HMFX_BOLT.spirits, hm = hx && hn && hx.meta.effects[hn]; if (hm) hx.spawn(hn, e.a.x, e.a.y, e.a.z + 0.06, hm.loop ? { duration: 1.2 } : {}); } // [HMFX48] dark bolt
+          { const hx = ctx.hmfx, hn = HMFX_IMPACT.dark, hm = hx && hn && hx.meta.effects[hn]; if (hm) hx.spawn(hn, e.a.x, e.a.y, e.a.z + 0.06, hm.loop ? { duration: 1.2 } : {}); } // [HMFX48] dark impact
+          { const hx = ctx.hmfx, hn = HMFX_FLASH.dark, hm = hx && hn && hx.meta.effects[hn]; if (hm) hx.spawn(hn, e.a.x, e.a.y, e.a.z + 0.06, hm.loop ? { duration: 1.2 } : {}); } } // [HMFX48] dark hit
       }
       if (s2.life <= 0 || this.G.downed) { if (s2.f) s2.f[0].remove(s2.f[1]); s2.f = null; s2.done = true; }
     }

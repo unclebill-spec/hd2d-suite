@@ -4,6 +4,7 @@
 // its fish colour (blue / violet / red, from the art pack). At night a placed orb casts a pool of radiance: pool decal +
 // a point light in its colour, and a light zone (glowlit, wraiths keep out). The orb billboard shows at every hour.
 // Art: art/orb_lanterns (orb_fx_32: orb_large_* / orb_grand_mix appended to the area spells atlas by build.py).
+const HMFX_ORB = { blue: 'glow_orb_blue', violet: 'glow_orb_violet', red: 'glow_orb_fire', grand: 'glow_orb_pink' }; // [HMFX48] orb lanterns
 export const ORB = {
   blue:   { fx: 'orb_large_blue', pool: 'coldfire_pool', color: '#2ab4ff' },
   violet: { fx: 'orb_large_violet', pool: 'violet_pool', color: '#a45cf0' },
@@ -37,7 +38,7 @@ export class Lanterns {
     const ctx = this.ctx; if (!ctx || !ctx.effects) return;
     const on = !!this.orbs()[p.id], still = !!this.G.qaStill, O = ORB[p.col], y = ctx.heightAt(p.x, p.z);
     if (!on) { if (p.orb || p.lit) this.clear(p); return; }
-    if (!p.orb) p.orb = ctx.effects.spawn(O.fx, p.x, y + p.lift, p.z + 0.12, { duration: 1e9, fadeIn: still ? 0 : 0.6 });
+    if (!p.orb) { p.orb = ctx.effects.spawn(O.fx, p.x, y + p.lift, p.z + 0.12, { duration: 1e9, fadeIn: still ? 0 : 0.6 }); { const hx = ctx.hmfx, hn = HMFX_ORB[p.col], hm = hx && hn && hx.meta.effects[hn]; if (hm) hx.spawn(hn, p.x, y, p.z + 0.06, hm.loop ? { duration: 1.2 } : {}); } } // [HMFX48] orb lantern
     const want = NIGHT(ctx.clock.t);
     if (want && !p.lit) {
       p.pool = ctx.effects.spawn(O.pool, p.x, y, p.z + 0.04, { duration: 1e9, fadeIn: still ? 0 : 1.0 });

@@ -2,6 +2,7 @@
 // hold three glow seeds each (Odo sells them). A planted seed sprouts after one in-game day and blooms after two
 // (S.day counts whole days as the clock wraps). Blooms glow by palette pixels only; at night each one casts a light
 // pool (decal + a point light in its colour) and is a light zone. E / A / tap beside a bloom harvests it.
+const HMFX_PLANT = { glowplant_sprout: 'flame_green', glowplant_coldfire: 'wisps_blue', glowplant_violet: 'flame_violet', glowplant_toadcap: 'glow_orb_fire' }; // [HMFX48] garden plants
 export const PLANTS = {
   coldfire: { name: 'cold-fire bloom', fx: 'glowplant_coldfire', pool: 'coldfire_pool', color: '#5ab4f0', gives: { gem: 'frost_core' }, herb: 'coldpetal' },
   violet:   { name: 'violet glowbell', fx: 'glowplant_violet', pool: 'violet_pool', color: '#a45cf0', gives: { gem: 'moon_opal' }, herb: 'glowbell' },
@@ -41,6 +42,7 @@ export class Garden {
       const y = ctx.heightAt(p.x, p.z);
       const name = st === 1 ? 'glowplant_seed' : st === 2 ? 'glowplant_sprout' : st === 3 ? PLANTS[p.kind].fx : null;
       if (name) p.fx = ctx.effects.spawn(name, p.x, y, p.z + 0.02, { duration: 1e9, fadeIn: still ? 0 : 0.5 });
+      if (name) { const hx = ctx.hmfx, hn = HMFX_PLANT[name], hm = hx && hn && hx.meta.effects[hn]; if (hm) hx.spawn(hn, p.x, y, p.z + 0.06, hm.loop ? { duration: 1.2 } : {}); } // [HMFX48] garden plant
       p.shown = st;
     }
     const want = st === 3 && NIGHT(ctx.clock.t);

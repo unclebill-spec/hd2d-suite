@@ -50,6 +50,7 @@ export const PET_STORM = {   // [onset, during, morning after]; {name} = the pet
   mosspup: ['({name} growls at the sky, then hides behind your boot.)', '({name} digs a little burrow and peeks out of it.)', '({name} shakes off, spraying moss everywhere.)'],
 };
 const FLASH = ['#c03cc8', '#e0302a'];   // storm lightning: a short point-light flash, violet or red
+const HMFX_STORM = { flash: 'lightning_violet' }; // [HMFX48] rift-storm point-light flash
 
 export class Storms {
   constructor(G) { this.G = G; this.ctx = null; this.area = null; this.fxT = 6; this.barkT = 70; this.flashes = []; this.lastT = null; this.forced = undefined; }
@@ -149,6 +150,7 @@ export class Storms {
     if (E) { E.spawn('rift_tear_minor', x, y, z, { duration: 1.1 + Math.random() * 0.6, fadeIn: 0.12 }); E.spawn('coldfire_motes', x * 0.5 + p.x * 0.5, y - 2.4, z + 1.5, { duration: 2.4 }); }
     const col = FLASH[Math.random() < 0.5 ? 0 : 1];
     const l = ctx.addGlow && !(this.G.flashOK && !this.G.flashOK()) ? ctx.addGlow(x, y - 1.2, z + 1.0, { color: col, intensity: 5 * k, range: 7, fadeIn: 0.02, lift: 0 }) : null;
+    { const hx = ctx.hmfx, hn = HMFX_STORM.flash, hm = hx && hn && hx.meta.effects[hn]; if (hm) hx.spawn(hn, x, y, z + 0.06, hm.loop ? { duration: 1.2 } : {}); } // [HMFX48] storm flash
     if (l) this.flashes.push({ l, t: 0, dur: 0.35 + Math.random() * 0.2 });
     this.G.audio && this.G.audio.sfx && this.G.audio.sfx('rumble');
     this.cracks = (this.cracks || 0) + 1;

@@ -13,6 +13,7 @@ export const RARITY = [
   { id: 'runeforged', name: 'Runeforged', col: '#ff2bd6', lo: '#b82a8c', hi: '#ffb4ea', w: [0, 0.2, 4], mul: 4.4, scrap: 48 },
 ];
 export const R_RARE = 1, R_EPIC = 2, R_LEG = 3, R_RUNE = 4;
+const HMFX_LOOT = { 1: 'sparkle_blue', 2: 'sparkle_violet', 3: 'sparkle_gold', 4: 'sparkle_pink' }; // [HMFX48] Rare, Epic, Legendary, Runeforged
 // the template's 14 slots (STATS.md 4.3); W = its slot weight, used only as a multiplier on the item's stat roll
 export const SLOTS = ['helm', 'neck', 'chest', 'legs', 'feet', 'arms', 'gloves', 'ringL', 'ringR', 'belt', 'cloak', 'primary', 'secondary', 'ranged'];
 export const SLOT_W = { helm: 0.8, neck: 0.6, chest: 1.0, legs: 0.9, feet: 0.6, arms: 0.6, gloves: 0.6, ringL: 0.5, ringR: 0.5, belt: 0.5, cloak: 0.6, primary: 1.0, secondary: 0.8, ranged: 0.6 };
@@ -386,6 +387,7 @@ export class Loot {
     this.layer.appendChild(el);
     // Epic / Legendary drops also light the ground around them (a pooled point light, no bloom)
     const light = rar >= R_EPIC && ctx.addGlow ? ctx.addGlow(x, y, z, { color: RARITY[rar].col, intensity: rar >= R_LEG ? 6 : 3.5, range: 2.8, lift: 0.45, fadeIn: 0.3 }) : null;
+    { const hx = ctx.hmfx, hn = HMFX_LOOT[rar], hm = hx && hn && hx.meta.effects[hn]; if (hm) hx.spawn(hn, x, y, z + 0.06, hm.loop ? { duration: 1.2 } : {}); } // [HMFX48] rarity sparkle
     const d = { x, y, z, it, gem: what.gem || null, gold: what.gold || 0, purse: !!what.purse, el, beam, aura, sc, frame: -1, t: 0, light };
     this.drops.push(d);
     return d;

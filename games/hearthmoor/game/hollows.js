@@ -5,6 +5,8 @@
 // ledge (game.spring: heals fully + a timed "spring-fizz" buff), and dark-hour cold-fire braziers (game.braziers:
 // a spell landing near one lights it; lit braziers burn through the dark hours as light zones wraiths avoid).
 const DARK = (t) => t > 0.75 || t < 0.25;              // dusk-into-night to dawn
+const HMFX_SPRING = { ambient: 'wisps_green', drink: 'heal_aura_green' }; // [HMFX48] spring motes and the drink
+const HMFX_BRAZIER = { cold: 'flame_violet' }; // [HMFX48] cold-fire braziers
 export const SPRING = { buff: 60, dmg: 1.15, regen: 1.5, cd: 8 };
 export const BRAZIER = { reach: 2.6, r: 3.2, flare: 25, color: '#5ac8ff' };
 export class Hollows {
@@ -25,6 +27,7 @@ export class Hollows {
         q.fx.push(ctx.effects.spawn('spring_bubbles', x + ox, y + 0.1, z + oz + 0.1, { duration: 1e9, fadeIn: still ? 0 : 1, ...(still ? { frame: f } : {}) }));
       }
       q.fx.push(ctx.effects.spawn('glitter', x, y + 0.1, z + 0.3, { duration: 1e9, ...(still ? { frame: 1 } : {}) }));
+      { const hx = ctx.hmfx, hn = HMFX_SPRING.ambient, hm = hx && hn && hx.meta.effects[hn]; if (hm) hx.spawn(hn, x, y, z + 0.06, hm.loop ? { duration: 1.2 } : {}); } // [HMFX48] spring wisps
     }
     q.light = ctx.addGlow ? ctx.addGlow(x, y, z, { color: '#94c0dc', intensity: 7, range: 4.2, fadeIn: still ? 0.01 : 1.2, lift: 0.6 }) : null;
   }
@@ -36,6 +39,7 @@ export class Hollows {
     const sec = this.spring && this.spring.secret;   // Ravenhold's hidden spring: a first find is a secret (Gnome Council merit)
     if (sec && !S.found[sec]) { S.found[sec] = 1; G.factions && G.factions.onSecret(); }
     if (ctx.effects) ctx.effects.spawn('healing_petals', ctx.player.x, ctx.player.y, ctx.player.z + 0.05);
+    { const hx = ctx.hmfx, hn = HMFX_SPRING.drink, hm = hx && hn && hx.meta.effects[hn]; if (hm) hx.spawn(hn, ctx.player.x, ctx.player.y, ctx.player.z + 0.06, hm.loop ? { duration: 1.2 } : {}); } // [HMFX48] spring drink
     G.toast && G.toast(`The spring fizzes through you: healed, and spring-fizz for ${SPRING.buff + extra} s (+15% damage, faster stamina)`, 3.2);
     G.audio && G.audio.sfx('quest');
   }
@@ -120,6 +124,7 @@ export class Hollows {
       }
     }
     q.light = ctx.addGlow ? ctx.addGlow(x, y, z, { color: BRAZIER.color, intensity: 10, range: 5.0, fadeIn: still ? 0.01 : 0.4, lift: 1.1 }) : null;
+    { const hx = ctx.hmfx, hn = HMFX_BRAZIER.cold, hm = hx && hn && hx.meta.effects[hn]; if (hm) hx.spawn(hn, x, y, z + 0.06, hm.loop ? { duration: 1.2 } : {}); } // [HMFX48] brazier flame
     q.burning = true;
   }
   burnOff(q) {

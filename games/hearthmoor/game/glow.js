@@ -47,6 +47,9 @@ const POOLS = {
 };
 export const POOL_R = 2.2;
 const BLOOM = { coldfire: { fx: 'glowplant_coldfire', pool: 'coldfire_pool' }, violet: { fx: 'glowplant_violet', pool: 'violet_pool' } };
+const HMFX_POOL = { cold: 'wisps_blue', violet: 'glow_orb_violet', red: 'flame_fire', under: 'glow_orb_green' }; // [HMFX48] cold wisps, violet orb, red flame, moss orb
+const HMFX_TOAD = { toad: 'glow_orb_pink' }; // [HMFX48] rose toadstools
+const HMFX_BUFF = { glowlit: 'buff_aura_blue' }; // [HMFX48] glowlit buff start
 const BLOOM_AT = [[-0.5, -0.1], [0.45, -0.3], [0.05, 0.4]];   // three plants per cluster
 // lamp kinds that make a light zone at night, and how far it reaches on the ground (metres)
 const LAMP_R = { lamp_post: 3.0, stone_lantern: 2.2, shrine: 2.6, portal: 2.0, rift: 2.0, quay_lantern: 2.4, pier_lantern: 2.4, fish_orb: 1.6 };
@@ -68,6 +71,7 @@ export class Glow {
       let [x, z, kind, color, alt] = P;
       if (alt && F[alt.flag] === alt.is) { kind = alt.kind; color = alt.color; }
       const y = ctx.heightAt(x, z), fx = [];
+      { const hx = ctx.hmfx, hn = HMFX_POOL[kind === 'bloom' ? color : kind], hm = hx && hn && hx.meta.effects[hn]; if (hm) hx.spawn(hn, x, y, z + 0.06, hm.loop ? { duration: 1.2 } : {}); } // [HMFX48] standing pool
       if (kind === 'bloom') {   // a wild cluster of garden glow plants (cold-fire blooms or violet glowbells) over their night pool
         if (ctx.effects) {
           const fr = (f) => (still ? { frame: f } : {});
@@ -145,6 +149,7 @@ export class Glow {
     const lit = this.litAt(ctx.player.x, ctx.player.z);
     if (lit !== this.lit) {
       this.lit = lit;
+      if (lit) { const p = ctx.player; const hx = ctx.hmfx, hn = HMFX_BUFF.glowlit, hm = hx && hn && hx.meta.effects[hn]; if (hm && p) hx.spawn(hn, p.x, p.y, p.z + 0.06, hm.loop ? { duration: 1.2 } : {}); } // [HMFX48] glowlit buff
       const el = document.getElementById('litTag'); if (el) el.hidden = !lit;
       const v = document.getElementById('vitals'); if (v) v.classList.toggle('glowlit', lit);
     }
@@ -154,6 +159,7 @@ export class Glow {
     for (const [x, z] of TOADS[this.area] || []) {
       const y = ctx.heightAt(x, z);
       const fx = ctx.effects ? ctx.effects.spawn('toadstools', x, y, z + 0.02, { duration: 1e9, fadeIn: still ? 0 : 1.2, ...(still ? { frame: 0 } : {}) }) : null;
+      { const hx = ctx.hmfx, hn = HMFX_TOAD.toad, hm = hx && hn && hx.meta.effects[hn]; if (hm) hx.spawn(hn, x, y, z + 0.06, hm.loop ? { duration: 1.2 } : {}); } // [HMFX48] toadstool
       const spores = ctx.effects ? ctx.effects.spawn('glitter', x + 0.1, y + 0.15, z + 0.05, { duration: 1e9, fadeIn: still ? 0 : 2, ...(still ? { frame: 2 } : {}) }) : null;
       const light = ctx.addGlow ? ctx.addGlow(x, y, z, { color: TOAD_COL, intensity: 6, range: 3.6, fadeIn: still ? 0.01 : 1.5, lift: 0.4 }) : null;
       this.toads.push({ x, z, fx, spores, light, on: true });
