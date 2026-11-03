@@ -51,3 +51,25 @@ const kept = LO.migrateItem({ ...oldItem('armor', 1, 5), gems: ['golem_core', nu
 ok(kept.up === 4 && kept.rr === 1 && kept.gems[0] === 'golem_core' && kept.gems.length === 2 && kept.name === 'Gleaming Moss Mail', 'rescale keeps gems, sockets, temper, rerolls, name');
 const S2 = { v: 2, gear: { weapon: oldItem('weapon', 3, 8) }, bag: [oldItem('armor', 2, 8)] }; LO.ensure(S2); const s2 = JSON.stringify(S2); LO.ensure(S2); LO.migrateGear(S2);
 ok(JSON.stringify(S2) === s2 && S2.gear.primary.mods.meleeMul < 0.1, 'save-level rescale idempotent (equipped + bag): ' + JSON.stringify(S2.gear.primary.mods));
+// gearfx: v3 -> v4. An rv 2 piece loads to rv 3. Armor type comes from the name, procs stay [], no new mods are written, gems / temper / rerolls stay. A second ensure() is a no-op.
+const v3 = {
+  v: 3, gold: 25, gems: { frost_core: 2 },
+  gear: {
+    helm: { uid: 'h', slot: 'helm', name: 'Rune Helm', rar: 3, lv: 9, rv: 2, mods: { hpAdd: 14 }, gems: ['frost_core', null], up: 7, rr: 2 },
+    chest: { uid: 'c', slot: 'chest', name: 'Moss Mail', rar: 1, lv: 5, rv: 2, mods: { hpAdd: 9, guardMul: -0.012 }, gems: [null], up: 2, rr: 1 },
+    gloves: { uid: 'g', slot: 'gloves', name: 'Leather Gloves', rar: 2, lv: 6, rv: 2, mods: { crit: 0.021, meleeMul: 0.03 }, gems: [], up: 0, rr: 3 },
+    primary: { uid: 'p', slot: 'primary', name: 'Iron Sword', rar: 2, lv: 7, rv: 2, mods: { meleeMul: 0.05, spellMul: 0.04 }, gems: ['rift_shard'], up: 1, rr: 0 },
+    neck: { uid: 'n', slot: 'neck', name: 'Moon Locket', rar: 1, lv: 4, rv: 2, mods: { crit: 0.01 }, gems: [null, null], up: 0, rr: 0 },
+  },
+  bag: [{ uid: 'w', slot: 'chest', name: 'Wool Tunic', rar: 0, lv: 3, rv: 2, mods: { hpAdd: 6 }, gems: ['moon_opal'], up: 5, rr: 1 }],
+};
+const modSnap = JSON.stringify([v3.gear.helm.mods, v3.gear.chest.mods, v3.gear.gloves.mods, v3.gear.primary.mods, v3.gear.neck.mods, v3.bag[0].mods]);
+LO.ensure(v3);
+const fxItems = [...Object.values(v3.gear).filter(Boolean), ...v3.bag];
+ok(fxItems.every((it) => it.rv === 3), 'rv 2 save loads to rv 3: ' + fxItems.map((it) => it.name + '=' + it.rv).join(', '));
+ok(v3.gear.chest.at === 'chain' && v3.bag[0].at === 'cloth' && v3.gear.gloves.at === 'leather' && v3.gear.helm.at === 'plate', 'armor type by name: Moss Mail chain, Wool Tunic cloth, Leather Gloves leather, Rune Helm plate (' + [v3.gear.chest.at, v3.bag[0].at, v3.gear.gloves.at, v3.gear.helm.at].join('/') + ')');
+ok(fxItems.every((it) => Array.isArray(it.procs) && it.procs.length === 0), 'procs [] on all');
+ok(v3.gear.primary.at == null && v3.gear.neck.at == null, 'weapons and jewelry get no armor type');
+ok(JSON.stringify([v3.gear.helm.mods, v3.gear.chest.mods, v3.gear.gloves.mods, v3.gear.primary.mods, v3.gear.neck.mods, v3.bag[0].mods]) === modSnap && !('resFire' in v3.gear.helm.mods) && !('avoid' in v3.gear.chest.mods) && !('runePct' in v3.gear.gloves.mods), 'no new mods added');
+ok(v3.gear.helm.gems[0] === 'frost_core' && v3.gear.helm.gems.length === 2 && v3.gear.helm.up === 7 && v3.gear.helm.rr === 2 && v3.gear.chest.gems.length === 1 && v3.gear.chest.up === 2 && v3.gear.chest.rr === 1 && v3.gear.gloves.gems.length === 0 && v3.gear.gloves.up === 0 && v3.gear.gloves.rr === 3 && v3.gear.primary.gems[0] === 'rift_shard' && v3.gear.primary.up === 1 && v3.gear.primary.rr === 0 && v3.bag[0].gems[0] === 'moon_opal' && v3.bag[0].up === 5 && v3.bag[0].rr === 1 && v3.gear.neck.gems.length === 2, 'gems, temper, rerolls kept');
+const again = JSON.stringify(v3); LO.ensure(v3); ok(JSON.stringify(v3) === again, 'second ensure() changes nothing');
