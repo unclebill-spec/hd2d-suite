@@ -1,0 +1,23 @@
+/* Hearthmoor menus, 2026-11 (Will: "go back to the old colors for the menu" + "the font needs to be more readable").
+   Replaces game/menu.css (the 2026-10-25 navy/neon restyle, commit dbec196) in index.html, so menus use the pre-restyle
+   parchment + carved-wood colours from game.css again. Kept from menu.css: the later phone-layout fixes (a9cf2e1, 04adc1c,
+   b66d5cf, 04bbc99), the Factions edge fix (b8bd7d4) and the reduced-motion switches. menu.css stays in the repo unused.
+   Font: Atkinson Hyperlegible (SIL OFL 1.1, art/ui/fonts/OFL-AtkinsonHyperlegible.txt), bundled for offline play. */
+@font-face { font-family: "Atkinson Hyperlegible"; src: url(../art/ui/fonts/AtkinsonHyperlegible-Regular.ttf) format("truetype"); font-weight: 400; font-display: swap; }
+@font-face { font-family: "Atkinson Hyperlegible"; src: url(../art/ui/fonts/AtkinsonHyperlegible-Bold.ttf) format("truetype"); font-weight: 500 900; font-display: swap; }
+:root { --ui-font: "Atkinson Hyperlegible", "Trebuchet MS", system-ui, sans-serif; }
+#hud, #dlg, #log, #opts, #heroui, #shopui, #autolv, #titlescreen, #wheel, #rotate, #introSkip, #boot, #bossbar, #pad, #pause,
+#hud *, #dlg *, #log *, #opts *, #heroui *, #shopui *, #autolv *, #titlescreen *, #wheel *, #rotate *, #introSkip, #bossbar *, #pad *, #pause * { font-family: var(--ui-font) !important; }
+#dlg p { font-weight: 400; font-size: 16px; line-height: 1.45; }
+#log li, .tip, .plaque .info, .plaque .keys { font-weight: 400; }
+#heroBody .row, #shopBody .row { font-size: 13px; }
+/* reduced motion (Options > motion: reduced -> body.rm) */
+body.rm .toast, body.rm #dlg .more, body.rm .slot.new, body.rm .btn.ping, body.rm #hud .vitals.lvup, body.rm .vitals.low .bar.hp, body.rm .vitals.tired .bar.st { animation: none; }
+@media (prefers-reduced-motion: reduce) { .toast { animation: none; } #dlg .more { animation: none; } }
+#opts .head .x, #log .head .x { margin-left: auto; }
+/* phones: the area-name chip stays one short line so it never runs into the bag / clock / log chips */
+@media (max-width: 640px), (max-height: 460px) { #hud .title { font: 700 12px/1.15 var(--ui-font); padding: 4px 8px; white-space: normal; max-width: 52vw; overflow: visible; text-overflow: clip; overflow-wrap: anywhere; } }
+@media (max-width: 640px) { #hud .title { font-size: 11px; line-height: 1; padding: 2px 8px; } }
+/* Factions tab: selected row keeps its faction edge */
+#heroBody .row.fac.sel { border-left-color: var(--fc); }
+@media (max-width: 640px) { #hud .hint { white-space: normal; text-align: center; width: 94vw; max-width: 94vw; overflow: visible; text-overflow: clip; line-height: 1.3; } }

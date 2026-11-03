@@ -8,3 +8,4 @@
 - `fonts/PixelifySans.ttf` — Pixelify Sans, Copyright 2021 The Pixelify Sans Project Authors (github.com/eifetx/Pixelify-Sans), SIL Open Font License 1.1, see `fonts/OFL-PixelifySans.txt`. Body text.
 
 The fonts are shipped unmodified; their OFL texts travel with them.
+- `fonts/AtkinsonHyperlegible-Regular.ttf`, `fonts/AtkinsonHyperlegible-Bold.ttf` — Atkinson Hyperlegible, Copyright 2020 Braille Institute of America, Inc., SIL Open Font License 1.1, see `fonts/OFL-AtkinsonHyperlegible.txt`. Menu / UI text (2026-11, readability ask), shipped unmodified.
