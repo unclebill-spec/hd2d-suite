@@ -924,3 +924,4 @@ First build stage from the builder handoff (M0 + M1 + the start of M2). Playable
   - a terraced village square, locked 3/4 camera, tilt-shift, one sun plus flickering lamps, sprite shadows;
   - day / dusk / night;
   - Layout One pad.
+2026-11-02 20:04 ET | HD-2D Cozy Builder | hearthmoor-tue-1103: art swaps (palette-fix-1030/1030b, gamefx-remap-1030, hollows-lane-fx, moss_golem_glow, vine_grasp, vanaheim icons), Vine Grasp/Moss Golem/Foresight Charm wiring, spell-school sfx + weather loops, merged hearthmoor-boot-counter 98c2143, sw.js regenerated | undo: git revert the branch commits after 34fe468 (merge: git revert -m 1 64e6def)
