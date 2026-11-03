@@ -61,6 +61,7 @@ export const PROCS = {
   runeShield: { school: 'light', ch: .06, icd: 15, absorb: .08, dur: 6 },
 };
 const PROC_LABEL = { lifeSteal: 'life steal', fireBolt: 'fire bolt', freeze: 'freeze', root: 'root', heal: 'heal proc', damageShield: 'damage shield', runeShield: 'rune shield' };
+const procName = (id) => { const w = PROC_LABEL[id] || id; return w.charAt(0).toUpperCase() + w.slice(1); };   // gearfx: "Fire bolt"
 // ---- save migration (old 3-slot / 5-rarity gear -> 14 slots / template tiers). Each item gets rv: 2 so it is never mapped twice.
 // rarity: common -> common, uncommon -> common, rare -> rare, epic -> epic, legendary -> legendary (never downgrades rare+)
 const OLD_RAR = [0, 0, 1, 2, 3], OLD_SLOT = { weapon: 'primary', armor: 'chest', trinket: 'neck' };
@@ -335,23 +336,33 @@ export function targetSlot(S, it) {
   return score(g.ringR) < score(g.ringL) ? 'ringR' : 'ringL';
 }
 // tooltip compare: "vs <equipped name>: +12% melee, -4 HP" against the same slot (rings: the weaker ring)
-const MOD_NAME = { meleeMul: ['% melee', 100], spellMul: ['% spells', 100], hpAdd: [' HP', 1], stAdd: [' stamina', 1], crit: ['% crit', 100], critDmg: ['% crit dmg', 100], guardMul: ['% guard dmg', 100], healMul: ['% healing', 100], summonMul: ['% summons', 100], spellCd: ['% spell cd', -100], stRegen: ['% st regen', 100], rollSpeed: ['% roll', 100], drain: ['% drain', 100], regen: [' HP/s', 1], resFire: [' fire res', 1], resWater: [' water res', 1], resLight: [' light res', 1], resDark: [' dark res', 1], resAll: [' all res', 1], avoid: ['% avoid', 100], move: ['% move', 100], haste: ['% haste', 100], block: ['% block', 100], runePct: ['% rune power', 100], shieldPct: ['% shield power', 100] };
+const MOD_NAME = { meleeMul: ['% melee', 100], spellMul: ['% spells', 100], hpAdd: [' HP', 1], stAdd: [' stamina', 1], crit: ['% crit', 100], critDmg: ['% crit dmg', 100], guardMul: ['% guard dmg', 100], healMul: ['% healing', 100], summonMul: ['% summons', 100], spellCd: ['% spell cd', -100], stRegen: ['% st regen', 100], rollSpeed: ['% roll', 100], drain: ['% drain', 100], regen: [' HP/s', 1], resFire: [' fire resist', 1], resWater: [' water resist', 1], resLight: [' light resist', 1], resDark: [' dark resist', 1], resAll: [' all resists', 1], avoid: ['% avoid', 100], move: ['% move', 100], haste: ['% haste', 100], block: ['% block', 100], runePct: [' Rune %', 100], shieldPct: [' Spell Shield %', 100] };
+const AT_WORD = { plate: 'Plate', chain: 'Chain', leather: 'Leather', cloth: 'Cloth' };   // gearfx: armor type word, first in describe()
 export function compare(S, it) {
   const sl = targetSlot(S, it), cur = sl && (S.gear || {})[sl];
   if (!cur || cur === it) return cur === it ? '' : `new for ${SLOT_LABEL[sl]}`;
   const tot = (x) => { const m = {}; const k = 1 + 0.07 * (x.up || 0); for (const [key, v] of Object.entries(x.mods || {})) m[key] = (m[key] || 0) + v * k; for (const g of x.gems || []) if (g && GEMS[g]) for (const [key, v] of Object.entries(GEMS[g].mods)) m[key] = (m[key] || 0) + v; return m; };
   const a = tot(it), b = tot(cur), keys = [...new Set([...Object.keys(a), ...Object.keys(b)])], out = [];
+  for (const [key, name] of [['resFire', ' fire resist'], ['resWater', ' water resist'], ['resLight', ' light resist'], ['resDark', ' dark resist']]) {   // gearfx: per school; resAll adds to each
+    const d = ((a[key] || 0) + (a.resAll || 0)) - ((b[key] || 0) + (b.resAll || 0)); if (Math.abs(d) < 0.5) continue;
+    out.push(`<b class="${d > 0 ? 'up' : 'dn'}">${d > 0 ? '+' : ''}${Math.round(d)}${name}</b>`);
+  }
   for (const key of keys) {
+    if (key === 'resFire' || key === 'resWater' || key === 'resLight' || key === 'resDark' || key === 'resAll') continue;
     const N = MOD_NAME[key] || [` ${key}`, 1], d = ((a[key] || 0) - (b[key] || 0)) * N[1]; if (Math.abs(d) < 0.05) continue;
     const better = key === 'guardMul' ? d < 0 : d > 0;
     out.push(`<b class="${better ? 'up' : 'dn'}">${d > 0 ? '+' : ''}${Math.abs(d) >= 10 || N[1] === 1 ? Math.round(d) : d.toFixed(1)}${N[0]}</b>`);
   }
+  const ids = (x) => [...new Set((x.procs || []).map((p) => p.id))], pa = ids(it), pb = ids(cur);   // gearfx: proc words gained (up) / lost (dn)
+  for (const id of pa) if (!pb.includes(id)) out.push(`<b class="up">+ ${procName(id)}</b>`);
+  for (const id of pb) if (!pa.includes(id)) out.push(`<b class="dn">- ${procName(id)}</b>`);
   return `vs ${cur.name}: ${out.length ? out.join(' ') : 'about the same'}`;
 }
 export function describe(it) {
   const k = 1 + 0.07 * (it.up || 0), m = Object.fromEntries(Object.entries(it.mods).map(([key, v]) => [key, INT_MOD.has(key) ? Math.round(v * k) : v * k])), out = [];
+  const ptxt = (v) => { const n = v * 100; return Math.abs(n - Math.round(n)) < 0.05 ? String(Math.round(n)) : n.toFixed(1); };   // gearfx: whole percents stay whole ("+3% move"); avoid keeps a tenth
+  if (it.at) out.push(AT_WORD[it.at] || (it.at.charAt(0).toUpperCase() + it.at.slice(1)));   // gearfx: Plate / Chain / Leather / Cloth first
   if (it.up) out.push(`+${it.up} tempered`);
-  if (it.at) out.push(it.at);
   if (m.meleeMul) out.push(`+${Math.round(m.meleeMul * 100)}% melee`);
   if (m.spellMul) out.push(`+${Math.round(m.spellMul * 100)}% spells`);
   if (m.hpAdd) out.push(`+${m.hpAdd} HP`);
@@ -366,18 +377,18 @@ export function describe(it) {
   if (m.healMul) out.push(`+${Math.round(m.healMul * 100)}% healing`);
   if (m.spellCd) out.push(`-${(m.spellCd * 100).toFixed(1)}% spell cooldown`);
   if (m.stRegen) out.push(`+${Math.round(m.stRegen * 100)}% stamina regen`);
-  if (m.resFire) out.push(`+${m.resFire} fire res`);
-  if (m.resWater) out.push(`+${m.resWater} water res`);
-  if (m.resLight) out.push(`+${m.resLight} light res`);
-  if (m.resDark) out.push(`+${m.resDark} dark res`);
-  if (m.resAll) out.push(`+${m.resAll} all res`);
-  if (m.avoid) out.push(`+${(m.avoid * 100).toFixed(1)}% avoid`);
-  if (m.move) out.push(`+${(m.move * 100).toFixed(1)}% move`);
-  if (m.haste) out.push(`+${(m.haste * 100).toFixed(1)}% haste`);
-  if (m.block) out.push(`+${(m.block * 100).toFixed(1)}% block`);
-  if (m.runePct) out.push(`+${(m.runePct * 100).toFixed(1)}% rune power`);
-  if (m.shieldPct) out.push(`+${(m.shieldPct * 100).toFixed(1)}% shield power`);
-  for (const p of it.procs || []) out.push(PROC_LABEL[p.id] || p.id);
+  if (m.resFire) out.push(`+${m.resFire} fire resist`);
+  if (m.resWater) out.push(`+${m.resWater} water resist`);
+  if (m.resLight) out.push(`+${m.resLight} light resist`);
+  if (m.resDark) out.push(`+${m.resDark} dark resist`);
+  if (m.resAll) out.push(`+${m.resAll} all resists`);
+  if (m.avoid) { const t = (m.avoid * 100).toFixed(1); if (t !== '0.0') out.push(`+${t}% avoid`); }
+  if (m.move) { const t = ptxt(m.move); if (t !== '0') out.push(`+${t}% move`); }
+  if (m.haste) { const t = ptxt(m.haste); if (t !== '0') out.push(`+${t}% haste`); }
+  if (m.block) { const t = ptxt(m.block); if (t !== '0') out.push(`+${t}% block`); }
+  if (m.runePct) { const t = ptxt(m.runePct); if (t !== '0') out.push(`Rune % +${t}`); }   // gearfx: label runePct "Rune %"
+  if (m.shieldPct) { const t = ptxt(m.shieldPct); if (t !== '0') out.push(`Spell Shield % +${t}`); }   // gearfx: label shieldPct "Spell Shield %"
+  for (const p of it.procs || []) { const d = PROCS[p.id] || {}, ch = Math.round(((p.ch ?? d.ch) || 0) * 100), icd = p.icd ?? d.icd ?? 0, cd = Math.abs(icd - Math.round(icd)) < 1e-6 ? Math.round(icd) : +(+icd).toFixed(1); out.push(`✦ ${procName(p.id)} ${ch}% · ${cd} s cd`); }   // gearfx: chance and cooldown
   for (const g of it.gems || []) out.push(g ? `◆ ${GEMS[g].name}` : '◇ empty socket');
   return out.join(' · ');
 }
@@ -508,9 +519,9 @@ export class Loot {
   onKill(a, lv, o = {}) {
     const gold = 2 + Math.floor(Math.random() * 5) + (o.gold || 0);
     this.drop(a.x + 0.35, a.z + 0.2, { gold });
-    const luck = this.G.S.mode === 'hero' ? 1 : 0;
+    const luck = this.G.S.mode === 'hero' ? 1 : 0, cls = this.G.S.cls;   // gearfx: pass class so 70% of armor matches CLASS_ARMOR
     if (o.legendary) {   // a boss: always a Legendary (template boss odds: 4% it comes out Runeforged), and Glenheart's golem core
-      this.drop(a.x - 0.3, a.z + 0.35, { item: makeItem(lv + 1, Math.random() < 0.04 * (luck ? 1.25 : 1) ? R_RUNE : R_LEG, null, Math.random, luck) });
+      this.drop(a.x - 0.3, a.z + 0.35, { item: makeItem(lv + 1, Math.random() < 0.04 * (luck ? 1.25 : 1) ? R_RUNE : R_LEG, null, Math.random, luck, cls) });
       this.drop(a.x + 0.1, a.z - 0.35, { gem: 'golem_core' });
       return;
     }
@@ -521,11 +532,11 @@ export class Loot {
     }
     const gemOdds = { golem: ['golem_core', 0.1], icegolem: ['frost_core', 0.25], wraith: ['rift_shard', 0.08], skelmage: ['rift_shard', 0.1], mossgolem: ['golem_core', 0.15], sporeling: ['rift_shard', 0.08] }[a.role];
     if (gemOdds && Math.random() < gemOdds[1]) this.drop(a.x + 0.05, a.z - 0.4, { gem: gemOdds[0] });
-    if (Math.random() < 0.6 + luck * 0.1) this.drop(a.x - 0.3, a.z + 0.35, { item: makeItem(lv, null, null, Math.random, luck) });
+    if (Math.random() < 0.6 + luck * 0.1) this.drop(a.x - 0.3, a.z + 0.35, { item: makeItem(lv, null, null, Math.random, luck, cls) });
   }
   dropItem(x, z, lv, minRar = 0) {
-    const luck = this.G.S.mode === 'hero' ? 1 : 0;   // rares + rift rewards roll the template's elite column
-    return this.drop(x, z, { item: makeItem(lv, rollRarity(1, luck, minRar), null, Math.random, luck) });
+    const luck = this.G.S.mode === 'hero' ? 1 : 0, cls = this.G.S.cls;   // gearfx: rare / rift drops use the same class armor bias
+    return this.drop(x, z, { item: makeItem(lv, rollRarity(1, luck, minRar), null, Math.random, luck, cls) });
   }
   drop(x, z, what) {
     const ctx = this.ctx; if (!ctx || !this.layer) return null;
