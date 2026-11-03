@@ -112,11 +112,11 @@ window.__hm = G;   // smoke tests + debugging
 // ------------------------------------------------------------------ save / load
 G.slot = Math.min(SLOT_N, Math.max(1, +(Q.get('slot') || localStorage.getItem(LAST_SLOT)) || 1));
 function readSave(n = G.slot) {
-  try { const s = JSON.parse(localStorage.getItem(slotKey(n))); if (s && (s.v === 2 || s.v === 3)) return LO.migrateGear(s); } catch (e) { /* corrupt: fall through */ }
+  try { const s = JSON.parse(localStorage.getItem(slotKey(n))); if (s && (s.v === 2 || s.v === 3 || s.v === 4)) return LO.migrateGear(s); } catch (e) { /* corrupt: fall through */ }
   if (n !== 1 || localStorage.getItem(V1_DONE)) return null;
   try {   // migrate a v1 save: same fields, no class yet (Continue asks who you are, then carries on)
     const o = JSON.parse(localStorage.getItem(SLOT_V1));
-    if (o && o.v === 1) return { ...fresh(), ...o, v: 3, cls: null, hp: null, migrated: 1 };
+    if (o && o.v === 1) return { ...fresh(), ...o, v: 4, cls: null, hp: null, migrated: 1 };
   } catch (e) { /* ignore */ }
   return null;
 }
@@ -1141,7 +1141,7 @@ async function cont() {
   resume(s);
 }
 async function resume(s) {
-  G.S = { ...fresh(), ...s, v: 3 }; LO.migrateGear(G.S); PR.ensure(G.S); facMigrate(G.S);   // older saves: merit from finished work
+  G.S = { ...fresh(), ...s, v: 4 }; LO.migrateGear(G.S); PR.ensure(G.S); facMigrate(G.S);   // older saves: merit from finished work
   G.introNext = false; if (G.S.flags && G.S.flags.intro === 'playing') G.S.flags.intro = 'skipped';   // Continue never replays the opening
   closeTitle();
   G.busy = true;
