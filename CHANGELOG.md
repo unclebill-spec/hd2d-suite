@@ -2,6 +2,10 @@
 
 Dates are America/New_York. Newest first. Keep this current with every change you push.
 
+## 2026-11-02 (America/New_York): Hearthmoor boot counter + offline note (branch `hearthmoor-boot-counter`, not live)
+
+- Boot "caching n / 110" label now counts up with the shell precache (page enables the SW message queue; SW posts every 8 files too). One-time "Ready to play offline" toast when the first realm is cached. sw.js regenerated.
+
 ## 2026-10-28 (America/New_York): Hearthmoor Vanaheim Stage B (branch `hearthmoor-vanaheim`, not live)
 
 - New areas Mossbrook (`vh_village`) and the Thorngarden (`vh_garden`); boss Mother Nettlecrown (1500 HP, phases 65/35 %, yields at 5 %, spare/conquer choice). Spring Wages contract for players at the ally cap. Spare gives the Bean-Circlet, the garden shop, frost bloom and an Embassy rank.

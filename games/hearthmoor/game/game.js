@@ -1335,7 +1335,7 @@ G.ask = { open: askAuto, pick: askPick };
 // ------------------------------------------------------------------ start
 async function main() {
   const swOn = !QA && 'serviceWorker' in navigator && location.protocol.startsWith('http') && !Q.has('nosw');
-  startBootProgress(); registerSW(swOn);   // the SW installs the core set while the plaza boots; the bar shows real bytes / files
+  startBootProgress(); registerSW(swOn, { onOfflineReady: () => toast('Ready to play offline', 2.6) });   // the SW installs the core set while the plaza boots; the bar shows real bytes / files
   wire();
   if (Q.has('reset')) localStorage.removeItem(slotKey(G.slot));
   if (Q.has('pad') || (matchMedia('(pointer: coarse)').matches && !Q.has('nopad') && !QA)) document.body.classList.add('padon');
