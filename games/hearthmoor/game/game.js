@@ -953,6 +953,7 @@ function wire() {
   if ($('sfxVol')) $('sfxVol').oninput = () => { G.audio.start(); G.audio.setSfxVol(+$('sfxVol').value / 100); syncSfx(); };
   syncSfx();
   if ($('btnPauseMenu')) $('btnPauseMenu').onclick = () => { if (G.setPause) G.setPause(true); };
+  if ($('btnPauseBag')) $('btnPauseBag').onclick = () => { if (G.setPause) G.setPause(true); };
   attachPause(G); attachMinimap(G);
   $('dlg').addEventListener('pointerdown', (e) => {
     e.preventDefault();

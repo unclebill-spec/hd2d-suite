@@ -100,6 +100,8 @@ export function attachMinimap(G) {
   const cv = document.getElementById('minimap');
   const btn = document.getElementById('btnMinimap');
   if (!cv) return;
+  cv.title = 'Pause menu (Esc)';
+  cv.addEventListener('click', (e) => { e.stopPropagation(); if (G.setPause && !G.title) G.setPause(true); });   // tap / click the map opens the pause menu (the HUD pause chip is gone)
   let on = onPref();
   let last = 0;
   const g = cv.getContext('2d');
