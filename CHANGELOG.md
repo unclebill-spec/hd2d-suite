@@ -925,3 +925,4 @@ First build stage from the builder handoff (M0 + M1 + the start of M2). Playable
   - day / dusk / night;
   - Layout One pad.
 2026-11-02 20:04 ET | HD-2D Cozy Builder | hearthmoor-tue-1103: art swaps (palette-fix-1030/1030b, gamefx-remap-1030, hollows-lane-fx, moss_golem_glow, vine_grasp, vanaheim icons), Vine Grasp/Moss Golem/Foresight Charm wiring, spell-school sfx + weather loops, merged hearthmoor-boot-counter 98c2143, sw.js regenerated | undo: git revert the branch commits after 34fe468 (merge: git revert -m 1 64e6def)
+2026-11-02 20:08 ET | HD-2D Cozy Builder | hearthmoor-tue-1103 GD calls: Moss Golem own gr_iii summon, hound reverted, Vine Grasp spec + Burrowmoss teach, Foresight TODO(vh_stars), music_asgard reverted to e1f601d, sw.js regen | undo: git revert c2866e4 3f3b35f and the sw/docs commit
