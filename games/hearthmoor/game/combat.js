@@ -18,7 +18,11 @@ const GOLEM_ROLES = ['golem', 'eldergolem', 'icegolem', 'mushgolem'];   // first
 // Muspelheim areas carry the pack's five from mp_fx), fire_wave_l / _u / _d and ember_mote are derived there. Neon-orange fire against the dark.
 const LAVA = '#ff7a1a', HOT = '#ffd27a';
 const HOUND = { name: 'Magma hound', hp: 110, dmg: 13, reach: 1.4, speed: 2.6 };
-const HOUND_ROLES = ['magma_hound'];   // the realm's own hound sheet (every Muspelheim area carries it); elsewhere no hound answers
+const HOUND_ROLES = ['magma_hound', 'moss_golem'];   // [VANAHEIM] the glow Moss Golem reuses the hound minion where the Vanaheim sheets carry it
+const SCHOOL_KIND = { root: 'nature', golem: 'nature', skin: 'nature', hound: 'nature', nova: 'light', chain: 'light', ward: 'light', spirits: 'dark', veil: 'dark', swarm: 'dark' };
+const spellSfx = (S) => { const sc = S.school || SCHOOL_KIND[S.kind]; return sc ? 'spell_' + sc : 'spell'; };
+const HOUND_LOOK = { magma_hound: { name: 'Magma hound', color: null, toast: 'A Magma Hound shakes itself out of the lava!' },
+  moss_golem: { name: 'Moss Golem', color: 0x7cff9a, toast: 'A Moss Golem heaves itself up out of the loam!' } };   // the realm's own hound sheet (every Muspelheim area carries it); elsewhere no hound answers
 const WAVE_FX = { right: 'fire_wave', left: 'fire_wave_l', up: 'fire_wave_u', down: 'fire_wave_d' };
 // [NIFLHEIM-2] the Frostweave school (Gudrun's lessons; flags fw_i / fw_ii / fw_iii). Art: the Niflheim pack's own nf_fx rows (ice_lance, frost_nova, mist_veil,
 // spirit_swarm, snow_puff) where an area's game-fx atlas carries them (the six Niflheim areas), else the stock spells atlas (coldfire_bolt, frost_puff, coldfire_motes, summon_poof).
@@ -67,7 +71,7 @@ export class Combat {
     this.nums = [];
     this.bars = new Map();
     this.st = PLAYER.stamina; this.stT = 0;
-    this.cd = { spell: 0, charm: 0, summon: 0, skin: 0, cold: 0, golem: 0, swarm: 0, ward: 0, hound: 0, veil: 0, spirits: 0, igolem: 0 };   // skin / cold / golem: the long Stonefrost II / III cooldowns, swarm / ward / hound: the Caldera school's (spell = the shared 1 s gap)
+    this.cd = { spell: 0, charm: 0, summon: 0, skin: 0, cold: 0, golem: 0, swarm: 0, ward: 0, hound: 0, veil: 0, spirits: 0, igolem: 0, root: 0 };   // skin / cold / golem: the long Stonefrost II / III cooldowns, swarm / ward / hound: the Caldera school's (spell = the shared 1 s gap)
     this.skin = null; this.patches = []; this.magma = []; this.motes = []; this.ward = null; this.veil = null; this.spirits = [];
     this.godT = 0;
     this.defeated = {};              // area:id -> game seconds left until it wanders back
@@ -80,7 +84,7 @@ export class Combat {
   // outgoing damage: stat / skill multiplier + a crit roll (crits pop bigger, in gold)
   out(kind, base) {
     const M = this.M, mul = kind === 'melee' ? M.meleeMul : kind === 'summon' ? M.summonMul : M.spellMul;
-    const crit = kind !== 'summon' && Math.random() < M.crit;
+    const crit = kind !== 'summon' && Math.random() < M.crit + ((this.foreUntil || 0) > performance.now() ? 0.05 : 0);   // [VANAHEIM] Foresight Charm
     this.lastCrit = crit;
     const lit = kind !== 'summon' && this.G.glow ? this.G.glow.dmgMul() : 1;   // glowlit: +10%
     const mode = (MODES[this.G.S.mode] || MODES.adventurer).deal;
@@ -197,7 +201,7 @@ export class Combat {
     const gl = D.shy ? this.G.glow : null;   // cold-fire wraiths: never drift into light
     const step = (tx, tz, scale = 1) => {
       if (gl) { const n = Math.hypot(tx, tz) || 1; if (gl.litAt(a.x + tx / n * 0.45, a.z + tz / n * 0.45)) return false; }
-      return ctx.moveActor(a, tx, tz, dt * scale * (this.coldAt(a.x, a.z) ? this.coldSlow : 1) * (e.chillT > 0 ? 0.5 : 1));   // Cold Fire patch / Frostweave chill: half speed
+      return ctx.moveActor(a, tx, tz, dt * scale * (this.coldAt(a.x, a.z) ? this.coldSlow : 1) * (e.chillT > 0 ? 0.5 : 1) * (e.rootT > 0 ? 0 : 1));   // [VANAHEIM] Vine Grasp: rooted foes do not move   // Cold Fire patch / Frostweave chill: half speed
     };
     if (gl && e.state !== 'attack') {
       const Z = gl.zoneAt(a.x, a.z);   // caught in light (a pool bloomed under it, a lamp came on): slip out
@@ -364,6 +368,7 @@ export class Combat {
   // ---------------------------------------------------------------- the player
   hurtPlayer(dmg, src, push = 0.3) {
     const ctx = this.ctx, p = ctx.player, G = this.G;
+    if (p.iframes > 0 && p.roll && !G.downed && this.hasForesight()) this.foreUntil = performance.now() + 60000;   // [VANAHEIM] Foresight Charm: a dodged hit -> +5% crit 60 s
     if (G.downed || this.godT > 0 || p.iframes > 0) return false;
     dmg *= (MODES[G.S.mode] || MODES.adventurer).hurt;   // Story / Adventurer / Hero
     if (this.skin) dmg = Math.max(1, Math.round(dmg * this.skin.take));   // Stone Skin: -40 % damage taken
@@ -480,7 +485,7 @@ export class Combat {
     const tgt = this.nearestEnemy(p, 7);
     if (tgt && !p.act) ctx.actors.setFacingFromVec(p, tgt.a.x - p.x, tgt.a.z - p.z);
     if (!p.act) p.castT = p.castDur;
-    G.audio.sfx('spell');
+    G.audio.sfx(spellSfx(S));   // [SOUND] school -> spell_light / spell_dark / spell_nature (audio falls back to 'spell')
     const fv = FV[p.facing] || [0, 1], fx = ctx.effects;
     if (!fx) return false;
     const T = S.stone ? this.stoneFx() : null;   // Boulder Toss / Frost Rune: tier II / III art + damage from the game-fx atlas
@@ -493,6 +498,7 @@ export class Combat {
     else if (S.kind === 'swarm') this.doSwarm(S);
     else if (S.kind === 'ward') this.doWard(S);
     else if (S.kind === 'hound') this.doHound(S);
+    else if (S.kind === 'root') this.doRoot(S);
     else if (S.kind === 'lance') this.doLance(S);
     else if (S.kind === 'fnova') this.doFrostNova(S);
     else if (S.kind === 'veil') this.doVeil(S);
@@ -739,18 +745,31 @@ export class Combat {
   doHound(S) {
     const ctx = this.ctx, p = ctx.player, G = this.G, roles = ctx.actors.meta.roles;
     const role = HOUND_ROLES.find((r) => roles[r]);
-    if (!role) { this.cd.hound = 0; this.cd.spell = 0; G.toast('No hound answers here: the Magma Hound needs Muspelheim\'s heat.', 2.2); return; }
+    if (!role) { this.cd.hound = 0; this.cd.spell = 0; G.toast('No hound answers here: the Magma Hound needs Muspelheim\'s heat (or Vanaheim\'s moss).', 2.2); return; }
+    const LK = HOUND_LOOK[role] || HOUND_LOOK.magma_hound, GLOW = LK.color || LAVA;
     if (this.summon) this.unsummon();
     const fv = FV[p.facing] || [0, 1], hp = Math.round(HOUND.hp * this.M.summonMul);
     const x = p.x + fv[0] * 1.0 + 0.3, z = p.z + fv[1] * 1.0;
     this.calSpawn('hound_summon', x, ctx.heightAt(x, z), z + 0.05, {}) || (ctx.effects && ctx.effects.spawn('summon_poof', x, ctx.heightAt(x, z), z + 0.05));
-    const a = ctx.addNpc({ id: 'summon', role, name: HOUND.name, pos: [x, z], behavior: 'idle', turn: false, speed: HOUND.speed });
+    const a = ctx.addNpc({ id: 'summon', role, name: LK.name, pos: [x, z], behavior: 'idle', turn: false, speed: HOUND.speed });
     a.ai = true; a.noTalk = true; a.facing = p.facing;
-    this.summon = { a, tier: 3, hound: true, D: { ...HOUND, hp }, hp, life: S.life + this.M.summonLife, cd: 0.4, target: null, sparkT: 0.3 };
-    if (ctx.addGlow) this.summon.light = ctx.addGlow(a.x, a.y, a.z, { color: LAVA, intensity: 4, range: 3.0, lift: 0.6, fadeIn: 0.4 });
-    if (G.glow) G.glow.pool(x, z, LAVA, 0.6);
+    this.summon = { a, tier: 3, hound: true, D: { ...HOUND, name: LK.name, hp }, hp, life: S.life + this.M.summonLife, cd: 0.4, target: null, sparkT: 0.3 };
+    if (ctx.addGlow) this.summon.light = ctx.addGlow(a.x, a.y, a.z, { color: GLOW, intensity: 4, range: 3.0, lift: 0.6, fadeIn: 0.4 });
+    if (G.glow) G.glow.pool(x, z, GLOW, 0.6);
     G.audio.sfx('summon');
-    G.toast('A Magma Hound shakes itself out of the lava!', 1.6);
+    G.toast(LK.toast, 1.6);
+  }
+  // [VANAHEIM] Vine Grasp ('root' kind): roots snare the nearest foe in place for S.life s (it can still swing); vine_grasp loops, then vine_grasp_end
+  hasForesight() { const eq = (this.G.S && this.G.S.gear) || {}; return Object.values(eq).some((it) => it && (it.unique === 'foresight_charm' || it.id === 'foresight_charm')); }
+  doRoot(S) {
+    const ctx = this.ctx, p = ctx.player, G = this.G, dur = S.life || 2.0;
+    const t = this.nearestEnemy(p, S.range || 6);
+    if (!t) { this.cd.spell = 0; this.cd.root = 0; G.toast('Nothing in reach for the vines.', 1.4); return; }
+    t.rootT = Math.max(t.rootT || 0, dur);
+    const a = t.a, gx = ctx.gamefx;
+    if (!(gx && gx.spawn && gx.meta && gx.meta.effects && gx.meta.effects.vine_grasp && gx.spawn('vine_grasp', a.x, a.y, a.z + 0.05, { duration: dur })))
+      ctx.effects && ctx.effects.spawn('summon_poof', a.x, a.y, a.z + 0.05);
+    G.toast('Vine Grasp: roots hold it fast.', 1.2);
   }
   updateCaldera(dt, frozen) {
     const ctx = this.ctx, p = ctx.player;
@@ -876,7 +895,7 @@ export class Combat {
   updateFrost(dt, frozen) {
     const ctx = this.ctx, p = ctx.player;
     if (frozen) return;
-    for (const e of this.enemies) if (e.chillT > 0) e.chillT = Math.max(0, e.chillT - dt);
+    for (const e of this.enemies) { if (e.chillT > 0) e.chillT = Math.max(0, e.chillT - dt); if (e.rootT > 0) e.rootT = Math.max(0, e.rootT - dt); }
     const v = this.veil;
     if (v) { v.t -= dt; if (v.f) { v.f[1].x = p.x; v.f[1].y = p.y; v.f[1].z = p.z + 0.08; } if (v.t <= 0 || this.G.downed) this.endVeil(); }
     for (const s2 of this.spirits) {

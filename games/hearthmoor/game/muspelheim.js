@@ -88,7 +88,8 @@ SPELLS.magma_pool = { name: 'Magma Pool', cd: 3.6, dmg: 5, radius: 1.6, life: 6,
 SPELLS.ember_swarm = { name: 'Ember Swarm', cd: 10, dmg: 9, burn: 2, n: 6, orbit: 1.0, kind: 'swarm', own: 'swarm' };   // II: 6 motes orbit you for 1 s, then fly at the nearest foes
 SPELLS.flame_ward = { name: 'Flame Ward', cd: 16, t: 8, take: 0.7, refl: 0.1, kind: 'ward', own: 'ward' };   // II: 8 s, -30 % fire damage taken, 10 % of each blow back as a burn
 SPELLS.magma_hound = { name: 'Magma Hound', cd: 40, life: 20, kind: 'hound', own: 'hound' };   // III: a magma hound fights for 20 s (replaces any other summon)
-Object.assign(SPELL_NAMES, { fire_wave: 'Fire Wave', magma_pool: 'Magma Pool', ember_swarm: 'Ember Swarm', flame_ward: 'Flame Ward', magma_hound: 'Magma Hound' });
+SPELLS.vine_grasp = { name: 'Vine Grasp', cd: 10, life: 2.0, range: 6, kind: 'root', own: 'root', school: 'nature' };   // [VANAHEIM] snare 2.0 s (placeholder = vine_grasp duration); Liss teaches it
+Object.assign(SPELL_NAMES, { fire_wave: 'Fire Wave', magma_pool: 'Magma Pool', ember_swarm: 'Ember Swarm', flame_ward: 'Flame Ward', magma_hound: 'Magma Hound', vine_grasp: 'Vine Grasp' });
 const csTeach = (G, flag, spells, toast) => { flags(G.S)[flag] = 1; for (const n of spells) G.learn(n); G.toast(toast, 2.8); mark(G); G.save && G.save(); };
 function school(S) {   // Torka's lessons, or null: they win over the Emberfang / Emberfall lines as soon as the level allows (Solvi's order)
   const f = F(S), al = (f.alliance || {}).muspelheim, lv = S.lv || 1;

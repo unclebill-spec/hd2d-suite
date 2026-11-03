@@ -22,6 +22,8 @@ export const VH_ITEMS = {
   frost_bloom:{ name: 'Frost bloom', px: 'frost_bloom', about: 'A thorn-flower frozen blue at the heart. The same cold as the spike.' },
   nettle_circlet: { name: 'Nettlecrown\'s Bean-Circlet', px: 'alder_charm', accessory: true, unique: true, regen: 2, thorns: 5,
                     about: 'A woven bean-vine crown with one blue bloom. +2 HP/s regen while resting; the first enemy that hits you each fight takes 5 thorn damage.' },
+  foresight_charm: { name: 'Foresight Charm', px: 'foresight_charm', accessory: true, unique: true,
+    about: 'A star-shaped bead that blinks a moment before danger does. After a dodge, +5% crit chance for 60 s.' },
   bloom_token:{ name: 'Bloomtide token', px: 'bloom_token', about: 'A pressed glow-cap on a ribbon. Gnomes trade them like secrets.' },
   mossheart_staff: { name: 'Mossheart Staff', px: 'mossheart_staff', legendary: true,
                      about: 'Grown, not carved, around a Greenheart tine. It hums, and somewhere a spore giant wakes up.' },
@@ -175,14 +177,16 @@ export const VH_TALK = {
     // at stage 1 she offers the two minigames still unwon via G.bloomAction({ act: 'bloom_game', kind }).
     if (A(S) !== 'befriend') return { pages: base };
     const q = S.quests || {};
-    if (!q.vh_bloom) return { pages: [...base, 'Every seventh night the springs bloom. Come find me then, and we\'ll harvest and dance.'],
-      then: (G) => { G.setQuest('vh_bloom', 1); G.refreshMarkers && G.refreshMarkers(); } };
+    if (!q.vh_bloom) return { pages: [...base, 'Every seventh night the springs bloom. Come find me then, and we\'ll harvest and dance.', bloomHint(S),
+      'Here, a trick of mine: ask the roots and they hold things still. Vine Grasp.'],
+      then: (G) => { G.setQuest('vh_bloom', 1); G.learn && G.learn('vine_grasp'); G.refreshMarkers && G.refreshMarkers(); } };
     if (q.vh_bloom !== 1) return { pages: base };
-    if (!bloomNight(S)) return { pages: ['Not tonight. Bloomtide comes every seventh night. The caps can feel it coming.'] };
+    if (!bloomNight(S)) return { pages: ['Not tonight. The caps can feel it coming.', bloomHint(S)] };
     const won = (S.flags || {}).vh_bloom_games || {};
     const options = BLOOM_KINDS.filter((k) => !won[k]).map((kind) => ({ act: 'bloom_game', kind, label: BLOOM_LABEL[kind],
       pick: (G) => { G.bloomAction({ act: 'bloom_game', kind }); return null; } }));
-    if (!options.length) return { pages: ['You harvested, you danced. The gnomes still want their riddles.'] };
+    if (!options.length) return hasForesight(S) ? { pages: ['You harvested, you danced. The gnomes still want their riddles.'] }
+      : { pages: ['You harvested, you danced. Three caps, three stars. Here. It winks before trouble does. Rude of it, but useful.'], then: (G) => { giveForesight(G); G.toast('Foresight Charm', 2.2); G.save && G.save(); } };
     options.push({ label: 'Later.', pick: () => null });
     return { pages: ['It\'s Bloomtide! The caps are glowing. Harvest with me, or dance?'], choice: { id: 'vh_bloom_games', options } };
   },
@@ -215,7 +219,7 @@ export const VH_ENEMIES = {
 // yields 5 % / 2 thorn-nymphs in P1 and P3 / conquer path +1 Thornhex (heals her 20) / no enrage / 600 XP.
 export const NETTLE = { adds: { 1: 2, 3: 2 }, healEvery: 6, grabDmg: 14, circle: [2.4, -1.0], face: [47, 20, 66, 66] };   // face: dialogue head crop inside her 160x200 idle-down frame
 // Hearthmoor Art icons (art/vanaheim/icons, 16 px): drawn as images in the bag (game.js iconHTML)
-for (const k of ['hexknot', 'fizzstone', 'tithe_seal', 'frost_bloom', 'mossheart_staff', 'nettle_circlet']) if (ITEMS[k]) ITEMS[k].img = `art/vanaheim/icons/${k}.png`;
+for (const k of ['hexknot', 'fizzstone', 'tithe_seal', 'frost_bloom', 'mossheart_staff', 'nettle_circlet', 'bloom_token', 'foresight_charm']) if (ITEMS[k]) ITEMS[k].img = `art/vanaheim/icons/${k}.png`;
 const PLACEHOLDER_ROLE = { nettlecrown: 'hedgewitch', thornnymph: 'sporeling', thornhex: 'hedgewitch' };   // PLACEHOLDER until art/vanaheim/READY.txt
 export const VH_PLANNED = { vh_village: 'Mossbrook', vh_garden: 'The Thorngarden' };
 export const AREAS_VH = Object.fromEntries(Object.keys(VH_PLANNED).map((a) => [a, `areas/${a}/`]));
@@ -270,6 +274,19 @@ const BLOOM_NIGHT_T = (t) => t > 0.8 || t < 0.25;   // same night window as alfh
 function bloomNight(S) {
   try { if (new URLSearchParams(location.search).has('bloomnight')) return true; } catch (e) { /* no location */ }
   const ctx = GREF.vana && GREF.vana.ctx; return (S.day || 0) % 7 === 0 && !!(ctx && ctx.clock && BLOOM_NIGHT_T(ctx.clock.t));
+}
+const nightsToBloom = (S) => (7 - ((S.day || 0) % 7)) % 7;   // [VANAHEIM] Liss's hint (story/liss_hint_foresight.md)
+function bloomHint(S) {
+  const n = nightsToBloom(S);
+  if (n === 0) return 'Bloomtide is tonight! Come back when the caps start glowing.';
+  if (n === 1) return 'Next Bloomtide is tomorrow night. My toes are already tingling.';
+  return `Next Bloomtide is in ${n} nights. I counted on my toes. Twice.`;
+}
+const hasForesight = (S) => [...(S.bag || []), ...Object.values(S.gear || {})].some((x) => x && x.unique === 'foresight_charm');
+function giveForesight(G) {   // both Bloomtide games won (stand-in for the gnome star game, not on this branch); the crit buff lives in combat.hurtPlayer / out()
+  const S = G.S; S.bag = S.bag || []; if (hasForesight(S)) return;
+  S.bag.push({ uid: `fore${Date.now().toString(36)}`, slot: 'trinket', name: 'Foresight Charm', rar: 3, lv: Math.max(1, S.lv || 1), unique: 'foresight_charm',
+    mods: {}, gems: [], img: 'art/vanaheim/icons/foresight_charm.png', about: VH_ITEMS.foresight_charm.about });
 }
 function giveCirclet(G) {   // the spare reward (Hearthmoor Story): a unique trinket; regen maps onto progress.mods().regen (HP/s while not chased)
   const S = G.S; S.bag = S.bag || [];
