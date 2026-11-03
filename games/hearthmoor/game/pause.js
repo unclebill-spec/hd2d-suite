@@ -139,6 +139,11 @@ export function attachPause(G) {
     paintFocus();
   }
 
+  function showPicker() {
+    // a v1 save has no class: cont() opens the hero picker, which lives inside the title screen
+    const ts = document.getElementById('titlescreen');
+    if (ts) ts.hidden = false;
+  }
   function openHero(tabN) {
     setPause(false);
     if (tabN != null && G.hui) { G.hui.tab = tabN; G.hui.i = 0; }
@@ -151,7 +156,7 @@ export function attachPause(G) {
     G.slot = n;
     try { localStorage.setItem('hearthmoor-lastslot', String(n)); } catch (e) { /* private mode */ }
     setPause(false);
-    if (!s.cls && G.cont) { G.cont(); return; }
+    if (!s.cls && G.cont) { showPicker(); G.cont(); return; }
     if (G.resume) G.resume(s);
   }
   function act(name, btn) {
@@ -167,6 +172,7 @@ export function attachPause(G) {
       if (!s) { if (G.toast) G.toast('No save in this slot.'); return; }
       if (!window.confirm('Load the last save? Progress since then will be lost.')) return;
       setPause(false);
+      if (!s.cls) showPicker();
       if (G.cont) G.cont();
     } else if (name === 'loadslot') loadSlot(+(btn && btn.dataset.slot));
     else if (name === 'quit') {
