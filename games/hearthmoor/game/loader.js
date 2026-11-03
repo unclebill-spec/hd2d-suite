@@ -91,17 +91,19 @@ const ask = (msg, ms = 120000) => new Promise((ok) => {
   ch.port1.onmessage = (e) => { clearTimeout(t); ok(e.data); };
   sw.postMessage(msg, [ch.port2]);
 });
-export function registerSW(enabled) {
+export function registerSW(enabled, { onOfflineReady } = {}) {
   if (!enabled || !('serviceWorker' in navigator)) return null;
   navigator.serviceWorker.addEventListener('message', (e) => {
     const d = e.data || {};
     if (d.type === 'hm-sw-fill') { S.fill = d; if (!d.complete && S.filling) setTimeout(nudge, 1000); return; }   // next time-boxed batch
     if (d.type !== 'hm-sw-progress') return;
     const frac = d.total ? d.bytes / d.total : d.files / d.nfiles;
-    if (d.kind === 'shell') S.swCore = { files: d.files, nfiles: d.nfiles, bytes: d.bytes, total: d.total, done: !!d.done };
+    if (d.kind === 'first' && d.done && onOfflineReady) { try { if (!localStorage.getItem('hm-offline-ready')) { localStorage.setItem('hm-offline-ready', '1'); onOfflineReady(); } } catch (err) { /* private mode */ } }
+    if (d.kind === 'shell') S.swCore = { files: Math.max(d.files, (S.swCore && S.swCore.files) || 0), nfiles: d.nfiles, bytes: d.bytes, total: d.total, done: !!d.done };
     else if (d.kind === 'first' || d.kind === 'lazy') { S.lazy = { phase: d.kind, files: d.files, nfiles: d.nfiles, done: !!d.done && d.kind === 'lazy', nfailed: d.nfailed || 0 };
       if (bootGone()) drawFillLine(S.lazy.done ? 1 : (d.kind === 'first' ? 0.25 * frac : 0.25 + 0.75 * frac)); }
   });
+  if (navigator.serviceWorker.startMessages) navigator.serviceWorker.startMessages();   // addEventListener alone leaves SW messages queued during boot (counter sat at 1/110)
   return navigator.serviceWorker.register('sw.js').catch((err) => { console.warn('[hearthmoor] service worker registration failed', err); return null; });
 }
 // background fill once play has started: the SW works in time-boxed batches (first realm, then lazy areas + audio, throttled);

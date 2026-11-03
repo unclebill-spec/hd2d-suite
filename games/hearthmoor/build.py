@@ -596,7 +596,7 @@ async function fill(name, list, { kind, conc = 4, gap = 0, budget = BATCH_MS } =
       for (const [oc, om] of old) if (om[f] === h) { r = await oc.match(abs(f)); if (r) { reused++; break; } }
       if (!r) r = await fetchOne(f);
       try { if (r) { await c.put(abs(f), r); meta[f] = h; n++; done += sz; } else failed.push(f); } catch (e) { failed.push(f); }   // e.g. quota
-      if (Date.now() - last > 200) { last = Date.now(); tell({ type: 'hm-sw-progress', kind, files: n, nfiles: list.length, bytes: done, total }); }
+      if (Date.now() - last > 200 || n % 8 === 0) { last = Date.now(); tell({ type: 'hm-sw-progress', kind, files: n, nfiles: list.length, bytes: done, total }); }
       if ((n + failed.length) % 40 === 0) await writeMeta(c, meta);
       if (gap) await sleep(gap);
     }
