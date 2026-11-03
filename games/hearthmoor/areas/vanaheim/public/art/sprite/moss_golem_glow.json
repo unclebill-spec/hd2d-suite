@@ -1,0 +1,134 @@
+{
+ "tool": "Hearthmoor Art moss-golem (tools/make_moss_golem.py, recolour of caldera mpenemy magma_hound)",
+ "biome": "cozy-village",
+ "frame": [
+  56,
+  68
+ ],
+ "pivot": [
+  28,
+  68
+ ],
+ "ground_row": 67,
+ "facings": [
+  "down",
+  "up",
+  "left",
+  "right"
+ ],
+ "anims": {
+  "idle": {
+   "start": 0,
+   "count": 4,
+   "fps": 3,
+   "loop": [
+    0,
+    1,
+    2,
+    1
+   ],
+   "blink": 3
+  },
+  "walk": {
+   "start": 4,
+   "count": 4,
+   "fps": 8
+  },
+  "cast": {
+   "start": 8,
+   "count": 4,
+   "fps": 6,
+   "loop": [
+    0,
+    1,
+    2,
+    2,
+    3,
+    3
+   ],
+   "casters_only": true
+  },
+  "attack": {
+   "start": 12,
+   "count": 4,
+   "fps": 10,
+   "loop": [
+    0,
+    1,
+    2,
+    2,
+    3
+   ],
+   "heroes_only": true
+  },
+  "defend": {
+   "start": 16,
+   "count": 4,
+   "fps": 6,
+   "loop": [
+    0,
+    1
+   ],
+   "hold": [
+    2,
+    3
+   ],
+   "heroes_only": true
+  },
+  "jump": {
+   "start": 20,
+   "count": 4,
+   "fps": 8,
+   "phases": [
+    "crouch",
+    "launch",
+    "airborne",
+    "land"
+   ],
+   "heroes_only": true
+  },
+  "die": {
+   "start": 24,
+   "count": 4,
+   "fps": 6,
+   "once": true,
+   "enemies_only": true
+  }
+ },
+ "cols": 28,
+ "size": [
+  1568,
+  272
+ ],
+ "image": "moss_golem_glow.png",
+ "roles": {
+  "moss_golem": {
+   "row": 0,
+   "kind": "summon",
+   "scale": 1.4,
+   "desc": "Moss Golem summon (1.4x): moss-green recolour of the Magma Hound rig; deep-moss cracks with neon-moss glow seams.",
+   "anims": [
+    "idle",
+    "walk",
+    "attack",
+    "die"
+   ],
+   "size_bounds": [
+    [
+     10,
+     54
+    ],
+    [
+     8,
+     68
+    ]
+   ],
+   "caster": false,
+   "enemy": false,
+   "stats_hint": {
+    "tier": "enemy",
+    "height_x_player": 1.4
+   }
+  }
+ }
+}

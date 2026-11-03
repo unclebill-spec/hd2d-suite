@@ -25183,6 +25183,18 @@
     "walk",
     "follow"
    ]
+  },
+  "moss_golem": {
+   "sheet": "moss_golem",
+   "row": 0,
+   "kind": "summon",
+   "anims": [
+    "idle",
+    "walk",
+    "attack",
+    "die"
+   ],
+   "desc": "Moss Golem summon (1.4x): moss-green recolour of the Magma Hound rig; deep-moss cracks with neon-moss glow seams."
   }
  },
  "sheets": {
@@ -25217,6 +25229,10 @@
   "hhinkling": {
    "json": "hhinkling.json",
    "image": "hhinkling.png"
+  },
+  "moss_golem": {
+   "json": "moss_golem_glow.json",
+   "image": "moss_golem_glow.png"
   }
  }
 }
