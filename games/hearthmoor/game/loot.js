@@ -15,6 +15,11 @@ export const R_RARE = 1, R_EPIC = 2, R_LEG = 3, R_RUNE = 4;
 // the template's 14 slots (STATS.md 4.3); W = its slot weight, used only as a multiplier on the item's stat roll
 export const SLOTS = ['helm', 'neck', 'chest', 'legs', 'feet', 'arms', 'gloves', 'ringL', 'ringR', 'belt', 'cloak', 'primary', 'secondary', 'ranged'];
 export const SLOT_W = { helm: 0.8, neck: 0.6, chest: 1.0, legs: 0.9, feet: 0.6, arms: 0.6, gloves: 0.6, ringL: 0.5, ringR: 0.5, belt: 0.5, cloak: 0.6, primary: 1.0, secondary: 0.8, ranged: 0.6 };
+// gear14 power normalisation: the live 3-slot kit (weapon + armor + trinket) rolled each piece at weight 1 (sum 3, ~2 mods each);
+// every new slot also rolls ~2 mods, so a full 14-piece kit would carry sum(SLOT_W) = 9.6 "old pieces" of stats (3.2x).
+// GEAR_NORM = 3 / sum(SLOT_W) = 3 / 9.6 = 0.3125 scales every roll so a full kit totals ~ the old kit; slot weights keep their relative shape.
+// uniques (asgard / vanaheim literals) set their own mods and are not scaled.
+export const GEAR_NORM = 3 / SLOTS.reduce((a, sl) => a + SLOT_W[sl], 0);
 export const SLOT_LABEL = { helm: 'helm', neck: 'neck', chest: 'chest', legs: 'legs', feet: 'feet', arms: 'arms', gloves: 'gloves', ringL: 'ring (left)', ringR: 'ring (right)', belt: 'belt', cloak: 'cloak', primary: 'main hand', secondary: 'off-hand', ranged: 'ranged / charm' };
 const DROP_SLOTS = SLOTS.filter((s) => s !== 'ringR');   // rings roll once (as ringL) and equip into the free / weaker ring slot
 export const ringSlot = (sl) => sl === 'ringL' || sl === 'ringR';
@@ -137,7 +142,7 @@ export function makeItem(lv = 1, rar = null, slot = null, rnd = Math.random, luc
   const r = rar ?? rollRarity(0, luck, 0, rnd);
   let sl = slot === 'weapon' ? 'primary' : slot === 'armor' ? 'chest' : slot === 'trinket' ? 'neck' : slot || DROP_SLOTS[Math.floor(rnd() * DROP_SLOTS.length)];
   if (!ROLLS[sl]) sl = 'neck';
-  const R = RARITY[r], k = R.mul * (1 + (lv - 1) * 0.06) * SLOT_W[sl];
+  const R = RARITY[r], k = R.mul * (1 + (lv - 1) * 0.06) * SLOT_W[sl] * GEAR_NORM;
   const base = BASES[sl][Math.floor(rnd() * BASES[sl].length)], pre = PREFIX[r][Math.floor(rnd() * 3)];
   const mods = {}, Rl = ROLLS[sl];
   const add = ([key, v]) => { if (key in mods) return; mods[key] = ['hpAdd', 'stAdd'].includes(key) ? Math.max(1, Math.round(v * k)) : +(v * k).toFixed(3); };

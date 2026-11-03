@@ -4,7 +4,7 @@
 // (random 1 stone, chosen 2; keep new or old; per-item limit by rarity). Gloom and glow: red forge mouths, neon-blue
 // quench tanks (forge pack gamefx + point lights). Also: Sparks in the Street (the riot, 5), sockets via Orri (4), smelt /
 // scrap-for-iron (1.1, 2.5), The First Temper (6), cold-blue sparks on +7 / +10 weapons (2.3). Nettle + the Still: later.
-import { RARITY, SLOTS, SLOT_W, SLOT_LABEL, scrap as lootScrap } from './loot.js';
+import { RARITY, SLOTS, SLOT_W, GEAR_NORM, SLOT_LABEL, scrap as lootScrap } from './loot.js';
 // gear14: caps per template tier [Common, Rare, Epic, Legendary, Runeforged]. Old Uncommon pieces became Common and keep any socket they had.
 export const SOCKET = { cap: [0, 2, 3, 3, 3], punch: [{ gold: 50, iron: 2 }, { gold: 120, steel: 1 }, { gold: 250, steel: 2, gems: ['rift_shard'] }] };
 export const SCRAP_IRON = [1, 3, 4, 6, 8];
@@ -77,7 +77,7 @@ export function temper(S, it, rnd = Math.random) {
   it.heat = heat + 1;   // gold + gems refunded (never taken), iron + steel spent
   return { ok: false, up: to - 1, line: it.heat >= UP.sure - 1 ? "She's hot as she'll get. Next try takes, I'd stake my anvil on it." : TOVA_FAIL[Math.floor(rnd() * 3)], quench: to >= 7 };
 }
-const itemK = (it) => RARITY[it.rar].mul * (1 + ((it.lv || 1) - 1) * 0.06) * (SLOT_W[it.slot] || 1);
+const itemK = (it) => RARITY[it.rar].mul * (1 + ((it.lv || 1) - 1) * 0.06) * (SLOT_W[it.slot] ? SLOT_W[it.slot] * GEAR_NORM : 1);   // rerolls match makeItem's normalised rolls
 // a reroll: replace `stat` (or a random one) with a fresh stat from the slot pool. Returns { old, neu } mods for the keep choice.
 export function rerollLock(S, it, chosen) {
   if (!it) return 'nothing equipped there';
