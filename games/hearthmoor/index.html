@@ -15,7 +15,7 @@
 <link rel="apple-touch-icon" href="icons/icon-192.png">
 <link rel="stylesheet" href="engine/hud.css">
 <link rel="stylesheet" href="game/game.css">
-<link rel="stylesheet" href="game/menu.css">
+<link rel="stylesheet" href="game/menu-classic.css">
 <script>window.HD2D_MANUAL = true;</script>
 <script type="importmap">
 { "imports": { "three": "./vendor/three.module.js", "three/addons/": "./vendor/addons/" } }
@@ -26,6 +26,7 @@
 <div id="fxlayer"></div>
 <div id="hud">
   <div class="chip title" id="title">Hearthmoor</div>
+  <button class="chip btn" id="btnPauseBag" title="Pause (Esc)" aria-label="Pause menu">⏸</button>
   <div class="chip bag" id="bag" data-hud><span class="empty">bag: empty</span></div>
   <div class="chip vitals" id="vitals" data-hud hidden>
     <span class="vrow"><b>HP</b><span class="bar hp"><i id="hpFill"></i></span><em id="hpTxt">90</em></span>
@@ -38,12 +39,14 @@
     <button class="chip btn" id="btnLog" title="Quest log (J)">quests 0/3</button>
     <button class="chip btn" id="btnSave" title="Save now (K)">save</button>
     <button class="chip btn" id="btnOpts" title="Options: display, fullscreen, install, sound, pad (O)">⚙</button>
+    <button class="chip btn" id="btnPauseMenu" title="Pause (Esc)">⏸</button>
   </div>
   <div class="say" id="say" hidden></div>
   <div class="prompt" id="prompt" hidden></div>
   <div class="toast" id="toast" hidden></div>
   <button id="introSkip" hidden title="Skip the Lantern Eve opening (Esc / B)">skip <span>▸▸</span></button>
-  <div class="hint" id="hint" data-pad="🎮 stick walk · A talk / jump · B dodge · X attack · Y cast (hold: spell wheel) · LB / RB spell · LT guard · RT summon · R-stick zoom (click: tonic) · Start quests">WASD walk · R attack · C guard · Z jump · X dodge · F cast · Q / 1-4 spell · B spellbook · G gear · V summon · U tonic · E talk · J quests · O options</div>
+  <div class="hint" id="hint" data-pad="🎮 stick walk · A talk / jump · B dodge · X attack · Y cast (hold: spell wheel) · LB / RB spell · LT guard · RT summon · R-stick zoom (click: tonic) · Start pause">WASD walk · R attack · C guard · Z jump · X dodge · F cast · Q / 1-4 spell · B spellbook · G gear · V summon · U tonic · E talk · J quests · O options · Esc pause</div>
+  <canvas id="minimap" width="132" height="132" hidden></canvas>
 </div>
 
 <!-- dialogue: carved-wood frame around a parchment page -->
@@ -129,10 +132,110 @@
       <button class="wbtn sm" id="btnGlow" title="Extra glow lights (spell pools, drops, lanterns). Phones: 2 is lighter on the GPU">glow lights: 3</button>
       <button class="wbtn sm" id="btnMotion" title="Menu cursor and selection pulse. Reduced shows the static frames (also follows the system reduced-motion setting)">motion: full</button>
       <button class="wbtn sm" id="btnShake" title="Screen shake on hits and boss moments. Off while motion is reduced">shake: on</button><button class="wbtn sm" id="btnFlash" title="Hit flashes, storm lightning and the lamp swell. Off while motion is reduced">flashes: on</button>
+      <button class="wbtn sm" id="btnMinimap" title="Show or hide the corner map">minimap: on</button>
       <button class="wbtn sm" id="btnMode" title="Story: gentle, no faint penalty · Adventurer · Hero: harder, better loot">mode: Adventurer</button>
     </div>
     <label class="lab musicvol" for="musicVol">music volume <span id="musicVolN">60%</span><input id="musicVol" type="range" min="0" max="100" step="5" value="60" aria-label="music volume"></label>
+    <label class="lab musicvol" for="sfxVol">sound volume <span id="sfxVolN">100%</span><input id="sfxVol" type="range" min="0" max="100" step="5" value="100" aria-label="sound volume"></label>
     <p class="tip" id="installTip" hidden></p>
+  </div>
+</div>
+
+<div id="pause" hidden>
+  <div class="card" data-scroll>
+    <div class="head"><b>Paused</b><button class="x" id="pauseClose" data-act="resume" title="Close (Esc)">✕</button></div>
+    <div class="tabs" id="pauseTabs">
+      <button type="button" class="wbtn sm">Options</button>
+      <button type="button" class="wbtn sm">Controls</button>
+      <button type="button" class="wbtn sm">Character</button>
+      <button type="button" class="wbtn sm">Spells &amp; Skills</button>
+      <button type="button" class="wbtn sm">Save / Load</button>
+    </div>
+    <div class="pane" id="pauseOpts"></div>
+    <div class="pane" id="pauseControls" hidden>
+      <h4>Keyboard + mouse</h4>
+      <table>
+        <thead><tr><th>Action</th><th>Binding</th></tr></thead>
+        <tbody>
+          <tr><td>Walk / run</td><td>WASD / arrows, Shift runs; click the ground</td></tr>
+          <tr><td>Talk</td><td>E / Space / Enter, click an NPC</td></tr>
+          <tr><td>Attack</td><td>R</td></tr>
+          <tr><td>Guard (hold)</td><td>C</td></tr>
+          <tr><td>Jump</td><td>Z</td></tr>
+          <tr><td>Dodge roll</td><td>X</td></tr>
+          <tr><td>Cast spell</td><td>F</td></tr>
+          <tr><td>Pick spell</td><td>Q next, 1-4 slot</td></tr>
+          <tr><td>Summon</td><td>V</td></tr>
+          <tr><td>Quest log</td><td>J / L</td></tr>
+          <tr><td>Pause menu</td><td>Esc</td></tr>
+          <tr><td>Options</td><td>O or the ⚙ chip</td></tr>
+          <tr><td>Hero screen</td><td>I</td></tr>
+          <tr><td>Gear + bag</td><td>G (or I, then → to Gear)</td></tr>
+          <tr><td>Factions</td><td>H (or I, then → to Factions)</td></tr>
+          <tr><td>Spellbook</td><td>B (or I, then → to Spells)</td></tr>
+          <tr><td>Zoom</td><td>+ / - / wheel</td></tr>
+          <tr><td>Save</td><td>K or Ctrl / Cmd + S</td></tr>
+          <tr><td>Close / cancel</td><td>Esc</td></tr>
+          <tr><td>Skip Lantern Eve</td><td>Esc</td></tr>
+        </tbody>
+      </table>
+      <h4>Controller</h4>
+      <table>
+        <thead><tr><th>Action</th><th>Binding</th></tr></thead>
+        <tbody>
+          <tr><td>Walk / run</td><td>left stick (full tilt runs), d-pad</td></tr>
+          <tr><td>Talk / jump</td><td>A talks; A jumps when nobody is near; LS click jumps</td></tr>
+          <tr><td>Attack</td><td>X or RS click</td></tr>
+          <tr><td>Guard (hold)</td><td>LT</td></tr>
+          <tr><td>Dodge roll</td><td>B when nothing to close</td></tr>
+          <tr><td>Cast spell</td><td>Y (hold Y: slow-time wheel)</td></tr>
+          <tr><td>Pick spell</td><td>LB / RB</td></tr>
+          <tr><td>Summon</td><td>RT</td></tr>
+          <tr><td>Quest log</td><td>Start, then Quest log</td></tr>
+          <tr><td>Pause menu</td><td>Start (B or Start closes it)</td></tr>
+          <tr><td>Hero screen</td><td>Start, then Y. LB / RB change tabs on the hero screen</td></tr>
+          <tr><td>Gear + bag</td><td>Start, Y, then RB to Gear</td></tr>
+          <tr><td>Factions</td><td>Start, Y, then LB to Factions</td></tr>
+          <tr><td>Spellbook</td><td>Start, Y, then RB to Spells</td></tr>
+          <tr><td>Zoom</td><td>right stick up / down</td></tr>
+          <tr><td>Close / cancel</td><td>B</td></tr>
+          <tr><td>Skip Lantern Eve</td><td>B</td></tr>
+          <tr><td>On-screen pad</td><td>Select</td></tr>
+        </tbody>
+      </table>
+      <h4>Touch</h4>
+      <table>
+        <thead><tr><th>Action</th><th>Binding</th></tr></thead>
+        <tbody>
+          <tr><td>Walk / run</td><td>floating stick (rim runs), tap the ground</td></tr>
+          <tr><td>Talk</td><td>MAIN shows talk near someone; tap the NPC</td></tr>
+          <tr><td>Attack</td><td>MAIN when nobody is near</td></tr>
+          <tr><td>Guard (hold)</td><td>guard button</td></tr>
+          <tr><td>Jump</td><td>jump button</td></tr>
+          <tr><td>Dodge roll</td><td>roll button</td></tr>
+          <tr><td>Cast spell</td><td>✦ tap</td></tr>
+          <tr><td>Pick spell</td><td>✦ hold: slow-time wheel, slide, let go</td></tr>
+          <tr><td>Summon</td><td>summon button</td></tr>
+          <tr><td>Quest log</td><td>☰</td></tr>
+          <tr><td>Pause menu</td><td>⏸ button next to the bag, or tap the minimap</td></tr>
+          <tr><td>Options</td><td>⏸ (or the minimap), then the Options tab</td></tr>
+          <tr><td>Hero / gear / spells / factions</td><td>tap the vitals chip, then the tab</td></tr>
+          <tr><td>Zoom</td><td>pinch</td></tr>
+          <tr><td>Save</td><td>save chip</td></tr>
+          <tr><td>Close / cancel</td><td>tap</td></tr>
+          <tr><td>Skip Lantern Eve</td><td>skip ▸▸</td></tr>
+        </tbody>
+      </table>
+      <p class="sum">Also: M sound, P pauses the clock, G shows the pad, H flips it for the left hand.</p>
+    </div>
+    <div class="pane" id="pauseChar" hidden></div>
+    <div class="pane" id="pauseSpells" hidden></div>
+    <div class="pane" id="pauseSave" hidden></div>
+    <div class="footbtns" id="pauseFoot">
+      <button type="button" class="wbtn sm" data-act="log">Quest log</button>
+      <button type="button" class="wbtn sm" data-act="resume">Resume</button>
+    </div>
+    <p class="tip">Esc / B / Start close · LB / RB or ← → tabs · A / Enter picks · Y opens the hero screen</p>
   </div>
 </div>
 
@@ -160,7 +263,7 @@
     </div>
     <p class="info" id="saveInfo"></p>
     <p class="tip" id="installTipT" hidden></p>
-    <p class="keys">WASD walk · R attack · C guard · Z jump · X dodge · F cast · Q / 1-4 spell · V summon · E talk<br>slots: ← → / 1-3 pick · C copy · Del delete (press twice)<br>controller: ← → / LB RB slot · A continue / start · X new game · Y copy · RT delete · Start quests</p>
+    <p class="keys">WASD walk · R attack · C guard · Z jump · X dodge · F cast · Q / 1-4 spell · V summon · E talk<br>slots: ← → / 1-3 pick · C copy · Del delete (press twice)<br>controller: ← → / LB RB slot · A continue / start · X new game · Y copy · RT delete · Start pause</p>
   </div>
   <div class="plaque picker" id="picker" hidden>
     <h2>Who are you?</h2>

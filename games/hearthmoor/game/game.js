@@ -38,6 +38,8 @@ import { Storms, stormAt, STORM_REGIONS } from './storms.js';
 import { Factions, FACTIONS, IDS as FAC_IDS, RANKS as FAC_RANKS, NEED as FAC_NEED, migrate as facMigrate } from './factions.js';
 import * as LO from './loot.js';
 import { Shop, drinkTonic, goodIconURL } from './shop.js';
+import { attachPause } from './pause.js';
+import { attachMinimap } from './minimap.js';
 import { Pets, PETS, ensurePets, petAura, forageExtra } from './pets.js';
 import { registerSW, startBootProgress, bootDone, startBackgroundFill, ensureArea } from './loader.js';   // GD call Oct 30: split precache + boot bar
 const CORE_AREAS = ['plaza', 'lane', 'mossglen', 'hollows'];   // = build.py CORE_AREAS (precached up front)
@@ -67,7 +69,7 @@ const fresh = () => ({ v: 2, cls: null, hp: null, area: 'plaza', pos: null, t: 0
 
 const G = {
   S: fresh(), game: null, ctx: null, busy: false, title: !QA, dlg: null, log: false, markers: {}, scenes: {}, armed: false,
-  audio: new Ambient(), autosave: 20, near: null, downed: false, opts: false, picking: false,
+  audio: new Ambient(), autosave: 20, near: null, downed: false, opts: false, pause: false, picking: false,
   peace: Q.has('peace') || (QA && !Q.has('combat')),
   qaStill: QA && !Q.has('combat'),   // QA screenshots / check-scene: enemies stand around unless &combat
 };
@@ -248,6 +250,7 @@ function spellName(id) { return (SPELLS[id] && SPELLS[id].name) || SPELL_NAMES[i
 G.spellName = spellName;
 function flashLog() { const b = $('btnLog'); b.classList.add('ping'); setTimeout(() => b.classList.remove('ping'), 1600); }
 function setLog(open) { G.log = open; $('log').hidden = !open; $('btnLog').classList.toggle('on', open); if (open) drawLog(); }
+G.setLog = setLog;
 let toastT = 0, toastPrio = false;
 const toastQ = [];   // toasts that arrive while a priority toast (a faction rank-up) is up wait their turn instead of replacing it
 function toastShow(t) { const el = $('toast'); if (t.html) el.innerHTML = t.msg; else el.textContent = t.msg; el.hidden = false; el.classList.remove('out'); toastT = t.s; toastPrio = t.prio; }
@@ -522,7 +525,8 @@ function onFrame(dt, ctx) {
     if (pl) G.stepP = [pl.x, pl.z]; const walk = d > 0.004 && d < 1 && !G.title && !G.busy && !G.dlg;
     G.stepT = walk ? (G.stepT || 0) + dt : 0.2; if (walk && G.stepT >= 0.32) { G.stepT = 0; G.audio.step && G.audio.step(); } }
   drawVitals(ctx);
-  if (G.title || G.busy) return;
+  if (G.minimapTick) G.minimapTick();
+  if (G.title || G.busy || G.pause) return;
   // exits + portals: arm once the player has stood outside every trigger (no bounce on arrival)
   const trig = [...(gm.exits || []).map((e) => ({ ...e, how: 'walk' })), ...(gm.portals || []).map((e) => ({ ...e, how: 'portal' }))];
   const inside = trig.find((e) => inRect(p, e.rect));
@@ -572,7 +576,7 @@ const hooks = {
   // fun pass (2026-10-29): the engine's night-lamp catch plays the existing soft wind-shimmer chime; its light swell obeys the flashes toggle
   onLampFlare: () => { G.audio.sfx('lampchime'); G.lampChimes = (G.lampChimes || 0) + 1; },
   allowFlash: () => flashOK(),
-  blockInput: () => !!(G.dlg || G.busy || G.title || G.log || G.downed || G.opts || G.picking || G.heroUI || G.shop || G.asking || WHEEL.open || G.hollows.busy() || G.intro.blocking()),
+  blockInput: () => !!(G.dlg || G.busy || G.title || G.log || G.downed || G.opts || G.pause || G.picking || G.heroUI || G.shop || G.asking || WHEEL.open || G.hollows.busy() || G.intro.blocking()),
   rollMods: () => { const M = G.combat.M; return { speed: M.rollSpeed, iframes: M.rollIframes }; },
   onCast: (name) => {
     const C = G.combat, s0 = C.cd.spell || 0, c0 = C.cd.charm || 0, ok = C.cast(name);
@@ -625,7 +629,7 @@ const hooks = {
     }
     return false;
   },
-  // controller buttons (standard mapping) before the engine defaults: title, dialogue, quest log, Start = log
+  // controller buttons (standard mapping) before the engine defaults: title, dialogue, quest log, Start = pause menu
   onPad: (name, ctx) => {
     if (G.picking) {
       if (name === 'left' || name === 'lb') pickMove(-1); else if (name === 'right' || name === 'rb') pickMove(1);
@@ -650,7 +654,8 @@ const hooks = {
     if (G.dlg && G.dlg.picking) { if (name === 'up') choiceMove(-1); else if (name === 'down') choiceMove(1); else if (name === 'a') choicePick(G.dlg.ci); else if (name === 'b') choiceCancel(); return true; }
     if (G.dlg) { if (name === 'a') advanceDialogue(); else if (name === 'b') closeDialogue(); return name !== 'select'; }
     if (G.log) { if (name === 'y' || name === 'rb' || name === 'lb') { setLog(false); setHeroUI(true); return true; } if (name === 'a' || name === 'b' || name === 'start') setLog(false); return name !== 'select'; }
-    if (name === 'start') { setLog(true); return true; }
+    if (G.pause) return G.pausePad ? G.pausePad(name) : true;
+    if (name === 'start') { if (G.setPause) G.setPause(true); return true; }
     if (name === 'rs') { G.drinkTonic(); return true; }   // right-stick click drinks a tonic
     if (name === 'y') { PADW.t = performance.now(); PADW.f = (window.__hd2d && window.__hd2d.frames) || 0; PADW.on = true; PADW.fired = false; return true; }   // tap casts, hold opens the wheel
     return false;
@@ -769,7 +774,10 @@ function syncDisplay() {
   const t = $('btnDisplayT'); if (t) t.textContent = 'Display: ' + DISPLAY_PRESETS[p].label;
 }
 function setOpts(open) {
-  G.opts = open; $('opts').hidden = !open; $('btnOpts').classList.toggle('on', open); syncAutoBtn(); syncModeBtn();
+  if (open && G.pause && G.setPause) G.setPause(false);
+  G.opts = open;
+  if ($('opts') && !(G.pause && !open)) $('opts').hidden = !open;
+  $('btnOpts').classList.toggle('on', open); syncAutoBtn(); syncModeBtn();
   if (open) { syncDisplay(); syncInstall(); $('btnFull').hidden = !canFull(); }
 }
 G.setOpts = setOpts;
@@ -827,7 +835,7 @@ function wireOptions() {
   $('btnWeather').onclick = () => cycleWeather(); syncWeatherBtn();
   $('btnOpts').onclick = () => setOpts(!G.opts);
   $('optsClose').onclick = () => setOpts(false);
-  $('opts').addEventListener('pointerdown', (e) => { if (e.target === $('opts')) setOpts(false); });
+  $('opts').addEventListener('pointerdown', (e) => { if (e.target === $('opts') && !G.pause) setOpts(false); });
   document.querySelectorAll('#displayRow [data-p]').forEach((b) => { b.onclick = () => { setDisplay(b.dataset.p); syncDisplay(); }; });
   const order = Object.keys(DISPLAY_PRESETS);
   $('btnDisplayT').onclick = () => { setDisplay(order[(order.indexOf(getDisplay()) + 1) % order.length]); syncDisplay(); };
@@ -937,6 +945,16 @@ function wire() {
   $('btnMusic').onclick = () => { G.audio.start(); G.audio.toggleMusic(); syncMusic(); };
   $('musicVol').oninput = () => { G.audio.start(); G.audio.setMusicVol(+$('musicVol').value / 100); syncMusic(); };
   syncMusic();
+  const syncSfx = () => {
+    const el = $('sfxVol'); if (!el) return;
+    const v = Math.round((G.audio.sfxVol == null ? 1 : G.audio.sfxVol) * 100);
+    el.value = String(v); const n = $('sfxVolN'); if (n) n.textContent = v + '%';
+  };
+  if ($('sfxVol')) $('sfxVol').oninput = () => { G.audio.start(); G.audio.setSfxVol(+$('sfxVol').value / 100); syncSfx(); };
+  syncSfx();
+  if ($('btnPauseMenu')) $('btnPauseMenu').onclick = () => { if (G.setPause) G.setPause(true); };
+  if ($('btnPauseBag')) $('btnPauseBag').onclick = () => { if (G.setPause) G.setPause(true); };
+  attachPause(G); attachMinimap(G);
   $('dlg').addEventListener('pointerdown', (e) => {
     e.preventDefault();
     const row = e.target.closest && e.target.closest('#dlgChoices .choice');
@@ -974,6 +992,7 @@ function wire() {
     if (G.intro.active && k === 'escape' && !G.heroUI && !G.shop && !G.opts) { e.preventDefault(); e.stopImmediatePropagation(); if (G.log) setLog(false); else G.intro.skip(); return; }   // Esc closes the topmost layer (the quest log) first; only with nothing on top does it skip the opening
     if (G.heroUI) { e.stopImmediatePropagation(); heroKey(k, e); return; }
     if (G.shop) { e.stopImmediatePropagation(); G.shopUI.key(k, e); return; }
+    if (G.pause) { e.preventDefault(); e.stopImmediatePropagation(); if (G.pauseKey) G.pauseKey(k, e); return; }
     if (k === 'u' && !hooks.blockInput()) { G.drinkTonic(); return; }
     if (k === 'i') { setHeroUI(true); return; }
     if (k === 'b') { HUI.tab = 2; HUI.i = 0; setHeroUI(true); return; }   // spellbook
@@ -982,6 +1001,7 @@ function wire() {
     if (k === 'o') { setOpts(!G.opts); return; }
     if (k === 'r' && G.opts) { cycleWeather(); return; }   // R in Options: weather on / light / off
     if (k === 'j' || k === 'l') setLog(!G.log);
+    if (k === 'escape' && !G.opts && !G.dlg && !G.log && !G.intro.active && !G.busy && !G.downed && !(G.wheel && G.wheel.state().open)) { e.preventDefault(); e.stopImmediatePropagation(); if (G.setPause) G.setPause(true); return; }
     if (k === 'escape') { if (G.opts) setOpts(false); else if (G.dlg) closeDialogue(); else if (G.log) setLog(false); }
     if (k === 'k' || ((e.ctrlKey || e.metaKey) && k === 's')) { e.preventDefault(); save(true); }
     if (k === 'm') { G.audio.start(); const m = G.audio.toggle(); $('btnSound').textContent = m ? 'sound: off' : 'sound: on'; }
@@ -1135,6 +1155,7 @@ async function resume(s) {
   G.busy = false;
   toast(`Welcome back. ${G.ctx.scene.name}, ${$('clocktxt').textContent}`, 2.6);
 }
+G.resume = resume; G.cont = cont;
 
 // ------------------------------------------------------------------ leveling: XP, level-up glow, auto-level ask, hero screen
 G.gainXP = (n, src) => {
@@ -1177,7 +1198,7 @@ const HUI = { tab: 0, i: 0 };
 function setHeroUI(open) {
   if (open && (G.title || G.busy || G.dlg || G.picking || G.shop)) return;
   G.heroUI = open; $('heroui').hidden = !open;
-  if (open) { if (G.log) setLog(false); if (G.opts) setOpts(false); PR.ensure(G.S); drawHero(); }
+  if (open) { if (G.pause && G.setPause) G.setPause(false); if (G.log) setLog(false); if (G.opts) setOpts(false); PR.ensure(G.S); drawHero(); }
 }
 G.setHeroUI = setHeroUI;
 G.openFactions = () => { HUI.tab = 4; HUI.i = 0; setHeroUI(true); };

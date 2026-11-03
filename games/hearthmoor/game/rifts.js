@@ -100,7 +100,7 @@ export class Rifts {
   alive() { const R = this.cur; return R ? R.foes.concat(R.rare ? [R.rare.e] : []).filter((e) => e.state !== 'dead' && e.state !== 'gone') : []; }
   update(dt) {
     const R = this.cur, ctx = this.ctx, G = this.G; if (!ctx) return;
-    const paused = G.title || G.busy || G.dlg || G.log || G.downed || G.picking || (G.intro && G.intro.active);
+    const paused = G.title || G.busy || G.dlg || G.log || G.downed || G.picking || G.pause || (G.intro && G.intro.active);
     if (!R) {
       if (!this.canAuto() || paused || !this.auto()) return;
       this.timer -= dt;
