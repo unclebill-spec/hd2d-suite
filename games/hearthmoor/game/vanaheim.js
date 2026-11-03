@@ -177,14 +177,14 @@ export const VH_TALK = {
     // at stage 1 she offers the two minigames still unwon via G.bloomAction({ act: 'bloom_game', kind }).
     if (A(S) !== 'befriend') return { pages: base };
     const q = S.quests || {};
-    if (!q.vh_bloom) return { pages: [...base, 'Every seventh night the springs bloom. Come find me then, and we\'ll harvest and dance.', bloomHint(S),
-      'Here, a trick of mine: ask the roots and they hold things still. Vine Grasp.'],
-      then: (G) => { G.setQuest('vh_bloom', 1); G.learn && G.learn('vine_grasp'); G.refreshMarkers && G.refreshMarkers(); } };
+    if (!q.vh_bloom) return { pages: [...base, 'Every seventh night the springs bloom. Come find me then, and we\'ll harvest and dance.', bloomHint(S)],
+      then: (G) => { G.setQuest('vh_bloom', 1); G.refreshMarkers && G.refreshMarkers(); } };
     if (q.vh_bloom !== 1) return { pages: base };
     if (!bloomNight(S)) return { pages: ['Not tonight. The caps can feel it coming.', bloomHint(S)] };
     const won = (S.flags || {}).vh_bloom_games || {};
     const options = BLOOM_KINDS.filter((k) => !won[k]).map((kind) => ({ act: 'bloom_game', kind, label: BLOOM_LABEL[kind],
       pick: (G) => { G.bloomAction({ act: 'bloom_game', kind }); return null; } }));
+    // TODO(vh_stars): swap to Counted Stars payout
     if (!options.length) return hasForesight(S) ? { pages: ['You harvested, you danced. The gnomes still want their riddles.'] }
       : { pages: ['You harvested, you danced. Three caps, three stars. Here. It winks before trouble does. Rude of it, but useful.'], then: (G) => { giveForesight(G); G.toast('Foresight Charm', 2.2); G.save && G.save(); } };
     options.push({ label: 'Later.', pick: () => null });
@@ -457,3 +457,22 @@ export class Vanaheim {
     }
   }
 }
+
+// [VANAHEIM C] Growth school (stage C spec): Burrowmoss teaches Vine Grasp (gr_i) once vh_hex === 3, and the Moss Golem (gr_iii) at Lv 10 with Embassy rank >= 2.
+// Moss Ward (gr_ii) is not on this branch yet, so gr_iii gates on gr_i for now. TODO(gr_ii): add Moss Ward at Lv 5 and gate gr_iii on gr_ii.
+const GR_LV = { 3: 10 };
+const grTeach = (G, flag, spells, toast) => { F_(G.S)[flag] = 1; for (const n of spells) G.learn(n); G.toast(toast, 2.8); G.save && G.save(); };
+export function growthLesson(S) {
+  const f = F_(S), lv = S.lv || 1, emb = (S.ranks || {}).embassy || 0;
+  if (A(S) !== 'befriend' || ((S.quests || {}).vh_hex || 0) !== 3) return null;
+  if (!f.gr_i) return { pages: ['Knots burnt, springs breathing. Sit on the mushroom. No, the other mushroom. That one bites.',
+    '(Burrowmoss taps the ground. A vine pops up, ties itself around his ankle in a neat bow, and waits politely.)',
+    'Vine Grasp. Ask the ground to hold someone for you. The ground is very obliging. More than my cousins.'],
+    then: (G) => { G.S.unlocks = { ...(G.S.unlocks || {}), growth_school: 1 }; grTeach(G, 'gr_i', ['vine_grasp'], 'Growth school: Vine Grasp'); } };
+  if (!f.gr_iii && lv >= GR_LV[3] && emb >= 2) return { pages: ['The Embassies say you are a proper friend now. So. A proper friend gets a proper golem.',
+    '(The hillside stands up. It is mossy, very large, and blinks at you with two blue glow-caps.)',
+    'The Moss Golem. He fights at your side a while, then lies down and is a hill again. Do not name him. You will name him.'],
+    then: (G) => grTeach(G, 'gr_iii', ['moss_golem'], 'Growth school III: Moss Golem') };
+  return null;
+}
+{ const warden1 = TALK.warden; TALK.warden = (S, ...a) => growthLesson(S) || warden1(S, ...a); }

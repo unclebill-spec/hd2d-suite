@@ -18,7 +18,7 @@ const GOLEM_ROLES = ['golem', 'eldergolem', 'icegolem', 'mushgolem'];   // first
 // Muspelheim areas carry the pack's five from mp_fx), fire_wave_l / _u / _d and ember_mote are derived there. Neon-orange fire against the dark.
 const LAVA = '#ff7a1a', HOT = '#ffd27a';
 const HOUND = { name: 'Magma hound', hp: 110, dmg: 13, reach: 1.4, speed: 2.6 };
-const HOUND_ROLES = ['magma_hound', 'moss_golem'];   // [VANAHEIM] the glow Moss Golem reuses the hound minion where the Vanaheim sheets carry it
+const HOUND_ROLES = ['magma_hound'];
 const SCHOOL_KIND = { root: 'nature', golem: 'nature', skin: 'nature', hound: 'nature', nova: 'light', chain: 'light', ward: 'light', spirits: 'dark', veil: 'dark', swarm: 'dark' };
 const spellSfx = (S) => { const sc = S.school || SCHOOL_KIND[S.kind]; return sc ? 'spell_' + sc : 'spell'; };
 const HOUND_LOOK = { magma_hound: { name: 'Magma hound', color: null, toast: 'A Magma Hound shakes itself out of the lava!' },
@@ -744,8 +744,10 @@ export class Combat {
   // Magma Hound (III): a magma hound runs at your side for 20 s (it takes the place of any other summon); only where the hound sheet is (Muspelheim)
   doHound(S) {
     const ctx = this.ctx, p = ctx.player, G = this.G, roles = ctx.actors.meta.roles;
-    const role = HOUND_ROLES.find((r) => roles[r]);
-    if (!role) { this.cd.hound = 0; this.cd.spell = 0; G.toast('No hound answers here: the Magma Hound needs Muspelheim\'s heat (or Vanaheim\'s moss).', 2.2); return; }
+    const moss = S.look === 'mossgolem';   // [VANAHEIM] Growth III: SPELLS.moss_golem reuses the hound minion with the moss_golem glow sheet
+    const role = moss ? (roles.moss_golem ? 'moss_golem' : null) : HOUND_ROLES.find((r) => roles[r]);
+    if (!role && moss) { this.cd.hound = 0; this.cd.spell = 0; G.toast('No moss answers here: the Moss Golem needs Vanaheim\'s loam.', 2.2); return; }
+    if (!role) { this.cd.hound = 0; this.cd.spell = 0; G.toast('No hound answers here: the Magma Hound needs Muspelheim\'s heat.', 2.2); return; }
     const LK = HOUND_LOOK[role] || HOUND_LOOK.magma_hound, GLOW = LK.color || LAVA;
     if (this.summon) this.unsummon();
     const fv = FV[p.facing] || [0, 1], hp = Math.round(HOUND.hp * this.M.summonMul);
@@ -762,10 +764,11 @@ export class Combat {
   // [VANAHEIM] Vine Grasp ('root' kind): roots snare the nearest foe in place for S.life s (it can still swing); vine_grasp loops, then vine_grasp_end
   hasForesight() { const eq = (this.G.S && this.G.S.gear) || {}; return Object.values(eq).some((it) => it && (it.unique === 'foresight_charm' || it.id === 'foresight_charm')); }
   doRoot(S) {
-    const ctx = this.ctx, p = ctx.player, G = this.G, dur = S.life || 2.0;
+    const ctx = this.ctx, p = ctx.player, G = this.G, dur = S.root || S.life || 2.0;
     const t = this.nearestEnemy(p, S.range || 6);
     if (!t) { this.cd.spell = 0; this.cd.root = 0; G.toast('Nothing in reach for the vines.', 1.4); return; }
     t.rootT = Math.max(t.rootT || 0, dur);
+    if (S.dmg) this.damageEnemy(t, this.out('spell', S.dmg), p, 0, PAL.gold);
     const a = t.a, gx = ctx.gamefx;
     if (!(gx && gx.spawn && gx.meta && gx.meta.effects && gx.meta.effects.vine_grasp && gx.spawn('vine_grasp', a.x, a.y, a.z + 0.05, { duration: dur })))
       ctx.effects && ctx.effects.spawn('summon_poof', a.x, a.y, a.z + 0.05);
