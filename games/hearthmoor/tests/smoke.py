@@ -1792,6 +1792,38 @@ def run(out, simscale=4, size=(960, 540), segs=SEGS):
                 def tap(x, y):
                     TS[0] = max(TS[0], time.time()); touch("touchStart", [(x, y)]); touch("touchEnd", [])
 
+                def tap_el(sel):   # real touch (CDP, the suite's own timestamps) on an element's centre
+                    c = T.ev(f"(() => {{ const r = document.querySelector('{sel}').getBoundingClientRect(); return [r.left + r.width / 2, r.top + r.height / 2]; }})()")
+                    tap(c[0], c[1]); q.wait_for_timeout(300)
+
+                def tap_pause(sel):
+                    # #pause .card scrolls and clips the parked Options list; a centre under the fold would miss the button
+                    T.ev("document.querySelector(%s).scrollIntoView({block:'center', inline:'nearest'})" % json.dumps(sel))
+                    tap_el(sel)
+
+                def open_pause_opts():
+                    # menu-classic.css hides #btnOpts (with #btnSave and #btnPauseMenu). The top-left ⏸ is #btnPauseBag.
+                    # pause.js parks #opts in the Options tab and sets G.pause. G.opts stays false, so !!window.__hm.opts never opens.
+                    tap_el("#btnPauseBag")
+                    T.until("!!window.__hm.pause")
+                    c = T.ev("""(() => {
+                      const b = [...document.querySelectorAll('#pauseTabs button')].find((el) => (el.textContent || '').trim() === 'Options');
+                      if (!b) return null;
+                      b.scrollIntoView({block:'center', inline:'nearest'});
+                      const r = b.getBoundingClientRect();
+                      return [r.left + r.width / 2, r.top + r.height / 2];
+                    })()""")
+                    tap(c[0], c[1]); q.wait_for_timeout(300)
+                    # setTab toggles .on on the matching #pauseTabs button and shows #pauseOpts
+                    T.until("!!window.__hm.pause && ((document.querySelector('#pauseTabs button.on') || {}).textContent || '').trim() === 'Options'")
+
+                def close_pause():
+                    # parked #opts hides its header (#pause #opts .head { display:none }), so #optsClose has no box to tap.
+                    # #pauseClose is data-act="resume": act() calls setPause(false), which clears G.pause and unparks #opts.
+                    T.ev("(() => { const card = document.querySelector('#pause .card'); if (card) card.scrollTop = 0; })()")
+                    tap_el("#pauseClose")
+                    T.until("!window.__hm.pause")
+
                 # loading gate on the phone: taps on Continue / the world while the assets load do nothing
                 held, hold = [], [True]
                 q.route("**/*.glb", lambda route: held.append(route) if hold[0] else route.continue_())
@@ -1931,9 +1963,9 @@ def run(out, simscale=4, size=(960, 540), segs=SEGS):
                 after = T.ev("[document.getElementById('wheel').hidden, window.__hm.ctx.timeScale(), window.__hm.ctx.spellIndex()]")
                 T.step("phone: holding spell opens the slow-time wheel; sliding + letting go picks and casts", wheel == [True, 0.2] and after == [True, 1, 1], wheel=wheel, after=after)
                 # left-handed flip from the options card: zone and stick move to the right, still floating
-                q.tap("#btnOpts"); q.wait_for_timeout(300)
-                q.tap("#btnHand"); q.wait_for_timeout(200)
-                q.tap("#optsClose"); q.wait_for_timeout(300)
+                open_pause_opts()
+                tap_pause("#btnHand"); q.wait_for_timeout(200)
+                close_pause(); q.wait_for_timeout(300)
                 z2 = T.ev("(() => { const a = document.getElementById('stickZone').getBoundingClientRect(); return [a.left, a.top, a.width, a.height]; })()")
                 tx, ty = z2[0] + z2[2] * 0.4, z2[1] + z2[3] * 0.35
                 TS[0] = max(TS[0], time.time()); touch("touchStart", [(tx, ty)]); q.wait_for_timeout(150)
@@ -1946,7 +1978,7 @@ def run(out, simscale=4, size=(960, 540), segs=SEGS):
                 touch("touchEnd", []); q.wait_for_timeout(200)
                 T.step("phone: left-handed flip mirrors the floating stick zone", T.ev("document.body.classList.contains('lefthand')") and z2[0] >= 194
                        and s4["base"] and abs(s4["base"]["x"] - tx) < 3, zone=[round(v) for v in z2])
-                q.tap("#btnOpts"); q.wait_for_timeout(300); q.tap("#btnHand"); q.wait_for_timeout(200); q.tap("#optsClose"); q.wait_for_timeout(200)
+                open_pause_opts(); tap_pause("#btnHand"); q.wait_for_timeout(200); close_pause(); q.wait_for_timeout(200)
                 # controller on the phone: pad hides while it is used, a touch brings it back
                 T.ev("__padPlug(true)"); T.ev("__padAxes(0, 1)"); q.wait_for_timeout(800)
                 T.until("getComputedStyle(document.getElementById('pad')).display === 'none'", 30)   # the next poll hides it; slow frames on a busy box need longer than a fixed pause
@@ -1957,22 +1989,20 @@ def run(out, simscale=4, size=(960, 540), segs=SEGS):
                 T.step("phone: on-screen pad hides while a controller is used and comes back on touch", hid and back, hidden=hid, back=back)
                 T.ev("__padPlug(false)")
                 q.wait_for_timeout(300)
-                def tap_el(sel):   # real touch (CDP, the suite's own timestamps) on an element's centre
-                    c = T.ev(f"(() => {{ const r = document.querySelector('{sel}').getBoundingClientRect(); return [r.left + r.width / 2, r.top + r.height / 2]; }})()")
-                    tap(c[0], c[1]); q.wait_for_timeout(300)
                 pm = [T.ev("window.__hm.weather.mode")]
-                tap_el("#btnOpts"); T.until("!!window.__hm.opts"); tap_el("#btnWeather"); T.until("window.__hm.weather.mode === 'off'")   # game-time: the touch lands on a game frame (slow on a busy box)
+                open_pause_opts(); tap_pause("#btnWeather"); T.until("window.__hm.weather.mode === 'off'")   # game-time: the touch lands on a game frame (slow on a busy box)
                 pm.append(T.ev("[window.__hm.weather.mode, window.__hm.weather.qa().emitters.length]"))
-                tap_el("#btnWeather"); T.until("window.__hm.weather.mode === 'on'"); tap_el("#btnWeather"); T.until("window.__hm.weather.mode === 'light'")
-                pm.append(T.ev("window.__hm.weather.mode")); tap_el("#optsClose")
-                T.step("phone: weather defaults to light; the Options button cycles light -> off -> on -> light by touch", pm == ["light", ["off", 0], "light"] and not T.ev("window.__hm.opts"), modes=pm)
+                tap_pause("#btnWeather"); T.until("window.__hm.weather.mode === 'on'"); tap_pause("#btnWeather"); T.until("window.__hm.weather.mode === 'light'")
+                pm.append(T.ev("window.__hm.weather.mode")); close_pause()
+                # closed state is G.pause, not G.opts: #pauseClose clears the flag pause.js set when it parked the card
+                T.step("phone: weather defaults to light; the Options button cycles light -> off -> on -> light by touch", pm == ["light", ["off", 0], "light"] and not T.ev("window.__hm.pause"), modes=pm)
                 # music (2026-10-19): the Plaza plays the Midgard theme (decoded ogg, looped by buffer length), ambient ducked ~70%; music toggle + volume slider by touch, saved
                 T.until("window.__hm.audio.musicState().track === 'midgard'", 60)
                 m0 = T.ev("window.__hm.audio.musicState()")
                 lp = T.ev("(() => { const c = window.__hm.audio.cur; return c && c.src ? [c.src.loop, c.src.loopStart, Math.abs(c.src.loopEnd - c.src.buffer.duration) < 1e-6, c.src.buffer.numberOfChannels] : null; })()")
-                tap_el("#btnOpts"); T.until("!!window.__hm.opts"); tap_el("#btnMusic"); T.until("window.__hm.audio.musicMuted === true", 20)
+                open_pause_opts(); tap_pause("#btnMusic"); T.until("window.__hm.audio.musicMuted === true", 20)
                 m1 = T.ev("[window.__hm.audio.musicState(), localStorage.getItem('hearthmoor-music-mute'), document.getElementById('btnMusic').textContent]")
-                tap_el("#btnMusic"); T.until("window.__hm.audio.musicState().track === 'midgard'", 30)
+                tap_pause("#btnMusic"); T.until("window.__hm.audio.musicState().track === 'midgard'", 30)
                 T.ev("(() => { const r = document.getElementById('musicVol'); r.value = 35; r.dispatchEvent(new Event('input', { bubbles: true })); })()")
                 m2 = T.ev("[window.__hm.audio.musicVol, localStorage.getItem('hearthmoor-music-vol'), document.getElementById('musicVolN').textContent, localStorage.getItem('hearthmoor-music-mute')]")
                 T.ev("(() => { const r = document.getElementById('musicVol'); r.value = 60; r.dispatchEvent(new Event('input', { bubbles: true })); })()")
@@ -1980,7 +2010,7 @@ def run(out, simscale=4, size=(960, 540), segs=SEGS):
                 T.ev("window.__hm.audio.setBattle(true, true, 0.016)"); T.until("window.__hm.audio.musicState().track === 'boss'", 30)
                 mb = T.ev("window.__hm.audio.musicState().track")
                 T.ev("window.__hm.audio.setBattle(false, false, 9)"); T.until("window.__hm.audio.musicState().track === 'midgard'", 30)
-                mr = T.ev("[window.__hm.audio.musicState(), window.__hm.audio.muted]"); tap_el("#optsClose")
+                mr = T.ev("[window.__hm.audio.musicState(), window.__hm.audio.muted]"); close_pause()
                 T.step("music: Midgard theme loops by buffer length (mono), ambient ducked not muted; music toggle + volume slider save; battle -> boss -> back to the realm theme",
                        m0["track"] == "midgard" and m0["ducked"] and not m0["failed"] and lp == [True, 0, True, 1]
                        and m1[0]["muted"] and m1[0]["track"] is None and not m1[0]["ducked"] and m1[1] == "1" and m1[2] == "music: off"
