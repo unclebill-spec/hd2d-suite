@@ -946,7 +946,7 @@ def run(out, simscale=4, size=(960, 540), segs=SEGS):
                 rep["shots"]["gear_page"] = T.shot("gear_page")
                 S = T.S()
                 T.step("gear page (G): Enter equips armor from the bag, max HP goes up", bool(S["gear"].get("chest")) and T.ev("window.__hm.combat.maxHp()") > hp_a,
-                       armor=(S["gear"].get("armor") or {}).get("name"), hp=[hp_a, T.ev("window.__hm.combat.maxHp()")])
+                       armor=(S["gear"].get("chest") or {}).get("name"), hp=[hp_a, T.ev("window.__hm.combat.maxHp()")])
                 pg.keyboard.press("Escape"); pg.wait_for_timeout(200)
                 T.ev("window.__hm.S.gold = 50; window.__hm.S.mode = 'adventurer'; window.__hm.combat.down()"); pg.wait_for_timeout(2400)
                 S = T.S(); purse = S.get("purse") or {}
@@ -1009,7 +1009,7 @@ def run(out, simscale=4, size=(960, 540), segs=SEGS):
                 nb = len(T.S()["bag"])
                 for d in legs:
                     T.ev(f"(() => {{ const c = window.__hm.ctx, p = c.player; p.x = {d['x']}; p.z = {d['z']}; p.y = c.heightAt(p.x, p.z); c.stopWalk(); }})()"); pg.wait_for_timeout(500)
-                T.ev("(() => { const S = window.__hm.S, i = S.bag.findIndex((it) => it.rar === 4); if (i >= 0) window.__hm.LO.equip(S, i); })()")
+                T.ev("(() => { const S = window.__hm.S, LO = window.__hm.LO; let i = S.bag.findIndex((it) => it.rar === LO.R_LEG); if (i < 0) i = S.bag.findIndex((it) => it.rar === LO.R_RUNE); if (i >= 0) LO.equip(S, i); })()")
                 try:  # the aura is added/removed by the frame loop (loot update), so wait on it, not on a fixed sleep (slow frames under parallel shards)
                     pg.wait_for_function("window.__hm.loot.auraOn() && !!document.querySelector('#fxlayer .loot.paura canvas')", timeout=10000, polling=100)
                 except Exception:  # noqa: BLE001  the step below reports it
@@ -1034,7 +1034,8 @@ def run(out, simscale=4, size=(960, 540), segs=SEGS):
                 big = T.ev(f"(() => {{ const R = window.__hd2d.actorRects(), m = R.find((r) => r.id === '{rare['id']}'), p = R.find((r) => r.id === 'player'); return {{ sheet: m && m.sheet, mh: m && m.h / m.k, ph: p && p.h / p.k }}; }})()")
                 rep["shots"]["rare_death_lord"] = T.shot("rare_death_lord")
                 T.step("a procedural rare: name prefix (trait + element + base), a coloured aura and its own light",
-                       rare["name"] == "Shielded Gloam Death Lord" and rare["aura"] and rare["light"] and rare["minRar"] >= 2, rare=rare)
+                       # gear14: one trait floors the drop at Rare (R_RARE = 1). Old index 2 was Rare; 2 is now Epic.
+                       rare["name"] == "Shielded Gloam Death Lord" and rare["aura"] and rare["light"] and rare["minRar"] == T.ev("window.__hm.LO.R_RARE"), rare=rare)
                 T.step("the rare is drawn natively on the area's boss sheet at 2-3x the hero (80 px frame vs 32)",
                        big["sheet"] == "boss" and big["mh"] == 80 and big["ph"] == 32 and 2 <= rare["scale"] <= 3, **big)
                 ward = T.ev(f"(() => {{ const G = window.__hm, C = G.combat, e = C.enemies.find((x) => x.id === '{rare['id']}'), h0 = e.hp, w0 = e.rare.ward; G.ctx.player.iframes = 99; G.peace = false; C.damageEnemy(e, 40, G.ctx.player);"
@@ -1049,7 +1050,8 @@ def run(out, simscale=4, size=(960, 540), segs=SEGS):
                 hunt = T.S().get("hunt") or {}
                 drops = T.ev("window.__hm.loot.qa()")
                 T.step("felling the rare: a hunt log entry and a guaranteed Rare-or-better drop; the aura goes",
-                       (hunt.get("deathlord:gloam:shielded") or {}).get("kills") == 1 and any((d["rar"] or 0) >= 2 for d in drops)
+                       # gear14: Rare-or-better is rar >= R_RARE (1). Old index 2 was that floor; 2 is now Epic.
+                       (hunt.get("deathlord:gloam:shielded") or {}).get("kills") == 1 and any(d.get("rar") is not None and d["rar"] >= 1 for d in drops)
                        and not T.ev("window.__hm.ctx.effects.list.some((f) => f.name === 'rare_aura_violet' && f.t < f.dur - 0.31)"), hunt=list(hunt), drops=drops)
                 T.step("merit: felling the one-trait rare earns the realm's faction 50 Hearth Tokens", T.ev("window.__hm.S.merit.hearth") == hm0 + 50, before=hm0, after=T.ev("window.__hm.S.merit.hearth"))
                 traits = T.ev("(() => { const G = window.__hm, C = G.combat, p = G.ctx.player; const R = G.rares.spawn({ base: 'elderwraith', el: 'frost', traits: ['enraged', 'blinking', 'summoner'], pos: [p.x + 3.2, p.z + 0.6] });"
@@ -1091,10 +1093,10 @@ def run(out, simscale=4, size=(960, 540), segs=SEGS):
                     ru = T.ev("(() => { const F = window.__hm.factions, t = document.getElementById('toast'); return { last: F.last, toast: t && !t.hidden ? t.innerText : '', merit: window.__hm.S.merit.gate, rank: window.__hm.S.ranks.gate }; })()")
                     if tier == 2: rep["shots"]["rank_up"] = T.shot("rank_up")
                     drops = T.ev("window.__hm.loot.qa()")
-                    need = {0: 1, 1: 2, 2: 3}[tier]
+                    need = {0: 0, 1: 1, 2: 2}[tier]   # gear14 TIERS minRar: Common, Rare (R_RARE), Epic (R_EPIC). Was 1/2/3 (Uncommon/Rare/Epic).
                     T.step(f"random rift tier {tier + 1} ({tid}): opens with its tear, spits a wave when you come close, seals with a reward",
                            ok and f1 and f1["state"] == "fight" and f1["alive"] >= 3 and end["rift"] is None and end["closed"][tid] == c0 + 1
-                           and any(d["gold"] for d in drops) and any((d["rar"] or 0) >= need for d in drops)
+                           and any(d["gold"] for d in drops) and any(d.get("rar") is not None and d["rar"] >= need for d in drops)
                            and (tier != 1 or (waves and waves[0][2])) and (tier != 2 or (len(waves) == 2 and waves[0][2] and waves[1][0] == 2)), waves=waves, fx=st["rift"] and st["rift"]["fx"])
                     T.step(f"merit: sealing the {tid} rift earns the Gatekeepers' Guild {(30, 60, 120)[tier]} Rift Marks", ru["merit"] == gm0 + (30, 60, 120)[tier], before=gm0, after=ru["merit"])
                     if tier == 2:
@@ -1251,8 +1253,11 @@ def run(out, simscale=4, size=(960, 540), segs=SEGS):
                 # ---------------------------------------------------------- save, reload, continue
                 pg.keyboard.press("k"); pg.wait_for_timeout(300)
                 saved = T.ev("JSON.parse(localStorage.getItem('hearthmoor-slot-1-v2'))")
-                T.step("saved to localStorage hearthmoor-slot-1-v2 (with the hero class)", saved and saved["area"] == "mossglen" and saved["v"] == 2 and saved["cls"] == "stormborn"
-                       and T.ev("localStorage.getItem('hearthmoor-slot-1-v1')") is None)
+                # gear14: fresh() writes schema v3 (class, HP, 14-slot gear). The storage key is still hearthmoor-slot-1-v2.
+                # v2 saves still load; Continue stamps v4. A live new game's K save is v3.
+                T.step("saved to localStorage hearthmoor-slot-1-v2 (with the hero class)", saved and saved["area"] == "mossglen" and saved["v"] == 3 and saved["cls"] == "stormborn"
+                       and T.ev("localStorage.getItem('hearthmoor-slot-1-v1')") is None,
+                       v=(saved or {}).get("v"), area=(saved or {}).get("area"), cls=(saved or {}).get("cls"))
                 T.step("the hunt log and rift tally are saved with the slot", sum(h["kills"] for h in (saved.get("hunt") or {}).values()) >= 4 and (saved.get("rifts") or {}).get("abyssal", 0) >= 1,
                        hunt=len(saved.get("hunt") or {}), rifts=saved.get("rifts"))
                 pos_before = T.pos()
@@ -1315,7 +1320,7 @@ def run(out, simscale=4, size=(960, 540), segs=SEGS):
                 # ---------------------------------------------------------- stage 3: Odo's shop (keys, controller, touch) + tonics
                 T.step("Odo the merchant keeps a stall in the plaza", T.ev("(() => { const a = window.__hm.ctx.npc('merchant'); return !!a && a.role === 'shopkeeper'; })()"))
                 T.ev("__padPlug(true)"); pg.wait_for_timeout(600)   # the shop + gear steps use the controller too
-                T.ev("(() => { const S = window.__hm.S, LO = window.__hm.LO; S.gold = 120; S.bag.push(LO.makeItem(2, 2, 'weapon')); })()")
+                T.ev("(() => { const S = window.__hm.S, LO = window.__hm.LO; S.gold = 120; S.bag.push(LO.makeItem(2, LO.R_EPIC, 'primary')); })()")
                 T.talk("merchant"); pg.wait_for_timeout(300)
                 shop0 = T.ev("window.__hm.shopUI.qa()")
                 T.step("talking to Odo opens the shop panel (tonic, glow seed, empty orb, glow-fish, 3 pieces of gear)", T.ev("!!window.__hm.shop && !document.getElementById('shopui').hidden") and len(shop0["rows"]) == 7
@@ -1348,7 +1353,7 @@ def run(out, simscale=4, size=(960, 540), segs=SEGS):
                 # ---------------------------------------------------------- stage 4: Bix Coppertuft's Nine Keys Bank (one vault shared by all save slots)
                 bx = T.ev("(() => { const a = window.__hm.ctx.npc('banker'); return a ? { role: a.role, p: [+a.x.toFixed(2), +a.z.toFixed(2)] } : null; })()")
                 T.step("Bix Coppertuft the gnome clerk keeps the bank in the plaza", bx and bx["role"] == "gnome", bix=bx)
-                T.ev("(() => { localStorage.removeItem('hearthmoor-bank-v1'); const S = window.__hm.S, LO = window.__hm.LO; S.gold = 100; S.bag.push(LO.makeItem(2, 1, 'armor')); })()")
+                T.ev("(() => { localStorage.removeItem('hearthmoor-bank-v1'); const S = window.__hm.S, LO = window.__hm.LO; S.gold = 100; S.bag.push(LO.makeItem(2, LO.R_RARE, 'chest')); })()")
                 T.talk("banker"); pg.wait_for_timeout(300)
                 bq = T.ev("window.__hm.shopUI.qa()")
                 T.step("talking to Bix opens the bank panel (Deposit tab: gold rows, then your gear)", bq["open"] == "bank" and bq["rows"][0]["name"] == "Deposit 10 gold"
@@ -1503,7 +1508,7 @@ def run(out, simscale=4, size=(960, 540), segs=SEGS):
                 T.ev(f"window.__hd2d.setTime({t_day if 0.25 < t_day < 0.8 else 0.5})")
                 T.ev("(() => { const S = window.__hm.S, LO = window.__hm.LO, it = LO.makeItem(3, LO.R_LEG, 'primary'); it.name = 'Sunfire Rune Hammer'; S.bag.unshift(it); S.gems.golem_core = 1; S.gems.rift_shard = 1; })()")
                 T.step("a Legendary always rolls 2 sockets; Rare+ roll 0-2", T.ev("window.__hm.S.bag[0].gems.length") == 2
-                       and T.ev("(() => { const LO = window.__hm.LO; let ok = true; for (let i = 0; i < 60; i++) { const n = LO.makeItem(2, 2).gems.length; if (n > 2) ok = false; if (LO.makeItem(2, 0).gems.length) ok = false; } return ok; })()"))
+                       and T.ev("(() => { const LO = window.__hm.LO; let ok = true; for (let i = 0; i < 60; i++) { const n = LO.makeItem(2, LO.R_RARE).gems.length; if (n > 2) ok = false; const e = LO.makeItem(2, LO.R_EPIC).gems.length; if (e > 2) ok = false; if (LO.makeItem(2, 0).gems.length) ok = false; } return ok; })()"))
                 sp0 = T.ev("window.__hm.combat.M.spellMul"); hp0 = T.ev("window.__hm.combat.maxHp()")
                 pg.keyboard.press("g"); pg.wait_for_timeout(300)
                 bag0 = T.ev("Object.keys(window.__hm.S.gear).length")   # gear14: the bag rows come after the 14 slot rows
@@ -1519,7 +1524,7 @@ def run(out, simscale=4, size=(960, 540), segs=SEGS):
                 T.step("socketed gems count once equipped (rift shard: spells, golem core: HP) and the icon shows them", T.ev("window.__hm.combat.M.spellMul") > sp0 + 0.05 and T.ev("window.__hm.combat.maxHp()") >= hp0 + 15,
                        spell=[sp0, T.ev("window.__hm.combat.M.spellMul")], hp=[hp0, T.ev("window.__hm.combat.maxHp()")])
                 pg.keyboard.press("Escape"); pg.wait_for_timeout(200)
-                T.ev("(() => { const S = window.__hm.S; if (S.gear.weapon && S.gear.weapon.rar === 4) window.__hm.LO.unequip(S, 'weapon'); })()")
+                T.ev("(() => { const S = window.__hm.S, LO = window.__hm.LO; if (S.gear.primary && S.gear.primary.rar === LO.R_LEG) LO.unequip(S, 'primary'); })()")
                 T.ev("__padPlug(false)"); pg.wait_for_timeout(600)
                 area = T.go_rect("exits")
                 T.talk("herbalist")
@@ -2205,10 +2210,11 @@ def run(out, simscale=4, size=(960, 540), segs=SEGS):
                 S = T.S()
                 v2 = T.ev("JSON.parse(localStorage.getItem('hearthmoor-slot-1-v2'))")
                 old = T.ev("JSON.parse(localStorage.getItem('hearthmoor-slot-1-v1'))")
+                # gear14: Continue stamps schema v4 (readSave's v1 path returns v: 4, resume forces v: 4). The key is still hearthmoor-slot-1-v2.
                 T.step("v1 save migrates: pick a hero once, area / bag / errands / charms carry over, v2 written, v1 left as it was",
                        T.ev("window.__hm.area") == "lane" and S["cls"] == "grovekeeper" and S["inv"] == v1["inv"] and S["quests"] == v1["quests"]
-                       and S["spells"] == v1["spells"] and v2 and v2["v"] == 2 and v2["cls"] == "grovekeeper" and old == v1
-                       and T.ev("window.__hm.ctx.player.role") == "grovekeeper", cls=S["cls"], area=T.ev("window.__hm.area"))
+                       and S["spells"] == v1["spells"] and v2 and v2["v"] == 4 and v2["cls"] == "grovekeeper" and old == v1
+                       and T.ev("window.__hm.ctx.player.role") == "grovekeeper", cls=S["cls"], area=T.ev("window.__hm.area"), v=(v2 or {}).get("v"))
                 T.step("no JS errors (all contexts)", not errors, errors=errors[:5])
                 mg.close()
                 seg_done("E")
