@@ -1017,7 +1017,7 @@ def run(out, simscale=4, size=(960, 540), segs=SEGS):
                 aura = T.ev("window.__hm.loot.auraOn() && !!document.querySelector('#fxlayer .loot.paura canvas')")
                 rep["shots"]["legendary_aura"] = T.shot("legendary_aura")
                 T.step("a Legendary equipped: a neon aura + rune light follow the hero", len(T.S()["bag"]) >= nb and aura, aura=aura)
-                T.ev("(() => { const S = window.__hm.S; for (const k of ['weapon', 'armor', 'trinket']) if (S.gear[k] && S.gear[k].rar === 4) window.__hm.LO.unequip(S, k); window.__hm.ctx.player.iframes = 0; })()")
+                T.ev("(() => { const S = window.__hm.S; for (const k of Object.keys(S.gear)) if (S.gear[k] && S.gear[k].rar >= window.__hm.LO.R_LEG) window.__hm.LO.unequip(S, k); window.__hm.ctx.player.iframes = 0; })()")
                 try:  # the aura is added/removed by the frame loop (loot update), so wait on it, not on a fixed sleep (slow frames under parallel shards)
                     pg.wait_for_function("!window.__hm.loot.auraOn()", timeout=10000, polling=100)
                 except Exception:  # noqa: BLE001  the step below reports it
