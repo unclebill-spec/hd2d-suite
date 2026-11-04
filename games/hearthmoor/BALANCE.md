@@ -93,3 +93,5 @@ Helheim night warm-light (GD, Oct 30 2026): hh_shore gets one Asgard brazier (pl
 - GD call Oct 30: lighter precache + progress bar (sw.js install = 3.1 MB shell only; first realm plaza/lane/mossglen/hollows 40 MB filled right after activate; other areas + audio lazy + throttled background fill; boot bar game/loader.js drawBootProgress). No game numbers changed.
 
 - 2026-11-02 7:30 PM ET (Game Director): Check day. (1) The render stall (frames stop with ready/not busy, findings.md) is treated as a harness/box-load artifact, not a vhc-split blocker; it wasn't seen on Nov 2 at low load. Master Builder hardens smoke.py. (2) Ingrith Asgard Rev 4b (boots/belt #3e5a8c, buckle #fff8e6) is OK to ship; master approval (APPROVED.md) waits on Will. (3) The SW split timing is accepted: shell activates under 45 s at 200 kB/s, and the first realm is offline-ready after about 5 min there.
+
+- 2026-10-31 3:56 AM ET (Game Director): Bloomtide. The playtime counter keeps ticking during minigames. The tap window must not count early (fix the one-frame-early bug). sw.js must precache the minigame assets.
