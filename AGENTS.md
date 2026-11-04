@@ -1,3 +1,5 @@
+> **Before any work here:** read /workspace/RESOURCES.md (team rules), your /workspace/bot-tools/<slug>.md tool list, and the game order in /workspace/NAMES.md. (Will, Nov 1, 2026)
+
 # AGENTS.md: handoff guide for hd2d-suite
 
 Bill (GitHub `unclebill-spec`) hands this project between his bots and Cursor through GitHub. Read this file first, then `CHANGELOG.md`.

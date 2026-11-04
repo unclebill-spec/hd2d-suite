@@ -1,3 +1,5 @@
+> **Before any work here:** read /workspace/RESOURCES.md (team rules), your /workspace/bot-tools/<slug>.md tool list, and the game order in /workspace/NAMES.md. (Will, Nov 1, 2026)
+
 # Hearthmoor Art staging: status and next steps (for agents)
 
 **State: PAUSED by Bill (2026-10-06). Don't start new Hearthmoor art until Bill resumes.**
