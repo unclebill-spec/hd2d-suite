@@ -39,6 +39,7 @@ import { Rifts } from './rifts.js';
 import { Storms, stormAt, STORM_REGIONS } from './storms.js';
 import { Factions, FACTIONS, IDS as FAC_IDS, RANKS as FAC_RANKS, NEED as FAC_NEED, migrate as facMigrate } from './factions.js';
 import * as LO from './loot.js';
+import { attachArrows } from './gear_arrows.js';
 import { Shop, drinkTonic, goodIconURL } from './shop.js';
 import { attachPause } from './pause.js';
 import { attachMinimap } from './minimap.js';
@@ -107,6 +108,7 @@ G.onRareKill = (R) => G.factions.onRare(R);   // Stage 5 part 3: merit
  G.qs = Q; G.qa = QA;   // Stage 5 part 2: procedural rares + random rifts
 G.weatherAt = weatherAt;   // smoke: the weather calendar
 G.loot = new LO.Loot(G); G.LO = LO; G.PR = PR;
+G.arrows = attachArrows(G);   // world-drop / bag / tooltip compare arrows (window.__hm.arrows)
 G.shopUI = new Shop(G); G.drinkTonic = () => drinkTonic(G);
 G.pets = new Pets(G); G.PETS = PETS; G.forage = () => forageExtra(G.S);   // Stage 6 part 2: glowing pets (the Stray Den)
 G.startBloomGame = (kind) => startBloomGame(G, kind); G.bloomAction = (o) => bloomAction(G, o);   // [VANAHEIM C] Liss: { act: 'bloom_game', kind }

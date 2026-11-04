@@ -351,6 +351,25 @@ export function score(it) {
   for (const g of it.gems || []) if (g && GEMS[g]) for (const [key, v] of Object.entries(GEMS[g].mods)) t += (SCORE[key] ?? 0.5) * v;
   return t;
 }
+// 1 = upgrade, 0 = equal, -1 = worse, using score(). Player gear only.
+// An empty slot is an upgrade. Rings compare to the weaker equipped ring; either ring empty counts as an upgrade.
+export function compareToEquipped(item, gear) {
+  if (!item || !item.slot) return 0;
+  const g = gear || {};
+  let cur = null;
+  if (ringSlot(item.slot)) {
+    const a = g.ringL || null, b = g.ringR || null;
+    if (!a || !b) return 1;
+    cur = score(a) <= score(b) ? a : b;
+  } else {
+    cur = g[item.slot] || null;
+    if (!cur) return 1;
+  }
+  const d = score(item) - score(cur);
+  if (d > 1e-9) return 1;
+  if (d < -1e-9) return -1;
+  return 0;
+}
 // which gear slot a piece goes into: its own, or for a ring the free ring slot, else the weaker ring
 export function targetSlot(S, it) {
   if (!it) return null; if (!ringSlot(it.slot)) return it.slot;
