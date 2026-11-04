@@ -14,3 +14,7 @@ Player-facing notes, newest first.
 - **5 rarities:** Common, Rare, Epic, Legendary and the new **Runeforged**, which drops with a pink rune beam (mostly from bosses).
 - **Your old gear comes with you:** weapons move to the main hand, armor to the chest, trinkets to the neck. Uncommon pieces become Common, and stats are adjusted to match new gear of the same rarity and level. Gems, sockets, tempering and names are kept; unique items are unchanged.
 - **Behind the scenes:** our automatic checks now cover the 14 gear slots, the forge's Weapons / Armour / Jewellery pickers, and the new pause-menu Options on phones.
+- **Gear effects:** new gear can now roll Rune %, Spell Shield %, life steal, resists and on-hit procs like Fire bolt. Legendary Rune/Spell Shield rolls are 1-2%, Runeforged 3-4%, and new drops are named for their armour type. (Forge rerolls don't roll the new stats yet.)
+- **Vanaheim:** Mossbrook village life: an arrival scene, Counted Stars, Hollis, the Hushed, the Riddle Stump, the staff bench, Veyra's bloom and a hidden spring.
+- **Bifrost Crossing:** people at the crossing now chat in small speech bubbles as you pass.
+- **Gear compare arrows:** a green up arrow marks an upgrade (an empty slot counts), a red down arrow marks a worse piece. Rings compare against your weaker ring. The arrow shows on the drop, in the bag and on the tooltip.
