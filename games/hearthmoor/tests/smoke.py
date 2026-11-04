@@ -780,8 +780,11 @@ def run(out, simscale=4, size=(960, 540), segs=SEGS):
                 T.btn(1, hold=60)
                 st = T.ev("window.__hm.combat.st")
                 T.step("B dodges in the field (roll costs stamina)", st < 100, stamina=st)
-                T.btn(9); log_open = T.ev("window.__hm.log"); T.btn(1); log_closed = not T.ev("window.__hm.log")
-                T.step("Start opens the quest log, B closes it", log_open and log_closed)
+                # Start opens the pause menu since the pause-menu change (RESTORE.md: Quest log is a button inside); J opens the log
+                T.btn(9); pz_open = bool(T.ev("window.__hm.pause")); T.btn(1); pz_closed = not T.ev("window.__hm.pause")
+                T.step("Start opens the pause menu, B closes it", pz_open and pz_closed)
+                pg.keyboard.press("j"); pg.wait_for_timeout(200); log_open = T.ev("window.__hm.log"); T.btn(1); log_closed = not T.ev("window.__hm.log")
+                T.step("J opens the quest log, B closes it", log_open and log_closed)
                 z0 = T.ev("window.__hd2d.camState().dist")
                 rs = lambda v: T.ev(f"(() => {{ window.__fakePad.axes[3] = {v}; window.__fakePad.timestamp = performance.now(); }})()")  # noqa: E731
                 # the zoom runs on game frames (slow on a busy box): hold the stick until the distance has moved, then let go
@@ -925,7 +928,7 @@ def run(out, simscale=4, size=(960, 540), segs=SEGS):
                 pg.wait_for_timeout(500)
                 beams, auras = T.ev("document.querySelectorAll('#fxlayer .loot .beam').length"), T.ev("document.querySelectorAll('#fxlayer .loot .aura').length")
                 rep["shots"]["loot_beams"] = T.shot("loot_beams")
-                T.step("loot: five rarity beams (Epic + Legendary auras) and a gold pile", beams == 5 and auras == 2, beams=beams, auras=auras)
+                T.step("loot: five rarity beams (Epic + Legendary + Runeforged auras) and a gold pile", beams == 5 and auras == 3, beams=beams, auras=auras)
                 g0, b0 = T.ev("window.__hm.S.gold"), T.ev("window.__hm.S.bag.length")
                 for d in T.ev("window.__hm.loot.qa()"):
                     T.ev(f"(() => {{ const c = window.__hm.ctx, p = c.player; p.x = {d['x']}; p.z = {d['z']}; p.y = c.heightAt(p.x, p.z); c.stopWalk(); }})()"); pg.wait_for_timeout(250)
@@ -936,13 +939,13 @@ def run(out, simscale=4, size=(960, 540), segs=SEGS):
                 T.step("bag chip shows the gear count and gold", chip.strip() == f"⚔ {len(S['bag'])}" and T.ev("!!document.querySelector('#bag .goldchip')"), chip=chip)
                 hp_a = T.ev("window.__hm.combat.maxHp()")
                 pg.keyboard.press("g"); pg.wait_for_timeout(300)
-                for _ in range(3): pg.keyboard.press("ArrowDown")
-                idx = T.ev("(() => window.__hm.S.bag.findIndex((it) => it.slot === 'armor'))()")
+                for _ in range(T.ev("Object.keys(window.__hm.S.gear).length")): pg.keyboard.press("ArrowDown")   # gear14: past the 14 slot rows
+                idx = T.ev("(() => window.__hm.S.bag.findIndex((it) => it.slot === 'chest'))()")   # gear14: old 'armor' is 'chest'
                 for _ in range(idx): pg.keyboard.press("ArrowDown")
                 pg.keyboard.press("Enter"); pg.wait_for_timeout(300)
                 rep["shots"]["gear_page"] = T.shot("gear_page")
                 S = T.S()
-                T.step("gear page (G): Enter equips armor from the bag, max HP goes up", bool(S["gear"].get("armor")) and T.ev("window.__hm.combat.maxHp()") > hp_a,
+                T.step("gear page (G): Enter equips armor from the bag, max HP goes up", bool(S["gear"].get("chest")) and T.ev("window.__hm.combat.maxHp()") > hp_a,
                        armor=(S["gear"].get("armor") or {}).get("name"), hp=[hp_a, T.ev("window.__hm.combat.maxHp()")])
                 pg.keyboard.press("Escape"); pg.wait_for_timeout(200)
                 T.ev("window.__hm.S.gold = 50; window.__hm.S.mode = 'adventurer'; window.__hm.combat.down()"); pg.wait_for_timeout(2400)
@@ -996,7 +999,7 @@ def run(out, simscale=4, size=(960, 540), segs=SEGS):
                        big["sheet"] == "boss" and big["mh"] == 80 and big["ph"] == 32 and big["scale"] == 2.5 and big["r"] >= 0.7 and big["pull"] > 1.01, **big)
                 T.ev("(() => { const C = window.__hm.combat, e = C.enemies.find((x) => x.id === 'mossheart'); window.__hm.peace = true; C.damageEnemy(e, 9999, window.__hm.ctx.player); })()")
                 pg.wait_for_timeout(900)
-                legs = [d for d in T.ev("window.__hm.loot.qa()") if d["rar"] == 4]
+                legs = [d for d in T.ev("window.__hm.loot.qa()") if (d["rar"] or 0) >= 3]   # gear14 rarity: Legendary = R_LEG 3 (4 is Runeforged)
                 T.step("Glenheart always drops a Legendary (and the boss bar goes away)", len(legs) >= 1 and T.ev("!document.getElementById('bossbar') || document.getElementById('bossbar').hidden"), drops=legs)
                 cores = [d for d in T.ev("window.__hm.loot.qa()") if d.get("gem") == "golem_core"]
                 T.step("Glenheart also drops a golem core (socket gem)", len(cores) >= 1, drops=cores)
@@ -1441,14 +1444,14 @@ def run(out, simscale=4, size=(960, 540), segs=SEGS):
                        T.ev("window.__hm.factions.riftGoldMul()") == 1.25 and T.ev("window.__hm.factions.priceMul('hearthmoor')") == (0.9 if T.ev("window.__hm.S.ranks.hearth") >= 1 else 1)
                        and T.ev("window.__hm.factions.priceMul('night')") == (0.85 if T.ev("window.__hm.S.ranks.corsair") >= 1 else 1), hearth=T.ev("window.__hm.S.ranks.hearth"))
                 T.ev("window.__hm.loot.clear()")
-                # controller: Start (log) -> RB (hero) -> LB / RB to Factions, d-pad down to the Guild, A wears its title
-                T.btn(9); pg.wait_for_timeout(250); T.btn(5); pg.wait_for_timeout(250)
+                # controller: Start (pause menu) -> Y (hero screen) -> LB / RB to Factions, d-pad down to the Guild, A wears its title
+                T.btn(9); pg.wait_for_timeout(250); T.btn(3); pg.wait_for_timeout(250)
                 for _ in range(5):
                     if T.ev("window.__hm.hui.tab") == 4: break
                     T.btn(4); pg.wait_for_timeout(200)
                 T.btn(13); pg.wait_for_timeout(200); T.btn(0); pg.wait_for_timeout(300)
                 head = T.ev("document.getElementById('heroHead').innerText")
-                T.step("controller: Start, RB, LB to Factions, d-pad + A wears the Guild title (shown in the hero header)", T.ev("window.__hm.hui.tab") == 4 and T.ev("window.__hm.S.title") == "gate:1"
+                T.step("controller: Start, Y, LB to Factions, d-pad + A wears the Guild title (shown in the hero header)", T.ev("window.__hm.hui.tab") == 4 and T.ev("window.__hm.S.title") == "gate:1"
                        and T.ev("window.__hm.factions.title()") == "Rift Warden" and "Rift Warden" in head, title=T.ev("window.__hm.S.title"), head=head[:80])
                 rep["shots"]["factions_panel"] = T.shot("factions_panel")
                 T.btn(1); pg.wait_for_timeout(250)
@@ -1498,12 +1501,13 @@ def run(out, simscale=4, size=(960, 540), segs=SEGS):
                        w1[0] == "light" and w1[1] == [0.8] and "light" in w1[2] and w2 == ["off", 0] and w3[0] == "on" and w3[1] == [1.6] and w3[2], w1=w1, w2=w2, w3=w3)
                 T.ev("window.__hm.weather.force(null)")
                 T.ev(f"window.__hd2d.setTime({t_day if 0.25 < t_day < 0.8 else 0.5})")
-                T.ev("(() => { const S = window.__hm.S, LO = window.__hm.LO, it = LO.makeItem(3, 4, 'weapon'); it.name = 'Sunfire Rune Hammer'; S.bag.unshift(it); S.gems.golem_core = 1; S.gems.rift_shard = 1; })()")
+                T.ev("(() => { const S = window.__hm.S, LO = window.__hm.LO, it = LO.makeItem(3, LO.R_LEG, 'primary'); it.name = 'Sunfire Rune Hammer'; S.bag.unshift(it); S.gems.golem_core = 1; S.gems.rift_shard = 1; })()")
                 T.step("a Legendary always rolls 2 sockets; Rare+ roll 0-2", T.ev("window.__hm.S.bag[0].gems.length") == 2
                        and T.ev("(() => { const LO = window.__hm.LO; let ok = true; for (let i = 0; i < 60; i++) { const n = LO.makeItem(2, 2).gems.length; if (n > 2) ok = false; if (LO.makeItem(2, 0).gems.length) ok = false; } return ok; })()"))
                 sp0 = T.ev("window.__hm.combat.M.spellMul"); hp0 = T.ev("window.__hm.combat.maxHp()")
                 pg.keyboard.press("g"); pg.wait_for_timeout(300)
-                pg.click("#heroBody .row[data-k='3']"); pg.wait_for_timeout(200)
+                bag0 = T.ev("Object.keys(window.__hm.S.gear).length")   # gear14: the bag rows come after the 14 slot rows
+                pg.click(f"#heroBody .row[data-k='{bag0}']"); pg.wait_for_timeout(200)
                 pg.keyboard.press("r"); pg.wait_for_timeout(250)
                 g1 = T.ev("window.__hm.S.bag[0].gems")
                 T.btn(3); pg.wait_for_timeout(250)
