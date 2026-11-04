@@ -2937,42 +2937,51 @@ def run(out, simscale=4, size=(960, 540), segs=SEGS):
                        rt["npcs"] == 3 and rt["q0"] == 1 and "crowd" in rt["blocked"] and "change the subject" in rt["wrong"] and rt["still"] and rt["q1"] == 2 and rt["q2"] == 3 and rt["free"], riot=rt)
                 ft = T.ev("""(() => { const G = window.__hm, S = G.S, F = G.forge, LO = G.LO;
                   F.tova().then(G); const q1 = S.quests.temper;
-                  S.bag = S.bag || []; S.bag.unshift(LO.makeItem(1, 1, 'armor')); const i0 = S.inv.ironbit || 0;
-                  const sc = F.scrapMenu().choice.options[0].pick(G).pages[0], iron = (S.inv.ironbit || 0) - i0;
+                  S.bag = S.bag || []; const scrapIt = LO.makeItem(1, 1, 'chest'); S.bag.unshift(scrapIt); const i0 = S.inv.ironbit || 0;
+                  // gear14: scrap still lists bag pieces (no slot group). Rarity 1 is Rare now (Uncommon is gone); SCRAP_IRON[1] is 3.
+                  const sc = F.scrapMenu().choice.options.find((o) => o.label.startsWith(scrapIt.name)).pick(G).pages[0], iron = (S.inv.ironbit || 0) - i0;
                   const p = G.ctx.player; p.x = -5.6; p.z = -7.6; F.interact(); F.interact(); F.interact();
-                  const w = LO.makeItem(1, 2, 'weapon'); S.gear.weapon = w; const g0 = S.gold;
-                  const t = F.temperMenu().choice.options[0].pick(G).pages[0];
+                  const w = LO.makeItem(1, 2, 'primary'); S.gear.primary = w; const g0 = S.gold;
+                  // gear14: the free first temper lists equipped pieces directly (no group step). Later menus use slotPick groups.
+                  const t = F.temperMenu().choice.options.find((o) => o.label.includes('main hand')).pick(G).pages[0];
                   const q2 = S.quests.temper; F.orri().then(G);
                   return { q1, sc, iron, bellows: !!S.flags.tp_bellows, up: w.up, free: S.gold === g0, t, q2, q3: S.quests.temper, rs: S.inv.runestone || 0 }; })()""")
-                T.step("The First Temper: offer, scrap at the forge (+2 iron), 3 bellows pumps, free +1, Orri's turn-in (rune-stone)",
-                       ft["q1"] == 1 and ft["iron"] == 2 and ft["bellows"] and ft["up"] == 1 and ft["free"] and "first temper" in ft["t"] and ft["q2"] == 2 and ft["q3"] == 3 and ft["rs"] >= 1, temper=ft)
+                T.step("The First Temper: offer, scrap at the forge (+3 iron), 3 bellows pumps, free +1, Orri's turn-in (rune-stone)",
+                       ft["q1"] == 1 and ft["iron"] == 3 and ft["bellows"] and ft["up"] == 1 and ft["free"] and "first temper" in ft["t"] and ft["q2"] == 2 and ft["q3"] == 3 and ft["rs"] >= 1, temper=ft)
                 tv = T.ev("""(async () => { const G = window.__hm, S = G.S, LO = G.LO;
                   S.gold = 5000; S.inv.ironbit = 100; S.inv.coldsteel = 30; S.gems = { ...(S.gems || {}), frost_core: 2, golem_core: 2, rift_shard: 1 };
-                  const w = LO.makeItem(1, 4, 'weapon'); S.gear.weapon = w; const base = w.mods.meleeMul;
-                  const lines = []; for (let i = 0; i < 10; i++) lines.push(G.forge.doTemper('weapon', () => 0).pages[0]);
-                  const cap = G.forge.doTemper('weapon', () => 0).pages[0];
-                  const m = LO.gearMods({ gear: { weapon: w } }, { guardMul: 1 });
-                  const a = LO.makeItem(1, 2, 'armor'); a.up = 5; S.gear.armor = a; const g0 = S.gold, i0 = S.inv.ironbit;
-                  const fail = G.forge.doTemper('armor', () => 0.99).pages[0];
+                  // gear14: Legendary moved from rarity index 4 to 3 (4 is Runeforged). Both still cap at +10; this step is the Legendary. weapon->primary, armor->chest.
+                  const w = LO.makeItem(1, 3, 'primary'); S.gear.primary = w; const base = w.mods.meleeMul;
+                  const lines = []; for (let i = 0; i < 10; i++) lines.push(G.forge.doTemper('primary', () => 0).pages[0]);
+                  const cap = G.forge.doTemper('primary', () => 0).pages[0];
+                  const m = LO.gearMods({ gear: { primary: w } }, { guardMul: 1 });
+                  const a = LO.makeItem(1, 2, 'chest'); a.up = 5; S.gear.chest = a; const g0 = S.gold, i0 = S.inv.ironbit;
+                  const fail = G.forge.doTemper('chest', () => 0.99).pages[0];
                   return { up: w.up, last: lines[9], cap, k: m.meleeMul / base, aUp: a.up, heat: a.heat, gold: S.gold === g0, iron: i0 - S.inv.ironbit, fail, desc: LO.describe(w) }; })()""")
                 T.step("Tova: +1..+10 on a Legendary (7% per +), capped at +10, a failed +6 keeps gold, eats iron, adds heat",
                        tv["up"] == 10 and abs(tv["k"] - 1.7) < 0.01 and "Hearthforged" in tv["last"] and "as far as" in tv["cap"] and tv["aUp"] == 5 and tv["heat"] == 1 and tv["gold"] and tv["iron"] == 6 and "+10 tempered" in tv["desc"], tova=tv)
-                rr = T.ev("""(() => { const G = window.__hm, S = G.S; S.inv.runestone = 1; const w = S.gear.weapon, k0 = Object.keys(w.mods);
-                  const e = G.forge.doReroll('weapon', null, () => 0.5); const kept = e.choice.options[0].pick(G);
-                  const again = G.forge.doReroll('weapon').pages[0];
-                  return { rr: w.rr, k0, k1: Object.keys(w.mods), kept: kept.pages[0], again, opts: G.forge.tova().choice.options.length }; })()""")
-                T.step("Orri: a rune-stone rerolls one stat (keep new), no stone = no reroll; Tova offers 3 slots + shop + not yet",
-                       rr["rr"] == 1 and len(rr["k1"]) == len(rr["k0"]) and set(rr["k1"]) != set(rr["k0"]) and "stone likes you" in rr["kept"] and "No stone" in rr["again"] and rr["opts"] == 5, orri=rr)
+                rr = T.ev("""(() => { const G = window.__hm, S = G.S; S.inv.runestone = 1; const w = S.gear.primary, k0 = Object.keys(w.mods);
+                  const e = G.forge.doReroll('primary', null, () => 0.5); const kept = e.choice.options.find((o) => o.label === 'Keep new').pick(G);
+                  const again = G.forge.doReroll('primary').pages[0];
+                  // gear14: Tova's root menu is still 5 services (not 3 slots). The 3 old slots are temperMenu's group picker.
+                  return { rr: w.rr, k0, k1: Object.keys(w.mods), kept: kept.pages[0], again, opts: G.forge.tova().choice.options.length, groups: G.forge.temperMenu().choice.options.map((o) => o.label) }; })()""")
+                T.step("Orri: a rune-stone rerolls one stat (keep new), no stone = no reroll; Tova offers 5 services, temper groups into Weapons / Armour / Jewellery",
+                       rr["rr"] == 1 and len(rr["k1"]) == len(rr["k0"]) and set(rr["k1"]) != set(rr["k0"]) and "stone likes you" in rr["kept"] and "No stone" in rr["again"] and rr["opts"] == 5 and rr["groups"][:3] == ["Weapons", "Armour", "Jewellery"], orri=rr)
                 sk = T.ev("""(() => { const G = window.__hm, S = G.S, F = G.forge, LO = G.LO;
-                  S.flags.orri_socket = 1; const w = S.gear.weapon; w.gems = [null, null]; const n0 = w.gems.length;
-                  const p1 = F.orri().choice.options[2].pick(G).choice.options[0].pick(G).pages[0], n1 = w.gems.length;
-                  const cap = F.doPunch('weapon').pages[0];
-                  S.gear.trinket = LO.makeItem(1, 0, 'trinket'); const com = F.doPunch('trinket').pages[0];
-                  S.inv.ironbit = 4; S.gems.frost_core = 1; const st0 = S.inv.coldsteel || 0; F.tova().choice.options[1].pick(G); const st = (S.inv.coldsteel || 0) - st0;
+                  // gear14: slotPick shows Weapons / Armour / Jewellery before the piece. Match the piece by its slot label (main hand / neck).
+                  const opt = (menu, label) => menu.choice.options.find((o) => o.label === label || o.label.includes(label));
+                  const slotOf = (menu, group, piece) => opt(opt(menu, group).pick(), piece);
+                  S.flags.orri_socket = 1; const w = S.gear.primary; w.gems = [null, null]; const n0 = w.gems.length;
+                  const p1 = slotOf(opt(F.orri(), 'Punch a socket').pick(G), 'Weapons', 'main hand').pick(G).pages[0], n1 = w.gems.length;
+                  const cap = F.doPunch('primary').pages[0];
+                  S.gear.neck = LO.makeItem(1, 0, 'neck'); const com = F.doPunch('neck').pages[0];
+                  S.inv.ironbit = 4; S.gems.frost_core = 1; const st0 = S.inv.coldsteel || 0; opt(F.tova(), 'Smelt').pick(G); const st = (S.inv.coldsteel || 0) - st0;
                   S.inv.runestone = 2; const out = Object.keys(w.mods)[0], rr0 = w.rr || 0;
-                  const e = F.orri().choice.options[1].pick(G).choice.options[0].pick(G).choice.options[0].pick(G); e.choice.options[0].pick(G);
+                  const stats = slotOf(opt(F.orri(), 'Reroll a stat you pick').pick(G), 'Weapons', 'main hand').pick(G);
+                  const e = stats.choice.options.find((o) => o.label.startsWith(out + ' ')).pick(G); opt(e, 'Keep new').pick(G);
                   const picked = !(out in w.mods) && (S.inv.runestone || 0) === 0 && w.rr === rr0 + 1;
-                  const cv = LO.iconCanvas('weapon', 4, 1, w.gems, 10), px = cv.getContext('2d').getImageData(0, 1, 1, 1).data;
+                  // gear14: icon kind is the slot id ('primary'; 'weapon' is only an alias). The sampled pixel is the +10 cold-blue mark.
+                  const cv = LO.iconCanvas('primary', 3, 1, w.gems, 10), px = cv.getContext('2d').getImageData(0, 1, 1, 1).data;
                   const s0 = F.sparks || 0; G.ctx.player.act = { name: 'attack', t: 0 }; F.update(0.016); G.ctx.player.act = null; F.update(0.016);
                   return { n0, n1, p1, cap, com, st, picked, icon: [px[0], px[1], px[2]], sparks: (F.sparks || 0) - s0 }; })()""")
                 T.step("Orri sockets (free first punch to 3, cap, no Commons), smelt 4 iron + frost core -> 2 cold-steel, pick-your-stat reroll (2 stones), +10 icon mark + cold-blue swing sparks",
