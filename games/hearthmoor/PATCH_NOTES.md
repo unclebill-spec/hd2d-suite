@@ -13,3 +13,4 @@ Player-facing notes, newest first.
 - **New spell effects:** fire, nature and shadow spells, heals, buffs, chain lightning, rift tears, storm flashes and loot drops now have their own coloured flourishes, and glowing pools, orb lanterns, garden plants, braziers and the spring sparkle with wisps, flames and glow orbs.
 - **5 rarities:** Common, Rare, Epic, Legendary and the new **Runeforged**, which drops with a pink rune beam (mostly from bosses).
 - **Your old gear comes with you:** weapons move to the main hand, armor to the chest, trinkets to the neck. Uncommon pieces become Common, and stats are adjusted to match new gear of the same rarity and level. Gems, sockets, tempering and names are kept; unique items are unchanged.
+- **Behind the scenes:** our automatic checks now cover the 14 gear slots, the forge's Weapons / Armour / Jewellery pickers, and the new pause-menu Options on phones.
