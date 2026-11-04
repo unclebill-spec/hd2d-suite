@@ -6,6 +6,7 @@ import { boot, DISPLAY_PRESETS, getDisplay, setDisplay } from '../engine/main.js
 import { ITEMS, QUESTS, TALK, SPELL_NAMES, markerFor, errandsDone, stormTalk } from './data.js';
 import { Harbor } from './ravenhold.js';
 import { Crossing } from './bifrost.js';
+import { Barks } from './barks.js';
 import { Alfheim, AREAS_ALF, AREA_NAMES_ALF } from './alfheim.js';   // [ALFHEIM]
 import { Svartalfheim, AREAS_SV, AREA_NAMES_SV } from './svartalfheim.js';   // [SVARTALFHEIM]
 import { Jotunheim, AREAS_JOT, AREA_NAMES_JOT } from './jotunheim.js';   // [JOTUNHEIM] stub
@@ -80,6 +81,7 @@ G.harbor = new Harbor(G);   // Ravenhold Harbor: waystones + the district gates'
 G.verdant = new Verdant(G);   // Stage 6.4: the Violet Spring, the Rotwood Hollow, the Verdant Heart
 G.temple = new Temple(G);   // Stage 6.3: the Old Temple (Harbor gate, clues, altar, Rift-gate, Midgard's arch)
 G.crossing = new Crossing(G);   // Bifrost Crossing: the realm gates' looks (alliance / merit keys)
+G.barks = new Barks(G);   // Bifrost ambient speech bubbles (window.__hm.barks.force)
 G.svart = new Svartalfheim(G);   // [SVARTALFHEIM]
 G.musp = new Muspelheim(G);   // [MUSPELHEIM]
 G.nifl = new Niflheim(G);   // [NIFLHEIM]
@@ -518,6 +520,7 @@ function onFrame(dt, ctx) {
   G.hollows.update(dt); G.garden.update(dt); G.lanterns.update(dt); G.forge.update(dt); G.alchemy.update(dt); G.glow.update(dt); G.weather.update(dt); G.intro.update(dt);
   G.loot.update(dt); G.shopUI.update(dt); G.rares.update(dt); G.storms.update(dt); G.rifts.update(dt); G.pets.update(dt); G.temple.update(dt); G.verdant.update(dt); G.alfheim.update(dt); G.svart.update(dt); G.jot.update(dt); G.musp.update(dt); G.nifl.update(dt); G.vana.update(dt); G.asg.update(dt); G.hel.update(dt);   // [ALFHEIM]
   G.combat.update(dt, ctx);
+  G.barks.update(dt);
   { const eng = G.combat.enemies.filter((e) => e.state === 'chase' || e.state === 'attack');   // music: battle / boss themes
     const bo = eng.find((e) => e.D.boss && !e.D.rare);   // [ASGARD 2026-10-31] pass the boss id: audio picks music_boss_<id>.ogg if it exists
     G.audio.setBattle(eng.length > 0 && !G.downed, bo ? String((bo.sp && (bo.sp.def || bo.sp.role)) || bo.id || true) : false, dt); }
