@@ -6,6 +6,7 @@ import { ENEMIES } from './heroes.js';
 import { XP } from './progress.js';
 import { SHOPS } from './shop.js';
 import { sfx, fx, shake, flash, rare, thornsOn, thornRing, tossCoin, bonusSeed } from './vanaheim_fun.js';   // fun pass juice
+import { wireStageC, LINK, payForesight, installStageC, realmBloomNight, vhMarkerHook } from './vanaheim_c.js';   // Stage C village life; this file fills LINK and STAGE_C.wire after TALK is assigned
 
 const F_ = (S) => (S.flags || (S.flags = {}));
 const A = (S) => ((S.flags || {}).alliance || {}).vanaheim;
@@ -184,7 +185,7 @@ export const VH_TALK = {
     const won = (S.flags || {}).vh_bloom_games || {};
     const options = BLOOM_KINDS.filter((k) => !won[k]).map((kind) => ({ act: 'bloom_game', kind, label: BLOOM_LABEL[kind],
       pick: (G) => { G.bloomAction({ act: 'bloom_game', kind }); return null; } }));
-    // TODO(vh_stars): swap to Counted Stars payout
+    // vanaheim_c installStageC replaces this once harvest and dance are both won (riddles, then a bloom token). Stars pay the charm.
     if (!options.length) return hasForesight(S) ? { pages: ['You harvested, you danced. The gnomes still want their riddles.'] }
       : { pages: ['You harvested, you danced. Three caps, three stars. Here. It winks before trouble does. Rude of it, but useful.'], then: (G) => { giveForesight(G); G.toast('Foresight Charm', 2.2); G.save && G.save(); } };
     options.push({ label: 'Later.', pick: () => null });
@@ -269,12 +270,9 @@ TALK.warden = (S) => {
 
 const GREF = {};
 const BLOOM_KINDS = ['harvest', 'dance'], BLOOM_LABEL = { harvest: 'Glow-cap Harvest', dance: 'Spring Dance' };
-const BLOOM_NIGHT_T = (t) => t > 0.8 || t < 0.25;   // same night window as alfheim.js NIGHT
 // bloom-night = every 7th in-game day, at night (spec 3.5). ?bloomnight in the URL forces it for QA.
-function bloomNight(S) {
-  try { if (new URLSearchParams(location.search).has('bloomnight')) return true; } catch (e) { /* no location */ }
-  const ctx = GREF.vana && GREF.vana.ctx; return (S.day || 0) % 7 === 0 && !!(ctx && ctx.clock && BLOOM_NIGHT_T(ctx.clock.t));
-}
+// Same check as Stage C (realmBloomNight): LINK.ctx is this module's world clock.
+export function bloomNight(S) { return realmBloomNight(S); }
 const nightsToBloom = (S) => (7 - ((S.day || 0) % 7)) % 7;   // [VANAHEIM] Liss's hint (story/liss_hint_foresight.md)
 function bloomHint(S) {
   const n = nightsToBloom(S);
@@ -283,11 +281,7 @@ function bloomHint(S) {
   return `Next Bloomtide is in ${n} nights. I counted on my toes. Twice.`;
 }
 const hasForesight = (S) => [...(S.bag || []), ...Object.values(S.gear || {})].some((x) => x && x.unique === 'foresight_charm');
-function giveForesight(G) {   // both Bloomtide games won (stand-in for the gnome star game, not on this branch); the crit buff lives in combat.hurtPlayer / out()
-  const S = G.S; S.bag = S.bag || []; if (hasForesight(S)) return;
-  S.bag.push({ uid: `fore${Date.now().toString(36)}`, slot: 'neck', name: 'Foresight Charm', rar: 2, rv: 2, lv: Math.max(1, S.lv || 1), unique: 'foresight_charm',
-    mods: {}, gems: [], img: 'art/vanaheim/icons/foresight_charm.png', about: VH_ITEMS.foresight_charm.about });
-}
+export function giveForesight(G) { return payForesight(G); }   // neck unique; Counted Stars uses the same push. Crit buff: combat.hurtPlayer / out().
 function giveCirclet(G) {   // the spare reward (Hearthmoor Story): a unique trinket; regen maps onto progress.mods().regen (HP/s while not chased)
   const S = G.S; S.bag = S.bag || [];
   if ([...S.bag, ...Object.values(S.gear || {})].some((x) => x && x.unique === 'nettle_circlet')) return;
@@ -296,6 +290,9 @@ function giveCirclet(G) {   // the spare reward (Hearthmoor Story): a unique tri
 }
 function endBossAdds(G) { const v = GREF.vana; if (v) v.clearAdds(); }
 export const wearsCirclet = (S) => Object.values(S.gear || {}).some((it) => it && it.unique === 'nettle_circlet');   // gear14: helm on new saves, neck on migrated ones
+
+// Assigned at the bottom of this file once TALK is live. attach calls it after the Stage B spots.
+export const STAGE_C = { wire: null };
 
 export class Vanaheim {
   constructor(G) { this.G = G; GREF.vana = this; this.ctx = null; this.area = null; this.spots = []; this.boss = null; this.adds = []; this.qaDone = null; this.thornUsed = false;
@@ -339,6 +336,14 @@ export class Vanaheim {
     return false;
   }
   look(name, pages, then) { this.G.openDialogue({ id: 'vh_look', name }, { pages, then }); }
+  // Spot stand-in for G.talkTo: open a TALK entry, choices included. False when the entry is empty.
+  talk(id, name) {
+    const fn = TALK[id];
+    const e = typeof fn === 'function' ? fn(this.S) : null;
+    if (!e || !e.pages) return false;
+    this.G.openDialogue({ id, name: name || id }, e);
+    return true;
+  }
   // ?vhq= QA preset: village | hex | thorn | fight | conquer | spare (yield dialogue open) | contract | cap | tobble
   //   | coin (village; first toss is the rare line + penny) | seed (spared stall, 60 gold; first glowseed buy gives the bonus) | thorns (fight + P3 thorn ring)
   qaPreset() {
@@ -362,6 +367,7 @@ export class Vanaheim {
     this.qaPreset();
     if (area === 'vh_village') this.village(ctx);
     if (area === 'vh_garden') this.garden(ctx);
+    if (STAGE_C.wire) STAGE_C.wire(this, this.G, area);
     const v = this.qs().get('vhq');
     if (area === 'vh_garden' && (v === 'fight' || v === 'spare' || v === 'thorns') && !this.boss && !F_(this.S).vh_nettle) setTimeout(() => { this.startBoss('nettlecrown'); if (v === 'spare') this.qaYield(); if (v === 'thorns') this.qaPhase3(); }, 400);
   }
@@ -476,3 +482,10 @@ export function growthLesson(S) {
   return null;
 }
 { const warden1 = TALK.warden; TALK.warden = (S, ...a) => growthLesson(S) || warden1(S, ...a); }
+
+// vanaheim_c.js evaluates first (it is a dependency). Re-wrap TALK now that VH_TALK and the warden school are live,
+// and point the night check at this realm's clock. Move the Stage C marker after vhMarker so story marks win.
+LINK.ctx = () => (GREF.vana && GREF.vana.ctx) || null;
+STAGE_C.wire = wireStageC;
+installStageC();
+{ const at = MARKER_HOOKS.indexOf(vhMarkerHook); if (at >= 0 && at !== MARKER_HOOKS.length - 1) { MARKER_HOOKS.splice(at, 1); MARKER_HOOKS.push(vhMarkerHook); } }

@@ -13,6 +13,7 @@ import { Jotunheim, AREAS_JOT, AREA_NAMES_JOT } from './jotunheim.js';   // [JOT
 import { Muspelheim, AREAS_MUSP, AREA_NAMES_MUSP } from './muspelheim.js';   // [MUSPELHEIM] skeleton: AREAS_MUSP is empty until areas are built
 import { Niflheim, AREAS_NIFL, AREA_NAMES_NIFL } from './niflheim.js';
 import { Vanaheim, AREAS_VH, AREA_NAMES_VH } from './vanaheim.js';   // [VANAHEIM] Stage B: Mossbrook village + the Thorngarden
+import './vanaheim_c.js';   // [VANAHEIM C] arrival, stars, Hollis, riddle stump, Morel, staff bench
 import { Asgard, AREAS_ASG, AREA_NAMES_ASG } from './asgard.js';   // [ASGARD]
 import { startBloomGame, bloomAction } from './minigames/bloomtide.js';   // [VANAHEIM C] Bloomtide harvest + dance minigames
 import { Helheim, AREAS_HEL, AREA_NAMES_HEL } from './helheim.js';   // [HELHEIM]   // [NIFLHEIM] skeleton: AREAS_NIFL is empty until areas are built
