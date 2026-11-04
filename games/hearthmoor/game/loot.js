@@ -95,11 +95,12 @@ export function migrateItem(it) {
   return migrateItemFx(it);   // gearfx: rv 2 -> rv 3, no second rescale
 }
 // gearfx: an rv 2 piece (already on the 14-slot scale) gains it.at from its base name and procs []. No new mods, never rescaled. Idempotent.
-const PLATE_BITS = ['Rune Helm', 'Rune Coat', 'Rune Sabatons', 'Rune Gauntlets', 'Rune Armbands', 'Rune Leggings', 'Rune Sash'];
-const CHAIN_BITS = ['Moss Mail', 'Moss Greaves', 'Fjord Hauberk', 'Moss', 'Smiths', 'Forge'];
+// Plate / Chain / Cloth / Robe / Hood / Wraps mark new drops. The older phrases stay so a saved name still migrates to the same type.
+const PLATE_BITS = ['Plate', 'Rune Helm', 'Rune Coat', 'Rune Sabatons', 'Rune Gauntlets', 'Rune Armbands', 'Rune Leggings', 'Rune Sash'];
+const CHAIN_BITS = ['Chain', 'Moss Mail', 'Moss Greaves', 'Fjord Hauberk', 'Moss', 'Smiths', 'Forge'];
 const LEATHER_BITS = ['Leather', 'Bog', 'Fur', 'Herders', 'Pouch', 'Raven'];
-const CLOTH_BITS = ['Wool', 'Felt', 'Knit', 'Lantern', 'Hearth', 'Bakers', 'Gardeners', 'Braided', 'Rope'];
-function armorTypeOf(name) {
+const CLOTH_BITS = ['Cloth', 'Robe', 'Hood', 'Wraps', 'Wool', 'Felt', 'Knit', 'Lantern', 'Hearth', 'Bakers', 'Gardeners', 'Braided', 'Rope'];
+export function armorTypeOf(name) {
   const n = name || '';
   if (PLATE_BITS.some((p) => n.includes(p))) return 'plate';
   if (CHAIN_BITS.some((p) => n.includes(p))) return 'chain';
@@ -162,6 +163,25 @@ const BASES = {
   ranged: ['Willow Bow', 'Firefly Jar', 'Yew Longbow', 'Rune Sling', 'Feather Charm', 'Elk Horn Charm'],
 };
 BASES.ringR = BASES.ringL;
+// New armor drops take a noun from the rolled type, so armorTypeOf(name) matches it.at. Saved bases above are not renamed.
+const ARMOR_NOUNS = {
+  plate: {
+    helm: ['Plate Helm', 'Rune Helm'], chest: ['Plate Coat', 'Rune Coat'], legs: ['Plate Greaves', 'Rune Leggings'], feet: ['Plate Sabatons', 'Rune Sabatons'],
+    arms: ['Plate Armbands', 'Rune Armbands'], gloves: ['Plate Gauntlets', 'Rune Gauntlets'], belt: ['Plate Sash', 'Rune Sash'], cloak: ['Plate Cloak'],
+  },
+  chain: {
+    helm: ['Chain Coif', 'Moss Cap'], chest: ['Chain Hauberk', 'Moss Mail', 'Fjord Hauberk'], legs: ['Chain Greaves', 'Moss Greaves'], feet: ['Chain Boots'],
+    arms: ['Chain Sleeves', 'Moss Wraps', 'Smiths Sleeves'], gloves: ['Chain Grips', 'Forge Grips'], belt: ['Chain Belt'], cloak: ['Chain Cloak', 'Moss Shawl'],
+  },
+  leather: {
+    helm: ['Leather Helm', 'Raven Helm'], chest: ['Leather Jerkin'], legs: ['Leather Trews', 'Herders Breeches'], feet: ['Leather Boots', 'Bog Walkers', 'Fur Boots'],
+    arms: ['Leather Vambraces'], gloves: ['Leather Gloves'], belt: ['Leather Girdle', 'Pouch Belt'], cloak: ['Leather Cape', 'Raven Cape'],
+  },
+  cloth: {
+    helm: ['Cloth Hood', 'Robe Hood', 'Wool Hood'], chest: ['Cloth Robe', 'Wool Tunic'], legs: ['Cloth Wraps', 'Wool Breeks'], feet: ['Cloth Slippers', 'Felt Boots'],
+    arms: ['Cloth Wraps', 'Braided Bracers'], gloves: ['Cloth Wraps', 'Knit Mittens'], belt: ['Cloth Cord', 'Rope Belt'], cloak: ['Cloth Mantle', 'Robe Cloak', 'Wool Mantle'],
+  },
+};
 const PREFIX = [['Plain', 'Worn', 'Sturdy'], ['Gleaming', 'Runed', 'Moonlit'], ['Starlit', 'Spellwoven', 'Twilight'], ['Sunfire', 'Elderglow', 'Rainbow'], ['Runeforged', 'Allfather\'s', 'Rift-sung']];
 // per-slot stat rolls (Hearthmoor's own mods; picked to fit the template's "can roll" column). fix = always, opt = one of.
 // base values are the old weapon / armor / trinket rolls; each is x rarity mul x level x SLOT_W[slot].
@@ -172,7 +192,7 @@ const RES_OPTS = [['resFire', 6], ['resWater', 6], ['resLight', 6], ['resDark', 
 const RES = ['res', 0], AVD = ['avoid', 0.01], MOV = ['move', 0.015], HST = ['haste', 0.015], BLK = ['block', 0.03];
 const INT_MOD = new Set(['hpAdd', 'stAdd', 'resFire', 'resWater', 'resLight', 'resDark', 'resAll']);
 // gearfx: runePct / shieldPct are absolute percents, not scaled by GEAR_NORM (or by level / slot / rarity).
-const ADV = { [R_EPIC]: { p: 0.25, lo: 1, hi: 2, n: 1 }, [R_LEG]: { p: 1, lo: 2, hi: 4, n: 1 }, [R_RUNE]: { p: 1, lo: 3, hi: 6, n: 2 } };
+const ADV = { [R_EPIC]: { p: 0.25, lo: 1, hi: 2, n: 1 }, [R_LEG]: { p: 1, lo: 1, hi: 2, n: 1 }, [R_RUNE]: { p: 1, lo: 3, hi: 4, n: 2 } };   // absolute percent. Epic 1-2, Legendary 1-2, Runeforged 3-4. Cap 20%.
 export const ROLLS = {
   helm: { fix: [HP], opt: [SPL, HEAL, RES] },                 // VIT, INT, SPI, max HP, a resist
   neck: { fix: [CRIT], opt: [CDMG, MEL, SPL, RES], epic: SUM },   // any primary, crit, crit dmg, a resist
@@ -237,7 +257,7 @@ function rollType(cls, rnd) {   // gearfx: 70% the class's own type when cls is 
   const pool = own ? ARMOR_TYPES.filter((t) => t !== own) : ARMOR_TYPES;
   return pool[pickW(rnd, pool.map((t) => ARMOR_W[t]))];
 }
-function rollAdv(r, at, rnd) {   // gearfx: absolute 1-6%, not multiplied by k / GEAR_NORM. Plate/chain lean runePct, cloth leans shieldPct.
+function rollAdv(r, at, rnd) {   // gearfx: absolute percent from ADV, not multiplied by k / GEAR_NORM. Plate/chain lean runePct, cloth leans shieldPct.
   const A = ADV[r]; if (!A || (A.p < 1 && rnd() >= A.p)) return [];
   const pct = () => Math.min(CAPS.runePct, (A.lo + Math.floor(rnd() * (A.hi - A.lo + 1))) / 100);
   if (A.n === 2) return [['runePct', pct()], ['shieldPct', pct()]];
@@ -258,8 +278,10 @@ export function makeItem(lv = 1, rar = null, slot = null, rnd = Math.random, luc
   let sl = slot === 'weapon' ? 'primary' : slot === 'armor' ? 'chest' : slot === 'trinket' ? 'neck' : slot || DROP_SLOTS[Math.floor(rnd() * DROP_SLOTS.length)];
   if (!ROLLS[sl]) sl = 'neck';
   const R = RARITY[r], k = R.mul * (1 + (lv - 1) * 0.06) * SLOT_W[sl] * GEAR_NORM;
-  const base = BASES[sl][Math.floor(rnd() * BASES[sl].length)], pre = PREFIX[r][Math.floor(rnd() * 3)];
+  const baseRoll = rnd(), pre = PREFIX[r][Math.floor(rnd() * 3)];
   const at = ARMOR_SLOTS.includes(sl) ? rollType(cls, rnd) : null;
+  const names = at ? ARMOR_NOUNS[at][sl] : BASES[sl];
+  const base = names[Math.floor(baseRoll * names.length)];
   const mods = {}, Rl = ROLLS[sl];
   const add = (pair) => {
     let [key, baseV] = pair;
@@ -300,7 +322,7 @@ function meanOverType(sl, opt, fn) {
 function advScore(r) {
   const A = ADV[r]; if (!A) return 0;
   let s = 0, n = 0; for (let p = A.lo; p <= A.hi; p++) { s += p / 100; n++; }
-  return A.p * A.n * SCORE.runePct * (s / n);   // gearfx: runePct and shieldPct share a weight, so the bias does not change the expected score
+  return A.p * A.n * SCORE.runePct * (s / n);   // gearfx: mean of ADV lo..hi (Legendary 1.5%, Runeforged 3.5% each). Shared weight, so the bias does not change the expected score.
 }
 function freshScore(sl, r, lv) {
   const Rl = ROLLS[sl]; if (!Rl) return 0; const k = RARITY[r].mul * (1 + (lv - 1) * 0.06) * SLOT_W[sl] * GEAR_NORM;

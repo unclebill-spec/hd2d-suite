@@ -131,3 +131,24 @@ for (const cls of CLASSES) for (const at of ORDER) {
   if (LO.canWear(cls, { at, slot: 'chest' }) !== allow) badWear.push(`${cls}/${at}`);
 }
 ok(!badWear.length && CLASSES.every((cls) => LO.canWear(cls, { slot: 'primary' }) && LO.canWear(cls, { slot: 'chest' })), 'canWear: plate all, chain down, leather leather/cloth, cloth cloth; untyped pieces are free (' + (badWear.join(', ') || '6 classes') + ')');
+const pctOf = (v) => Math.round(v * 100);
+const advBand = (rar, lo, hi, n, seed) => {
+  const rnd = lcg(seed); let bad = 0, seen = 0; const vals = new Set();
+  for (let i = 0; i < n; i++) {
+    const it = LO.makeItem(15, rar, 'chest', rnd);
+    const keys = ['runePct', 'shieldPct'].filter((k) => it.mods[k] != null);
+    if (keys.length !== (rar === LO.R_RUNE ? 2 : 1)) bad++;
+    for (const k of keys) { seen++; const pct = pctOf(it.mods[k]); vals.add(pct); if (pct < lo || pct > hi) bad++; }
+  }
+  return { bad, seen, vals: [...vals].sort((a, b) => a - b) };
+};
+const legBand = advBand(LO.R_LEG, 1, 2, 400, 51), runeBand = advBand(LO.R_RUNE, 3, 4, 400, 52);
+ok(legBand.bad === 0 && legBand.seen === 400 && legBand.vals.includes(1) && legBand.vals.includes(2) && legBand.vals.every((p) => p >= 1 && p <= 2), `Legendary rune/shield rolls in [1,2]% (${legBand.vals.join(',')})`);
+ok(runeBand.bad === 0 && runeBand.seen === 800 && runeBand.vals.includes(3) && runeBand.vals.includes(4) && runeBand.vals.every((p) => p >= 3 && p <= 4), `Runeforged rune/shield rolls in [3,4]% (${runeBand.vals.join(',')})`);
+const slotsA = ['helm', 'chest', 'legs', 'feet', 'arms', 'gloves', 'belt', 'cloak'];
+let nameBad = 0; const rndName = lcg(61);
+for (let i = 0; i < 2000; i++) {
+  const it = LO.makeItem(1 + (i % 20), i % 5, slotsA[i % slotsA.length], rndName, 0, CLASSES[i % CLASSES.length]);
+  if (!it.at || LO.armorTypeOf(it.name) !== it.at) nameBad++;
+}
+ok(nameBad === 0, `2000 armor-slot drops across classes: armorTypeOf(name) === at (${nameBad} mismatch)`);

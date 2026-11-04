@@ -88,6 +88,7 @@ export function rerollLock(S, it, chosen) {
 export function reroll(S, it, stat = null, rnd = Math.random) {
   const chosen = !!stat, why = rerollLock(S, it, chosen); if (why) return { blocked: why };
   const keys = Object.keys(it.mods), out = stat && keys.includes(stat) ? stat : keys[Math.floor(rnd() * keys.length)];
+  // TODO: forge rerolls don't roll the gearfx stats (resists/avoid/move/haste/block/runePct/shieldPct) yet.
   const pool = REROLL.pool[it.slot] || REROLL.pool.neck, free = Object.keys(pool).filter((k) => !keys.includes(k));
   const nk = free[Math.floor(rnd() * free.length)], raw = pool[nk] * itemK(it) * (0.8 + 0.4 * rnd());
   const v = ['hpAdd', 'stAdd'].includes(nk) ? Math.max(1, Math.round(raw)) : +raw.toFixed(3);
