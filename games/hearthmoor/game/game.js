@@ -112,11 +112,11 @@ window.__hm = G;   // smoke tests + debugging
 // ------------------------------------------------------------------ save / load
 G.slot = Math.min(SLOT_N, Math.max(1, +(Q.get('slot') || localStorage.getItem(LAST_SLOT)) || 1));
 function readSave(n = G.slot) {
-  try { const s = JSON.parse(localStorage.getItem(slotKey(n))); if (s && (s.v === 2 || s.v === 3)) return LO.migrateGear(s); } catch (e) { /* corrupt: fall through */ }
+  try { const s = JSON.parse(localStorage.getItem(slotKey(n))); if (s && (s.v === 2 || s.v === 3 || s.v === 4)) return LO.migrateGear(s); } catch (e) { /* corrupt: fall through */ }
   if (n !== 1 || localStorage.getItem(V1_DONE)) return null;
   try {   // migrate a v1 save: same fields, no class yet (Continue asks who you are, then carries on)
     const o = JSON.parse(localStorage.getItem(SLOT_V1));
-    if (o && o.v === 1) return { ...fresh(), ...o, v: 3, cls: null, hp: null, migrated: 1 };
+    if (o && o.v === 1) return { ...fresh(), ...o, v: 4, cls: null, hp: null, migrated: 1 };
   } catch (e) { /* ignore */ }
   return null;
 }
@@ -1141,7 +1141,7 @@ async function cont() {
   resume(s);
 }
 async function resume(s) {
-  G.S = { ...fresh(), ...s, v: 3 }; LO.migrateGear(G.S); PR.ensure(G.S); facMigrate(G.S);   // older saves: merit from finished work
+  G.S = { ...fresh(), ...s, v: 4 }; LO.migrateGear(G.S); PR.ensure(G.S); facMigrate(G.S);   // older saves: merit from finished work
   G.introNext = false; if (G.S.flags && G.S.flags.intro === 'playing') G.S.flags.intro = 'skipped';   // Continue never replays the opening
   closeTitle();
   G.busy = true;
@@ -1195,6 +1195,13 @@ function syncModeBtn() { const b = $('btnMode'); if (b) b.textContent = 'mode: '
 G.syncModeBtn = syncModeBtn;
 function syncAutoBtn() { const b = $('btnAuto'); if (b) b.textContent = 'auto level: ' + (G.S.autoLevel ? 'on' : 'off'); }
 const HUI = { tab: 0, i: 0 };
+function defenseHTML(S, M) {   // gearfx: gear screen only. Resists are reduction vs an on-level foe; a value on its cap shows (cap).
+  const lv = S.lv || 1, K = LO.CAPS.resK(lv, lv), C = LO.CAPS;
+  const pct = (v) => { const n = Math.max(0, v) * 100; return (Math.abs(n - Math.round(n)) < 0.05 ? Math.round(n) : +n.toFixed(1)) + '%'; };
+  const bit = (name, v, lim, plus) => { const raw = v || 0, hit = raw >= lim - 1e-6, c = hit ? lim : Math.max(0, raw); return `<span>${name} ${plus ? '+' : ''}${pct(c)}${hit ? ' (cap)' : ''}</span>`; };
+  const res = (school) => { const R = (M['res' + school[0].toUpperCase() + school.slice(1)] || 0) + (M.resAll || 0), p = R > 0 ? Math.min(C.res, R / (R + K)) : 0, hit = R > 0 && p >= C.res - 1e-9; return `<span>${school[0].toUpperCase() + school.slice(1)} ${pct(p)}${hit ? ' (cap)' : ''}</span>`; };
+  return `<p class="pts def"><b>Defense</b><span class="vs">vs Lv ${lv}</span>${['fire', 'water', 'light', 'dark'].map(res).join('')}${bit('Avoid', M.avoid, C.avoid)}${bit('Rune %', M.runePct, C.runePct)}${bit('Spell Shield %', M.shieldPct, C.shieldPct)}${bit('Block', M.block, C.block)}${bit('Move', M.move, C.move, true)}${bit('Haste', M.haste, C.haste, true)}</p>`;
+}
 function setHeroUI(open) {
   if (open && (G.title || G.busy || G.dlg || G.picking || G.shop)) return;
   G.heroUI = open; $('heroui').hidden = !open;
@@ -1222,15 +1229,19 @@ function drawHero() {
     LO.ensure(S);
     const eq = LO.SLOTS.map((sl) => [sl, S.gear[sl]]);
     const NE = LO.SLOTS.length; HUI.n = NE + S.bag.length;   // gear14: 14 equipped rows, then the bag
-    const rowOf = (it, k, label, btns, cmp = '') => `<div class="row gear${it ? ' r' + it.rar : ' none'}${k === HUI.i ? ' sel' : ''}" data-k="${k}">`
-      + `<b>${LO.SLOT_LABEL[label] || label}</b><em class="iname">${it ? `<i class="ic" data-up="${it.up || 0}" data-ic="${it.slot}:${it.rar}:${(it.gems || []).map((g) => g || '-').join(',')}"></i>${it.name}` : '— empty —'}</em>`
-      + `<span>${it ? `<u>${LO.RARITY[it.rar].name}</u> · ${LO.describe(it)}` : ''}${cmp ? `<small class="cmp">${cmp}</small>` : ''}</span><span class="bb">${btns}</span></div>`;
+    const rowOf = (it, k, label, btns, cmp = '') => {   // gearfx: Can't wear on the row and its tooltip; equip below refuses, scrap / bank / sell stay open
+      const no = !!(it && !LO.canWear(S.cls, it)), desc = it ? LO.describe(it) : '', tip = it ? `${LO.RARITY[it.rar].name} · ${desc}${no ? " · Can't wear" : ''}` : '';
+      return `<div class="row gear${it ? ' r' + it.rar : ' none'}${no ? ' nowear' : ''}${k === HUI.i ? ' sel' : ''}" data-k="${k}"${tip ? ` title="${tip.replace(/&/g, '&amp;').replace(/"/g, '&quot;')}"` : ''}>`
+        + `<b>${LO.SLOT_LABEL[label] || label}</b><em class="iname">${it ? `<i class="ic" data-up="${it.up || 0}" data-ic="${it.slot}:${it.rar}:${(it.gems || []).map((g) => g || '-').join(',')}"></i>${it.name}` : '— empty —'}</em>`
+        + `<span>${it ? `<u>${LO.RARITY[it.rar].name}</u> · ${desc}` : ''}${no ? ' <b class="nowear">Can\'t wear</b>' : ''}${cmp ? `<small class="cmp">${cmp}</small>` : ''}</span><span class="bb">${btns}</span></div>`;
+    };
     const owned = LO.GEM_IDS.filter((g) => S.gems[g] > 0);
     if (!owned.includes(HUI.gem)) HUI.gem = owned[0] || null;
     const sockBtn = (it, k) => (it && (it.gems || []).includes(null) && HUI.gem ? `<button class="wbtn sm plus" data-sock="${k}">socket</button>` : '');
     body.innerHTML = petStrip(S) + `<p class="pts">Gold ${S.gold} · bag ${S.bag.length} / ${LO.BAG_MAX} · Enter / A equip · X scrap for gold</p>`
       + `<p class="pts gems">${owned.length ? `gems: ${owned.map((g) => `<span class="gemtag${g === HUI.gem ? ' on' : ''}" style="--gc:${LO.GEMS[g].col}">◆ ${LO.GEMS[g].name} ×${S.gems[g]}</span>`).join(' ')}`
         + ` <button class="wbtn sm" id="gemCycle">gem ▸</button> · R / Y socket into the chosen row · T / RT next gem` : 'gems: none yet (golem cores, rift shards: beat foes, or ask the night merchant)'}</p>`
+      + defenseHTML(S, M)
       + `<div class="gear14">${eq.map(([sl, it], k) => rowOf(it, k, sl, (it ? `<button class="wbtn sm plus" data-uneq="${sl}">take off</button>` : '') + sockBtn(it, k))).join('')}</div>`
       + (S.bag.length ? '<p class="pts">bag</p>' : '<p class="pts">bag is empty: beat enemies, walk over the beams</p>')
       + S.bag.map((it, i) => rowOf(it, NE + i, LO.ringSlot(it.slot) ? 'ring' : it.slot, `<button class="wbtn sm plus" data-eq="${i}">equip</button>${sockBtn(it, NE + i)}<button class="wbtn sm plus" data-scrap="${i}">scrap</button>`, LO.compare(S, it))).join('');
@@ -1238,7 +1249,7 @@ function drawHero() {
     body.querySelectorAll('[data-sock]').forEach((b) => { b.onclick = (e) => { e.stopPropagation(); HUI.i = +b.dataset.sock; heroSocket(); }; });
     const gc = $('gemCycle'); if (gc) gc.onclick = (e) => { e.stopPropagation(); gemCycle(); };
     const pf = $('petFeed'); if (pf) pf.onclick = (e) => { e.stopPropagation(); petFeed(); };
-    body.querySelectorAll('[data-eq]').forEach((b) => { b.onclick = (e) => { e.stopPropagation(); if (LO.equip(S, +b.dataset.eq)) { G.audio.sfx('equip'); save(); drawHero(); } }; });
+    body.querySelectorAll('[data-eq]').forEach((b) => { b.onclick = (e) => { e.stopPropagation(); const it = S.bag[+b.dataset.eq]; if (it && !LO.canWear(S.cls, it)) { toast('Can\'t wear', 1.6); return; } if (LO.equip(S, +b.dataset.eq)) { G.audio.sfx('equip'); save(); drawHero(); } }; });   // gearfx: refuse the wear; the piece stays in the bag so it can still be scrapped
     body.querySelectorAll('[data-uneq]').forEach((b) => { b.onclick = (e) => { e.stopPropagation(); if (LO.unequip(S, b.dataset.uneq)) { save(); drawHero(); } }; });
     body.querySelectorAll('[data-scrap]').forEach((b) => { b.onclick = (e) => { e.stopPropagation(); HUI.i = LO.SLOTS.length + +b.dataset.scrap; heroScrap(); }; });
     const sel = body.querySelector('.row.sel'); if (sel && sel.scrollIntoView) sel.scrollIntoView({ block: 'nearest' });

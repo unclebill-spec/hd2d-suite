@@ -178,6 +178,7 @@ export function mods(S) {
     stAdd: 3 * d('swift'), crit: 0.03 + 0.01 * d('swift'), rollSpeed: 1 + 0.02 * d('swift'), rollIframes: 0,
     summonLife: 0, seedSplit: 0, chainJumps: 0, trapRadius: 1, drain: 0, regen: 0, arc: 0,
     spellCd: 0, critDmg: 0, stRegen: 0, summonCd: 0, summonTier: 0,
+    resFire: 0, resWater: 0, resLight: 0, resDark: 0, resAll: 0, avoid: 0, move: 0, haste: 0, block: 0, runePct: 0, shieldPct: 0, procs: [],   // gearfx: combat reads these; gearMods fills procs
   };
   for (const node of TREES[S.cls] || []) {
     if (!S.skills[node.id]) continue;

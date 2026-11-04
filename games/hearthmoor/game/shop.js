@@ -21,6 +21,7 @@ const GEAR_PRICE = [20, 110, 260, 600, 1200];   // gear14: Common, Rare, Epic, L
 const SHOP_SLOTS = ['primary', 'chest', 'neck', 'helm', 'ringL', 'secondary', 'legs', 'cloak', 'feet', 'gloves', 'ranged', 'arms', 'belt'];
 export const buyPrice = (it) => Math.round(GEAR_PRICE[it.rar] * (1 + 0.05 * ((it.lv || 1) - 1)));
 export const sellPrice = (it, mul = 1) => Math.max(LO.RARITY[it.rar].scrap + 1, Math.round(buyPrice(it) * 0.25 * mul));
+const cantWear = (S, it) => (it && !LO.canWear(S.cls, it) ? ' · <b class="nowear">Can\'t wear</b>' : '');   // gearfx: tag on the about line; buy, sell and the bank still take the piece
 
 export const SHOPS = {
   hearthmoor: { name: "Odo's Wares", keeper: 'Odo the merchant', goods: ['tonic', 'glowseed', 'orblamp', 'glowfish'], gear: { n: 3, rar: [0, 0, 0] }, sellMul: 1 },
@@ -74,7 +75,7 @@ export class Shop {
   }
   bankRows() {
     const S = this.G.S, b = this.bank, full = bankUsed(b) >= BANK_MAX, gold = S.gold || 0;
-    const gearRow = (it, k, kind) => ({ kind, it, k, name: it.name, about: `${LO.RARITY[it.rar].name} ${LO.SLOT_LABEL[it.slot] || it.slot} · ${LO.describe(it)}`, price: 0 });
+    const gearRow = (it, k, kind) => ({ kind, it, k, name: it.name, about: `${LO.RARITY[it.rar].name} ${LO.SLOT_LABEL[it.slot] || it.slot} · ${LO.describe(it)}${cantWear(S, it)}`, price: 0 });
     if (this.tab === 0) return [
       { kind: 'dep_gold', n: Math.min(10, gold), name: 'Deposit 10 gold', about: `you carry ${gold} · banked gold is safe from a faint`, cant: !gold },
       { kind: 'dep_gold', n: gold, name: 'Deposit all gold', about: `${gold} gold`, cant: !gold },
@@ -155,9 +156,9 @@ export class Shop {
           price: Math.round(GOODS[g].price * mul), have: (S.inv[g] || 0), cant: sold, left };
       }),
               ...(D.gems || []).map((g) => ({ kind: 'gem', id: g, name: LO.GEMS[g].name, about: `socket gem · ${LO.GEMS[g].about}`, price: Math.round(LO.GEMS[g].price * mul), have: (S.gems[g] || 0) })),
-              ...this.stockOf(this.open).map((it, k) => ({ kind: 'gear', it, k, name: it.name, about: `${LO.RARITY[it.rar].name} ${LO.SLOT_LABEL[it.slot] || it.slot} · ${LO.describe(it)} · ${LO.compare(S, it).replace(/<[^>]+>/g, '')}`, price: Math.round(buyPrice(it) * mul) }))];
+              ...this.stockOf(this.open).map((it, k) => ({ kind: 'gear', it, k, name: it.name, about: `${LO.RARITY[it.rar].name} ${LO.SLOT_LABEL[it.slot] || it.slot} · ${LO.describe(it)}${cantWear(S, it)} · ${LO.compare(S, it).replace(/<[^>]+>/g, '')}`, price: Math.round(buyPrice(it) * mul) }))];
     }
-    return (S.bag || []).map((it, k) => ({ kind: 'sell', it, k, name: it.name, about: `${LO.RARITY[it.rar].name} ${LO.SLOT_LABEL[it.slot] || it.slot} · ${LO.describe(it)}`, price: sellPrice(it, D.sellMul) }));
+    return (S.bag || []).map((it, k) => ({ kind: 'sell', it, k, name: it.name, about: `${LO.RARITY[it.rar].name} ${LO.SLOT_LABEL[it.slot] || it.slot} · ${LO.describe(it)}${cantWear(S, it)}`, price: sellPrice(it, D.sellMul) }));
   }
   show(id) {
     const G = this.G;

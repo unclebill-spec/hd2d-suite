@@ -3,6 +3,7 @@
 // Visuals come from the engine (sprites, spells atlas); this file only decides who gets hit and how hard.
 import { mods as progMods, XP, addXP, MODES, summonTier } from './progress.js';
 import { HERO, SPELLS, CHARM_DMG, CHARM_CD, SUMMONS, SUMMON_LIFE, SUMMON_CD, ENEMIES, RESPAWN, LEASH, SPAWNS, PLAYER } from './heroes.js';
+import { CAPS, PROCS, SCHOOL_OF } from './loot.js';   // gearfx: caps, proc table, element -> school
 
 // summon tiers (Part 4): I base, II glows (a following light + sparkles), III radiant form (lit rim, crown of light,
 // sparkles; '<role>_r' sprite) + a rune circle on arrival, IV (capstone) brighter and wider light + a sparkle burst.
@@ -51,12 +52,24 @@ export const framePullFor = (k) => (k >= 4 ? Math.min(2.0, 1 + (k - 1) * 0.18) :
 export const isTrial = (e, S) => { const t = (e.sp && e.sp.trial) ?? e.D.trial; return typeof t === 'function' ? !!t(S) : !!t; };
 const ROMAN = ['', 'I', 'II', 'III', 'IV'];
 const PAL = { ink: '#2a1e1c', white: '#fff8e6', gold: '#f2c24a', rose: '#e47c8c', green: '#b2c464', sky: '#94c0dc' };
+const GREY = '#b7b1a6';   // gearfx: Dodged (no grey in PAL)
+const PROC_WORD = { lifeSteal: 'Leech', fireBolt: 'Bolt', freeze: 'Freeze', root: 'Root', heal: 'Heal', damageShield: 'Thorns', runeShield: 'Rune' };
+const PROC_COL = { lifeSteal: PAL.rose, fireBolt: PAL.gold, freeze: PAL.sky, root: PAL.green, heal: PAL.green, damageShield: PAL.gold, runeShield: PAL.sky };
 // 3x5 pixel font: digits, + and - (drawn at an integer scale with a 1 px ink outline, never smoothed)
 const GLYPH = {
   0: ['111', '101', '101', '101', '111'], 1: ['010', '110', '010', '010', '111'], 2: ['111', '001', '111', '100', '111'],
   3: ['111', '001', '011', '001', '111'], 4: ['101', '101', '111', '001', '001'], 5: ['111', '100', '111', '001', '111'],
   6: ['111', '100', '111', '101', '111'], 7: ['111', '001', '010', '010', '010'], 8: ['111', '101', '111', '101', '111'],
   9: ['111', '101', '111', '001', '111'], '+': ['000', '010', '111', '010', '000'], '-': ['000', '000', '111', '000', '000'],
+  A: ['010', '101', '111', '101', '101'], B: ['110', '101', '110', '101', '110'], C: ['111', '100', '100', '100', '111'],
+  D: ['110', '101', '101', '101', '110'], E: ['111', '100', '110', '100', '111'], F: ['111', '100', '110', '100', '100'],
+  G: ['111', '100', '101', '101', '011'], H: ['101', '101', '111', '101', '101'], I: ['111', '010', '010', '010', '111'],
+  J: ['001', '001', '001', '101', '010'], K: ['101', '101', '110', '101', '101'], L: ['100', '100', '100', '100', '111'],
+  M: ['101', '111', '101', '101', '101'], N: ['101', '111', '111', '101', '101'], O: ['111', '101', '101', '101', '111'],
+  P: ['110', '101', '110', '100', '100'], Q: ['111', '101', '101', '111', '001'], R: ['110', '101', '110', '101', '101'],
+  S: ['111', '100', '111', '001', '111'], T: ['111', '010', '010', '010', '010'], U: ['101', '101', '101', '101', '111'],
+  V: ['101', '101', '101', '101', '010'], W: ['101', '101', '101', '111', '101'], X: ['101', '101', '010', '101', '101'],
+  Y: ['101', '101', '010', '010', '010'], Z: ['111', '001', '010', '100', '111'],
 };
 export function pixelText(str, color, scale = 3) {
   const w = str.length * 4 + 1, h = 7;                 // 3 px glyph + 1 px gap, 1 px outline all round
@@ -65,7 +78,7 @@ export function pixelText(str, color, scale = 3) {
   const g = cv.getContext('2d');
   g.imageSmoothingEnabled = false;
   const on = new Set();
-  [...str].forEach((ch, i) => (GLYPH[ch] || []).forEach((row, y) => [...row].forEach((b, x) => { if (b === '1') on.add(`${1 + i * 4 + x},${1 + y}`); })));
+  [...str].forEach((ch, i) => (GLYPH[ch] || GLYPH[ch.toUpperCase()] || []).forEach((row, y) => [...row].forEach((b, x) => { if (b === '1') on.add(`${1 + i * 4 + x},${1 + y}`); })));
   const px = (x, y, c) => { g.fillStyle = c; g.fillRect(x * scale, y * scale, scale, scale); };
   for (const k of on) {
     const [x, y] = k.split(',').map(Number);
@@ -90,6 +103,8 @@ export class Combat {
     this.godT = 0;
     this.defeated = {};              // area:id -> game seconds left until it wanders back
     this.time = 0;
+    this.procCd = {}; this.dmgShieldT = 0; this.runeAbs = 0; this.runeAbsT = 0; this._procHit = false; this._inProc = false;   // gearfx
+    this.gfx = { lastProc: null, procs: 0 };   // gearfx: lastProc + procs fired count
   }
   get hero() { return HERO[this.G.S.cls] || HERO.wildcaller; }
   maxHp() { return this.hero.hp + this.M.hpAdd; }
@@ -109,6 +124,7 @@ export class Combat {
   // ---------------------------------------------------------------- area lifecycle
   attach(ctx, area) {
     this.ctx = ctx; this.area = area;
+    if (ctx && ctx.player) this.bindSpeed(ctx.player);   // gearfx: move bonus on the raw speed, before the first step
     this.enemies = []; this.navBig = null; this.summon = null; this.projs = []; this.traps = []; this.later = []; this.skin = null; this.patches = []; this.magma = []; this.motes = []; this.endWard(); this.endVeil(); this.spirits = [];
     this.clearDom();
     if (this.G.S.hp == null || this.G.S.hp <= 0) this.G.S.hp = this.maxHp();
@@ -145,8 +161,12 @@ export class Combat {
     if (!this.ctx || ctx !== this.ctx) return;
     this.time += dt;
     const p = ctx.player, G = this.G;
+    if (p) this.bindSpeed(p);   // gearfx
     // cooldowns + stamina
     for (const k in this.cd) this.cd[k] = Math.max(0, this.cd[k] - dt);
+    for (const id in this.procCd) this.procCd[id] = Math.max(0, this.procCd[id] - dt);   // gearfx: each proc id keeps its own ICD
+    if (this.dmgShieldT > 0) this.dmgShieldT = Math.max(0, this.dmgShieldT - dt);
+    if (this.runeAbsT > 0 && (this.runeAbsT = Math.max(0, this.runeAbsT - dt)) <= 0) this.runeAbs = 0;
     if (this.godT > 0) { this.godT -= dt; p.quad.visible = this.godT <= 0 || Math.floor(this.godT * 12) % 2 === 0; if (this.godT <= 0) p.quad.visible = true; }
     const guarding = p.act && p.act.name === 'defend';
     if (this.stT > 0) this.stT -= dt;
@@ -154,7 +174,7 @@ export class Combat {
     const regen = this.M.regen;   // Warm Light: slow regen while nothing is chasing you
     if (regen && !this.G.downed && this.G.S.hp < this.maxHp() && !this.enemies.some((e) => e.state === 'chase' || e.state === 'attack')) this.G.S.hp = Math.min(this.maxHp(), this.G.S.hp + regen * dt);
     // the player's swing lands on its impact frame
-    if (p.act && p.act.name === 'attack' && !p.act.hitDone && p.act.t >= PLAYER.impact) { p.act.hitDone = true; this.meleeHit(); }
+    if (p.act && p.act.name === 'attack' && !p.act.hitDone && p.act.t >= PLAYER.impact / (p.act.gfxH || 1)) { p.act.hitDone = true; this.meleeHit(); }   // gearfx: impact stays at the same point in the (shorter) swing
     // defeated enemies wander back after a while
     for (const k of Object.keys(this.defeated)) {
       this.defeated[k] -= dt;
@@ -212,10 +232,11 @@ export class Combat {
     const sees = !frozen && !this.peace && this.godT <= 0 && !veiled && d < D.aggro && Math.abs(p.y - a.y) < 1.3;
     e.cd -= dt;
     if (frozen && e.state !== 'attack') { ctx.actors.animate(a, dt, false); this.floatBob(e); return; }
+    if (e.frozenT > 0) { a.act = null; if (e.state === 'attack') { e.state = 'chase'; e.fired = false; } ctx.actors.animate(a, dt, false); this.floatBob(e); return; }   // gearfx: a freeze holds the foe and stops the swing
     const gl = D.shy ? this.G.glow : null;   // cold-fire wraiths: never drift into light
     const step = (tx, tz, scale = 1) => {
       if (gl) { const n = Math.hypot(tx, tz) || 1; if (gl.litAt(a.x + tx / n * 0.45, a.z + tz / n * 0.45)) return false; }
-      return ctx.moveActor(a, tx, tz, dt * scale * (this.coldAt(a.x, a.z) ? this.coldSlow : 1) * (e.chillT > 0 ? 0.5 : 1) * (e.rootT > 0 ? 0 : 1));   // [VANAHEIM] Vine Grasp: rooted foes do not move   // Cold Fire patch / Frostweave chill: half speed
+      return ctx.moveActor(a, tx, tz, dt * scale * (this.coldAt(a.x, a.z) ? this.coldSlow : 1) * (e.chillT > 0 ? 1 - (e.chillPct > 0 ? e.chillPct : 0.5) : 1) * (e.rootT > 0 || e.frozenT > 0 ? 0 : 1));   // [VANAHEIM] Vine Grasp / gearfx freeze: rooted foes do not move   // Cold Fire patch / Frostweave chill: half speed (a boss freeze is a 40% slow via chillPct)
     };
     if (gl && e.state !== 'attack') {
       const Z = gl.zoneAt(a.x, a.z);   // caught in light (a pool bloomed under it, a lamp came on): slip out
@@ -329,7 +350,7 @@ export class Combat {
       this.G.toast && !this.chillTold && (this.chillTold = true, this.G.toast(D.chillMsg || 'Chilled! The frost golem saps your stamina.', 2));
     }
   }
-  damageEnemy(e, dmg, src, push = 0.35, color = PAL.white) {
+  damageEnemy(e, dmg, src, push = 0.35, color = PAL.white, noProc = false) {
     if (e.state === 'dead' || e.state === 'gone') return false;
     const ctx = this.ctx, a = e.a;
     if (e.mods && e.mods.hurt) dmg = e.mods.hurt(e, dmg);   // a Shielded rare's ward soaks part of the hit
@@ -341,6 +362,7 @@ export class Combat {
     if (push && src) this.shove(a, a.x - src.x, a.z - src.z, push * (e.a.role === 'golem' || e.D.heavy ? (e.D.boss ? 0.15 : 0.35) : 1));
     if (!this.peace && (e.state === 'idle' || e.state === 'home')) e.state = 'chase';
     if (e.hp <= 0) { if (isTrial(e, this.G.S)) this.yieldTo(e); else this.kill(e); }
+    if (!noProc && this._procHit && !this._inProc) this.rollProc(e, dmg);   // gearfx: player melee / spell / bolt only; proc damage passes noProc
     return true;
   }
   // 6.4 trial mode (Hjortur's guardian trial): at 0 HP the foe yields instead of dying: no XP, no loot, no onBoss merit,
@@ -379,6 +401,93 @@ export class Combat {
     a.x = nx; a.z = nz; a.y = nh;
   }
 
+  // ---------------------------------------------------------------- gearfx: haste, move, resists, procs
+  hasteMul() { return 1 + Math.min(this.M.haste || 0, CAPS.haste); }   // gearfx: swing interval. onAct divides p.act.dur by this; PLAYER.atkCost stays. Base clip is engine/sprites.js ACT.attack (engine/main.js actorAct). Do not divide that again.
+  moveMul() { return 1 + Math.min(this.M.move || 0, CAPS.move); }   // gearfx: composed in the p.speed getter so Stone Skin / blizzard keep writing the raw value
+  bindSpeed(p) {   // gearfx: effective speed = raw * moveMul. Writers (blizzard, gaze, Stone Skin) store the raw number.
+    if (!p || p._gfxSp) return;
+    let raw = p.speed; const C = this;
+    Object.defineProperty(p, 'speed', { configurable: true, enumerable: true, get() { return raw * C.moveMul(); }, set(v) { raw = v; } });
+    Object.defineProperty(p, '_spRaw', { configurable: true, enumerable: false, get() { return raw; } });
+    Object.defineProperty(p, '_gfxSp', { value: 1, enumerable: false });
+  }
+  spRaw(p) { return p && p._spRaw != null ? p._spRaw : (p ? p.speed : 0); }
+  foeOf(src) { return src && this.enemies ? this.enemies.find((x) => x.a === src || (src.a && x.a === src.a)) || null : null; }
+  hitSchool(foe, src) {   // gearfx: foe element via SCHOOL_OF; a loose src.fire / ice / lightning maps the same way when the foe is physical or missing
+    let school = foe && foe.D ? SCHOOL_OF(foe.D.element) : 'physical';
+    if (school === 'physical' && src) {
+      if (src.fire) school = 'fire';
+      else if (src.ice || src.cold) school = SCHOOL_OF('ice');
+      else if (src.lightning) school = SCHOOL_OF('lightning');
+      else if (src.light) school = 'light';
+      else if (src.dark) school = 'dark';
+      else if (src.water) school = 'water';
+      else if (src.element) school = SCHOOL_OF(src.element);
+    }
+    return school;
+  }
+  shieldHeld() { const it = this.G.S.gear && this.G.S.gear.secondary; return !!(it && /Buckler|Shield/.test(it.name || '')); }   // gearfx: same bases that roll block
+  foeLv(foe) { return foe ? (foe.lv != null ? foe.lv : (foe.D && foe.D.lv != null ? foe.D.lv : (foe.sp && foe.sp.lv != null ? foe.sp.lv : null))) : null; }
+  resKey(school) { return 'res' + school.charAt(0).toUpperCase() + school.slice(1); }
+  resistPct(R, foe) { if (!(R > 0)) return 0; const K = CAPS.resK(this.foeLv(foe), this.G.S.lv || 1); return Math.min(CAPS.res, R / (R + K)); }
+  foeRes(e, school) {   // gearfx: a foe's own rating, if it has one (D.resFire / resAll / D.res[school] / mods)
+    if (!e) return 0; const D = e.D || {}, X = e.mods || {}, k = this.resKey(school);
+    const R = (D[k] || 0) + (D.resAll || 0) + (X[k] || 0) + (X.resAll || 0) + (D.res && D.res[school] || 0);
+    return this.resistPct(R, e);
+  }
+  hitFoe(e, dmg, src, push = 0.35, color = PAL.white) {   // gearfx: a landed player melee / spell / bolt. Summons stay on damageEnemy and never proc.
+    this._procHit = true;
+    try { return this.damageEnemy(e, dmg, src, push, color, false); }
+    finally { this._procHit = false; }
+  }
+  procReady(e, p) {
+    const def = PROCS[p.id]; if (!def) return false;
+    if (p.id === 'root' && e.D && e.D.boss) return false;   // gearfx: bosses are immune, so the roll can land on another proc
+    if (def.per === 'target') return !(e.procT && e.procT[p.id] > 0);
+    return !((this.procCd[p.id] || 0) > 0);
+  }
+  rollProc(e, dmg) {   // gearfx: at most one proc. chance = min(ch + crit*0.25, ch*2, 0.35). crit is M.crit. A killing blow still procs.
+    if (!e || e.state === 'gone' || this._inProc) return;
+    const list = (this.M.procs || []).filter((p) => p && this.procReady(e, p)); if (!list.length) return;
+    const crit = this.M.crit || 0, bag = list.slice();
+    for (let i = bag.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); const t = bag[i]; bag[i] = bag[j]; bag[j] = t; }
+    this._inProc = true;
+    try {
+      for (const p of bag) {
+        const ch = p.ch ?? PROCS[p.id].ch, chance = Math.min(ch + crit * 0.25, ch * 2, 0.35);
+        if (Math.random() < chance) { this.fireProc(p, e, dmg); return; }
+      }
+    } finally { this._inProc = false; }
+  }
+  fireProc(p, e, dmg) {
+    const id = p.id, def = PROCS[id]; if (!def) return;
+    const icd = p.icd ?? def.icd;
+    if (def.per === 'target') { e.procT = e.procT || {}; e.procT[id] = icd; } else this.procCd[id] = icd;
+    this.gfx.lastProc = id; this.gfx.procs = (this.gfx.procs || 0) + 1;
+    if (e.a) this.number(PROC_WORD[id] || id, e.a.x, e.a.y + 2.35, e.a.z, PROC_COL[id] || PAL.white);
+    if (id === 'lifeSteal') this.heal(dmg * def.healPct, true);
+    else if (id === 'fireBolt') this.procBolt(p, e);
+    else if (id === 'freeze') this.procFreeze(e);
+    else if (id === 'root') { if (!(e.D && e.D.boss)) e.rootT = Math.max(e.rootT || 0, def.dur); }
+    else if (id === 'heal') this.heal(this.maxHp() * def.healPct, true);
+    else if (id === 'damageShield') this.dmgShieldT = def.dur;
+    else if (id === 'runeShield') { this.runeAbs = this.maxHp() * def.absorb; this.runeAbsT = def.dur; }
+  }
+  procBolt(p, e) {   // gearfx: (8 + 3*lv) * spellMul, then the foe's own fire resist. Reuses ember / coldfire_bolt / ember_pop. noProc so it cannot chain.
+    const ctx = this.ctx; if (!ctx || !e || e.state === 'dead' || e.state === 'gone') return;
+    const def = PROCS.fireBolt, lv = p.lv || this.G.S.lv || 1, pl = ctx.player;
+    const n = Math.max(CAPS.minHit, Math.round((def.base + def.perLv * lv) * (this.M.spellMul || 1) * (1 - this.foeRes(e, 'fire'))));
+    const fx = ctx.effects, nm = fx && (fx.meta.effects.ember ? 'ember' : fx.meta.effects.coldfire_bolt ? 'coldfire_bolt' : (fx.meta.effects.ember_pop ? 'ember_pop' : null));
+    if (nm) fx.spawn(nm, pl.x, pl.y + 0.3, pl.z + 0.05, nm === 'coldfire_bolt' ? { to: [e.a.x, e.a.y + 0.4, e.a.z] } : { duration: 0.35, fadeIn: 0 });
+    this.damageEnemy(e, n, pl, 0.15, LAVA, true);
+  }
+  procFreeze(e) {   // gearfx: freeze = rootT (no move) + frozenT (no swing). Elite/rare 0.5 s. Bosses are only slowed.
+    const def = PROCS.freeze;
+    if (e.D && e.D.boss) { e.chillT = Math.max(e.chillT || 0, def.bossDur); e.chillPct = def.bossSlow; return; }
+    const dur = (e.D && (e.D.elite || e.D.rare)) || e.rare ? def.eliteDur : def.dur;
+    e.rootT = Math.max(e.rootT || 0, dur); e.frozenT = Math.max(e.frozenT || 0, dur);
+  }
+
   // ---------------------------------------------------------------- the player
   hurtPlayer(dmg, src, push = 0.3) {
     const ctx = this.ctx, p = ctx.player, G = this.G;
@@ -386,24 +495,42 @@ export class Combat {
     if (G.downed || this.godT > 0 || p.iframes > 0) return false;
     dmg *= (MODES[G.S.mode] || MODES.adventurer).hurt;   // Story / Adventurer / Hero
     if (this.skin) dmg = Math.max(1, Math.round(dmg * this.skin.take));   // Stone Skin: -40 % damage taken
-    const foe = this.ward && src ? this.enemies.find((x) => x.a === src || (src.a && x.a === src.a)) : null, raw = dmg;
+    const foe = this.foeOf(src), raw = dmg;
     if (this.ward && src && (src.fire || (foe && foe.D.element === 'fire'))) dmg = Math.max(1, Math.round(dmg * this.ward.take));   // Flame Ward: -30 % fire damage taken
+    // gearfx: after mode / skin / ward. (a) avoid (b) rune or resist+shield (c) block (d) rune absorb (e) min 1. Guard below is unchanged.
+    const M = this.M, school = this.hitSchool(foe, src);
+    const half = !!(src && (src.proj || src.bolt)) || !!(foe && foe.D && foe.D.ranged) || school !== 'physical';
+    const avoid = Math.min(M.avoid || 0, CAPS.avoid) * (half ? CAPS.avoidSpell : 1);
+    if (avoid > 0 && Math.random() < avoid) { this.number('Dodged', p.x, p.y + 2.0, p.z, GREY); return true; }   // gearfx: 0 damage, the swing still "lands" for the caller
+    if (school === 'physical') dmg *= 1 - Math.min(M.runePct || 0, CAPS.runePct);
+    else {
+      const red = this.resistPct((M[this.resKey(school)] || 0) + (M.resAll || 0), foe);
+      if (red >= 0.25) this.number('Resisted', p.x, p.y + 2.15, p.z, PAL.sky);
+      dmg *= (1 - red) * (1 - Math.min(M.shieldPct || 0, CAPS.shieldPct));
+    }
     const fv = FV[p.facing] || [0, 1];
-    const dx = src.x - p.x, dz = src.z - p.z, d = Math.hypot(dx, dz) || 1;
+    const dx = src && src.x != null ? src.x - p.x : 0, dz = src && src.z != null ? src.z - p.z : 0, dlen = Math.hypot(dx, dz) || 1;
+    const front = !!(src && src.x != null && (fv[0] * dx + fv[1] * dz) / dlen > 0.15);
+    if (dmg > 0 && front && this.shieldHeld() && Math.random() < Math.min(M.block || 0, CAPS.block)) { dmg *= 1 - CAPS.blockSoak; this.number('Blocked', p.x, p.y + 2.15, p.z, PAL.sky); }
+    if (this.runeAbsT > 0 && this.runeAbs > 0 && dmg > 0) {
+      const soak = Math.min(this.runeAbs, dmg); this.runeAbs -= soak; dmg -= soak;
+      if (dmg <= 0.0001) { this.number('Absorbed', p.x, p.y + 2.0, p.z, PAL.white); return true; }   // gearfx: the pool ate the whole hit, so it never connects
+    }
     let guarded = false;
-    if (p.act && p.act.name === 'defend' && (fv[0] * dx + fv[1] * dz) / d > 0.15) {
+    if (p.act && p.act.name === 'defend' && front) {
       guarded = true;
-      dmg = Math.max(1, Math.round(dmg * (this.hero.guard ?? PLAYER.guardMul) * this.M.guardMul));
-      this.st -= (6 + dmg * 1.5) * this.M.guardSt; this.stT = PLAYER.regenDelay;
+      dmg = Math.max(1, Math.round(dmg * (this.hero.guard ?? PLAYER.guardMul) * M.guardMul));
+      this.st -= (6 + dmg * 1.5) * M.guardSt; this.stT = PLAYER.regenDelay;
       if (ctx.effects) ctx.effects.spawn('hit_spark', p.x + fv[0] * 0.3, p.y, p.z + fv[1] * 0.3 + 0.1);
       G.audio.sfx('guard');
       if (this.st <= 0) { this.st = 0; ctx.release('defend'); G.toast('Guard broken!', 1.2); }
-    } else G.audio.sfx('hurt');
+    } else { G.audio.sfx('hurt'); dmg = Math.max(CAPS.minHit, Math.round(dmg)); }   // gearfx: a hit that connects deals at least 1
     G.S.hp = Math.max(0, G.S.hp - dmg);
-    if (foe && foe.state !== 'dead' && foe.state !== 'gone') this.ignite(foe, Math.max(1, Math.round(raw * this.ward.refl)));   // ... and 10 % of the blow comes back as a burn on whoever struck
+    if (this.ward && foe && foe.state !== 'dead' && foe.state !== 'gone') this.ignite(foe, Math.max(1, Math.round(raw * this.ward.refl)));   // ... and 10 % of the blow comes back as a burn on whoever struck
+    if (this.dmgShieldT > 0 && foe && foe.state !== 'dead' && foe.state !== 'gone' && dmg > 0) this.damageEnemy(foe, Math.max(CAPS.minHit, Math.round(dmg * PROCS.damageShield.reflect)), null, 0, LAVA, true);   // gearfx: 20% of the dealt hit back as fire, and it does not proc
     p.flashT = this.flashOK() ? 0.15 : 0; p.iframes = PLAYER.hitIframes;
     this.number(dmg, p.x, p.y + 2.0, p.z, guarded ? PAL.sky : PAL.rose);
-    this.shove(p, -dx, -dz, guarded ? push * 0.4 : push);
+    if (src && src.x != null) this.shove(p, -dx, -dz, guarded ? push * 0.4 : push);
     if (G.S.hp <= 0) this.down();
     return true;
   }
@@ -452,14 +579,14 @@ export class Combat {
       if (d > m.reach + e.D.r || Math.abs(a.y - p.y) > 1.0) continue;
       if (d > 0.45 && (fv[0] * dx + fv[1] * dz) / d < PLAYER.arc - this.M.arc) continue;
       const dmg = this.out('melee', m.dmg);
-      if (this.damageEnemy(e, dmg, p, 0.45, this.lastCrit ? PAL.gold : PAL.white)) { hit++; if (this.M.drain) this.heal(dmg * this.M.drain, true); }
+      if (this.hitFoe(e, dmg, p, 0.45, this.lastCrit ? PAL.gold : PAL.white)) { hit++; if (this.M.drain) this.heal(dmg * this.M.drain, true); }   // gearfx: melee procs
     }
     if (this.summon) hit += 0;   // never hits your own summon
     if (!hit) this.G.audio.sfx('swing');
     return hit;
   }
   onAct(name) {
-    if (name === 'attack') { this.st = Math.max(0, this.st - PLAYER.atkCost); this.stT = 0.35; }
+    if (name === 'attack') { this.st = Math.max(0, this.st - PLAYER.atkCost); this.stT = 0.35; const a = this.ctx && this.ctx.player && this.ctx.player.act; if (a && a.name === 'attack' && !a.gfxH) { const h = this.hasteMul(); a.dur /= h; a.gfxH = h; } }   // gearfx: interval / dur / hasteMul. Stamina stays PLAYER.atkCost. Base clip is engine ACT.attack; step 3 must not divide dur again.
   }
   onDodge() {
     if (this.G.downed) return false;
@@ -488,7 +615,7 @@ export class Combat {
       if (name === 'healing_petals') this.later.push({ t: 0.3, fn: () => this.heal(12) });
       if (dmg) this.later.push({ t: 0.18, fn: () => {
         const fv = FV[p.facing] || [0, 1], cx = p.x + fv[0] * 1.2, cz = p.z + fv[1] * 1.2;
-        for (const e of this.alive()) if (Math.hypot(e.a.x - cx, e.a.z - cz) < 1.5) this.damageEnemy(e, this.out('spell', dmg), p, 0.25, PAL.gold);
+        for (const e of this.alive()) if (Math.hypot(e.a.x - cx, e.a.z - cz) < 1.5) this.hitFoe(e, this.out('spell', dmg), p, 0.25, PAL.gold);   // gearfx: charm
       } });
       return true;
     }
@@ -534,7 +661,7 @@ export class Combat {
       fx.spawn('rune_slam', p.x, p.y, p.z + 0.05); fx.spawn('impact', p.x, p.y, p.z + 0.06);
       { const hx = ctx.hmfx, hn = HMFX_FLASH.light, hm = hx && hn && hx.meta.effects[hn]; if (hm) hx.spawn(hn, p.x, p.y, p.z + 0.06, hm.loop ? { duration: 1.2 } : {}); } // [HMFX48] light hit
       if (this.G.glow) this.G.glow.pool(p.x, p.z, this.G.glow.colorOf('rune_slam'), 1.2);
-      for (const e of this.alive()) if (dist(e.a, p) < S.radius + e.D.r) this.damageEnemy(e, this.out('spell', S.dmg), p, S.push, PAL.gold);
+      for (const e of this.alive()) if (dist(e.a, p) < S.radius + e.D.r) this.hitFoe(e, this.out('spell', S.dmg), p, S.push, PAL.gold);   // gearfx: nova
     } else if (S.kind === 'trap') {
       const x = p.x + fv[0] * 1.7, z = p.z + fv[1] * 1.7, y = ctx.heightAt(x, z);
       (T && T.rune ? T.g : fx).spawn(T && T.rune ? T.rune : 'rune_trap', x, y, z + 0.02);
@@ -547,7 +674,7 @@ export class Combat {
         if (!e) break;
         hitList.push(e);
         const dmg = this.out('spell', S.dmg * Math.pow(0.75, i));
-        this.later.push({ t, fn: () => { if (e.state !== 'dead' && e.state !== 'gone') { fx.spawn('sky_strike', e.a.x, e.a.y, e.a.z + 0.06); { const hx = ctx.hmfx, hn = HMFX_ZAP.chain, hm = hx && hn && hx.meta.effects[hn]; if (hm) hx.spawn(hn, e.a.x, e.a.y, e.a.z + 0.06, hm.loop ? { duration: 1.2 } : {}); } this.damageEnemy(e, dmg, p, 0.2, PAL.gold); if (i === 0 && this.G.glow) this.G.glow.pool(e.a.x, e.a.z, this.G.glow.colorOf('sky_strike')); } } }); // [HMFX48] chain lightning
+        this.later.push({ t, fn: () => { if (e.state !== 'dead' && e.state !== 'gone') { fx.spawn('sky_strike', e.a.x, e.a.y, e.a.z + 0.06); { const hx = ctx.hmfx, hn = HMFX_ZAP.chain, hm = hx && hn && hx.meta.effects[hn]; if (hm) hx.spawn(hn, e.a.x, e.a.y, e.a.z + 0.06, hm.loop ? { duration: 1.2 } : {}); } this.hitFoe(e, dmg, p, 0.2, PAL.gold); if (i === 0 && this.G.glow) this.G.glow.pool(e.a.x, e.a.z, this.G.glow.colorOf('sky_strike')); } } }); // [HMFX48] chain lightning
         from = e.a; t += 0.16;
       }
       if (!hitList.length) { fx.spawn('sky_strike', p.x + fv[0] * 2, ctx.heightAt(p.x + fv[0] * 2, p.z + fv[1] * 2), p.z + fv[1] * 2 + 0.06); { const hx = ctx.hmfx, hn = HMFX_ZAP.chain, hm = hx && hn && hx.meta.effects[hn]; if (hm) hx.spawn(hn, p.x + fv[0] * 2, ctx.heightAt(p.x + fv[0] * 2, p.z + fv[1] * 2), p.z + fv[1] * 2 + 0.06, hm.loop ? { duration: 1.2 } : {}); } } // [HMFX48] chain lightning
@@ -557,7 +684,7 @@ export class Combat {
       if (this.G.glow) this.G.glow.pool(p.x, p.z, this.G.glow.colorOf('bloom_ring'));
       this.heal(S.heal);
       if (this.summon) this.summon.hp = Math.min(this.summon.D.hp, this.summon.hp + S.heal);
-      for (const e of this.alive()) if (dist(e.a, p) < S.radius + e.D.r) this.damageEnemy(e, this.out('spell', S.dmg), p, 0.5, PAL.gold);
+      for (const e of this.alive()) if (dist(e.a, p) < S.radius + e.D.r) this.hitFoe(e, this.out('spell', S.dmg), p, 0.5, PAL.gold);   // gearfx: bloom
     }
     return false;
   }
@@ -574,7 +701,7 @@ export class Combat {
     else if (S.burst && ctx.effects) ctx.effects.spawn(S.burst, x, ctx.heightAt(x, z), z + 0.05);
     if ((T && T.hit) || S.burst) { const hx = ctx.hmfx, hn = HMFX_IMPACT.nature, hm = hx && hn && hx.meta.effects[hn]; if (hm) hx.spawn(hn, x, ctx.heightAt(x, z), z + 0.06, hm.loop ? { duration: 1.2 } : {}); } // [HMFX48] nature impact
     const rad = S.radius * (T ? T.rad : 1);
-    for (const e of this.alive()) if (Math.hypot(e.a.x - x, e.a.z - z) < rad + e.D.r) this.damageEnemy(e, this.out('spell', S.dmg * (proj.mul || 1) * (proj.small ? 0.5 : 1)), { x, z }, 0.4, PAL.gold);
+    for (const e of this.alive()) if (Math.hypot(e.a.x - x, e.a.z - z) < rad + e.D.r) this.hitFoe(e, this.out('spell', S.dmg * (proj.mul || 1) * (proj.small ? 0.5 : 1)), { x, z }, 0.4, PAL.gold);   // gearfx: bolt burst
   }
   updateProjs() {
     const ctx = this.ctx, p = ctx.player;
@@ -584,7 +711,7 @@ export class Combat {
       if (!f || pr.done || !fxo.list.includes(f)) { pr.done = true; continue; }
       if (pr.owner === 'enemy') {
         if (Math.hypot(f.x - p.x, f.z - p.z) < pr.r && !this.G.downed) {
-          if (this.hurtPlayer(pr.dmg, { x: f.x, z: f.z, a: pr.src }, 0.35) || p.act?.name === 'defend') { ctx.effects.remove(f); ctx.effects.spawn('frost_puff', f.x, f.y - 0.6, f.z); pr.done = true; }
+          if (this.hurtPlayer(pr.dmg, { x: f.x, z: f.z, a: pr.src, proj: true }, 0.35) || p.act?.name === 'defend') { ctx.effects.remove(f); ctx.effects.spawn('frost_puff', f.x, f.y - 0.6, f.z); pr.done = true; }   // gearfx: a bolt is a projectile (half avoid)
         }
         // a summon in the way takes the bolt
         const s = this.summon;
@@ -593,7 +720,7 @@ export class Combat {
       }
       for (const e of this.alive()) {
         if (pr.hitSet.has(e) || Math.hypot(e.a.x - f.x, e.a.z - f.z) > 0.6 + e.D.r) continue;
-        if (pr.S.kind === 'pierce') { pr.hitSet.add(e); this.damageEnemy(e, this.out('spell', pr.S.dmg), f, 0.5, PAL.gold); }
+        if (pr.S.kind === 'pierce') { pr.hitSet.add(e); this.hitFoe(e, this.out('spell', pr.S.dmg), f, 0.5, PAL.gold); }   // gearfx: pierce
         else { fxo.remove(f); this.burst(pr, f.x, f.z); pr.done = true; break; }
       }
     }
@@ -610,7 +737,7 @@ export class Combat {
       if (near || tr.t > tr.S.life) {
         fxo.remove(tr.armed);
         (T && T.burst ? T.g : ctx.effects).spawn(T && T.burst ? T.burst : 'glyph_burst', tr.x, tr.y, tr.z + 0.04);
-        if (near) for (const e of this.alive()) if (Math.hypot(e.a.x - tr.x, e.a.z - tr.z) < tr.S.radius * (T ? T.rad : 1) * this.M.trapRadius + e.D.r) { this.damageEnemy(e, this.out('spell', tr.S.dmg * (T ? T.mul : 1)), tr, 0.3, PAL.gold); e.cd = Math.max(e.cd, 1.6); }
+        if (near) for (const e of this.alive()) if (Math.hypot(e.a.x - tr.x, e.a.z - tr.z) < tr.S.radius * (T ? T.rad : 1) * this.M.trapRadius + e.D.r) { this.hitFoe(e, this.out('spell', tr.S.dmg * (T ? T.mul : 1)), tr, 0.3, PAL.gold); e.cd = Math.max(e.cd, 1.6); }   // gearfx: trap
         tr.done = true;
       }
     }
@@ -628,11 +755,12 @@ export class Combat {
   }
   get coldSlow() { return 0.5; }
   coldAt(x, z) { for (const c of this.patches || []) if (Math.hypot(x - c.x, z - c.z) < c.r) return true; return false; }
-  // Stone Skin: 6 s, -40 % damage taken, -20 % speed (p.speed is shared with the blizzard's frost slow: re-base whenever someone else writes it)
+  // Stone Skin: 6 s, -40 % damage taken, -20 % speed (raw p.speed is shared with the blizzard's frost slow: re-base whenever someone else writes it)
   doSkin(S) {
     const ctx = this.ctx, p = ctx.player, g = ctx.gamefx;
     if (this.skin) this.endSkin();
-    this.skin = { t: S.t, take: S.take, sp0: p.speed, sp: p.speed * S.speed, k: S.speed };
+    this.bindSpeed(p); const sp0 = this.spRaw(p);   // gearfx: the slow is on the raw value; the getter puts moveMul on top
+    this.skin = { t: S.t, take: S.take, sp0, sp: sp0 * S.speed, k: S.speed };
     p.speed = this.skin.sp;
     const T = STONE[2];
     if (g && g.meta.effects[T.cast]) g.spawn(T.cast, p.x, p.y, p.z + 0.06);
@@ -644,7 +772,7 @@ export class Combat {
   }
   endSkin() {
     const k = this.skin, p = this.ctx && this.ctx.player; if (!k) return;
-    if (p && p.speed === k.sp) p.speed = k.sp0;
+    if (p && this.spRaw(p) === k.sp) p.speed = k.sp0;   // gearfx: restore the raw speed, not the move-scaled one
     if (k.ring && this.ctx.gamefx) this.ctx.gamefx.remove(k.ring);
     this.skin = null;
   }
@@ -684,7 +812,7 @@ export class Combat {
     const ctx = this.ctx, p = ctx.player, k = this.skin;
     if (k && !frozen) {
       k.t -= dt;
-      if (p.speed !== k.sp) { k.sp0 = p.speed; k.sp = k.sp0 * k.k; p.speed = k.sp; }   // someone else (the blizzard slow) wrote p.speed: re-base
+      if (this.spRaw(p) !== k.sp) { k.sp0 = this.spRaw(p); k.sp = k.sp0 * k.k; p.speed = k.sp; }   // gearfx: blizzard / gaze write the raw speed; re-base from that so the slow does not compound
       if (k.t <= 0 || this.G.downed) this.endSkin();
     }
     for (const c of this.patches) {
@@ -715,7 +843,7 @@ export class Combat {
       if (d > S.range + e.D.r || Math.abs(e.a.y - p.y) > 1.2) continue;
       if (d > 0.5 && (fv[0] * dx + fv[1] * dz) / d < S.arc) continue;
       hit.push(e);
-      this.later.push({ t: Math.max(0, d - 0.6) / S.roll, fn: () => { if (this.ctx === ctx && e.state !== 'dead' && e.state !== 'gone') { this.damageEnemy(e, this.out('spell', S.dmg), p, S.push, PAL.gold); this.ignite(e, S.burn); } } });
+      this.later.push({ t: Math.max(0, d - 0.6) / S.roll, fn: () => { if (this.ctx === ctx && e.state !== 'dead' && e.state !== 'gone') { this.hitFoe(e, this.out('spell', S.dmg), p, S.push, PAL.gold); this.ignite(e, S.burn); } } });
       this.later.push({ t: Math.max(0, d - 0.6) / S.roll, fn: () => { if (this.ctx === ctx && e.state !== 'dead' && e.state !== 'gone') { const hx = ctx.hmfx, hn = HMFX_FLASH.fire, hm = hx && hn && hx.meta.effects[hn]; if (hm) hx.spawn(hn, e.a.x, e.a.y, e.a.z + 0.06, hm.loop ? { duration: 1.2 } : {}); } } }); // [HMFX48] fire hit
     }
     this.lastWave = { n: hit.length, ids: hit.map((e) => e.id) };
@@ -793,7 +921,7 @@ export class Combat {
     const t = this.nearestEnemy(p, S.range || 6);
     if (!t) { this.cd.spell = 0; this.cd.root = 0; G.toast('Nothing in reach for the vines.', 1.4); return; }
     t.rootT = Math.max(t.rootT || 0, dur);
-    if (S.dmg) this.damageEnemy(t, this.out('spell', S.dmg), p, 0, PAL.gold);
+    if (S.dmg) this.hitFoe(t, this.out('spell', S.dmg), p, 0, PAL.gold);   // gearfx: vine grasp
     const a = t.a, gx = ctx.gamefx;
     if (!(gx && gx.spawn && gx.meta && gx.meta.effects && gx.meta.effects.vine_grasp && gx.spawn('vine_grasp', a.x, a.y, a.z + 0.05, { duration: dur })))
       ctx.effects && ctx.effects.spawn('summon_poof', a.x, a.y, a.z + 0.05);
@@ -853,7 +981,7 @@ export class Combat {
         const dx = tx - m.x, dz = tz - m.z, d = Math.hypot(dx, dz), st = Math.min(d, 9 * dt);
         if (d > 0.01) { m.x += dx / d * st; m.z += dz / d * st; m.y += (ty - m.y) * Math.min(1, dt * 6); }
         if (e && e.state !== 'dead' && e.state !== 'gone' && d < 0.35 + e.D.r * 0.6) {
-          this.damageEnemy(e, this.out('spell', m.S.dmg), m, 0.15, PAL.gold); this.ignite(e, m.S.burn);
+          this.hitFoe(e, this.out('spell', m.S.dmg), m, 0.15, PAL.gold); this.ignite(e, m.S.burn);   // gearfx: swarm mote (a bolt). Burns and magma ticks stay on damageEnemy and do not proc.
           if (sw) sw.hits++; this.swarmHits = (this.swarmHits || 0) + 1;
           if (ctx.effects && ctx.effects.meta.effects.ember_pop) ctx.effects.spawn('ember_pop', e.a.x, e.a.y, e.a.z + 0.1);
           m.state = 'gone';
@@ -886,7 +1014,7 @@ export class Combat {
       const dx = e.a.x - p.x, dz = e.a.z - p.z, along = dx * fv[0] + dz * fv[1], side = Math.abs(dx * fv[1] - dz * fv[0]);
       if (along < 0 || along > S.range + e.D.r || side > 0.6 + e.D.r * 0.5 || Math.abs(e.a.y - p.y) > 1.2) continue;
       hit.push(e);
-      this.later.push({ t: along / S.speed, fn: () => { if (this.ctx === ctx && e.state !== 'dead' && e.state !== 'gone') { this.damageEnemy(e, this.out('spell', S.dmg), p, S.push, PAL.sky); this.chill(e, S.chill); } } });
+      this.later.push({ t: along / S.speed, fn: () => { if (this.ctx === ctx && e.state !== 'dead' && e.state !== 'gone') { this.hitFoe(e, this.out('spell', S.dmg), p, S.push, PAL.sky); this.chill(e, S.chill); } } });
       this.later.push({ t: along / S.speed, fn: () => { if (this.ctx === ctx && e.state !== 'dead' && e.state !== 'gone') { const hx = ctx.hmfx, hn = HMFX_FLASH.frost, hm = hx && hn && hx.meta.effects[hn]; if (hm) hx.spawn(hn, e.a.x, e.a.y, e.a.z + 0.06, hm.loop ? { duration: 1.2 } : {}); } } }); // [HMFX48] frost hit
     }
     this.lastLance = { n: hit.length, ids: hit.map((e) => e.id) };
@@ -899,7 +1027,7 @@ export class Combat {
     const hit = [];
     for (const e of this.alive()) {
       if (dist(e.a, p) > S.radius + e.D.r * 0.5 || Math.abs(e.a.y - p.y) > 1.2) continue;
-      hit.push(e); this.damageEnemy(e, this.out('spell', S.dmg), p, S.push, PAL.sky); this.chill(e, S.chill);
+      hit.push(e); this.hitFoe(e, this.out('spell', S.dmg), p, S.push, PAL.sky); this.chill(e, S.chill);   // gearfx: frost nova
     }
     this.lastNova = { n: hit.length, ids: hit.map((e) => e.id) };
   }
@@ -925,7 +1053,7 @@ export class Combat {
   updateFrost(dt, frozen) {
     const ctx = this.ctx, p = ctx.player;
     if (frozen) return;
-    for (const e of this.enemies) { if (e.chillT > 0) e.chillT = Math.max(0, e.chillT - dt); if (e.rootT > 0) e.rootT = Math.max(0, e.rootT - dt); }
+    for (const e of this.enemies) { if (e.chillT > 0) { e.chillT = Math.max(0, e.chillT - dt); if (!(e.chillT > 0) && e.chillPct) e.chillPct = 0; } if (e.rootT > 0) e.rootT = Math.max(0, e.rootT - dt); if (e.frozenT > 0) e.frozenT = Math.max(0, e.frozenT - dt); if (e.procT) for (const id in e.procT) e.procT[id] = Math.max(0, e.procT[id] - dt); }   // gearfx: freeze timer, boss chill clears, per-target proc ICD
     const v = this.veil;
     if (v) { v.t -= dt; if (v.f) { v.f[1].x = p.x; v.f[1].y = p.y; v.f[1].z = p.z + 0.08; } if (v.t <= 0 || this.G.downed) this.endVeil(); }
     for (const s2 of this.spirits) {
@@ -1085,7 +1213,7 @@ export class Combat {
   }
   // QA helpers
   qa() {
-    return { hp: this.G.S.hp, max: this.maxHp(), st: Math.round(this.st), cd: { ...this.cd }, god: this.godT,
+    return { hp: this.G.S.hp, max: this.maxHp(), st: Math.round(this.st), cd: { ...this.cd }, god: this.godT, gfx: this.gfx,   // gearfx: lastProc + procs fired count
              enemies: this.enemies.map((e) => ({ id: e.id, role: e.a.role, hp: e.hp, state: e.state, rare: !!e.rare, name: e.D.name, x: +e.a.x.toFixed(2), z: +e.a.z.toFixed(2) })),
              summon: this.summon ? { role: this.summon.a.role, hp: this.summon.hp, life: +this.summon.life.toFixed(1), tier: this.summon.tier, light: !!this.summon.light, name: this.summon.a.name } : null };
   }

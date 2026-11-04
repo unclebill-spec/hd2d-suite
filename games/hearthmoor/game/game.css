@@ -332,6 +332,12 @@ body.tv #dlg { width: min(900px, 80vw); } body.tv #dlg p { font-size: 20px; }
 #heroBody .gear14 .row.none { opacity: .62; }
 #heroBody .row.gear small.cmp { display: block; font-size: 11px; opacity: .92; }
 #heroBody .row.gear small.cmp b.up { color: #2f8a3a; } #heroBody .row.gear small.cmp b.dn { color: #b04a1c; }
+/* gearfx: Defense strip on the gear screen only. Chips wrap; nothing widens the phone card. */
+#heroBody .pts.def { display: flex; flex-wrap: wrap; gap: 2px 8px; align-items: baseline; max-width: 100%; min-width: 0; color: #3a2a1c; }
+#heroBody .pts.def b { font-size: 11px; }
+#heroBody .pts.def .vs { font-weight: 600; opacity: .75; }
+#heroBody .pts.def span { white-space: nowrap; }
+#heroBody .nowear, #shopBody .nowear { color: #b04a1c; font-weight: 800; }
 @media (max-width: 700px), (orientation: portrait) and (max-width: 900px) {
   #heroBody .gear14 { grid-template-columns: minmax(0, 1fr); }
   #heroBody .gear14 .row.gear > .bb { flex-direction: row; }
@@ -342,4 +348,5 @@ body.tv #dlg { width: min(900px, 80vw); } body.tv #dlg p { font-size: 20px; }
   #heroBody .row.gear > span:not(.bb) { grid-area: desc; font-size: 11px; min-width: 0; }
   #heroBody .row.gear > .bb { grid-area: bb; display: flex; flex-wrap: wrap; gap: 2px; justify-content: flex-end; }
   #heroBody .row.gear .bb .wbtn { padding: 1px 6px; font-size: 11px; }
+  #heroBody .pts.def { max-width: 100%; }   /* gearfx: defense chips wrap inside the phone card */
 }

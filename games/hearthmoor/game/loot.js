@@ -25,6 +25,44 @@ export const GEAR_NORM = 3 / SLOTS.reduce((a, sl) => a + SLOT_W[sl], 0);
 export const SLOT_LABEL = { helm: 'helm', neck: 'neck', chest: 'chest', legs: 'legs', feet: 'feet', arms: 'arms', gloves: 'gloves', ringL: 'ring (left)', ringR: 'ring (right)', belt: 'belt', cloak: 'cloak', primary: 'main hand', secondary: 'off-hand', ranged: 'ranged / charm' };
 const DROP_SLOTS = SLOTS.filter((s) => s !== 'ringR');   // rings roll once (as ringL) and equip into the free / weaker ring slot
 export const ringSlot = (sl) => sl === 'ringL' || sl === 'ringR';
+// gearfx: armor type only restricts wearing and biases which optional mod is picked. The rolled numbers do not change by type.
+// Order is the wear hierarchy: plate wears all, chain wears chain/leather/cloth, leather wears leather/cloth, cloth wears cloth.
+export const ARMOR_TYPES = ['plate', 'chain', 'leather', 'cloth'];
+export const CLASS_ARMOR = { runeguard: 'plate', cinderknight: 'plate', stormborn: 'chain', grovekeeper: 'chain', wildcaller: 'leather', seer: 'cloth' };
+const ARMOR_SLOTS = ['helm', 'chest', 'legs', 'feet', 'arms', 'gloves', 'belt', 'cloak'];
+const WEAPON_SLOTS = ['primary', 'secondary', 'ranged'];
+const ARMOR_W = { plate: 7, chain: 8, leather: 11, cloth: 16 };   // gearfx: how often each type's name shows up on the armor bases
+const BIAS = { plate: ['hpAdd', 'guardMul', 'runePct'], chain: ['hpAdd', 'guardMul', 'runePct'], leather: ['crit', 'avoid', 'haste'], cloth: ['spellMul', 'healMul', 'shieldPct'] };
+const BIAS_W = 3;   // gearfx: a favoured optional stat is 3x as likely; its value is the same as any other roll
+export function canWear(cls, it) {
+  if (!it || !it.at) return true;
+  const own = CLASS_ARMOR[cls]; if (!own) return false;
+  return ARMOR_TYPES.indexOf(it.at) >= ARMOR_TYPES.indexOf(own);
+}
+// gearfx: enemy D.element -> school. Missing (and anything unlisted) is physical. Mana does not exist; stamina is the only resource.
+const SCHOOL_MAP = { fire: 'fire', ice: 'water', cold: 'water', water: 'water', light: 'light', lightning: 'light', dark: 'dark' };
+export const SCHOOL_OF = (element) => SCHOOL_MAP[element] || 'physical';
+// gearfx: resist reduction is min(60%, R/(R+K)), K = 50 + 10*foeLevel (enemy level, else the player's). Avoid 25% (spells/bolts use half).
+// Move +25% total; feet clamp at +10% and cloaks at +5% when the mod is rolled. Haste +50%. Block chance 50%, a block soaks 50%.
+// runePct and shieldPct cap at 20%. A hit that connects always deals at least 1.
+export const CAPS = {
+  res: 0.6, resK: (foeLv, playerLv) => 50 + 10 * (foeLv == null ? (playerLv || 1) : foeLv),
+  avoid: 0.25, avoidSpell: 0.5, move: 0.25, moveFeet: 0.1, moveCloak: 0.05,
+  haste: 0.5, block: 0.5, blockSoak: 0.5, runePct: 0.2, shieldPct: 0.2, minHit: 1,
+};
+// gearfx: on-hit chance = min(ch + crit*0.25, ch*2, 0.35). One proc per landed hit, each id keeps its own ICD, procs never trigger procs.
+// Common/Rare: none. Epic: 30% of one. Legendary: one. Runeforged: one + 35% of a second, distinct. Primary, secondary and ranged only.
+export const PROCS = {
+  lifeSteal: { school: 'dark', ch: .15, icd: 1, healPct: .15 },
+  fireBolt: { school: 'fire', ch: .10, icd: 3, base: 8, perLv: 3 },
+  freeze: { school: 'water', ch: .06, icd: 8, dur: 1, eliteDur: .5, bossSlow: .4, bossDur: 1.5, per: 'target' },
+  root: { school: 'water', ch: .08, icd: 8, dur: 2, boss: 'immune', per: 'target' },
+  heal: { school: 'light', ch: .10, icd: 4, healPct: .04 },
+  damageShield: { school: 'fire', ch: .08, icd: 12, dur: 5, reflect: .2 },
+  runeShield: { school: 'light', ch: .06, icd: 15, absorb: .08, dur: 6 },
+};
+const PROC_LABEL = { lifeSteal: 'life steal', fireBolt: 'fire bolt', freeze: 'freeze', root: 'root', heal: 'heal proc', damageShield: 'damage shield', runeShield: 'rune shield' };
+const procName = (id) => { const w = PROC_LABEL[id] || id; return w.charAt(0).toUpperCase() + w.slice(1); };   // gearfx: "Fire bolt"
 // ---- save migration (old 3-slot / 5-rarity gear -> 14 slots / template tiers). Each item gets rv: 2 so it is never mapped twice.
 // rarity: common -> common, uncommon -> common, rare -> rare, epic -> epic, legendary -> legendary (never downgrades rare+)
 const OLD_RAR = [0, 0, 1, 2, 3], OLD_SLOT = { weapon: 'primary', armor: 'chest', trinket: 'neck' };
@@ -34,24 +72,46 @@ const OLD_RAR = [0, 0, 1, 2, 3], OLD_SLOT = { weapon: 'primary', armor: 'chest',
 // Gems, sockets, temper (it.up), rerolls (it.rr), names untouched; rv: 2 marks the item so it is never rescaled twice.
 const OLD_MUL = [1, 1.4, 1.9, 2.6, 3.5];
 export function migrateItem(it) {
-  if (!it || typeof it !== 'object' || it.rv === 2) return it;
-  const oldR = typeof it.rar === 'number' ? Math.max(0, Math.min(4, it.rar)) : null;
-  if (oldR !== null) it.rar = OLD_RAR[oldR];
-  if (OLD_SLOT[it.slot]) it.slot = OLD_SLOT[it.slot];
-  if (!it.fixed && !it.unique && oldR !== null && SLOT_W[it.slot] && it.mods && typeof it.mods === 'object') {
-    // base factor, then a uniform trim so the piece's score equals a fresh drop's expected score (old weapons lacked the
-    // Epic+ crit-dmg roll, old trinkets rolled stamina where necks roll crit dmg / melee / spells)
-    const f0 = (RARITY[it.rar].mul / OLD_MUL[oldR]) * SLOT_W[it.slot] * GEAR_NORM, raw = {};
-    for (const [key, v] of Object.entries(it.mods)) if (typeof v === 'number') raw[key] = v * f0;
-    const have = Object.entries(raw).reduce((a, [key, v]) => a + (SCORE[key] ?? 0.5) * v, 0), want = freshScore(it.slot, it.rar, it.lv || 1);
-    const g = have > 0 && want > 0 ? want / have : 1;
-    for (const [key, v] of Object.entries(raw)) it.mods[key] = ['hpAdd', 'stAdd'].includes(key) ? (v ? Math.sign(v) * Math.max(1, Math.round(Math.abs(v) * g)) : 0) : +(v * g).toFixed(3);
-    // integer HP / stamina rounding (min 1) can swing a tiny low-level piece by 20%+: put the leftover on its largest % mod
-    const fl = Object.keys(raw).filter((key) => !['hpAdd', 'stAdd'].includes(key) && SCORE[key]).sort((a, b) => Math.abs(SCORE[b] * raw[b]) - Math.abs(SCORE[a] * raw[a]))[0];
-    if (fl && want > 0) { const now = Object.entries(it.mods).reduce((a, [key, v]) => a + (key in raw ? (SCORE[key] ?? 0.5) * v : 0), 0), nv = it.mods[fl] + (want - now) / SCORE[fl];
-      if (Math.sign(nv) === Math.sign(it.mods[fl])) it.mods[fl] = +nv.toFixed(4); }
+  if (!it || typeof it !== 'object' || it.rv === 3) return it;
+  if (it.rv !== 2) {   // gearfx: rv < 2 keeps the gear14 map + rescale exactly, and still lands on rv 2 before the fx step
+    const oldR = typeof it.rar === 'number' ? Math.max(0, Math.min(4, it.rar)) : null;
+    if (oldR !== null) it.rar = OLD_RAR[oldR];
+    if (OLD_SLOT[it.slot]) it.slot = OLD_SLOT[it.slot];
+    if (!it.fixed && !it.unique && oldR !== null && SLOT_W[it.slot] && it.mods && typeof it.mods === 'object') {
+      // base factor, then a uniform trim so the piece's score equals a fresh drop's expected score (old weapons lacked the
+      // Epic+ crit-dmg roll, old trinkets rolled stamina where necks roll crit dmg / melee / spells)
+      const f0 = (RARITY[it.rar].mul / OLD_MUL[oldR]) * SLOT_W[it.slot] * GEAR_NORM, raw = {};
+      for (const [key, v] of Object.entries(it.mods)) if (typeof v === 'number') raw[key] = v * f0;
+      const have = Object.entries(raw).reduce((a, [key, v]) => a + (SCORE[key] ?? 0.5) * v, 0), want = freshScore(it.slot, it.rar, it.lv || 1);
+      const g = have > 0 && want > 0 ? want / have : 1;
+      for (const [key, v] of Object.entries(raw)) it.mods[key] = ['hpAdd', 'stAdd'].includes(key) ? (v ? Math.sign(v) * Math.max(1, Math.round(Math.abs(v) * g)) : 0) : +(v * g).toFixed(3);
+      // integer HP / stamina rounding (min 1) can swing a tiny low-level piece by 20%+: put the leftover on its largest % mod
+      const fl = Object.keys(raw).filter((key) => !['hpAdd', 'stAdd'].includes(key) && SCORE[key]).sort((a, b) => Math.abs(SCORE[b] * raw[b]) - Math.abs(SCORE[a] * raw[a]))[0];
+      if (fl && want > 0) { const now = Object.entries(it.mods).reduce((a, [key, v]) => a + (key in raw ? (SCORE[key] ?? 0.5) * v : 0), 0), nv = it.mods[fl] + (want - now) / SCORE[fl];
+        if (Math.sign(nv) === Math.sign(it.mods[fl])) it.mods[fl] = +nv.toFixed(4); }
+    }
+    it.rv = 2;
   }
-  it.rv = 2; return it;
+  return migrateItemFx(it);   // gearfx: rv 2 -> rv 3, no second rescale
+}
+// gearfx: an rv 2 piece (already on the 14-slot scale) gains it.at from its base name and procs []. No new mods, never rescaled. Idempotent.
+const PLATE_BITS = ['Rune Helm', 'Rune Coat', 'Rune Sabatons', 'Rune Gauntlets', 'Rune Armbands', 'Rune Leggings', 'Rune Sash'];
+const CHAIN_BITS = ['Moss Mail', 'Moss Greaves', 'Fjord Hauberk', 'Moss', 'Smiths', 'Forge'];
+const LEATHER_BITS = ['Leather', 'Bog', 'Fur', 'Herders', 'Pouch', 'Raven'];
+const CLOTH_BITS = ['Wool', 'Felt', 'Knit', 'Lantern', 'Hearth', 'Bakers', 'Gardeners', 'Braided', 'Rope'];
+function armorTypeOf(name) {
+  const n = name || '';
+  if (PLATE_BITS.some((p) => n.includes(p))) return 'plate';
+  if (CHAIN_BITS.some((p) => n.includes(p))) return 'chain';
+  if (LEATHER_BITS.some((p) => n.includes(p))) return 'leather';
+  if (CLOTH_BITS.some((p) => n.includes(p))) return 'cloth';
+  return 'cloth';
+}
+export function migrateItemFx(it) {
+  if (!it || typeof it !== 'object' || it.rv !== 2) return it;
+  if (ARMOR_SLOTS.includes(it.slot) && !it.at) it.at = armorTypeOf(it.name);
+  if (!Array.isArray(it.procs)) it.procs = [];
+  it.rv = 3; return it;
 }
 export function migrateGear(S) {   // bag + equipped (the bank's vault maps its items via migrateItem on read); gems, sockets (it.gems), temper (it.up) and rerolls (it.rr) are kept as-is
   if (!S || typeof S !== 'object') return S;
@@ -107,20 +167,26 @@ const PREFIX = [['Plain', 'Worn', 'Sturdy'], ['Gleaming', 'Runed', 'Moonlit'], [
 // base values are the old weapon / armor / trinket rolls; each is x rarity mul x level x SLOT_W[slot].
 const HP = ['hpAdd', 8], ST = ['stAdd', 4], MEL = ['meleeMul', 0.04], SPL = ['spellMul', 0.04], CRIT = ['crit', 0.01], CDMG = ['critDmg', 0.05],
   GRD = ['guardMul', -0.015], HEAL = ['healMul', 0.04], SUM = ['summonMul', 0.05], CD = ['spellCd', 0.015], STR = ['stRegen', 0.04], ROLL = ['rollSpeed', 0.04];
+// gearfx: new keys join the opt pools (one optional roll, same affix count). RES picks one school or resAll. Block is shield bases only, added in makeItem.
+const RES_OPTS = [['resFire', 6], ['resWater', 6], ['resLight', 6], ['resDark', 6], ['resAll', 3]];
+const RES = ['res', 0], AVD = ['avoid', 0.01], MOV = ['move', 0.015], HST = ['haste', 0.015], BLK = ['block', 0.03];
+const INT_MOD = new Set(['hpAdd', 'stAdd', 'resFire', 'resWater', 'resLight', 'resDark', 'resAll']);
+// gearfx: runePct / shieldPct are absolute percents, not scaled by GEAR_NORM (or by level / slot / rarity).
+const ADV = { [R_EPIC]: { p: 0.25, lo: 1, hi: 2, n: 1 }, [R_LEG]: { p: 1, lo: 2, hi: 4, n: 1 }, [R_RUNE]: { p: 1, lo: 3, hi: 6, n: 2 } };
 export const ROLLS = {
-  helm: { fix: [HP], opt: [SPL, HEAL] },            // VIT, INT, SPI, max HP
-  neck: { fix: [CRIT], opt: [CDMG, MEL, SPL], epic: SUM },   // any primary, crit, crit dmg
-  chest: { fix: [HP, GRD], opt: [] },               // VIT, STR, max HP (the old armor roll)
-  legs: { fix: [HP], opt: [ST, MEL, SPL] },          // VIT, STR, DEX, AGI, INT, max HP
-  feet: { fix: [ST], opt: [ROLL, STR] },             // AGI, DEX, VIT, avoid / move
-  arms: { fix: [MEL], opt: [SPL, CD] },              // STR, DEX, INT, haste
-  gloves: { fix: [CRIT], opt: [MEL, SPL, CD] },      // STR, DEX, INT, crit, haste
-  ringL: { fix: [CRIT], opt: [CDMG, ST, MEL, SPL] }, // any primary, crit, crit dmg, stamina
-  belt: { fix: [HP, ST], opt: [] },                  // VIT, STR, max HP, max stamina
-  cloak: { fix: [STR], opt: [GRD, HEAL, ROLL] },      // AGI, SPI, avoid, move
-  primary: { fix: [MEL, SPL], opt: [], epic: CDMG }, // weapon damage, crit dmg (the old weapon roll)
-  secondary: { fix: [GRD], opt: [HP, SPL, HEAL] },   // shield VIT / tome-orb INT, SPI
-  ranged: { fix: [CRIT], opt: [CDMG, SUM, ST], epic: SUM },  // bow DEX, crit / charm (the old trinket summon roll)
+  helm: { fix: [HP], opt: [SPL, HEAL, RES] },                 // VIT, INT, SPI, max HP, a resist
+  neck: { fix: [CRIT], opt: [CDMG, MEL, SPL, RES], epic: SUM },   // any primary, crit, crit dmg, a resist
+  chest: { fix: [HP], opt: [GRD, RES] },                      // max HP + guard or a resist (still two mods; the old armor had both fixed)
+  legs: { fix: [HP], opt: [ST, MEL, SPL] },                   // VIT, STR, DEX, AGI, INT, max HP
+  feet: { fix: [ST], opt: [ROLL, STR, AVD, MOV] },            // AGI, DEX, VIT, avoid or move
+  arms: { fix: [MEL], opt: [SPL, CD, HST] },                  // STR, DEX, INT, haste
+  gloves: { fix: [CRIT], opt: [MEL, SPL, CD, HST] },          // STR, DEX, INT, crit, haste
+  ringL: { fix: [CRIT], opt: [CDMG, ST, MEL, SPL, RES, AVD] }, // any primary, crit, crit dmg, stamina, avoid, a resist
+  belt: { fix: [HP, ST], opt: [] },                           // VIT, STR, max HP, max stamina
+  cloak: { fix: [STR], opt: [GRD, HEAL, ROLL, RES, AVD, MOV] }, // AGI, SPI, avoid or move, a resist
+  primary: { fix: [MEL, SPL], opt: [], epic: CDMG },          // weapon damage, crit dmg (the old weapon roll)
+  secondary: { fix: [GRD], opt: [HP, SPL, HEAL] },            // shield VIT / tome-orb INT, SPI; Buckler/Shield also roll block
+  ranged: { fix: [CRIT], opt: [CDMG, SUM, ST, RES], epic: SUM },  // bow DEX, crit / charm, a resist
 };
 ROLLS.ringR = ROLLS.ringL;
 // 8x8 icons (1 = rarity colour, 2 = light, 3 = dark); old ids weapon / armor / trinket kept for any stray caller
@@ -147,7 +213,7 @@ const pickW = (rnd, ws) => { let t = ws.reduce((a, b) => a + b, 0) * rnd(); for 
 export function ensure(S) {
   if (!Array.isArray(S.bag)) S.bag = [];
   if (!S.gear || typeof S.gear !== 'object') S.gear = {};
-  if (Object.keys(S.gear).some((k) => !SLOTS.includes(k)) || S.bag.some((it) => it && it.rv !== 2) || Object.values(S.gear).some((it) => it && it.rv !== 2)) migrateGear(S);
+  if (Object.keys(S.gear).some((k) => !SLOTS.includes(k)) || S.bag.some((it) => it && it.rv !== 3) || Object.values(S.gear).some((it) => it && it.rv !== 3)) migrateGear(S);   // gearfx: rv 2 still needs the fx step
   for (const sl of SLOTS) if (!(sl in S.gear)) S.gear[sl] = null;
   if (typeof S.gold !== 'number') S.gold = (S.inv && S.inv.coin) || 0;
   if (!S.gems || typeof S.gems !== 'object') S.gems = {};
@@ -159,31 +225,104 @@ export function rollRarity(col = 0, luck = 0, minRar = 0, rnd = Math.random) {
   const ws = rarityWeights(col, luck, minRar);
   return ws.some((w) => w > 0) ? pickW(rnd, ws) : Math.min(R_RUNE, minRar);
 }
-export function makeItem(lv = 1, rar = null, slot = null, rnd = Math.random, luck = 0) {
+const biasW = (at, key) => (at && BIAS[at] && BIAS[at].includes(key) ? BIAS_W : 1);
+function scaledMod(key, base, k, sl) {   // gearfx: same rounding makeItem and freshScore share. move clamps per slot at roll time.
+  if (INT_MOD.has(key)) return Math.max(1, Math.round(base * k));
+  if (key === 'move') { const cap = sl === 'feet' ? CAPS.moveFeet : sl === 'cloak' ? CAPS.moveCloak : CAPS.move; return Math.min(cap, +(base * k).toFixed(3)); }
+  return +(base * k).toFixed(3);
+}
+function rollType(cls, rnd) {   // gearfx: 70% the class's own type when cls is passed; otherwise (and the other 30%) weighted by ARMOR_W
+  const own = cls && CLASS_ARMOR[cls];
+  if (own && rnd() < 0.7) return own;
+  const pool = own ? ARMOR_TYPES.filter((t) => t !== own) : ARMOR_TYPES;
+  return pool[pickW(rnd, pool.map((t) => ARMOR_W[t]))];
+}
+function rollAdv(r, at, rnd) {   // gearfx: absolute 1-6%, not multiplied by k / GEAR_NORM. Plate/chain lean runePct, cloth leans shieldPct.
+  const A = ADV[r]; if (!A || (A.p < 1 && rnd() >= A.p)) return [];
+  const pct = () => Math.min(CAPS.runePct, (A.lo + Math.floor(rnd() * (A.hi - A.lo + 1))) / 100);
+  if (A.n === 2) return [['runePct', pct()], ['shieldPct', pct()]];
+  const keys = ['runePct', 'shieldPct'];
+  return [[keys[pickW(rnd, keys.map((key) => biasW(at, key)))], pct()]];
+}
+function rollProcs(r, rnd) {
+  if (r < R_EPIC) return [];
+  const ids = Object.keys(PROCS), pack = (id) => ({ id, ch: PROCS[id].ch, icd: PROCS[id].icd });
+  const pick = (ban) => { const pool = ban ? ids.filter((id) => id !== ban) : ids; return pool[Math.floor(rnd() * pool.length)]; };
+  if (r === R_EPIC) return rnd() < 0.3 ? [pack(pick())] : [];
+  const a = pick(), out = [pack(a)];
+  if (r >= R_RUNE && rnd() < 0.35) out.push(pack(pick(a)));
+  return out;
+}
+export function makeItem(lv = 1, rar = null, slot = null, rnd = Math.random, luck = 0, cls = null) {
   const r = rar ?? rollRarity(0, luck, 0, rnd);
   let sl = slot === 'weapon' ? 'primary' : slot === 'armor' ? 'chest' : slot === 'trinket' ? 'neck' : slot || DROP_SLOTS[Math.floor(rnd() * DROP_SLOTS.length)];
   if (!ROLLS[sl]) sl = 'neck';
   const R = RARITY[r], k = R.mul * (1 + (lv - 1) * 0.06) * SLOT_W[sl] * GEAR_NORM;
   const base = BASES[sl][Math.floor(rnd() * BASES[sl].length)], pre = PREFIX[r][Math.floor(rnd() * 3)];
+  const at = ARMOR_SLOTS.includes(sl) ? rollType(cls, rnd) : null;
   const mods = {}, Rl = ROLLS[sl];
-  const add = ([key, v]) => { if (key in mods) return; mods[key] = ['hpAdd', 'stAdd'].includes(key) ? Math.max(1, Math.round(v * k)) : +(v * k).toFixed(3); };
+  const add = (pair) => {
+    let [key, baseV] = pair;
+    if (key === 'res') { add(RES_OPTS[Math.floor(rnd() * RES_OPTS.length)]); return; }
+    if (key in mods) return;
+    mods[key] = scaledMod(key, baseV, k, sl);
+  };
   Rl.fix.forEach(add);
-  if (Rl.opt.length) add(Rl.opt[Math.floor(rnd() * Rl.opt.length)]);
+  let opt = Rl.opt;
+  if (sl === 'secondary' && /Buckler|Shield/.test(base)) opt = opt.concat([BLK]);   // gearfx: block is a shield-type secondary only
+  if (opt.length) add(opt[pickW(rnd, opt.map((e) => biasW(at, e[0])))]);
   if (Rl.epic && r >= R_EPIC) add(Rl.epic);
+  for (const [key, v] of rollAdv(r, at, rnd)) if (!(key in mods)) mods[key] = v;
   const n = rollSockets(r, rnd);
-  return { uid: `${Date.now().toString(36)}${(uidN++).toString(36)}`, slot: sl, name: `${pre} ${base}`, rar: r, lv, mods, gems: Array(n).fill(null), rv: 2 };
+  const it = { uid: `${Date.now().toString(36)}${(uidN++).toString(36)}`, slot: sl, name: `${pre} ${base}`, rar: r, lv, mods, gems: Array(n).fill(null), rv: 3 };
+  if (at) it.at = at;
+  if (WEAPON_SLOTS.includes(sl)) it.procs = rollProcs(r, rnd);
+  return it;
 }
-// expected score of a fresh makeItem(lv, r, sl) roll (fixed rolls + the mean optional roll + the Epic+ roll), no gems / temper
-function freshScore(sl, r, lv) {
-  const Rl = ROLLS[sl]; if (!Rl) return 0; const k = RARITY[r].mul * (1 + (lv - 1) * 0.06) * SLOT_W[sl] * GEAR_NORM;
-  const sc = ([key, v]) => (SCORE[key] ?? 0.5) * (['hpAdd', 'stAdd'].includes(key) ? Math.max(1, Math.round(v * k)) : +(v * k).toFixed(3));   // same rounding as makeItem
-  let t = Rl.fix.reduce((a, x) => a + sc(x), 0), keys = new Set(Rl.fix.map((x) => x[0]));
-  if (Rl.opt.length) t += Rl.opt.reduce((a, x) => a + (keys.has(x[0]) ? 0 : sc(x)), 0) / Rl.opt.length;
-  if (Rl.epic && r >= R_EPIC && !keys.has(Rl.epic[0])) t += sc(Rl.epic);
+// expected score of a fresh classless makeItem(lv, r, sl) (fixed + mean biased opt + epic + mean advanced), no gems / temper / procs
+function optScore(opt, at, k, sl, fixKeys) {
+  const W = opt.reduce((a, e) => a + biasW(at, e[0]), 0); if (!W) return 0;
+  const one = (key, base) => (SCORE[key] ?? 0.5) * scaledMod(key, base, k, sl);
+  let t = 0;
+  for (const e of opt) {
+    const p = biasW(at, e[0]) / W;
+    if (e[0] === 'res') t += p * RES_OPTS.reduce((a, x) => a + one(x[0], x[1]), 0) / RES_OPTS.length;
+    else if (!fixKeys.has(e[0])) t += p * one(e[0], e[1]);
+  }
   return t;
 }
+function meanOverType(sl, opt, fn) {
+  if (!ARMOR_SLOTS.includes(sl)) return fn(null);
+  let t = 0, w = 0;
+  for (const at of ARMOR_TYPES) { const ww = ARMOR_W[at]; t += ww * fn(at); w += ww; }
+  return t / w;
+}
+function advScore(r) {
+  const A = ADV[r]; if (!A) return 0;
+  let s = 0, n = 0; for (let p = A.lo; p <= A.hi; p++) { s += p / 100; n++; }
+  return A.p * A.n * SCORE.runePct * (s / n);   // gearfx: runePct and shieldPct share a weight, so the bias does not change the expected score
+}
+function freshScore(sl, r, lv) {
+  const Rl = ROLLS[sl]; if (!Rl) return 0; const k = RARITY[r].mul * (1 + (lv - 1) * 0.06) * SLOT_W[sl] * GEAR_NORM;
+  const fixKeys = new Set(Rl.fix.map((x) => x[0]));
+  let t = Rl.fix.reduce((a, x) => a + (SCORE[x[0]] ?? 0.5) * scaledMod(x[0], x[1], k, sl), 0);
+  const lists = sl === 'secondary'
+    ? [[BASES.secondary.filter((b) => /Buckler|Shield/.test(b)).length / BASES.secondary.length, Rl.opt.concat([BLK])], [0, Rl.opt]]
+    : [[1, Rl.opt]];
+  lists[1] && (lists[1][0] = 1 - lists[0][0]);
+  let pEpic = 0;
+  for (const [p, opt] of lists) {
+    if (!p || !opt.length) continue;
+    t += p * meanOverType(sl, opt, (at) => optScore(opt, at, k, sl, fixKeys));
+    if (Rl.epic) pEpic += p * meanOverType(sl, opt, (at) => { const W = opt.reduce((a, e) => a + biasW(at, e[0]), 0); return opt.reduce((a, e) => a + (e[0] === Rl.epic[0] ? biasW(at, e[0]) : 0), 0) / W; });
+  }
+  if (Rl.epic && r >= R_EPIC && !fixKeys.has(Rl.epic[0])) t += (1 - pEpic) * (SCORE[Rl.epic[0]] ?? 0.5) * scaledMod(Rl.epic[0], Rl.epic[1], k, sl);
+  return t + advScore(r);
+}
 // a rough "how good is this piece" number (compare + the weaker-ring pick); same weights the tooltips show
-const SCORE = { hpAdd: 0.005, stAdd: 0.008, meleeMul: 1, spellMul: 1, crit: 3, critDmg: 0.6, guardMul: -2, healMul: 0.8, summonMul: 0.8, spellCd: 2, stRegen: 0.5, rollSpeed: 0.5, drain: 3, regen: 0.1 };
+// gearfx: each new key's base roll scores ~0.036, in line with melee 0.04 / crit 0.03 / a point of the old budget.
+// resAll's 3 rating counts as four schools (4 * 3/6 of a single resist). runePct / shieldPct are the absolute percent, so 3% ~= one base roll.
+const SCORE = { hpAdd: 0.005, stAdd: 0.008, meleeMul: 1, spellMul: 1, crit: 3, critDmg: 0.6, guardMul: -2, healMul: 0.8, summonMul: 0.8, spellCd: 2, stRegen: 0.5, rollSpeed: 0.5, drain: 3, regen: 0.1, resFire: 0.006, resWater: 0.006, resLight: 0.006, resDark: 0.006, resAll: 0.024, avoid: 3.6, move: 2.4, haste: 2.4, block: 1.2, runePct: 1.2, shieldPct: 1.2 };
 export function score(it) {
   if (!it) return 0; const k = 1 + 0.07 * (it.up || 0);
   let t = 0; for (const [key, v] of Object.entries(it.mods || {})) t += (SCORE[key] ?? 0.5) * v * k;
@@ -198,21 +337,32 @@ export function targetSlot(S, it) {
   return score(g.ringR) < score(g.ringL) ? 'ringR' : 'ringL';
 }
 // tooltip compare: "vs <equipped name>: +12% melee, -4 HP" against the same slot (rings: the weaker ring)
-const MOD_NAME = { meleeMul: ['% melee', 100], spellMul: ['% spells', 100], hpAdd: [' HP', 1], stAdd: [' stamina', 1], crit: ['% crit', 100], critDmg: ['% crit dmg', 100], guardMul: ['% guard dmg', 100], healMul: ['% healing', 100], summonMul: ['% summons', 100], spellCd: ['% spell cd', -100], stRegen: ['% st regen', 100], rollSpeed: ['% roll', 100], drain: ['% drain', 100], regen: [' HP/s', 1] };
+const MOD_NAME = { meleeMul: ['% melee', 100], spellMul: ['% spells', 100], hpAdd: [' HP', 1], stAdd: [' stamina', 1], crit: ['% crit', 100], critDmg: ['% crit dmg', 100], guardMul: ['% guard dmg', 100], healMul: ['% healing', 100], summonMul: ['% summons', 100], spellCd: ['% spell cd', -100], stRegen: ['% st regen', 100], rollSpeed: ['% roll', 100], drain: ['% drain', 100], regen: [' HP/s', 1], resFire: [' fire resist', 1], resWater: [' water resist', 1], resLight: [' light resist', 1], resDark: [' dark resist', 1], resAll: [' all resists', 1], avoid: ['% avoid', 100], move: ['% move', 100], haste: ['% haste', 100], block: ['% block', 100], runePct: [' Rune %', 100], shieldPct: [' Spell Shield %', 100] };
+const AT_WORD = { plate: 'Plate', chain: 'Chain', leather: 'Leather', cloth: 'Cloth' };   // gearfx: armor type word, first in describe()
 export function compare(S, it) {
   const sl = targetSlot(S, it), cur = sl && (S.gear || {})[sl];
   if (!cur || cur === it) return cur === it ? '' : `new for ${SLOT_LABEL[sl]}`;
   const tot = (x) => { const m = {}; const k = 1 + 0.07 * (x.up || 0); for (const [key, v] of Object.entries(x.mods || {})) m[key] = (m[key] || 0) + v * k; for (const g of x.gems || []) if (g && GEMS[g]) for (const [key, v] of Object.entries(GEMS[g].mods)) m[key] = (m[key] || 0) + v; return m; };
   const a = tot(it), b = tot(cur), keys = [...new Set([...Object.keys(a), ...Object.keys(b)])], out = [];
+  for (const [key, name] of [['resFire', ' fire resist'], ['resWater', ' water resist'], ['resLight', ' light resist'], ['resDark', ' dark resist']]) {   // gearfx: per school; resAll adds to each
+    const d = ((a[key] || 0) + (a.resAll || 0)) - ((b[key] || 0) + (b.resAll || 0)); if (Math.abs(d) < 0.5) continue;
+    out.push(`<b class="${d > 0 ? 'up' : 'dn'}">${d > 0 ? '+' : ''}${Math.round(d)}${name}</b>`);
+  }
   for (const key of keys) {
+    if (key === 'resFire' || key === 'resWater' || key === 'resLight' || key === 'resDark' || key === 'resAll') continue;
     const N = MOD_NAME[key] || [` ${key}`, 1], d = ((a[key] || 0) - (b[key] || 0)) * N[1]; if (Math.abs(d) < 0.05) continue;
     const better = key === 'guardMul' ? d < 0 : d > 0;
     out.push(`<b class="${better ? 'up' : 'dn'}">${d > 0 ? '+' : ''}${Math.abs(d) >= 10 || N[1] === 1 ? Math.round(d) : d.toFixed(1)}${N[0]}</b>`);
   }
+  const ids = (x) => [...new Set((x.procs || []).map((p) => p.id))], pa = ids(it), pb = ids(cur);   // gearfx: proc words gained (up) / lost (dn)
+  for (const id of pa) if (!pb.includes(id)) out.push(`<b class="up">+ ${procName(id)}</b>`);
+  for (const id of pb) if (!pa.includes(id)) out.push(`<b class="dn">- ${procName(id)}</b>`);
   return `vs ${cur.name}: ${out.length ? out.join(' ') : 'about the same'}`;
 }
 export function describe(it) {
-  const k = 1 + 0.07 * (it.up || 0), m = Object.fromEntries(Object.entries(it.mods).map(([key, v]) => [key, ['hpAdd', 'stAdd'].includes(key) ? Math.round(v * k) : v * k])), out = [];
+  const k = 1 + 0.07 * (it.up || 0), m = Object.fromEntries(Object.entries(it.mods).map(([key, v]) => [key, INT_MOD.has(key) ? Math.round(v * k) : v * k])), out = [];
+  const ptxt = (v) => { const n = v * 100; return Math.abs(n - Math.round(n)) < 0.05 ? String(Math.round(n)) : n.toFixed(1); };   // gearfx: whole percents stay whole ("+3% move"); avoid keeps a tenth
+  if (it.at) out.push(AT_WORD[it.at] || (it.at.charAt(0).toUpperCase() + it.at.slice(1)));   // gearfx: Plate / Chain / Leather / Cloth first
   if (it.up) out.push(`+${it.up} tempered`);
   if (m.meleeMul) out.push(`+${Math.round(m.meleeMul * 100)}% melee`);
   if (m.spellMul) out.push(`+${Math.round(m.spellMul * 100)}% spells`);
@@ -228,19 +378,33 @@ export function describe(it) {
   if (m.healMul) out.push(`+${Math.round(m.healMul * 100)}% healing`);
   if (m.spellCd) out.push(`-${(m.spellCd * 100).toFixed(1)}% spell cooldown`);
   if (m.stRegen) out.push(`+${Math.round(m.stRegen * 100)}% stamina regen`);
+  if (m.resFire) out.push(`+${m.resFire} fire resist`);
+  if (m.resWater) out.push(`+${m.resWater} water resist`);
+  if (m.resLight) out.push(`+${m.resLight} light resist`);
+  if (m.resDark) out.push(`+${m.resDark} dark resist`);
+  if (m.resAll) out.push(`+${m.resAll} all resists`);
+  if (m.avoid) { const t = (m.avoid * 100).toFixed(1); if (t !== '0.0') out.push(`+${t}% avoid`); }
+  if (m.move) { const t = ptxt(m.move); if (t !== '0') out.push(`+${t}% move`); }
+  if (m.haste) { const t = ptxt(m.haste); if (t !== '0') out.push(`+${t}% haste`); }
+  if (m.block) { const t = ptxt(m.block); if (t !== '0') out.push(`+${t}% block`); }
+  if (m.runePct) { const t = ptxt(m.runePct); if (t !== '0') out.push(`Rune % +${t}`); }   // gearfx: label runePct "Rune %"
+  if (m.shieldPct) { const t = ptxt(m.shieldPct); if (t !== '0') out.push(`Spell Shield % +${t}`); }   // gearfx: label shieldPct "Spell Shield %"
+  for (const p of it.procs || []) { const d = PROCS[p.id] || {}, ch = Math.round(((p.ch ?? d.ch) || 0) * 100), icd = p.icd ?? d.icd ?? 0, cd = Math.abs(icd - Math.round(icd)) < 1e-6 ? Math.round(icd) : +(+icd).toFixed(1); out.push(`✦ ${procName(p.id)} ${ch}% · ${cd} s cd`); }   // gearfx: chance and cooldown
   for (const g of it.gems || []) out.push(g ? `◆ ${GEMS[g].name}` : '◇ empty socket');
   return out.join(' · ');
 }
 export function gearMods(S, m) {   // fold equipped gear into progress.mods()
+  m.procs = [];   // gearfx: {id, ch, icd, lv, uid} from equipped weapons; resAll stays its own key (combat adds it to every school)
   for (const it of Object.values((S && S.gear) || {})) {
     if (!it) continue;
-    const k = 1 + 0.07 * (it.up || 0);   // 6.7 forge: +7% per + on the item's own mods (not gems)
-    const own = Object.fromEntries(Object.entries(it.mods).map(([key, v]) => [key, ['hpAdd', 'stAdd'].includes(key) ? Math.round(v * k) : v * k]));
+    const k = 1 + 0.07 * (it.up || 0);   // 6.7 forge: +7% per + on the item's own mods (not gems, not proc chances)
+    const own = Object.fromEntries(Object.entries(it.mods).map(([key, v]) => [key, INT_MOD.has(key) ? Math.round(v * k) : v * k]));
     const all = [own, ...(it.gems || []).filter(Boolean).map((g) => GEMS[g].mods)];
-    for (const mods of all) for (const [k, v] of Object.entries(mods)) {
-      if (k === 'guardMul') m.guardMul = Math.max(0.4, m.guardMul + v);
-      else m[k] = (m[k] || 0) + v;
+    for (const mods of all) for (const [key, v] of Object.entries(mods)) {
+      if (key === 'guardMul') m.guardMul = Math.max(0.4, m.guardMul + v);
+      else m[key] = (m[key] || 0) + v;
     }
+    for (const p of it.procs || []) m.procs.push({ id: p.id, ch: p.ch, icd: p.icd, lv: it.lv, uid: it.uid });
   }
   return m;
 }
@@ -356,9 +520,9 @@ export class Loot {
   onKill(a, lv, o = {}) {
     const gold = 2 + Math.floor(Math.random() * 5) + (o.gold || 0);
     this.drop(a.x + 0.35, a.z + 0.2, { gold });
-    const luck = this.G.S.mode === 'hero' ? 1 : 0;
+    const luck = this.G.S.mode === 'hero' ? 1 : 0, cls = this.G.S.cls;   // gearfx: pass class so 70% of armor matches CLASS_ARMOR
     if (o.legendary) {   // a boss: always a Legendary (template boss odds: 4% it comes out Runeforged), and Glenheart's golem core
-      this.drop(a.x - 0.3, a.z + 0.35, { item: makeItem(lv + 1, Math.random() < 0.04 * (luck ? 1.25 : 1) ? R_RUNE : R_LEG, null, Math.random, luck) });
+      this.drop(a.x - 0.3, a.z + 0.35, { item: makeItem(lv + 1, Math.random() < 0.04 * (luck ? 1.25 : 1) ? R_RUNE : R_LEG, null, Math.random, luck, cls) });
       this.drop(a.x + 0.1, a.z - 0.35, { gem: 'golem_core' });
       return;
     }
@@ -369,11 +533,11 @@ export class Loot {
     }
     const gemOdds = { golem: ['golem_core', 0.1], icegolem: ['frost_core', 0.25], wraith: ['rift_shard', 0.08], skelmage: ['rift_shard', 0.1], mossgolem: ['golem_core', 0.15], sporeling: ['rift_shard', 0.08] }[a.role];
     if (gemOdds && Math.random() < gemOdds[1]) this.drop(a.x + 0.05, a.z - 0.4, { gem: gemOdds[0] });
-    if (Math.random() < 0.6 + luck * 0.1) this.drop(a.x - 0.3, a.z + 0.35, { item: makeItem(lv, null, null, Math.random, luck) });
+    if (Math.random() < 0.6 + luck * 0.1) this.drop(a.x - 0.3, a.z + 0.35, { item: makeItem(lv, null, null, Math.random, luck, cls) });
   }
   dropItem(x, z, lv, minRar = 0) {
-    const luck = this.G.S.mode === 'hero' ? 1 : 0;   // rares + rift rewards roll the template's elite column
-    return this.drop(x, z, { item: makeItem(lv, rollRarity(1, luck, minRar), null, Math.random, luck) });
+    const luck = this.G.S.mode === 'hero' ? 1 : 0, cls = this.G.S.cls;   // gearfx: rare / rift drops use the same class armor bias
+    return this.drop(x, z, { item: makeItem(lv, rollRarity(1, luck, minRar), null, Math.random, luck, cls) });
   }
   drop(x, z, what) {
     const ctx = this.ctx; if (!ctx || !this.layer) return null;
