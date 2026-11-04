@@ -115,7 +115,7 @@ def steps(b, url, T, size, errors, rep, stub=None, shots=None):
         S("S.ranks = { ...(S.ranks || {}), gate: 2 }; return 1;")
         mp("qaSpot('qa_aud')"); frames(2)
         T.step("Aud sends a Gate Runner without a blade to the gear page", sv()["dlg"] == "mg_unarmed", dlg=sv()["dlg"]); fin()
-        S("S.gear = { ...(S.gear || {}), weapon: { slot: 'weapon', name: 'Test blade', rar: 1, lv: 5, mods: {}, gems: [null, null] } }; return 1;")
+        S("S.gear = { ...(S.gear || {}), primary: { slot: 'primary', name: 'Test blade', rar: 1, lv: 5, mods: {}, gems: [null, null] } }; return 1;")
         mp("qaSpot('qa_aud')"); frames(2); d1 = sv()["dlg"]; fin(); s1 = sv()
         T.step("an armed Gate Runner starts The Armed Crossing (stage 1, mg_aud)", d1 == "mg_aud" and s1["quests"]["mp_gate"] == 1 and s1["flags"]["aud"], dlg=d1, qa=s1["quests"])
         T.ev("window.__hm.musp.spot({ id: 'qa_key', pos: [0, 0], r: 9, label: '', act: () => window.__hm.musp.key() })")

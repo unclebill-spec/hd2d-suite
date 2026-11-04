@@ -429,7 +429,7 @@ def steps(b, url, T, size, errors, rep, stub=None, shots=None):
         T.ev("(() => { const S = window.__hm.S; S.quests.jt_axe = 2; S.inv.heart_ice = 3; })()"); jt("qaTalk('rimewife')"); frames(2); a = sv()
         T.step("Solvi wakes the axe: The Rimebreaker is in the bag, heart-ice spent, jt_axe 3", a["axe"] == 3 and "rimebreaker" in a["bag"] and a["hice"] == 0, bag=a["bag"], axe=a["axe"])
         a = load("rimecaves", "&jtq=conquer")
-        T.ev("(() => { const G = window.__hm, i = G.S.bag.findIndex((x) => x.unique === 'rimebreaker'); G.S.gear = G.S.gear || {}; G.S.gear.weapon = { slot: 'weapon', name: 'The Rimebreaker', unique: 'rimebreaker', rar: 4, lv: 10, mods: { meleeMul: 0.1 }, gems: [null, null] }; })()")
+        T.ev("(() => { const G = window.__hm, i = G.S.bag.findIndex((x) => x.unique === 'rimebreaker'); G.S.gear = G.S.gear || {}; G.S.gear.primary = { slot: 'primary', name: 'The Rimebreaker', unique: 'rimebreaker', rar: 4, lv: 10, mods: { meleeMul: 0.1 }, gems: [null, null] }; })()")
         T.ev("(() => { const C = window.__hm.combat, p = window.__hd2d.ctx.player; C.spawnEnemy({ id: 'rb_t', role: 'frost_troll', pos: [p.x, p.z - 3], once: true }, false); C.rimeN = 0; })()")
         for _ in range(3):
             T.ev("(() => { const C = window.__hm.combat, e = C.enemies.find((x) => x.id === 'rb_t'); C.damageEnemy(e, 1, window.__hd2d.ctx.player, 0.45); })()")
