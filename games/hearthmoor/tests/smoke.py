@@ -782,8 +782,14 @@ def run(out, simscale=4, size=(960, 540), segs=SEGS):
                 summ = T.ev("window.__hm.combat.qa().summon")
                 T.step("RT summons the hero's companion", summ and summ["role"] == "stormsprite", summon=summ)
                 T.ev("window.__hm.combat.st = 100")
-                T.btn(1, hold=60)
+                # T.btn waits for extra pad polls after release; at ?simscale=4 on a slow frame that is
+                # >1 s of sim (regenDelay 0.6 + 30/s regen) and stamina is full again before the read.
+                n0 = T.ev("window.__hd2d.padPresses || 0")
+                T.ev("__padBtn(1, 1)")
+                T.until("window.__hm.combat.st < 100", 3)
                 st = T.ev("window.__hm.combat.st")
+                T.ev("__padBtn(1, 0)")
+                T.wait(f"(window.__hd2d.padPresses || 0) > {n0}", 20)
                 T.step("B dodges in the field (roll costs stamina)", st < 100, stamina=st)
                 # Start opens the pause menu since the pause-menu change (RESTORE.md: Quest log is a button inside); J opens the log
                 T.btn(9); pz_open = bool(T.ev("window.__hm.pause")); T.btn(1); pz_closed = not T.ev("window.__hm.pause")
@@ -911,7 +917,10 @@ def run(out, simscale=4, size=(960, 540), segs=SEGS):
                 pg.keyboard.press("r"); pg.wait_for_timeout(450)
                 hp1 = T.ev("window.__hm.combat.enemies.find((e) => e.id === 'golem_0').hp")
                 T.step("R swings: the golem takes damage, a crisp pixel damage number pops", hp1 < hp0 and nums > 0, hp=[hp0, hp1], numbers=nums)
-                pg.keyboard.press("1"); pg.wait_for_timeout(100); pg.keyboard.press("f"); pg.wait_for_timeout(700)
+                pg.keyboard.press("1"); pg.wait_for_timeout(100); pg.keyboard.press("f")
+                # poolLife is 1.8s of sim time; at ?simscale=4 a 700ms wall wait is ~2.8s of sim and the pool is already gone.
+                # Wait for the first jump (pool + HP drop) instead of sleeping past the pool's life.
+                T.until(f"window.__hm.glow.pools.length > 0 && window.__hm.ctx.glows.filter((g) => isFinite(g.life)).length > 0 && window.__hm.combat.enemies.find((e) => e.id === 'golem_0').hp < {hp1}", 3)
                 hp2 = T.ev("window.__hm.combat.enemies.find((e) => e.id === 'golem_0').hp")
                 T.step("class spell (Chain Lightning) strikes and goes on cooldown", hp2 < hp1 and T.ev("window.__hm.combat.cd.spell") > 0, hp=hp2)
                 pools = T.ev("window.__hm.glow.pools.length"); glows = T.ev("window.__hm.ctx.glows.filter((g) => isFinite(g.life)).length")

@@ -674,7 +674,9 @@ export class Combat {
         if (!e) break;
         hitList.push(e);
         const dmg = this.out('spell', S.dmg * Math.pow(0.75, i));
-        this.later.push({ t, fn: () => { if (e.state !== 'dead' && e.state !== 'gone') { fx.spawn('sky_strike', e.a.x, e.a.y, e.a.z + 0.06); { const hx = ctx.hmfx, hn = HMFX_ZAP.chain, hm = hx && hn && hx.meta.effects[hn]; if (hm) hx.spawn(hn, e.a.x, e.a.y, e.a.z + 0.06, hm.loop ? { duration: 1.2 } : {}); } this.hitFoe(e, dmg, p, 0.2, PAL.gold); if (i === 0 && this.G.glow) this.G.glow.pool(e.a.x, e.a.z, this.G.glow.colorOf('sky_strike')); } } }); // [HMFX48] chain lightning
+        if (i === 0 && this.G.glow) this.G.glow.pool(e.a.x, e.a.z, this.G.glow.colorOf('sky_strike'));   // first jump: same as nova / bloom, not deferred through later()
+
+        this.later.push({ t, fn: () => { if (this.ctx !== ctx) return; if (e.state !== 'dead' && e.state !== 'gone') { fx.spawn('sky_strike', e.a.x, e.a.y, e.a.z + 0.06); { const hx = ctx.hmfx, hn = HMFX_ZAP.chain, hm = hx && hn && hx.meta.effects[hn]; if (hm) hx.spawn(hn, e.a.x, e.a.y, e.a.z + 0.06, hm.loop ? { duration: 1.2 } : {}); } this.hitFoe(e, dmg, p, 0.2, PAL.gold); } } }); // [HMFX48] chain lightning
         from = e.a; t += 0.16;
       }
       if (!hitList.length) { fx.spawn('sky_strike', p.x + fv[0] * 2, ctx.heightAt(p.x + fv[0] * 2, p.z + fv[1] * 2), p.z + fv[1] * 2 + 0.06); { const hx = ctx.hmfx, hn = HMFX_ZAP.chain, hm = hx && hn && hx.meta.effects[hn]; if (hm) hx.spawn(hn, p.x + fv[0] * 2, ctx.heightAt(p.x + fv[0] * 2, p.z + fv[1] * 2), p.z + fv[1] * 2 + 0.06, hm.loop ? { duration: 1.2 } : {}); } } // [HMFX48] chain lightning
