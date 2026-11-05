@@ -809,18 +809,29 @@ export async function boot(opts = {}) {
     if (hmfx) hmfx.update(dt);
     if (hooks.onFrame) hooks.onFrame(dt, ctx);
   }
+  const SIM_STEP = 0.05;
   function frame() {
     if (!alive) return;
     const now = performance.now();
-    let dt = Math.min(0.05, (now - last) / 1000); last = now;
-    if (fixedDt) dt = fixedDt;
-    if (API.held) dt = 0; // QA: freeze simulation, keep rendering
+    const wall = Math.max(0, (now - last) / 1000); last = now;
+    // ?simscale=N is a QA multiplier. At >= 20 fps this is the old clamp: min(50 ms, wall) once per sub-step.
+    // Under that, SwiftShader on a loaded box draws well below 1 fps, so 4 * 50 ms never finishes a long
+    // walk inside the smoke timeout. Catch up toward wall * simScale (capped) in <= 50 ms steps.
+    // Play (simScale 1) keeps the 50 ms clamp. Particles stay on the short step so a hitch cannot spiral.
+    let n, dt;
+    if (API.held) { n = simScale; dt = 0; } // QA: freeze simulation, keep rendering
+    else if (fixedDt) { n = simScale; dt = fixedDt; }
+    else if (simScale > 1 && wall > SIM_STEP) {
+      const simBudget = Math.min(0.5 * simScale, wall * simScale);
+      n = Math.max(simScale, Math.ceil(simBudget / SIM_STEP));
+      dt = simBudget / n;
+    } else { dt = Math.min(SIM_STEP, wall); n = simScale; }
     gp = gamepads.poll(!GATE.loading);
     API.padPolls = (API.padPolls || 0) + 1;
     if (gp.used && !GATE.loading) setCtrl(true);
     if (gp.zoom) zoomBy(1 - gp.zoom * Math.min(0.05, (now - (frame.lastNow || now)) / 1000) * 0.6);
     frame.lastNow = now;
-    for (let s = 0; s < simScale; s++) simulate(dt);
+    for (let s = 0; s < n; s++) { if (!alive) return; simulate(dt); }
     if (particles && simScale > 1) for (let s = 1; s < simScale; s++) particles.update(dt, { motes: 0, bugs: 0 }, []);
     // camera follows (translation only; orientation is locked)
     tmpV.set(player.x, player.y, player.z).add(look);
