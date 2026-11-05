@@ -30,11 +30,12 @@ after gamefx() (which rebuilds the atlas from its base).
 
 usage: python3 tools/hearthmoor/musp_art.py [--force] [--school-all] [area ...]      (then: cd games/hearthmoor && python3 -c "import build; build.write_pwa()")
 """
-import json, shutil, sys
+import json, os, shutil, sys
 from pathlib import Path
 from PIL import Image
 
-GAME = Path(__file__).resolve().parents[2] / "games" / "hearthmoor"
+# HM_GAME_DIR: smoke points this at a temp copy so a test run does not rewrite tracked gamefx.png.
+GAME = Path(os.environ["HM_GAME_DIR"]) if os.environ.get("HM_GAME_DIR") else Path(__file__).resolve().parents[2] / "games" / "hearthmoor"
 STAGING = Path("/workspace/hearthmoor-staging/art/muspelheim")
 ST = GAME / "art" / "muspelheim"
 ARGS = [a for a in sys.argv[1:] if not a.startswith("--")]
@@ -75,7 +76,7 @@ FX_FILE = ("gamefx", "mp_fx.json")   # staging gamefx rows: ST / "gamefx" / "mp_
 
 def neon_audit(src, sm, img_name, roles):
     """off-palette colours per staging role of a sheet -> {role: set(hex)}; only roles in `roles` (staging names) are looked at"""
-    sys.path.insert(0, str(GAME.parents[1]))
+    sys.path.insert(0, str(Path(__file__).resolve().parents[2]))
     from hd2d_common import load_biome  # noqa: E402
     pal = set(load_biome(sm.get("biome", "cozy-village"))["colors"].values())
     im = Image.open(src.parent / img_name).convert("RGBA"); px = im.load(); fw, fh = sm["frame"]; bad = {}

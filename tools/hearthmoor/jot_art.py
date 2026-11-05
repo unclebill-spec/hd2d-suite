@@ -22,11 +22,12 @@ swaps them with ctx.pz) and stone_cairn trail markers.
 
 usage: python3 tools/hearthmoor/jot_art.py [--force] [--stonefrost-all] [area ...]      (then: cd games/hearthmoor && python3 -c "import build; build.write_pwa()")
 """
-import json, shutil, sys
+import json, os, shutil, sys
 from pathlib import Path
 from PIL import Image
 
-GAME = Path(__file__).resolve().parents[2] / "games" / "hearthmoor"
+# HM_GAME_DIR: smoke points this at a temp copy so stonefrost (called from musp_art) does not rewrite tracked gamefx.png.
+GAME = Path(os.environ["HM_GAME_DIR"]) if os.environ.get("HM_GAME_DIR") else Path(__file__).resolve().parents[2] / "games" / "hearthmoor"
 STAGING = Path("/workspace/hearthmoor-staging/art/jotunheim")
 ST = GAME / "art" / "jotunheim"
 ARGS = [a for a in sys.argv[1:] if not a.startswith("--")]

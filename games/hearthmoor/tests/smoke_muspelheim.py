@@ -15,8 +15,10 @@ import argparse
 import functools
 import json
 import os
+import shutil
 import subprocess
 import sys
+import tempfile
 import threading
 import time
 from http.server import SimpleHTTPRequestHandler, ThreadingHTTPServer
@@ -25,6 +27,39 @@ from pathlib import Path
 GAME = Path(__file__).resolve().parents[1]
 READY = Path("/workspace/hearthmoor-staging/art/muspelheim/READY.txt")
 ARGS = ["--use-angle=swiftshader", "--enable-unsafe-swiftshader", "--ignore-gpu-blocklist"]
+
+
+def run_musp_art():
+    """musp_art.py (and jot_art.stonefrost, which it imports) saves areas/*/public/art/gamefx/gamefx.png.
+    Run it against a temp copy of the areas it rewrites so a smoke run leaves tracked art alone."""
+    script = GAME.parents[1] / "tools" / "hearthmoor" / "musp_art.py"
+    tmp = Path(tempfile.mkdtemp(prefix="hm-musp-art-"))
+    try:
+        g = tmp / "hearthmoor"
+        for a in ("muspelheim", "mp_hall", "lavafalls", "caldera", "caldera2"):
+            src = GAME / "areas" / a
+            if not src.is_dir():
+                continue
+            dst = g / "areas" / a
+            dst.parent.mkdir(parents=True, exist_ok=True)
+            shutil.copytree(src, dst)
+        fx = GAME / "areas" / "plaza" / "public" / "art" / "gamefx"
+        if fx.is_dir():
+            dst = g / "areas" / "plaza" / "public" / "art" / "gamefx"
+            dst.mkdir(parents=True, exist_ok=True)
+            for name in ("gamefx.png", "gamefx.json"):
+                if (fx / name).is_file():
+                    shutil.copy2(fx / name, dst / name)
+        jot = GAME / "art" / "jotunheim"
+        if jot.is_dir():
+            dst = g / "art" / "jotunheim"
+            dst.parent.mkdir(parents=True, exist_ok=True)
+            shutil.copytree(jot, dst)
+        env = os.environ.copy()
+        env["HM_GAME_DIR"] = str(g)
+        return subprocess.run([sys.executable, str(script)], capture_output=True, text=True, timeout=300, env=env)
+    finally:
+        shutil.rmtree(tmp, ignore_errors=True)
 
 
 def steps(b, url, T, size, errors, rep, stub=None, shots=None):
@@ -80,7 +115,7 @@ def steps(b, url, T, size, errors, rep, stub=None, shots=None):
         r = subprocess.run([sys.executable, "-c", "import build; print(','.join(build.AREAS))"], cwd=GAME, capture_output=True, text=True, timeout=120)
         areas = r.stdout.strip().split(",") if r.returncode == 0 else []
         T.step("build.py joins the Muspelheim areas only when READY.txt exists" , r.returncode == 0 and (("muspelheim" in areas) == ready), ready=ready, n=len(areas), err=r.stderr[-200:])
-        r = subprocess.run([sys.executable, str(GAME.parents[1] / "tools" / "hearthmoor" / "musp_art.py")], capture_output=True, text=True, timeout=300)
+        r = run_musp_art()
         T.step("musp_art.py waits on READY.txt (does nothing without it)", r.returncode == 0 and (ready or "READY.txt is missing" in r.stdout), out=r.stdout[-200:])
         # ---- the module and its shared-table registrations
         a = load("bifrost")
