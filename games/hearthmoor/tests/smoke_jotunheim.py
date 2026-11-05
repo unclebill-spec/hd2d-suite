@@ -376,7 +376,10 @@ def steps(b, url, T, size, errors, rep, stub=None, shots=None):
         HEAD = "(() => { const c = window.__hd2d.ctx, a = c.actors.list.find((x) => x.id === 'hrimgard'); if (!a) return null; const p = c.project(a.x, a.y + c.actors.heightM * a.tall, a.z), f = c.project(a.x, a.y, a.z); return { head: Math.round(p.y), feet: Math.round(f.y), top: Math.round(document.querySelector('canvas').getBoundingClientRect().top), pull: +c.pull().toFixed(2) }; })()"
 
         def framed(tag):
-            until("window.__hd2d.ctx.pull() >= 1.9", 60); h = T.ev(HEAD)
+            until("window.__hd2d.ctx.pull() >= 1.9", 60)
+            # 7x eases toward ~2.08; 1.9 is the 6x settled pull and leaves the head 1 px above the canvas
+            until("window.__hd2d.ctx.pull() >= 2.0", 30)
+            h = T.ev(HEAD)
             T.step(f"Hrimgard {tag}: the camera pulls out for the 7x boss and his head is in frame", h is not None and h["pull"] >= 1.9 and h["head"] >= h["top"] + 4 and h["feet"] > h["head"] + 120, frame=h)
             shot("jt_hrimgard_" + tag)
         # ---- Hrimgard: P2 frozen floor + golems, P3 relit braziers that mend him until snuffed

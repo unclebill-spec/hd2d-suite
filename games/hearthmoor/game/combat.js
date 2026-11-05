@@ -46,8 +46,9 @@ const ICEGOLEM = { name: 'Ice golem', hp: 100, dmg: 15, reach: 1.4, speed: 1.8 }
 const ICEGOLEM_ROLES = ['ice_golem', 'icegolem', 'golem', 'eldergolem'];   // the realm's own ice golem first (Niflheim areas), else the stock frost golem / stone golem looks
 
 const SUMMON_GLOW = { mushgolem: '#f2c24a', runesentinel: '#ffb24a', runewisp: '#94c0dc', stormsprite: '#94c0dc', sapling: '#b2c464', emberimp: '#ffb24a' };
-// 6.4: camera framing for big foes: 2.5x Glenheart pulls ~1.18 (unchanged); 5-6x bosses pull up to ~1.9 (engine clamp 2.0)
-export const framePullFor = (k) => (k >= 4 ? Math.min(2.0, 1 + (k - 1) * 0.18) : 1 + (k - 1) * 0.12);
+// 6.4: camera framing for big foes: 2.5x Glenheart pulls ~1.18 (unchanged); 5-6x bosses pull ~1.7-1.9;
+// 7x / 8x (Hrimgard, Aurelion, Vharzul) need past the old 2.0 cap or the head sits on the canvas lip
+export const framePullFor = (k) => (k >= 4 ? Math.min(2.4, 1 + (k - 1) * 0.18) : 1 + (k - 1) * 0.12);
 // 6.4 trial mode: ENEMIES[x].trial = true or (S) => bool (Hjortur yields on the befriend path); a spawn can set sp.trial
 export const isTrial = (e, S) => { const t = (e.sp && e.sp.trial) ?? e.D.trial; return typeof t === 'function' ? !!t(S) : !!t; };
 const ROMAN = ['', 'I', 'II', 'III', 'IV'];

@@ -886,7 +886,7 @@ export async function boot(opts = {}) {
     burst: (name, x, y, z, n) => particles && particles.burst(name, x, y, z, n),
     heightAt: (x, z) => (collide ? (collide.height(x, z) ?? 0) : 0),
     zoom: () => dist,
-    framePull: (f) => { pullTo = THREE.MathUtils.clamp(f || 1, 1, 2.0); }, pull: () => pull,   // pull up to 2x for 5-6x bosses (style lock boss scale)
+    framePull: (f) => { pullTo = THREE.MathUtils.clamp(f || 1, 1, 2.4); }, pull: () => pull,   // pull up to 2.4x for 7-8x bosses (5-6x stay ~1.7-1.9)
     moveActor, act: (name, a, o) => actorAct(name, a || player, o || {}), release: (name, a) => actors.release(a || player, name),
     dodge, summon, playerCast, cycleSpell, selectSpell, spellIndex: () => spellIdx,
     setTimeScale: (s) => { timeScale = Math.max(0, Math.min(1, s)); }, timeScale: () => timeScale,
