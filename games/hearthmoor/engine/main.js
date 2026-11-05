@@ -815,14 +815,15 @@ export async function boot(opts = {}) {
     const now = performance.now();
     const wall = Math.max(0, (now - last) / 1000); last = now;
     // ?simscale=N is a QA multiplier. At >= 20 fps this is the old clamp: min(50 ms, wall) once per sub-step.
-    // Under that, SwiftShader on a loaded box draws well below 1 fps, so 4 * 50 ms never finishes a long
-    // walk inside the smoke timeout. Catch up toward wall * simScale (capped) in <= 50 ms steps.
+    // Under that, SwiftShader draws well below 1 fps, so 4 * 50 ms never finishes a long walk inside the
+    // smoke timeout. Catch up toward wall * simScale, but stay under one attack (0.42 s): input is polled
+    // once before the sub-steps, and smoke reads that one-shot act when the frame returns.
     // Play (simScale 1) keeps the 50 ms clamp. Particles stay on the short step so a hitch cannot spiral.
     let n, dt;
     if (API.held) { n = simScale; dt = 0; } // QA: freeze simulation, keep rendering
     else if (fixedDt) { n = simScale; dt = fixedDt; }
     else if (simScale > 1 && wall > SIM_STEP) {
-      const simBudget = Math.min(0.5 * simScale, wall * simScale);
+      const simBudget = Math.min(0.4, wall * simScale);
       n = Math.max(simScale, Math.ceil(simBudget / SIM_STEP));
       dt = simBudget / n;
     } else { dt = Math.min(SIM_STEP, wall); n = simScale; }
