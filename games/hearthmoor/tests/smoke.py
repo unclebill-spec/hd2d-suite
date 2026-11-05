@@ -1,6 +1,6 @@
 """Hearthmoor smoke test: plays the whole game end to end in headless Chromium (SwiftShader WebGL2).
 
-    python3 games/hearthmoor/tests/smoke.py [--out games/hearthmoor/tests/shots] [--simscale 4]
+    python3 games/hearthmoor/tests/smoke.py [--out games/hearthmoor/tests/shots] [--simscale 4] [--jobs 2]
 
 Real inputs where it matters: clicks on the title buttons, E presses to talk and page through dialogue, F to cast,
 J for the quest log, K to save, page reload + Continue. Walking uses the game's own A* tap-to-walk (ctx.walkTo),
@@ -115,6 +115,11 @@ def stall_rewait(wait_fn, frame_fn, f_start, on_stall, log, what=""):
         raise
     log(f"  [STALL-WARN] frames stalled at {f_now}, recovered on the one re-wait: {what[:120]}")
     return "recovered"
+
+
+def page_shot(page, path):
+    """CSS-pixel capture. A device-scale shot of the WebGL canvas hangs SwiftShader past 120s (segment D)."""
+    page.screenshot(path=str(path), timeout=120000, scale="css", animations="disabled", caret="hide")
 
 
 class Smoke:
@@ -233,7 +238,7 @@ class Smoke:
 
     def shot(self, name):
         p = self.out / f"{name}.png"
-        self.pg.screenshot(path=str(p), timeout=120000)
+        page_shot(self.pg, p)
         return str(p)
 
     def walk(self, x, z, timeout=90):
@@ -1785,7 +1790,8 @@ def run(out, simscale=4, size=(960, 540), segs=SEGS):
             try:
                 saved = pg.evaluate("localStorage.getItem('hearthmoor-slot-1-v2')") if "C" in segs else cp_load(None, T, url, "cp3")["hearthmoor-slot-1-v2"]
                 ctx.close()
-                ph = b.new_context(viewport={"width": 390, "height": 844}, device_scale_factor=2, is_mobile=True, has_touch=True)
+                # dpr 1: layout and CDP touches are CSS px. dpr 2 built a 780x1688 SwiftShader framebuffer and Page.screenshot hung past 120s.
+                ph = b.new_context(viewport={"width": 390, "height": 844}, device_scale_factor=1, is_mobile=True, has_touch=True)
                 ph.add_init_script(f"if (!sessionStorage.getItem('seeded')) {{ localStorage.setItem('hearthmoor-slot-1-v2', {json.dumps(saved)}); sessionStorage.setItem('seeded', '1'); }}")
                 ph.add_init_script(STUB)
                 q = ph.new_page()
@@ -1856,7 +1862,7 @@ def run(out, simscale=4, size=(960, 540), segs=SEGS):
                 q.wait_for_timeout(800)
                 padon = q.evaluate("document.body.classList.contains('padon') && !document.getElementById('pad').hidden")
                 p2 = out / "phone_portrait_pad.png"
-                q.screenshot(path=str(p2), timeout=120000)
+                page_shot(q, p2)
                 rep["shots"]["phone_portrait_pad"] = str(p2)
                 T.step("phone portrait: pad on, game continues on touch", padon)
                 # no page scroll / zoom
@@ -1890,7 +1896,7 @@ def run(out, simscale=4, size=(960, 540), segs=SEGS):
                 q.wait_for_timeout(80)
                 s2 = T.ev("window.__hd2d.stickState()")
                 p3 = out / "phone_portrait_floatstick.png"
-                q.screenshot(path=str(p3), timeout=120000)
+                page_shot(q, p3)
                 rep["shots"]["phone_portrait_floatstick"] = str(p3)
                 q.wait_for_timeout(600)
                 touch("touchEnd", []); q.wait_for_timeout(300)
@@ -1966,7 +1972,7 @@ def run(out, simscale=4, size=(960, 540), segs=SEGS):
                 for i in range(1, 6):
                     touch("touchMove", [(x + 12 * i, y)]); q.wait_for_timeout(30)
                 p5 = out / "phone_portrait_spellwheel.png"
-                q.screenshot(path=str(p5), timeout=120000)
+                page_shot(q, p5)
                 rep["shots"]["phone_portrait_spellwheel"] = str(p5)
                 touch("touchEnd", []); q.wait_for_timeout(300)
                 after = T.ev("[document.getElementById('wheel').hidden, window.__hm.ctx.timeScale(), window.__hm.ctx.spellIndex()]")
@@ -1982,7 +1988,7 @@ def run(out, simscale=4, size=(960, 540), segs=SEGS):
                 for i in range(1, 6):
                     touch("touchMove", [(tx - 14 * i, ty)]); q.wait_for_timeout(35)
                 p4 = out / "phone_portrait_floatstick_left.png"
-                q.screenshot(path=str(p4), timeout=120000)
+                page_shot(q, p4)
                 rep["shots"]["phone_portrait_floatstick_left"] = str(p4)
                 touch("touchEnd", []); q.wait_for_timeout(200)
                 T.step("phone: left-handed flip mirrors the floating stick zone", T.ev("document.body.classList.contains('lefthand')") and z2[0] >= 194
@@ -2091,7 +2097,7 @@ def run(out, simscale=4, size=(960, 540), segs=SEGS):
                     for (let j = i + 1; j < R.length; j++) { const b = R[j][1]; const ox = Math.min(a.right, b.right) - Math.max(a.left, b.left), oy = Math.min(a.bottom, b.bottom) - Math.max(a.top, b.top);
                       if (ox > 1 && oy > 1 && !els[i].contains(els[j]) && !els[j].contains(els[i])) bad.push([R[i][0], R[j][0]]); } } return bad; })()""")
                 p6 = out / "phone_landscape_buttons.png"
-                q.screenshot(path=str(p6), timeout=120000)
+                page_shot(q, p6)
                 rep["shots"]["phone_landscape_buttons"] = str(p6)
                 T.step("phone landscape: HUD + action buttons inside the screen, nothing overlapping", not lay, overlaps=lay[:6])
                 seg_done("D")
@@ -3154,7 +3160,7 @@ def run_jobs(n, out, simscale, segs=SEGS):
     for i, p in enumerate(plan):
         so = out / f"shard{i + 1}"
         lf = open(out / f"shard{i + 1}.log", "w")
-        pr = subprocess.Popen([sys.executable, "-u", str(Path(__file__).resolve()), "--segments", p, "--out", str(so), "--simscale", str(simscale)] + ([] if Smoke.RETRY else ["--no-retry"]),
+        pr = subprocess.Popen([sys.executable, "-u", str(Path(__file__).resolve()), "--segments", p, "--out", str(so), "--simscale", str(simscale), "--jobs", "1"] + ([] if Smoke.RETRY else ["--no-retry"]),
                               stdout=subprocess.PIPE, stderr=subprocess.STDOUT, text=True, bufsize=1)
 
         def pump(pr=pr, lf=lf, tag=f"[s{i + 1}:{p}]"):
@@ -3188,13 +3194,14 @@ def run_jobs(n, out, simscale, segs=SEGS):
 
 
 if __name__ == "__main__":
-    ap = argparse.ArgumentParser(description="Hearthmoor smoke test. Serial by default (all segments, one browser).")
+    ap = argparse.ArgumentParser(description="Hearthmoor smoke test. Default is 2 browser workers (capped; --jobs 1 runs serial in this process).")
     ap.add_argument("--out", default=str(GAME / "tests" / "shots"))
     ap.add_argument("--simscale", type=int, default=4)
     ap.add_argument("--segments", default=SEGS, help="run only these segments (e.g. CF); later segments start from the saved checkpoints")
     ap.add_argument("--quick", default=None, help="per-change subset: the segments covering an area, e.g. --quick pet / bifrost / combat (comma list ok)")
     ap.add_argument("--shard", default=None, help="i/N: run shard i of N (same split as --jobs N)")
-    ap.add_argument("--jobs", type=int, default=0, help="run all segments as N parallel browser workers in this one process")
+    ap.add_argument("--jobs", type=int, default=2, help="parallel browser workers (default 2). 0 or 1 = serial in this process. Above 2 is capped unless --uncap-jobs or HM_JOBS_UNCAP=1")
+    ap.add_argument("--uncap-jobs", action="store_true", help="allow --jobs above 2 (4 SwiftShader Chromiums OOM a 15 GiB no-swap box)")
     ap.add_argument("--list", action="store_true", help="list the segments, quick areas and the shard plan")
     ap.add_argument("--no-retry", action="store_true", help="a failing step fails at once (no one-shot retry)")
     ap.add_argument("--no-preflight", action="store_true", help="skip tests/preflight.sh")
@@ -3218,8 +3225,12 @@ if __name__ == "__main__":
         for n in (2, 3, 4):
             print(f"--jobs {n}: {plan_shards(n)}")
         sys.exit(0)
-    if a.jobs and a.jobs > 1:
-        r = run_jobs(a.jobs, Path(a.out), a.simscale, segs)
+    jobs = a.jobs
+    if jobs > 2 and not (a.uncap_jobs or os.environ.get("HM_JOBS_UNCAP") == "1"):
+        print(f"smoke: --jobs {jobs} capped to 2 (15 GiB no-swap; --uncap-jobs or HM_JOBS_UNCAP=1 to override)", flush=True)
+        jobs = 2
+    if jobs > 1:
+        r = run_jobs(jobs, Path(a.out), a.simscale, segs)
         if r["pass"]:
             save_timing(r["segments"])
         sys.exit(0 if r["pass"] else 1)
