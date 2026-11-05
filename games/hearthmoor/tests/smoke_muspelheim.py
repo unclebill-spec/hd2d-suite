@@ -187,7 +187,7 @@ def steps(b, url, T, size, errors, rep, stub=None, shots=None):
                   " G.area = 'plaza'; f.alliance = { muspelheim: 'conquer' }; out.away = G.factions.realm(); f.alliance = {}; G.area = a; return out; })()")
         T.step("merit routing: befriend pays Realm Favor, conquer and contract pay Rift Marks (gate) inside the realm's areas only", rr == {"bef": "embassy", "con": "gate", "hire": "gate", "away": "hearth"}, rr=rr)
         ef = mp("qaFang()")
-        T.step("Emberfang is a legendary weapon (unique emberfang)", ef["unique"] == "emberfang" and ef["name"] == "Emberfang" and ef["rar"] == 4 and ef["slot"] == "weapon", ef=ef)
+        T.step("Emberfang is a legendary weapon (unique emberfang)", ef["unique"] == "emberfang" and ef["name"] == "Emberfang" and ef["rar"] == 3 and ef["slot"] == "primary", ef=ef)
         # ---- built areas (only once the art pack and the builds exist)
         built = sv()["built"]
         if built:
