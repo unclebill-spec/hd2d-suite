@@ -1212,6 +1212,7 @@ function setHeroUI(open) {
   if (open && (G.title || G.busy || G.dlg || G.picking || G.shop)) return;
   G.heroUI = open; $('heroui').hidden = !open;
   if (open) { if (G.pause && G.setPause) G.setPause(false); if (G.log) setLog(false); if (G.opts) setOpts(false); PR.ensure(G.S); drawHero(); }
+  if (open && G.S.quests.eve_watch === 1) { G.S.flags.ew_bag = 1; refreshMarkers(); drawLog(); }
 }
 G.setHeroUI = setHeroUI;
 G.openFactions = () => { HUI.tab = 4; HUI.i = 0; setHeroUI(true); };
@@ -1366,6 +1367,10 @@ function wireLeveling() {
   $('heroClose').onclick = () => setHeroUI(false);
   document.querySelectorAll('#heroTabs button').forEach((b, k) => { b.onclick = () => { HUI.tab = k; HUI.i = 0; drawHero(); }; });
   $('vitals').addEventListener('click', () => setHeroUI(true));
+  // touch: tap the on-screen bag to look at the sigil (Lanterns Down step 1a)
+  $('bag').addEventListener('click', () => {
+    if (G.S.quests.eve_watch === 1) { G.S.flags.ew_bag = 1; refreshMarkers(); drawLog(); }
+  });
   $('heroui').addEventListener('pointerdown', (e) => { if (e.target === $('heroui')) setHeroUI(false); });
 }
 G.ask = { open: askAuto, pick: askPick };

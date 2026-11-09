@@ -1012,3 +1012,108 @@ export function markerFor(id, S) {
   if (id === 'alchemist' && q.cauldron === 2) return 'quest_mark';
   return null;
 }
+
+// ===== [INTRO] Lantern Eve opening v2 + "Lanterns Down" (Hearthmoor Story, staging/story/intro.md). =====
+// Paste at the END of game/data.js (uses data.js's own ITEMS, QUESTS, TALK, MARKER_HOOKS and flags()).
+// intro.js reads INTRO_LINES for its bubbles; it sets S.flags.ew_on = 1 in after() and gives 'eve_sigil'.
+// Old saves (intro already done, no ew_on) never see this quest and keep their old markers.
+
+ITEMS.eve_sigil = { name: 'Lantern Eve sigil', px: 'glowseed', key: true,
+  about: 'A fire-realm seal the wraith dropped. Hot to look at, cold to hold. The little flame curls to the LEFT. Keep it.' };
+
+QUESTS.eve_watch = {
+  title: 'Lanterns Down',
+  giver: 'Grandpa Alder',
+  story: true,   // story: not one of the three Lantern Eve errands (errandsDone / the Rift Shrine opening ignore it)
+  steps: {
+    1: (S) => { const F = S.flags || {};
+      if (!F.ew_bag) return 'Look at the sigil in your bag: press I (or G for Gear + bag). On touch, tap the bag on screen.';
+      return 'Show the sigil to Warden Hilde by the plaza steps. Walk up to her and talk (E / A).'; },
+    2: (S) => (Object.keys(S.orbs || {}).some((k) => k.startsWith('home_'))
+      ? 'Tell Grandpa Alder the lantern is lit. Your quest log (J) always shows the next step.'
+      : 'Set an orb lantern on a post by the cottage, near Pudding\'s corner: walk up and press E / A.'),
+    3: 'One lantern back in its place. Hearthmoor\'s errand-folk are waiting with their ! marks.',
+  },
+};
+
+// the bubbles, in order; [speaker id, text]. 'narr' = a caption chip, no speaker.
+export const INTRO_LINES = {
+  talk: [
+    ['eve_bram', 'Lantern Eve, friends! Light your lantern, whisper a wish to the little fish inside, and let it go.'],
+    ['eve_bram', 'Up they swim, all the way to the Rainbow Rift. My gran swore the Rift reads every single wish.'],
+    ['elder', 'Forty Lantern Eves I\'ve watched. The Rift has never once written back.'],
+    ['baker', 'You never put your address on the fish, Alder.'],
+    ['kid', 'Mine\'s the wobbly one! I wished Pudding would stop chasing moths.'],
+    ['kid', '...And for a pony. Is two wishes allowed?'],
+    ['eve_bram', 'Two wishes, one fish. He\'ll manage. He\'s a very hard-working fish.'],
+    ['baker', 'Welcome to Hearthmoor, dear. You picked a lovely night to arrive.'],
+  ],
+  crack: [
+    ['narr', 'A deep boom rolls in from Ravenhold. Far off, a tall figure stands in the Rift, eyes cold and blue.'],
+    ['narr', 'It lifts one hand. A seam of blue cold fire splits the sky, and every lantern stops dead.'],
+  ],
+  wraith: [
+    ['eve_bram', 'Cold fire?! Everyone behind me! Hero, the lanterns are with you: drive it back!'],
+  ],
+  after: [
+    ['kid', 'It dropped something! It\'s hot! No, it\'s cold! It\'s both! You hold it.'],
+    ['elder', 'That\'s a fire-realm seal. Muspelheim\'s mark, out of a cold-fire tear. That makes no sense at all.'],
+    ['baker', 'Three lanterns came down in my geraniums. The fish are fine. The geraniums are furious.'],
+    ['elder', 'Who stood up there in the crack? Did anyone see a face?'],
+    ['eve_bram', 'Only the eyes. Blue as a frozen pond. I\'ll be pouring myself a very warm stew.'],
+    ['elder', 'Come here a moment, young one. Before the night gets any older.'],
+  ],
+  // origin extras (S.cls), shown after the kid's line
+  seer: ['narr', '(Your runes itch. The little flame on the seal curls the wrong way, like a reflection. Someone cast it from a mirror.)'],
+  cinderknight: ['narr', '(Your ember seam stays dark around the seal. Real fire-realm work would answer it. This doesn\'t.)'],
+};
+
+const ewQ = (S) => (S.quests || {}).eve_watch || 0;
+const ewOrb = (S) => Object.keys(S.orbs || {}).some((k) => k.startsWith('home_'));
+
+// Grandpa Alder: gives / turns in the quest, otherwise his old lines
+const elderOld = TALK.elder;
+TALK.elder = (S) => {
+  const F = S.flags || {}, q = ewQ(S);
+  if (!F.ew_on) return elderOld(S);
+  if (!q) return {
+    pages: ['That seal is the first strange thing to fall out of the sky in my lifetime, and I had an uncle who juggled.',
+            'Keep it safe in your bag, and have a look at it. Then show it to Warden Hilde. The Order of the Hearth keeps a list of strange things.',
+            'And one more kindness after that: Marla\'s lantern came down. A lit lantern keeps cold-fire wraiths away, so let\'s put one back up.'],
+    then: (G) => G.setQuest('eve_watch', 1),
+  };
+  if (q === 1) return { pages: ['Bag first: press I, or G for your gear and bag. Then Hilde, by the steps. She looks stern. She is stern. But fair.'] };
+  if (q === 2 && !ewOrb(S)) return { pages: ['An empty orb and a glow-fish: put them together on the post by the cottage. Walk up and press E or A.'] };
+  if (q === 2) return {
+    pages: ['There. See how the light pools on the stones? Wraiths won\'t step into a lit circle. Nobody likes cold feet.',
+            'Here, a Hearth tonic. Drink with U if a scrape gets serious. The village saves itself every little while, and K saves on purpose.',
+            'Now: Marla, Wren and Tib all need a hand. Look for the ! over their heads. The moss gate up the terrace takes you to Mossglen.'],
+    then: (G) => { G.give('tonic', 1); G.factions && G.factions.add('hearth', 20, 'eve_watch'); G.setQuest('eve_watch', 3); },
+  };
+  return elderOld(S);
+};
+
+// Warden Hilde: during step 1 (after the bag look) she reads the sigil, then her usual first-talk (Factions tab) runs
+const hildeOld = TALK.hilde;
+TALK.hilde = (S) => {
+  const F = S.flags || {}, base = hildeOld(S);
+  if (!F.ew_on || ewQ(S) !== 1 || !F.ew_bag || F.ew_hilde) return base;
+  return {
+    pages: ['A fire-realm seal, dropped by a frost-fire wraith. That\'s like finding a snowball in an oven.',
+            'Keep it. Evidence walks better with feet than it sits in a drawer. Somebody, somewhere, will want to see that.',
+            ...base.pages],
+    then: (G) => { flags(G.S).ew_hilde = 1; if (base.then) base.then(G); G.give('orblamp', 1); G.give('glowfish', 1);
+                   G.toast('Hilde hands you Marla\'s empty orb and the glow-fish that fell out of it.', 2.8); G.setQuest('eve_watch', 2); },
+  };
+};
+
+// markers: Alder ! (offer) / turn-in; Hilde turn-in on step 1; the three errand marks wait until Lanterns Down is done
+MARKER_HOOKS.push((id, S) => {
+  const F = S.flags || {}; if (!F.ew_on) return undefined;
+  const q = ewQ(S);
+  if (id === 'elder') { if (!q) return 'quest_mark'; if (q === 2 && ewOrb(S)) return 'quest_turnin'; if (q < 3) return null; }
+  if (id === 'hilde' && q === 1 && F.ew_bag && !F.ew_hilde) return 'quest_turnin';
+  if ((id === 'baker' || id === 'herbalist' || id === 'kid') && q < 3) return null;
+  return undefined;
+});
+// ===== [/INTRO] =====
