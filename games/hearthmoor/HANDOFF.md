@@ -7,6 +7,7 @@ _
 - Will-authorized combined fix candidate (GD handoff /workspace/handoffs/2026-11-09-cozy-hearthmoor-fix-test-publish.md). Base live 053343b. LOCAL ONLY, not pushed; needs GD official retest + sign-off before any push/merge/publish (rollback tag first, publish-game.sh only).
 - 50366be loot: blocked-cell drops snap to nearest walkable cell (cherry-pick of cbe6d3b); de0902d CPU pickup-reach test. 2a715e6 Mordrath-only frameLift 2 m (pull stays 2.26, clamp 2.4 unchanged). 3576430 blue equals marker for same-score gear (Will ~8 PM Nov 9, BALANCE.md); green/red unchanged.
 - REV3 (Nov 9 ~10:08 PM ET): 7c88579 bounded reachable loot fallback/deferral; 3206db7 separate walk/scan caps (best-first walk toward origin); sw.js regenerated via write_pwa (a92ba2f, CORE hearthmoor-core-1c935880eb). Supersedes 424cc2c/947fe9a. Next: GD Mordrath retreat follow-up (lift 2 insufficient at hero (0,-27.2)).
+- REV4 (Nov 9 ~10:25 PM ET): 7c59fad Mordrath frameFit (lift from hero->boss offset, floor 2, max 9, pull 2.26) after GD retreat FAIL at hero (0,-27.2); sw.js regenerated 2e94301 (CORE hearthmoor-core-2dcdae3616). Supersedes 9d817a8.
 - Pending GD runtime acceptance: settled Mordrath crown+feet screenshot (desktop+phone), in-play court-slope / blocked-drop pickup with bag/gold change, blue equals visible desktop+phone, boot/offline. Details /workspace/handoffs/2026-11-09-cozy-fix-candidate.md.
 
 ## RESUME HERE (2026-11-02, branch hearthmoor-tue-1103, HD-2D Cozy Builder)
