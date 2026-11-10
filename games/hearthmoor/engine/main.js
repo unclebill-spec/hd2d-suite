@@ -166,12 +166,14 @@ export async function boot(opts = {}) {
   const look = new THREE.Vector3(...(C.look || [0, 0, -3]));   // frame ahead of the player (the terrace)
   function aspectScale() { const a = cssW / cssH; return a < 1.25 ? Math.min(1.9, 1.25 / a) : 1; }
   // framing pull-back for big foes (style lock boss scale): games call ctx.framePull(f) while a boss is engaged;
-  // eased so the camera breathes out / in instead of jumping
-  let pull = 1, pullTo = 1;
+  // eased so the camera breathes out / in instead of jumping. frameLook lifts the aim for one boss (Mordrath) without raising the 2.4 clamp.
+  let pull = 1, pullTo = 1, lookLift = 0, lookLiftTo = 0;
   function placeCamera() {
     pull += (pullTo - pull) * 0.05; if (Math.abs(pullTo - pull) < 1e-3) pull = pullTo;
+    lookLift += (lookLiftTo - lookLift) * 0.05; if (Math.abs(lookLiftTo - lookLift) < 1e-3) lookLift = lookLiftTo;
     const d = dist * aspectScale() * pull;
     camera.position.copy(target).addScaledVector(camDir, d);
+    camera.position.y += lookLift;
     camera.userData.hazeOff = d - C.distance;   // portrait / zoom pull-back does not add fog
     camera.quaternion.setFromEuler(new THREE.Euler(-pitch, 0, 0, 'YXZ'));   // fixed: no orbit, no yaw
     camera.updateMatrixWorld();
@@ -845,7 +847,8 @@ export async function boot(opts = {}) {
     if (shadeClock <= 0) { updateShade(); shadeClock = 0.25; }
     for (const a of actors.list) a.shade += (a.shadeTarget * Math.min(1, g.sun_intensity / 2) - a.shade) * Math.min(1, dt * 5);
     swayTrees(trees, time);
-    const k = Number(Q.get('k')) || actors.pixelScale(camera, target, bufH);
+    tmpV.copy(target); tmpV.y += lookLift;
+    const k = Number(Q.get('k')) || actors.pixelScale(camera, tmpV, bufH);
     updateGlows(dt);
     actors.sync(camera, bufW, bufH, k, g, glows.length ? lamps.concat(glows) : lamps, sunDir);
     if (particles && !API._fxQuiet) {   // QA effects lineup: ambient particles frozen + hidden (see effectLineup)
@@ -887,6 +890,7 @@ export async function boot(opts = {}) {
     heightAt: (x, z) => (collide ? (collide.height(x, z) ?? 0) : 0),
     zoom: () => dist,
     framePull: (f) => { pullTo = THREE.MathUtils.clamp(f || 1, 1, 2.4); }, pull: () => pull,   // pull up to 2.4x for 7-8x bosses (5-6x stay ~1.7-1.9)
+    frameLook: (y) => { lookLiftTo = Math.max(0, y || 0); },
     moveActor, act: (name, a, o) => actorAct(name, a || player, o || {}), release: (name, a) => actors.release(a || player, name),
     dodge, summon, playerCast, cycleSpell, selectSpell, spellIndex: () => spellIdx,
     setTimeScale: (s) => { timeScale = Math.max(0, Math.min(1, s)); }, timeScale: () => timeScale,

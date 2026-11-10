@@ -1182,12 +1182,17 @@ export class Combat {
       if (n.t > 0.9) { n.el.remove(); n.done = true; }
     }
     this.nums = this.nums.filter((n) => !n.done);
-    // camera framing scales with big foes: breathe the camera out while one is engaged and near (eased in the engine)
-    let pullF = 1;
+    // camera framing scales with big foes: breathe the camera out while one is engaged and near (eased in the engine).
+    // framePull on a def replaces the scale curve for that foe only. frameLift raises the look target (Mordrath's crown).
+    let pullF = 1, liftF = 0;
     for (const e of this.enemies) {
       const k = e.D.scale || 1;
-      if (k > 1 && (e.state === 'chase' || e.state === 'attack' || e.D.framed) && dist(e.a, ctx.player) < (e.D.aggro || 6) + 3) pullF = Math.max(pullF, framePullFor(k));
+      if (k > 1 && (e.state === 'chase' || e.state === 'attack' || e.D.framed) && dist(e.a, ctx.player) < (e.D.aggro || 6) + 3) {
+        pullF = Math.max(pullF, e.D.framePull > 0 ? e.D.framePull : framePullFor(k));
+        if (e.D.frameLift > 0) liftF = Math.max(liftF, e.D.frameLift);
+      }
     }
+    if (ctx.frameLook) ctx.frameLook(liftF);
     if (ctx.framePull) ctx.framePull(pullF);
     for (const e of this.enemies) {
       let b = this.bars.get(e.id);
