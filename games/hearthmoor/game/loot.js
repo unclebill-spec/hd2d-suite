@@ -530,6 +530,29 @@ function drawAura(cv, scale, frame, epic, worn = false, rune = false) {
   }
 }
 
+// A blocked cell has no height, and heightAt turns that null into 0, so the sprite sinks into the mesh.
+// Gold, items, gems and the purse all go through drop(), so one snap covers every kind.
+export const LOOT_SNAP_M = 1.25;
+export function snapWalkable(collide, x, z, radius = LOOT_SNAP_M) {
+  if (!collide || !collide.blocked(x, z)) return { x, z };
+  const step = collide.cell;
+  if (!(step > 0)) return { x, z };
+  const n = Math.ceil(radius / step);
+  let best = null, bestD = radius + 1e-9;
+  for (let j = -n; j <= n; j++) {
+    for (let i = -n; i <= n; i++) {
+      if (i === 0 && j === 0) continue;
+      const d = Math.hypot(i * step, j * step);
+      if (d > radius || d >= bestD) continue;
+      const cx = x + i * step, cz = z + j * step;
+      if (collide.blocked(cx, cz)) continue;
+      best = { x: cx, z: cz };
+      bestD = d;
+    }
+  }
+  return best || { x, z };
+}
+
 export class Loot {
   constructor(G) { this.G = G; this.layer = document.getElementById('fxlayer'); this.drops = []; this.t = 0; }
   attach(ctx) { this.clear(); this.ctx = ctx; }
@@ -582,6 +605,7 @@ export class Loot {
   }
   drop(x, z, what) {
     const ctx = this.ctx; if (!ctx || !this.layer) return null;
+    if (ctx.collide && ctx.collide.blocked(x, z)) { const s = snapWalkable(ctx.collide, x, z); x = s.x; z = s.z; }
     const y = ctx.heightAt(x, z), it = what.item || null, rar = it ? it.rar : -1;
     const el = document.createElement('div'); el.className = 'loot' + (it ? ' r' + rar : what.gem ? ' gem' : ' gold') + (what.purse ? ' purse' : '');
     const sc = 3;
