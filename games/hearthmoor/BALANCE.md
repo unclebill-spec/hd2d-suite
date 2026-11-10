@@ -95,3 +95,5 @@ Helheim night warm-light (GD, Oct 30 2026): hh_shore gets one Asgard brazier (pl
 - 2026-11-02 7:30 PM ET (Game Director): Check day. (1) The render stall (frames stop with ready/not busy, findings.md) is treated as a harness/box-load artifact, not a vhc-split blocker; it wasn't seen on Nov 2 at low load. Master Builder hardens smoke.py. (2) Ingrith Asgard Rev 4b (boots/belt #3e5a8c, buckle #fff8e6) is OK to ship; master approval (APPROVED.md) waits on Will. (3) The SW split timing is accepted: shell activates under 45 s at 200 kB/s, and the first realm is offline-ready after about 5 min there.
 
 - 2026-10-31 3:56 AM ET (Game Director): Bloomtide. The playtime counter keeps ticking during minigames. The tap window must not count early (fix the one-frame-early bug). sw.js must precache the minigame assets.
+
+2026-11-09 ~8:00 PM ET (Will, direct in GD chat; relayed via GD handoff 2026-11-09-cozy-gear-markers-blue-equals.md): equal-score world gear drops show a blue equals sign over the gear; better = green up, worse = red down; empty slot = upgrade; consumables no marker. Scores unchanged.

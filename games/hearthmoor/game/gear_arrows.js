@@ -1,10 +1,12 @@
-// Gear compare arrows: neon up / red down over world drops, bag rows, and the gear tooltip.
-// Colours are the check_palette ramps only: ORB_NEON green #3cf08a / #b8ffd4 / #14a85a, NEON red #ff5a4a / #e0302a / #a81c22.
+// Gear compare arrows: neon up / red down / blue equal over world drops, bag rows, and the gear tooltip.
+// Colours are the check_palette ramps only: ORB_NEON green #3cf08a / #b8ffd4 / #14a85a, NEON red #ff5a4a / #e0302a / #a81c22,
+// NEON blue (portal / temple) #2ab4ff / #a6ecff / #1c62d8.
 import { compareToEquipped, describe, RARITY } from './loot.js';
 
 export const ARROW_PAL = {
   up: { hi: '#b8ffd4', mid: '#3cf08a', lo: '#14a85a' },
   down: { hi: '#ff5a4a', mid: '#e0302a', lo: '#a81c22' },
+  equal: { hi: '#a6ecff', mid: '#2ab4ff', lo: '#1c62d8' },
 };
 
 const UP = [
@@ -37,19 +39,38 @@ const DOWN = [
   '.....3.....',
   '...........',
 ];
+// Same 11×13 grid as the arrows. Two bars, hi on the top edge of each, mid underneath.
+const EQUAL = [
+  '...........',
+  '...........',
+  '...........',
+  '.222222222.',
+  '.111111111.',
+  '...........',
+  '...........',
+  '...........',
+  '.222222222.',
+  '.111111111.',
+  '...........',
+  '...........',
+  '...........',
+];
 
 export function arrowDir(item, gear) { return compareToEquipped(item, gear); }
 export function arrowKind(item, gear) {
   const d = arrowDir(item, gear);
-  return d > 0 ? 'up' : d < 0 ? 'down' : 'none';
+  if (d > 0) return 'up';
+  if (d < 0) return 'down';
+  return item && item.slot ? 'equal' : 'none';
 }
 
 function arrowCanvas(dir, scale) {
-  const rows = dir > 0 ? UP : DOWN, h = rows.length, w = rows[0].length;
+  const kind = dir > 0 ? 'up' : dir < 0 ? 'down' : 'equal';
+  const rows = kind === 'up' ? UP : kind === 'down' ? DOWN : EQUAL, h = rows.length, w = rows[0].length;
   const cv = document.createElement('canvas');
   cv.width = w * scale; cv.height = h * scale;
   const g = cv.getContext('2d'); g.imageSmoothingEnabled = false;
-  const ramp = dir > 0 ? ARROW_PAL.up : ARROW_PAL.down;
+  const ramp = ARROW_PAL[kind];
   const on = (x, y) => x >= 0 && y >= 0 && y < h && x < w && rows[y][x] !== '.';
   const px = (x, y, c) => { g.fillStyle = c; g.fillRect(x * scale, y * scale, scale, scale); };
   for (let y = 0; y < h; y++) for (let x = 0; x < w; x++) {
@@ -63,7 +84,7 @@ function arrowCanvas(dir, scale) {
     else if (ch === '3') px(x, y, ramp.lo);
   }
   cv.className = 'garrow';
-  cv.dataset.dir = dir > 0 ? 'up' : 'down';
+  cv.dataset.dir = kind;
   // `.card canvas` in game.css is 60×96 and matches every canvas in the hero card, so a bag-row
   // arrow (scale 2 → 22×26) was stretched and clipped the name. Pin each arrow to its bitmap.
   cv.style.width = cv.width + 'px';
@@ -88,7 +109,7 @@ function syncDrop(d, gear) {
   if (d.arrowDir === dir && d.arrowEl && d.arrowEl.isConnected) return;
   d.arrowDir = dir;
   if (d.arrowEl) { d.arrowEl.remove(); d.arrowEl = null; }
-  if (!dir) return;
+  if (arrowKind(d.it, gear) === 'none') return;
   const cv = arrowCanvas(dir, 3);
   placeWorld(cv, d.it.rar);
   d.el.appendChild(cv);
@@ -126,22 +147,22 @@ function ensureUi() {
 function openTip(it, gear, rect) {
   if (!tipEl || !it) return;
   const dir = compareToEquipped(it, gear);
-  const kind = dir > 0 ? 'up' : dir < 0 ? 'down' : 'none';
-  const col = dir > 0 ? ARROW_PAL.up.mid : ARROW_PAL.down.mid;
+  const kind = arrowKind(it, gear);
+  const col = dir > 0 ? ARROW_PAL.up.mid : dir < 0 ? ARROW_PAL.down.mid : ARROW_PAL.equal.mid;
   const lines = describe(it).split(' · ');
   tipEl.innerHTML = '';
-  if (dir) tipEl.appendChild(arrowCanvas(dir, 4));
+  if (kind !== 'none') tipEl.appendChild(arrowCanvas(dir, 4));
   const body = document.createElement('div');
   const name = document.createElement('div');
   name.className = 'gat-name';
   name.textContent = it.name;
   name.style.color = (RARITY[it.rar] || RARITY[0]).lo;
   body.appendChild(name);
-  if (dir) {
+  if (kind !== 'none') {
     const tag = document.createElement('div');
     tag.className = 'gat-tag';
     tag.style.color = col;
-    tag.textContent = dir > 0 ? 'UPGRADE' : 'WORSE';
+    tag.textContent = dir > 0 ? 'UPGRADE' : dir < 0 ? 'WORSE' : 'SAME';
     body.appendChild(tag);
   }
   const box = document.createElement('div');
@@ -178,9 +199,10 @@ function markBag(G) {
     bagRows(body).forEach((row, i) => {
       const it = bag[i];
       const dir = it ? compareToEquipped(it, gear) : 0;
+      const kind = it ? arrowKind(it, gear) : 'none';
       row.querySelectorAll('canvas.garrow').forEach((n) => n.remove());
       const name = row.querySelector('.iname');
-      if (name && dir) { name.style.minWidth = '0'; name.style.overflow = 'hidden'; name.prepend(arrowCanvas(dir, 2)); }
+      if (name && kind !== 'none') { name.style.minWidth = '0'; name.style.overflow = 'hidden'; name.prepend(arrowCanvas(dir, 2)); }
       if (!row.dataset.arrListen) {
         row.dataset.arrListen = '1';
         row.addEventListener('mouseenter', () => {
@@ -221,15 +243,17 @@ export function attachArrows(G) {
   const api = {
     qa() {
       return loot.drops.filter((d) => d.it && d.el && d.el.isConnected).map((d) => {
-        const dir = compareToEquipped(d.it, (G.S && G.S.gear) || {});
+        const gear = (G.S && G.S.gear) || {};
+        const dir = compareToEquipped(d.it, gear);
+        const kind = arrowKind(d.it, gear);
         const el = d.arrowEl;
         const r = el && el.isConnected ? el.getBoundingClientRect() : null;
         const onScreen = !!(r && r.width > 2 && r.bottom > 0 && r.right > 0 && r.top < window.innerHeight && r.left < window.innerWidth);
         return {
           name: d.it.name, slot: d.it.slot, dir,
-          arrow: dir > 0 ? 'up' : dir < 0 ? 'down' : 'none',
-          color: dir > 0 ? ARROW_PAL.up.mid : dir < 0 ? ARROW_PAL.down.mid : null,
-          shown: dir !== 0 && !!el,
+          arrow: kind,
+          color: kind === 'up' ? ARROW_PAL.up.mid : kind === 'down' ? ARROW_PAL.down.mid : kind === 'equal' ? ARROW_PAL.equal.mid : null,
+          shown: kind !== 'none' && !!el,
           onScreen,
           rect: r ? { x: r.x, y: r.y, w: r.width, h: r.height } : null,
         };

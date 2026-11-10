@@ -13,8 +13,9 @@ ok(score(gloves) === score(same) && score(better) > score(gloves) && score(worse
 
 ok(compareToEquipped(better, { gloves }) === 1 && arrowKind(better, { gloves }) === 'up', 'upgrade over equipped');
 ok(compareToEquipped(worse, { gloves }) === -1 && arrowKind(worse, { gloves }) === 'down', 'downgrade under equipped');
-ok(compareToEquipped(same, { gloves }) === 0 && arrowDir(same, { gloves }) === 0 && arrowKind(same, { gloves }) === 'none', 'equal score draws no arrow');
+ok(compareToEquipped(same, { gloves }) === 0 && arrowDir(same, { gloves }) === 0 && arrowKind(same, { gloves }) === 'equal', 'equal score draws a blue equals marker');
 ok(compareToEquipped(worse, { gloves: null }) === 1 && compareToEquipped(worse, {}) === 1 && arrowKind(worse, {}) === 'up', 'empty slot is an upgrade');
+ok(arrowKind({ name: 'Hearth tonic' }, {}) === 'none' && arrowKind({ slot: '', name: 'loose gold' }, {}) === 'none', 'non-gear draws no arrow');
 
 const rings = {
   ringL: it('ringL', { crit: 0.04 }),   // 0.12
@@ -24,6 +25,7 @@ ok(score(rings.ringR) < score(rings.ringL), 'fixture: ringR is the weaker ring')
 ok(compareToEquipped(it('ringL', { crit: 0.02 }), rings) === 1, 'ring above the weaker ring is an upgrade');
 ok(compareToEquipped(it('ringR', { crit: 0.005 }), rings) === -1, 'ring under the weaker ring is a downgrade');
 ok(compareToEquipped(it('ringL', { crit: 0.01 }), rings) === 0, 'ring equal to the weaker ring is equal');
+ok(arrowKind(it('ringL', { crit: 0.01 }), rings) === 'equal', 'ring equal to the weaker ring draws an equals marker');
 ok(compareToEquipped(it('ringL', { hpAdd: 1 }), { ringL: rings.ringL, ringR: null }) === 1, 'one empty ring slot is an upgrade');
 ok(compareToEquipped(it('ringR', { hpAdd: 1 }), { ringL: null, ringR: null }) === 1, 'both ring slots empty is an upgrade');
 ok(compareToEquipped(it('helm', { hpAdd: 1 }), { helm: it('helm', { meleeMul: 0.2 }), ringL: null }) === -1, 'a filled non-ring slot does not use the empty ring');
@@ -32,5 +34,7 @@ const neck = it('neck', { crit: 0.01 });
 ok(compareToEquipped(it('neck', { crit: 0.01 }, { gems: ['rift_shard'] }), { neck }) === 1, 'gems count through score()');
 ok(ARROW_PAL.up.mid === '#3cf08a' && ARROW_PAL.up.hi === '#b8ffd4' && ARROW_PAL.up.lo === '#14a85a', 'up arrow uses ORB_NEON green');
 ok(ARROW_PAL.down.hi === '#ff5a4a' && ARROW_PAL.down.mid === '#e0302a' && ARROW_PAL.down.lo === '#a81c22', 'down arrow uses NEON red');
+// check_palette.py NEON "neon blue (portal / temple)": mid #2ab4ff, hi #a6ecff, lo #1c62d8
+ok(!!(ARROW_PAL.equal && ARROW_PAL.equal.hi === '#a6ecff' && ARROW_PAL.equal.mid === '#2ab4ff' && ARROW_PAL.equal.lo === '#1c62d8'), 'equal marker uses NEON blue (portal / temple)');
 
 if (!process.exitCode) console.log('gear arrows: all checks passed');
