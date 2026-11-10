@@ -5,7 +5,7 @@ import { fileURLToPath } from 'node:url';
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { Collide } from '../engine/collide.js';
-import { LOOT_SNAP_M, Loot, snapWalkable } from '../game/loot.js';
+import { LOOT_SNAP_M, LOOT_SNAP_MAX_M, Loot, snapWalkable } from '../game/loot.js';
 import * as LootApi from '../game/loot.js';
 
 const here = dirname(fileURLToPath(import.meta.url));
@@ -134,7 +134,7 @@ function nearestOpenSample(col, x, z, radius) {
 }
 
 // Standable cells a hero can actually walk to. Grid is collide.cell; stand test is canStand, r 0.28.
-function reachableFrom(col, hero) {
+function reachableFrom(col, hero, cap = 8000) {
   const step = col.cell, r = HERO_R;
   const h0 = col.canStand(hero.x, hero.z, hero.y, r);
   if (h0 == null) return [];
@@ -145,7 +145,7 @@ function reachableFrom(col, hero) {
   const q = [{ x: hero.x, z: hero.z, h: h0, i: i0, j: j0 }];
   const dirs = [[1, 0], [-1, 0], [0, 1], [0, -1]];
   let head = 0;
-  while (head < q.length && cells.length < 8000) {
+  while (head < q.length && cells.length < cap) {
     const cur = q[head++];
     for (const [di, dj] of dirs) {
       const i = cur.i + di, j = cur.j + dj;
@@ -398,4 +398,66 @@ test('drop keeps gold, item identity, gem and purse through a snap and through d
   waiting.update(0.05);
   assert.equal(waiting.drops.length, 4, 'second update does not duplicate');
   assert.equal(G.S.gold, 0);
+});
+
+// Temple reachable region is 4628 cells at 0.25 m, over LOOT_SNAP_CAP. A shared walk+scan budget
+// lets the walk return early and leaves scanOpen with nothing, so Loot.drop falls back to the hero.
+const TEMPLE_HEROES = [
+  { name: 'court', x: 0, y: 2.0, z: -9.6 },
+  { name: 'nave', x: -2, y: 1.2, z: -6 },
+];
+
+test('temple stair drops with a hero stay beside the blocked origin, not at the hero', () => {
+  stubDocument();
+  const item = { name: 'Stair Helm', slot: 'helm', rar: 2, mods: { hpAdd: 1 }, gems: [], up: 0, procs: [], rv: 3, at: 'plate' };
+  for (const hero of TEMPLE_HEROES) {
+    assert.equal(collide.canStand(hero.x, hero.z, hero.y, HERO_R), hero.y, hero.name + ' stands');
+    const cells = reachableFrom(collide, hero, 20000);
+    assert.ok(cells.length > 4000, hero.name + ' reachable region ' + cells.length + ' exceeds the shared snap cap');
+    for (const origin of BLOCKED) {
+      for (const what of [{ gold: 6 }, { item }]) {
+        const kind = what.item ? 'item' : 'gold';
+        const label = hero.name + ' ' + origin.name + ' ' + kind;
+        const loot = new Loot(fakeGame());
+        loot.attach(fakeCtx(collide, hero));
+        const d = loot.drop(origin.x, origin.z, what);
+        assert.ok(d, label + ' placed');
+        assert.equal(collide.blocked(d.x, d.z), false, label + ' blocked');
+        assert.notEqual(collide.height(d.x, d.z), null, label + ' height');
+        const od = Math.hypot(d.x - origin.x, d.z - origin.z);
+        assert.ok(od <= LOOT_SNAP_MAX_M + 1e-9, label + ' is ' + od.toFixed(3) + ' m from the origin');
+        assert.ok(nearestReach(cells, d.x, d.z) < PICKUP_M, label + ' not within pickup of a hero-reachable cell');
+        const hd = Math.hypot(d.x - hero.x, d.z - hero.z);
+        assert.ok(hd >= PICKUP_M, label + ' is ' + hd.toFixed(3) + ' m from the hero; the walk spent the shared LOOT_SNAP_CAP so scanOpen returned null and drop() fell back to the hero feet');
+        if (what.item) assert.equal(d.it, item, label + ' item identity');
+        else assert.equal(d.gold, 6, label + ' gold');
+      }
+    }
+  }
+});
+
+test('huge open grid snaps a blocked origin beside itself when the reachable region exceeds the cap', () => {
+  const cell = 0.25, w = 160, h = 160; // 25600 cells, well past a 4000 walk cap
+  const origin = { x: 20.125, z: 20.125 };
+  const hero = { x: 22.125, y: CM / 100, z: 20.125 };
+  const oi = Math.floor(origin.x / cell), oj = Math.floor(origin.z / cell);
+  const col = new Collide(gridSpec(w, h, cell, (i, j) => !(i === oi && j === oj)));
+  assert.equal(col.blocked(origin.x, origin.z), true, 'origin cell is blocked');
+  assert.equal(col.height(origin.x, origin.z), null);
+  assert.equal(col.canStand(hero.x, hero.z, hero.y, HERO_R), hero.y, 'hero stands on the open grid');
+  const cells = reachableFrom(col, hero, 4500);
+  assert.ok(cells.length > 4000, 'reachable region ' + cells.length + ' exceeds the shared snap cap');
+  stubDocument();
+  const loot = new Loot(fakeGame());
+  loot.attach(fakeCtx(col, hero));
+  const d = loot.drop(origin.x, origin.z, { gold: 3 });
+  assert.ok(d, 'placed');
+  assert.equal(col.blocked(d.x, d.z), false);
+  assert.notEqual(col.height(d.x, d.z), null, 'height');
+  const od = Math.hypot(d.x - origin.x, d.z - origin.z);
+  assert.ok(od > 0 && od <= LOOT_SNAP_MAX_M + 1e-9, 'beside the origin, got ' + od.toFixed(3) + ' m');
+  assert.ok(nearestReach(cells, d.x, d.z) < PICKUP_M, 'not within pickup of the hero region');
+  const hd = Math.hypot(d.x - hero.x, d.z - hero.z);
+  assert.ok(hd >= PICKUP_M, 'is ' + hd.toFixed(3) + ' m from the hero; the walk spent the shared LOOT_SNAP_CAP so scanOpen returned null and drop() fell back to the hero feet');
+  assert.equal(d.gold, 3);
 });

@@ -533,12 +533,16 @@ function drawAura(cv, scale, frame, epic, worn = false, rune = false) {
 // A blocked cell has no height, and heightAt turns that null into 0, so the sprite sinks into the mesh.
 // Gold, items, gems and the purse all go through drop(), so one snap covers every kind.
 // Blocked origins only: walk hero-standable cells (canStand, r 0.28, one step = collide.cell) from ctx.player
-// and keep the nearest open point that is inside pickup range of that region. The walk is capped so a solid
-// blocker cannot scan the whole heightfield. No hero means defer — never hand back the blocked cell, and never
-// guess an open cell that might sit across a wall. Open origins return immediately (no walk).
+// and keep the nearest open point that is inside pickup range of that region. The walk and the open-cell scan
+// have separate caps. The walk is best-first toward the origin and only keeps cells inside
+// LOOT_SNAP_MAX_M + pickup of the origin, plus the path that connects the hero to that disk, so a large
+// reachable region cannot spend the scan budget. No hero means defer — never hand back the blocked cell, and
+// never guess an open cell that might sit across a wall. Open origins return immediately (no walk).
 export const LOOT_SNAP_M = 1.25;
 export const LOOT_SNAP_MAX_M = 4;
 export const LOOT_SNAP_CAP = 4000;
+export const LOOT_SNAP_WALK_CAP = LOOT_SNAP_CAP;
+export const LOOT_SNAP_SCAN_CAP = LOOT_SNAP_CAP;
 const LOOT_PICKUP_M = 0.75;
 const LOOT_HERO_R = 0.28;
 
@@ -557,7 +561,7 @@ function nearReach(x, z, reach) {
   return false;
 }
 
-// `take` is the shared iteration budget. It returns false once LOOT_SNAP_CAP probes have been spent.
+// `take` returns false once that phase's cap is spent. Walk and scan do not share a counter.
 function scanOpen(collide, x, z, radius, reach, take) {
   const step = collide.cell, n = Math.ceil(radius / step);
   let best = null, bestD = radius + 1e-9;
@@ -577,34 +581,77 @@ function scanOpen(collide, x, z, radius, reach, take) {
   return best;
 }
 
-function reachableCells(collide, hero, take) {
+function makePriHeap() {
+  const a = [];
+  const up = (i) => {
+    while (i > 0) {
+      const p = (i - 1) >> 1;
+      if (a[p].d <= a[i].d) break;
+      const t = a[p]; a[p] = a[i]; a[i] = t;
+      i = p;
+    }
+  };
+  const down = (i) => {
+    const n = a.length;
+    for (;;) {
+      let m = i, l = i * 2 + 1, r = l + 1;
+      if (l < n && a[l].d < a[m].d) m = l;
+      if (r < n && a[r].d < a[m].d) m = r;
+      if (m === i) break;
+      const t = a[m]; a[m] = a[i]; a[i] = t;
+      i = m;
+    }
+  };
+  return {
+    push(node) { a.push(node); up(a.length - 1); },
+    pop() {
+      const top = a[0], last = a.pop();
+      if (a.length) { a[0] = last; down(0); }
+      return top;
+    },
+    get len() { return a.length; },
+  };
+}
+
+// Best-first from the hero toward the origin. Cells farther than `reachR` from the origin are only
+// the connecting path: once the disk is reached they are not expanded, and only in-disk cells are
+// returned for the pickup test. `take` is the walk cap.
+function reachableCells(collide, hero, originX, originZ, reachR, take) {
   const step = collide.cell, ox = collide.ox, oz = collide.oz, cells = [];
   const i0 = Math.floor((hero.x - ox) / step), j0 = Math.floor((hero.z - oz) / step);
   if (i0 < 0 || j0 < 0 || i0 >= collide.w || j0 >= collide.h) return cells;
   const h0 = Number.isFinite(hero.y) ? hero.y : (collide.height(hero.x, hero.z) ?? 0);
-  const seen = new Set([i0 + ':' + j0]);
   if (!take()) return cells;
   const hs = collide.canStand(hero.x, hero.z, h0, LOOT_HERO_R);
   if (hs == null) return cells;
-  const q = [{ x: hero.x, z: hero.z, h: hs, i: i0, j: j0 }];
-  cells.push(q[0]);
+  const r2 = reachR * reachR;
+  const dist2 = (px, pz) => { const dx = px - originX, dz = pz - originZ; return dx * dx + dz * dz; };
+  const seen = new Set([i0 + ':' + j0]);
+  const heap = makePriHeap();
+  const startD = dist2(hero.x, hero.z);
+  const start = { x: hero.x, z: hero.z, h: hs, i: i0, j: j0, d: startD };
+  if (startD <= r2) cells.push(start);
+  heap.push(start);
+  let inDisk = startD <= r2;
   const dirs = [[1, 0], [-1, 0], [0, 1], [0, -1]];
-  let head = 0;
-  while (head < q.length) {
-    const cur = q[head++];
+  while (heap.len) {
+    const cur = heap.pop();
+    if (inDisk && cur.d > r2) continue;
     for (const [di, dj] of dirs) {
       const i = cur.i + di, j = cur.j + dj;
       if (i < 0 || j < 0 || i >= collide.w || j >= collide.h) continue;
       const k = i + ':' + j;
       if (seen.has(k)) continue;
+      const nx = ox + (i + 0.5) * step, nz = oz + (j + 0.5) * step;
+      const nd = dist2(nx, nz);
+      if (inDisk && nd > r2) continue;
       seen.add(k);
       if (!take()) return cells;
-      const nx = ox + (i + 0.5) * step, nz = oz + (j + 0.5) * step;
       const nh = collide.canStand(nx, nz, cur.h, LOOT_HERO_R);
       if (nh == null) continue;
-      const node = { x: nx, z: nz, h: nh, i, j };
-      cells.push(node);
-      q.push(node);
+      const node = { x: nx, z: nz, h: nh, i, j, d: nd };
+      if (nd <= r2) { cells.push(node); inDisk = true; }
+      heap.push(node);
     }
   }
   return cells;
@@ -612,28 +659,30 @@ function reachableCells(collide, hero, take) {
 
 export function snapWalkable(collide, x, z, radius = LOOT_SNAP_M, opt = null) {
   const stats = opt && opt.stats;
-  let steps = 0;
-  const take = () => (steps < LOOT_SNAP_CAP ? (steps++, true) : false);
+  let steps = 0, walkN = 0, scanN = 0;
+  const takeWalk = () => (walkN < LOOT_SNAP_WALK_CAP ? (walkN++, steps++, true) : false);
+  const takeScan = () => (scanN < LOOT_SNAP_SCAN_CAP ? (scanN++, steps++, true) : false);
   const finish = (out) => { if (stats) stats.nodes = steps; return out; };
   if (!collide || !(collide.cell > 0)) return finish({ x, z });
-  if (!take()) return finish({ deferred: true });
+  if (!takeScan()) return finish({ deferred: true });
   if (!collide.blocked(x, z)) return finish({ x, z }); // open: same bits, no walk
   const limit = radius > 0 ? radius : LOOT_SNAP_M;
   const hero = opt && opt.hero && Number.isFinite(opt.hero.x) && Number.isFinite(opt.hero.z) ? opt.hero : null;
   if (!hero) {
     // No region to test against. A nearby open cell can be the other side of a wall, so do not guess:
     // keep the legacy 1.25 m snap only when one exists (temple drops call this with no hero), else defer.
-    const near = scanOpen(collide, x, z, limit, null, take);
+    const near = scanOpen(collide, x, z, limit, null, takeScan);
     if (near) return finish(near);
     return finish({ deferred: true });
   }
-  const reach = reachableCells(collide, hero, take);
   const first = Math.min(limit, LOOT_SNAP_M);
-  let best = scanOpen(collide, x, z, first, reach, take);
   const outer = limit === LOOT_SNAP_M ? LOOT_SNAP_MAX_M : limit;
-  if (!best && outer > first) best = scanOpen(collide, x, z, outer, reach, take);
+  const reachR = Math.max(outer, first) + LOOT_PICKUP_M;
+  const reach = reachableCells(collide, hero, x, z, reachR, takeWalk);
+  let best = scanOpen(collide, x, z, first, reach, takeScan);
+  if (!best && outer > first) best = scanOpen(collide, x, z, outer, reach, takeScan);
   if (best) return finish(best);
-  if (take() && !collide.blocked(hero.x, hero.z)) return finish({ x: hero.x, z: hero.z });
+  if (takeScan() && !collide.blocked(hero.x, hero.z)) return finish({ x: hero.x, z: hero.z });
   return finish({ deferred: true });
 }
 
