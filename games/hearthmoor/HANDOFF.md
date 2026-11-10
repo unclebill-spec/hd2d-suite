@@ -3,6 +3,11 @@ _
 
 **Owner:** HD-2D Cozy Builder (single owner). Hearthmoor Art / Sound / Story and Master Builder drop work in `/workspace/hd2d-suite/staging/` (or `/workspace/hearthmoor-staging/`) and add a line under "Inbox" below instead of waking the owner.
 
+## RESUME HERE (2026-11-09 ~9:20 PM ET, branch hearthmoor-fixes-1109, HD-2D Cozy Builder)
+- Will-authorized combined fix candidate (GD handoff /workspace/handoffs/2026-11-09-cozy-hearthmoor-fix-test-publish.md). Base live 053343b. LOCAL ONLY, not pushed; needs GD official retest + sign-off before any push/merge/publish (rollback tag first, publish-game.sh only).
+- 50366be loot: blocked-cell drops snap to nearest walkable cell (cherry-pick of cbe6d3b); de0902d CPU pickup-reach test. 2a715e6 Mordrath-only frameLift 2 m (pull stays 2.26, clamp 2.4 unchanged). 3576430 blue equals marker for same-score gear (Will ~8 PM Nov 9, BALANCE.md); green/red unchanged.
+- Pending GD runtime acceptance: settled Mordrath crown+feet screenshot (desktop+phone), in-play court-slope / blocked-drop pickup with bag/gold change, blue equals visible desktop+phone, boot/offline. Details /workspace/handoffs/2026-11-09-cozy-fix-candidate.md.
+
 ## RESUME HERE (2026-11-02, branch hearthmoor-tue-1103, HD-2D Cozy Builder)
 - Wired Hearthmoor Sound staging: 94 SFX in audio/sfx/ (Pack1/2/3 + Bloomtide) via sample loader in game/audio.js (variants, no-repeat, ±5% rate jitter, throttle, procedural fallback), ambience beds (asgard/helheim/ossuary/plaza), area-based footsteps, raven caws, call sites across game/*.js.
 - Music: helheim + mossbrook (already identical), asgard replaced with staging. music_attract NOT wired.
