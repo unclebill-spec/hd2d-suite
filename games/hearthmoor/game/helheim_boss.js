@@ -23,8 +23,8 @@ Object.assign(ENEMIES, {
   odric: { name: 'Ser Odric Gravemantle', scale: 3, hp: 460, dmg: 18, speed: 1.3, reach: 2.6, windup: 0.6, cd: 1.8, aggro: 9, r: 0.8, push: 0.2, heavy: true, boss: true, trial: true, respawn: 1e9, element: 'dark' },
   vesperin_bat: { name: 'Mist-bat', scale: 1.6, hp: 60, dmg: 9, speed: 2.4, reach: 1.4, windup: 0.4, cd: 1.4, aggro: 10, r: 0.5, push: 0.4, float: true, element: 'dark', respawn: 1e9 },
   vesperin: { name: 'Lord Vesperin', scale: 3, hp: 900, dmg: 20, speed: 1.6, reach: 2.6, windup: 0.6, cd: 1.8, aggro: 10, r: 0.9, push: 0.2, heavy: true, boss: true, miniboss: true, element: 'dark', phases: [0.5], respawn: 1e9 },
-  // frameLift (metres): raise the look target while he is engaged. The 8x pull stays 2.26; a pull that clears the crown crosses the camera far plane on a phone.
-  mordrath: { name: 'Mordrath, the Pale Sovereign', scale: 8, framed: true, frameLift: 2, plate: true, element: 'dark', phases: [0.6, 0.25], hp: 2800, dmg: 30, speed: 0.9, reach: 6.0, windup: 1.0, cd: 2.4, aggro: 14, r: 2.2, push: 0.05, heavy: true, boss: true, minion: 'shade', respawn: 1e9 },
+  // frameLift (metres) is the floor while he is engaged. frameFit raises it from the hero→boss offset (combat.js frameLiftFor) so a retreat inside aggro+3 keeps the crown in frame. The 8x pull stays 2.26.
+  mordrath: { name: 'Mordrath, the Pale Sovereign', scale: 8, framed: true, frameLift: 2, frameFit: true, plate: true, element: 'dark', phases: [0.6, 0.25], hp: 2800, dmg: 30, speed: 0.9, reach: 6.0, windup: 1.0, cd: 2.4, aggro: 14, r: 2.2, push: 0.05, heavy: true, boss: true, minion: 'shade', respawn: 1e9 },
 });
 Object.assign(XP, { shade: 35, gate_shade: 80, soul_wraith: 55, grave_lantern: 40, bone_elemental: 90, garnet_golem: 110, skeleton_line: 30, lich: 85, gloam_knight: 70, odric: 0, vesperin_bat: 20, vesperin: 500, mordrath: 1400 });
 Object.assign(BASES, {

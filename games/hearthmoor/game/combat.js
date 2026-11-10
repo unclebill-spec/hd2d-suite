@@ -49,6 +49,18 @@ const SUMMON_GLOW = { mushgolem: '#f2c24a', runesentinel: '#ffb24a', runewisp: '
 // 6.4: camera framing for big foes: 2.5x Glenheart pulls ~1.18 (unchanged); 5-6x bosses pull ~1.7-1.9;
 // 7x / 8x (Hrimgard, Aurelion, Vharzul) need past the old 2.0 cap or the head sits on the canvas lip
 export const framePullFor = (k) => (k >= 4 ? Math.min(2.4, 1 + (k - 1) * 0.18) : 1 + (k - 1) * 0.12);
+// Mordrath opts in with frameFit. The numeric frameLift is the floor (clears the pin). Past ~5.6 m north of
+// the ossuary aim (hero.z - 2.4, clamped to the scene), the crown needs +0.7 m of lift per extra metre.
+// Hard max 9. Pull is unchanged. Foes without frameFit never reach this.
+const FRAME_LIFT_MAX = 9;
+export function frameLiftFor(def, hero, boss) {
+  const base = def && def.frameLift > 0 ? def.frameLift : 0;
+  if (!def || !def.frameFit || !hero || !boss) return base;
+  const az = Math.min(12, Math.max(-48, hero.z - 2.4));
+  const north = az - boss.z;
+  const need = 0.7 * north - 1.87;
+  return Math.min(FRAME_LIFT_MAX, Math.max(base, need));
+}
 // 6.4 trial mode: ENEMIES[x].trial = true or (S) => bool (Hjortur yields on the befriend path); a spawn can set sp.trial
 export const isTrial = (e, S) => { const t = (e.sp && e.sp.trial) ?? e.D.trial; return typeof t === 'function' ? !!t(S) : !!t; };
 const ROMAN = ['', 'I', 'II', 'III', 'IV'];
@@ -1189,7 +1201,8 @@ export class Combat {
       const k = e.D.scale || 1;
       if (k > 1 && (e.state === 'chase' || e.state === 'attack' || e.D.framed) && dist(e.a, ctx.player) < (e.D.aggro || 6) + 3) {
         pullF = Math.max(pullF, e.D.framePull > 0 ? e.D.framePull : framePullFor(k));
-        if (e.D.frameLift > 0) liftF = Math.max(liftF, e.D.frameLift);
+        const lift = e.D.frameFit ? frameLiftFor(e.D, ctx.player, e.a) : (e.D.frameLift > 0 ? e.D.frameLift : 0);
+        if (lift > 0) liftF = Math.max(liftF, lift);
       }
     }
     if (ctx.frameLook) ctx.frameLook(liftF);

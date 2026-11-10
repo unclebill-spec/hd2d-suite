@@ -57,40 +57,56 @@ function aspectScale(w, h) {
   return a < ASPECT_WIDE ? Math.min(ASPECT_CAP, ASPECT_NUM / a) : 1;
 }
 
-function project(pull, w, h, hero, lift = 0) {
+function project(pull, w, h, hero, lift = 0, bossPt = null) {
   const pitch = THREE.MathUtils.degToRad(C.pitch);
   const camDir = new THREE.Vector3(0, Math.sin(pitch), Math.cos(pitch));
-  // Settled frameLook raises the aim. Locked orientation, so camera = (target + up*lift) + camDir * d.
-  const target = new THREE.Vector3(hero.x, (heroY ?? 0) + (lift || 0), hero.z).add(new THREE.Vector3(...C.look));
+  // Engine placeCamera: target = hero + look, clamp x/z, camera = target + camDir * distance*aspect*pull,
+  // then camera.y += lookLift. Orientation stays Euler(-pitch, 0, 0, YXZ). pixelScale reads the lifted aim.
+  const ground = (x, z, fallback) => { const y = collide.height(x, z); return y == null ? fallback : y; };
+  const heroGround = ground(hero.x, hero.z, heroY ?? 0);
+  const target = new THREE.Vector3(hero.x, heroGround, hero.z).add(new THREE.Vector3(...C.look));
   target.x = THREE.MathUtils.clamp(target.x, C.bounds[0], C.bounds[2]);
   target.z = THREE.MathUtils.clamp(target.z, C.bounds[1], C.bounds[3]);
   const d = C.distance * aspectScale(w, h) * pull;
   const camera = new THREE.PerspectiveCamera(C.fov, w / h, 1, FAR);
   camera.position.copy(target).addScaledVector(camDir, d);
+  camera.position.y += lift || 0;
   camera.quaternion.setFromEuler(new THREE.Euler(-pitch, 0, 0, 'YXZ'));
   camera.updateMatrixWorld();
-  const p0 = target.clone().project(camera);
-  const p1 = new THREE.Vector3(target.x, target.y + HEIGHT_M, target.z).project(camera);
+  const aim = new THREE.Vector3(target.x, target.y + (lift || 0), target.z);
+  const p0 = aim.clone().project(camera);
+  const p1 = new THREE.Vector3(aim.x, aim.y + HEIGHT_M, aim.z).project(camera);
   const px = Math.abs(p1.y - p0.y) * 0.5 * h;
   const k = Math.max(1, Math.round(px / (HERO_FH - 1)));
-  const boss = new THREE.Vector3(BOSS_AT.mordrath[0], bossY ?? 0, BOSS_AT.mordrath[1]);
-  const toCam = camera.position.clone().sub(boss).normalize().multiplyScalar(FEET_BIAS);
-  const feetW = boss.clone().add(toCam);
-  const bossDist = camera.position.distanceTo(feetW);
-  const feet = feetW.clone().project(camera);
-  const sx = Math.round((feet.x * 0.5 + 0.5) * w);
-  const sy = Math.round((feet.y * 0.5 + 0.5) * h);
-  const yTop = h - (sy + PIVOT_Y * k);
-  const topPx = sy + PIVOT_Y * k;
+  const bpos = bossPt || { x: BOSS_AT.mordrath[0], z: BOSS_AT.mordrath[1] };
+  const boss = new THREE.Vector3(bpos.x, ground(bpos.x, bpos.z, bossY ?? 0), bpos.z);
+  const heroPt = new THREE.Vector3(hero.x, heroGround, hero.z);
+  // sprites.js: feet nudged 0.45 m toward the camera, snapped to buffer pixels, quad hung from the pivot.
+  function place(pt, fh, pivotX) {
+    const toCam = camera.position.clone().sub(pt).normalize().multiplyScalar(FEET_BIAS);
+    const feetW = pt.clone().add(toCam);
+    const feet = feetW.clone().project(camera);
+    const sx = Math.round((feet.x * 0.5 + 0.5) * w);
+    const sy = Math.round((feet.y * 0.5 + 0.5) * h);
+    const yTop = h - (sy + fh * k);
+    return { sx, sy, yTop, x0: sx - pivotX * k, feetZ: feet.z, dist: camera.position.distanceTo(feetW), feetW };
+  }
+  const bq = place(boss, BOSS_FH, bossMeta.pivot[0]);
+  const hq = place(heroPt, HERO_FH, actorsMeta.pivot[0]);
+  const topPx = bq.sy + PIVOT_Y * k;
   const ndcTop = (topPx / h) * 2 - 1;
   const overPx = (ndcTop - 1) * h / 2;
   const tall = BOSS_FH / HERO_FH;
   const head = new THREE.Vector3(boss.x, boss.y + HEIGHT_M * tall, boss.z).project(camera);
   const headTop = h - (head.y * 0.5 + 0.5) * h;
-  const depthHead = feetW.clone();
+  const depthHead = bq.feetW.clone();
   depthHead.y += HEIGHT_M * tall;
   const depthZ = depthHead.project(camera).z;
-  return { pull, lift: lift || 0, k, sx, sy, yTop, ndcTop, overPx, headTop, x0: sx - bossMeta.pivot[0] * k, d, px, bossDist, feetZ: feet.z, depthZ };
+  return {
+    pull, lift: lift || 0, k, sx: bq.sx, sy: bq.sy, yTop: bq.yTop, ndcTop, overPx, headTop,
+    x0: bq.x0, d, px, bossDist: bq.dist, feetZ: bq.feetZ, depthZ,
+    heroTop: hq.yTop, heroFeet: hq.yTop + actorsMeta.ground_row * k, heroZ: hq.feetZ,
+  };
 }
 
 function decodePNG(path) {
@@ -336,12 +352,20 @@ function sourceLift(def) {
 const extents = Object.fromEntries(MORDRATH_ROLES.map((role) => [role, opaqueExtent(role)]));
 const catalog = enemyCatalog();
 
-function placed(pull, view, hero, lift = 0) {
-  const r = project(pull, view.w, view.h, hero, lift);
+function placed(pull, view, hero, lift = 0, bossPt = null) {
+  const r = project(pull, view.w, view.h, hero, lift, bossPt);
   return MORDRATH_ROLES.map((role) => {
     const ext = extents[role];
     return { role, crown: r.yTop + ext.top * r.k, feet: r.yTop + ext.bot * r.k, ...r };
   });
+}
+
+// Lift combat will request. Unmodified code has a constant frameLift; a frameFit def computes one from the offset.
+function liftFor(hero, boss) {
+  const live = ENEMIES.mordrath;
+  if (typeof combat.frameLiftFor === 'function') return combat.frameLiftFor(live, hero, boss);
+  if (typeof live.frameLift === 'function') return live.frameLift(hero, boss);
+  return sourceLift(catalog.mordrath);
 }
 
 test('pull 2.26 on 960x540 reproduces the settled crown clip', () => {
@@ -410,4 +434,62 @@ test('Mordrath phases get a pull that fits crown and feet; other scale>=4 foes s
     assert.ok(got <= 2.4, id + ' stayed under the ordinary cap');
   }
   console.log(`accepted Mordrath pull ${accepted} lift ${lift} (framePullFor 8 = ${framePullFor(8)}, engine cap for an override ${engineCap(def.framePull)}, far ${FAR})`);
+});
+
+test('Mordrath crown, feet, and the hero quad stay inside the frame across the engaged range', () => {
+  // Pull stays on while dist < aggro 14 + 3. Retreat is the runtime fail: hero (0,-27.2), boss on his mark, dist 16.2.
+  const RETREAT_HERO = { x: 0, z: -27.2 };
+  const RETREAT_BOSS = { x: BOSS_AT.mordrath[0], z: BOSS_AT.mordrath[1] };
+  const ARENA = [
+    RETREAT_BOSS,
+    { x: 4, z: -44 }, { x: -4, z: -44 }, { x: 0, z: -40 }, { x: 3, z: -47 },
+    { x: -5, z: -42 }, { x: 6, z: -45 }, { x: -6, z: -46 }, { x: 0, z: -49 },
+  ];
+  const DISTS = [6, 11, 16.9];
+  const ANGLES = [
+    ['straight', 0],
+    ['diag+45', Math.PI / 4],
+    ['diag-45', -Math.PI / 4],
+    ['north', Math.PI],
+    ['east', Math.PI / 2],
+    ['west', -Math.PI / 2],
+    ['diag+135', 3 * Math.PI / 4],
+    ['diag-135', -3 * Math.PI / 4],
+  ];
+  const poses = [{ name: 'retreat', hero: RETREAT_HERO, boss: RETREAT_BOSS }];
+  for (const boss of ARENA) {
+    for (const dist of DISTS) {
+      for (const [tag, ang] of ANGLES) {
+        poses.push({
+          name: `${tag} d${dist} boss(${boss.x},${boss.z})`,
+          hero: { x: boss.x + Math.sin(ang) * dist, z: boss.z + Math.cos(ang) * dist },
+          boss,
+        });
+      }
+    }
+  }
+  const retreat = poses[0];
+  assert.equal(retreat.hero.x, 0);
+  assert.equal(retreat.hero.z, -27.2);
+  assert.equal(retreat.boss.x, 0);
+  assert.equal(retreat.boss.z, -43.4);
+  assert.ok(Math.abs(Math.hypot(retreat.hero.x - retreat.boss.x, retreat.hero.z - retreat.boss.z) - 16.2) < 1e-9);
+  const pull = acceptedPull(catalog.mordrath);
+  const fails = [];
+  for (const pose of poses) {
+    const dist = Math.hypot(pose.hero.x - pose.boss.x, pose.hero.z - pose.boss.z);
+    assert.ok(dist < 17, pose.name + ' left the aggro+3 gate at ' + dist);
+    const lift = liftFor(pose.hero, pose.boss);
+    for (const view of Object.values(VIEWS)) {
+      for (const row of placed(pull, view, pose.hero, lift, pose.boss)) {
+        const heroIn = row.heroTop >= MARGIN && row.heroFeet <= view.h - MARGIN && row.heroZ < 1 && row.heroZ > -1;
+        const bossIn = row.crown >= MARGIN && row.feet <= view.h - MARGIN;
+        const depthIn = row.bossDist < FAR && row.feetZ < 1 && row.depthZ < 1;
+        if (bossIn && heroIn && depthIn) continue;
+        fails.push(`${pose.name} hero (${pose.hero.x},${pose.hero.z}) boss (${pose.boss.x},${pose.boss.z}) ${view.label} ${row.role} pull ${pull} lift ${lift} crown ${row.crown} feet ${row.feet} hero ${row.heroTop}-${row.heroFeet} bossDist ${row.bossDist.toFixed(2)} feetZ ${row.feetZ.toFixed(3)} (need crown and heroTop >= ${MARGIN}, feet and heroFeet <= ${view.h - MARGIN}, boss in front of far ${FAR})`);
+      }
+    }
+  }
+  if (fails.length) console.log(fails.join('\n'));
+  assert.equal(fails.length, 0, fails.slice(0, 12).join('\n'));
 });
