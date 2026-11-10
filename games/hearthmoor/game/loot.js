@@ -532,35 +532,132 @@ function drawAura(cv, scale, frame, epic, worn = false, rune = false) {
 
 // A blocked cell has no height, and heightAt turns that null into 0, so the sprite sinks into the mesh.
 // Gold, items, gems and the purse all go through drop(), so one snap covers every kind.
+// Blocked origins only: walk hero-standable cells (canStand, r 0.28, one step = collide.cell) from ctx.player
+// and keep the nearest open point that is inside pickup range of that region. The walk is capped so a solid
+// blocker cannot scan the whole heightfield. No hero means defer — never hand back the blocked cell, and never
+// guess an open cell that might sit across a wall. Open origins return immediately (no walk).
 export const LOOT_SNAP_M = 1.25;
-export function snapWalkable(collide, x, z, radius = LOOT_SNAP_M) {
-  if (!collide || !collide.blocked(x, z)) return { x, z };
-  const step = collide.cell;
-  if (!(step > 0)) return { x, z };
-  const n = Math.ceil(radius / step);
+export const LOOT_SNAP_MAX_M = 4;
+export const LOOT_SNAP_CAP = 4000;
+const LOOT_PICKUP_M = 0.75;
+const LOOT_HERO_R = 0.28;
+
+function heroOf(ctx) {
+  const p = ctx && ctx.player;
+  if (!p || !Number.isFinite(p.x) || !Number.isFinite(p.z)) return null;
+  return p;
+}
+
+function nearReach(x, z, reach) {
+  const lim2 = LOOT_PICKUP_M * LOOT_PICKUP_M;
+  for (let k = 0; k < reach.length; k++) {
+    const p = reach[k], dx = p.x - x, dz = p.z - z;
+    if (dx * dx + dz * dz < lim2) return true;
+  }
+  return false;
+}
+
+// `take` is the shared iteration budget. It returns false once LOOT_SNAP_CAP probes have been spent.
+function scanOpen(collide, x, z, radius, reach, take) {
+  const step = collide.cell, n = Math.ceil(radius / step);
   let best = null, bestD = radius + 1e-9;
   for (let j = -n; j <= n; j++) {
     for (let i = -n; i <= n; i++) {
       if (i === 0 && j === 0) continue;
       const d = Math.hypot(i * step, j * step);
       if (d > radius || d >= bestD) continue;
+      if (!take()) return best;
       const cx = x + i * step, cz = z + j * step;
       if (collide.blocked(cx, cz)) continue;
+      if (reach && !nearReach(cx, cz, reach)) continue;
       best = { x: cx, z: cz };
       bestD = d;
     }
   }
-  return best || { x, z };
+  return best;
+}
+
+function reachableCells(collide, hero, take) {
+  const step = collide.cell, ox = collide.ox, oz = collide.oz, cells = [];
+  const i0 = Math.floor((hero.x - ox) / step), j0 = Math.floor((hero.z - oz) / step);
+  if (i0 < 0 || j0 < 0 || i0 >= collide.w || j0 >= collide.h) return cells;
+  const h0 = Number.isFinite(hero.y) ? hero.y : (collide.height(hero.x, hero.z) ?? 0);
+  const seen = new Set([i0 + ':' + j0]);
+  if (!take()) return cells;
+  const hs = collide.canStand(hero.x, hero.z, h0, LOOT_HERO_R);
+  if (hs == null) return cells;
+  const q = [{ x: hero.x, z: hero.z, h: hs, i: i0, j: j0 }];
+  cells.push(q[0]);
+  const dirs = [[1, 0], [-1, 0], [0, 1], [0, -1]];
+  let head = 0;
+  while (head < q.length) {
+    const cur = q[head++];
+    for (const [di, dj] of dirs) {
+      const i = cur.i + di, j = cur.j + dj;
+      if (i < 0 || j < 0 || i >= collide.w || j >= collide.h) continue;
+      const k = i + ':' + j;
+      if (seen.has(k)) continue;
+      seen.add(k);
+      if (!take()) return cells;
+      const nx = ox + (i + 0.5) * step, nz = oz + (j + 0.5) * step;
+      const nh = collide.canStand(nx, nz, cur.h, LOOT_HERO_R);
+      if (nh == null) continue;
+      const node = { x: nx, z: nz, h: nh, i, j };
+      cells.push(node);
+      q.push(node);
+    }
+  }
+  return cells;
+}
+
+export function snapWalkable(collide, x, z, radius = LOOT_SNAP_M, opt = null) {
+  const stats = opt && opt.stats;
+  let steps = 0;
+  const take = () => (steps < LOOT_SNAP_CAP ? (steps++, true) : false);
+  const finish = (out) => { if (stats) stats.nodes = steps; return out; };
+  if (!collide || !(collide.cell > 0)) return finish({ x, z });
+  if (!take()) return finish({ deferred: true });
+  if (!collide.blocked(x, z)) return finish({ x, z }); // open: same bits, no walk
+  const limit = radius > 0 ? radius : LOOT_SNAP_M;
+  const hero = opt && opt.hero && Number.isFinite(opt.hero.x) && Number.isFinite(opt.hero.z) ? opt.hero : null;
+  if (!hero) {
+    // No region to test against. A nearby open cell can be the other side of a wall, so do not guess:
+    // keep the legacy 1.25 m snap only when one exists (temple drops call this with no hero), else defer.
+    const near = scanOpen(collide, x, z, limit, null, take);
+    if (near) return finish(near);
+    return finish({ deferred: true });
+  }
+  const reach = reachableCells(collide, hero, take);
+  const first = Math.min(limit, LOOT_SNAP_M);
+  let best = scanOpen(collide, x, z, first, reach, take);
+  const outer = limit === LOOT_SNAP_M ? LOOT_SNAP_MAX_M : limit;
+  if (!best && outer > first) best = scanOpen(collide, x, z, outer, reach, take);
+  if (best) return finish(best);
+  if (take() && !collide.blocked(hero.x, hero.z)) return finish({ x: hero.x, z: hero.z });
+  return finish({ deferred: true });
 }
 
 export class Loot {
-  constructor(G) { this.G = G; this.layer = document.getElementById('fxlayer'); this.drops = []; this.t = 0; }
-  attach(ctx) { this.clear(); this.ctx = ctx; }
+  constructor(G) { this.G = G; this.layer = document.getElementById('fxlayer'); this.drops = []; this.pending = []; this.t = 0; }
+  attach(ctx) { this.clear(); this.ctx = ctx; this._flushPending(); }
   detach() { this.clear(); this.ctx = null; }
   clear() {
     for (const d of this.drops) { d.el.remove(); if (d.light) d.light.kill = true; }
     this.drops = [];
+    // pending is not a placed drop and is not area-cached state. clear() runs on every area
+    // change (detach then attach). Deleting it would lose the payload; attach re-drops it at
+    // the hero when the new ground can hold it, and update retries until then.
     if (this.pa) { this.pa.el.remove(); if (this.pa.light) this.pa.light.kill = true; this.pa = null; }
+  }
+  _flushPending() {
+    const ctx = this.ctx, hero = heroOf(ctx);
+    if (!hero || !this.pending.length) return;
+    if (ctx.collide && ctx.collide.blocked(hero.x, hero.z)) return;
+    const batch = this.pending.splice(0, this.pending.length);
+    for (const what of batch) {
+      const d = this.drop(hero.x, hero.z, what);
+      if (!d) this.pending.push(what); // placement failed: keep it, do not spawn a second copy
+    }
   }
   // a Legendary equipped: the same marching neon ring under the hero's feet, plus a warm rune light that follows
   playerAura(fr) {
@@ -605,7 +702,14 @@ export class Loot {
   }
   drop(x, z, what) {
     const ctx = this.ctx; if (!ctx || !this.layer) return null;
-    if (ctx.collide && ctx.collide.blocked(x, z)) { const s = snapWalkable(ctx.collide, x, z); x = s.x; z = s.z; }
+    if (ctx.collide && ctx.collide.blocked(x, z)) {
+      const hero = heroOf(ctx);
+      if (!hero) { this.pending.push(what); return null; }
+      const s = snapWalkable(ctx.collide, x, z, LOOT_SNAP_M, { hero });
+      if (s && !s.deferred && Number.isFinite(s.x) && Number.isFinite(s.z) && !ctx.collide.blocked(s.x, s.z)) { x = s.x; z = s.z; }
+      else if (!ctx.collide.blocked(hero.x, hero.z)) { x = hero.x; z = hero.z; }
+      else { this.pending.push(what); return null; }
+    }
     const y = ctx.heightAt(x, z), it = what.item || null, rar = it ? it.rar : -1;
     const el = document.createElement('div'); el.className = 'loot' + (it ? ' r' + rar : what.gem ? ' gem' : ' gold') + (what.purse ? ' purse' : '');
     const sc = 3;
@@ -623,6 +727,7 @@ export class Loot {
   }
   update(dt) {
     const ctx = this.ctx; if (!ctx) return;
+    this._flushPending();
     this.t += dt;
     const p = ctx.player, fr = Math.floor(this.t * 6);
     this.playerAura(fr);
