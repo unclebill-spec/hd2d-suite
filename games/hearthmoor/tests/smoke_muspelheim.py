@@ -24,6 +24,8 @@ import time
 from http.server import SimpleHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
 
+from PIL import Image
+
 GAME = Path(__file__).resolve().parents[1]
 READY = Path("/workspace/hearthmoor-staging/art/muspelheim/READY.txt")
 ARGS = ["--use-angle=swiftshader", "--enable-unsafe-swiftshader", "--ignore-gpu-blocklist"]
@@ -60,6 +62,45 @@ def run_musp_art():
         return subprocess.run([sys.executable, str(script)], capture_output=True, text=True, timeout=300, env=env)
     finally:
         shutil.rmtree(tmp, ignore_errors=True)
+
+
+def gamefx_image_problems(areas=None):
+    """Real-PNG problems for every scene.json gamefx pair under an areas directory.
+
+    The json `size` is only a claim. This opens each PNG and returns {area: [problems]}
+    when that claim disagrees with the file, a row's y+h falls past the real height,
+    or a row is fully transparent. An empty dict means every pair passed. `areas`
+    defaults to this game's areas/. The school-row list stays a separate step.
+    """
+    root = Path(areas) if areas is not None else GAME / "areas"
+    bad = {}
+    for sp in sorted(root.glob("*/scene.json")):
+        sc = json.loads(sp.read_text())
+        g = sc.get("gamefx")
+        if not g:
+            continue
+        problems = _gamefx_pair_problems(sp.parent / g["json"], sp.parent / g["image"])
+        if problems:
+            bad[sp.parent.name] = problems
+    return bad
+
+
+def _gamefx_pair_problems(json_path, image_path):
+    m = json.loads(Path(json_path).read_text())
+    problems = []
+    with Image.open(image_path) as im:
+        if list(im.size) != m["size"]:
+            problems.append(f"size json{m['size']} img{list(im.size)}")
+        rgba = im.convert("RGBA")
+        width, height = rgba.size
+        cell = m["cell"]
+        for name, effect in m["effects"].items():
+            y, h = effect["row"] * cell, cell
+            if y + h > height:
+                problems.append(f"{name}:row{effect['row']} outside image")
+            elif not rgba.crop((0, y, width, y + h)).getbbox():
+                problems.append(f"{name}:empty")
+    return problems
 
 
 def steps(b, url, T, size, errors, rep, stub=None, shots=None):
@@ -367,6 +408,8 @@ def steps(b, url, T, size, errors, rep, stub=None, shots=None):
             if bad:
                 miss[sp.parent.name] = bad
         T.step("every built area's gamefx atlas carries the Caldera school rows (the pack's five + fire_wave_l / _u / _d + ember_mote), inside the image", not miss, miss=miss)
+        gfx_bad = gamefx_image_problems()
+        T.step("every gamefx png matches the size its json claims, and every row's y+h fits inside the real image and is not empty", not gfx_bad, gfx=gfx_bad)
         if built:
             a = load("lavafalls", "&muq=school")
             sc0 = mp("qaSchool()")
