@@ -493,3 +493,33 @@ test('Mordrath crown, feet, and the hero quad stay inside the frame across the e
   if (fails.length) console.log(fails.join('\n'));
   assert.equal(fails.length, 0, fails.slice(0, 12).join('\n'));
 });
+
+test('8x settled pin: 053343b clip reproduces at lift 0 and the live frameFit lift clears crown and feet', () => {
+  const pull = acceptedPull(catalog.mordrath);
+  assert.equal(pull, 2.26);
+  const boss = { x: BOSS_AT.mordrath[0], z: BOSS_AT.mordrath[1] };
+  const clip = placed(pull, VIEWS.qa, QA_HERO, 0, boss);
+  assert.ok(clip.some((row) => row.crown < MARGIN));
+  const fails = [];
+  for (const x of [-1.5, 0, 1.5]) {
+    for (const z of [-38.1, -36.6, -35.1]) {
+      const hero = { x, z };
+      const lift = liftFor(hero, boss);
+      for (const view of Object.values(VIEWS)) {
+        for (const row of placed(pull, view, hero, lift, boss)) {
+          if (row.crown >= MARGIN && row.feet <= view.h - MARGIN && row.bossDist < FAR && row.feetZ < 1 && row.depthZ < 1) continue;
+          fails.push(`hero (${x},${z}) ${view.label} ${row.role} lift ${lift} crown ${row.crown} feet ${row.feet} bossDist ${row.bossDist.toFixed(2)} feetZ ${row.feetZ.toFixed(3)} depthZ ${row.depthZ.toFixed(3)}`);
+        }
+      }
+    }
+  }
+  if (fails.length) console.log(fails.join('\n'));
+  assert.equal(fails.length, 0, fails.slice(0, 12).join('\n'));
+  const pinLift = liftFor(QA_HERO, boss);
+  assert.equal(pinLift, 2);
+  for (const view of Object.values(VIEWS)) {
+    for (const row of placed(pull, view, QA_HERO, pinLift, boss)) {
+      console.log(`${view.label} ${row.role} lift ${pinLift} crown ${row.crown} feet ${row.feet}`);
+    }
+  }
+});
