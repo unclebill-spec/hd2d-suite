@@ -117,6 +117,48 @@ def stall_rewait(wait_fn, frame_fn, f_start, on_stall, log, what=""):
     return "recovered"
 
 
+def _reward_rows(seq):
+    return list(seq) if isinstance(seq, (list, tuple)) else []
+
+
+def _reward_num(v):
+    return isinstance(v, (int, float)) and not isinstance(v, bool)
+
+
+def seal_reward_ok(need, ground, seal_snap, bag_new_rars, gold_delta):
+    """Whether a rift seal paid gold and an item of rarity >= need.
+
+    ground is loot.qa() at the smoke's later sample (auto-pickup may already have cleared it).
+    seal_snap is {won, drops, pending} taken inside rifts.close, or None. pending rows are the
+    normalized {gold, gem, rar, minRar} view: a deferred dropItem counts when minRar >= need
+    even if no item was rolled yet. bag_new_rars are S.bag items gained since the rift opened.
+    gold_delta is S.gold now minus S.gold before open. Returns (gold_ok, rar_ok).
+    """
+    snap = seal_snap if isinstance(seal_snap, dict) else {}
+    ground_rows = _reward_rows(ground)
+    snap_drops = _reward_rows(snap.get("drops"))
+    pending = _reward_rows(snap.get("pending"))
+
+    def has_gold(rows):
+        for d in rows:
+            if isinstance(d, dict) and _reward_num(d.get("gold")) and d.get("gold") > 0:
+                return True
+        return False
+
+    def row_rar(d):
+        if not isinstance(d, dict):
+            return False
+        rar = d.get("rar")
+        if _reward_num(rar) and rar >= need:
+            return True
+        floor = d.get("minRar")
+        return _reward_num(floor) and floor >= need
+
+    gold_ok = has_gold(ground_rows) or has_gold(snap_drops) or has_gold(pending) or (_reward_num(gold_delta) and gold_delta > 0)
+    rar_ok = any(row_rar(d) for d in ground_rows + snap_drops + pending) or any(_reward_num(r) and r >= need for r in _reward_rows(bag_new_rars))
+    return gold_ok, rar_ok
+
+
 def page_shot(page, path):
     """CSS-pixel capture. A device-scale shot of the WebGL canvas hangs SwiftShader past 120s (segment D)."""
     page.screenshot(path=str(path), timeout=120000, scale="css", animations="disabled", caret="hide")
@@ -1086,37 +1128,107 @@ def run(out, simscale=4, size=(960, 540), segs=SEGS):
                 OPEN = "(() => { const G = window.__hm, p = G.ctx.player; const R = G.rifts.open(%d, [p.x + 4.6, p.z - 0.8]); if (%s) G.rifts.cur.forceRare = true; return G.rifts.state(); })()"   # force the tier II rare at open (setting it later races the hero's approach)
                 GO = "(() => { const G = window.__hm, c = G.ctx, p = c.player, R = G.rifts.cur; p.x = R.pos[0] - 1.4; p.z = R.pos[1] + 0.6; p.y = c.heightAt(p.x, p.z); c.stopWalk(); })()"
                 ALIVE = "window.__hm.rifts.alive()"
+                # seal loot is sampled inside close(), before the 0.4 s auto-pickup moves it into S.gold / S.bag / S.gems.
+                # loot.js pending stores drop()'s what: {gold} | {gem} | {item:{rar}} (dropItem rolls first). A deferred
+                # dropItem with no rolled item is {minRar} or args = dropItem(x, z, lv, minRar), and minRar >= need counts.
+                SNAP = "(() => { const S = window.__hm.S; return { bag: (S.bag || []).length, gold: S.gold || 0, shard: (S.gems && S.gems.rift_shard) || 0 }; })()"
+                WRAP = """(() => {
+  const G = window.__hm, r = G.rifts, orig = r.close;
+  window.__hmCloseOrig = orig;
+  window.__hmSeal = null;
+  function pend(p) {
+    p = p || {};
+    const it = p.it || p.item || null;
+    let rar = it && it.rar != null ? it.rar : (p.rar != null ? p.rar : null);
+    let minRar = p.minRar != null ? p.minRar : null;
+    let gold = p.gold || 0, gem = p.gem || null;
+    const a = p.args;
+    if (Array.isArray(a)) {
+      if (minRar == null && typeof a[3] === 'number') minRar = a[3];
+      const w = a[2];
+      if (w && typeof w === 'object') {
+        const wit = w.item || w.it;
+        if (rar == null && wit && wit.rar != null) rar = wit.rar;
+        if (rar == null && w.rar != null) rar = w.rar;
+        if (minRar == null && w.minRar != null) minRar = w.minRar;
+        if (!gold && w.gold) gold = w.gold;
+        if (!gem && w.gem) gem = w.gem;
+      }
+    } else if (a && typeof a === 'object') {
+      const wit = a.item || a.it;
+      if (rar == null && wit && wit.rar != null) rar = wit.rar;
+      if (rar == null && a.rar != null) rar = a.rar;
+      if (minRar == null && a.minRar != null) minRar = a.minRar;
+      if (!gold && a.gold) gold = a.gold;
+      if (!gem && a.gem) gem = a.gem;
+    }
+    return { gold: gold || 0, gem: gem || null, rar: rar, minRar: minRar };
+  }
+  const wrapped = function (won, quiet) {
+    const ret = orig.call(this, won, quiet);
+    if (won) {
+      const L = G.loot;
+      window.__hmSeal = { won: !!won, drops: L && L.qa ? L.qa() : [], pending: ((L && L.pending) || []).map(pend) };
+      if (r.close === wrapped) r.close = orig;
+    }
+    return ret;
+  };
+  r.close = wrapped;
+  return true;
+})()"""
+                UNWRAP = "(() => { const G = window.__hm, orig = window.__hmCloseOrig; if (G && G.rifts && typeof orig === 'function') G.rifts.close = orig; window.__hmCloseOrig = null; return true; })()"
                 for tier, tid, fx, shot in ((0, "minor", "rift_tear_minor", "rift_minor"), (1, "major", "rift_tear", "rift_major"), (2, "abyssal", "rift_tear_abyss", "rift_abyssal")):
                     c0 = (T.S().get("rifts") or {}).get(tid, 0); gm0 = T.ev("window.__hm.S.merit.gate"); gr0 = T.ev("window.__hm.S.ranks.gate")
-                    st = T.ev(OPEN % (tier, 'true' if tier == 1 else 'false'))
-                    T.frames(10); pg.wait_for_timeout(700)
-                    rep["shots"][shot] = T.shot(shot)
-                    ok = st["rift"] and st["rift"]["state"] == "open" and fx in st["rift"]["fx"] and (tier < 2 or "rift_ring_abyss" in st["rift"]["fx"])
-                    T.ev(GO); T.frames(6); pg.wait_for_timeout(400)
-                    f1 = T.ev("window.__hm.rifts.state()")["rift"]
-                    waves = []
-                    for w in range(3):
-                        r = T.ev("window.__hm.rifts.state()")["rift"]
-                        if not r: break
-                        waves.append([r["wave"], r["alive"], r["rare"]])
-                        T.ev(KILL % ALIVE); T.frames(8); pg.wait_for_timeout(500)
-                    end = T.ev("window.__hm.rifts.state()")
-                    if tier == 2:   # the Guild's rank-up toast shows (it may queue behind another rank-up, e.g. the Hearth's from the rift rare)
-                        try: T.wait("(() => { const t = document.getElementById('toast'); return !t.hidden && t.innerText.includes(\"Gatekeepers' Guild: Friend\"); })()", 30)
-                        except Exception: pass
-                    ru = T.ev("(() => { const F = window.__hm.factions, t = document.getElementById('toast'); return { last: F.last, toast: t && !t.hidden ? t.innerText : '', merit: window.__hm.S.merit.gate, rank: window.__hm.S.ranks.gate }; })()")
-                    if tier == 2: rep["shots"]["rank_up"] = T.shot("rank_up")
-                    drops = T.ev("window.__hm.loot.qa()")
-                    need = {0: 0, 1: 1, 2: 2}[tier]   # gear14 TIERS minRar: Common, Rare (R_RARE), Epic (R_EPIC). Was 1/2/3 (Uncommon/Rare/Epic).
-                    T.step(f"random rift tier {tier + 1} ({tid}): opens with its tear, spits a wave when you come close, seals with a reward",
-                           ok and f1 and f1["state"] == "fight" and f1["alive"] >= 3 and end["rift"] is None and end["closed"][tid] == c0 + 1
-                           and any(d["gold"] for d in drops) and any(d.get("rar") is not None and d["rar"] >= need for d in drops)
-                           and (tier != 1 or (waves and waves[0][2])) and (tier != 2 or (len(waves) == 2 and waves[0][2] and waves[1][0] == 2)), waves=waves, fx=st["rift"] and st["rift"]["fx"])
-                    T.step(f"merit: sealing the {tid} rift earns the Gatekeepers' Guild {(30, 60, 120)[tier]} Rift Marks", ru["merit"] == gm0 + (30, 60, 120)[tier], before=gm0, after=ru["merit"])
-                    if tier == 2:
-                        T.step("rank-up: the abyssal seal lifts the Guild to Friend with a toast in its glow colour + a sparkle burst and a coloured light on the hero",
-                               gr0 == 0 and ru["rank"] == 1 and ru["last"] and ru["last"]["id"] == "gate" and ru["last"]["r"] == 1 and ru["last"]["spark"] and ru["last"]["glow"] and "Gatekeepers' Guild: Friend" in ru["toast"], ru=ru)
-                    T.ev("window.__hm.loot.clear()")
+                    pre = T.ev(SNAP)
+                    try:
+                        T.ev(WRAP)
+                        st = T.ev(OPEN % (tier, 'true' if tier == 1 else 'false'))
+                        T.frames(10); pg.wait_for_timeout(700)
+                        rep["shots"][shot] = T.shot(shot)
+                        ok = st["rift"] and st["rift"]["state"] == "open" and fx in st["rift"]["fx"] and (tier < 2 or "rift_ring_abyss" in st["rift"]["fx"])
+                        T.ev(GO); T.frames(6); pg.wait_for_timeout(400)
+                        f1 = T.ev("window.__hm.rifts.state()")["rift"]
+                        waves = []
+                        for w in range(3):
+                            r = T.ev("window.__hm.rifts.state()")["rift"]
+                            if not r: break
+                            waves.append([r["wave"], r["alive"], r["rare"]])
+                            T.ev(KILL % ALIVE); T.frames(8); pg.wait_for_timeout(500)
+                        end = T.ev("window.__hm.rifts.state()")
+                        if tier == 2:   # the Guild's rank-up toast shows (it may queue behind another rank-up, e.g. the Hearth's from the rift rare)
+                            try: T.wait("(() => { const t = document.getElementById('toast'); return !t.hidden && t.innerText.includes(\"Gatekeepers' Guild: Friend\"); })()", 30)
+                            except Exception: pass
+                        ru = T.ev("(() => { const F = window.__hm.factions, t = document.getElementById('toast'); return { last: F.last, toast: t && !t.hidden ? t.innerText : '', merit: window.__hm.S.merit.gate, rank: window.__hm.S.ranks.gate }; })()")
+                        if tier == 2: rep["shots"]["rank_up"] = T.shot("rank_up")
+                        drops = T.ev("window.__hm.loot.qa()")
+                        seal = T.ev("window.__hmSeal")
+                        n0 = int(pre["bag"])
+                        post = T.ev("(() => { const S = window.__hm.S, bag = S.bag || [];"
+                                    f" return {{ rars: bag.slice({n0}).map((it) => it && it.rar != null ? it.rar : null), gold: S.gold || 0, shard: (S.gems && S.gems.rift_shard) || 0 }}; }})()")
+                        bag_new = list(post.get("rars") or [])
+                        gold_delta = (post.get("gold") or 0) - (pre.get("gold") or 0)
+                        shard_delta = (post.get("shard") or 0) - (pre.get("shard") or 0)
+                        need = {0: 0, 1: 1, 2: 2}[tier]   # gear14 TIERS minRar: Common, Rare (R_RARE), Epic (R_EPIC). Was 1/2/3 (Uncommon/Rare/Epic).
+                        gold_ok, rar_ok = seal_reward_ok(need, drops, seal, bag_new, gold_delta)
+                        T.step(f"random rift tier {tier + 1} ({tid}): opens with its tear, spits a wave when you come close, seals with a reward",
+                               ok and f1 and f1["state"] == "fight" and f1["alive"] >= 3 and end["rift"] is None and end["closed"][tid] == c0 + 1
+                               and gold_ok and rar_ok
+                               and (tier != 1 or (waves and waves[0][2])) and (tier != 2 or (len(waves) == 2 and waves[0][2] and waves[1][0] == 2)),
+                               bag_new=bag_new, gold_delta=gold_delta, shard_delta=shard_delta, seal=seal,
+                               ground=[{"gold": d.get("gold"), "rar": d.get("rar")} for d in (drops or [])],
+                               waves=waves, fx=st["rift"] and st["rift"]["fx"])
+                        T.step(f"merit: sealing the {tid} rift earns the Gatekeepers' Guild {(30, 60, 120)[tier]} Rift Marks", ru["merit"] == gm0 + (30, 60, 120)[tier], before=gm0, after=ru["merit"])
+                        if tier == 2:
+                            T.step("rank-up: the abyssal seal lifts the Guild to Friend with a toast in its glow colour + a sparkle burst and a coloured light on the hero",
+                                   gr0 == 0 and ru["rank"] == 1 and ru["last"] and ru["last"]["id"] == "gate" and ru["last"]["r"] == 1 and ru["last"]["spark"] and ru["last"]["glow"] and "Gatekeepers' Guild: Friend" in ru["toast"], ru=ru)
+                        T.ev("window.__hm.loot.clear()")
+                    finally:
+                        try:
+                            T.ev(UNWRAP)
+                        except Exception as e:  # noqa: BLE001  a failed restore must not hide the rift step, and must not leave close wrapped
+                            try: T.log(f"  [rift] close restore failed: {e}")
+                            except Exception:  # noqa: BLE001
+                                pass
                 H = T.S().get("hunt") or {}
                 T.step("rift rares go into the hunt log too (the abyssal one has two traits)", sum(h["kills"] for h in H.values()) >= 4 and any(len(h["traits"]) == 2 for h in H.values()),
                        hunt=[h["name"] for h in H.values()])
