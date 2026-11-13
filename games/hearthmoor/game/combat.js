@@ -61,6 +61,8 @@ export function frameLiftFor(def, hero, boss) {
   const need = 0.7 * north - 1.87;
   return Math.min(FRAME_LIFT_MAX, Math.max(base, need));
 }
+// Nameplate opt-in. Mordrath's crown sits in the top band, so his bar docks low. Every other boss and rare stays up top.
+export const bossBarLow = (def) => !!(def && def.barLow);
 // 6.4 trial mode: ENEMIES[x].trial = true or (S) => bool (Hjortur yields on the befriend path); a spawn can set sp.trial
 export const isTrial = (e, S) => { const t = (e.sp && e.sp.trial) ?? e.D.trial; return typeof t === 'function' ? !!t(S) : !!t; };
 const ROMAN = ['', 'I', 'II', 'III', 'IV'];
@@ -1215,19 +1217,20 @@ export class Combat {
       if (!b) { b = document.createElement('div'); b.className = 'ebar'; b.innerHTML = '<i></i>'; this.layer.appendChild(b); this.bars.set(e.id, b); }
       b.hidden = false;
       if (e.light) e.light.pos.set(e.a.x, e.a.y, e.a.z);
-      if (e.D.boss || e.D.rare) { this.bossBar(e); b.hidden = true; continue; }   // bosses and rares: a named bar up top
+      if (e.D.boss || e.D.rare) { this.bossBar(e); b.hidden = true; continue; }   // bosses and rares: a named bar (low only when the def sets barLow)
       const s = ctx.project(e.a.x, e.a.y + (e.a.lift || 0) + (e.a.role === 'golem' || e.D.slam ? 1.75 : 1.85) * (e.D.scale || 1), e.a.z);
       b.style.transform = `translate(${Math.round(s.x - 15)}px, ${Math.round(s.y)}px)`;
       b.firstChild.style.width = Math.max(0, Math.round(26 * e.hp / e.D.hp)) + 'px';
     }
   }
-  // the mini-boss gets a named parchment bar at the top of the screen instead of a little world bar
+  // a named parchment bar instead of a little world bar. Top of the screen, unless the def sets barLow.
   bossBar(e) {
     if (!this.bossEl) {
       const el = document.createElement('div'); el.id = 'bossbar'; el.innerHTML = '<b></b><span><i></i></span>';
       (document.getElementById('hud') || document.body).appendChild(el); this.bossEl = el;
     }
     const el = this.bossEl; el.hidden = false;
+    el.classList.toggle('low', bossBarLow(e.D));
     el.firstChild.textContent = e.D.name; el.dataset.id = e.id;
     el.firstChild.style.color = e.D.rare ? e.D.glow : '';   // a rare's name in its element colour
     el.querySelector('i').style.width = Math.max(0, Math.round(100 * e.hp / e.D.hp)) + '%';
