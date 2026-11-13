@@ -159,6 +159,20 @@ def seal_reward_ok(need, ground, seal_snap, bag_new_rars, gold_delta):
     return gold_ok, rar_ok
 
 
+def dmgnum_ok(hp0, hp1, nums) -> bool:
+    """Whether an R swing left a visible damage floater or the golem's HP already fell.
+
+    At ?simscale=4 a 450 ms wall wait is ~1.8 s of sim, long enough for a short
+    #fxlayer .dmgnum floater to expire before the query (a04cf1c: HP 120→84 and
+    120→75 with nums == 0). Pass if nums > 0 or hp1 < hp0. Fail only when HP did
+    not drop and no floater is present. Non-numeric or missing values do not
+    satisfy that side of the or.
+    """
+    floater = _reward_num(nums) and nums > 0
+    dropped = _reward_num(hp0) and _reward_num(hp1) and hp1 < hp0
+    return floater or dropped
+
+
 def page_shot(page, path):
     """CSS-pixel capture. A device-scale shot of the WebGL canvas hangs SwiftShader past 120s (segment D)."""
     page.screenshot(path=str(path), timeout=120000, scale="css", animations="disabled", caret="hide")
@@ -958,7 +972,7 @@ def run(out, simscale=4, size=(960, 540), segs=SEGS):
                 nums = T.ev("document.querySelectorAll('#fxlayer .dmgnum').length")
                 pg.keyboard.press("r"); pg.wait_for_timeout(450)
                 hp1 = T.ev("window.__hm.combat.enemies.find((e) => e.id === 'golem_0').hp")
-                T.step("R swings: the golem takes damage, a crisp pixel damage number pops", hp1 < hp0 and nums > 0, hp=[hp0, hp1], numbers=nums)
+                T.step("R swings: the golem takes damage, a crisp pixel damage number pops", dmgnum_ok(hp0, hp1, nums), hp=[hp0, hp1], numbers=nums)
                 pg.keyboard.press("1"); pg.wait_for_timeout(100); pg.keyboard.press("f")
                 # poolLife is 1.8s of sim time; at ?simscale=4 a 700ms wall wait is ~2.8s of sim and the pool is already gone.
                 # Wait for the first jump (pool + HP drop) instead of sleeping past the pool's life.
