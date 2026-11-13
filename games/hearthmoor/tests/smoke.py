@@ -173,6 +173,69 @@ def dmgnum_ok(hp0, hp1, nums) -> bool:
     return floater or dropped
 
 
+# loot.js wear order: plate wears all, chain wears chain/leather/cloth, leather wears leather/cloth, cloth wears cloth.
+_ARMOR_TYPES = ("plate", "chain", "leather", "cloth")
+_CLASS_ARMOR = {
+    "runeguard": "plate", "cinderknight": "plate",
+    "stormborn": "chain", "grovekeeper": "chain",
+    "wildcaller": "leather", "seer": "cloth",
+}
+_CLOTH_CUES = ("Cloth", "Robe", "Wool", "Hood", "Wraps")
+
+
+def _armor_at(it):
+    """it.at when set; else a type cue in the name. None means untyped (wearable, same as !it.at)."""
+    if not isinstance(it, dict):
+        return None
+    at = it.get("at")
+    if isinstance(at, str) and at:
+        return at
+    name = it.get("name") if isinstance(it.get("name"), str) else ""
+    if "Plate" in name:
+        return "plate"
+    if "Leather" in name:
+        return "leather"
+    if "Chain" in name or "Mail" in name or "Hauberk" in name:
+        return "chain"
+    if any(cue in name for cue in _CLOTH_CUES):
+        return "cloth"
+    return None
+
+
+def can_wear(cls, it):
+    """Mirror loot.js canWear. No item or no armor type is wearable.
+
+    Plate wears every type; chain wears chain/leather/cloth; leather wears leather/cloth;
+    cloth wears cloth. Stormborn (chain) cannot wear plate ("Can't wear"). A missing it.at
+    is inferred from the name (Plate, Leather, Chain/Mail/Hauberk, cloth cues).
+    """
+    at = _armor_at(it)
+    if not at:
+        return True
+    own = _CLASS_ARMOR.get(cls)
+    if not own:
+        return False
+    try:
+        at_i = _ARMOR_TYPES.index(at)
+    except ValueError:
+        at_i = -1
+    return at_i >= _ARMOR_TYPES.index(own)
+
+
+def wearable_chest_index(cls, bag):
+    """Index of the first bag item with slot 'chest' that can_wear, or -1."""
+    if not isinstance(bag, (list, tuple)):
+        return -1
+    for i, it in enumerate(bag):
+        if isinstance(it, dict) and it.get("slot") == "chest" and can_wear(cls, it):
+            return i
+    return -1
+
+
+# Seal-loot snapshot JS. Module-level so it cannot shadow run()'s worktree SNAP dict (snapshot_tracked).
+SEAL_SNAP = "(() => { const S = window.__hm.S; return { bag: (S.bag || []).length, gold: S.gold || 0, shard: (S.gems && S.gems.rift_shard) || 0 }; })()"
+
+
 def page_shot(page, path):
     """CSS-pixel capture. A device-scale shot of the WebGL canvas hangs SwiftShader past 120s (segment D)."""
     page.screenshot(path=str(path), timeout=120000, scale="css", animations="disabled", caret="hide")
@@ -994,7 +1057,9 @@ def run(out, simscale=4, size=(960, 540), segs=SEGS):
                 T.ev(f"window.__hd2d.setTime({t_keep if 0.25 < t_keep < 0.8 else 0.5})"); pg.wait_for_timeout(200)
                 # ---------------------------------------------------------- loot, gear page, faint penalty, modes
                 T.ev("window.__hm.peace = true")
-                T.ev("(() => { const c = window.__hm.ctx, p = c.player, L = window.__hm.loot, LO = window.__hm.LO; for (let r = 0; r < 5; r++) L.drop(p.x + 1.2 + r * 0.7, p.z + 0.9, { item: LO.makeItem(3, r, LO.SLOTS[r % 3]) }); L.drop(p.x + 1.2, p.z + 1.8, { gold: 7 }); })()")
+                T.ev("(() => { const c = window.__hm.ctx, p = c.player, L = window.__hm.loot, LO = window.__hm.LO, cls = window.__hm.S.cls;"
+                     " for (let r = 0; r < 5; r++) { let it; do { it = LO.makeItem(3, r, LO.SLOTS[r % 3], undefined, 0, cls); } while (!LO.canWear(cls, it));"
+                     " L.drop(p.x + 1.2 + r * 0.7, p.z + 0.9, { item: it }); } L.drop(p.x + 1.2, p.z + 1.8, { gold: 7 }); })()")
                 pg.wait_for_timeout(500)
                 beams, auras = T.ev("document.querySelectorAll('#fxlayer .loot .beam').length"), T.ev("document.querySelectorAll('#fxlayer .loot .aura').length")
                 rep["shots"]["loot_beams"] = T.shot("loot_beams")
@@ -1010,7 +1075,13 @@ def run(out, simscale=4, size=(960, 540), segs=SEGS):
                 hp_a = T.ev("window.__hm.combat.maxHp()")
                 pg.keyboard.press("g"); pg.wait_for_timeout(300)
                 for _ in range(T.ev("Object.keys(window.__hm.S.gear).length")): pg.keyboard.press("ArrowDown")   # gear14: past the 14 slot rows
-                idx = T.ev("(() => window.__hm.S.bag.findIndex((it) => it.slot === 'chest'))()")   # gear14: old 'armor' is 'chest'
+                idx = T.ev("(() => { const S = window.__hm.S, LO = window.__hm.LO, G = window.__hm;"
+                           " const wear = (it) => !!(it && it.slot === 'chest' && LO.canWear(S.cls, it));"
+                           " let i = (S.bag || []).findIndex(wear);"
+                           " if (i < 0) { let it; do { it = LO.makeItem(3, 2, 'chest', undefined, 0, S.cls); } while (!wear(it));"
+                           " (S.bag = S.bag || []).push(it); if (G.hui) G.hui.n = LO.SLOTS.length + S.bag.length; if (G.setHeroUI) G.setHeroUI(true);"
+                           " i = S.bag.findIndex(wear); }"
+                           " return i; })()")   # gear14: old 'armor' is 'chest'; first chest this class can wear (Stormborn: not plate)
                 for _ in range(idx): pg.keyboard.press("ArrowDown")
                 pg.keyboard.press("Enter"); pg.wait_for_timeout(300)
                 rep["shots"]["gear_page"] = T.shot("gear_page")
@@ -1145,7 +1216,6 @@ def run(out, simscale=4, size=(960, 540), segs=SEGS):
                 # seal loot is sampled inside close(), before the 0.4 s auto-pickup moves it into S.gold / S.bag / S.gems.
                 # loot.js pending stores drop()'s what: {gold} | {gem} | {item:{rar}} (dropItem rolls first). A deferred
                 # dropItem with no rolled item is {minRar} or args = dropItem(x, z, lv, minRar), and minRar >= need counts.
-                SNAP = "(() => { const S = window.__hm.S; return { bag: (S.bag || []).length, gold: S.gold || 0, shard: (S.gems && S.gems.rift_shard) || 0 }; })()"
                 WRAP = """(() => {
   const G = window.__hm, r = G.rifts, orig = r.close;
   window.__hmCloseOrig = orig;
@@ -1193,7 +1263,7 @@ def run(out, simscale=4, size=(960, 540), segs=SEGS):
                 UNWRAP = "(() => { const G = window.__hm, orig = window.__hmCloseOrig; if (G && G.rifts && typeof orig === 'function') G.rifts.close = orig; window.__hmCloseOrig = null; return true; })()"
                 for tier, tid, fx, shot in ((0, "minor", "rift_tear_minor", "rift_minor"), (1, "major", "rift_tear", "rift_major"), (2, "abyssal", "rift_tear_abyss", "rift_abyssal")):
                     c0 = (T.S().get("rifts") or {}).get(tid, 0); gm0 = T.ev("window.__hm.S.merit.gate"); gr0 = T.ev("window.__hm.S.ranks.gate")
-                    pre = T.ev(SNAP)
+                    pre = T.ev(SEAL_SNAP)
                     try:
                         T.ev(WRAP)
                         st = T.ev(OPEN % (tier, 'true' if tier == 1 else 'false'))
