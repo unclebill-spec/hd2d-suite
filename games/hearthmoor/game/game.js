@@ -13,6 +13,7 @@ import { Svartalfheim, AREAS_SV, AREA_NAMES_SV } from './svartalfheim.js';   // 
 import { Jotunheim, AREAS_JOT, AREA_NAMES_JOT } from './jotunheim.js';   // [JOTUNHEIM] stub
 import { Muspelheim, AREAS_MUSP, AREA_NAMES_MUSP } from './muspelheim.js';   // [MUSPELHEIM] skeleton: AREAS_MUSP is empty until areas are built
 import { Niflheim, AREAS_NIFL, AREA_NAMES_NIFL } from './niflheim.js';
+import { installSideQuests } from './side_quests.js';
 import { Vanaheim, AREAS_VH, AREA_NAMES_VH } from './vanaheim.js';   // [VANAHEIM] Stage B: Mossbrook village + the Thorngarden
 import './vanaheim_c.js';   // [VANAHEIM C] arrival, stars, Hollis, riddle stump, Morel, staff bench
 import { Asgard, AREAS_ASG, AREA_NAMES_ASG } from './asgard.js';   // [ASGARD]
@@ -88,6 +89,7 @@ G.barks = new Barks(G);   // Bifrost ambient speech bubbles (window.__hm.barks.f
 G.svart = new Svartalfheim(G);   // [SVARTALFHEIM]
 G.musp = new Muspelheim(G);   // [MUSPELHEIM]
 G.nifl = new Niflheim(G);   // [NIFLHEIM]
+installSideQuests(G);
 G.vana = new Vanaheim(G);   // [VANAHEIM]
 G.asg = new Asgard(G);   // [ASGARD]
 G.hel = new Helheim(G);   // [HELHEIM]

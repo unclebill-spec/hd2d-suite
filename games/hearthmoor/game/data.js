@@ -844,6 +844,8 @@ OT.quartermaster = (S) => {
   return (S.flags || {}).temple_lit && S.met?.sable && e.choice ? { ...e, pages: ['A gate that doesn\'t need my skiff. Bad for business, good for the city. I\'ll sulk quietly.'] } : e;
 };
 Object.assign(TALK, OT);
+// Captured after OT assigns Brother Tamsin, and before niflheim.js reuses the archivist key for Vigdis Stillwater.
+export const TALK_TAMSIN = TALK.archivist;
 
 // ---------------------------------------------------------------- 6.5 rift storms: NPC storm lines, morning-after lines, toast scenes
 // While S.flags.storm is set, an NPC's first page becomes its storm line ('here' when the storm covers this area, else
