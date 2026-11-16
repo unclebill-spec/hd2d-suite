@@ -20,6 +20,9 @@ export const calmed = (S) => RIOT.filter((r) => (S.flags || {})[r.flag]).length;
 export const rioterOn = (S, id) => { const r = RIOT.find((x) => x.id === id); return !!r && forgeOpen(S) && !riotDone(S) && !(S.flags || {})[r.flag]; };
 export const riotDone = (S) => ((S.quests || {}).forge_riot || 0) === 3;
 const BELLOWS = [-5.6, -8.4];
+// quench_steam's 8 frames do not close (frame 0 is a full puff, frame 7 is a thin one), so we do not set loop.
+// Ambient tanks play one puff (0.8 s) and hide, then retrigger; a +7/+10 burst is a single puff that hides. Never duration: Infinity.
+export const QUENCH_STEAM = { frames: 8, fps: 10, duration: 0.8 };
 export const UP = {
   per: 0.07, cap: [4, 6, 8, 10, 10], heatBonus: 0.15, sure: 3,
   cost: [null,
@@ -147,9 +150,21 @@ export class Forge {
     if (forgeOpen(S) && !riotDone(S)) {   // 5: Sparks in the Street: the crowd is still at the gate
       if (!S.quests.forge_riot) setTimeout(() => this.G.setQuest && this.G.setQuest('forge_riot', 1), 0);
     }
+    this._steamOn = false;
     for (const f of gm.forgefx || []) {
       const [x, , z] = f.pos, y = ctx.heightAt(x, z);
-      if (ctx.gamefx && ctx.gamefx.meta.effects[f.name]) this.fx.push(ctx.gamefx.spawn(f.name, x, y, z, { duration: Infinity, fadeIn: still ? 0 : 0.6 }));
+      if (!(ctx.gamefx && ctx.gamefx.meta.effects[f.name])) continue;
+      if (f.name === 'quench_steam') {
+        const spawnSteam = () => {
+          if (this.ctx !== ctx || this.area !== 'forge' || !ctx.gamefx) return;
+          const inst = ctx.gamefx.spawn('quench_steam', x, y, z, { duration: QUENCH_STEAM.duration, fadeIn: still && !this._steamOn ? 0 : (this._steamOn ? 0 : 0.6), onDone: spawnSteam });
+          this._steamOn = true;
+          if (inst) this.fx.push(inst);
+        };
+        spawnSteam();
+      } else {
+        this.fx.push(ctx.gamefx.spawn(f.name, x, y, z, { duration: Infinity, fadeIn: still ? 0 : 0.6 }));
+      }
       if (ctx.addGlow && /fire|pool/.test(f.name)) {
         const red = /red|fire/.test(f.name);
         this.lights.push(ctx.addGlow(x, y, z, { color: red ? '#ff5a4a' : '#2ab4ff', intensity: red ? 7 : 5, range: red ? 5 : 3.6, lift: 0.6, fadeIn: still ? 0.01 : 0.8 }));
@@ -158,7 +173,7 @@ export class Forge {
   }
   detach() { for (const f of this.fx) if (f) f.dur = f.t + 0.2; for (const l of this.lights) if (l) l.kill = true; this.fx = []; this.lights = []; this.ctx = null; }
   zones() { const gm = this.ctx && this.area === 'forge' ? this.ctx.scene.game : null; return gm ? (gm.forgefx || []).filter((f) => /pool/.test(f.name)).map((f) => ({ x: f.pos[0], z: f.pos[2], r: 2.0, src: 'forge' })) : []; }
-  burst(name, x, z) { const ctx = this.ctx; if (ctx && ctx.gamefx && ctx.gamefx.meta.effects[name]) ctx.gamefx.spawn(name, x, ctx.heightAt(x, z), z + 0.1); }
+  burst(name, x, z) { const ctx = this.ctx; if (ctx && ctx.gamefx && ctx.gamefx.meta.effects[name]) ctx.gamefx.spawn(name, x, ctx.heightAt(x, z), z + 0.1, name === 'quench_steam' ? { duration: QUENCH_STEAM.duration } : {}); }
   // ---- the riot (5.3): each rioter wants the right temple clue; a wrong one just reopens the choice
   rioter(id) {
     const G = this.G, S = G.S, r = RIOT.find((x) => x.id === id), F = (S.flags = S.flags || {});
