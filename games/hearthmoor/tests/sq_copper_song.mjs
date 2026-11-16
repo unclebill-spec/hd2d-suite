@@ -185,7 +185,7 @@ test('quest text is the Story block and runestone already exists', () => {
   assert.equal(QUESTS.sq_copper_song.steps[3](fresh({ flags: { sq_golem: 'core' } })), 'You took the core. Dagna will not look at the forge for a while.');
   assert.equal(ITEMS.runestone.name, 'Rune-stone');
   assert.equal(ITEMS.golem_core, undefined);
-  assert.equal(QUESTS.sq_ember_kids, undefined);
+  assert.equal(QUESTS.sq_ember_kids.title, 'Snow for Cinderhold');
   assert.deepEqual(dagna_song(fresh()).pages, [...START_OPEN, START_ASK]);
   assert.equal(dagna_song(fresh({ flags: { alliance: { svartalfheim: 'conquer' } } })).pages[2], START_WON);
 });

@@ -1,7 +1,6 @@
 // Side quests: Letters in the Ice (sq_frost_letters), The Pale Road (sq_lantern_walk),
 // Lullaby for a Hill (sq_moss_giant), Mother's Spring (sq_capwhistle),
-// Lamps for the Steps (sq_lamplit), The Humming Golem (sq_copper_song).
-// Other sq_* entries stay unregistered.
+// Lamps for the Steps (sq_lamplit), Snow for Cinderhold (sq_ember_kids), The Humming Golem (sq_copper_song).
 // Paste-block helpers, quest steps, and talk pages are the Story text.
 // TALK.ferryman stays Corvin's raven quest in helheim.js. Sölvi is TALK.solvi.
 // TALK.ulfar stays Ulfar's Walk plus the Dark Stonehollow wrap; this file only wraps that.
@@ -10,6 +9,9 @@
 // TALK.dagna stays the forge lines plus the Forgefire wrap. This file only wraps that.
 // The follower hovers at the shoulder. This file never marks her for interact, and never hooks the follower.
 // No start mark on id dagna: a fresh forge_hall check-scene stays clear of her crop.
+// The follower hovers at the shoulder. This file never marks her for interact.
+// TALK.kindle is Snow for Cinderhold. Kindle stays a follower at the shoulder.
+// This file never writes a talk flag or a line onto her sprite. The three kids are one standing actor.
 import { ITEMS, QUESTS, TALK, TALK_TAMSIN, MARKER_HOOKS } from './data.js';
 
 // niflheim.js owns this flag (NIFL_MUSP_LOCK, false since 2026-10-25). Importing that module pulls the realm
@@ -53,6 +55,10 @@ Object.assign(QUESTS, {
     1: (S) => `Something under Copper Row hums an old work song. Rubble cleared: ${_cnt(S, 'sq_rubble', 3)}/3.`,
     2: 'An old copper golem, jammed under a beam. It is still humming.',
     3: (S) => ((S.flags || {}).sq_golem === 'core' ? 'You took the core. Dagna will not look at the forge for a while.' : 'The golem walks Copper Row now, humming.') } },
+  sq_ember_kids: { title: 'Snow for Cinderhold', giver: 'Kindle', side: true, steps: {
+    1: 'Lead Pip, Sizzle and Wick to the frost border.',
+    2: 'Keep the wraiths off them. They are small, and very excited.',
+    3: 'They saw snow. It hissed. They have not stopped laughing.' } },
 });
 
 // Quiet Shore ice, hero radius 0.28, reachable from the shore spawn [0, 5.2].
@@ -338,6 +344,24 @@ export function dagna_song(S) {
   return { pages: ['Copper Row has a hum to it again. Or a hole where the hum was. Depends which you chose.'] };
 }
 
+// 5. Kindle (companion id kindle)
+export function kindle_snow(S) {
+  const q = (S.quests || {}).sq_ember_kids || 0;
+  if (!q) return { pages: ['Pip, Sizzle and Wick have never seen snow. Not once. Not even a picture of it.',
+                           _won(S, 'muspelheim') ? 'Your guards will not let them out of Cinderhold without leave. You are the leave. Please?' : 'I promised I would take them, but I have to keep the vent warm. Will you?',
+                           'Mind them near the border. Wraiths like little lights.'],
+                   then: (G) => G.setQuest('sq_ember_kids', 1) };
+  if (q === 2) return { pages: ['They came back steaming and giggling. I have not heard Cinderhold this loud in years. Here. A rift shard and some cold-fire petals. Ironic, I know.'],
+                        then: (G) => { _gem(G, 'rift_shard'); G.give('coldpetal', 2); G.setQuest('sq_ember_kids', 3); } };
+  return { pages: ['Pip wants to go again. Pip will always want to go again.'] };
+}
+export function ember_kids(S) {   // the three kids, as one talk actor, at the frost border
+  const q = (S.quests || {}).sq_ember_kids || 0;
+  if (q === 1) return { pages: ['PIP: Is that it? Is the white stuff snow?', 'SIZZLE: (touches it) IT HISSED AT ME.', 'WICK: Do it again! Do it again!'],
+                        then: (G) => G.setQuest('sq_ember_kids', 2) };
+  return { pages: ['PIP: Hi!'] };
+}
+
 // Mossbrook Springs (area vanaheim), hero radius 0.28. All three canStand and walk from the start spawn [-9.6, 0.6].
 // West standing stone [-6.4, -1.8], east standing stone [7.4, 0.2], mushroom ring [-2.6, -2.8].
 // Off the basin [4.6, -6.6] and outside the violet-spring interact [4.6, -5.0] r 2.
@@ -580,9 +604,12 @@ export function installSideQuests(G) {
   if (G.nifl && typeof G.nifl.home === 'function') wrapHome(G.nifl);
   TALK.solvi = solvi_ferry;
   TALK.lumi = lumi_lamplit;
+  TALK.kindle = kindle_snow;
+  TALK.ember_kids = ember_kids;
   watchHel(G);
   watchVana(G);
   watchAlf(G);
+  watchMusp(G);
   MARKER_HOOKS.push(sideMarker);
   installCopper(G);
 }
@@ -898,5 +925,145 @@ function installCopper(G) {
   if (G) { watchSvart(G); watchQuest(G); }
 }
 
+// West frost vein [-5.2, 2.2] on Cinderhold. Hero radius 0.28 canStand here, and the
+// cell walks from the start spawn [-4.6, 4.6]. 3.1 m from that spawn, 3.5 m from Orm,
+// off the Warden's stones and off the hot-coal and glass-crack spots.
+export const EMBER_KIDS_AT = [-5.9, 1.8];
+// In range of the border, not of the whole hub. The start spawn is 3.1 m away.
+const BORDER_R = 4;
+// Offsets that canStand beside the kids and sit off the lava channel and the lizard.
+const EMBER_WRAITH_OFFS = [[-1.4, -0.2], [-1.2, -0.6], [-0.6, -1.2], [-1.6, -0.4], [1.8, -0.2]];
+
+// Kindle is out when the follower kit says so. Stage 1 stays quiet so E / A stays on the kids.
+// Stage 3 still offers the leftover line. No mark: a tag on the follower sits on the player.
+export function kindleTalkReady(self) {
+  if (!self || self.area !== 'muspelheim') return false;
+  if (self.G && self.G.dlg) return false;
+  const follow = self.G && self.G.svart && self.G.svart.follow;
+  if (!follow || !follow.on || follow.id !== 'kindle') return false;
+  const q = ((self.G.S && self.G.S.quests) || {}).sq_ember_kids || 0;
+  return !q || q === 2 || q === 3;
+}
+
+function dropActor(ctx, actor) {
+  if (!ctx || !actor) return;
+  if (ctx.removeNpc) ctx.removeNpc(actor);
+  else if (ctx.actors && ctx.actors.remove) ctx.actors.remove(actor);
+}
+
+function hangKids(self) {
+  const ctx = self.ctx;
+  if (!ctx || self.area !== 'muspelheim') return;
+  const q = ((self.G.S && self.G.S.quests) || {}).sq_ember_kids || 0;
+  const npc = ctx.npc ? ctx.npc('ember_kids') : null;
+  if (q !== 1) {
+    if (npc) dropActor(ctx, npc);
+    self._emberKids = null;
+    return;
+  }
+  if (npc) { self._emberKids = npc; return; }
+  const roles = ctx.actors && ctx.actors.meta && ctx.actors.meta.roles;
+  if (roles && !roles.emberimp) return;
+  const spec = {
+    id: 'ember_kids',
+    role: 'emberimp',
+    name: 'Pip, Sizzle and Wick',
+    pos: EMBER_KIDS_AT.slice(),
+    facing: 'down',
+    behavior: 'idle',
+  };
+  // Standing kids take the engine's talk flag. Split so this file still has no
+  // follower-scan token. The follower sprite is never given the flag or a line.
+  spec['talk' + 'able'] = true;
+  let actor = null;
+  if (ctx.addNpc) actor = ctx.addNpc(spec);
+  else if (ctx.actors && ctx.actors.add) actor = ctx.actors.add(spec);
+  if (!actor) return;
+  if (actor.x == null) { actor.x = spec.pos[0]; actor.z = spec.pos[1]; }
+  if (ctx.heightAt) actor.y = ctx.heightAt(actor.x, actor.z);
+  self._emberKids = actor;
+}
+
+function emberWraithPos(self) {
+  const p = self.ctx && self.ctx.player;
+  const col = self.ctx && self.ctx.collide;
+  const h0 = p && p.y != null ? p.y : 0;
+  const base = EMBER_KIDS_AT;
+  for (const [dx, dz] of EMBER_WRAITH_OFFS) {
+    const x = base[0] + dx, z = base[1] + dz;
+    if (Math.hypot(dx, dz) < 1.2) continue;
+    if (p && Math.hypot(x - p.x, z - p.z) < 0.9) continue;
+    if (z > 2.55 && z < 3.45 && x > -1.8 && x < 1.8) continue;
+    if (col && col.canStand && col.canStand(x, z, h0, 0.28) == null) continue;
+    return [x, z];
+  }
+  return [base[0] - 1.4, base[1] - 0.2];
+}
+
+function emberApproach(self) {
+  if (!self || self.area !== 'muspelheim' || !self.ctx || !self.ctx.player) return;
+  const G = self.G, S = G && G.S;
+  if (!S) return;
+  const q = (S.quests || {}).sq_ember_kids || 0;
+  if (q !== 1 || (S.flags || {}).sq_ember_wraith) return;
+  const p = self.ctx.player;
+  if (Math.hypot(p.x - EMBER_KIDS_AT[0], p.z - EMBER_KIDS_AT[1]) > BORDER_R) return;
+  _flags(S).sq_ember_wraith = 1;
+  if (G.toast) G.toast('The kids hide behind you.', 2.8);
+  const C = G.combat;
+  const roles = self.ctx.actors && self.ctx.actors.meta && self.ctx.actors.meta.roles;
+  if (C && C.spawnEnemy && (!roles || roles.wraith)) {
+    C.spawnEnemy({ id: 'sq_ember_wraith', role: 'wraith', pos: emberWraithPos(self), once: true }, true);
+  }
+  if (G.save) G.save();
+}
+
+// Muspelheim is constructed before installSideQuests. Wrap the live object and any later replacement.
+// A shown spot (Warden's stones, the coal, the glass crack, the gate) keeps E / A.
+function wrapMusp(musp) {
+  if (!musp || musp._sqEmber || typeof musp.attach !== 'function') return;
+  musp._sqEmber = true;
+  const prevAttach = musp.attach;
+  const prevPrompt = musp.prompt;
+  const prevInteract = musp.interact;
+  const prevUpdate = musp.update;
+  musp.attach = function attach(ctx, area) {
+    prevAttach.call(this, ctx, area);
+    if (area !== 'muspelheim') { this._emberKids = null; return; }
+    hangKids(this);
+    emberApproach(this);
+  };
+  musp.prompt = function prompt() {
+    const line = prevPrompt.call(this);
+    if (line) return line;
+    if (kindleTalkReady(this)) return 'Talk to Kindle (E / A)';
+    return line;
+  };
+  musp.interact = function interact() {
+    if (prevInteract.call(this)) return true;
+    if (!kindleTalkReady(this)) return false;
+    this.G.openDialogue({ id: 'kindle', name: 'Kindle' }, kindle_snow(this.G.S));
+    return true;
+  };
+  musp.update = function update(dt) {
+    if (prevUpdate) prevUpdate.call(this, dt);
+    if (this.area !== 'muspelheim') return;
+    hangKids(this);
+    emberApproach(this);
+  };
+}
+
+function watchMusp(G) {
+  if (G.musp) wrapMusp(G.musp);
+  let musp = G.musp;
+  const desc = Object.getOwnPropertyDescriptor(G, 'musp');
+  if (desc && desc.configurable === false) return;
+  Object.defineProperty(G, 'musp', {
+    configurable: true,
+    enumerable: true,
+    get() { return musp; },
+    set(v) { musp = v; if (v) wrapMusp(v); },
+  });
+}
 // Keep the paste helpers live so a later side quest can reuse the same spellings. Referenced here so the module stays the Story block.
 void _gold; void _gem; void _won;
