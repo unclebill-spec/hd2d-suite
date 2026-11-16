@@ -237,8 +237,11 @@ function sideMarker(id, S) {
     if (ulfarMainMarked(S)) return undefined;
     const qm = (S.quests || {}).sq_moss_giant || 0;
     const caps = (S.inv || {}).redcap || 0;
+    // Turn-in only. A start quest_mark sits in Ulfar's phone-landscape crop
+    // (the head is already off the top of the buffer, so the ! lands mid-sprite)
+    // and drops atlas_corr to ~0.72. Default check-scene is a fresh start, so
+    // this keeps Stonehollow identical to the pre-quest baseline. Talk still starts the quest from idle.
     if ((qm === 1 && caps >= 3) || qm === 2) return 'quest_turnin';
-    if (!qm && ulfarPrev && ulfarIdle(ulfarPrev(S))) return 'quest_mark';
   }
   return undefined;
 }

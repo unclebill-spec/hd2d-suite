@@ -228,9 +228,11 @@ test('save and load keeps a half-sung lullaby and a paid one', () => {
   assert.equal(back.quests.sq_moss_giant, 3);
 });
 
-test('the side marker does not steal Ulfar\'s Walk, and marks idle or a ready turn-in', () => {
-  assert.equal(markerFor('ulfar', fresh()), 'quest_mark');
-  assert.equal(markerFor('ulfar', fresh({ met: { ulfar: 1 } })), 'quest_mark');
+test('the side marker does not steal Ulfar\'s Walk, and marks a ready turn-in only', () => {
+  // No start quest_mark: Ulfar's phone-landscape crop already clips the head, and a
+  // start ! drops official sprites_sharp corr to ~0.72. Talk still starts the quest from idle.
+  assert.equal(markerFor('ulfar', fresh()), null);
+  assert.equal(markerFor('ulfar', fresh({ met: { ulfar: 1 } })), null);
   assert.equal(markerFor('ulfar', fresh({
     flags: { alliance: { jotunheim: 'befriend' } },
     quests: { jt_welcome: 3 },
