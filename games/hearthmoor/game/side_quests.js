@@ -1,5 +1,6 @@
-// Letters in the Ice (sq_frost_letters). One side quest. Other sq_* entries stay unregistered.
-// Paste-block helpers, the gloves item, the quest steps, and hrefna_letters are the Story text.
+// Side quests: Letters in the Ice (sq_frost_letters) and The Pale Road (sq_lantern_walk).
+// Other sq_* entries stay unregistered. Paste-block helpers, quest steps, and talk pages are the Story text.
+// TALK.ferryman stays Corvin's raven quest in helheim.js. Sölvi is TALK.solvi.
 import { ITEMS, QUESTS, TALK, TALK_TAMSIN, MARKER_HOOKS } from './data.js';
 
 // niflheim.js owns this flag (NIFL_MUSP_LOCK, false since 2026-10-25). Importing that module pulls the realm
@@ -23,6 +24,10 @@ Object.assign(QUESTS, {
     1: (S) => `Chip the unsent letters out of the Gloamhaven ice wall (${_cnt(S, 'sq_letter', 3)}/3).`,
     2: 'Deliver them: a fisher in Ravenhold, Brother Tamsin, and one with no name on it.',
     3: 'Hrefna kept the last letter.' } },
+  sq_lantern_walk: { title: 'The Pale Road', giver: 'Sölvi the Ferryman', side: true, steps: {
+    1: 'Bring an empty orb and a glow-fish to Sölvi, and carry the light down the pale road.',
+    2: (S) => `Lead the lost lights back to the ferry (${_cnt(S, 'sq_light', 3)}/3).`,
+    3: 'Sölvi nods once. A little pale light follows you home.' } },
 });
 
 // Quiet Shore ice, hero radius 0.28, reachable from the shore spawn [0, 5.2].
@@ -79,6 +84,58 @@ export function hrefna_letters(S) {
   return { pages: ['The wall is a little emptier. That is a good thing, I think.'] };
 }
 
+// Lantern Shore, hero radius 0.28, baked collision canStand. The three lights walk the pale road
+// from the Gloamhaven gate down to the jetty. Sölvi stands at the landing [1.8, 0.2], clear of Corvin [-1.6, 0.6].
+export const LIGHT_SPOTS = [
+  { id: 'sq_light1', pos: [-2.0, 6.4], label: 'a lost light on the pale road (E / A)' },
+  { id: 'sq_light2', pos: [1.2, 4.6], label: 'a lost light in the reeds (E / A)' },
+  { id: 'sq_light3', pos: [0.0, -1.2], label: 'a lost light by the jetty (E / A)' },
+];
+
+const LIGHT_LOOK = {
+  sq_light1: ['(A small light sits in the pebbles. It is shy. It will not come until the orb does.)', '(It lifts, pale and quiet, and follows.)'],
+  sq_light2: ['(Another lost light, no bigger than a thumb, hiding in the reeds. The glow-fish orb steadies it.)', '(It drifts after you. It does not like to be first.)'],
+  sq_light3: ['(The last light waits by the jetty, very small, very still. It sees the orb and comes.)'],
+};
+
+export function lightCount(S) { return _cnt(S, 'sq_light', 3); }
+
+export function collectLight(G, id, hel) {
+  const S = G.S;
+  if ((S.found || {})[id]) return lightCount(S);
+  S.found = { ...(S.found || {}), [id]: 1 };
+  const n = lightCount(S);
+  if (G.toast) G.toast(`Light ${n}/3`, 2.2);
+  if (n >= 3 && G.toast) G.toast('They can be taken to the ferry.', 3.0);
+  const spot = LIGHT_SPOTS.find((s) => s.id === id);
+  if (spot && hel && hel.fxAt && hel.ctx) {
+    const y = hel.ctx.heightAt ? hel.ctx.heightAt(spot.pos[0], spot.pos[1]) : 0;
+    hel.fxAt(hel.ctx, 'wisps_blue', spot.pos[0], y + 0.6, spot.pos[1], { duration: 1.4 });
+  }
+  if (G.save) G.save();
+  return n;
+}
+
+// Story TALK.ferryman body, hooked as TALK.solvi. Never assign TALK.ferryman (that is Corvin).
+// flags.sq_pale_follow is the cosmetic "pale light follows you" mark. No follower sprite is hung on it yet.
+export function solvi_ferry(S) {
+  const q = (S.quests || {}).sq_lantern_walk || 0, inv = S.inv || {};
+  if (!q) return { pages: ['(An old man in a grey wool coat leans on a ferry pole. He speaks so quietly you lean in.)',
+                           'Sölvi. I take the lights across. But some walk the pale road and never find the ferry.',
+                           'They follow light. Bring me an empty orb and a glow-fish, and carry it down the road for them.'],
+                   then: (G) => G.setQuest('sq_lantern_walk', 1) };
+  if (q === 1 && (inv.orblamp || 0) > 0 && (inv.glowfish || 0) > 0) return {
+    pages: ['(He sets the glow-fish in the orb. It brightens, pale blue.) Walk slowly. They are shy. The shades will not come near this.'],
+    then: (G) => { G.S.inv.orblamp -= 1; G.S.inv.glowfish -= 1; G.setQuest('sq_lantern_walk', 2); },
+  };
+  if (q === 2 && _cnt(S, 'sq_light', 3) >= 3) return {
+    pages: ['(Three small lights settle on the ferry, one by one.)', 'There. They can cross now.', 'Take this. The dead have little use for gold, and the living have a lot.'],
+    then: (G) => { _gold(G, 120); _flags(G.S).sq_pale_follow = 1; G.setQuest('sq_lantern_walk', 3); },
+  };
+  if (q === 3) return { pages: ['(Sölvi nods once. That is all.)'] };
+  return { pages: ['An orb, and a fish to light it.'] };
+}
+
 function fisherLetter() {
   return {
     pages: [
@@ -122,6 +179,12 @@ function sideMarker(id, S) {
     if (q === 2 && !F.sq_letter_fisher) return 'quest_turnin';
   }
   if (id === 'archivist' && q === 2 && !F.sq_letter_tamsin) return 'quest_turnin';
+  if (id === 'solvi') {
+    const ql = (S.quests || {}).sq_lantern_walk || 0;
+    const inv = S.inv || {};
+    if (!ql) return 'quest_mark';
+    if ((ql === 1 && (inv.orblamp || 0) > 0 && (inv.glowfish || 0) > 0) || (ql === 2 && lightCount(S) >= 3)) return 'quest_turnin';
+  }
   return undefined;
 }
 
@@ -175,7 +238,44 @@ export function installSideQuests(G) {
   };
 
   if (G.nifl && typeof G.nifl.home === 'function') wrapHome(G.nifl);
+  TALK.solvi = solvi_ferry;
+  watchHel(G);
   MARKER_HOOKS.push(sideMarker);
+}
+
+// Helheim is constructed after installSideQuests (game.js). Watch the assignment and hang the
+// pale-road lights on shore() once the realm object exists. Does not touch TALK.ferryman.
+function wrapShore(hel) {
+  if (!hel || hel._sqPale || typeof hel.shore !== 'function') return;
+  hel._sqPale = true;
+  const prev = hel.shore;
+  hel.shore = function shore() {
+    prev.call(this);
+    const self = this;
+    for (const spot of LIGHT_SPOTS) {
+      self.spot({
+        id: spot.id,
+        pos: spot.pos,
+        r: 1.2,
+        label: spot.label,
+        show: () => ((self.G.S.quests || {}).sq_lantern_walk || 0) === 2 && !(self.G.S.found || {})[spot.id],
+        act: () => self.look(spot.id, 'A lost light', LIGHT_LOOK[spot.id], () => collectLight(self.G, spot.id, self)),
+      });
+    }
+  };
+}
+
+function watchHel(G) {
+  if (G.hel) wrapShore(G.hel);
+  let hel = G.hel;
+  const desc = Object.getOwnPropertyDescriptor(G, 'hel');
+  if (desc && desc.configurable === false) return;
+  Object.defineProperty(G, 'hel', {
+    configurable: true,
+    enumerable: true,
+    get() { return hel; },
+    set(v) { hel = v; if (v) wrapShore(v); },
+  });
 }
 
 // Keep the paste helpers live so a later side quest can reuse the same spellings. Referenced here so the module stays the Story block.
