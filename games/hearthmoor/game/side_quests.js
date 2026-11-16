@@ -1,6 +1,8 @@
-// Side quests: Letters in the Ice (sq_frost_letters) and The Pale Road (sq_lantern_walk).
-// Other sq_* entries stay unregistered. Paste-block helpers, quest steps, and talk pages are the Story text.
+// Side quests: Letters in the Ice (sq_frost_letters), The Pale Road (sq_lantern_walk),
+// Lullaby for a Hill (sq_moss_giant). Other sq_* entries stay unregistered.
+// Paste-block helpers, quest steps, and talk pages are the Story text.
 // TALK.ferryman stays Corvin's raven quest in helheim.js. Sölvi is TALK.solvi.
+// TALK.ulfar stays Ulfar's Walk plus the Dark Stonehollow wrap; this file only wraps that.
 import { ITEMS, QUESTS, TALK, TALK_TAMSIN, MARKER_HOOKS } from './data.js';
 
 // niflheim.js owns this flag (NIFL_MUSP_LOCK, false since 2026-10-25). Importing that module pulls the realm
@@ -28,6 +30,10 @@ Object.assign(QUESTS, {
     1: 'Bring an empty orb and a glow-fish to Sölvi, and carry the light down the pale road.',
     2: (S) => `Lead the lost lights back to the ferry (${_cnt(S, 'sq_light', 3)}/3).`,
     3: 'Sölvi nods once. A little pale light follows you home.' } },
+  sq_moss_giant: { title: 'Lullaby for a Hill', giver: 'Ulfar Mossback', side: true, steps: {
+    1: (S) => `Gather three red toadstool caps for the lullaby (${Math.min(3, (S.inv || {}).redcap || 0)}/3).`,
+    2: 'Sing to the hill. Low, high, low. Softly.',
+    3: 'The hill sighs, rolls over, and shows you a hidden spring.' } },
 });
 
 // Quiet Shore ice, hero radius 0.28, reachable from the shore spawn [0, 5.2].
@@ -136,6 +142,29 @@ export function solvi_ferry(S) {
   return { pages: ['An orb, and a fish to light it.'] };
 }
 
+// Story TALK body for Lullaby for a Hill. The hidden spring is this talk (no spring mesh in the Jotunheim kit).
+// redcap and springwater are existing items. _gem is the shared gem helper above.
+export function ulfar_hill(S) {
+  const q = (S.quests || {}).sq_moss_giant || 0, caps = (S.inv || {}).redcap || 0;
+  if (!q) return { pages: ['Hear that rumble? That is not a storm. That is Old Hrolf, asleep on the road. Snoring.',
+                           'Every snore cracks the ice. We sing him a lullaby, he rolls over, and the road is clear. Grandmother\'s way.',
+                           'The song needs three red toadstool caps, glowing. Ask me why and I will tell you: I do not know. Grandmother\'s way.'],
+                   then: (G) => G.setQuest('sq_moss_giant', 1) };
+  if (q === 1 && caps >= 3) return {
+    pages: ['Good caps. Set them on the stones. Now sing. Three notes. Do not sing the wrong one first, he hates that.'],
+    choice: { id: 'sq_lullaby', options: [
+      { label: 'Low, high, low.', pick: (G) => { G.S.inv.redcap -= 3; G.setQuest('sq_moss_giant', 2);
+          return { pages: ['(The hill hums back. It shifts, like a blanket being pulled up, and rolls off the road.)', 'There. He always slept on top of the best spring in Jotunheim. Look.'] }; } },
+      { label: 'High, low, high.', pick: () => ({ pages: ['(The hill grumbles. A pebble lands on your head.)', 'Wrong one first. Try again. Softer.'] }) },
+      { label: 'Low, low, low.', pick: () => ({ pages: ['(The hill snores louder.)', 'That one only makes him sleep deeper. Again.'] }) },
+    ] },
+  };
+  if (q === 2) return { pages: ['A hidden spring, glowing blue. Fill your vials. And take this. Grandmother would want a singer paid.'],
+                        then: (G) => { G.give('springwater', 3); _gem(G, 'moon_opal'); G.setQuest('sq_moss_giant', 3); } };
+  if (q === 3) return { pages: ['Old Hrolf is snoring on the other side of the road now. Much better.'] };
+  return { pages: [`Three red caps. You have ${caps}.`] };
+}
+
 function fisherLetter() {
   return {
     pages: [
@@ -161,7 +190,26 @@ function idleLine(entry) {
   return typeof p === 'string' && /^I know this fight/.test(p);
 }
 
+// Ulfar's idle only. The Walk offer, the finger-count reminder, the Barrow turn-in, and
+// "(Ulfar looks at the lake." (Dark Stonehollow) are not idle and must pass through.
+function ulfarIdle(entry) {
+  const p = entry && entry.pages && entry.pages[0];
+  return typeof p === 'string' && (/^Oh\. Hello\. You are very small/.test(p) || /^Snow tastes like nothing/.test(p));
+}
+
+// jotunheim.js marks ulfar for Ulfar's Walk. Same condition, so a side marker cannot paint over it
+// even if this hook runs first. Returning undefined lets that hook (or markerFor) keep the tag.
+function ulfarMainMarked(S) {
+  const f = S.flags || {};
+  const al = f.alliance && f.alliance.jotunheim;
+  const jq = (S.quests || {}).jt_ulfar || 0;
+  const welcome = (S.quests || {}).jt_welcome || 0;
+  const found = S.found || {};
+  return al === 'befriend' && ((!jq && welcome >= 3) || (jq === 1 && ['uw_goat', 'uw_song', 'uw_mitten'].every((k) => found[k])));
+}
+
 let hrefnaPrev = null;
+let ulfarPrev = null;
 let installed = false;
 
 function sideMarker(id, S) {
@@ -184,6 +232,13 @@ function sideMarker(id, S) {
     const inv = S.inv || {};
     if (!ql) return 'quest_mark';
     if ((ql === 1 && (inv.orblamp || 0) > 0 && (inv.glowfish || 0) > 0) || (ql === 2 && lightCount(S) >= 3)) return 'quest_turnin';
+  }
+  if (id === 'ulfar') {
+    if (ulfarMainMarked(S)) return undefined;
+    const qm = (S.quests || {}).sq_moss_giant || 0;
+    const caps = (S.inv || {}).redcap || 0;
+    if ((qm === 1 && caps >= 3) || qm === 2) return 'quest_turnin';
+    if (!qm && ulfarPrev && ulfarIdle(ulfarPrev(S))) return 'quest_mark';
   }
   return undefined;
 }
@@ -209,6 +264,7 @@ export function installSideQuests(G) {
   if (installed) return;
   installed = true;
   hrefnaPrev = TALK.hrefna;
+  ulfarPrev = TALK.ulfar;
   const harborPrev = TALK.harbormaster;
   const vigdis = TALK.archivist;
 
@@ -219,6 +275,19 @@ export function installSideQuests(G) {
     if ((q === 1 && letterCount(S) >= 3) || (q === 2 && F.sq_letters_given)) return hrefna_letters(S);
     const prior = hrefnaPrev ? hrefnaPrev(S) : null;
     if (idleLine(prior) && !q) return hrefna_letters(S);
+    return prior;
+  };
+
+  // Outermost wrap. jotunheim.js has already put Ulfar's Walk and the Dark Stonehollow lines on TALK.ulfar.
+  // A ready lullaby or the spring reward is returned first. Every other non-idle line (the Walk offer,
+  // the finger-count reminder, the Barrow turn-in, the dark lake line) is returned unchanged.
+  // The side quest starts only from Ulfar's idle, and only when it has not started.
+  TALK.ulfar = (S) => {
+    const q = (S.quests || {}).sq_moss_giant || 0;
+    const caps = (S.inv || {}).redcap || 0;
+    if ((q === 1 && caps >= 3) || q === 2) return ulfar_hill(S);
+    const prior = ulfarPrev ? ulfarPrev(S) : null;
+    if (ulfarIdle(prior) && !q) return ulfar_hill(S);
     return prior;
   };
 
