@@ -1,8 +1,9 @@
 // Side quests: Letters in the Ice (sq_frost_letters), The Pale Road (sq_lantern_walk),
-// Lullaby for a Hill (sq_moss_giant). Other sq_* entries stay unregistered.
+// Lullaby for a Hill (sq_moss_giant), Mother's Spring (sq_capwhistle). Other sq_* entries stay unregistered.
 // Paste-block helpers, quest steps, and talk pages are the Story text.
 // TALK.ferryman stays Corvin's raven quest in helheim.js. Sölvi is TALK.solvi.
 // TALK.ulfar stays Ulfar's Walk plus the Dark Stonehollow wrap; this file only wraps that.
+// TALK.tobble stays Mother's bubble-lamp; this file only wraps that. TALK.tobble_bench is untouched.
 import { ITEMS, QUESTS, TALK, TALK_TAMSIN, MARKER_HOOKS } from './data.js';
 
 // niflheim.js owns this flag (NIFL_MUSP_LOCK, false since 2026-10-25). Importing that module pulls the realm
@@ -34,6 +35,10 @@ Object.assign(QUESTS, {
     1: (S) => `Gather three red toadstool caps for the lullaby (${Math.min(3, (S.inv || {}).redcap || 0)}/3).`,
     2: 'Sing to the hill. Low, high, low. Softly.',
     3: 'The hill sighs, rolls over, and shows you a hidden spring.' } },
+  sq_capwhistle: { title: "Mother's Spring", giver: 'Tobble Capwhistle', side: true, steps: {
+    1: (S) => `Follow the verses of Tobble's mother's song (${_cnt(S, 'sq_verse', 3)}/3).`,
+    2: 'The last verse points behind the waterfall.',
+    3: (S) => (_won(S, 'vanaheim') ? 'A violet spring. Tobble thanks you very formally, and that hurts more.' : 'A violet spring. Tobble sits and says nothing for a while.') } },
 });
 
 // Quiet Shore ice, hero radius 0.28, reachable from the shore spawn [0, 5.2].
@@ -165,6 +170,54 @@ export function ulfar_hill(S) {
   return { pages: [`Three red caps. You have ${caps}.`] };
 }
 
+// Story talk for Mother's Spring. coldpetal, glowbell, and springwater already exist. No new items.
+// The hidden spring is this talk (no waterfall in the Vanaheim kit), same as Lullaby for a Hill.
+export function tobble_spring(S) {
+  const q = (S.quests || {}).sq_capwhistle || 0;
+  if (!q) return { pages: ['My mother used to sing about a spring. "Past the three blue stones, under the singing water, where the moss is purple at noon."',
+                           _won(S, 'vanaheim') ? 'I would like to find it, if Hearthmoor allows us our own springs still.' : 'I always thought it was made up. Will you help me look anyway?'],
+                   then: (G) => G.setQuest('sq_capwhistle', 1) };
+  if (q === 1 && _cnt(S, 'sq_verse', 3) >= 3) return { pages: ['Three blue stones, singing water... the waterfall! Behind it. It has to be behind it.'],
+                        then: (G) => G.setQuest('sq_capwhistle', 2) };
+  if (q === 2) return {
+    pages: _won(S, 'vanaheim')
+      ? ['(A hidden spring, glowing violet.) It is real. Thank you, Hearthmoor. Truly. Please take these, as is proper.']
+      : ['(Tobble sits by the violet spring. He does not say anything for a long while.)', 'She used to hum the last verse wrong on purpose so I would correct her.', 'Take these. Petals and bells from her spring. She would like you.'],
+    then: (G) => { G.give('coldpetal', 3); G.give('glowbell', 3); G.give('springwater', 2); G.setQuest('sq_capwhistle', 3); },
+  };
+  return { pages: ['I come here on Mondays now. Mother liked Mondays.'] };
+}
+
+// Mossbrook Springs (area vanaheim), hero radius 0.28. All three canStand and walk from the start spawn [-9.6, 0.6].
+// West standing stone [-6.4, -1.8], east standing stone [7.4, 0.2], mushroom ring [-2.6, -2.8].
+// Off the basin [4.6, -6.6] and outside the violet-spring interact [4.6, -5.0] r 2.
+// r 1.2 keeps the west verse and the moss verse from sharing a prompt, and keeps the moss verse
+// outside Elder Burrowmoss's 2.2 talk radius at [-1.0, -4.4].
+export const VERSE_SPOTS = [
+  { id: 'sq_verse1', pos: [-5.6, -0.8], name: 'Blue stones', label: 'blue stones, west (E / A)' },
+  { id: 'sq_verse2', pos: [6.6, 0.8], name: 'Blue stones', label: 'blue stones, east (E / A)' },
+  { id: 'sq_verse3', pos: [-3.4, -1.8], name: 'Purple moss', label: 'singing water, purple moss (E / A)' },
+];
+
+const VERSE_LOOK = {
+  sq_verse1: ['(Blue stones, the first of the song. "Past the three blue stones." You hum it. The west stone keeps the note.)'],
+  sq_verse2: ['(Another blue stone, east of the springs. The second line of the song fits it, and the water almost sings along.)'],
+  sq_verse3: ['(The moss here is purple, the colour it takes at noon, and the water keeps a tune. The last line of the song ends.)'],
+};
+
+export function verseCount(S) { return _cnt(S, 'sq_verse', 3); }
+
+export function noteVerse(G, id) {
+  const S = G.S;
+  if ((S.found || {})[id]) return verseCount(S);
+  S.found = { ...(S.found || {}), [id]: 1 };
+  const n = verseCount(S);
+  if (G.toast) G.toast(`Verse ${n}/3`, 2.2);
+  if (n >= 3 && G.toast) G.toast('Tobble can place the last line.', 3.0);
+  if (G.save) G.save();
+  return n;
+}
+
 function fisherLetter() {
   return {
     pages: [
@@ -197,6 +250,23 @@ function ulfarIdle(entry) {
   return typeof p === 'string' && (/^Oh\. Hello\. You are very small/.test(p) || /^Snow tastes like nothing/.test(p));
 }
 
+// Tobble's idle only. The mushroom line is the befriend idle. The toadstool line is the conquer idle
+// (alliance is not befriend). The bubble-lamp offer, the join choice, and the stage-2 come-back are not idle.
+function tobbleIdle(entry) {
+  const p = entry && entry.pages && entry.pages[0];
+  return typeof p === 'string' && (/^\(Tobble hides behind a toadstool/.test(p) || /^That mushroom is judging us/.test(p));
+}
+
+// vanaheim.js marks tobble for Mother's bubble-lamp. Same condition, so a side marker cannot paint over it.
+function tobbleMainMarked(S) {
+  const q = S.quests || {};
+  const i = S.inv || {};
+  const av = ((S.flags || {}).alliance || {}).vanaheim;
+  if (av === 'befriend' && q.rotwood === 3 && !q.vh_tobble) return true;
+  if (q.vh_tobble === 1 && i.fizzstone && i.glowfry) return true;
+  return false;
+}
+
 // jotunheim.js marks ulfar for Ulfar's Walk. Same condition, so a side marker cannot paint over it
 // even if this hook runs first. Returning undefined lets that hook (or markerFor) keep the tag.
 function ulfarMainMarked(S) {
@@ -210,6 +280,7 @@ function ulfarMainMarked(S) {
 
 let hrefnaPrev = null;
 let ulfarPrev = null;
+let tobblePrev = null;
 let installed = false;
 
 function sideMarker(id, S) {
@@ -243,6 +314,14 @@ function sideMarker(id, S) {
     // this keeps Stonehollow identical to the pre-quest baseline. Talk still starts the quest from idle.
     if ((qm === 1 && caps >= 3) || qm === 2) return 'quest_turnin';
   }
+  if (id === 'tobble') {
+    if (tobbleMainMarked(S)) return undefined;
+    const qc = (S.quests || {}).sq_capwhistle || 0;
+    // No start quest_mark. A start ! on the idle gnome sits in the phone-landscape crop
+    // and drops official sprites_sharp, and default check-scene is a fresh save.
+    // Talk still starts the quest from the mushroom idle and from the conquer hide line.
+    if ((qc === 1 && verseCount(S) >= 3) || qc === 2) return 'quest_turnin';
+  }
   return undefined;
 }
 
@@ -268,6 +347,7 @@ export function installSideQuests(G) {
   installed = true;
   hrefnaPrev = TALK.hrefna;
   ulfarPrev = TALK.ulfar;
+  tobblePrev = TALK.tobble;
   const harborPrev = TALK.harbormaster;
   const vigdis = TALK.archivist;
 
@@ -294,6 +374,18 @@ export function installSideQuests(G) {
     return prior;
   };
 
+  // Outermost wrap. vanaheim.js has already put Mother's bubble-lamp on TALK.tobble.
+  // A ready verse turn-in or the spring reward is returned first, including after Vanaheim is conquered.
+  // Every other non-idle main line (the lamp offer, the fizzstone/glowfry join, the come-back at stage 2)
+  // is returned unchanged. The side quest starts only from Tobble's idle, and only when it has not started.
+  TALK.tobble = (S) => {
+    const q = (S.quests || {}).sq_capwhistle || 0;
+    if ((q === 1 && verseCount(S) >= 3) || q === 2) return tobble_spring(S);
+    const prior = tobblePrev ? tobblePrev(S) : null;
+    if (tobbleIdle(prior) && !q) return tobble_spring(S);
+    return prior;
+  };
+
   TALK.harbormaster = (S) => {
     const q = (S.quests || {}).sq_frost_letters || 0;
     if (q === 2 && !(S.flags || {}).sq_letter_fisher) return fisherLetter();
@@ -312,6 +404,7 @@ export function installSideQuests(G) {
   if (G.nifl && typeof G.nifl.home === 'function') wrapHome(G.nifl);
   TALK.solvi = solvi_ferry;
   watchHel(G);
+  watchVana(G);
   MARKER_HOOKS.push(sideMarker);
 }
 
@@ -347,6 +440,42 @@ function watchHel(G) {
     enumerable: true,
     get() { return hel; },
     set(v) { hel = v; if (v) wrapShore(v); },
+  });
+}
+
+// Vanaheim is constructed after installSideQuests (game.js). Watch the assignment and hang the
+// verse looks on the Mossbrook Springs overworld (area vanaheim). village() is vh_village; do not use it.
+function wrapSprings(vana) {
+  if (!vana || vana._sqSpring || typeof vana.attach !== 'function') return;
+  vana._sqSpring = true;
+  const prev = vana.attach;
+  vana.attach = function attach(ctx, area) {
+    prev.call(this, ctx, area);
+    if (area !== 'vanaheim') return;
+    const self = this;
+    for (const spot of VERSE_SPOTS) {
+      self.spot({
+        id: spot.id,
+        pos: spot.pos,
+        r: 1.2,
+        label: spot.label,
+        show: () => ((self.G.S.quests || {}).sq_capwhistle || 0) === 1 && !(self.G.S.found || {})[spot.id],
+        act: () => self.look(spot.name, VERSE_LOOK[spot.id], () => noteVerse(self.G, spot.id)),
+      });
+    }
+  };
+}
+
+function watchVana(G) {
+  if (G.vana) wrapSprings(G.vana);
+  let vana = G.vana;
+  const desc = Object.getOwnPropertyDescriptor(G, 'vana');
+  if (desc && desc.configurable === false) return;
+  Object.defineProperty(G, 'vana', {
+    configurable: true,
+    enumerable: true,
+    get() { return vana; },
+    set(v) { vana = v; if (v) wrapSprings(v); },
   });
 }
 
