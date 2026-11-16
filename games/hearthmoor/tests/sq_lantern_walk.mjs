@@ -84,7 +84,7 @@ test('quest text and light spots are the Story block', () => {
   assert.equal(QUESTS.sq_lantern_walk.title, 'The Pale Road');
   assert.equal(QUESTS.sq_lantern_walk.giver, 'Sölvi the Ferryman');
   assert.equal(QUESTS.sq_lantern_walk.side, true);
-  assert.equal(QUESTS.sq_lamplit, undefined);
+  assert.equal(QUESTS.sq_lamplit.title, 'Lamps for the Steps');
   assert.equal(QUESTS.sq_lantern_walk.steps[1], 'Bring an empty orb and a glow-fish to Sölvi, and carry the light down the pale road.');
   assert.equal(QUESTS.sq_lantern_walk.steps[2]({ found: {} }), 'Lead the lost lights back to the ferry (0/3).');
   assert.equal(QUESTS.sq_lantern_walk.steps[2]({ found: { sq_light1: 1, sq_light3: 1 } }), 'Lead the lost lights back to the ferry (2/3).');

@@ -73,7 +73,7 @@ test('item, quest text, and letter spots are the Story block', () => {
   assert.equal(ITEMS.frostveil_gloves.about, 'Grey wool, lined with frost-silk. Your fingers stay warm, and cold fire burns a little brighter in them. (Trinket.)');
   assert.equal(QUESTS.sq_frost_letters.title, 'Letters in the Ice');
   assert.equal(QUESTS.sq_frost_letters.side, true);
-  assert.equal(QUESTS.sq_lamplit, undefined);
+  assert.equal(QUESTS.sq_lamplit.title, 'Lamps for the Steps');
   assert.equal(QUESTS.sq_frost_letters.steps[1]({ found: {} }), 'Chip the unsent letters out of the Gloamhaven ice wall (0/3).');
   assert.equal(QUESTS.sq_frost_letters.steps[1]({ found: { sq_letter1: 1, sq_letter3: 1 } }), 'Chip the unsent letters out of the Gloamhaven ice wall (2/3).');
   assert.equal(QUESTS.sq_frost_letters.steps[2], 'Deliver them: a fisher in Ravenhold, Brother Tamsin, and one with no name on it.');

@@ -1,9 +1,12 @@
 // Side quests: Letters in the Ice (sq_frost_letters), The Pale Road (sq_lantern_walk),
-// Lullaby for a Hill (sq_moss_giant), Mother's Spring (sq_capwhistle). Other sq_* entries stay unregistered.
+// Lullaby for a Hill (sq_moss_giant), Mother's Spring (sq_capwhistle),
+// Lamps for the Steps (sq_lamplit). Other sq_* entries stay unregistered.
 // Paste-block helpers, quest steps, and talk pages are the Story text.
 // TALK.ferryman stays Corvin's raven quest in helheim.js. Sölvi is TALK.solvi.
 // TALK.ulfar stays Ulfar's Walk plus the Dark Stonehollow wrap; this file only wraps that.
 // TALK.tobble stays Mother's bubble-lamp; this file only wraps that. TALK.tobble_bench is untouched.
+// TALK.lumi is Lamps for the Steps. Wispwood nest talk passes its own pages and does not read TALK.lumi.
+// The follower hovers at the shoulder. This file never marks her for interact.
 import { ITEMS, QUESTS, TALK, TALK_TAMSIN, MARKER_HOOKS } from './data.js';
 
 // niflheim.js owns this flag (NIFL_MUSP_LOCK, false since 2026-10-25). Importing that module pulls the realm
@@ -39,6 +42,10 @@ Object.assign(QUESTS, {
     1: (S) => `Follow the verses of Tobble's mother's song (${_cnt(S, 'sq_verse', 3)}/3).`,
     2: 'The last verse points behind the waterfall.',
     3: (S) => (_won(S, 'vanaheim') ? 'A violet spring. Tobble thanks you very formally, and that hurts more.' : 'A violet spring. Tobble sits and says nothing for a while.') } },
+  sq_lamplit: { title: 'Lamps for the Steps', giver: 'Lumi', side: true, steps: {
+    1: (S) => `A wraith drank the light from five orbs on the Glimmer Steps. Orbs lit: ${_cnt(S, 'sq_orb', 5)}/5.`,
+    2: 'One orb left. Lumi is hovering beside it, very nervous.',
+    3: (S) => (_won(S, 'alfheim') ? 'Five orbs burn. The elves shut their shutters as you pass.' : 'Five orbs burn neon blue. Lumi will not stop talking about it.') } },
 });
 
 // Quiet Shore ice, hero radius 0.28, reachable from the shore spawn [0, 5.2].
@@ -186,6 +193,113 @@ export function tobble_spring(S) {
     then: (G) => { G.give('coldpetal', 3); G.give('glowbell', 3); G.give('springwater', 2); G.setQuest('sq_capwhistle', 3); },
   };
   return { pages: ['I come here on Mondays now. Mother liked Mondays.'] };
+}
+
+// Same night window as alfheim.js / glow.js / alfheim_lumi.js. Day check-scene (no quest) shows nothing.
+const lamplitNight = (t) => t > 0.8 || t < 0.25;
+
+// Glimmer Steps (area alfheim). Four of the kit prism lanterns in areas/src/alfheim.json.
+// The mesh center is blocked; a hero of radius 0.28 can stand within r 1.2 and walk there from [1.6, 4.4].
+// r 1.2 keeps two lanterns from sharing a prompt. Ferrin's pool [6.4, 4.6] (r 2.4) is 6.3 m from the nearest.
+// The fifth orb is the last-orb talk, not a spot.
+export const ORB_SPOTS = [
+  { id: 'sq_orb1', pos: [-2.6, -0.4], label: 'a dark orb, west steps (E / A)' },
+  { id: 'sq_orb2', pos: [2.6, -0.4], label: 'a dark orb, east steps (E / A)' },
+  { id: 'sq_orb3', pos: [-6.4, -3.8], label: 'a dark orb, far west (E / A)' },
+  { id: 'sq_orb4', pos: [6.4, -3.8], label: 'a dark orb, far east (E / A)' },
+];
+
+const ORB_LOOK = {
+  sq_orb1: ['(The orb on this lantern is dark. You touch the glass, and a little of Lumi\'s glow goes in. It burns neon blue.)'],
+  sq_orb2: ['(Another dark orb. It takes the glow and wakes, neon blue, like a cousin opening its eyes.)'],
+  sq_orb3: ['(This one is dark too. The glass warms. Neon blue climbs the inside of the orb.)'],
+  sq_orb4: ['(The orb drinks the glow. Neon blue. Somewhere close, the dark is not pleased.)'],
+};
+
+export function orbCount(S) { return _cnt(S, 'sq_orb', 5); }
+
+// Offsets that canStand from the lantern terrace (height 1.2) on all four prism lanterns, and sit off the hero.
+const WRAITH_OFFS = [[1.8, 0.6], [-1.8, 0.6], [2.2, 0], [-2.2, 0], [1.6, -1.4], [-1.6, -1.4]];
+
+function wraithPos(alf, spot) {
+  const p = alf && alf.ctx && alf.ctx.player;
+  const col = alf && alf.ctx && alf.ctx.collide;
+  const h0 = p && p.y != null ? p.y : 1.2;
+  const base = spot && spot.pos ? spot.pos : [0, 0];
+  for (const [dx, dz] of WRAITH_OFFS) {
+    const x = base[0] + dx, z = base[1] + dz;
+    if (p && Math.hypot(x - p.x, z - p.z) < 0.8) continue;
+    if (col && col.canStand && col.canStand(x, z, h0, 0.28) == null) continue;
+    return [x, z];
+  }
+  const fx = p && base[0] - p.x < 0 ? -1 : 1;
+  return [base[0] + fx * 1.8, base[1] + 0.6];
+}
+
+export function lightOrb(G, id, alf) {
+  const S = G.S;
+  if ((S.found || {})[id]) return orbCount(S);
+  S.found = { ...(S.found || {}), [id]: 1 };
+  const n = orbCount(S);
+  if (G.toast) G.toast(`Orb ${n}/5`, 2.2);
+  const spot = ORB_SPOTS.find((s) => s.id === id);
+  if (spot && alf && alf.fx && alf.ctx) {
+    const y = alf.ctx.heightAt ? alf.ctx.heightAt(spot.pos[0], spot.pos[1]) : 0;
+    alf.fx('sparkle_burst', spot.pos[0], y + 0.55, spot.pos[1] + 0.05, { duration: 0.9 });
+  }
+  if (n >= 4) {
+    if (G.toast) G.toast('The light pushes the wraith back.', 2.4);
+    const C = G.combat;
+    if (C && C.spawnEnemy) C.spawnEnemy({ id: 'sq_lamplit_wraith', role: 'wraith', pos: wraithPos(alf, spot), once: true }, true);
+  }
+  if (G.save) G.save();
+  return n;
+}
+
+// Talk only when Lumi is actually out on the Steps: the offer at night, the last orb, or the reward.
+// Stage 1 with fewer than four orbs stays quiet so E / A stays on the orbs.
+export function lamplitTalkReady(self) {
+  if (!self || self.area !== 'alfheim' || !self.lumi || !self.lumi.on) return false;
+  if (self.G && self.G.dlg) return false;
+  const S = self.G && self.G.S || {};
+  const q = (S.quests || {}).sq_lamplit || 0;
+  if (!q) {
+    if (!((S.flags || {}).alliance || {}).alfheim) return false;
+    const t = self.ctx && self.ctx.clock && self.ctx.clock.t;
+    return lamplitNight(t);
+  }
+  if (q === 1) return orbCount(S) >= 4;
+  return q === 2;
+}
+
+export function lumi_lamplit(S) {
+  const q = (S.quests || {}).sq_lamplit || 0, F = S.flags || {};
+  if (!q) return {
+    pages: ['Oh. Oh no. Look at them. Five orbs, and all of them dark!',
+            'Those are my cousins. Well, sort of cousins. They are light in glass, I am light in... me. We are basically family.',
+            'Something drank them. A wraith, I bet. They love a free meal. Will you help me light them again?'],
+    choice: { id: 'sq_lamplit', options: [
+      { label: 'Let\'s light them.', pick: (G) => { G.setQuest('sq_lamplit', 1);
+          return { pages: ['Yes! Touch each one and I will lend a little glow. Watch the wraith. It will not like this at all.'] }; } },
+      { label: 'Later, Lumi.', cancel: true, pick: () => ({ pages: ['Later. Right. They will just... sit in the dark. Being sad. It is fine.'] }) },
+    ] },
+  };
+  if (q === 1 && _cnt(S, 'sq_orb', 5) >= 4) return {
+    pages: ['One left! You do it. No, wait. I could do it? No. Yes? I get shy around family.'],
+    choice: { id: 'sq_lamplit_last', options: [
+      { label: 'You light it, Lumi.', pick: (G) => { _flags(G.S).sq_lumi_lit = 1; G.setQuest('sq_lamplit', 2);
+          return { pages: ['(Lumi touches the orb. It blooms neon blue, and so does she, all the way to the edges.)', 'Oh. Oh, that felt nice. Do not tell anyone I cried. Wisps can cry. A bit. It sparkles.'] }; } },
+      { label: 'I\'ve got it.', pick: (G) => { G.setQuest('sq_lamplit', 2);
+          return { pages: ['(The last orb catches.) There! Five. Five cousins, all glowing. You are very good at this.'] }; } },
+    ] },
+  };
+  if (q === 2) return {
+    pages: _won(S, 'alfheim')
+      ? ['They are lit. The elves are watching from behind their shutters. They will not come out while you are here.', '...I know why. I am still glad we did it. Here. The Steps keep a little gold for lamplighters.']
+      : ['They are lit! Look at the Steps. Like a river of little moons.', 'The lamplighters\' box had gold in it. And some glow seeds. Plant them somewhere dark that deserves it.'],
+    then: (G) => { _gold(G, 60); G.give('glowseed', 2); G.setQuest('sq_lamplit', 3); },
+  };
+  return { pages: [(S.flags || {}).sq_lumi_lit ? 'I still feel a bit brighter since I lit that orb. Is that silly?' : 'Five cousins. I visit them sometimes.'] };
 }
 
 // Mossbrook Springs (area vanaheim), hero radius 0.28. All three canStand and walk from the start spawn [-9.6, 0.6].
@@ -403,8 +517,10 @@ export function installSideQuests(G) {
 
   if (G.nifl && typeof G.nifl.home === 'function') wrapHome(G.nifl);
   TALK.solvi = solvi_ferry;
+  TALK.lumi = lumi_lamplit;
   watchHel(G);
   watchVana(G);
+  watchAlf(G);
   MARKER_HOOKS.push(sideMarker);
 }
 
@@ -476,6 +592,64 @@ function watchVana(G) {
     enumerable: true,
     get() { return vana; },
     set(v) { vana = v; if (v) wrapSprings(v); },
+  });
+}
+
+// Alfheim is constructed after installSideQuests (game.js). Watch the assignment.
+// Orbs hang after attach (atSteps and lumi.attach already ran). Prompt and interact
+// let a shown spot win, then offer Lumi, then the previous prompt.
+function hangOrbs(alf) {
+  for (const spot of ORB_SPOTS) {
+    alf.spot({
+      id: spot.id,
+      pos: spot.pos,
+      r: 1.2,
+      label: spot.label,
+      show: () => {
+        const S = alf.G.S;
+        if (((S.quests || {}).sq_lamplit || 0) !== 1 || (S.found || {})[spot.id]) return false;
+        const t = alf.ctx && alf.ctx.clock && alf.ctx.clock.t;
+        return lamplitNight(t);
+      },
+      act: () => alf.look(spot.id, 'A dark orb', ORB_LOOK[spot.id], () => lightOrb(alf.G, spot.id, alf)),
+    });
+  }
+}
+
+function wrapAlf(alf) {
+  if (!alf || alf._sqLamplit || typeof alf.attach !== 'function') return;
+  alf._sqLamplit = true;
+  const prevAttach = alf.attach;
+  const prevPrompt = alf.prompt;
+  const prevInteract = alf.interact;
+  alf.attach = function attach(ctx, area) {
+    prevAttach.call(this, ctx, area);
+    if (area === 'alfheim') hangOrbs(this);
+  };
+  alf.prompt = function prompt() {
+    const line = prevPrompt.call(this);
+    if (line) return line;
+    if (lamplitTalkReady(this)) return 'Talk to Lumi (E / A)';
+    return line;
+  };
+  alf.interact = function interact() {
+    if (prevInteract.call(this)) return true;
+    if (!lamplitTalkReady(this)) return false;
+    this.G.openDialogue({ id: 'lumi', name: 'Lumi' }, lumi_lamplit(this.G.S));
+    return true;
+  };
+}
+
+function watchAlf(G) {
+  if (G.alfheim) wrapAlf(G.alfheim);
+  let alf = G.alfheim;
+  const desc = Object.getOwnPropertyDescriptor(G, 'alfheim');
+  if (desc && desc.configurable === false) return;
+  Object.defineProperty(G, 'alfheim', {
+    configurable: true,
+    enumerable: true,
+    get() { return alf; },
+    set(v) { alf = v; if (v) wrapAlf(v); },
   });
 }
 
