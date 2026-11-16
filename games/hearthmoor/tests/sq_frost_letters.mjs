@@ -68,7 +68,8 @@ const ADDRESS = 'A fisher in Ravenhold. Brother Tamsin at the temple. And this o
 
 test('item, quest text, and letter spots are the Story block', () => {
   assert.equal(ITEMS.frostveil_gloves.name, 'Frostveil Gloves');
-  assert.equal(ITEMS.frostveil_gloves.px, 'tonic');
+  assert.equal(ITEMS.frostveil_gloves.px, 'frostveil_gloves');
+  assert.equal(ITEMS.frostveil_gloves.img, 'art/vanaheim/icons/frostveil_gloves.png');
   assert.equal(ITEMS.frostveil_gloves.about, 'Grey wool, lined with frost-silk. Your fingers stay warm, and cold fire burns a little brighter in them. (Trinket.)');
   assert.equal(QUESTS.sq_frost_letters.title, 'Letters in the Ice');
   assert.equal(QUESTS.sq_frost_letters.side, true);

@@ -15,7 +15,7 @@ const _won = (S, realm) => _ally(S)[realm] === 'conquer';
 const _cnt = (S, pre, n) => Array.from({ length: n }, (_, i) => `${pre}${i + 1}`).filter((k) => (S.found || {})[k]).length;
 
 Object.assign(ITEMS, {
-  frostveil_gloves: { name: 'Frostveil Gloves', px: 'tonic', about: 'Grey wool, lined with frost-silk. Your fingers stay warm, and cold fire burns a little brighter in them. (Trinket.)' },
+  frostveil_gloves: { name: 'Frostveil Gloves', px: 'frostveil_gloves', about: 'Grey wool, lined with frost-silk. Your fingers stay warm, and cold fire burns a little brighter in them. (Trinket.)', img: 'art/vanaheim/icons/frostveil_gloves.png' },
 });
 
 Object.assign(QUESTS, {
