@@ -7,6 +7,7 @@ import { ITEMS, QUESTS, TALK, SPELL_NAMES, markerFor, errandsDone, stormTalk } f
 import { Harbor } from './ravenhold.js';
 import { Crossing } from './bifrost.js';
 import { Barks } from './barks.js';
+import { CODEX, unlockedEntries } from './codex.js';
 import { Alfheim, AREAS_ALF, AREA_NAMES_ALF } from './alfheim.js';   // [ALFHEIM]
 import { Svartalfheim, AREAS_SV, AREA_NAMES_SV } from './svartalfheim.js';   // [SVARTALFHEIM]
 import { Jotunheim, AREAS_JOT, AREA_NAMES_JOT } from './jotunheim.js';   // [JOTUNHEIM] stub
@@ -233,6 +234,7 @@ function drawLog() {
   $('logCount').textContent = `${n}/3 done`;
   $('btnLog').textContent = `quests ${n}/3`;
   drawHunt();
+  drawCodex();
   const sp = $('logSpells');
   if (sp) sp.textContent = 'Spell slots: ' + slots().map((s) => spellName(s)).join(' · ') + '  ·  Charms known: ' + G.S.spells.map((s) => SPELL_NAMES[s] || s).join(' · ');
 }
@@ -246,6 +248,31 @@ function drawHunt() {
   $('riftCount').textContent = `Rifts sealed: ${R.minor || 0} minor · ${R.major || 0} major · ${R.abyssal || 0} abyssal`;
 }
 G.drawHunt = drawHunt;
+function drawCodex() {
+  const el = $('codexList'); if (!el) return;
+  const rows = unlockedEntries(G.S || {});
+  el.replaceChildren();
+  if (!rows.length) {
+    const li = document.createElement('li');
+    li.className = 'todo';
+    const span = document.createElement('span');
+    span.textContent = 'No lore yet. Make friends (or enemies) past the Rift.';
+    li.append(span);
+    el.append(li);
+  } else {
+    for (const entry of rows) {
+      const li = document.createElement('li');
+      const b = document.createElement('b');
+      b.textContent = entry.title;
+      const span = document.createElement('span');
+      span.textContent = entry.text;
+      li.append(b, span);
+      el.append(li);
+    }
+  }
+  const count = $('codexCount');
+  if (count) count.textContent = `${rows.length}/${CODEX.length} found`;
+}
 function spellBlurb(id) {
   const S = SPELLS[id];
   if (S) return `class spell · ${S.kind}${S.dmg ? ` · ${S.dmg} dmg` : ''}${S.heal ? ` · heals ${S.heal}` : ''} · ${S.cd}s`;

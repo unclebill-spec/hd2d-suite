@@ -140,7 +140,10 @@ body.rm .toast, body.rm #dlg .more, body.rm .slot.new, body.rm .btn.ping, body.r
 #log li.done b { color: #b2c464; }
 #log .hunt h4 { color: var(--nb-hi); font: 400 18px var(--hd); border-top: 2px solid var(--ui-indigo); }
 #log .hunt h4 span { font: 400 12px var(--bd); color: var(--ui-text); }
+#log .codex h4 { color: var(--nb-hi); font: 400 18px var(--hd); border-top: 2px solid var(--ui-indigo); }
+#log .codex h4 span { font: 400 12px var(--bd); color: var(--ui-text); }
 #huntList li { color: var(--ui-text); } #huntList li i { border-color: var(--ui-navy); }
+#codexList li { color: var(--ui-text); }
 /* ---- title, save slots and hero picker (night_glass) */
 .plaque { padding: 22px 30px 16px; }
 .slotcard { background: var(--ui-indigo); color: var(--ui-text-hi); border: 2px solid var(--nb-lo); border-radius: 0; box-shadow: none; font-family: var(--bd); }
