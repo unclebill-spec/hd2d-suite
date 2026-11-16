@@ -222,6 +222,18 @@
    "say": [
     "The lanterns go all the way across. I counted."
    ]
+  },
+  {
+   "id": "solvi",
+   "role": "solvi",
+   "name": "Sölvi the Ferryman",
+   "pos": [
+    1.8,
+    0.2
+   ],
+   "facing": "left",
+   "behavior": "idle",
+   "talkable": true
   }
  ],
  "player": {

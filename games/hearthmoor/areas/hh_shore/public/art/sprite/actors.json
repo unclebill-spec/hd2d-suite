@@ -26298,6 +26298,16 @@
     "walk",
     "follow"
    ]
+  },
+  "solvi": {
+   "sheet": "solvi",
+   "row": 0,
+   "kind": "human",
+   "anims": [
+    "idle",
+    "walk"
+   ],
+   "desc": "Sölvi the Ferryman (1x, side quests): grey-blue wool coat over an icy-blue tunic, belted slate trousers, sealskin boots, silver-white hair and short beard, a slate ferry pole with a pale glow tip."
   }
  },
  "sheets": {
@@ -26320,6 +26330,10 @@
   "hhenemy": {
    "json": "hhenemy.json",
    "image": "hhenemy.png"
+  },
+  "solvi": {
+   "json": "solvi.json",
+   "image": "solvi.png"
   }
  }
 }

@@ -261,6 +261,18 @@
    "say": [
     "Mind the road. It wails, but it doesn't bite."
    ]
+  },
+  {
+   "id": "solvi",
+   "role": "solvi",
+   "name": "Sölvi the Ferryman",
+   "pos": [
+    9.2,
+    -2.2
+   ],
+   "facing": "left",
+   "behavior": "idle",
+   "talkable": true
   }
  ],
  "player": {
