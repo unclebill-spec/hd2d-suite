@@ -302,9 +302,8 @@ def install_old_temple(areas=AREAS):
     P = GAME / "art" / "old_temple"
     am_ot = json.loads((P / "sprite" / "old_temple_actors.json").read_text())
     fxm = json.loads((P / "gamefx" / "old_temple_fx.json").read_text())
-    # faceless_gaze stays out for now: its eye-glint frames are under check-scene's 20 px measurable minimum (gamefx_sharp
-    # counts that as unverified). It belongs to the later 'Faceless Statues' beat; the Art bot can redraw it bigger.
-    skip = {"faceless_gaze"}
+    # faceless_gaze v2 (Hearthmoor Art 2026-11-15): redrawn eye-glint frames are measurable (42-78 px).
+    skip = set()
     fxm = {**fxm, "effects": {k: v for k, v in fxm["effects"].items() if k not in skip}}
     n = 0
     for a in areas:
@@ -846,9 +845,8 @@ def install_forge(areas=AREAS):
     P = GAME / "art" / "forge"
     am_f = json.loads((P / "forge_actors.json").read_text())
     fxm = json.loads((P / "forge_fx.json").read_text())
-    # quench_steam / embers_drift / anvil_glow stay out: too sparse for check-scene's gamefx_sharp (like faceless_gaze);
-    # the forge uses the particle 'embers' emitter and forge_sparks instead
-    skip = {"quench_steam", "embers_drift", "anvil_glow"}
+    # quench_steam / embers_drift / anvil_glow: chunk fix (Hearthmoor Art 2026-11-15) makes frames measurable.
+    skip = set()
     fxm = {**fxm, "effects": {k: v for k, v in fxm["effects"].items() if k not in skip}}
     for a in [x for x in areas if x in FORGE_AREAS]:
         root = GAME / "areas" / a

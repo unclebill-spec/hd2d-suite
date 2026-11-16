@@ -879,6 +879,53 @@
    ],
    "notes": "dusk only, alternate window"
   },
+  "faceless_gaze": {
+   "row": 26,
+   "frames": 4,
+   "fps": 3,
+   "loop": true,
+   "loop_from": 0,
+   "loops": 1,
+   "kind": "billboard",
+   "pivot": [
+    24,
+    47
+   ],
+   "lift": 2.05,
+   "glow": true,
+   "light": null,
+   "speed": null,
+   "travel": null,
+   "then": null,
+   "duration": 9999,
+   "frame_list": [
+    {
+     "x": 0,
+     "y": 1248,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 48,
+     "y": 1248,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 96,
+     "y": 1248,
+     "w": 48,
+     "h": 48
+    },
+    {
+     "x": 144,
+     "y": 1248,
+     "w": 48,
+     "h": 48
+    }
+   ],
+   "notes": "The Faceless Statues (night): over faceless_statue's mask (mask centre y ~2.34)"
+  },
   "stonefrost_cast_ii": {
    "row": 27,
    "frames": 6,

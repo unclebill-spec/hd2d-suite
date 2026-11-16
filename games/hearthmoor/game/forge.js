@@ -247,7 +247,7 @@ export class Forge {
     const r = temper(S, it, rnd);
     if (r.blocked) return { pages: [/gold/.test(r.blocked) ? "Short on gold. The forge eats coal and coal costs coin. I'll keep the fire warm for you." : /iron|steel/.test(r.blocked) ? "Short on iron. Scrap something you've outgrown, and I'll sort the bits." : /cap/.test(r.blocked) ? "That's as far as this piece goes. A Common can't carry a Legendary's fire. Bring me something rarer." : `Not today: ${r.blocked}.`] };
     const a = (this.ctx.scene.game.anvils || [])[0];
-    if (a) { this.burst('forge_sparks', a.pos[0], a.pos[1]); if (r.quench) { this.burst('forge_sparks', -1.8, -8.0); for (let k = 0; k < 4; k++) this.ctx.burst && this.ctx.burst('wet_glint_cool', -1.8 + (k - 1.5) * 0.3, this.ctx.heightAt(-1.8, -8.0) + 0.8, -7.6); } }
+    if (a) { this.burst('forge_sparks', a.pos[0], a.pos[1]); if (r.quench) { this.burst('forge_sparks', -1.8, -8.0); this.burst('quench_steam', -1.8, -8.0); for (let k = 0; k < 4; k++) this.ctx.burst && this.ctx.burst('wet_glint_cool', -1.8 + (k - 1.5) * 0.3, this.ctx.heightAt(-1.8, -8.0) + 0.8, -7.6); } }
     G.audio && G.audio.sfx(r.ok ? 'craft_rare' : 'error'); G.save && G.save();
     return { pages: [r.line] };
   }

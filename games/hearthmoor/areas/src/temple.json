@@ -689,7 +689,7 @@
      -7.2
     ]
    ],
-   "remaining": "riftgate_glow_lit kit piece (the lit glow mesh + its 3 lamps): the dormant glow mesh stays and the lit state is the vortex + ring + light; Edda (novice) still uses the lamplighter role; faceless_gaze (the statues' night gaze, for the later 'Faceless Statues' beat) is not installed: its frames are under check-scene's 20-px measurable minimum, so gamefx_sharp can't verify it"
+   "remaining": "riftgate_glow_lit kit piece (the lit glow mesh + its 3 lamps): the dormant glow mesh stays and the lit state is the vortex + ring + light; Edda (novice) still uses the lamplighter role"
   }
  },
  "gamefx": true
