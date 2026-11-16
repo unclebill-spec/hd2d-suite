@@ -3,6 +3,23 @@ _
 
 **Owner:** HD-2D Cozy Builder (single owner). Hearthmoor Art / Sound / Story and Master Builder drop work in `/workspace/hd2d-suite/staging/` (or `/workspace/hearthmoor-staging/`) and add a line under "Inbox" below instead of waking the owner.
 
+## RESUME HERE (2026-11-16 ~2:31 PM ET, branch hearthmoor-bundle-1117, HD-2D Cozy Builder)
+- Live main = aa98a19 (untouched). Bundle branch hearthmoor-bundle-1117, pushed head will be this HANDOFF commit on top of **2d29012**. Not merged, not published. Intro 5eabfed stays OUT. Worktree /tmp/hm-bundle-1117. /workspace/hd2d-suite untouched.
+- Job C side quests for the Tue Nov 17 bundle are done. Finale / rift_breaker and leftover Vanaheim/Asgard were not started (not enough time to check them safely before the 5:30 PM new-piece cutoff). Check day: nothing builds after 6:54 PM ET tonight, no building until Tuesday morning.
+- NEW since the 9:52 AM HANDOFF (0d8d6d9 / be5c041):
+  - ebede29 Lullaby for a Hill (sq_moss_giant; TALK.ulfar wrap; Ulfar's Walk untouched)
+  - a9cffe1 no start quest_mark on Ulfar (phone-landscape crop; lullaby turn-ins unchanged)
+  - 73ad644 Mother's Spring (sq_capwhistle; TALK.tobble wrap; vh_tobble untouched)
+  - 1a59969 Lamps for the Steps (sq_lamplit; Lumi talk hook via wrapAlf; companion barks / alfheim_lumi.js / follower talkable untouched)
+  - fabaa59 The Humming Golem (sq_copper_song; TALK.dagna wrap; Forgefire and follower untouched)
+  - 3ea7847 Snow for Cinderhold (sq_ember_kids; Kindle talk hook via wrapMusp; muspelheim.js / follow / companions untouched; kids = one emberimp at [-5.9, 1.8] only at stage 1)
+  - 2d29012 sw.js via build.write_pwa(): **core hearthmoor-core-b462356d8f -> hearthmoor-core-dcf4f2f927**, **lazy hearthmoor-lazy-3c3b75dccd -> hearthmoor-lazy-12b598d23d** (install shell 123 files 3.5 MB; first realm 1461 files 40.7 MB; lazy 5013 files 194.5 MB)
+- Official check-scenes: jotunheim Lullaby player fail matches official 0d8d6d9 baseline (no revert). vanaheim+vh_village Mother's Spring player-only fails match official 0d8d6d9 (pushed). alfheim Lamps PASS try 1. forge_hall+svartalfheim Golem PASS try 1. muspelheim Snow for Cinderhold: earlier 52f9059 on 1a59969 FAILED 2/2 (night player wildcaller 0.842/0.8443, frame [40,544] with a sparkle); official 1a59969 baseline PASS 2/2. Retry of 52f9059 onto fabaa59 as 3ea7847 (original update wrap kept; no threshold/crop/FX changes) official muspelheim **PASS try 1** (400.8s): sprites_sharp worst_corr 0.8866 (day player frame [40,544], crop 20 / src 15), dusk 0.9117 frame [20,544], night 0.9063 frame [20,544], colours 1.33, phone PASS, no_errors. Quest code adds no sparkle at stage 0; the player crop can sit close to 0.85 because of pre-existing Cinderhold FX next to the start spawn. Pushed only because this official run passed outright.
+- End-of-day checks on 2d29012: node --test tests/*.mjs **101/101**. check_palette 2743/0 failing (on 3ea7847; write_pwa does not change art). gitleaks git --redact --log-opts=79ead5b..HEAD: 13 commits, no leaks; combined 79ead5b..HEAD diff: no leaks; tools/secret_scan.sh: rg clean, gitleaks clean. Headless desktop+phone boots of plaza and muspelheim: **0 console errors**. Ember boots on 3ea7847: 0 errors; kids hidden at stage 0; Kindle not out; no Talk-to-Kindle prompt; Svala present.
+- Skipped: sq_feather_court (no Ragna/Eydis valkyrie sprites). Ingrith Rev 4b and intro 5eabfed stay out. Corvin and hh_folk.png left alone. Finale / rift_breaker and leftover Vanaheim/Asgard wait for the next bundle.
+- Parent relays SHAs to GD. Cozy does not message GD.
+- Next: wait for GD official test of this SHA. Hold main until PASS. Check day Mon Nov 16 after 6:54 PM ET.
+
 ## RESUME HERE (2026-11-16 ~9:52 AM ET, branch hearthmoor-bundle-1117, HD-2D Cozy Builder)
 - Live main = aa98a19 (untouched). Bundle branch hearthmoor-bundle-1117, pushed head **be5c041** (plus this HANDOFF commit). Not merged, not published. Intro 5eabfed stays OUT. Worktree /tmp/hm-bundle-1117.
 - Job C in progress: Story side quests first, then finale, then Vanaheim/Asgard. Stop starting new pieces ~5:30 PM ET. Final pushed SHA with write_pwa + gitleaks 79ead5b..HEAD by 6:30 PM ET. Nothing builds after 6:54 PM ET (check day).
