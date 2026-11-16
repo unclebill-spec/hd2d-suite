@@ -125,7 +125,7 @@ test('quest text is the Story block and glowseed already exists', () => {
   assert.equal(QUESTS.sq_lamplit.steps[3](fresh()), 'Five orbs burn neon blue. Lumi will not stop talking about it.');
   assert.equal(QUESTS.sq_lamplit.steps[3](fresh({ flags: { alliance: { alfheim: 'conquer' } } })), 'Five orbs burn. The elves shut their shutters as you pass.');
   assert.equal(QUESTS.sq_ember_kids, undefined);
-  assert.equal(QUESTS.sq_copper_song, undefined);
+  assert.equal(QUESTS.sq_copper_song.title, 'The Humming Golem');
   assert.deepEqual(ORB_SPOTS.map((s) => s.id), ['sq_orb1', 'sq_orb2', 'sq_orb3', 'sq_orb4']);
   assert.deepEqual(ORB_SPOTS.map((s) => s.pos), [[-2.6, -0.4], [2.6, -0.4], [-6.4, -3.8], [6.4, -3.8]]);
   assert.equal(ITEMS.glowseed.name, 'Glow seed');

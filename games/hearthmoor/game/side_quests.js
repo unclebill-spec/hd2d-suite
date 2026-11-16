@@ -1,12 +1,15 @@
 // Side quests: Letters in the Ice (sq_frost_letters), The Pale Road (sq_lantern_walk),
 // Lullaby for a Hill (sq_moss_giant), Mother's Spring (sq_capwhistle),
-// Lamps for the Steps (sq_lamplit). Other sq_* entries stay unregistered.
+// Lamps for the Steps (sq_lamplit), The Humming Golem (sq_copper_song).
+// Other sq_* entries stay unregistered.
 // Paste-block helpers, quest steps, and talk pages are the Story text.
 // TALK.ferryman stays Corvin's raven quest in helheim.js. Sölvi is TALK.solvi.
 // TALK.ulfar stays Ulfar's Walk plus the Dark Stonehollow wrap; this file only wraps that.
 // TALK.tobble stays Mother's bubble-lamp; this file only wraps that. TALK.tobble_bench is untouched.
 // TALK.lumi is Lamps for the Steps. Wispwood nest talk passes its own pages and does not read TALK.lumi.
-// The follower hovers at the shoulder. This file never marks her for interact.
+// TALK.dagna stays the forge lines plus the Forgefire wrap. This file only wraps that.
+// The follower hovers at the shoulder. This file never marks her for interact, and never hooks the follower.
+// No start mark on id dagna: a fresh forge_hall check-scene stays clear of her crop.
 import { ITEMS, QUESTS, TALK, TALK_TAMSIN, MARKER_HOOKS } from './data.js';
 
 // niflheim.js owns this flag (NIFL_MUSP_LOCK, false since 2026-10-25). Importing that module pulls the realm
@@ -46,6 +49,10 @@ Object.assign(QUESTS, {
     1: (S) => `A wraith drank the light from five orbs on the Glimmer Steps. Orbs lit: ${_cnt(S, 'sq_orb', 5)}/5.`,
     2: 'One orb left. Lumi is hovering beside it, very nervous.',
     3: (S) => (_won(S, 'alfheim') ? 'Five orbs burn. The elves shut their shutters as you pass.' : 'Five orbs burn neon blue. Lumi will not stop talking about it.') } },
+  sq_copper_song: { title: 'The Humming Golem', giver: 'Dagna Coalbeard', side: true, steps: {
+    1: (S) => `Something under Copper Row hums an old work song. Rubble cleared: ${_cnt(S, 'sq_rubble', 3)}/3.`,
+    2: 'An old copper golem, jammed under a beam. It is still humming.',
+    3: (S) => ((S.flags || {}).sq_golem === 'core' ? 'You took the core. Dagna will not look at the forge for a while.' : 'The golem walks Copper Row now, humming.') } },
 });
 
 // Quiet Shore ice, hero radius 0.28, reachable from the shore spawn [0, 5.2].
@@ -302,6 +309,35 @@ export function lumi_lamplit(S) {
   return { pages: [(S.flags || {}).sq_lumi_lit ? 'I still feel a bit brighter since I lit that orb. Is that silly?' : 'Five cousins. I visit them sometimes.'] };
 }
 
+// Story talk for The Humming Golem. runestone already exists. golem_core is a gem, not an ITEMS row.
+// The Copper Row golem opens this as Dagna. The forge wrap does too, once three piles are clear or the reward is ready.
+export function dagna_song(S) {
+  const q = (S.quests || {}).sq_copper_song || 0;
+  if (!q) return {
+    pages: ['Hush. Hear that? Under the floor.', 'That is my grandfather\'s work song. He hummed it at the anvil for sixty years. He has been dead for twelve.',
+            _won(S, 'svartalfheim') ? 'The old tunnel is closed by your new orders. I am asking you to open it. Just this once.' : 'The old tunnel under Copper Row. Come with me. Bring a pick.'],
+    then: (G) => G.setQuest('sq_copper_song', 1),
+  };
+  if (q === 1 && _cnt(S, 'sq_rubble', 3) >= 3) return {
+    pages: ['(Under a fallen beam: a copper golem, old and green at the joints. Its chest glows neon blue. It is humming.)',
+            'He built this one. Look, his mark. It has been humming his song down here in the dark all this time.',
+            'The forge would pay well for a core like that. I know it would. I am not saying we should.'],
+    choice: { id: 'sq_golem', options: [
+      { label: 'Sing the second verse with it.', pick: (G) => { _flags(G.S).sq_golem = 'free'; G.setQuest('sq_copper_song', 2);
+          return { pages: ['(Dagna sings, rough and low. The golem stops. Then it sings the next line, and lifts the beam off itself.)', 'Grandfather. You stubborn old lump.'] }; } },
+      { label: 'Take the core for the forge.', pick: (G) => { _flags(G.S).sq_golem = 'core'; _gem(G, 'golem_core'); G.setQuest('sq_copper_song', 2);
+          return { pages: ['(The humming stops. The neon goes out of its chest. The tunnel is very quiet.)', '...Right. Right. It is good metal. He would have said so.'] }; } },
+    ] },
+  };
+  if (q === 2) return {
+    pages: (S.flags || {}).sq_golem === 'core'
+      ? ['I will carry the rest of him home. You keep the core. Do not let Tova sell it.']
+      : ['He is walking Copper Row now. Smiths keep stopping to listen. Here: my grandfather\'s rune-stone, and the reward the guild owed him.'],
+    then: (G) => { if ((G.S.flags || {}).sq_golem !== 'core') { G.give('runestone', 1); _gold(G, 80); } G.setQuest('sq_copper_song', 3); },
+  };
+  return { pages: ['Copper Row has a hum to it again. Or a hole where the hum was. Depends which you chose.'] };
+}
+
 // Mossbrook Springs (area vanaheim), hero radius 0.28. All three canStand and walk from the start spawn [-9.6, 0.6].
 // West standing stone [-6.4, -1.8], east standing stone [7.4, 0.2], mushroom ring [-2.6, -2.8].
 // Off the basin [4.6, -6.6] and outside the violet-spring interact [4.6, -5.0] r 2.
@@ -371,6 +407,27 @@ function tobbleIdle(entry) {
   return typeof p === 'string' && (/^\(Tobble hides behind a toadstool/.test(p) || /^That mushroom is judging us/.test(p));
 }
 
+// Dagna's forge idle only. Trial, Kindle, and Forgefire offer / reminder / turn-in are not idle.
+function dagnaIdle(entry) {
+  const p = entry && entry.pages && entry.pages[0];
+  return typeof p === 'string' && /^Anvildeep's best smith\./.test(p);
+}
+
+// Main-quest beats and Forgefire pages pass through unchanged. Matched on the first line the story returns.
+function dagnaKept(entry) {
+  const p = entry && entry.pages && entry.pages[0];
+  if (typeof p !== 'string') return false;
+  if (/^Strike the Great Anvil when the glow is smallest\./.test(p)) return true;
+  if (/^Three true\. Your arm's not bad/.test(p)) return true;
+  if (/^The Heart's lost somewhere\./.test(p)) return true;
+  if (/^\(Dagna hammers the three cores/.test(p)) return true;
+  if (/^Take the Heart to the Thane\./.test(p)) return true;
+  if (/^Forgefire! Go and hit something\./.test(p)) return true;
+  if (/^Three true strikes and three orders\?/.test(p)) return true;
+  if (/^Forgefire! strikes /.test(p)) return true;
+  return false;
+}
+
 // vanaheim.js marks tobble for Mother's bubble-lamp. Same condition, so a side marker cannot paint over it.
 function tobbleMainMarked(S) {
   const q = S.quests || {};
@@ -395,6 +452,8 @@ function ulfarMainMarked(S) {
 let hrefnaPrev = null;
 let ulfarPrev = null;
 let tobblePrev = null;
+let dagnaPrev = null;
+let dagnaWrapped = false;
 let installed = false;
 
 function sideMarker(id, S) {
@@ -457,7 +516,10 @@ function wrapHome(nifl) {
 }
 
 export function installSideQuests(G) {
-  if (installed) return;
+  if (installed) {
+    installCopper(G);
+    return;
+  }
   installed = true;
   hrefnaPrev = TALK.hrefna;
   ulfarPrev = TALK.ulfar;
@@ -522,6 +584,7 @@ export function installSideQuests(G) {
   watchVana(G);
   watchAlf(G);
   MARKER_HOOKS.push(sideMarker);
+  installCopper(G);
 }
 
 // Helheim is constructed after installSideQuests (game.js). Watch the assignment and hang the
@@ -651,6 +714,188 @@ function watchAlf(G) {
     get() { return alf; },
     set(v) { alf = v; if (v) wrapAlf(v); },
   });
+}
+
+// Copper Row (area svartalfheim). Hero radius 0.28, walkable from the start spawn [1.6, 5.0].
+// Just off the crate [-1.6, 3.0], the barrel [-8.4, 2.8], and the coal bin [-6.6, -9.2].
+// Each center is at least 3 m from Brokk, Tansy, Kesh, Haldis, dw_a, sv_a, and the spawn.
+// r 1.2 keeps the prompts apart. Hidden unless sq_copper_song is 1, so a fresh check-scene is unchanged.
+// The fallen beam is near the coal pile. It is a look, plus a temporary golem sprite. No new mesh.
+export const RUBBLE_SPOTS = [
+  { id: 'sq_rubble1', pos: [-3.75, 3.25], name: 'Rubble', label: 'rubble under the crates (E / A)' },
+  { id: 'sq_rubble2', pos: [-8.5, 2.0], name: 'Rubble', label: 'rubble by the barrel (E / A)' },
+  { id: 'sq_rubble3', pos: [-6.0, -9.0], name: 'Rubble', label: 'rubble by the coal bin (E / A)' },
+];
+
+export const COPPER_GOLEM = { id: 'sq_golem', pos: [-5.25, -8.25], role: 'golem' };
+
+const SPARK_AT = [-5.0, 2.0];
+
+const RUBBLE_LOOK = {
+  sq_rubble1: ['(Rubble jammed against the crates. You shift the stones. An old work song hums under the street.)'],
+  sq_rubble2: ['(Loose rock by the barrel. You clear a gap. The hum is warmer here, and the cracks spit sparks.)'],
+  sq_rubble3: ['(A pile of fallen stone by the coal bin. You pull it aside. The work song is right under your boots.)'],
+};
+
+export function rubbleCount(S) { return _cnt(S, 'sq_rubble', 3); }
+
+function dismissCopperGolem(sv) {
+  const ctx = sv && sv.ctx;
+  if (!ctx || !ctx.npc) return;
+  const a = ctx.npc(COPPER_GOLEM.id);
+  if (!a) return;
+  if (ctx.removeNpc) ctx.removeNpc(a);
+  else if (ctx.actors && ctx.actors.remove) ctx.actors.remove(a);
+}
+
+function ensureCopperGolem(sv) {
+  if (!sv || sv.area !== 'svartalfheim') return;
+  const S = (sv.G && sv.G.S) || {};
+  const ready = ((S.quests || {}).sq_copper_song || 0) === 1 && rubbleCount(S) >= 3;
+  if (!ready) { dismissCopperGolem(sv); return; }
+  const ctx = sv.ctx;
+  if (!ctx || !ctx.addNpc) return;
+  if (ctx.npc && ctx.npc(COPPER_GOLEM.id)) return;
+  const roles = ctx.actors && ctx.actors.meta && ctx.actors.meta.roles;
+  if (roles && !roles[COPPER_GOLEM.role]) return;
+  ctx.addNpc({
+    id: COPPER_GOLEM.id,
+    role: COPPER_GOLEM.role,
+    name: 'Copper golem',
+    pos: COPPER_GOLEM.pos.slice(),
+    facing: 'down',
+    behavior: 'idle',
+  });
+}
+
+// One stock ember imp, from the barrel pile, and only while the quest is at stage 1.
+// Not hung from attach, so a default check-scene never meets it.
+function sparkImp(G) {
+  const f = _flags(G.S);
+  if (f.sq_copper_spark) return;
+  if (((G.S.quests || {}).sq_copper_song || 0) !== 1) return;
+  f.sq_copper_spark = 1;
+  const C = G.combat;
+  if (!C || !C.spawnEnemy || !C.ctx) return;
+  C.spawnEnemy({ id: 'sq_copper_imp', role: 'emberimp', pos: SPARK_AT.slice(), once: true }, true);
+}
+
+function clearRubble(sv, spot) {
+  return (G) => {
+    const S = G.S;
+    if ((S.found || {})[spot.id]) return;
+    S.found = { ...(S.found || {}), [spot.id]: 1 };
+    const n = rubbleCount(S);
+    if (G.toast) G.toast(`Rubble ${n}/3`, 2.2);
+    if (spot.id === 'sq_rubble2') {
+      if (G.toast) G.toast('Fire elementals spark in the cracks.', 2.4);
+      sparkImp(G);
+    }
+    if (n >= 3) {
+      if (G.toast) G.toast('Something under the beam is humming.', 2.6);
+      if (sv && sv.area === 'svartalfheim') ensureCopperGolem(sv);
+    }
+    if (G.save) G.save();
+  };
+}
+
+function hangCopper(sv) {
+  if (!sv || sv.area !== 'svartalfheim') return;
+  for (const spot of RUBBLE_SPOTS) {
+    sv.spot({
+      id: spot.id,
+      pos: spot.pos,
+      r: 1.2,
+      label: spot.label,
+      show: () => ((sv.G.S.quests || {}).sq_copper_song || 0) === 1 && !(sv.G.S.found || {})[spot.id],
+      act: () => sv.G.openDialogue({ id: spot.id, name: spot.name }, { pages: RUBBLE_LOOK[spot.id], then: clearRubble(sv, spot) }),
+    });
+  }
+  sv.spot({
+    id: COPPER_GOLEM.id,
+    pos: COPPER_GOLEM.pos,
+    r: 1.2,
+    label: 'a fallen beam (E / A)',
+    show: () => ((sv.G.S.quests || {}).sq_copper_song || 0) === 1 && rubbleCount(sv.G.S) >= 3,
+    act: () => sv.G.openDialogue({ id: 'dagna', name: 'Dagna Coalbeard' }, dagna_song(sv.G.S)),
+  });
+  ensureCopperGolem(sv);
+}
+
+function wrapSvart(sv) {
+  if (!sv || sv._sqCopper || typeof sv.attach !== 'function') return;
+  sv._sqCopper = true;
+  const prev = sv.attach;
+  sv.attach = function attach(ctx, area) {
+    prev.call(this, ctx, area);
+    if (area === 'svartalfheim') hangCopper(this);
+  };
+}
+
+// G.svart is built before installSideQuests. Watch the property in case it is replaced.
+function watchSvart(G) {
+  if (!G || G._sqCopperWatch) return;
+  G._sqCopperWatch = true;
+  if (G.svart) wrapSvart(G.svart);
+  let sv = G.svart;
+  const desc = Object.getOwnPropertyDescriptor(G, 'svart');
+  if (desc && desc.configurable === false) return;
+  Object.defineProperty(G, 'svart', {
+    configurable: true,
+    enumerable: true,
+    get() { return sv; },
+    set(v) { sv = v; if (v) wrapSvart(v); },
+  });
+}
+
+// game.js assigns setQuest after installSideQuests. The choice sets stage 2; drop the sprite then.
+function watchQuest(G) {
+  if (!G || G._sqCopperQuest) return;
+  G._sqCopperQuest = true;
+  const wrap = (f) => {
+    if (typeof f !== 'function' || f._sqCopper) return f;
+    const prev = f.bind(G);
+    const wrapped = (id, stage) => {
+      const out = prev(id, stage);
+      if (id === 'sq_copper_song' && stage >= 2 && G.svart) dismissCopperGolem(G.svart);
+      return out;
+    };
+    wrapped._sqCopper = true;
+    return wrapped;
+  };
+  let fn = wrap(G.setQuest);
+  const desc = Object.getOwnPropertyDescriptor(G, 'setQuest');
+  if (desc && desc.configurable === false) {
+    if (fn) G.setQuest = fn;
+    return;
+  }
+  Object.defineProperty(G, 'setQuest', {
+    configurable: true,
+    enumerable: true,
+    get() { return fn; },
+    set(v) { fn = wrap(v); },
+  });
+}
+
+function wrapDagnaTalk() {
+  if (dagnaWrapped || typeof TALK.dagna !== 'function') return;
+  dagnaWrapped = true;
+  dagnaPrev = TALK.dagna;
+  TALK.dagna = (S) => {
+    const prior = dagnaPrev(S);
+    if (dagnaKept(prior)) return prior;
+    const q = (S.quests || {}).sq_copper_song || 0;
+    const n = rubbleCount(S);
+    if (q === 2 || (q === 1 && n >= 3)) return dagna_song(S);
+    if (!q && dagnaIdle(prior)) return dagna_song(S);
+    if (q >= 3 && dagnaIdle(prior)) return dagna_song(S);
+    return prior;
+  };
+}
+
+function installCopper(G) {
+  wrapDagnaTalk();
+  if (G) { watchSvart(G); watchQuest(G); }
 }
 
 // Keep the paste helpers live so a later side quest can reuse the same spellings. Referenced here so the module stays the Story block.
