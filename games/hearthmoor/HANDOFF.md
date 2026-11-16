@@ -3,6 +3,20 @@ _
 
 **Owner:** HD-2D Cozy Builder (single owner). Hearthmoor Art / Sound / Story and Master Builder drop work in `/workspace/hd2d-suite/staging/` (or `/workspace/hearthmoor-staging/`) and add a line under "Inbox" below instead of waking the owner.
 
+## RESUME HERE (2026-11-16 ~9:52 AM ET, branch hearthmoor-bundle-1117, HD-2D Cozy Builder)
+- Live main = aa98a19 (untouched). Bundle branch hearthmoor-bundle-1117, pushed head **be5c041** (plus this HANDOFF commit). Not merged, not published. Intro 5eabfed stays OUT. Worktree /tmp/hm-bundle-1117.
+- Job C in progress: Story side quests first, then finale, then Vanaheim/Asgard. Stop starting new pieces ~5:30 PM ET. Final pushed SHA with write_pwa + gitleaks 79ead5b..HEAD by 6:30 PM ET. Nothing builds after 6:54 PM ET (check day).
+- NEW since 79ead5b:
+  - 21c2705 Letters in the Ice (sq_frost_letters; Grok Build)
+  - 35e3eec Art frostveil_gloves 16x16 icon (px frostveil_gloves, art/vanaheim/icons/frostveil_gloves.png)
+  - 69ab40b standalone Sölvi sheet as its own NPC (solvi role/sheet; Corvin ferryman and hh_folk.png untouched)
+  - 82de2db The Pale Road (sq_lantern_walk; TALK.solvi; TALK.ferryman stays Corvin)
+  - be5c041 move Gloamhaven Sölvi to [10.6, -2.2] by the ferry steps (original [9.2, -2.2] sat under the willow; check-scene colours 2.43 / phone landscape sharp fail). hh_shore Sölvi stays [1.8, 0.2].
+- Checks on be5c041: node --test tests/*.mjs 70/70. check_palette 2744/0 failing. check-sprite solvi PASS (frames=32 colours=8, 0 semi) on all three copies. Existing hhfolk/actors/gamefx IDENTICAL to 35e3eec. check-scene helheim PASS 384.6s (solvi ratio 1.0, uniform 1.0, corr 1.0/0.9999/0.9996; phone landscape uniform 1.0 corr 1.0) and hh_shore PASS 387.4s (solvi ratio 1.0). Desktop+phone boots 0 console errors; Sölvi and Corvin present in both areas; shore lights shown at stage 2.
+- write_pwa and gitleaks still end-of-day (do not regenerate sw.js mid-stream). Fallback if a later piece fails: be5c041 (Letters + Pale Road).
+- Next: remaining side quests with existing art (sq_moss_giant, sq_capwhistle, sq_lamplit, sq_ember_kids, sq_copper_song). Defer sq_feather_court until Ragna/Eydis sprites exist. Then finale / rift_breaker if assets and time; then leftover Vanaheim/Asgard. No Ingrith Rev 4b, no intro 5eabfed.
+- Parent relays SHAs to GD. Cozy does not message GD.
+
 ## RESUME HERE (2026-11-15 ~10:47 PM ET, branch hearthmoor-bundle-1117, HD-2D Cozy Builder)
 - Live main = aa98a19 (untouched). Bundle branch hearthmoor-bundle-1117, head will be the HANDOFF commit on top of 4d98016. Not merged, not published. Intro 5eabfed stays OUT.
 - NEW on a931e68: (6) 5015503 quench_steam playback fix (GD: a frozen last frame looked like a glitch). The 8-frame strip does not loop cleanly (frame 0 is a full puff, frame 7 is a thin one, 0 shared opaque pixels), so ambient tank steam plays one 0.8s puff, hides, and retriggers — frames keep advancing past 0.8s in an unfrozen session. A +7/+10 temper burst is a single puff with no onDone; it plays once and hides, never duration Infinity. embers_drift, anvil_glow, faceless_gaze and all atlas bytes unchanged. (7) 4d98016 sw.js via write_pwa: core 4efad7163e -> hearthmoor-core-b462356d8f, lazy hearthmoor-lazy-3c3b75dccd unchanged.
