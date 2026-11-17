@@ -3,6 +3,18 @@ _
 
 **Owner:** HD-2D Cozy Builder (single owner). Hearthmoor Art / Sound / Story and Master Builder drop work in `/workspace/hd2d-suite/staging/` (or `/workspace/hearthmoor-staging/`) and add a line under "Inbox" below instead of waking the owner.
 
+## RESUME HERE (2026-11-16 ~11:10 PM ET, branch hearthmoor-bundle-1117, HD-2D Cozy Builder)
+- Fix round for GD's official FAIL of b270676 (fix list /workspace/handoffs/2026-11-17-gd-hearthmoor-1117-fixlist.md). Will (Mon ~10:05 PM ET): "Fix everything" / "have it run again" (check-day override for this fix only). Will "Include" for the intro at 10:19 PM ET (GD chat). Live main = aa98a19 (untouched). Not merged, not published. Worktree /tmp/hm-bundle-1117. /workspace/hd2d-suite untouched.
+- NEW since b270676:
+  - c5811a4 The Humming Golem imp: ENEMIES.emberimp added (melee fire foe, hp 35; SUMMONS row unchanged), so Combat.spawnEnemy no longer throws at combat.js:159. tests/sq_copper_imp_enemy.mjs (fails on b270676, passes now).
+  - 39c0846 SW update + offline: skipWaiting at install and on a SKIP_WAITING message; the page stops hm-fill nudges while an update installs (newer pages only; first install unaffected); activate deletes old caches, claims, and on an upgrade reloads open pages once via client.navigate (not awaited; once per worker version, so no loop); plaza files cached at install (title/picker boot offline right after install); audio fetches skipped when offline and uncached (no 503 console errors). sw.js via write_pwa: core dcf4f2f927 -> eceaacc881.
+  - 6386f69 intro 5eabfed cherry-picked (Lantern Eve v2 + Lanterns Down; clean, no conflicts).
+  - a9d35be tests/intro_lanterns_down.mjs (Story's intro_test as node:test) + sw.js via write_pwa: **core hearthmoor-core-9bffd4e45d**, **lazy hearthmoor-lazy-12b598d23d** (unchanged).
+- quench_steam: no code change. Ticking check: the burst's t/frame advance with __hd2d.frames and it is removed (desktop + phone, 0 errors). GD's 0-frame window means the renderer was not ticking in the harness.
+- Checks (logs /workspace/.hm-logs/hearthmoor-bundle-1117-fix1/): node 104/104; check_palette 2743/0; check-scene plaza PASS try 1; boots desktop+phone plaza + svartalfheim 0 errors (imp spawns via real spawnEnemy); intro plays and skips (Esc desktop, chip tap phone) 0 errors; offline reload 0 errors both before and after offline-ready; SW update from aa98a19 takes over and reloads the page at ~85-88 s (old worker finishes its in-flight fill batch first), aa98 save Continues; gitleaks b270676..HEAD clean.
+- Still out: Ingrith Rev 4b, finale / rift_breaker, feather_court, Vanaheim C / Asgard, attract, Sound pack2/3. Nothing else in /workspace/hearthmoor-staging was new and unmerged.
+- Parent relays SHAs to GD. Cozy does not message GD. Next: GD scoped retest (fixes + boot/offline + steam + intro). Hold main until PASS.
+
 ## RESUME HERE (2026-11-16 ~2:31 PM ET, branch hearthmoor-bundle-1117, HD-2D Cozy Builder)
 - Live main = aa98a19 (untouched). Bundle branch hearthmoor-bundle-1117, pushed head will be this HANDOFF commit on top of **2d29012**. Not merged, not published. Intro 5eabfed stays OUT. Worktree /tmp/hm-bundle-1117. /workspace/hd2d-suite untouched.
 - Job C side quests for the Tue Nov 17 bundle are done. Finale / rift_breaker and leftover Vanaheim/Asgard were not started (not enough time to check them safely before the 5:30 PM new-piece cutoff). Check day: nothing builds after 6:54 PM ET tonight, no building until Tuesday morning.
