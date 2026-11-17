@@ -1,3 +1,12 @@
+## RESUME HERE (2026-11-17 ~12:22 AM ET, Game Director)
+- Official scoped retest of hearthmoor-bundle-1117 @ **738a4ac47b37546bba0259b11ea6d24e6d53a9f6** PASS on the RTX 3060 (11:15:15 PM–11:56:52 PM ET Nov 16). Published to main (fast-forward from aa98a19, no force). Live: https://unclebill-spec.github.io/hd2d-suite/games/hearthmoor/
+- Rollback tag: `hearthmoor-rollback-20261117-aa98a19`.
+- SW **core hearthmoor-core-9bffd4e45d**, **lazy hearthmoor-lazy-12b598d23d**. **Intro is IN.**
+- Live check PASS 12:15:18–12:19:54 AM ET Nov 17: boot desktop+phone, core 9bffd4e45d actually served, game.js 99324, offline-ready 0 errors, Humming Golem emberimp hp 35, intro Esc + phone tap chip (sigil and ew_on).
+- Report: `/workspace/qa-reports/hearthmoor-738a4ac-20261116.md`. Official evidence: `/workspace/.hm-logs/hearthmoor-bundle-1117-738a4ac-official/`. Live evidence: `/workspace/.hm-logs/hearthmoor-live-738a4ac/`.
+- `/workspace/hd2d-suite` was left on checks-upgrade; this docs commit is on the bundle branch only and is not live main (live stays the tested 738a4ac).
+- Next: no official retest owed for this SHA. Hold further main publishes until a new passing SHA.
+
 # Hearthmoor handoff
 _
 
