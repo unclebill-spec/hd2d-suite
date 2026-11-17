@@ -28,6 +28,11 @@ const MUSIC_DIR = 'audio/music/';
 // kind -> [files (random-pick, no repeat of the last), volume, throttle ms, procedural fallback kind]. Lazy-loaded on first use and
 // decoded with the shared AudioContext; until a buffer is ready, or if every file fails, the procedural sound below plays instead.
 const SFX_DIR = 'audio/sfx/';
+// offline and not in a cache yet (the SW fills audio lazily): skip the request instead of a 503 console error; callers fall back as on any failed load
+const fetchAudio = async (u) => {
+  if (typeof navigator !== 'undefined' && navigator.onLine === false && typeof caches !== 'undefined' && !(await caches.match(new URL(u, location.href).href))) throw new Error('offline');
+  return fetch(u);
+};
 const v = (b, n) => [b, ...Array.from({ length: n - 1 }, (_, i) => b.replace(/(\.ogg)$/, '') + '_' + (i + 2))];
 const SFX = {
   swing: [['melee_swing'], 0.5, 0], hit: [[...v('melee_hit', 3), 'hit_juice_1', 'hit_juice_2', 'hit_juice_3'], 0.6, 60], hurt: [['hurt'], 0.6, 150],
@@ -101,7 +106,7 @@ export class Ambient {
   want() { return this.boss ? this.bossTrack() : this.battle ? 'battle' : (REALM_OF[this.area] || 'midgard'); }
   load(name) {
     if (this.bufs[name] || this.failed[name] || !this.ctx) return this.bufs[name] || null;
-    this.bufs[name] = fetch(MUSIC_DIR + 'music_' + name + '.ogg').then((r) => { if (!r.ok) throw new Error(r.status); return r.arrayBuffer(); })
+    this.bufs[name] = fetchAudio(MUSIC_DIR + 'music_' + name + '.ogg').then((r) => { if (!r.ok) throw new Error(r.status); return r.arrayBuffer(); })
       .then((ab) => new Promise((ok, no) => this.ctx.decodeAudioData(ab, ok, no)))
       .catch(() => { this.failed[name] = true; delete this.bufs[name]; return null; });
     return this.bufs[name];
@@ -201,7 +206,7 @@ export class Ambient {
   // ---- sample SFX (files) with procedural fallback
   sbuf(f) {
     const k = this.sb || (this.sb = {});
-    if (!(f in k)) k[f] = fetch(SFX_DIR + f + '.ogg').then((r) => { if (!r.ok) throw new Error(r.status); return r.arrayBuffer(); })
+    if (!(f in k)) k[f] = fetchAudio(SFX_DIR + f + '.ogg').then((r) => { if (!r.ok) throw new Error(r.status); return r.arrayBuffer(); })
       .then((ab) => new Promise((ok, no) => this.ctx.decodeAudioData(ab, ok, no))).then((b) => (k[f] = b)).catch(() => (k[f] = null));
     return k[f];
   }

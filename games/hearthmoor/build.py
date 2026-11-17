@@ -608,16 +608,27 @@ async function fill(name, list, { kind, conc = 4, gap = 0, budget = BATCH_MS } =
   return { complete, failed };
 }
 self.addEventListener('install', (e) => {
+  self.skipWaiting();   // take over as soon as install finishes (old page fill messages must not hold us in waiting)
+  tell({ type: 'hm-sw-update', core: CORE }).catch(() => {});
   log('install', CORE, `${SHELL_FILES.length} shell files`);
-  e.waitUntil(fill(CORE, SHELL_FILES, { kind: 'shell', conc: 6, budget: 240000 }).then(async ({ failed }) => {
+  // the first area is cached at install so an offline reload right after a fresh install can boot the title/picker
+  e.waitUntil(fill(CORE, [...SHELL_FILES, ...FIRST_FILES.filter(([f]) => f.startsWith('areas/' + CORE_AREAS[0] + '/'))], { kind: 'shell', conc: 6, budget: 240000 }).then(async ({ failed }) => {
     const must = ['index.html', 'game/game.js', 'engine/main.js'];   // the rest of a short shell is refetched on use if a request failed
     if (failed.some((f) => must.includes(f))) throw new Error('hearthmoor shell incomplete: ' + failed.slice(0, 5).join(', '));
     log('install done'); await self.skipWaiting();
   }).catch((err) => { log('install failed', String(err)); throw err; }));
 });
 self.addEventListener('activate', (e) => {
-  e.waitUntil(caches.keys().then((ks) => Promise.all(ks.filter((k) => k.startsWith('hearthmoor-') && k !== CORE && k !== LAZY).map((k) => (log('delete old cache', k), caches.delete(k)))))
-    .then(() => self.clients.claim()).then(() => { log('activated', CORE, LAZY); return tell({ type: 'hm-sw-active', core: CORE, lazy: LAZY }); }));
+  e.waitUntil((async () => {
+    const olds = (await caches.keys()).filter((k) => k.startsWith('hearthmoor-') && k !== CORE && k !== LAZY);
+    await Promise.all(olds.map((k) => (log('delete old cache', k), caches.delete(k))));
+    await self.clients.claim();
+    log('activated', CORE, LAZY); await tell({ type: 'hm-sw-active', core: CORE, lazy: LAZY });
+    if (olds.length) {   // an upgrade: pages still running the previous build reload once into this one (the game saves on pagehide); activate runs once per version, so no loop
+      const ws = (await self.clients.matchAll({ type: 'window' })).filter((c) => c.url.startsWith(self.registration.scope) && typeof c.navigate === 'function');
+      log('reload clients', ws.length); ws.forEach((c) => c.navigate(c.url).catch(() => {}));   // not awaited: the reload's own fetch waits for this activate to finish
+    }
+  })());
 });
 // background fill, page-driven in time-boxed batches: first realm (core cache) then the lazy set (one file at a time, with a gap)
 let filling = null;
@@ -630,6 +641,7 @@ async function fillStep(gap) {
 const AREA_LIST = (id) => LAZY_FILES.filter(([f]) => f.startsWith('areas/' + id + '/'));
 self.addEventListener('message', (e) => {
   const d = e.data || {}, port = e.ports && e.ports[0];
+  if (d.type === 'SKIP_WAITING') { self.skipWaiting(); return; }
   if (d.type === 'hm-fill') {
     if (!filling) filling = fillStep(d.gap ?? 60).then((r) => tell({ type: 'hm-sw-fill', ...r }), (err) => log('fill error', String(err))).finally(() => { filling = null; });
     e.waitUntil(filling);

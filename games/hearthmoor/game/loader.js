@@ -61,7 +61,7 @@ function drawFillLine(frac) {
   l.hidden = false; l.style.width = (Math.max(0, frac) * 100).toFixed(1) + '%';
 }
 
-const S = { frac: 0, swCore: null, booted: false, lazy: null, fill: null, filling: false };
+const S = { frac: 0, swCore: null, booted: false, lazy: null, fill: null, filling: false, updating: false };
 export const loaderState = () => ({ frac: S.frac, swCore: S.swCore, lazy: S.lazy, booted: S.booted });
 const bootGone = () => { const b = el('boot'); return !b || b.classList.contains('gone'); };
 function show(frac, label) { if (frac < S.frac) return; S.frac = frac; if (!bootGone()) drawBootProgress(frac, label); }
@@ -95,6 +95,7 @@ export function registerSW(enabled, { onOfflineReady } = {}) {
   if (!enabled || !('serviceWorker' in navigator)) return null;
   navigator.serviceWorker.addEventListener('message', (e) => {
     const d = e.data || {};
+    if (d.type === 'hm-sw-update') { if (navigator.serviceWorker.controller) S.updating = true; return; }   // an update (not the first install): stop fill nudges
     if (d.type === 'hm-sw-fill') { S.fill = d; if (!d.complete && S.filling) setTimeout(nudge, 1000); return; }   // next time-boxed batch
     if (d.type !== 'hm-sw-progress') return;
     const frac = d.total ? d.bytes / d.total : d.files / d.nfiles;
@@ -104,12 +105,18 @@ export function registerSW(enabled, { onOfflineReady } = {}) {
       if (bootGone()) drawFillLine(S.lazy.done ? 1 : (d.kind === 'first' ? 0.25 * frac : 0.25 + 0.75 * frac)); }
   });
   if (navigator.serviceWorker.startMessages) navigator.serviceWorker.startMessages();   // addEventListener alone leaves SW messages queued during boot (counter sat at 1/110)
-  return navigator.serviceWorker.register('sw.js').catch((err) => { console.warn('[hearthmoor] service worker registration failed', err); return null; });
+  return navigator.serviceWorker.register('sw.js').then((reg) => {
+    const skip = (w) => w && navigator.serviceWorker.controller && w.postMessage({ type: 'SKIP_WAITING' });
+    if (reg.waiting) { S.updating = true; skip(reg.waiting); }
+    reg.addEventListener('updatefound', () => { const w = reg.installing; if (!navigator.serviceWorker.controller) return;   // first install: nothing to replace, the fill keeps going
+      S.updating = true; if (w) w.addEventListener('statechange', () => { if (w.state === 'installed') skip(w); else if (w.state === 'redundant') S.updating = false; }); });
+    return reg;
+  }).catch((err) => { console.warn('[hearthmoor] service worker registration failed', err); return null; });
 }
 // background fill once play has started: the SW works in time-boxed batches (first realm, then lazy areas + audio, throttled);
 // the page asks for the next batch when one ends, and re-nudges every minute in case the browser stopped the worker
 let fillGap = 60;
-function nudge() { const c = navigator.serviceWorker && navigator.serviceWorker.controller; if (c && !(S.lazy && S.lazy.done)) c.postMessage({ type: 'hm-fill', gap: fillGap }); }
+function nudge() { if (S.updating) return; const c = navigator.serviceWorker && navigator.serviceWorker.controller; if (c && !(S.lazy && S.lazy.done)) c.postMessage({ type: 'hm-fill', gap: fillGap }); }
 export function startBackgroundFill(gap = 60) {
   if (!('serviceWorker' in navigator)) return;
   fillGap = gap; S.filling = true;
